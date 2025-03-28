@@ -178,24 +178,6 @@ namespace protein_grid {
 		return (xyz_bound_[0] * xyz_bound_[1] * xyz_bound_[2]);
 	}
 
-	// @brief function to set the xyz coordinates of the sub_region_min
-	// reminder, these values should directly relate to coordinates in the pose, and not be directly aimed at the matrix indices
-	void ProteinGrid::set_sub_region_min( utility::vector1<core::Size> region_in )
-	{
-		sub_region_min_[1] = region_in[1];
-		sub_region_min_[2] = region_in[2];
-		sub_region_min_[3] = region_in[3];
-	}
-
-	// @brief function to set the xyz coordinates of the sub_region_max
-	// reminder, these values should directly relate to coordinates in the pose, and not be directly aimed at the matrix indices
-	void ProteinGrid::set_sub_region_max( utility::vector1<core::Size> region_in )
-	{
-		sub_region_max_[1] = region_in[1];
-		sub_region_max_[2] = region_in[2];
-		sub_region_max_[3] = region_in[3];
-	}
-
 	// @brief overwrite the true sub area center and dimensions
 	//makes a call to reset the wrap matrix around pose to account for the change in the sub area
 	void ProteinGrid::set_sub_regions( numeric::xyzVector<int> sub_area_center, utility::vector1<core::Size> sub_region_dimensions )

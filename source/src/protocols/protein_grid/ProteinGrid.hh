@@ -77,7 +77,7 @@ public:
 
 	// @brief overwrite the true sub area center and dimensions
 	//makes a call to reset the wrap matrix around pose to account for the change in the sub area
-	void set_sub_regions( numeric::xyzVector<int> sub_area_center, utility::vector1<core::Size> sub_region_dimensions )
+	void set_sub_regions( numeric::xyzVector<int> sub_area_center, utility::vector1<core::Size> sub_region_dimensions );
 
 	// 
 
