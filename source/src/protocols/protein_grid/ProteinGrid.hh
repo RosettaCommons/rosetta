@@ -79,7 +79,9 @@ public:
 	//makes a call to reset the wrap matrix around pose to account for the change in the sub area
 	void set_sub_regions( numeric::xyzVector<int> sub_area_center, utility::vector1<core::Size> sub_region_dimensions );
 
-	// 
+	// @brief function that turns off using a sub area (until a function is called that turns it back on, like passing in new sub area dimensions)
+	// calls a rewrap on the pose that will now ignore the sub area
+	void ignore_sub_area();
 
 	// @brief function to elaborate upon the protein_matrix_, and will review the pose and update occupied cells by projecting atom lennard jobes radii and marking cells within the radius as occupied
 	// if a sub area boundary is defined, will define that area with different values
@@ -119,6 +121,11 @@ private:
 	//xyz min and max values
 	void define_sub_regions();
 
+	// @brief run a check to see if a coordinate within the protein_matrix is within the sub area
+	//returns true if the coordinate is, false otherwise
+	//I don't think we want this to be a public function, since this uses coordinates relative to the protein matrix, and not pose coordinates (which are shifted and potentially stretched)
+	bool is_coordinate_in_sub_area(core::Size x, core::Size y, core::Size z);
+
 	// @brief 3D matrix of voxelized representation of atoms in pose; individual indices contain data values that correspond to whether the voxel is occupied by pose atoms
 	// the coordinates of pose atoms are used to correspond to voxels in this matrix. Atom coordinates are all shifted so that the minimum coordinate value of all pose atoms are shifted to 1
 	ProteinMatrix protein_matrix_;
@@ -141,6 +148,10 @@ private:
 	//values >1 increase the resolution, which can help better define the sphere shape of lj radii from atoms; this comes at a substantial time/memory code
 	//resolution value must be positive
 	core::Real resolution_ = 1;
+
+	// @brief bool to define if using a sub area, used in some functions
+	//default is false
+	bool using_sub_area_ = false;
 
 	// @brief the direct coordinates to represent the center of the sub area to be investigated (if at all) within the matrix, aligns with the pose
 	numeric::xyzVector<int> true_sub_area_center_;

@@ -111,6 +111,8 @@ namespace protein_grid {
 		true_sub_area_center_ = sub_area_center;
 		true_sub_region_dimensions_ = sub_region_dimensions;
 
+		using_sub_area_ = true;
+
 		//wrap matrix around pose
 		wrap_matrix_around_pose();
 	}
@@ -137,6 +139,8 @@ namespace protein_grid {
 		//set values of true/absolute sub areas (center and dimensions before shifting)
 		true_sub_area_center_ = sub_area_center;
 		true_sub_region_dimensions_ = sub_region_dimensions;
+
+		using_sub_area_ = true;
 
 		//wrap matrix around pose
 		wrap_matrix_around_pose();
@@ -182,6 +186,8 @@ namespace protein_grid {
 	//makes a call to reset the wrap matrix around pose to account for the change in the sub area
 	void ProteinGrid::set_sub_regions( numeric::xyzVector<int> sub_area_center, utility::vector1<core::Size> sub_region_dimensions )
 	{
+		using_sub_area_ = true;
+
 		//set center
 		true_sub_area_center_ = sub_area_center;
 
@@ -436,7 +442,7 @@ namespace protein_grid {
 		xyz_bound_[3] = std::floor((xyz_shift_[3] + largest_z) * resolution_);
 
 		//if the true_sub_area_dimension_ values are not 0, then we have a sub area that we want to work with and consider for investigation
-		if(true_sub_region_dimensions_[1] != 0 && true_sub_region_dimensions_[2] != 0 && true_sub_region_dimensions_[3] != 0)
+		if(using_sub_area_)
 		{
 			//apply the shift and resolution to the true center and dimension, and derive the sub area max and min
 			define_sub_regions();
@@ -478,7 +484,11 @@ namespace protein_grid {
 		for ( core::Size xyzVec = 1; xyzVec <= atom_coordinates.size(); ++xyzVec ) {
 			protein_matrix_[atom_coordinates[xyzVec].x() + xyz_shift_[1]][atom_coordinates[xyzVec].y() + xyz_shift_[2]][atom_coordinates[xyzVec].z() + xyz_shift_[3]] = 1;
 
-			//check if the coordinate is within the sub-area, if so, then adjust the value
+			//check if the coordinate is within the sub-area, if so, then adjust the value if the point is within the sub area
+			if(using_sub_area_ && is_coordinate_in_sub_area(atom_coordinates[xyzVec].x() + xyz_shift_[1], atom_coordinates[xyzVec].y() + xyz_shift_[2], atom_coordinates[xyzVec].z() + xyz_shift_[3]))
+			{
+				protein_matrix_[atom_coordinates[xyzVec].x() + xyz_shift_[1]][atom_coordinates[xyzVec].y() + xyz_shift_[2]][atom_coordinates[xyzVec].z() + xyz_shift_[3]] = 3;
+			}
 
 
 			//increment occupied cell count by 1
@@ -530,6 +540,29 @@ namespace protein_grid {
 
 		sub_region_max_ = utility::vector1<int>(3, 0);
 		sub_region_min_ = utility::vector1<int>(3, 0);
+	}
+
+	// @brief run a check to see if a coordinate within the protein_matrix is within the sub area
+	//returns true if the coordinate is, false otherwise
+	//I don't think we want this to be a public function, since this uses coordinates relative to the protein matrix, and not pose coordinates (which are shifted and potentially stretched)
+	bool ProteinGrid::is_coordinate_in_sub_area(core::Size x, core::Size y, core::Size z)
+	{
+		if(x >= sub_region_min_[1] && x <= sub_region_max_[1] && y >= sub_region_min_[2] && y <= sub_region_max_[2] && z >= sub_region_min_[3] && z <= sub_region_max_[3])
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	// @brief function that turns off using a sub area (until a function is called that turns it back on, like passing in new sub area dimensions)
+	// calls a rewrap on the pose that will now ignore the sub area
+	void ProteinGrid::ignore_sub_area()
+	{
+		using_sub_area_ = false;
+		wrap_matrix_around_pose();
 	}
 }
 }
