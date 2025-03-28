@@ -27,6 +27,7 @@
 #include <utility/exit.hh>
 #include <utility/Binary_Util.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <numeric/xyzVector.fwd.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
@@ -54,10 +55,10 @@ public:
 	ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution);
 
 	//constructor that takes in pose and sub_region_min/max vectors
-	ProteinGrid(core::pose::PoseOP in_pose, utility::vector1<core::Size> sub_region_max, utility::vector1<core::Size> sub_region_min);
+	ProteinGrid(core::pose::PoseOP in_pose, numeric::xyzVector<int> sub_area_center, utility::vector1<core::Size> sub_region_dimensions);
 
 	//constructor that takes in pose, resolution values, and subregion vectors
-	ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution, utility::vector1<core::Size> sub_region_max, utility::vector1<core::Size> sub_region_min);
+	ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution, numeric::xyzVector<int> sub_area_center, utility::vector1<core::Size> sub_region_dimensions);
 
 	//copy constructor
 	ProteinGrid( ProteinGrid const & other );
@@ -74,17 +75,11 @@ public:
 	// @brief simple function to derive the volume of the matrix
 	core::Size get_grid_volume();
 
-	// @brief function to set the xyz coordinates of the sub_region_min
-	// reminder, these values should directly relate to coordinates in the pose, and not be directly aimed at the matrix indices
-	void set_sub_region_min( utility::vector1<core::Size> region_in );
+	// @brief overwrite the true sub area center and dimensions
+	//makes a call to reset the wrap matrix around pose to account for the change in the sub area
+	void set_sub_regions( numeric::xyzVector<int> sub_area_center, utility::vector1<core::Size> sub_region_dimensions )
 
-	// @brief function to set the xyz coordinates of the sub_region_max
-	// reminder, these values should directly relate to coordinates in the pose, and not be directly aimed at the matrix indices
-	void set_sub_region_max( utility::vector1<core::Size> region_in );
-
-	// @brief function to set the xyz coordinates of sub_region_max and sun_region_min
-	// reminder, these values should directly relate to coordinates in the pose, and not be directly aimed at the matrix indices
-	void set_sub_regions( utility::vector1<core::Size> region_max, utility::vector1<core::Size> region_min );	
+	// 
 
 	// @brief function to elaborate upon the protein_matrix_, and will review the pose and update occupied cells by projecting atom lennard jobes radii and marking cells within the radius as occupied
 	// if a sub area boundary is defined, will define that area with different values
@@ -115,7 +110,14 @@ private:
 	void reset_xyz_vectors();
 
 	// @brief reset (or set) the sub-region matrices to be 3 values of zeroes
-	void reset_sub_region_vectors();	
+	void reset_sub_region_vectors();
+
+	// @brief function to set up the sub region vectors
+	// this sets up the following:
+	//xyz center vector -> fills out the adjusted xyz center vector (shift and resolution)
+	//xyz dimension vector -> adjusted xyz dimensions vector (resolution)
+	//xyz min and max values
+	void define_sub_regions();
 
 	// @brief 3D matrix of voxelized representation of atoms in pose; individual indices contain data values that correspond to whether the voxel is occupied by pose atoms
 	// the coordinates of pose atoms are used to correspond to voxels in this matrix. Atom coordinates are all shifted so that the minimum coordinate value of all pose atoms are shifted to 1
@@ -140,11 +142,22 @@ private:
 	//resolution value must be positive
 	core::Real resolution_ = 1;
 
+	// @brief the direct coordinates to represent the center of the sub area to be investigated (if at all) within the matrix, aligns with the pose
+	numeric::xyzVector<int> true_sub_area_center_;
+
+	// @brief the adjusted coordinates to represent the center of the sub area to be investigated (if at all) within the matrix, adjusted by the shift and resolution
+	numeric::xyzVector<core::Size> adjusted_sub_area_center_;
+
+	// @brief the true dimensions (in angstroms) to project the sub area about the true sub area center
+	utility::vector1<core::Size> true_sub_region_dimensions_;
+
+	// @brief the adjusted dimensions (in angstroms) to project the sub area about the sub area center, adjusted by resolution
+	utility::vector1<core::Size> adjusted_sub_region_dimensions_;
+
 	// @brief vectors of maximum and minimum xyz values for a sub-area to potentially investigate in methods like space filling
 	// the region is a rectangular prism that is defined by coordinates outlined in sub_refoun_min_ and sub_region_max_
 	//seed values to be zero to indicate that we should not be using the subregion unless these values get set to be >=1
-	//these are meant to be coordinats in the pose (rounded to an int), not cells in the ProteinMatrix
-	//the values will be scaled and shifted when used
+	//these are the values that correspond to cells in the protein matrix
 	utility::vector1<core::Size> sub_region_max_;
 	utility::vector1<core::Size> sub_region_min_;
 

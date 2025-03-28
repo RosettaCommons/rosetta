@@ -25,6 +25,7 @@
 #include <utility/Binary_Util.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
+#include <numeric/xyzVector.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
@@ -40,6 +41,21 @@ namespace protein_grid {
 	/// @brief condensing the data type name for the main 3D vector (or matrix) that represents the protein
 	// currently laid out in that the matrix internal data can only be of Size. If flexibility is needed, this could be expanded upon later. The main reason for not doing this now is that operations that use the matrix data rely on the data being a discrete set of positive integers
 	typedef utility::vector1<utility::vector1<utility::vector1<core::Size>>> ProteinMatrix;
+
+	//key to values that can exist in the ProteinMatrix:
+	//if the matrix is written to a pdb file, the different states will be translated to different atoms 
+	//0 = empty and out of sub area, carbon, black
+	//1 = pose and out of sub area, fluorine, icy blue
+	//2 = empty and in sub area, oxygen, red
+	//3 = pose and in sub area, nitrogen, blue
+	//4 = do not use, keep even for unoccupied space
+	//5 = secondary ligand and out of sub area, sulphur, yellow
+	//6 = do not use, keep even for unoccupied space
+	//7 = secondary ligand and in sub area, chlorine, green
+	//8 = do not use, keep even for unoccupied space
+	//9 = secondary ligand and pose out of sub area, phosphorous, orange
+	//10 = do not use, keep even for unoccupied space
+	//11 = secondary ligand and pose in sub area, iodine, purple
 
 	//tracer for class prints
 	static basic::Tracer ms_tr( "core.grid.ProteinGrid" );
@@ -75,8 +91,8 @@ namespace protein_grid {
 		wrap_matrix_around_pose();
 	}
 
-	//constructor that takes in pose and sub_region_min/max vectors
-	ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, utility::vector1<core::Size> sub_region_max, utility::vector1<core::Size> sub_region_min)
+	//constructor that takes in pose and sub region vectors
+	ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, numeric::xyzVector<int> sub_area_center, utility::vector1<core::Size> sub_region_dimensions)
 	{
 		working_pose_ = in_pose;
 
@@ -84,15 +100,23 @@ namespace protein_grid {
 		//shift and bound vectors will be set/reset in the wrap function
 		reset_sub_region_vectors();
 
-		//set sub regions
-		set_sub_regions(sub_region_max,sub_region_min);
+		//set dimensions
+		//throw a warning if the inputted subregion is not 3 entries long, will try to move forward anyway
+		if(sub_region_dimensions.size() != 3)
+		{
+			ms_tr.Warning << "Sub region dimensions vector that was provided does not have 3 expected values. Contents of vector: " << sub_region_dimensions << std::endl;
+		}
+
+		//set values of true/absolute sub areas (center and dimensions before shifting)
+		true_sub_area_center_ = sub_area_center;
+		true_sub_region_dimensions_ = sub_region_dimensions;
 
 		//wrap matrix around pose
 		wrap_matrix_around_pose();
 	}
 
 	//constructor that takes in pose, resolution values, and subregion vectors
-	ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution, utility::vector1<core::Size> sub_region_max, utility::vector1<core::Size> sub_region_min)
+	ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution, numeric::xyzVector<int> sub_area_center, utility::vector1<core::Size> sub_region_dimensions)
 	{
 		working_pose_ = in_pose;
 		resolution_ = resolution;
@@ -103,8 +127,16 @@ namespace protein_grid {
 		//shift and bound vectors will be set/reset in the wrap function
 		reset_sub_region_vectors();
 
-		//set sub regions
-		set_sub_regions(sub_region_max,sub_region_min);
+		//set dimensions
+		//throw a warning if the inputted subregion is not 3 entries long, will try to move forward anyway
+		if(sub_region_dimensions.size() != 3)
+		{
+			ms_tr.Warning << "Sub region dimensions vector that was provided does not have 3 expected values. Contents of vector: " << sub_region_dimensions << std::endl;
+		}
+
+		//set values of true/absolute sub areas (center and dimensions before shifting)
+		true_sub_area_center_ = sub_area_center;
+		true_sub_region_dimensions_ = sub_region_dimensions;
 
 		//wrap matrix around pose
 		wrap_matrix_around_pose();
@@ -164,12 +196,149 @@ namespace protein_grid {
 		sub_region_max_[3] = region_in[3];
 	}
 
-	// @brief function to set the xyz coordinates of sub_region_max and sun_region_min
-	// reminder, these values should directly relate to coordinates in the pose, and not be directly aimed at the matrix indices
-	void ProteinGrid::set_sub_regions( utility::vector1<core::Size> region_max, utility::vector1<core::Size> region_min )
+	// @brief overwrite the true sub area center and dimensions
+	//makes a call to reset the wrap matrix around pose to account for the change in the sub area
+	void ProteinGrid::set_sub_regions( numeric::xyzVector<int> sub_area_center, utility::vector1<core::Size> sub_region_dimensions )
 	{
-		set_sub_region_max(region_max);
-		set_sub_region_min(region_min);
+		//set center
+		true_sub_area_center_ = sub_area_center;
+
+		//set dimensions
+		//throw a warning if the inputted subregion is not 3 entries long, will try to move forward anyway
+		if(sub_region_dimensions.size() != 3)
+		{
+			ms_tr.Warning << "Sub region dimensions vector that was provided does not have 3 expected values. Contents of vector: " << sub_region_dimensions << std::endl;
+		}
+
+		true_sub_region_dimensions_ = sub_region_dimensions;
+		
+		wrap_matrix_around_pose();
+	}
+
+	// @brief function to set up the sub region vectors
+	// this sets up the following:
+	//xyz center vector -> fills out the adjusted xyz center vector (shift and resolution)
+	//xyz dimension vector -> adjusted xyz dimensions vector (resolution)
+	//xyz min and max values
+	//leaving this function as public
+	void ProteinGrid::define_sub_regions()
+	{
+		//first, set the center and then adjust based on the resolution and shift values
+		adjusted_sub_area_center_.x() = std::floor((xyz_shift_[1] + true_sub_area_center_.x()) * resolution_);
+		adjusted_sub_area_center_.y() = std::floor((xyz_shift_[2] + true_sub_area_center_.y()) * resolution_);
+		adjusted_sub_area_center_.z() = std::floor((xyz_shift_[3] + true_sub_area_center_.z()) * resolution_);
+
+		//throw a warning if the adjusted center falls outside the matrix
+		if(adjusted_sub_area_center_.x() > xyz_bound_[1])
+		{
+			ms_tr.Warning << "Sub region center x outside of matrix. True (inputted): " << true_sub_area_center_.x() << " Adjusted: " << adjusted_sub_area_center_.x() << std::endl;
+		}
+		//throw a warning if the adjusted center falls outside the matrix
+		if(adjusted_sub_area_center_.y() > xyz_bound_[2])
+		{
+			ms_tr.Warning << "Sub region center y outside of matrix. True (inputted): " << true_sub_area_center_.y() << " Adjusted: " << adjusted_sub_area_center_.y() << std::endl;
+		}
+		//throw a warning if the adjusted center falls outside the matrix
+		if(adjusted_sub_area_center_.z() > xyz_bound_[3])
+		{
+			ms_tr.Warning << "Sub region center z outside of matrix. True (inputted): " << true_sub_area_center_.z() << " Adjusted: " << adjusted_sub_area_center_.z() << std::endl;
+		}
+
+		//now, set the adjusted dimensions
+		adjusted_sub_region_dimensions_[1] = std::floor(true_sub_region_dimensions_[1] * resolution_);
+		adjusted_sub_region_dimensions_[2] = std::floor(true_sub_region_dimensions_[2] * resolution_);
+		adjusted_sub_region_dimensions_[3] = std::floor(true_sub_region_dimensions_[3] * resolution_);
+
+		//derive the min and max
+		//if the min or max are below 1 or beyond the dimension boundary, set the value to be that boundary
+
+		//max
+		//x
+		if(adjusted_sub_area_center_.x() + adjusted_sub_region_dimensions_[1] > xyz_bound_[1])
+		{
+			//greater than boundary, set to boundary
+			sub_region_max_[1] = xyz_bound_[1];
+		}
+		else if(adjusted_sub_area_center_.x() + adjusted_sub_region_dimensions_[1] < 1)
+		{
+			//smaller than minumum (1), set to 1
+			sub_region_max_[1] = 1;
+		}
+		else
+		{
+			//set normally, as the center + the dimension
+			sub_region_max_[1] = adjusted_sub_area_center_.x() + adjusted_sub_region_dimensions_[1];
+		}
+		//y
+		if(adjusted_sub_area_center_.y() + adjusted_sub_region_dimensions_[2] > xyz_bound_[2])
+		{
+			sub_region_max_[2] = xyz_bound_[2];
+		}
+		else if(adjusted_sub_area_center_.y() + adjusted_sub_region_dimensions_[2] < 1)
+		{
+			sub_region_max_[2] = 1;
+		}
+		else
+		{
+			sub_region_max_[2] = adjusted_sub_area_center_.y() + adjusted_sub_region_dimensions_[2];
+		}
+		//z
+		if(adjusted_sub_area_center_.z() + adjusted_sub_region_dimensions_[3] > xyz_bound_[3])
+		{
+			sub_region_max_[3] = xyz_bound_[3];
+		}
+		else if(adjusted_sub_area_center_.z() + adjusted_sub_region_dimensions_[3] < 1)
+		{
+			sub_region_max_[3] = 1;
+		}
+		else
+		{
+			sub_region_max_[3] = adjusted_sub_area_center_.z() + adjusted_sub_region_dimensions_[3];
+		}
+
+		//min
+		//x
+		if(adjusted_sub_area_center_.x() - adjusted_sub_region_dimensions_[1] > xyz_bound_[1])
+		{
+			//greater than boundary, set to boundary
+			sub_region_min_[1] = xyz_bound_[1];
+		}
+		else if(adjusted_sub_area_center_.x() - adjusted_sub_region_dimensions_[1] < 1)
+		{
+			//smaller than minumum (1), set to 1
+			sub_region_min_[1] = 1;
+		}
+		else
+		{
+			//set normally, as the center - the dimension
+			sub_region_min_[1] = adjusted_sub_area_center_.x() - adjusted_sub_region_dimensions_[1];
+		}
+		//y
+		if(adjusted_sub_area_center_.y() - adjusted_sub_region_dimensions_[2] > xyz_bound_[2])
+		{
+			sub_region_min_[2] = xyz_bound_[2];
+		}
+		else if(adjusted_sub_area_center_.y() - adjusted_sub_region_dimensions_[2] < 1)
+		{
+			sub_region_min_[2] = 1;
+		}
+		else
+		{
+			sub_region_min_[2] = adjusted_sub_area_center_.y() - adjusted_sub_region_dimensions_[2];
+		}
+		//z
+		if(adjusted_sub_area_center_.z() - adjusted_sub_region_dimensions_[3] > xyz_bound_[3])
+		{
+			sub_region_min_[3] = xyz_bound_[3];
+		}
+		else if(adjusted_sub_area_center_.z() - adjusted_sub_region_dimensions_[3] < 1)
+		{
+			sub_region_min_[3] = 1;
+		}
+		else
+		{
+			sub_region_min_[3] = adjusted_sub_area_center_.z() - adjusted_sub_region_dimensions_[3];
+		}
 	}
 
 	// @brief function to elaborate upon the protein_matrix_, and will review the pose and update occupied cells by projecting atom lennard jobes radii and marking cells within the radius as occupied
@@ -284,6 +453,13 @@ namespace protein_grid {
 		xyz_bound_[2] = std::floor((xyz_shift_[2] + largest_y) * resolution_);
 		xyz_bound_[3] = std::floor((xyz_shift_[3] + largest_z) * resolution_);
 
+		//if the true_sub_area_dimension_ values are not 0, then we have a sub area that we want to work with and consider for investigation
+		if(true_sub_region_dimensions_[1] != 0 && true_sub_region_dimensions_[2] != 0 && true_sub_region_dimensions_[3] != 0)
+		{
+			//apply the shift and resolution to the true center and dimension, and derive the sub area max and min
+			define_sub_regions();
+		}
+
 		//create 3D matrix to roughly represent 3D coordinate space of protein
 		ms_tr.Debug << "Creating protein clash coordinate matrix. Dimensions of matrix are " << xyz_bound_[1] << "," << xyz_bound_[2] << "," << xyz_bound_[3] << std::endl;
 		ms_tr.Debug << "Shift from from original coordinates, and multiplied by current resolution factor (" << resolution_ << ") are: " << xyz_shift_[1] << "," << xyz_shift_[2] << "," << xyz_shift_[3] << std::endl;
@@ -319,6 +495,9 @@ namespace protein_grid {
 		//approximated by flooring coordinates down
 		for ( core::Size xyzVec = 1; xyzVec <= atom_coordinates.size(); ++xyzVec ) {
 			protein_matrix_[atom_coordinates[xyzVec].x() + xyz_shift_[1]][atom_coordinates[xyzVec].y() + xyz_shift_[2]][atom_coordinates[xyzVec].z() + xyz_shift_[3]] = 1;
+
+			//check if the coordinate is within the sub-area, if so, then adjust the value
+
 
 			//increment occupied cell count by 1
 			++matrix_fullness_;
@@ -356,6 +535,17 @@ namespace protein_grid {
 	// @brief reset (or set) the sub-region matrices to be 3 values of zeroes
 	void ProteinGrid::reset_sub_region_vectors()
 	{
+		true_sub_area_center_.x() = 0;
+		true_sub_area_center_.y() = 0;
+		true_sub_area_center_.z() = 0;
+
+		adjusted_sub_area_center_.x() = 0;
+		adjusted_sub_area_center_.y() = 0;
+		adjusted_sub_area_center_.z() = 0;
+
+		true_sub_region_dimensions_ = utility::vector1<int>(3, 0);
+		adjusted_sub_region_dimensions_ = utility::vector1<int>(3, 0);
+
 		sub_region_max_ = utility::vector1<int>(3, 0);
 		sub_region_min_ = utility::vector1<int>(3, 0);
 	}
