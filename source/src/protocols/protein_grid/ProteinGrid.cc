@@ -104,7 +104,11 @@ namespace protein_grid {
 		//throw a warning if the inputted subregion is not 3 entries long, will try to move forward anyway
 		if(sub_region_dimensions.size() != 3)
 		{
-			ms_tr.Warning << "Sub region dimensions vector that was provided does not have 3 expected values. Contents of vector: " << sub_region_dimensions << std::endl;
+			ms_tr.Warning << "Sub region dimensions vector that was provided does not have 3 expected values. Contents of vector: [";
+			for (auto val : sub_region_dimensions) {
+				ms_tr.Warning << val << ",";
+			}
+			ms_tr.Warning << "]" << std::endl;
 		}
 
 		//set values of true/absolute sub areas (center and dimensions before shifting)
@@ -133,7 +137,11 @@ namespace protein_grid {
 		//throw a warning if the inputted subregion is not 3 entries long, will try to move forward anyway
 		if(sub_region_dimensions.size() != 3)
 		{
-			ms_tr.Warning << "Sub region dimensions vector that was provided does not have 3 expected values. Contents of vector: " << sub_region_dimensions << std::endl;
+			ms_tr.Warning << "Sub region dimensions vector that was provided does not have 3 expected values. Contents of vector: [";
+			for (auto val : sub_region_dimensions) {
+				ms_tr.Warning << val << ",";
+			}
+			ms_tr.Warning << "]" << std::endl;
 		}
 
 		//set values of true/absolute sub areas (center and dimensions before shifting)
@@ -195,8 +203,13 @@ namespace protein_grid {
 		//throw a warning if the inputted subregion is not 3 entries long, will try to move forward anyway
 		if(sub_region_dimensions.size() != 3)
 		{
-			ms_tr.Warning << "Sub region dimensions vector that was provided does not have 3 expected values. Contents of vector: " << sub_region_dimensions << std::endl;
+			ms_tr.Warning << "Sub region dimensions vector that was provided does not have 3 expected values. Contents of vector: [";
+			for (auto val : sub_region_dimensions) {
+				ms_tr.Warning << val << ",";
+			}
+			ms_tr.Warning << "]" << std::endl;
 		}
+
 
 		true_sub_region_dimensions_ = sub_region_dimensions;
 		
