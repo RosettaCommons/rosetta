@@ -62,7 +62,6 @@ using namespace protocols::dna;
 
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
-static basic::Tracer TR( "apps.pilot.motif_dna_packer_design" );
 
 #include <core/import_pose/import_pose.hh> // Need since refactor
 
@@ -73,10 +72,8 @@ static basic::Tracer TR( "apps.pilot.motif_dna_packer_design" );
 #include <utility/file/file_sys_util.hh> // file_exists
 #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>
-using utility::vector1;
 #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
-using utility::string_split;
 
 // c++ headers
 #include <fstream>
@@ -137,6 +134,8 @@ using namespace chemical;
 using namespace pack;
 using namespace task;
 using namespace scoring;
+using utility::string_split;
+using utility::vector1;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -239,8 +238,9 @@ main( int argc, char * argv [] )
 			core::import_pose::pose_from_file( pose_pointer_helper, *filename , core::import_pose::PDB_file);
 			pose::PoseOP pose(new pose::Pose(pose_pointer_helper));
 
-			//get discovery position
-			core::Size discovery_position = option[ OptionKeys::motifs::protein_discovery_locus ];
+			//get discovery position(s), load into Size vector
+			//vector from options is int, but assignment should convert to size
+			utility::vector1<core::Size> discovery_position = option[ OptionKeys::motifs::protein_discovery_locus ]();
 
 			//declare LigandDiscoverySearch object
 			ms_tr << "Making LigandDiscoverySearch object" << std::endl;
