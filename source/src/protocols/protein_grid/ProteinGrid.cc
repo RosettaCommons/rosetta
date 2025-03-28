@@ -48,7 +48,7 @@ namespace protein_grid {
 	//simple constructor that only takes in pose
 	ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose)
 	{
-		protein_matrix_ = in_pose;
+		working_pose_ = in_pose;
 
 		//reset the subregion vectors
 		//shift and bound vectors will be set/reset in the wrap function
@@ -61,7 +61,7 @@ namespace protein_grid {
 	//constructor that takes in pose and new resolution value
 	ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution)
 	{
-		protein_matrix_ = in_pose;
+		working_pose_ = in_pose;
 		resolution_ = resolution;
 		//validate the resolution
 		validate_resolution();
@@ -77,7 +77,7 @@ namespace protein_grid {
 	//constructor that takes in pose and sub_region_min/max vectors
 	ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, utility::vector1<core::Size> sub_region_max, utility::vector1<core::Size> sub_region_min)
 	{
-		protein_matrix_ = in_pose;
+		working_pose_ = in_pose;
 
 		//reset the subregion vectors
 		//shift and bound vectors will be set/reset in the wrap function
@@ -93,7 +93,7 @@ namespace protein_grid {
 	//constructor that takes in pose, resolution values, and subregion vectors
 	ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution, utility::vector1<core::Size> sub_region_max, utility::vector1<core::Size> sub_region_min)
 	{
-		protein_matrix_ = in_pose;
+		working_pose_ = in_pose;
 		resolution_ = resolution;
 		//validate the resolution
 		validate_resolution();
