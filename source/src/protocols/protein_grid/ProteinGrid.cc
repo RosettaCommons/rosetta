@@ -24,6 +24,7 @@
 #include <utility/exit.hh>
 #include <utility/Binary_Util.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
@@ -116,13 +117,13 @@ namespace protein_grid {
 	}
 
 	//@brief = operator overload
-	ProteinGrid::ProteinGrid & operator=( ProteinGrid const & other ) {
+	ProteinGrid & ProteinGrid::operator=( ProteinGrid const & other ) {
 		other.clone( *this );
 		return *this;
 	}
 
 	// destructor
-	~ProteinGrid::ProteinGrid() override = default;
+	ProteinGrid::~ProteinGrid() = default;
 
 	// @brief function to clone the current ProteinGrid into inputted ProteinGrid
 	void ProteinGrid::clone(ProteinGrid & copy) const {
@@ -190,13 +191,16 @@ namespace protein_grid {
 	// @brief default constructor
 	//will need to use class functions to seed values for input pose and other potential input data
 	//should only use parameterized or copy constructor
-	ProteinGrid::ProteinGrid();
+	ProteinGrid::ProteinGrid()
+	{
+		
+	}
 
 	// @brief critical function that builds/rebuilds (overwrites existing) the proteingrid protein_matrix_ around the pose in working_pose_
 	//called on creation of the object, and also called in cases like changing the pose or resolution
 	//this function will simply fill out cells with either a 0 if there is no atom present in the corresponding cell, or a 1 if there is
 	//for a more in-depth space fill (project LJ radii), the space fill function will need to be called
-	ProteinGrid::void wrap_matrix_around_pose()
+	void ProteinGrid::wrap_matrix_around_pose()
 	{
 		//run through all atoms to derive a range of dimensions to contain the protein in a 3D  space
 		//since we can't have negative indices, we need to normalize the coordinate values so that everything is positive

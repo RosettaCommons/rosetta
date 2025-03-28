@@ -38,7 +38,7 @@
 namespace protocols {
 namespace protein_grid {
 
-class ProteinGrid : public utility::VirtualBase
+class ProteinGrid
 {
 public:
 	/// @brief condensing the data type name for the main 3D vector (or matrix) that represents the protein
