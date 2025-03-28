@@ -10,7 +10,7 @@
 /// @file   src/protocols/protein_grid/ProteinGrid.hh
 /// @author Ari Ginsparg
 
-#include <protocols/protein_grid/ProteinGrid.fwd.hh>
+#include <protocols/protein_grid/ProteinGrid.hh>
 #include <core/types.hh>
 
 #include <numeric/xyzVector.hh>
