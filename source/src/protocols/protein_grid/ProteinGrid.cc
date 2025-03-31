@@ -344,6 +344,7 @@ namespace protein_grid {
 
 	// @brief function to elaborate upon the protein_matrix_, and will review the pose and update occupied cells by projecting atom lennard jobes radii and marking cells within the radius as occupied
 	// if a sub area boundary is defined, will define that area with different values
+	// note: we are not going to re-size the proteinmatrix of measure the volume that exists outside the proteinmatrix; this could be updated later, but not doing this simplifies the operation
 	void ProteinGrid::project_lj_radii(){
 		//iterate over each atom in working_pose
 		for ( core::Size res_num = 1; res_num <= working_pose_->size(); ++res_num ) {
@@ -574,7 +575,35 @@ namespace protein_grid {
 	// calls a rewrap on the pose that will now ignore the sub area
 	void ProteinGrid::ignore_sub_area()
 	{
+		//throw warning and return if using_sub_area_ was already false; return
+		if (using_sub_area_ == false)
+		{
+			ms_tr.Warning << "Warning! We were already not using a sub area." << std::endl;
+			return;
+		}
+
 		using_sub_area_ = false;
+		wrap_matrix_around_pose();
+
+		//if using the lj radius to define volume, get the lj data again, because it is wiped by effectively reseting with the wrap_matrix function
+		if(using_lj_radii_)
+		{
+			project_lj_radii();
+		}
+	}
+
+	// @ brief function that turns off lj radii by recalling the wrap_matrix function
+	void ProteinGrid::ignore_lj_radii()
+	{
+		//throw warning and return if using_lj_radii_ was already false; return
+		if (using_lj_radii_ == false)
+		{
+			ms_tr.Warning << "Warning! We were already not lj radii." << std::endl;
+			return;
+		}
+
+		//set to false and reset wrap around matrix
+		using_lj_radii_ = false;
 		wrap_matrix_around_pose();
 	}
 }

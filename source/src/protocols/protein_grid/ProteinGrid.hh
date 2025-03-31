@@ -83,6 +83,9 @@ public:
 	// calls a rewrap on the pose that will now ignore the sub area
 	void ignore_sub_area();
 
+	// @ brief function that turns off lj radii by recalling the wrap_matrix function
+	void ignore_lj_radii();
+
 	// @brief function to elaborate upon the protein_matrix_, and will review the pose and update occupied cells by projecting atom lennard jobes radii and marking cells within the radius as occupied
 	// if a sub area boundary is defined, will define that area with different values
 	void project_lj_radii();
@@ -152,6 +155,10 @@ private:
 	// @brief bool to define if using a sub area, used in some functions
 	//default is false
 	bool using_sub_area_ = false;
+
+	// @brief bool to define if using atom lennard-jones (lj) radii in volume definition
+	//default is false
+	bool using_lj_radii_ = false;
 
 	// @brief the direct coordinates to represent the center of the sub area to be investigated (if at all) within the matrix, aligns with the pose
 	numeric::xyzVector<int> true_sub_area_center_;
