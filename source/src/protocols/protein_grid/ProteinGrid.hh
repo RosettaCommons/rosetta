@@ -28,6 +28,7 @@
 #include <utility/Binary_Util.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/xyzVector.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
@@ -75,6 +76,9 @@ public:
 	// @brief simple function to derive the volume of the matrix
 	core::Size get_grid_volume();
 
+	// @brief simple function to derive the volume of the sub area matrix
+	core::Size get_sub_area_grid_volume();
+
 	// @brief overwrite the true sub area center and dimensions
 	//makes a call to reset the wrap matrix around pose to account for the change in the sub area
 	void set_sub_regions( numeric::xyzVector<int> sub_area_center, utility::vector1<core::Size> sub_region_dimensions );
@@ -90,9 +94,23 @@ public:
 	// if a sub area boundary is defined, will define that area with different values
 	void project_lj_radii();
 
-	//(function for determining space fill difference by also including a ligand residuetype)
+	//@brief function where a residue object (i.e. ligand) outside of a pose can be imposed upon the matrix, and the space filling volume of the system with the ligand can be analyzed
+	//this forces activation of the space fill data on the class
+	//the imposed ligand space fill data is retained in object until a function is called that wipes data (i.e. wrap_matrix_around_pose)
+	void placed_ligand_space_fill_analysis(core::conformation::ResidueOP ligresOP);
 
+	//@brief function that takes in a residue object (i.e. ligand) and determines if the ligand clashes with the pose in this class
+	//returns true if there is a clash, and false if there is no clash
+	//this can work with with and without space fill, and is unaffected by a sub area
+	bool placed_ligand_clash_analysis(core::conformation::ResidueOP ligresOP);
 
+	// @ brief function that prints out the current state of the ProteinMatrix as a Pose, so the user can do things like write the pose to a pdb
+	//takes in a string to use to help assign a name to the created pose
+	core::pose::Pose export_protein_matrix_to_pose(std::string pdb_name_prefix);
+
+	// @ brief function that prints out the current state of the ProteinMatrix as a pdb; calls export_protein_matrix_to_pose and goes the extra step to print out the pose to a pdb without the user having to do more
+	//takes in a string to use to help assign a name to the created pose and pdb
+	void export_protein_matrix_to_pdb(std::string pdb_name_prefix);
 
 private:
 
@@ -145,6 +163,9 @@ private:
 	// @brief value to hold the number of cells/voxels within the matrix, derived by the product of the xyz_bound_ dimensions
 	core::Size matrix_volume_ = 0;
 
+	// @brief value to hold the number of cells/voxels within the sub area matrix, derived by the product of the xyz_bound_ dimensions
+	core::Size sub_matrix_volume_ = 0;	
+
 	// @brief floating value that can be used to scale the resolution of the protein grid, if desired
 	// default resolution of voxels are at 1 cubic angstrom (generally recommended)
 	//values <1 decrease the resolution of the matrix, increasing the likelihood of multiple atoms appearing in the same voxel
@@ -182,6 +203,10 @@ private:
 	// @brief values to track how full the matrix is with atoms, and a ratio to track the fullness value compared to the size of the matrix
 	core::Size matrix_fullness_ = 0;
 	core::Real fullness_ratio_ = 0;
+
+	// @brief values to track how full the sub matrix is with atoms, and a ratio to track the fullness value compared to the size of the matrix
+	core::Size sub_matrix_fullness_ = 0;
+	core::Real sub_fullness_ratio_ = 0;
 };
 
 }

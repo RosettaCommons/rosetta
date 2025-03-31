@@ -26,6 +26,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <numeric/xyzVector.hh>
+#include <core/conformation/Residue.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
@@ -182,12 +183,20 @@ namespace protein_grid {
 		copy.matrix_fullness_ = this->matrix_fullness_;
 		copy.fullness_ratio_ = this->fullness_ratio_;
 		copy.matrix_volume_ = this->matrix_volume_;
+
+		//come back and remove this comment after the class is written and all member variables are accounted for in the clone!!!
 	}
 
 	// @brief simple function to derive the volume of the matrix
 	core::Size ProteinGrid::get_grid_volume()
 	{
 		return (xyz_bound_[0] * xyz_bound_[1] * xyz_bound_[2]);
+	}
+
+	// @brief simple function to derive the volume of the sub area matrix
+	core::Size ProteinGrid::get_sub_area_grid_volume()
+	{
+		return ((sub_region_max_[1] - sub_region_min_[1]) * (sub_region_max_[2] - sub_region_min_[2]) * (sub_region_max_[3] - sub_region_min_[3]));
 	}
 
 	// @brief overwrite the true sub area center and dimensions
@@ -340,24 +349,253 @@ namespace protein_grid {
 		{
 			sub_region_min_[3] = adjusted_sub_area_center_.z() - adjusted_sub_region_dimensions_[3];
 		}
+
+		//set the sub_matrix_volume_
+		sub_matrix_volume_ = get_sub_area_grid_volume();
 	}
 
 	// @brief function to elaborate upon the protein_matrix_, and will review the pose and update occupied cells by projecting atom lennard jobes radii and marking cells within the radius as occupied
 	// if a sub area boundary is defined, will define that area with different values
-	// note: we are not going to re-size the proteinmatrix of measure the volume that exists outside the proteinmatrix; this could be updated later, but not doing this simplifies the operation
+	// note: we are not going to re-size the proteinmatrix of measure the volume that exists outside the ProteinMatrix; this could be updated later, but not doing this simplifies the operation
+	// a main argument for retaining this as-is is that there is less reason to look at the hwole pose, and usually working with the sub-area only is better, which is less likely to be cut off (only if it is at any edges)
 	void ProteinGrid::project_lj_radii(){
+		
+		//reset the fullness count
+		matrix_fullness_ = 0;
+
 		//iterate over each atom in working_pose
+		//translate the atom coordinates to where the center would be in the matrix
+		//extract the atom lj radius, and then project it from the center
 		for ( core::Size res_num = 1; res_num <= working_pose_->size(); ++res_num ) {
 			for ( core::Size atom_num = 1; atom_num <= working_pose_->residue(res_num).natoms(); ++atom_num ) {
-			
+				
+				//get the x,y,z data of the atom, rounded to the closest value
+				numeric::xyzVector<int> atom_xyz;
+				//floor the coordinates down for a constant negative directional shift
+				atom_xyz.x() = std::floor(working_pose_->residue(res_num).xyz(atom_num).x());
+				atom_xyz.y() = std::floor(working_pose_->residue(res_num).xyz(atom_num).y());
+				atom_xyz.z() = std::floor(working_pose_->residue(res_num).xyz(atom_num).z());
 
+				//extract the lj radius as a floating point value, which we will use to project the area about teh atom
+				core::Real atom_lj_radius = working_pose_->residue(res_num).atom_type(atom_num).lj_radius();
+
+				//apply the xyz shift and resolution to the atom coordinates
+				atom_xyz.x() = std::floor((atom_xyz.x() + xyz_shift_[1]) * resolution_);
+				atom_xyz.y() = std::floor((atom_xyz.y() + xyz_shift_[2]) * resolution_);
+				atom_xyz.z() = std::floor((atom_xyz.z() + xyz_shift_[3]) * resolution_);
+
+				//apply the resolution to the lj radius and then floor it
+				atom_lj_radius *= resolution_;
+				atom_lj_radius = std::floor(atom_lj_radius);
+
+				//derive maxima and minima for the radius about the atom
+				//if a value would go out of bounds (<1 or > dimension bound), set the the appropriate boundary
+				core::Size atom_x_min = 0;
+				core::Size atom_x_max = 0;
+				core::Size atom_y_min = 0;
+				core::Size atom_y_max = 0;
+				core::Size atom_z_min = 0;
+				core::Size atom_z_max = 0;
+				
+				//xmin
+				//if below the matrix minimum, set to 1
+				if(atom_xyz.x() - atom_lj_radius < 1)
+				{
+					atom_x_min = 1;
+				}
+				//if above the matrix maximum, set to the maximum
+				else if(atom_xyz.x() - atom_lj_radius > xyz_bound_[1])
+				{
+					atom_x_min = xyz_bound_[1];
+				}
+				//if within boundaries, keep as is
+				else
+				{
+					atom_x_min = atom_xyz.x() - atom_lj_radius;
+				}
+
+				//xmax
+				//if below the matrix minimum, set to 1
+				if(atom_xyz.x() + atom_lj_radius < 1)
+				{
+					atom_x_max = 1;
+				}
+				//if above the matrix maximum, set to the maximum
+				else if(atom_xyz.x() + atom_lj_radius > xyz_bound_[1])
+				{
+					atom_x_max = xyz_bound_[1];
+				}
+				//if within boundaries, keep as is
+				else
+				{
+					atom_x_max = atom_xyz.x() + atom_lj_radius;
+				}
+
+				//ymin
+				//if below the matrix minimum, set to 1
+				if(atom_xyz.y() - atom_lj_radius < 1)
+				{
+					atom_y_min = 1;
+				}
+				//if above the matrix maximum, set to the maximum
+				else if(atom_xyz.y() - atom_lj_radius > xyz_bound_[2])
+				{
+					atom_y_min = xyz_bound_[2];
+				}
+				//if within boundaries, keep as is
+				else
+				{
+					atom_y_min = atom_xyz.y() - atom_lj_radius;
+				}
+
+				//ymax
+				//if below the matrix minimum, set to 1
+				if(atom_xyz.y() + atom_lj_radius < 1)
+				{
+					atom_y_max = 1;
+				}
+				//if above the matrix maximum, set to the maximum
+				else if(atom_xyz.y() + atom_lj_radius > xyz_bound_[2])
+				{
+					atom_y_max = xyz_bound_[2];
+				}
+				//if within boundaries, keep as is
+				else
+				{
+					atom_y_max = atom_xyz.y() + atom_lj_radius;
+				}
+
+				//zmin
+				//if below the matrix minimum, set to 1
+				if(atom_xyz.z() - atom_lj_radius < 1)
+				{
+					atom_z_min = 1;
+				}
+				//if above the matrix maximum, set to the maximum
+				else if(atom_xyz.z() - atom_lj_radius > xyz_bound_[3])
+				{
+					atom_z_min = xyz_bound_[3];
+				}
+				//if within boundaries, keep as is
+				else
+				{
+					atom_z_min = atom_xyz.z() - atom_lj_radius;
+				}
+
+				//zmax
+				//if below the matrix minimum, set to 1
+				if(atom_xyz.z() + atom_lj_radius < 1)
+				{
+					atom_z_max = 1;
+				}
+				//if above the matrix maximum, set to the maximum
+				else if(atom_xyz.z() + atom_lj_radius > xyz_bound_[3])
+				{
+					atom_z_max = xyz_bound_[3];
+				}
+				//if within boundaries, keep as is
+				else
+				{
+					atom_z_max = atom_xyz.z() + atom_lj_radius;
+				}
+
+				//iterate over a cube around the atom, whose side length is 2x the lj radius (with the atom xyz coordinate in the center)
+				//iterate voxel by voxel within the cube to determine which cubes are filled
+				//effectively inscribe a sphere within the cube, and the voxels that compose the sphere will be appropriately marked as being occupied
+				for (core::Size i = atom_x_min; i <= atom_x_max; ++i)
+				{
+					for (core::Size j = atom_y_min; j <= atom_y_max; ++j)
+					{
+						for (core::Size k = atom_z_min; k <= atom_z_max; ++k)
+						{
+							//check if the coordinate is within the sphere, and if so, provide the proper assignment
+							//get the distance of the current point from the atom center, and determine if it is less than the radius
+							core::Real atom_cell_distance = sqrt( ((i - atom_xyz.x()) * (i - atom_xyz.x())) + ((j - atom_xyz.y()) * (j - atom_xyz.y())) + ((k - atom_xyz.z()) * (k - atom_xyz.z())) );
+
+							if (atom_cell_distance <= atom_lj_radius)
+							{
+								//check if the coordinate is within the sub-area, if so, then adjust the value if the point is within the sub area
+								if(using_sub_area_ && is_coordinate_in_sub_area(i,j,k))
+								{
+									protein_matrix_[i][j][k] = 3;
+									//increment the sub area fullness
+									++sub_matrix_fullness_;
+								}
+								else
+								{
+									protein_matrix_[i][j][k] = 1;
+								}
+								//increment occupied cell count by 1
+								++matrix_fullness_;
+							}
+						}
+					}
+				}
 
 			}
 		}
-		//
+		
+		//safety check to ensure that we actually had atoms in the pose, and that the matrix has a nonzero volume
+		if(matrix_volume_ == 0)
+		{
+			ms_tr.Warning << "The matrix has no volume, likely because the inputted pose has no atoms!" << std::endl;
+		}
+
+		//derive the fullness ratio as the number of occupied cells over the total cell number
+		fullness_ratio_ = static_cast<core::Real>(matrix_fullness_) / matrix_volume_;
+
+
+		//calculate the sub area fullness if using it
+		if(using_sub_area_)
+		{
+			sub_fullness_ratio_ = static_cast<core::Real>(sub_matrix_fullness_) / sub_matrix_volume_;
+		}
 	}
 
-	//(function for determining space fill difference by also including a ligand residuetype)
+	//@brief function where a residue object (i.e. ligand) outside of a pose can be imposed upon the matrix, and the space filling volume of the system with the ligand can be analyzed
+	//this forces activation of the space fill data on the class
+	//the imposed ligand space fill data is retained in object until a function is called that wipes data (i.e. wrap_matrix_around_pose)
+	void ProteinGrid::placed_ligand_space_fill_analysis(core::conformation::ResidueOP ligresOP)
+	{
+		//begin by forcing the working pose to have the space fill projected about atoms, if it is not already
+		if(using_lj_radii_ == false)
+		{
+			using_lj_radii_ = true;
+			project_lj_radii();
+		}
+
+		//read over each atom in the inputted residue
+		//project a sphere around the atom and determine the matrix value to correspond to space occupied by the ligand atoms
+
+		//FINISH THIS////////////
+	}
+
+	//@brief function that takes in a residue object (i.e. ligand) and determines if the ligand clashes with the pose in this class
+	//returns true if there is a clash, and false if there is no clash
+	//this can work with with and without space fill, and is unaffected by a sub area
+	bool ProteinGrid::placed_ligand_clash_analysis(core::conformation::ResidueOP ligresOP)
+	{
+		//FINISH THIS////////////
+		return false;
+	}
+
+	// @ brief function that prints out the current state of the ProteinMatrix as a Pose, so the user can do things like write the pose to a pdb
+	//takes in a string to use to help assign a name to the created pose
+	core::pose::Pose ProteinGrid::export_protein_matrix_to_pose(std::string pdb_name_prefix)
+	{
+		//do this
+		//temporary placeholder, this will not actually return working_pose
+		return *working_pose_;
+	}
+
+	// @ brief function that prints out the current state of the ProteinMatrix as a pdb; calls export_protein_matrix_to_pose and goes the extra step to print out the pose to a pdb without the user having to do more
+	//takes in a string to use to help assign a name to the created pose and pdb
+	void export_protein_matrix_to_pdb(std::string pdb_name_prefix)
+	{
+		//do this
+		export_protein_matrix_to_pose(pdb_name_prefix);
+		return;
+	}
 
 	// @brief default constructor
 	//will need to use class functions to seed values for input pose and other potential input data
@@ -496,12 +734,15 @@ namespace protein_grid {
 		//apply the shift to the coordinates
 		//approximated by flooring coordinates down
 		for ( core::Size xyzVec = 1; xyzVec <= atom_coordinates.size(); ++xyzVec ) {
-			protein_matrix_[atom_coordinates[xyzVec].x() + xyz_shift_[1]][atom_coordinates[xyzVec].y() + xyz_shift_[2]][atom_coordinates[xyzVec].z() + xyz_shift_[3]] = 1;
+			protein_matrix_[floor((atom_coordinates[xyzVec].x() + xyz_shift_[1]) * resolution_)][floor((atom_coordinates[xyzVec].y() + xyz_shift_[2])  * resolution_)][floor((atom_coordinates[xyzVec].z() + xyz_shift_[3])  * resolution_)] = 1;
 
 			//check if the coordinate is within the sub-area, if so, then adjust the value if the point is within the sub area
-			if(using_sub_area_ && is_coordinate_in_sub_area(atom_coordinates[xyzVec].x() + xyz_shift_[1], atom_coordinates[xyzVec].y() + xyz_shift_[2], atom_coordinates[xyzVec].z() + xyz_shift_[3]))
+			if(using_sub_area_ && is_coordinate_in_sub_area(floor((atom_coordinates[xyzVec].x() + xyz_shift_[1]) * resolution_), floor((atom_coordinates[xyzVec].y() + xyz_shift_[2])  * resolution_), floor((atom_coordinates[xyzVec].z() + xyz_shift_[3])  * resolution_)))
 			{
-				protein_matrix_[atom_coordinates[xyzVec].x() + xyz_shift_[1]][atom_coordinates[xyzVec].y() + xyz_shift_[2]][atom_coordinates[xyzVec].z() + xyz_shift_[3]] = 3;
+				protein_matrix_[floor((atom_coordinates[xyzVec].x() + xyz_shift_[1]) * resolution_)][floor((atom_coordinates[xyzVec].y() + xyz_shift_[2])  * resolution_)][floor((atom_coordinates[xyzVec].z() + xyz_shift_[3])  * resolution_)] = 3;
+				
+				//increment the sub area fullness
+				++sub_matrix_fullness_;
 			}
 
 
@@ -518,6 +759,11 @@ namespace protein_grid {
 		//derive the fullness ratio as the number of occupied cells over the total cell number
 		fullness_ratio_ = static_cast<core::Real>(matrix_fullness_) / matrix_volume_;
 
+		//calculate the sub area fullness if using it
+		if(using_sub_area_)
+		{
+			sub_fullness_ratio_ = static_cast<core::Real>(sub_matrix_fullness_) / sub_matrix_volume_;
+		}
 	}
 
 	// @brief function to check and ensure that the resolution value is valid (> 0)
