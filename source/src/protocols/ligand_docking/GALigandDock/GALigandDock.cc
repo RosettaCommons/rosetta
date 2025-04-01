@@ -89,6 +89,7 @@
 
 #include <ctime>
 #include <fstream>
+#include <math.h>
 
 #include <core/kinematics/Jump.hh> // AUTO IWYU For Jump
 #include <core/optimization/MinimizerOptions.hh> // AUTO IWYU For MinimizerOptions
@@ -602,12 +603,12 @@ GALigandDock::apply( pose::Pose & pose )
 					TR << "No local resolution provided. Using the global resolution" << std::endl;
 				}
 
-				core::Real expected_dens = 0.4535172 - 0.0190373 * local_res_ + 0.5542869 * pose_cc  -0.0006722 * nheavyatoms;
+				core::Real expected_dens = 0.3428443 - 0.0372441 * local_res_ + 1.1934549 * pose_cc  -0.0014546 * nheavyatoms;
 
 				core::Real dG_z = ((dG - expected_dG)/15.8 * -1 * 0.8);
-				core::Real dens_z = ((penalized_density - expected_dens)/(0.07192 * 1.1));
+				core::Real dens_z = ((atanh(penalized_density) - expected_dens)/(0.1531 * 1.1));
 
-				core::Real zscore = ((dG_z + dens_z)/2)/(std::pow(0.5, 0.5));
+				core::Real zscore = ((dG_z + dens_z)/2)/(std::pow( (0.5 + 0.5*0.261), 0.5) );
 
 				core::pose::setPoseExtraScore( pose, "dG_Z", dG_z );
 				core::pose::setPoseExtraScore( pose, "dens_Z", dens_z );
