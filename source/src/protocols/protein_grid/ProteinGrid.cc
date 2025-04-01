@@ -29,9 +29,11 @@
 #include <core/conformation/Residue.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/chemical/MutableResidueType.hh>
 #include <basic/options/keys/protein_grid.OptionKeys.gen.hh>
 #include <core/pose/extra_pose_info_util.hh>
+#include <utility/Binary_Util.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
@@ -902,6 +904,9 @@ namespace protein_grid {
 		ms_tr.Trace << "Number of chi in residue is currently: " << dummylig_mrt->nchi() << std::endl;
 
 		//we now have a blank dummy residue type that we can rebuild as a way to represent the ProteinMatrix, and could spit out to a pdb
+		//declare an additional mrt object that we will fill with atoms. every 100 atoms, we'll add the build mrt to the pose, and then wipe it using the dummy so we can build again
+		core::chemical::MutableResidueType my_mrt( *dummylig_mrt );
+
 		//declare strings to use for the atom name, type, and mm_type
 		std::string atom_name = "";
 		std::string atom_type_name = "";
@@ -957,13 +962,212 @@ namespace protein_grid {
 						continue;
 					}
 
-					//keep working on this!!
+					//derive unique atom name based on the atom count
+					atom_name = base_10_to_base_62(total_atom_counter);
+
+					//carbon
+					if ( protein_matrix_[x][y][z] == 0 ) {
+						atom_type_name = "aroC";
+						mm_atom_type_name = "C";
+					}
+					//hydrogen
+					//hydrogen may be a problem, try fluorine instead (icy blue)
+					if ( protein_matrix_[x][y][z] == 1 ) {
+						//atom_type_name = "Haro";
+						//mm_atom_type_name = "H";
+						atom_type_name = "F";
+						mm_atom_type_name = "F1";
+					}
+					//oxygen
+					if ( protein_matrix_[x][y][z] == 2 ) {
+						atom_type_name = "OH";
+						mm_atom_type_name = "O";
+					}
+					//nitrogen
+					if ( protein_matrix_[x][y][z] == 3 ) {
+						atom_type_name = "NH2O";
+						mm_atom_type_name = "N";
+					}
+					//sulphur
+					if ( protein_matrix_[x][y][z] == 5 ) {
+						atom_type_name = "S";
+						mm_atom_type_name = "S";
+					}
+					//chlorine
+					if ( protein_matrix_[x][y][z] == 7 ) {
+						atom_type_name = "Cl";
+						mm_atom_type_name = "CL";
+					}
+					//phosphorous
+					if ( protein_matrix_[x][y][z] == 9 ) {
+						atom_type_name = "Pha";
+						mm_atom_type_name = "P";
+					}
+					//iodine
+					if ( protein_matrix_[x][y][z] == 11 ) {
+						atom_type_name = "I";
+						mm_atom_type_name = "I";
+					}
+
+					//add the atom to the mrt
+					//default charge to 0
+					my_mrt.add_atom(atom_name, atom_type_name, mm_atom_type_name, 0);
+
+					//derive the coordinates of the atom
+					//divide matrix coordinates by resolution scalar and then subtract corresponding shift (un-apply the resolution and shift so that this atom aligns with a position in the pose)
+					atom_xyz[1] = (static_cast<core::Real>(x)/resolution_) - xyz_shift_[1];
+					atom_xyz[2] = (static_cast<core::Real>(y)/resolution_) - xyz_shift_[2];
+					atom_xyz[3] = (static_cast<core::Real>(z)/resolution_) - xyz_shift_[3];
+
+					//set the coordinates of the atom in the mrt
+					my_mrt.set_ideal_xyz(atom_name, Vector(atom_xyz[1],atom_xyz[2],atom_xyz[3]) );
+
+					//handle adding the icoor data for the atom
+					//skip if the atom name is "" (which will happen if you only look at the sub-matrix)
+					if ( atom_name != "" ) {
+						++atom_counter;
+						++total_atom_counter;
+
+						//if atom counter is <= 3, add the atom name to the first_three_atoms vector
+						//atom count must be >3 so we know the first 3 atoms and can retroactively add icoor for those first 3 atoms
+						if ( atom_counter <= 3 ) {
+							first_three_atoms.push_back(atom_name);
+
+							//if the count is 3, we can retroactively add icoor data for the first 3 atoms now
+							if ( atom_counter == 3 ) {
+
+								my_mrt.set_icoor(first_three_atoms[1],0,0,0,first_three_atoms[1],first_three_atoms[2],first_three_atoms[3],false);
+
+								my_mrt.set_icoor(first_three_atoms[2],0,0,0,first_three_atoms[1],first_three_atoms[2],first_three_atoms[3],false);
+								//flip order of stub2 and stub3 for 3rd atom (looking at some params files, it seems like they do this)
+								my_mrt.set_icoor(first_three_atoms[3],0,0,0,first_three_atoms[1],first_three_atoms[3],first_three_atoms[2],false);
+
+								//add bonds to connect these 3
+								my_mrt.add_bond(first_three_atoms[1],first_three_atoms[2]);
+								my_mrt.add_bond(first_three_atoms[2],first_three_atoms[3]);
+							}
+						} else {
+							//add icoor data for later atoms, using the first 3 atoms as the same stub atoms each time
+							my_mrt.set_icoor(first_three_atoms[1],0,0,0,first_three_atoms[1],first_three_atoms[2],first_three_atoms[3],false);
+
+							//bond everything else to the 3rd atom and hope things dont get wonky
+							//if they do, I can try another means to attach atoms to each other looking at previous atoms
+							my_mrt.add_bond(first_three_atoms[3],atom_name);
+
+						}
+
+						//cut off when my_mrt becomes 100 atoms and start a new residue so that the conversion for an rt doesn't take too long
+						//there might need to be some handling at the end if my_mrt only has 1-2 atoms
+						//handling would probably just be to add fake atoms in the place of the first atom to fill out to 3 for the icoor data
+						if ( atom_counter == 100 ) {
+							//convert my_mrt to a data type that can be added to a pose
+
+							//assign internal coordinates
+							my_mrt.assign_internal_coordinates();
+
+							//convert to residuetype
+							ResidueTypeCOP my_rt(ResidueType::make(my_mrt));
+
+							//convert to residue
+							core::conformation::ResidueOP my_res( core::conformation::ResidueFactory::create_residue(*my_rt));
+
+							//append residue to pose
+							matrix_pose.append_residue_by_jump( *my_res, 1 );
+
+							//reset atom counter
+							atom_counter = 0;
+
+							//pop back the entries to first_three_atoms so we can start again
+							first_three_atoms.pop_back();
+							first_three_atoms.pop_back();
+							first_three_atoms.pop_back();
+
+							//reset my_mrt
+							my_mrt = *dummylig_mrt;
+						}
+
+						//set name back to "" so that we don't keep going after we finish the sub area
+						atom_name = "";
+
+					}
+
+
 				}
 			}
 		}	
 
-		//do this
-		//temporary placeholder, this will not actually return working_pose
+		ms_tr.Trace << "Made all atoms for this matrix" << std::endl;
+
+		//handle rare case where the my_mrt that reaches this point only has 0-2 atoms and would have no icoor data
+		//if no atoms, just return the pose
+		if ( my_mrt.natoms() == 0 ) {
+			ms_tr.Trace << "Returning system pose." << std::endl;
+			return matrix_pose;
+		} else if ( my_mrt.natoms() == 1 ) {
+			//if only 1 atom, make 2 "copies" (atom in the same position as original) of the atom and assign icoor data
+			//make name of atom
+			atom_name = base_10_to_base_62(total_atom_counter + 1);
+			//add atom to mrt
+			//use same types as what was used last
+			my_mrt.add_atom(atom_name, atom_type_name, mm_atom_type_name, 0);
+			//add atom to the first three atoms list for tracking
+			first_three_atoms.push_back(atom_name);
+
+			//make name of atom
+			atom_name = base_10_to_base_62(total_atom_counter + 2);
+			//add atom to mrt
+			//use same types as what was used last
+			my_mrt.add_atom(atom_name, atom_type_name, mm_atom_type_name, 0);
+			//add atom to the first three atoms list for tracking
+			first_three_atoms.push_back(atom_name);
+
+			//set icoor data for these atoms
+			my_mrt.set_icoor(first_three_atoms[1],0,0,0,first_three_atoms[1],first_three_atoms[2],first_three_atoms[3],false);
+			my_mrt.set_icoor(first_three_atoms[2],0,0,0,first_three_atoms[1],first_three_atoms[2],first_three_atoms[3],false);
+			my_mrt.set_icoor(first_three_atoms[3],0,0,0,first_three_atoms[1],first_three_atoms[3],first_three_atoms[2],false);
+
+			//add bonds to connect these 3
+			my_mrt.add_bond(first_three_atoms[1],first_three_atoms[2]);
+			my_mrt.add_bond(first_three_atoms[2],first_three_atoms[3]);
+
+		} else if ( my_mrt.natoms() == 2 ) {
+			//if 2 atoms, make a 3rd atom that is a "copy" of the first atom
+			//make name of atom
+			atom_name = base_10_to_base_62(total_atom_counter + 1);
+			//add atom to mrt
+			//use same types as what was used last
+			my_mrt.add_atom(atom_name, atom_type_name, mm_atom_type_name, 0);
+			//add atom to the first three atoms list for tracking
+			first_three_atoms.push_back(atom_name);
+
+			//set icoor data for these atoms
+			my_mrt.set_icoor(first_three_atoms[1],0,0,0,first_three_atoms[1],first_three_atoms[2],first_three_atoms[3],false);
+			my_mrt.set_icoor(first_three_atoms[2],0,0,0,first_three_atoms[1],first_three_atoms[2],first_three_atoms[3],false);
+			my_mrt.set_icoor(first_three_atoms[3],0,0,0,first_three_atoms[1],first_three_atoms[3],first_three_atoms[2],false);
+
+			//add bonds to connect the 3 atoms
+			my_mrt.add_bond(first_three_atoms[1],first_three_atoms[2]);
+			my_mrt.add_bond(first_three_atoms[2],first_three_atoms[3]);
+		}
+
+		//now need to finalize the final mrt and add it to the pose
+
+		//assign internal coordinates
+		my_mrt.assign_internal_coordinates();
+
+		//convert my_mrt to a data type that can be added to a pose
+		//convert to residuetype
+		ResidueTypeCOP my_rt(ResidueType::make(my_mrt));
+
+		//convert to residue
+		core::conformation::ResidueOP my_res( core::conformation::ResidueFactory::create_residue(*my_rt));
+
+		//append residue to pose
+		matrix_pose.append_residue_by_jump( *my_res, 1 );		
+
+		ms_tr.Trace << "Returning system pose." << std::endl;
+
+		//return the matrix_pose that is full of atoms in a grid that represents teh ProteinMatrix
 		return matrix_pose;
 	}
 
@@ -994,6 +1198,52 @@ namespace protein_grid {
 		//add a comment to the working_pose_ that notes the matrix file that was made
 		core::pose::add_comment(*working_pose_, "Corresponding space fill matrix file:", matrix_pdb_name);
 	}
+
+
+	// @brief function to be used to convert a base 10 number to base 62 (as a string with characters represented by upper+lower case letters and digits)
+	//used in export_protein_matrix_to_pose to assign a unique name to an atom
+	//Due to limitations in atom icoor data, an atom name can be no longer than 4 characters, so this provides 62^4 (~14.7M) unique atom names
+	std::string ProteinGrid::base_10_to_base_62(core::Size starting_num)
+	{
+		//bool to indicate whether to keep processing the number
+		//stop processing once we fully build the string, which occurs when dividing the current number by 62 is <1 (integer would be 0)
+		bool keep_processing = true;
+
+		//string to hold the base 62 representation of the number
+		//characters represented by base_62_cipher_ vector in the .hh file
+		std::string base_62_number = "";
+
+		core::Size curr_num = starting_num;
+
+		while ( keep_processing )
+		{
+			//take the quotient of the current number by 62
+			core::Size quotient = curr_num / 62;
+
+			//derive the modulus of the current number by 62
+			core::Size mod = curr_num % 62;
+
+			//use the mod value to get the corresponding character from the cipher and append to the string
+			//character appends to the front of the string
+			base_62_number.insert(base_62_number.begin(),utility::code_to_6bit(mod + 1));
+
+			//if the quotient is under 62, get the number from the cipher, otherwise we have to repeat the processing operation
+			if ( quotient < 62 ) {
+				// use the quotient to add to the number, unless the quotient is 0 (no need to add a placeholder 0)
+				if ( quotient != 0 ) {
+					base_62_number.insert(base_62_number.begin(),utility::code_to_6bit(quotient + 1));
+				}
+
+				//we have now fully derived the base 62 number and can stop processing
+				keep_processing = false;
+			} else {
+				//set the quotient to the current number and we continue the operation off of it
+				curr_num = quotient;
+			}
+		}
+
+		return base_62_number;
+	}	
 
 	// @brief default constructor
 	//will need to use class functions to seed values for input pose and other potential input data
