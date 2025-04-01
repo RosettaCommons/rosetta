@@ -648,7 +648,7 @@ namespace protein_grid {
 			atom_xyz.z() = std::floor((atom_xyz.z() + xyz_shift_[3]) * resolution_);
 
 			//derive the atom lj radius and apply the resolution to it, then floor
-			core::Real atom_lj_radius = ligresOP->atom_type(atom_num).lj_radius();
+			core::Real atom_lj_radius = ligresOP->atom_type(residue_atom_iterator).lj_radius();
 			atom_lj_radius *= resolution_;
 			atom_lj_radius = std::floor(atom_lj_radius);
 
@@ -969,7 +969,7 @@ namespace protein_grid {
 
 	// @ brief function that prints out the current state of the ProteinMatrix as a pdb; calls export_protein_matrix_to_pose and goes the extra step to print out the pose to a pdb without the user having to do more
 	//takes in a string to use to help assign a name to the created pose and pdb
-	void export_protein_matrix_to_pdb(std::string pdb_name_prefix)
+	void ProteinGrid::export_protein_matrix_to_pdb(std::string pdb_name_prefix)
 	{
 		//create a file name to output the pose to
 		std::string matrix_pdb_name = pdb_name_prefix + "_WholeRatio_" + std::to_string(fullness_ratio_);
