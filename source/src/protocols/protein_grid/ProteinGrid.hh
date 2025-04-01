@@ -105,12 +105,17 @@ public:
 	bool placed_ligand_clash_analysis(core::conformation::ResidueOP ligresOP);
 
 	// @ brief function that prints out the current state of the ProteinMatrix as a Pose, so the user can do things like write the pose to a pdb
-	//takes in a string to use to help assign a name to the created pose
-	core::pose::Pose export_protein_matrix_to_pose(std::string pdb_name_prefix);
+	core::pose::Pose export_protein_matrix_to_pose();
 
 	// @ brief function that prints out the current state of the ProteinMatrix as a pdb; calls export_protein_matrix_to_pose and goes the extra step to print out the pose to a pdb without the user having to do more
 	//takes in a string to use to help assign a name to the created pose and pdb
 	void export_protein_matrix_to_pdb(std::string pdb_name_prefix);
+
+	// @brief function to set the value of print_whole_matrix_
+	void set_print_whole_matrix(bool setter);
+
+	// @brief function to set the value of print_empty_space_
+	void set_print_empty_space(bool setter);
 
 private:
 
@@ -147,6 +152,9 @@ private:
 	//I don't think we want this to be a public function, since this uses coordinates relative to the protein matrix, and not pose coordinates (which are shifted and potentially stretched)
 	bool is_coordinate_in_sub_area(core::Size x, core::Size y, core::Size z);
 
+	// @brief function to initialize additional member variables
+	void initialize();
+
 	// @brief 3D matrix of voxelized representation of atoms in pose; individual indices contain data values that correspond to whether the voxel is occupied by pose atoms
 	// the coordinates of pose atoms are used to correspond to voxels in this matrix. Atom coordinates are all shifted so that the minimum coordinate value of all pose atoms are shifted to 1
 	ProteinMatrix protein_matrix_;
@@ -161,25 +169,25 @@ private:
 	utility::vector1<core::Size> xyz_bound_;
 
 	// @brief value to hold the number of cells/voxels within the matrix, derived by the product of the xyz_bound_ dimensions
-	core::Size matrix_volume_ = 0;
+	core::Size matrix_volume_;
 
 	// @brief value to hold the number of cells/voxels within the sub area matrix, derived by the product of the xyz_bound_ dimensions
-	core::Size sub_matrix_volume_ = 0;	
+	core::Size sub_matrix_volume_;	
 
 	// @brief floating value that can be used to scale the resolution of the protein grid, if desired
 	// default resolution of voxels are at 1 cubic angstrom (generally recommended)
 	//values <1 decrease the resolution of the matrix, increasing the likelihood of multiple atoms appearing in the same voxel
 	//values >1 increase the resolution, which can help better define the sphere shape of lj radii from atoms; this comes at a substantial time/memory code
 	//resolution value must be positive
-	core::Real resolution_ = 1;
+	core::Real resolution_;
 
 	// @brief bool to define if using a sub area, used in some functions
 	//default is false
-	bool using_sub_area_ = false;
+	bool using_sub_area_
 
 	// @brief bool to define if using atom lennard-jones (lj) radii in volume definition
 	//default is false
-	bool using_lj_radii_ = false;
+	bool using_lj_radii_;
 
 	// @brief the direct coordinates to represent the center of the sub area to be investigated (if at all) within the matrix, aligns with the pose
 	numeric::xyzVector<int> true_sub_area_center_;
@@ -201,12 +209,19 @@ private:
 	utility::vector1<core::Size> sub_region_min_;
 
 	// @brief values to track how full the matrix is with atoms, and a ratio to track the fullness value compared to the size of the matrix
-	core::Size matrix_fullness_ = 0;
-	core::Real fullness_ratio_ = 0;
+	core::Size matrix_fullness_;
+	core::Real fullness_ratio_;
 
 	// @brief values to track how full the sub matrix is with atoms, and a ratio to track the fullness value compared to the size of the matrix
-	core::Size sub_matrix_fullness_ = 0;
-	core::Real sub_fullness_ratio_ = 0;
+	core::Size sub_matrix_fullness_;
+	core::Real sub_fullness_ratio_;
+
+	// @brief values that help to specify that to output to a pose/pdb
+	// print_whole_matrix_ determines whether to only print the sub area (if there is one) or the entire ProteinMatrix; default to false because the user likely wants to focus on the sub area if doing this
+	// print_empty_space_ determines whether to represent empty space as atoms in the pdb; default to false because readability is better when the empty space is not shown
+	// both of these variables aren't included in constructors since this feature is mainly used for debugging, and can instead be set in setter variables or flags
+	bool print_whole_matrix_;
+	bool print_empty_space_;
 };
 
 }

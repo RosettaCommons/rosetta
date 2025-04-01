@@ -7197,7 +7197,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'binding_pocket_cube_or_sphere', 'Boolean', default = 'true', desc = 'Boolean value to determine whether the user wants to use a cubic or sphereical shape to represent a binding pocket when using the binding_pocket_center_sf flag. True (default) designates that the used wants to use a cube, false designates that the user wants to use a sphere. Cube defined as volume centered about coordinates from binding_pocket_center_sf where cube side length is 2xbinding_pocket_radius_sf in angstroms (and scaled with resolution factor). Sphere defined similar to cube, except that it used the cube to start, and then only looks at indices where the distance between the index and sphere center is <= the radius (1/2 cube side length or radius)'),
 		Option( 'output_space_fill_matrix_pdbs', 'Boolean', default = 'false', desc = 'Output space fill matrix as atoms in a pdb that correspond to cells in matrix. Useful for visualization and debugging, but not necessary for large-scale operations. The sub-area is composed of nitrogen (occupied) and oxygen (unoccupied) atoms. If selected, the rest of the matrix is represented by fluorine (occupied) and carbon (unoccupied). This should only be used in for small diagnostic uses, as it is VERY slow, especially if you export the entire matrix beyond the sub-area.'),
 		Option( 'use_whole_matrix_in_space_fill_pdb', 'Boolean', default = 'false', desc = 'If using output_space_fill_matrix_pdbs flag, this option (when true) allows for visualization of the entire space fill matrix, instead of just the sub-area.'),
-		Option( 'use_empty_space_in_space_fill_pdb', 'Boolean', default = 'false', desc = 'If using output_space_fill_matrix_pdbs flag, this option (when true) allows for visualization of the space fill matrix, including empty space.'),
+		Option( 'use_empty_space_in_space_fill_pdb', 'Boolean', default = 'false', desc = 'If using output_space_fill_matrix_pdbs flag, this option (when true) allows for visualization of the space fill matrix, including empty space.'),		
 		Option( 'collect_motifs_from_placed_ligand', 'Boolean', default = 'false', desc = 'If using liganddiscoverysearch, option to choose whether to investigate if placed ligand forms motifs with residues in binding pocket'),
 		Option( 'significant_residues_for_motifs', 'IntegerVector', desc = 'Indices of residues of interest that user wants to have motifs form against placed ligand. Ligand can survive if not all residues here are hit'),
 		Option( 'mandatory_residues_for_motifs', 'IntegerVector', desc = 'Indices of residues of interest that user needs to have motifs form against placed ligand. Ligand cannot survive if not all residues here are hit'),
@@ -7610,6 +7610,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'use_gzip','Boolean', desc="gzip output files", default='false'),
 		Option( 'normalize','Real', desc="Normalizing factor (usually target sequence length)", default='1.0'),
 	), # -ProQ
+
+	Option_Group ( 'protein_grid',
+		Option( 'output_whole_matrix', 'Boolean', default = 'false', desc = 'If using output_space_fill_matrix_pdbs flag, this option (when true) allows for visualization of the entire space fill matrix, instead of just the sub-area.'),
+		Option( 'output_empty_space', 'Boolean', default = 'false', desc = 'If using output_space_fill_matrix_pdbs flag, this option (when true) allows for visualization of the space fill matrix, including empty space.'),
+	),
 
 	Option_Group( 'qsar',
 		Option( 'weights','String',default='talaris2013',desc = 'select qsar weight set to use'),

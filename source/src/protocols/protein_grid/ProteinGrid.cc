@@ -27,6 +27,9 @@
 #include <core/conformation/Residue.hh>
 #include <numeric/xyzVector.hh>
 #include <core/conformation/Residue.hh>
+#include <core/io/pdb/pdb_writer.hh>
+#include <basic/options/option.hh>
+#include <core/chemical/MutableResidueType.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
@@ -45,6 +48,7 @@ namespace protein_grid {
 
 	//key to values that can exist in the ProteinMatrix:
 	//if the matrix is written to a pdb file, the different states will be translated to different atoms 
+	//notably, even numbers are relegated to define empty space, and odd numbers are relegated to define occupied space
 	//0 = empty and out of sub area, carbon, black
 	//1 = pose and out of sub area, fluorine, icy blue
 	//2 = empty and in sub area, oxygen, red
@@ -66,6 +70,9 @@ namespace protein_grid {
 	//simple constructor that only takes in pose
 	ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose)
 	{
+		//seed initial values on member variables
+		initialize();
+
 		working_pose_ = in_pose;
 
 		//reset the subregion vectors
@@ -79,6 +86,9 @@ namespace protein_grid {
 	//constructor that takes in pose and new resolution value
 	ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution)
 	{
+		//seed initial values on member variables
+		initialize();
+
 		working_pose_ = in_pose;
 		resolution_ = resolution;
 		//validate the resolution
@@ -95,6 +105,10 @@ namespace protein_grid {
 	//constructor that takes in pose and sub region vectors
 	ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, numeric::xyzVector<int> sub_area_center, utility::vector1<core::Size> sub_region_dimensions)
 	{
+		//seed initial values on member variables
+		initialize();
+
+		//set the working_pose_ to be the input pose
 		working_pose_ = in_pose;
 
 		//reset the subregion vectors
@@ -125,6 +139,9 @@ namespace protein_grid {
 	//constructor that takes in pose, resolution values, and subregion vectors
 	ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution, numeric::xyzVector<int> sub_area_center, utility::vector1<core::Size> sub_region_dimensions)
 	{
+		//seed initial values on member variables
+		initialize();
+
 		working_pose_ = in_pose;
 		resolution_ = resolution;
 		//validate the resolution
@@ -185,6 +202,27 @@ namespace protein_grid {
 		copy.matrix_volume_ = this->matrix_volume_;
 
 		//come back and remove this comment after the class is written and all member variables are accounted for in the clone!!!
+	}
+
+	// @brief function to initialize member variables at constructor calls
+	//this sets initial and default values for member variables that we can build the matrix upon
+	void ProteinGrid::initialize() 
+	{
+		
+		matrix_volume_ = 0;
+		sub_matrix_volume_ = 0;	
+		resolution_ = 1;
+		using_sub_area_ = false;
+		using_lj_radii_ = false;
+		matrix_fullness_ = 0;
+		fullness_ratio_ = 0;
+		sub_matrix_fullness_ = 0;
+		sub_fullness_ratio_ = 0;
+
+		//seed variables that are relevant for how to output the matrix to a pdb for visualization
+		//not planning to have devoted constructors to define these variables
+		print_whole_matrix_ = option[ OptionKeys::protein_grid::output_whole_matrix ]();
+		print_empty_space_ = option[ OptionKeys::protein_grid::output_empty_space ]();
 	}
 
 	// @brief simple function to derive the volume of the matrix
@@ -350,6 +388,19 @@ namespace protein_grid {
 			sub_region_min_[3] = adjusted_sub_area_center_.z() - adjusted_sub_region_dimensions_[3];
 		}
 
+		//with maxima and minima defined, set values within the sub area to 2 instead of 0
+		//2 is defined as empty and within the sub area
+		for (core::Size i = sub_region_min_[1]; i <= sub_region_max_[1]; ++i)
+		{
+			for (core::Size j = sub_region_min_[2]; j <= sub_region_max_[2]; ++j)
+			{
+				for (core::Size k = sub_region_min_[3]; k <= sub_region_max_[3]; ++k)
+				{
+					protein_matrix_[i][j][k] = 2;
+				}
+			}
+		}
+
 		//set the sub_matrix_volume_
 		sub_matrix_volume_ = get_sub_area_grid_volume();
 	}
@@ -512,6 +563,7 @@ namespace protein_grid {
 							//get the distance of the current point from the atom center, and determine if it is less than the radius
 							core::Real atom_cell_distance = sqrt( ((i - atom_xyz.x()) * (i - atom_xyz.x())) + ((j - atom_xyz.y()) * (j - atom_xyz.y())) + ((k - atom_xyz.z()) * (k - atom_xyz.z())) );
 
+							//if the distance from the atom center to the current voxel is within the lj radius, then we have an occupied voxel that needs to be appropriately labeled
 							if (atom_cell_distance <= atom_lj_radius)
 							{
 								//check if the coordinate is within the sub-area, if so, then adjust the value if the point is within the sub area
@@ -555,9 +607,10 @@ namespace protein_grid {
 	//@brief function where a residue object (i.e. ligand) outside of a pose can be imposed upon the matrix, and the space filling volume of the system with the ligand can be analyzed
 	//this forces activation of the space fill data on the class
 	//the imposed ligand space fill data is retained in object until a function is called that wipes data (i.e. wrap_matrix_around_pose)
+	//this does allow the placement of multiple ligands if called multiple times, past ligand data will be retained until an operation that called wrap_protein_matrix is performed
 	void ProteinGrid::placed_ligand_space_fill_analysis(core::conformation::ResidueOP ligresOP)
 	{
-		//begin by forcing the working pose to have the space fill projected about atoms, if it is not already
+		//begin by forcing the working pose to have the space fill projected about pose atoms, if it is not already
 		if(using_lj_radii_ == false)
 		{
 			using_lj_radii_ = true;
@@ -567,34 +620,376 @@ namespace protein_grid {
 		//read over each atom in the inputted residue
 		//project a sphere around the atom and determine the matrix value to correspond to space occupied by the ligand atoms
 
-		//FINISH THIS////////////
+		//reminder of what the different values ProteinMatrix values are, since we can use them all here:
+		//if the matrix is written to a pdb file, the different states will be translated to different atoms 
+		//0 = empty and out of sub area, carbon, black
+		//1 = pose and out of sub area, fluorine, icy blue
+		//2 = empty and in sub area, oxygen, red
+		//3 = pose and in sub area, nitrogen, blue
+		//4 = do not use, keep even for unoccupied space
+		//5 = secondary ligand and out of sub area, sulphur, yellow
+		//6 = do not use, keep even for unoccupied space
+		//7 = secondary ligand and in sub area, chlorine, green
+		//8 = do not use, keep even for unoccupied space
+		//9 = secondary ligand and pose out of sub area, phosphorous, orange
+		//10 = do not use, keep even for unoccupied space
+		//11 = secondary ligand and pose in sub area, iodine, purple
+
+		for ( core::Size residue_atom_iterator = 1; residue_atom_iterator <= ligresOP->natoms(); ++residue_atom_iterator ) {
+			//convert coordinates of current atom into format that can be read into space fill matrix matrix
+			numeric::xyzVector<int> atom_xyz = ligresOP->xyz(residue_atom_iterator);
+
+			//apply the xyz shift to each value (and do before applying the resolution increase factor)
+			atom_xyz.x() = std::floor((atom_xyz.x() + xyz_shift_[1]) * resolution_);
+			atom_xyz.y() = std::floor((atom_xyz.y() + xyz_shift_[2]) * resolution_);
+			atom_xyz.z() = std::floor((atom_xyz.z() + xyz_shift_[3]) * resolution_);
+
+			//derive the atom lj radius and apply the resolution to it, then floor
+			core::Real atom_lj_radius = working_pose_->residue(res_num).atom_type(atom_num).lj_radius();
+			atom_lj_radius *= resolution_;
+			atom_lj_radius = std::floor(atom_lj_radius);
+
+			//derive maxima and minima for the radius about the atom
+			//if a value would go out of bounds (<1 or > dimension bound), set the the appropriate boundary
+			core::Size atom_x_min = 0;
+			core::Size atom_x_max = 0;
+			core::Size atom_y_min = 0;
+			core::Size atom_y_max = 0;
+			core::Size atom_z_min = 0;
+			core::Size atom_z_max = 0;
+			
+			//xmin
+			//if below the matrix minimum, set to 1
+			if(atom_xyz.x() - atom_lj_radius < 1)
+			{
+				atom_x_min = 1;
+			}
+			//if above the matrix maximum, set to the maximum
+			else if(atom_xyz.x() - atom_lj_radius > xyz_bound_[1])
+			{
+				atom_x_min = xyz_bound_[1];
+			}
+			//if within boundaries, keep as is
+			else
+			{
+				atom_x_min = atom_xyz.x() - atom_lj_radius;
+			}
+
+			//xmax
+			//if below the matrix minimum, set to 1
+			if(atom_xyz.x() + atom_lj_radius < 1)
+			{
+				atom_x_max = 1;
+			}
+			//if above the matrix maximum, set to the maximum
+			else if(atom_xyz.x() + atom_lj_radius > xyz_bound_[1])
+			{
+				atom_x_max = xyz_bound_[1];
+			}
+			//if within boundaries, keep as is
+			else
+			{
+				atom_x_max = atom_xyz.x() + atom_lj_radius;
+			}
+
+			//ymin
+			//if below the matrix minimum, set to 1
+			if(atom_xyz.y() - atom_lj_radius < 1)
+			{
+				atom_y_min = 1;
+			}
+			//if above the matrix maximum, set to the maximum
+			else if(atom_xyz.y() - atom_lj_radius > xyz_bound_[2])
+			{
+				atom_y_min = xyz_bound_[2];
+			}
+			//if within boundaries, keep as is
+			else
+			{
+				atom_y_min = atom_xyz.y() - atom_lj_radius;
+			}
+
+			//ymax
+			//if below the matrix minimum, set to 1
+			if(atom_xyz.y() + atom_lj_radius < 1)
+			{
+				atom_y_max = 1;
+			}
+			//if above the matrix maximum, set to the maximum
+			else if(atom_xyz.y() + atom_lj_radius > xyz_bound_[2])
+			{
+				atom_y_max = xyz_bound_[2];
+			}
+			//if within boundaries, keep as is
+			else
+			{
+				atom_y_max = atom_xyz.y() + atom_lj_radius;
+			}
+
+			//zmin
+			//if below the matrix minimum, set to 1
+			if(atom_xyz.z() - atom_lj_radius < 1)
+			{
+				atom_z_min = 1;
+			}
+			//if above the matrix maximum, set to the maximum
+			else if(atom_xyz.z() - atom_lj_radius > xyz_bound_[3])
+			{
+				atom_z_min = xyz_bound_[3];
+			}
+			//if within boundaries, keep as is
+			else
+			{
+				atom_z_min = atom_xyz.z() - atom_lj_radius;
+			}
+
+			//zmax
+			//if below the matrix minimum, set to 1
+			if(atom_xyz.z() + atom_lj_radius < 1)
+			{
+				atom_z_max = 1;
+			}
+			//if above the matrix maximum, set to the maximum
+			else if(atom_xyz.z() + atom_lj_radius > xyz_bound_[3])
+			{
+				atom_z_max = xyz_bound_[3];
+			}
+			//if within boundaries, keep as is
+			else
+			{
+				atom_z_max = atom_xyz.z() + atom_lj_radius;
+			}
+
+			//iterate over a cube around the atom, whose side length is 2x the lj radius (with the atom xyz coordinate in the center)
+			//iterate voxel by voxel within the cube to determine which cubes are filled
+			//effectively inscribe a sphere within the cube, and the voxels that compose the sphere will be appropriately marked as being occupied
+			for (core::Size i = atom_x_min; i <= atom_x_max; ++i)
+			{
+				for (core::Size j = atom_y_min; j <= atom_y_max; ++j)
+				{
+					for (core::Size k = atom_z_min; k <= atom_z_max; ++k)
+					{
+						//check if the coordinate is within the sphere, and if so, provide the proper assignment
+						//get the distance of the current point from the atom center, and determine if it is less than the radius
+						core::Real atom_cell_distance = sqrt( ((i - atom_xyz.x()) * (i - atom_xyz.x())) + ((j - atom_xyz.y()) * (j - atom_xyz.y())) + ((k - atom_xyz.z()) * (k - atom_xyz.z())) );
+
+						//if the distance from the atom center to the current voxel is within the lj radius, then we have an occupied voxel that needs to be appropriately labeled
+						if (atom_cell_distance <= atom_lj_radius)
+						{
+							//cases to test for appropriately filling the cell
+
+							//outside sub area and not occupied by pose, should be initially 0
+							//set to 5
+							if(is_coordinate_in_sub_area(i,j,k) == false && protein_matrix_[i][j][k] == 0)
+							{
+								protein_matrix_[i][j][k] = 5;
+								//increment occupied cell count by 1
+								++matrix_fullness_;
+							}
+
+							//inside sub area and not occupied by pose, should be initially 2
+							//set to 7
+							if(using_sub_area_ && is_coordinate_in_sub_area(i,j,k) && protein_matrix_[i][j][k] == 2)
+							{
+								protein_matrix_[i][j][k] = 7;
+								//increment occupied cell count by 1
+								++matrix_fullness_;
+								++sub_matrix_fullness_;
+							}
+
+							//outside sub area and occupied by pose, should be initially 1
+							//set to 9
+							//do not increment fullness because it is already occupied by the pose
+							if(is_coordinate_in_sub_area(i,j,k) == false && protein_matrix_[i][j][k] == 1)
+							{
+								protein_matrix_[i][j][k] = 9;
+							}
+
+							//inside sub area and occupied by pose, should be initially 3
+							//set to 11
+							//do not increment fullness because it is already occupied by the pose
+							if(using_sub_area_ && is_coordinate_in_sub_area(i,j,k) && protein_matrix_[i][j][k] == 3)
+							{
+								protein_matrix_[i][j][k] = 11;
+								
+							}							
+						}
+					}
+				}
+			}
+		}
 	}
 
 	//@brief function that takes in a residue object (i.e. ligand) and determines if the ligand clashes with the pose in this class
 	//returns true if there is a clash, and false if there is no clash
 	//this can work with with and without space fill, and is unaffected by a sub area
+	//this function does not modify the ProteinMatrix, and instead either iterates over all atoms in the ligresOP and returns true if there is no clash, or returns false at the first clashing hit
+	//to be fast, this function does not utilize lj radii on the ligand atoms
 	bool ProteinGrid::placed_ligand_clash_analysis(core::conformation::ResidueOP ligresOP)
 	{
-		//FINISH THIS////////////
-		return false;
+		//iterate over all atoms in the ligresOP to see if any clash with the pose
+		for ( core::Size residue_atom_iterator = 1; residue_atom_iterator <= ligresOP->natoms(); ++residue_atom_iterator ) {
+			//convert coordinates of current atom into format that can be read into space fill matrix matrix
+			numeric::xyzVector<int> atom_xyz = ligresOP->xyz(residue_atom_iterator);
+
+			//apply the xyz shift to each value (and do before applying the resolution increase factor)
+			atom_xyz.x() = std::floor((atom_xyz.x() + xyz_shift_[1]) * resolution_);
+			atom_xyz.y() = std::floor((atom_xyz.y() + xyz_shift_[2]) * resolution_);
+			atom_xyz.z() = std::floor((atom_xyz.z() + xyz_shift_[3]) * resolution_);
+
+			//plug the atom xyz coordinates into the proteinmatrix and see what the value is
+			//if the value is odd, then it is occupied by the pose (or technically could be a placed ligand, but that would indicate a clash as well)
+			if(protein_matrix_[atom_xyz.x()][atom_xyz.y()][atom_xyz.z()] % 2 == 1)
+			{
+				return false;
+			}
+		}
+
+		//if we iterated over all atoms and made it to this point, return true
+		return true;
 	}
 
 	// @ brief function that prints out the current state of the ProteinMatrix as a Pose, so the user can do things like write the pose to a pdb
-	//takes in a string to use to help assign a name to the created pose
-	core::pose::Pose ProteinGrid::export_protein_matrix_to_pose(std::string pdb_name_prefix)
+	core::pose::Pose ProteinGrid::export_protein_matrix_to_pose()
 	{
+		//create a dummy mutable residue type that we can use to add atoms to
+		//it's a huge pain to build a new residue from scratch, so we are going to assume that working_pose_ actually has contents
+		//we'll pluck the first residue from the pose, and use it to make our dummy mrt
+
+		//warning and handling in case working_pose_ is actually empty, just return the working pose
+		if(working_pose_->size() == 0)
+		{
+			ms_tr.Warning << "There is nothing in the working_pose_! Load something in so we can export the protein matrix. Returning the empty working_pose_." << std::endl;
+			return working_pose_;
+		}
+
+		//pluck the first residue in working_pose_
+		core::conformation::Residue dummyligres = working_pose_->residue(1);
+
+		//derive a mutable residue type from the residue
+		core::chemical::MutableResidueTypeOP dummylig_mrt( new core::chemical::MutableResidueType( dummyligres.type() ) );
+
+		//run through each atom in dummylig_mrt and delete it so it is effectively clear
+		//this definitely goes against what the data structure is designed for (considering that the default constructor is blocked from use), but hopefully this just does what I need it to do
+		//see if this works: keep deleting the atom at index 1 until the number of atoms in the mrt is 0
+		while ( dummylig_mrt->natoms() > 0 )
+		{
+			//debug print of the first atom in the list of verticies and number of atoms
+
+			ms_tr.Trace << "Number of atoms in dummy mrt is now: " <<  dummylig_mrt->natoms() << std::endl;
+
+			//pop the first atom in the list of vertices
+			dummylig_mrt->delete_atom(dummylig_mrt->all_atoms()[1]);
+		}
+
+
+		ms_tr.Trace << "Number of atoms in dummy mrt is now: " <<  dummylig_mrt->natoms() << std::endl;
+
+		//delete all chis in the dummy ligand
+		//probably easiest to use delete_terminal_chi
+		while ( dummylig_mrt->nchi() > 0 )
+		{
+
+			ms_tr.Trace << "Number of chi in residue is currently: " << dummylig_mrt->nchi() << std::endl;
+
+			//delete the terminal chi
+			dummylig_mrt->delete_terminal_chi();
+		}
+
+		ms_tr.Trace << "Number of chi in residue is currently: " << dummylig_mrt->nchi() << std::endl;
+
+		//we now have a blank dummy residue type that we can rebuild as a way to represent the ProteinMatrix, and could spit out to a pdb
+		//declare strings to use for the atom name, type, and mm_type
+		std::string atom_name = "";
+		std::string atom_type_name = "";
+		std::string mm_atom_type_name = "";
+
+		//declare vector to hold atom coordinates
+		utility::vector1<core::Real> atom_xyz(3,0);
+
+		//declare a vector to hold the names of first 3 atoms so we can apply icoor data (especialy for the first 3 atoms)
+		utility::vector1<std::string> first_three_atoms;
+
+		//counter to determine the first 3 atoms so we can assign icoor_data to the first 3 atoms after we reach them (can't do beforehand, as we do not know atoms before we reach them)
+		core::Size atom_counter = 0;
+
+		//counter to count the total atom number for unique name tracking
+		core::Size total_atom_counter = 0;
+
+		//create pose for matrix
+		pose::Pose matrix_pose;
+
+		//reminder of what the different values ProteinMatrix values are, since we can use them all here:
+		//if the matrix is written to a pdb file, the different states will be translated to different atoms 
+		//0 = empty and out of sub area, carbon, black
+		//1 = pose and out of sub area, fluorine, icy blue
+		//2 = empty and in sub area, oxygen, red
+		//3 = pose and in sub area, nitrogen, blue
+		//4 = do not use, keep even for unoccupied space
+		//5 = secondary ligand and out of sub area, sulphur, yellow
+		//6 = do not use, keep even for unoccupied space
+		//7 = secondary ligand and in sub area, chlorine, green
+		//8 = do not use, keep even for unoccupied space
+		//9 = secondary ligand and pose out of sub area, phosphorous, orange
+		//10 = do not use, keep even for unoccupied space
+		//11 = secondary ligand and pose in sub area, iodine, purple
+
+		//iterate over each cell in the matrix to create atoms to add to the mrt
+		for ( core::Size x = 1; x <= xyz_bound_[1]; ++x ) {
+			for ( core::Size y = 1; y <= xyz_bound_[2]; ++y ) {
+				for ( core::Size z = 1; z <= xyz_bound_[3]; ++z ) {
+					//check whether to print the atom if it is outside the sub area and if we want to print outside the sub area
+					//if not using a sub area, we will assume that we want to print the whole pose
+					if(using_sub_area_ && print_whole_matrix_ == false && (protein_matrix_[x][y][z] == 0 || protein_matrix_[x][y][z] == 1 || protein_matrix_[x][y][z] == 5 || protein_matrix_[x][y][z] == 9))
+					{
+						//move to next voxel
+						continue;
+					}
+
+					//check whether to print the atom if it is empty space (printing with empty space is slower and makes a more memory intensive file)
+					//values that correspond to emptiness are even (0 and 2)
+					if(print_empty_space_ == false && protein_matrix_[x][y][z] % 2 == 0)
+					{
+						//move to next voxel
+						continue;
+					}
+
+					
+				}
+			}
+		}	
+
 		//do this
 		//temporary placeholder, this will not actually return working_pose
-		return *working_pose_;
+		return matrix_pose;
 	}
 
 	// @ brief function that prints out the current state of the ProteinMatrix as a pdb; calls export_protein_matrix_to_pose and goes the extra step to print out the pose to a pdb without the user having to do more
 	//takes in a string to use to help assign a name to the created pose and pdb
 	void export_protein_matrix_to_pdb(std::string pdb_name_prefix)
 	{
-		//do this
-		export_protein_matrix_to_pose(pdb_name_prefix);
-		return;
+		//create a file name to output the pose to
+		std::string matrix_pdb_name = pdb_name_prefix + "_WholeRatio_" + std::to_string(fullness_ratio_);
+
+		//if using a sub area, tack that onto the name
+		if(using_sub_area_)
+		{
+			matrix_pdb_name = matrix_pdb_name + "_SubRatio_" + std::to_string(sub_fullness_ratio_);
+		}
+		
+		//tack on end 
+		matrix_pdb_name = matrix_pdb_name + ".pdb";
+
+		ms_tr.Trace << "Preparing to make visualization pose for " << matrix_pdb_name << std::endl;
+
+		//create a pose to print to a pdb
+		pose::Pose matrix_pose = export_protein_matrix_to_pose();
+		
+		//dump the pose to a pdb
+		matrix_pose.dump_pdb(matrix_pdb_name);
+
+		//add a comment to the working_pose_ that notes the matrix file that was made
+		core::pose::add_comment(*working_pose_, "Corresponding space fill matrix file:", matrix_pdb_name);
 	}
 
 	// @brief default constructor
@@ -807,6 +1202,12 @@ namespace protein_grid {
 	//I don't think we want this to be a public function, since this uses coordinates relative to the protein matrix, and not pose coordinates (which are shifted and potentially stretched)
 	bool ProteinGrid::is_coordinate_in_sub_area(core::Size x, core::Size y, core::Size z)
 	{
+		//greedily return false if we are not even using a sub area, since we are not even using a sub area
+		if(using_sub_area_ == false)
+		{
+			return false;
+		}
+
 		if(x >= sub_region_min_[1] && x <= sub_region_max_[1] && y >= sub_region_min_[2] && y <= sub_region_max_[2] && z >= sub_region_min_[3] && z <= sub_region_max_[3])
 		{
 			return true;
@@ -851,6 +1252,18 @@ namespace protein_grid {
 		//set to false and reset wrap around matrix
 		using_lj_radii_ = false;
 		wrap_matrix_around_pose();
+	}
+
+	// @brief function to set the value of print_whole_matrix_
+	void ProteinGrid::set_print_whole_matrix(bool setter)
+	{
+		print_whole_matrix_ = setter;
+	}
+
+	// @brief function to set the value of print_empty_space_
+	void ProteinGrid::set_print_empty_space(bool setter)
+	{
+		print_empty_space_ = setter;
 	}
 }
 }
