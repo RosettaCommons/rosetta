@@ -30,6 +30,7 @@
 #include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <core/chemical/MutableResidueType.hh>
+#include <basic/options/keys/protein_grid.OptionKeys.gen.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
@@ -175,6 +176,7 @@ namespace protein_grid {
 	//copy constructor
 	ProteinGrid::ProteinGrid( ProteinGrid const & other ) 
 	{
+		initialize();
 		other.clone( *this );
 	}
 
@@ -221,8 +223,8 @@ namespace protein_grid {
 
 		//seed variables that are relevant for how to output the matrix to a pdb for visualization
 		//not planning to have devoted constructors to define these variables
-		print_whole_matrix_ = option[ OptionKeys::protein_grid::output_whole_matrix ]();
-		print_empty_space_ = option[ OptionKeys::protein_grid::output_empty_space ]();
+		print_whole_matrix_ = basic::options::option[ basic::options::OptionKeys::protein_grid::output_whole_matrix ]();
+		print_empty_space_ = basic::options::option[ basic::options::OptionKeys::protein_grid::output_empty_space ]();
 	}
 
 	// @brief simple function to derive the volume of the matrix
@@ -954,7 +956,7 @@ namespace protein_grid {
 						continue;
 					}
 
-					
+					//keep working on this!!
 				}
 			}
 		}	

@@ -183,7 +183,7 @@ private:
 
 	// @brief bool to define if using a sub area, used in some functions
 	//default is false
-	bool using_sub_area_
+	bool using_sub_area_;
 
 	// @brief bool to define if using atom lennard-jones (lj) radii in volume definition
 	//default is false

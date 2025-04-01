@@ -96,6 +96,7 @@ using utility::string_split;
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
+#include <basic/options/keys/protein_grid.OptionKeys.gen.hh>
 
 //this may solve atom clash issue
 #include <core/pose/xyzStripeHashPose.hh>
