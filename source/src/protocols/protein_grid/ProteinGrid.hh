@@ -155,6 +155,11 @@ private:
 	// @brief function to initialize additional member variables
 	void initialize();
 
+	// @brief function to be used to convert a base 10 number to base 62 (as a string with characters represented by upper+lower case letters and digits)
+	//used in export_protein_matrix_to_pose to assign a unique name to an atom
+	//Due to limitations in atom icoor data, an atom name can be no longer than 4 characters, so this provides 62^4 (~14.7M) unique atom names
+	std::string base_10_to_base_62(core::Size starting_num);
+
 	// @brief 3D matrix of voxelized representation of atoms in pose; individual indices contain data values that correspond to whether the voxel is occupied by pose atoms
 	// the coordinates of pose atoms are used to correspond to voxels in this matrix. Atom coordinates are all shifted so that the minimum coordinate value of all pose atoms are shifted to 1
 	ProteinMatrix protein_matrix_;

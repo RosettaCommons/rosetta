@@ -33,6 +33,7 @@
 #include <core/chemical/MutableResidueType.hh>
 #include <basic/options/keys/protein_grid.OptionKeys.gen.hh>
 #include <core/pose/extra_pose_info_util.hh>
+#include <core/conformation/ResidueFactory.hh>
 #include <utility/Binary_Util.hh>
 
 #include <ObjexxFCL/string.functions.hh>
@@ -1020,7 +1021,7 @@ namespace protein_grid {
 					atom_xyz[3] = (static_cast<core::Real>(z)/resolution_) - xyz_shift_[3];
 
 					//set the coordinates of the atom in the mrt
-					my_mrt.set_ideal_xyz(atom_name, Vector(atom_xyz[1],atom_xyz[2],atom_xyz[3]) );
+					my_mrt.set_ideal_xyz(atom_name, numeric::xyzVector<core::Real>(atom_xyz[1],atom_xyz[2],atom_xyz[3]) );
 
 					//handle adding the icoor data for the atom
 					//skip if the atom name is "" (which will happen if you only look at the sub-matrix)
@@ -1066,7 +1067,7 @@ namespace protein_grid {
 							my_mrt.assign_internal_coordinates();
 
 							//convert to residuetype
-							ResidueTypeCOP my_rt(ResidueType::make(my_mrt));
+							core::chemical::ResidueTypeCOP my_rt(core::chemical::ResidueType::make(my_mrt));
 
 							//convert to residue
 							core::conformation::ResidueOP my_res( core::conformation::ResidueFactory::create_residue(*my_rt));
@@ -1157,7 +1158,7 @@ namespace protein_grid {
 
 		//convert my_mrt to a data type that can be added to a pose
 		//convert to residuetype
-		ResidueTypeCOP my_rt(ResidueType::make(my_mrt));
+		core::chemical::ResidueTypeCOP my_rt(core::chemical::ResidueType::make(my_mrt));
 
 		//convert to residue
 		core::conformation::ResidueOP my_res( core::conformation::ResidueFactory::create_residue(*my_rt));
