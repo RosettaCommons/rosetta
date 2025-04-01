@@ -31,6 +31,7 @@
 #include <basic/options/option.hh>
 #include <core/chemical/MutableResidueType.hh>
 #include <basic/options/keys/protein_grid.OptionKeys.gen.hh>
+#include <core/pose/extra_pose_info_util.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
@@ -647,7 +648,7 @@ namespace protein_grid {
 			atom_xyz.z() = std::floor((atom_xyz.z() + xyz_shift_[3]) * resolution_);
 
 			//derive the atom lj radius and apply the resolution to it, then floor
-			core::Real atom_lj_radius = working_pose_->residue(res_num).atom_type(atom_num).lj_radius();
+			core::Real atom_lj_radius = ligresOP->atom_type(atom_num).lj_radius();
 			atom_lj_radius *= resolution_;
 			atom_lj_radius = std::floor(atom_lj_radius);
 
@@ -862,7 +863,7 @@ namespace protein_grid {
 		if(working_pose_->size() == 0)
 		{
 			ms_tr.Warning << "There is nothing in the working_pose_! Load something in so we can export the protein matrix. Returning the empty working_pose_." << std::endl;
-			return working_pose_;
+			return *working_pose_;
 		}
 
 		//pluck the first residue in working_pose_
@@ -919,7 +920,7 @@ namespace protein_grid {
 		core::Size total_atom_counter = 0;
 
 		//create pose for matrix
-		pose::Pose matrix_pose;
+		core::pose::Pose matrix_pose;
 
 		//reminder of what the different values ProteinMatrix values are, since we can use them all here:
 		//if the matrix is written to a pdb file, the different states will be translated to different atoms 
@@ -985,7 +986,7 @@ namespace protein_grid {
 		ms_tr.Trace << "Preparing to make visualization pose for " << matrix_pdb_name << std::endl;
 
 		//create a pose to print to a pdb
-		pose::Pose matrix_pose = export_protein_matrix_to_pose();
+		core::pose::Pose matrix_pose = export_protein_matrix_to_pose();
 		
 		//dump the pose to a pdb
 		matrix_pose.dump_pdb(matrix_pdb_name);
