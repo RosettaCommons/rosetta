@@ -13,11 +13,16 @@
 #ifndef INCLUDED_protocols_protein_grid_ProteinGrid_fwd_hh
 #define INCLUDED_protocols_protein_grid_ProteinGrid_fwd_hh
 
+// Utility headers
+#include <utility/pointer/access_ptr.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace protein_grid {
 
 class ProteinGrid; // fwd declaration
+
+typedef  utility::pointer::shared_ptr< ProteinGrid >  ProteinGridOP;
 }
 }
 
