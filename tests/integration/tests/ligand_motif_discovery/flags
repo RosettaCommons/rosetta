@@ -22,7 +22,7 @@
 #space fill method
 #define cube-shaped binding pocket about coordinate (coordinate corresponds to within 4s0v.pdb, shifts with script)
 -binding_pocket_center_sf 54,6,53
--binding_pocket_radius_sf 7
+-binding_pocket_dimensions_sf 7,7,7
 #define cutoff of how much of binding pocket volume must be filled compared to empty pocket (>15% more filled than empty when ligand is placed)
 -space_fill_cutoff_differential_score_sub 0.15
 
