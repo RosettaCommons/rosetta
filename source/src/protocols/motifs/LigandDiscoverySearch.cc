@@ -789,11 +789,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					clash_pose_grid_ = utility::pointer::make_shared<protocols::protein_grid::ProteinGrid>(working_pose_, resolution_increase_factor, bp_xyz, binding_pocket_dimensions);			
 				}
 			}
-			else
-			{
-				//make the proteingrid that just wraps around the working_pose_
-				clash_pose_grid_ = utility::pointer::make_shared<protocols::protein_grid::ProteinGrid>(working_pose_, resolution_increase_factor);
-			}
 		}
 		else
 		{
