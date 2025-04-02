@@ -79,6 +79,18 @@ public:
 	// @brief simple function to derive the volume of the sub area matrix
 	core::Size get_sub_area_grid_volume();
 
+	// @brief simple function to derive the pre-calculated occpuied ratio of the full matrix
+	core::Real get_grid_occupied_cell_ratio();
+
+	// @brief simple function to derive the pre-calculated occpuied ratio of the sub area matrix
+	core::Real get_sub_grid_occupied_cell_ratio();
+
+	// @brief simple function to derive the pre-calculated occpuied cell count of the full matrix
+	core::Real get_grid_occupied_cell_count();
+
+	// @brief simple function to derive the pre-calculated occpuied cell count of the sub area matrix
+	core::Real get_sub_grid_occupied_cell_count();
+
 	// @brief overwrite the true sub area center and dimensions
 	//makes a call to reset the wrap matrix around pose to account for the change in the sub area
 	void set_sub_regions( numeric::xyzVector<int> sub_area_center, utility::vector1<core::Size> sub_region_dimensions );

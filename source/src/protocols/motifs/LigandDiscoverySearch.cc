@@ -721,68 +721,84 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			protocols::motifs::hash_motif_library_into_map(motif_library_,mymap);
 		}
 
-		//set up target_residues_sf_ and target_residues_contact_
-		//can interact with any of 3 integer_value vectors flags: in::target_residues, motifs::targer_residues_sf, and motifs::target_residues_contact
-		//target_residues_sf will only write into the target_residues_sf vector; target_residues_contact will only write into target_residues_contact_
-		//if target_residues flag is used, it will overwrite call to other flags and write the same contents to both vectors (easy way to fill both as same)
-		//acceptable behavior (with handling) for either vector to be empty
+		//declare the clash pose grid
 
-		//read in target_residues_sf and target_residues_contact flags if they were used
-		if ( option[ OptionKeys::motifs::target_residues_sf ].user() ) {
-			target_residues_sf_ = option[ OptionKeys::motifs::target_residues_sf ]();
+		//first, declare the resolution factor for the matrix
+		core::Real resolution_increase_factor = option[ OptionKeys::motifs::resolution_scale_factor_float ];
+
+		//next, identify if we want to define a sub-area (binding pocket) to explore further
+		//we will set up the ProteinGrid depending on whether we have the sub area or not
+		//use if we used binding_pocket_dimensions_sf and binding_pocket_center_sf flags to define the sub area dimensions and center
+		if ( option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].user() && option[ OptionKeys::motifs::binding_pocket_center_sf ].user()) {
+			//make sure dimensions vector is valid
+			//can not use if fewer than 3 values (do not use), warn if there are more than 3
+			if ( option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].size()<3 ) {
+				ms_tr.Warning << "Input vector for binding_pocket_dimensions_sf is too small with only " << option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].size() << " entries. We will not use a sub-area/binding pocket in analyses." << std::endl;
+			} else {
+				if ( option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].size()>3 ) {
+					ms_tr.Warning << "Input vector for binding_pocket_dimensions_sf has more than 3 entries with having " << option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].size() << " entries. We will only use the first 3 values." << std::endl;
+				}
+
+				//create vector to hold the dimensions
+				//store as a size
+				utility::vector1<core::Size> binding_pocket_dimensions;
+
+				//set the first 3 values of the binding_pocket_dimensions_sf vector to binding_pocket_dimensions (and also apply the resolution factor)
+				binding_pocket_dimensions = option[ OptionKeys::motifs::binding_pocket_dimensions_sf ]();
+
+				//now derive the binding pocket center, and ensure the input is valid
+				utility::vector1<core::Size> binding_pocket_center_xyz = option[ OptionKeys::motifs::binding_pocket_center_sf ]();
+
+				//ensure that there are enough entries in the center vector
+				if ( binding_pocket_center_xyz.size() <= 2 ) {
+					//handle if too small
+					ms_tr.Warning << "You have only inputted " << binding_pocket_center_xyz.size() << " coordinates for the binding pocket center xyz coordinates. We need exactly 3 to work. We can't do anything with this, and will skip this method and will not use a sub-area/binding pocket in analyses." << std::endl;
+					//make the proteingrid that just wraps around the working_pose_
+					clash_pose_grid_(new protocols::protein_grid::ProteinGrid(working_pose_, resolution_increase_factor));
+				}
+				else
+				{
+					//throw potential warnings if there are more than 3 entries in the input, and then make the grid that also has a sub area
+					for ( core::Size coordinate = 1; coordinate <= binding_pocket_center_xyz.size(); ++coordinate ) {
+						//apply relevant xyz shift as long as the coordinate is between 1-3, otherwise throw a warning
+						if ( coordinate > 3 ) {
+
+							ms_tr.Warning << "You have inputted an excess value using the motifs::binding_pocket_center_sf flag. This is value #" << coordinate << " in the input vector with a value of: " << binding_pocket_center_xyz[coordinate] << ". Ignoring this bad input, and you should review the proper usage for this flag." << std::endl;
+
+						}
+					}
+
+					//make the proteingrid that wraps around the working_pose_ and declares a sub area
+					clash_pose_grid_(new protocols::protein_grid::ProteinGrid(working_pose_, resolution_increase_factor, binding_pocket_center_xyz, binding_pocket_dimensions));				
+				}
+			}
+			else
+			{
+				//make the proteingrid that just wraps around the working_pose_
+				clash_pose_grid_(new protocols::protein_grid::ProteinGrid(working_pose_, resolution_increase_factor));
+			}
+		}
+		else
+		{
+			//make the proteingrid that just wraps around the working_pose_
+			clash_pose_grid_(new protocols::protein_grid::ProteinGrid(working_pose_, resolution_increase_factor));
 		}
 
-		//read in target_residues and override
-		if ( option[ OptionKeys::in::target_residues ].user() ) {
-			target_residues_sf_ = option[ OptionKeys::in::target_residues ]();
-		}
+		//now create the space fill matrix, first as a copy of the clash matrix
+		sf_pose_grid_(new protocols::protein_grid::ProteinGrid(*clash_pose_grid_));
 
-		core::Size x_shift = 0;
-		core::Size y_shift = 0;
-		core::Size z_shift = 0;
-		int x_bound_int = 0;
-		int y_bound_int = 0;
-		int z_bound_int = 0;
+		//run space fill on the space fill grid
+		sf_pose_grid_->project_lj_radii();
 
-		//create protein atom matrix
-		create_protein_representation_matrix(x_shift, y_shift, z_shift, x_bound_int, y_bound_int, z_bound_int);
+		//create a copy of the space fill matrix that will be used for checking the space fill with the ligand. The member sf_pose_grid will be used as a base to copy back over after the space fill analysis, since that should be faster than reverting the grid using built-in functions (since we have a copy to use as a shortcut)
+		protocols::protein_grid::ProteinGridOP working_sf_pose_grid(new protocols::protein_grid::ProteinGrid(*sf_pose_grid_));
 
-		//variable to  hold the linear scale by which we will increase the resolution of identification
-		//default is 1. Probably want to set to 3-6
-		//declaring here so it can be passed in calls for space fill function
-		int resolution_increase_factor = option[ OptionKeys::motifs::resolution_scale_factor ];
-
-		//declare variable set for space fill protein matrix
-		//create vectors to hold values that correspond to xyz values in the space fill matrix
-		//these probably shouldn't be xyzVector objects, since they don't directly correspond to xyz coordinates, but rather that they are values that correspond to xyz axes, scalars, and segments
-
-		//used to note the shift of the vector so that the smallest xyz values correspond to 0,0,0
-		utility::vector1<core::Size>  xyz_shift_sf (3,0);
-
-		//used to note the maxima of the xyz vector
-		utility::vector1<core::Size>  xyz_bound_sf (3,0);
-
-		//used to note the minimum values of points in the sub-area of the space fill vector
-		utility::vector1<core::Size>  sub_xyz_min_sf (3,0);
-
-		//used to note the maximum values of points in the sub-area of the space fill vector
-		utility::vector1<core::Size>  sub_xyz_max_sf (3,0);
-
-		//create 2 vectors to hold occupied ratio scores (core::Real) and raw counts of occupied, unoccupied, and total cells (core::Size) for both the main area and sub area
-
+		//derive the occupied ratios of the empty system before placing any ligands, in case we are interested in deriving differentials in space fill
 		//index 1 corresponds to the occupied ratio for the whole system
 		//index 2 corresponds to only the sub-area
 		utility::vector1<core::Real>  occupied_ratios (2,0);
-
-		//whole system
-		//index 1 = occupied cell count
-		//index 2 = unoccupied cell count
-		//index 3 = total cell count
-		//sub area
-		//index 4 = occupied cell count
-		//index 5 = unoccpuied cell count
-		//index 6 = total cell count
-		utility::vector1<core::Size>  matrix_data_counts (6,0);
+		occupied_ratios[1] = working_sf_pose_grid->get_grid_occupied_cell_ratio();
+		occupied_ratios[2] = working_sf_pose_grid->get_sub_grid_occupied_cell_ratio();
 
 		//create and load in the space fill cutoff scores (if there are any), default to zero; zero can be an acceptable inputted score
 		//store as a vector
@@ -798,59 +814,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		if ( option[ OptionKeys::motifs::space_fill_cutoff_differential_score_sub ].user() ) {
 			score_cutoffs_sf[3] = option[ OptionKeys::motifs::space_fill_cutoff_differential_score_sub ];
 		}
-
-		//create the space fill representation matrix
-		//do even if no cutoff scores were made so that the information can be generated and returned anyway
-		create_protein_representation_matrix_space_fill(xyz_shift_sf, xyz_bound_sf, resolution_increase_factor, sub_xyz_min_sf, sub_xyz_max_sf, occupied_ratios, matrix_data_counts, working_position);
-
-		//create a dummy mutableresiduetype that is empty (all atoms deleted) so we can use it for the expore_space_fill_matrix function
-		core::conformation::ResidueOP dummyligresOP = all_residues_[1];
-
-		//derive a mutable residue type
-		core::chemical::MutableResidueTypeOP dummylig_mrt( new core::chemical::MutableResidueType( dummyligresOP->type() ) );
-
-		//run through each atom in dummylig_mrt and delete it so it is effectively clear
-		//this definitely goes against what the data structure is designed for (considering that the default constructor is blocked from use), but hopefully this just does what I need it to do
-		//see if this works: keep deleting the atom at index 1 until the number of atoms in the mrt is 0
-		while ( dummylig_mrt->natoms() > 0 )
-				{
-			//debug print of the first atom in the list of verticies and number of atoms
-
-			ms_tr.Trace << "Number of atoms in dummy mrt is now: " <<  dummylig_mrt->natoms() << std::endl;
-
-			//pop the first atom in the list of vertices
-			dummylig_mrt->delete_atom(dummylig_mrt->all_atoms()[1]);
-		}
-
-
-		ms_tr.Trace << "Number of atoms in dummy mrt is now: " <<  dummylig_mrt->natoms() << std::endl;
-
-		//delete all chis in the dummy ligand
-		//probably easiest to use delete_terminal_chi
-		while ( dummylig_mrt->nchi() > 0 )
-				{
-
-			ms_tr.Trace << "Number of chi in residue is currently: " << dummylig_mrt->nchi() << std::endl;
-
-			//delete the terminal chi
-			dummylig_mrt->delete_terminal_chi();
-		}
-
-		ms_tr.Trace << "Number of chi in residue is currently: " << dummylig_mrt->nchi() << std::endl;
-
-
-		//create a pdb of the space fill matrix if the flag selects for it
-		if ( option[ OptionKeys::motifs::output_space_fill_matrix_pdbs ] ) {
-			//call function to export, use "empty" as the string prefix
-			export_space_fill_matrix_as_C_H_O_N_pdb(protein_representation_matrix_space_fill_, xyz_shift_sf, xyz_bound_sf, resolution_increase_factor,
-				occupied_ratios, "empty", *dummylig_mrt);
-			//export_space_fill_matrix_as_C_H_O_N_pdb(protein_representation_matrix_, xyz_shift_sf, xyz_bound_sf, resolution_increase_factor,
-			// sub_xyz_min_sf, sub_xyz_max_sf, occupied_ratios, "empty");
-		}
-
-		//make a copy of matrix_data_counts that represents the system without a placed ligand
-		//this will be used so that we can modify the original as we look at systems with ligands placed, and can revert to the original
-		utility::vector1<core::Size>  matrix_data_counts_empty = matrix_data_counts;
 
 		//for whole ligand.wts function, determine also if we want to use the function for scoring at all
 		bool use_ligand_wts = option[ OptionKeys::motifs::score_with_ligand_wts_function ];
@@ -972,7 +935,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					bool has_clashing = false;
 
 					//check if the placement clashes
-					has_clashing = ligand_clash_check(ligresOP, x_shift, y_shift, z_shift, x_bound_int, y_bound_int, z_bound_int);
+					has_clashing = clash_pose_grid_->placed_ligand_clash_analysis(ligresOP);
 
 					//continue because we clash
 					if ( has_clashing == true ) {
@@ -982,7 +945,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//space fill analysis block
 					//faster than using score functions
 					//this is used to determine if enough of a defined binding pocked is filled by a placed ligand or not (ensures elimination of off-target placements)
-					//only attempt this block if we request at least one of the 2 score cutoffs for space filling
+					//only attempt this block if we request at least one of the score cutoffs for space filling
 
 					if ( option[ OptionKeys::motifs::space_fill_cutoff_score ].user() || option[ OptionKeys::motifs::space_fill_cutoff_score_sub ].user() || option[ OptionKeys::motifs::space_fill_cutoff_differential_score_sub ].user() ) {
 
@@ -991,8 +954,12 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						//default values are 0
 						utility::vector1<core::Real> space_fill_scores (2,0);
 
-						//run space fill analysis function, set to a vector
-						SpaceFillMatrix current_space_fill_matrix = space_fill_analysis(ligresOP, xyz_shift_sf, xyz_bound_sf, resolution_increase_factor, sub_xyz_min_sf, sub_xyz_max_sf, space_fill_scores, matrix_data_counts);
+						//run space fill analysis function
+						working_sf_pose_grid->placed_ligand_space_fill_analysis(ligresOP);
+
+						//extract the full and sub ratios
+						space_fill_scores[1] = working_sf_pose_grid->get_grid_occupied_cell_ratio();
+						space_fill_scores[2] = working_sf_pose_grid->get_sub_grid_occupied_cell_ratio();
 
 						//derive a differential score for the sub area between the placed and empty system
 						//only do anything if the user used the differencial cutoff score
@@ -1009,31 +976,30 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							//std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark() + "_rep_" + std::to_string(fa_rep) + "_atr_" + std::to_string(fa_atr) + "_delta_" + std::to_string(delta_score) + "_constr_" + std::to_string(sc_constraint_check) + ".pdb";
 							std::string matrix_pdb_prefix = output_prefix + "_ResPos_" + std::to_string(working_position) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark();
 							//call function to export, use "empty" as the string prefix
-							export_space_fill_matrix_as_C_H_O_N_pdb(current_space_fill_matrix, xyz_shift_sf, xyz_bound_sf, resolution_increase_factor,
-								space_fill_scores, matrix_pdb_prefix, *dummylig_mrt);
+							working_sf_pose_grid->export_protein_matrix_to_pdb(matrix_pdb_prefix);
 						}
 
-						//at end before check, reset matrix_data_counts so that it returns to the empty state
-						matrix_data_counts = matrix_data_counts_empty;
+						//at end before check, reset the working_sf_pose_grid to wipe the placed ligand
+						working_sf_pose_grid(new protocols::protein_grid::ProteinGrid(*sf_pose_grid_));
 
 						//run check for if the placement is passable based on score
 						//either the whole system score or the sub area score need to pass (one can fail)
-						if ( (space_fill_scores[1] >= score_cutoffs_sf[1] and option[ OptionKeys::motifs::space_fill_cutoff_score ].user()) || (space_fill_scores[2] >= score_cutoffs_sf[2] and option[ OptionKeys::motifs::space_fill_cutoff_score_sub ].user()) || (fill_differential >= score_cutoffs_sf[3] and option[ OptionKeys::motifs::space_fill_cutoff_differential_score_sub ].user()) ) {
+						if ( (space_fill_scores[1] >= score_cutoffs_sf[1] && option[ OptionKeys::motifs::space_fill_cutoff_score ].user()) || (space_fill_scores[2] >= score_cutoffs_sf[2] && option[ OptionKeys::motifs::space_fill_cutoff_score_sub ].user()) || (fill_differential >= score_cutoffs_sf[3] && option[ OptionKeys::motifs::space_fill_cutoff_differential_score_sub ].user()) ) {
 							//print out where any scores passed
 
-							if ( space_fill_scores[1] >= score_cutoffs_sf[1] and option[ OptionKeys::motifs::space_fill_cutoff_score ].user() ) {
+							if ( space_fill_scores[1] >= score_cutoffs_sf[1] && option[ OptionKeys::motifs::space_fill_cutoff_score ].user() ) {
 								ms_tr.Debug << space_fill_scores[1] << " : whole system, passed" << std::endl;
 							} else if ( option[ OptionKeys::motifs::space_fill_cutoff_score ].user() ) {
 								ms_tr.Debug << space_fill_scores[1] << " : whole system, failed" << std::endl;
 							}
 
-							if ( space_fill_scores[2] >= score_cutoffs_sf[2] and option[ OptionKeys::motifs::space_fill_cutoff_score_sub ].user() ) {
+							if ( space_fill_scores[2] >= score_cutoffs_sf[2] && option[ OptionKeys::motifs::space_fill_cutoff_score_sub ].user() ) {
 								ms_tr.Debug << space_fill_scores[2] << " : sub-area, passed" << std::endl;
 							} else if ( option[ OptionKeys::motifs::space_fill_cutoff_score_sub ].user() ) {
 								ms_tr.Debug << space_fill_scores[2] << " : sub-area, failed" << std::endl;
 							}
 
-							if ( fill_differential >= score_cutoffs_sf[3] and option[ OptionKeys::motifs::space_fill_cutoff_differential_score_sub ].user() ) {
+							if ( fill_differential >= score_cutoffs_sf[3] && option[ OptionKeys::motifs::space_fill_cutoff_differential_score_sub ].user() ) {
 								ms_tr.Debug << fill_differential << " : sub-area differential, passed" << std::endl;
 							} else if ( option[ OptionKeys::motifs::space_fill_cutoff_differential_score_sub ].user() ) {
 								ms_tr.Debug << fill_differential << " : sub-area differential, failed" << std::endl;
@@ -1451,1268 +1417,4 @@ protocols::motifs::MotifCOPs LigandDiscoverySearch::get_motif_sublibrary_by_aa(s
 
 
 	return motif_holder;
-}
-
-//create protein_representation_matrix_
-//uses working_pose to make the matrix
-void LigandDiscoverySearch::create_protein_representation_matrix(core::Size & x_shift, core::Size & y_shift, core::Size & z_shift, int & x_bound_int, int & y_bound_int, int & z_bound_int)
-{
-	//run through all atoms to derive a range of dimensions to contain the protein in a 3D  space
-	//since we can't have negative indices, we need to normalize the coordinate values so that everything is positive
-	//derive constant values based  on the most negative values in each dimension, and then add that constant to all coordinates
-	//to be safe, values need to be seeded with an initial value, or errors could be thrown when deriving shift values
-
-	int smallest_x = 1;
-	int smallest_y = 1;
-	int smallest_z = 1;
-
-	int largest_x = 1;
-	int largest_y = 1;
-	int largest_z = 1;
-
-	//create a list of coordinates of each atom to hold and work with to fill the protein_representation_matrix
-	//can't seem to make a vector of xyzVector objects, so will need to just make a custome 2D vector  to  hold the data
-	utility::vector1<numeric::xyzVector<int>> atom_coordinates;
-
-	//determine largest and smallest x,y,z  values to determine dimensions of matrix
-	for ( core::Size res_num = 1; res_num <= working_pose_->size(); ++res_num ) {
-		for ( core::Size atom_num = 1; atom_num <= working_pose_->residue(res_num).natoms(); ++atom_num ) {
-			//get the x,y,z data of the atom, rounded to the closest value
-			numeric::xyzVector<int> atom_xyz;
-			//floor the coordinates down for a constant negative directional shift
-			atom_xyz.x() = std::floor(working_pose_->residue(res_num).xyz(atom_num).x());
-			atom_xyz.y() = std::floor(working_pose_->residue(res_num).xyz(atom_num).y());
-			atom_xyz.z() = std::floor(working_pose_->residue(res_num).xyz(atom_num).z());
-
-			//safe handling for the first atom encountered to be set as the smallest and largest values
-			if ( res_num == 1 && atom_num == 1)
-			{
-				smallest_x = atom_xyz.x();
-				smallest_y = atom_xyz.y();
-				smallest_z = atom_xyz.z();
-				largest_x = atom_xyz.x();
-				largest_y = atom_xyz.y();
-				largest_z = atom_xyz.z();
-				continue;
-			}
-
-			//determine if any of the values  are the smallest
-			if ( smallest_x > atom_xyz.x() ) {
-				smallest_x = atom_xyz.x();
-			}
-			if ( smallest_y > atom_xyz.y() ) {
-				smallest_y = atom_xyz.y();
-			}
-			if ( smallest_z > atom_xyz.z() ) {
-				smallest_z = atom_xyz.z();
-			}
-
-			//determine if any  are the largest
-			if ( largest_x < atom_xyz.x() ) {
-				largest_x = atom_xyz.x();
-			}
-			if ( largest_y < atom_xyz.y() ) {
-				largest_y = atom_xyz.y();
-			}
-			if ( largest_z < atom_xyz.z() ) {
-				largest_z = atom_xyz.z();
-			}
-
-			atom_coordinates.push_back(atom_xyz);
-
-		}
-	}
-
-	//take negative values of the smallest values and then add 1 to derive the constants
-	//the logic here should apply, whether the smallest value is positive or negative
-	//for the smallest value in the system to be indexed to 1, you add the negative of itself + 1; this shift would be applied to all other atom coordinates
-	x_shift = (smallest_x * -1) + 1;
-	y_shift = (smallest_y * -1) + 1;
-	z_shift = (smallest_z * -1) + 1;
-
-	//apply shift values to largest to get boundaries
-	core::Size x_bound  = x_shift + largest_x;
-	core::Size y_bound  = y_shift + largest_y;
-	core::Size z_bound  = z_shift + largest_z;
-
-	x_bound_int = x_bound;
-	y_bound_int = y_bound;
-	z_bound_int = z_bound;
-
-	//create 3D matrix to roughly represent 3D coordinate space of protein
-	ms_tr.Debug << "Creating protein clash coordinate matrix. Dimensions of matrix are " << x_bound << "," << y_bound << "," << z_bound << std::endl;
-
-
-	for ( core::Size x = 1; x <= x_bound; ++x ) {
-		//make a 2D  matrix
-		utility::vector1<utility::vector1<bool>> sub_matrix;
-
-		for ( core::Size y = 1; y <= y_bound; ++y ) {
-
-			//make a 1D matrix, seed with false values
-			utility::vector1<bool> sub_sub_matrix(z_bound,  false);
-			//push 1D  matrix into 2D
-			sub_matrix.push_back(sub_sub_matrix);
-
-		}
-		//push a 2D  matrix into the 3D matrix
-		protein_representation_matrix_.push_back(sub_matrix);
-	}
-
-	//seed the matrix with approximate coordinates of each atom
-	//apply the shift to the coordinates
-	//approximated by flooring coordinates down
-	for ( core::Size xyzVec = 1; xyzVec <= atom_coordinates.size(); ++xyzVec ) {
-		protein_representation_matrix_[atom_coordinates[xyzVec].x() + x_shift][atom_coordinates[xyzVec].y() + y_shift][atom_coordinates[xyzVec].z() + z_shift] = true;
-	}
-}
-
-//create protein_representation_matrix_space_fill_
-//uses working_pose to make the matrix
-//void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(core::Size & x_shift, core::Size & y_shift, core::Size & z_shift, core::Size & x_bound_int, core::Size & y_bound_int, core::Size & z_bound_int, int & resolution_increase_factor,
-//core::Size & sub_x_min, core::Size & sub_x_max, core::Size & sub_y_min, core::Size & sub_y_max, core::Size & sub_z_min, core::Size & sub_z_max, core::Real & occupied_ratio, core::Real & sub_occupied_ratio)
-//condensing arguments in function to use vectors to hold xyz trios
-void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
-	utility::vector1<core::Size> & sub_xyz_min, utility::vector1<core::Size> & sub_xyz_max, utility::vector1<core::Real> & occupied_ratios, utility::vector1<core::Size> & matrix_data_counts, core::Size working_position)
-{
-	//values that can be seeded into the matrix with their meaning. Only 0-3 can be seeded using this function, and then space_fill_analysis can seed 4+
-	//note, 0 and 2 are only even numbers that are currently used for now
-	/*
-	0 = empty and out of sub area, carbon, black
-	1 = protein and out of sub area, fluorine, icy blue
-	2 = empty and in sub area, oxygen, red
-	3 = protein and in sub area, nitrogen, blue
-	4 = do not use, keep even for unoccupied space
-	5 = ligand and out of sub area, sulphur, yellow
-	6 = do not use, keep even for unoccupied space
-	7 = ligand and in sub area, chlorine, green
-	8 = do not use, keep even for unoccupied space
-	9 = ligand and protein out of sub area, phosphorous, orange
-	10 = do not use, keep even for unoccupied space
-	11 = ligand and protein in sub area, iodine, purple
-	*/
-
-	int smallest_x = 1;
-	int smallest_y = 1;
-	int smallest_z = 1;
-
-	int largest_x = 1;
-	int largest_y = 1;
-	int largest_z = 1;
-
-	//create a list of coordinates of each atom to hold and work with to fill the protein_representation_matrix
-	//can't seem to make a vector of xyzVector objects, so will need to just make a custome 2D vector  to  hold the data
-	//unlike clash detection, going to use floats as well for increaserd precision
-	utility::vector1<numeric::xyzVector<int>> atom_coordinates;
-
-	//vector to hold the coordinates of atoms and the lennard jones radius
-	utility::vector1<utility::vector1<core::Real>> atom_coordinates_float_and_lj_radius;
-
-	//determine largest and smallest x,y,z  values to determine dimensions of matrix
-	for ( core::Size res_num = 1; res_num <= working_pose_->size(); ++res_num ) {
-		for ( core::Size atom_num = 1; atom_num <= working_pose_->residue(res_num).natoms(); ++atom_num ) {
-			//get the x,y,z data of the atom, rounded to the closest value
-			numeric::xyzVector<int> atom_xyz;
-			//floor the coordinates down for a constant negative directional shift
-			atom_xyz.x() = std::floor(working_pose_->residue(res_num).xyz(atom_num).x());
-			atom_xyz.y() = std::floor(working_pose_->residue(res_num).xyz(atom_num).y());
-			atom_xyz.z() = std::floor(working_pose_->residue(res_num).xyz(atom_num).z());
-
-			utility::vector1<core::Real> atom_xyz_float_with_lj_radius;
-			//note, these are floor ints, as derived directly above
-			atom_xyz_float_with_lj_radius.push_back(atom_xyz.x());
-			atom_xyz_float_with_lj_radius.push_back(atom_xyz.y());
-			atom_xyz_float_with_lj_radius.push_back(atom_xyz.z());
-
-			atom_xyz_float_with_lj_radius.push_back(working_pose_->residue(res_num).atom_type(atom_num).lj_radius());
-
-			atom_coordinates_float_and_lj_radius.push_back(atom_xyz_float_with_lj_radius);
-
-			//safe handling for the first atom encountered to be set as the smallest and largest values
-			if ( res_num == 1 && atom_num == 1)
-			{
-				smallest_x = atom_xyz.x();
-				smallest_y = atom_xyz.y();
-				smallest_z = atom_xyz.z();
-				largest_x = atom_xyz.x();
-				largest_y = atom_xyz.y();
-				largest_z = atom_xyz.z();
-				continue;
-			}
-
-			//determine if any of the values  are the smallest
-			if ( smallest_x > atom_xyz.x() ) {
-				smallest_x = atom_xyz.x();
-			}
-			if ( smallest_y > atom_xyz.y() ) {
-				smallest_y = atom_xyz.y();
-			}
-			if ( smallest_z > atom_xyz.z() ) {
-				smallest_z = atom_xyz.z();
-			}
-
-			//determine if any are the largest
-			if ( largest_x < atom_xyz.x() ) {
-				largest_x = atom_xyz.x();
-			}
-			if ( largest_y < atom_xyz.y() ) {
-				largest_y = atom_xyz.y();
-			}
-			if ( largest_z < atom_xyz.z() ) {
-				largest_z = atom_xyz.z();
-			}
-
-			atom_coordinates.push_back(atom_xyz);
-
-		}
-	}
-
-	//take negative values of the smallest values and then add 1 to derive the constants
-	xyz_shift[1] = (smallest_x * -1) + 1;
-	xyz_shift[2] = (smallest_y * -1) + 1;
-	xyz_shift[3] = (smallest_z * -1) + 1;
-
-	//apply shift values to largest to get boundaries
-	xyz_bound[1] = xyz_shift[1] + largest_x;
-	xyz_bound[2] = xyz_shift[2] + largest_y;
-	xyz_bound[3] = xyz_shift[3] + largest_z;
-
-	//apply constant shifts to all coordinates
-	//apply resolution factor to all atoms
-	for ( core::Size xyzVec = 1; xyzVec <= atom_coordinates.size(); ++xyzVec ) {
-		atom_coordinates[xyzVec].x() += xyz_shift[1];
-		atom_coordinates[xyzVec].y() += xyz_shift[2];
-		atom_coordinates[xyzVec].z() += xyz_shift[3];
-
-		atom_coordinates[xyzVec].x() *= resolution_increase_factor;
-		atom_coordinates[xyzVec].y() *= resolution_increase_factor;
-		atom_coordinates[xyzVec].z() *= resolution_increase_factor;
-
-		atom_coordinates_float_and_lj_radius[xyzVec][1] += xyz_shift[1];
-		atom_coordinates_float_and_lj_radius[xyzVec][2] += xyz_shift[2];
-		atom_coordinates_float_and_lj_radius[xyzVec][3] += xyz_shift[3];
-
-		atom_coordinates_float_and_lj_radius[xyzVec][1] *= resolution_increase_factor;
-		atom_coordinates_float_and_lj_radius[xyzVec][2] *= resolution_increase_factor;
-		atom_coordinates_float_and_lj_radius[xyzVec][3] *= resolution_increase_factor;
-		atom_coordinates_float_and_lj_radius[xyzVec][4] *= resolution_increase_factor;
-	}
-
-	//create 3D matrix to roughly represent 3D coordinate space of protein
-	//bad syntax, may just have to do  an iterative  fill
-
-	xyz_bound[1] *= resolution_increase_factor;
-	xyz_bound[2] *= resolution_increase_factor;
-	xyz_bound[3] *= resolution_increase_factor;
-
-
-	ms_tr.Debug << "Creating space fill matrix. Dimensions of matrix are " << xyz_bound[1] << "," << xyz_bound[2] << "," << xyz_bound[3] << std::endl;
-
-
-	//make a matrix, and we will copy it over to the global one once we make it
-	SpaceFillMatrix protein_representation_matrix;
-
-	for ( core::Size x = 1; x <= xyz_bound[1]; ++x ) {
-		//make a 2D  matrix
-		utility::vector1<utility::vector1<core::Size>> sub_matrix;
-
-		for ( core::Size y = 1; y <= xyz_bound[2]; ++y ) {
-
-			//make a 1D matrix, seed with 0 values
-			utility::vector1<core::Size> sub_sub_matrix(xyz_bound[3],  0);
-			//push 1D  matrix into 2D
-			sub_matrix.push_back(sub_sub_matrix);
-
-		}
-		//push a 2D  matrix into the 3D matrix
-		protein_representation_matrix.push_back(sub_matrix);
-	}
-
-	//seed the matrix with approximate coordinates of each atom
-	//use the vector that has the LJ radii to fill out cells
-	for ( core::Size xyzVec = 1; xyzVec <= atom_coordinates_float_and_lj_radius.size(); ++xyzVec ) {
-		//iterate through all cells in the matrix and determine if the sphere projected by the atom center and LJ radius hits this cell
-		//there may be a more efficient way to do this...
-		//I think there is! instead of iterating the whole volume of the matrix, only iterate about a range bound by a cube with with side length = 2 x LJ radius
-		//adjust min and max to ensure we don't run off of the matrix
-
-		core::Size x_min = atom_coordinates_float_and_lj_radius[xyzVec][1] - atom_coordinates_float_and_lj_radius[xyzVec][4];
-		core::Size x_max = atom_coordinates_float_and_lj_radius[xyzVec][1] + atom_coordinates_float_and_lj_radius[xyzVec][4];
-		if ( x_min < 1 ) {
-			x_min = 1;
-		}
-		if ( x_max > xyz_bound[1] ) {
-			x_max = xyz_bound[1];
-		}
-		core::Size y_min = atom_coordinates_float_and_lj_radius[xyzVec][2] - atom_coordinates_float_and_lj_radius[xyzVec][4];
-		core::Size y_max = atom_coordinates_float_and_lj_radius[xyzVec][2] + atom_coordinates_float_and_lj_radius[xyzVec][4];
-		if ( y_min < 1 ) {
-			y_min = 1;
-		}
-		if ( y_max > xyz_bound[2] ) {
-			y_max = xyz_bound[2];
-		}
-		core::Size z_min = atom_coordinates_float_and_lj_radius[xyzVec][3] - atom_coordinates_float_and_lj_radius[xyzVec][4];
-		core::Size z_max = atom_coordinates_float_and_lj_radius[xyzVec][3] + atom_coordinates_float_and_lj_radius[xyzVec][4];
-		if ( z_min < 1 ) {
-			z_min = 1;
-		}
-		if ( z_max > xyz_bound[3] ) {
-			z_max = xyz_bound[3];
-		}
-
-		//iterate over each cell between xmin-max, ymin-max, zmin-max, a cube around the atom
-		for ( core::Size x = x_min; x <= x_max; ++x ) {
-			for ( core::Size y = y_min; y <= y_max; ++y ) {
-				for ( core::Size z = z_min; z <= z_max; ++z ) {
-					//use distance formula to figure out if cell x,y,z is within the sphere projected by the atom point about its LJ radius
-					//get distance between x,y,z and the atom point
-					core::Real atom_cell_distance = sqrt(((x - atom_coordinates_float_and_lj_radius[xyzVec][1]) * (x - atom_coordinates_float_and_lj_radius[xyzVec][1])) + ((y - atom_coordinates_float_and_lj_radius[xyzVec][2]) * (y - atom_coordinates_float_and_lj_radius[xyzVec][2])) + ((z - atom_coordinates_float_and_lj_radius[xyzVec][3]) * (z - atom_coordinates_float_and_lj_radius[xyzVec][3])));
-					//if distance is less than the radius, then the point is occupied
-					if ( atom_cell_distance < atom_coordinates_float_and_lj_radius[xyzVec][4] ) {
-						protein_representation_matrix[x][y][z] = 1;
-					}
-				}
-			}
-		}
-	}
-
-	//system should be processed. Get a count of occupied vs unoccupied cells
-	core::Real total_cells = xyz_bound[1] * xyz_bound[2] * xyz_bound[3];
-
-	core::Real occupied_cell_count = 0;
-	core::Real unoccupied_cell_count = 0;
-
-	for ( core::Size x = 1; x <= xyz_bound[1]; ++x ) {
-		for ( core::Size y = 1; y <= xyz_bound[2]; ++y ) {
-			for ( core::Size z = 1; z <= xyz_bound[3]; ++z ) {
-				if ( protein_representation_matrix[x][y][z] == 1 ) {
-					++occupied_cell_count;
-				} else {
-					++unoccupied_cell_count;
-				}
-			}
-		}
-	}
-
-	occupied_ratios[1] = occupied_cell_count / total_cells;
-
-
-	ms_tr.Debug << "Total: " << total_cells << std::endl;
-	ms_tr.Debug << "Occupied: " << occupied_cell_count << std::endl;
-	ms_tr.Debug << "Unoccupied: " << unoccupied_cell_count << std::endl;
-	ms_tr.Debug << "Occupied-Total Ratio: " << occupied_ratios[1] << std::endl;
-
-
-	//write values to matrix_data_counts
-	matrix_data_counts[1] = occupied_cell_count;
-	matrix_data_counts[2] = unoccupied_cell_count;
-	matrix_data_counts[3] = total_cells;
-
-	//NEW FOR BINDING POCKET FILL TEST
-	//Use the anchor residue and inputted vector of residues of interest (if listed), and create a box to use to represent a binding pocket (subsection of whole pose) for small scale space fill analysis
-
-	//define subsection if no vector of residues of interest listed (based on NBR of anchor * 2, similar to minipose derivation)
-	//get location of anchor residue center/NBR atom
-	//#########
-
-	//check to see if binding_pocket_center_sf flag is used; create a vector to correspond to its coordinates later when defining the max and min for the sub-area
-	bool using_binding_pocket_center_sf = false;
-	if ( option[ OptionKeys::motifs::binding_pocket_center_sf ].user() ) {
-		using_binding_pocket_center_sf = true;
-	}
-
-	core::Real sub_total_cells = 0;
-	core::Real sub_occupied_cell_count = 0;
-	core::Real sub_unoccupied_cell_count = 0;
-
-	//define the sub-area min and max for xyz
-	sub_xyz_min[1] = 0;
-	sub_xyz_max[1] = 0;
-	sub_xyz_min[2] = 0;
-	sub_xyz_max[2] = 0;
-	sub_xyz_min[3] = 0;
-	sub_xyz_max[3] = 0;
-
-	//default of only looking at area about anchor residue; probably not the best method if you actually care about using this method
-	if ( target_residues_sf_.size() == 0 && using_binding_pocket_center_sf == false ) {
-
-
-		ms_tr.Trace << "Defining sub-area only by anchor residue." << std::endl;
-
-
-		//define nbr_atom_xyz vector as the xyz vector of the nbr atom of the xyz residue
-		numeric::xyzVector<int> nbr_atom_xyz = working_pose_->residue(working_position).nbr_atom_xyz();
-
-		//get the nbr radius of the residue
-		core::Real anchor_nbr_radius = working_pose_->residue(working_position).nbr_radius();
-
-		//debugging: get coordinates of nbr atom and nbr radius
-
-		ms_tr.Debug << "Raw coordinates of nbr atom and nbr radius: " << nbr_atom_xyz.x() << ", " << nbr_atom_xyz.y() << ", " << nbr_atom_xyz.z() << "; " << anchor_nbr_radius << std::endl;
-
-
-		//apply the xyz shift
-		nbr_atom_xyz[0] += static_cast<int>(xyz_shift[1]);
-		nbr_atom_xyz[1] += static_cast<int>(xyz_shift[2]);
-		nbr_atom_xyz[2] += static_cast<int>(xyz_shift[3]);
-
-
-		ms_tr.Debug << "Shifted not scaled coordinates of nbr atom and nbr radius: " << nbr_atom_xyz[0] << ", " << nbr_atom_xyz[1] << ", " << nbr_atom_xyz[2] << "; " << anchor_nbr_radius << std::endl;
-
-		//translate NBR radius length to define the sub-area to investigate
-		nbr_atom_xyz[0] *= resolution_increase_factor;
-		nbr_atom_xyz[1] *= resolution_increase_factor;
-		nbr_atom_xyz[2] *= resolution_increase_factor;
-
-		anchor_nbr_radius *= resolution_increase_factor;
-
-		//define the sub-area min and max for xyz
-		sub_xyz_min[1] = nbr_atom_xyz[0] - anchor_nbr_radius;
-		sub_xyz_max[1] = nbr_atom_xyz[0] + anchor_nbr_radius;
-		sub_xyz_min[2] = nbr_atom_xyz[1] - anchor_nbr_radius;
-		sub_xyz_max[2] = nbr_atom_xyz[1] + anchor_nbr_radius;
-		sub_xyz_min[3] = nbr_atom_xyz[2] - anchor_nbr_radius;
-		sub_xyz_max[3] = nbr_atom_xyz[2] + anchor_nbr_radius;
-
-
-		//debugging: get coordinates of nbr atom and nbr radius
-
-		ms_tr.Debug << "xyz shifts and resolution factor: " << xyz_shift[1] << ", " << xyz_shift[2] << ", " << xyz_shift[3] <<  "; " << resolution_increase_factor << std::endl;
-		ms_tr.Debug << "Shifted and scaled coordinates of nbr atom and nbr radius: " << nbr_atom_xyz[0] << ", " << nbr_atom_xyz[1] << ", " << nbr_atom_xyz[2] << "; " << anchor_nbr_radius << std::endl;
-		ms_tr.Debug << "Min and Max xyz: " << sub_xyz_min[1] << ", " << sub_xyz_min[2] << ", " << sub_xyz_min[3] << "; " << sub_xyz_max[1] << ", " << sub_xyz_max[2] << ", " << sub_xyz_max[3] << " " << std::endl;
-
-
-	} else if ( target_residues_sf_.size() > 0 ) {
-		//
-		//define subsection if the vector of residues is listed
-		//if target_residues_sf and binding_pocket_center_sf flags are used, the cube/sphere area will be defined by the min and max values from both. This can help make sure that specific residue regions are covered (could turn the cube into a rectangular prism and sphere into an elipsoid)
-		ms_tr.Trace << "Defining sub-area by inputted residues using motifs::target_residues_sf flag." << std::endl;
-
-
-		//run through the vector of indices and identify the coordinates of the nbr atom
-		//could technically check all atoms in each residue, but would be longer and nbr should get us a good enough estimate
-		for ( const auto & target_residue : target_residues_sf_ ) {
-			//get the scaled xyz coordinates of the residue's nbr atom and adjust the sub xyz minmax values
-			//have as int to account for negative coordinates (which we will convert to positive by shifting)
-			numeric::xyzVector<int> nbr_atom_xyz_int = working_pose_->residue(target_residue).nbr_atom_xyz();
-
-			//apply the xyz shift to each value (and do before applying the resolution increase factor)
-			nbr_atom_xyz_int[0] += xyz_shift[1];
-			nbr_atom_xyz_int[1] += xyz_shift[2];
-			nbr_atom_xyz_int[2] += xyz_shift[3];
-
-			//translate NBR radius length to define the sub-area to investigate
-			nbr_atom_xyz_int[0] *= resolution_increase_factor;
-			nbr_atom_xyz_int[1] *= resolution_increase_factor;
-			nbr_atom_xyz_int[2] *= resolution_increase_factor;
-
-			//create new xyzvector of the nbr atom xyz that is shifted and scaled
-			numeric::xyzVector<core::Size> nbr_atom_xyz = nbr_atom_xyz_int;
-
-			// get min and max for x,y,z for subarea
-
-			//x
-			if ( nbr_atom_xyz[0] < sub_xyz_min[1] || sub_xyz_min[1] == 0 ) {
-
-				sub_xyz_min[1] = nbr_atom_xyz[0];
-
-			}
-			if ( nbr_atom_xyz[0] > sub_xyz_max[1] || sub_xyz_max[1] == 0 ) {
-				//we check later if we exceed the max, so not a worry here
-				sub_xyz_max[1] = nbr_atom_xyz[0];
-			}
-
-			//y
-			if ( nbr_atom_xyz[1] < sub_xyz_min[2] || sub_xyz_min[2] == 0 ) {
-
-				sub_xyz_min[2] = nbr_atom_xyz[1];
-
-			}
-			if ( nbr_atom_xyz[1] > sub_xyz_max[2] || sub_xyz_max[2] == 0 ) {
-				//we check later if we exceed the max, so not a worry here
-				sub_xyz_max[2] = nbr_atom_xyz[1];
-			}
-
-			//z
-			if ( nbr_atom_xyz[2] < sub_xyz_min[3] || sub_xyz_min[3] == 0 ) {
-
-				sub_xyz_min[3] = nbr_atom_xyz[2];
-
-			}
-			if ( nbr_atom_xyz[2] > sub_xyz_max[3] || sub_xyz_max[3] == 0 ) {
-				//we check later if we exceed the max, so not a worry here
-				sub_xyz_max[3] = nbr_atom_xyz[2];
-			}
-
-
-		}
-	} else if ( using_binding_pocket_center_sf == true ) {
-		//pull the xyz coordinates of the binding pocket center
-		//may the vector to hold the xyz coordinates
-		utility::vector1<core::Size> binding_pocket_center_xyz = option[ OptionKeys::motifs::binding_pocket_center_sf ]();
-
-		//make sure that the user has inputted 3 valid coordinates and flag a warning for each value beyond the first 3
-		//center coordinates are invalid if they are outside the space fill matrix (apply the xyz shift and resolution scaling and then check)
-		//iterate over each coordinate to apply the respectful xyz shift and resolution and make these checks as well as for bad coordinates
-		//also ensure that there are at least 3 values. If there are not, we can not use the 0-2 coordinate values and we will kill the attempt at this method
-
-		bool vector_big_enough = true;
-
-		if ( binding_pocket_center_xyz.size() <= 2 ) {
-			vector_big_enough = false;
-		}
-
-		if ( vector_big_enough ) {
-			for ( core::Size coordinate = 1; coordinate <= binding_pocket_center_xyz.size(); ++coordinate ) {
-				//apply relevant xyz shift as long as the coordinate is between 1-3, otherwise throw a warning
-				if ( coordinate <= 3 ) {
-					binding_pocket_center_xyz[coordinate] += xyz_shift[coordinate];
-					binding_pocket_center_xyz[coordinate] *= resolution_increase_factor;
-				} else {
-
-					ms_tr.Warning << "You have inputted an excess value using the motifs::binding_pocket_center_sf flag. This is value #" << coordinate << " in the input vector with a value of: " << binding_pocket_center_xyz[coordinate] << ". Ignoring this bad input, and you should review the proper usage for this flag." << std::endl;
-
-				}
-			}
-		} else {
-
-			ms_tr.Warning << "You have only inputted " << binding_pocket_center_xyz.size() << " coordinates for the binding pocket center xyz coordinates. We need exactly 3 to work. We can't do anything with this, and will skip this method and will just use an area around the anchor residue." << std::endl;
-
-		}
-
-		//get the sub min and max values
-		//need to test and make sure that potential underflow with Size data type doesn't mess things up
-		//get the radius value
-		//this is for a single value to be used for xyz
-		core::Real radius_real = option[ OptionKeys::motifs::binding_pocket_radius_sf ]();
-		//scale the radius by the resolution factor
-		radius_real *= resolution_increase_factor;
-
-		//declare a vector to use for x,y,z
-		//index 0 corresponds to x, index 1 corresponds to y, index 2 corresponds to z
-		utility::vector1<core::Real> binding_pocket_dimensions;
-		binding_pocket_dimensions.push_back(radius_real);
-		binding_pocket_dimensions.push_back(radius_real);
-		binding_pocket_dimensions.push_back(radius_real);
-
-		ms_tr << "binding_pocket_dimensions: " << binding_pocket_dimensions[1] << "," << binding_pocket_dimensions[2] << "," << binding_pocket_dimensions[3] << std::endl;
-
-
-		//overwrite if we used binding_pocket_dimensions_sf flag (which can use a different value in x,y,z)
-		if ( option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].user() ) {
-			//make sure dimensions vector is valid
-			//can not use if fewer than 3 values (do not use), warn if there are more than 3
-			if ( option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].size()<3 ) {
-				ms_tr.Warning << "Input vector for binding_pocket_dimensions_sf is too small with only " << option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].size() << " entries. We will default to using binding_pocket_radius_sf." << std::endl;
-
-			} else {
-				if ( option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].size()>3 ) {
-
-					ms_tr.Warning << "Input vector for binding_pocket_dimensions_sf has more than 3 entries with having " << option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].size() << " entries. We will only use the first 3 values." << std::endl;
-
-				}
-
-				//set the first 3 values of the binding_pocket_dimensions_sf vector to binding_pocket_dimensions (and also apply the resolution factor)
-				binding_pocket_dimensions = option[ OptionKeys::motifs::binding_pocket_dimensions_sf ]();
-
-				//apply resolution factor to each dimension
-				for ( core::Size dimension = 1; dimension <= binding_pocket_dimensions.size(); ++dimension ) {
-					binding_pocket_dimensions[dimension] *= resolution_increase_factor;
-				}
-
-			}
-
-		}
-
-
-		ms_tr << "binding_pocket_dimensions: " << binding_pocket_dimensions[1] << "," << binding_pocket_dimensions[2] << "," << binding_pocket_dimensions[3] << std::endl;
-
-
-		//apply the radius
-		//make sure that we don't underflow for any values, and set the value to 1 if we would
-		//values could underflow if the coordinate is really far in the negative direction
-		//the shape will be junk if the entire shape is out of bounds
-		//x
-		if ( binding_pocket_center_xyz[1] - binding_pocket_dimensions[1] <= 0 ) {
-			sub_xyz_min[1] = 1;
-		} else {
-			sub_xyz_min[1] = binding_pocket_center_xyz[1] - binding_pocket_dimensions[1];
-		}
-		if ( binding_pocket_center_xyz[1] + binding_pocket_dimensions[1] <= 0 ) {
-			sub_xyz_max[1] = 1;
-		} else {
-			sub_xyz_max[1] = binding_pocket_center_xyz[1] + binding_pocket_dimensions[1];
-		}
-
-		//y
-		if ( binding_pocket_center_xyz[2] - binding_pocket_dimensions[2] <= 0 ) {
-			sub_xyz_min[2] = 1;
-		} else {
-			sub_xyz_min[2] = binding_pocket_center_xyz[2] - binding_pocket_dimensions[2];
-		}
-		if ( binding_pocket_center_xyz[2] + binding_pocket_dimensions[2] <= 0 ) {
-			sub_xyz_max[2] = 1;
-		} else {
-			sub_xyz_max[2] = binding_pocket_center_xyz[2] + binding_pocket_dimensions[2];
-		}
-
-		//z
-		if ( binding_pocket_center_xyz[3] - binding_pocket_dimensions[3] <= 0 ) {
-			sub_xyz_min[3] = 1;
-		} else {
-			sub_xyz_min[3] = binding_pocket_center_xyz[3] - binding_pocket_dimensions[3];
-		}
-		if ( binding_pocket_center_xyz[3] + binding_pocket_dimensions[3] <= 0 ) {
-			sub_xyz_max[3] = 1;
-		} else {
-			sub_xyz_max[3] = binding_pocket_center_xyz[3] + binding_pocket_dimensions[3];
-		}
-	}
-
-	//if any values are outside the bounds of the main vector, adjust them to match the boundary and avoid going out of bounds
-	if ( sub_xyz_min[1] < 1 ) {
-		sub_xyz_min[1] = 1;
-	}
-	if ( sub_xyz_max[1] > xyz_bound[1] ) {
-		sub_xyz_max[1] = xyz_bound[1];
-	}
-
-	if ( sub_xyz_min[2] < 1 ) {
-		sub_xyz_min[2] = 1;
-	}
-	if ( sub_xyz_max[2] > xyz_bound[2] ) {
-		sub_xyz_max[2] = xyz_bound[2];
-	}
-
-	if ( sub_xyz_min[3] < 1 ) {
-		sub_xyz_min[3] = 1;
-	}
-	if ( sub_xyz_max[3] > xyz_bound[3] ) {
-		sub_xyz_max[3] = xyz_bound[3];
-	}
-
-
-	ms_tr << "Sub-region stats without placed region, bound by adjusted coordinates: x(" << sub_xyz_min[1] << "->" << sub_xyz_max[1] << ") y(" << sub_xyz_min[2] << "->" << sub_xyz_max[2] << ") z(" << sub_xyz_min[3] << "->" << sub_xyz_max[3] << ")" << std::endl;
-
-	//run through the boundaries and determine the space fill ratio of the sub-area
-	for ( core::Size x = sub_xyz_min[1]; x <= sub_xyz_max[1]; ++x ) {
-		for ( core::Size y = sub_xyz_min[2]; y <= sub_xyz_max[2]; ++y ) {
-			for ( core::Size z = sub_xyz_min[3]; z <= sub_xyz_max[3]; ++z ) {
-				if ( protein_representation_matrix[x][y][z] == 1 ) {
-					++sub_occupied_cell_count;
-
-					//adjust the value to now be 3 to indicate that this is full within the sub-area
-					protein_representation_matrix[x][y][z] = 3;
-				} else {
-					++sub_unoccupied_cell_count;
-
-					//adjust the value to now be 2 to indicate that this is empty within the sub-area
-					protein_representation_matrix[x][y][z] = 2;
-				}
-				++sub_total_cells;
-			}
-		}
-	}
-
-	//calculate the ratio (to be passed by reference out of the function)
-	occupied_ratios[2] = sub_occupied_cell_count / sub_total_cells;
-
-	//output information on sub-region
-
-
-	ms_tr.Debug << "Total: " << sub_total_cells << std::endl;
-	ms_tr.Debug << "Occupied: " << sub_occupied_cell_count << std::endl;
-	ms_tr.Debug << "Unoccupied: " << sub_unoccupied_cell_count << std::endl;
-	ms_tr.Debug << "Occupied-Total Ratio: " << occupied_ratios[2] << std::endl;
-
-
-	matrix_data_counts[4] = sub_occupied_cell_count;
-	matrix_data_counts[5] = sub_unoccupied_cell_count;
-	matrix_data_counts[6] = sub_total_cells;
-
-	//copy the generated matrix over to the global variable
-	protein_representation_matrix_space_fill_ = protein_representation_matrix;
-}
-
-//function to run a clash check of the placed ligand against the protein representation matrix
-//ligand needs to be placed with a motif (at the very least needs coordinates)
-bool LigandDiscoverySearch::ligand_clash_check(core::conformation::ResidueOP ligresOP, core::Size x_shift, core::Size y_shift, core::Size z_shift, int x_bound_int, int y_bound_int, int z_bound_int)
-{
-	//bool to track if ligand clashes
-	bool has_clashing = false;
-
-	//iterate through all atoms in the placed ligand, and determine if there is clashing
-	//hold the number of times that there is clashing. If ligand clashes (ligand and protein atom in same cell), we can kill the attempt
-
-	core::Size num_atoms_in_ligand = ligresOP->natoms();
-
-	for ( core::Size residue_atom_iterator = 1; residue_atom_iterator <= num_atoms_in_ligand; ++residue_atom_iterator ) {
-		//convert coordinates of current atom into format that can be read into protein placement matrix, determine if there is clashing
-		numeric::xyzVector<int> test_atom_xyz = ligresOP->xyz(residue_atom_iterator);
-
-		test_atom_xyz.x() = static_cast<int>(test_atom_xyz.x());
-		test_atom_xyz.y() = static_cast<int>(test_atom_xyz.y());
-		test_atom_xyz.z() = static_cast<int>(test_atom_xyz.z());
-
-		//apply x,y,z shift to the coordinates
-		test_atom_xyz.x() += x_shift;
-		test_atom_xyz.y() += y_shift;
-		test_atom_xyz.z() += z_shift;
-
-		//handle case of ligand atom existing beyond protein matrix (won't be a clash anyway)
-		if ( test_atom_xyz.x() < 1 || test_atom_xyz.x() > x_bound_int ) {
-			continue;
-		}
-		if ( test_atom_xyz.y() < 1 || test_atom_xyz.y() > y_bound_int ) {
-			continue;
-		}
-		if ( test_atom_xyz.z() < 1 || test_atom_xyz.z() > z_bound_int ) {
-			continue;
-		}
-
-		//probe corresponding index of protein_representation_matrix
-		if ( protein_representation_matrix_[test_atom_xyz.x()][test_atom_xyz.y()][test_atom_xyz.z()] ) {
-			//clash case
-			//since we hit a clash, no need to look at other ligand atoms
-			has_clashing = true;
-			break;
-		}
-	}
-
-	return has_clashing;
-}
-
-// function to check if the space-filling capacity of the placed ligand is adequate
-//returns a boolean value based on whether or not the space filling is satisfactory
-//uses the protein representation space fill matrix
-//
-//satisfaction is based on whether the ratio of occupied cells to unoccupied cells is >= a user-inputted threshold
-//returns space_fill_matrix_copy (the filled matrix with the ligand)
-
-LigandDiscoverySearch::SpaceFillMatrix LigandDiscoverySearch::space_fill_analysis(core::conformation::ResidueOP ligresOP, utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
-	utility::vector1<core::Size> & sub_xyz_min, utility::vector1<core::Size> & sub_xyz_max, utility::vector1<core::Real> & occupied_ratios, utility::vector1<core::Size> & matrix_data_counts)
-{
-	//values that can be seeded into the matrix with their meaning. Only 5,7,9,11 can be seeded using this function since we adjust values based on the ligand being present
-	//note, 0 and 2 are only even numbers that are currently used for now
-	/*
-	0 = empty and out of sub area, carbon, black
-	1 = protein and out of sub area, fluorine, icy blue
-	2 = empty and in sub area, oxygen, red
-	3 = protein and in sub area, nitrogen, blue
-	4 = do not use, keep even for unoccupied space
-	5 = ligand and out of sub area, sulphur, yellow
-	6 = do not use, keep even for unoccupied space
-	7 = ligand and in sub area, chlorine, green
-	8 = do not use, keep even for unoccupied space
-	9 = ligand and protein out of sub area, phosphorous, orange
-	10 = do not use, keep even for unoccupied space
-	11 = ligand and protein in sub area, iodine, purple
-	*/
-
-	//debugging
-	//print out what matrix data counts looks like before and after modification
-
-	ms_tr.Debug << "matrix_data_counts: " << matrix_data_counts[1] << ", " << matrix_data_counts[2] << ", " << matrix_data_counts[3] << ", " << matrix_data_counts[4] << ", " << matrix_data_counts[5] << ", " << matrix_data_counts[6] << std::endl;
-
-	//iterate through all atoms in the placed ligand, and update the count of occupied cells in the space fill matrix, going atom by atom
-	//We will not edit the matrix, and will instead just update the count if a cells occupied by an atom in the ligand is not already occupied by an atom of the protein system
-
-	//make a temporary copy of protein_representation_matrix_space_fill_ so that we can adjust the boolean values (and make sure that we can properly mark occupied cells once as we check with the atoms)
-	//otherwise, we risk overcounting occupied cells (which also leads to underflow in the unoccupied cells)
-	//make sure it is not a deep copy
-	SpaceFillMatrix space_fill_matrix_copy = protein_representation_matrix_space_fill_;
-
-
-	core::Size num_atoms_in_ligand = ligresOP->natoms();
-
-	for ( core::Size residue_atom_iterator = 1; residue_atom_iterator <= num_atoms_in_ligand; ++residue_atom_iterator ) {
-		//convert coordinates of current atom into format that can be read into space fill matrix matrix
-		numeric::xyzVector<int> test_atom_xyz_int = ligresOP->xyz(residue_atom_iterator);
-
-		//apply the xyz shift to each value (and do before applying the resolution increase factor)
-		test_atom_xyz_int[0] += xyz_shift[1];
-		test_atom_xyz_int[1] += xyz_shift[2];
-		test_atom_xyz_int[2] += xyz_shift[3];
-
-		//translate NBR radius length to define the sub-area to investigate
-		test_atom_xyz_int[0] *= resolution_increase_factor;
-		test_atom_xyz_int[1] *= resolution_increase_factor;
-		test_atom_xyz_int[2] *= resolution_increase_factor;
-
-		//temporary for debugging; list the coordinates of the atom before and after shifting
-		//ms_tr << "Atom #" << residue_atom_iterator << " raw xyz: " << test_atom_xyz_int[0] << "," << test_atom_xyz_int[1] << "," << test_atom_xyz_int[2] << " adjusted xyz: " << test_atom_xyz_int[0] << "," << test_atom_xyz_int[1] << "," << test_atom_xyz_int[2] << std::endl;
-
-		//create new xyzvector of the nbr atom xyz that is shifted and scaled
-		numeric::xyzVector<core::Size> test_atom_xyz = test_atom_xyz_int;
-
-		//get the lj radius of the atom and scale it with the resolution factor
-		//atom_xyz_float_with_lj_radius.push_back(working_pose_->residue(res_num).atom_type(atom_num).lj_radius());
-		//not storing in a vector this time, since we don't need it after this iteration of the for loop
-		core::Real test_atom_lj_radius = ligresOP->atom_type(residue_atom_iterator).lj_radius() * resolution_increase_factor;
-
-		//define the minimum and maximum areas to explore, based on the coordinate of the atom and the lj radius
-		//ensure we don't run off the area
-
-		core::Size x_min = test_atom_xyz_int[0] - test_atom_lj_radius;
-		core::Size x_max = test_atom_xyz_int[0] + test_atom_lj_radius;
-		if ( x_min < 1 ) {
-			x_min = 1;
-		}
-		if ( x_max > xyz_bound[1] ) {
-			x_max = xyz_bound[1];
-		}
-		core::Size y_min = test_atom_xyz_int[1] - test_atom_lj_radius;
-		core::Size y_max = test_atom_xyz_int[1] + test_atom_lj_radius;
-		if ( y_min < 1 ) {
-			y_min = 1;
-		}
-		if ( y_max > xyz_bound[2] ) {
-			y_max = xyz_bound[2];
-		}
-		core::Size z_min = test_atom_xyz_int[2] - test_atom_lj_radius;
-		core::Size z_max = test_atom_xyz_int[2] + test_atom_lj_radius;
-		if ( z_min < 1 ) {
-			z_min = 1;
-		}
-		if ( z_max > xyz_bound[3] ) {
-			z_max = xyz_bound[3];
-		}
-
-		//iterate over the xyz of this area
-		//iterate over each cell between xmin-max, ymin-max, zmin-max, a cube around the atom
-		for ( core::Size x = x_min; x <= x_max; ++x ) {
-			for ( core::Size y = y_min; y <= y_max; ++y ) {
-				for ( core::Size z = z_min; z <= z_max; ++z ) {
-
-					//use distance formula to figure out if cell x,y,z is within the sphere projected by the atom point about its LJ radius
-					//get distance between x,y,z and the atom point
-					//distance = sqrt((x1-x2)^2 + (y1-y2)^2 + (z1-z2)^2)
-					core::Real atom_cell_distance = sqrt(((x - test_atom_xyz_int[0]) * (x - test_atom_xyz_int[0])) + ((y - test_atom_xyz_int[1]) * (y - test_atom_xyz_int[1])) + ((z - test_atom_xyz_int[2]) * (z - test_atom_xyz_int[2])));
-
-					//if distance is less than the radius, then the cell/point is occupied by this atom and we should investigate
-					if ( atom_cell_distance < test_atom_lj_radius ) {
-						//make sure that the cell isn't occupied already in the space fill matrix
-						//if not already occupied, adjust the occupied and unoccupied counts
-						if ( space_fill_matrix_copy[x][y][z] == 0 ) {
-							//std::cout << x << "," << y << "," << z << std::endl;
-							//occupied by ligand and outside of sub area
-							space_fill_matrix_copy[x][y][z] = 5;
-
-							//adjust matrix data counts for occupied and unoccupied for the main system
-							++matrix_data_counts[1];
-							--matrix_data_counts[2];
-
-							//if x,y,z lies within the boundary of the sub area, adjust the matrix data counts for it too
-							if ( x >= sub_xyz_min[1] && x <= sub_xyz_max[1] && y >= sub_xyz_min[2] && y <= sub_xyz_max[2] && z >= sub_xyz_min[3] && z <= sub_xyz_max[3] ) {
-								//adjust matrix data counts for occupied and unoccupied for the sub area
-								++matrix_data_counts[4];
-								--matrix_data_counts[5];
-							}
-						} else if ( space_fill_matrix_copy[x][y][z] == 1 ) {
-							//std::cout << x << "," << y << "," << z << std::endl;
-							//occupied by ligand and protein out of sub area
-							space_fill_matrix_copy[x][y][z] = 9;
-
-							//adjust matrix data counts for occupied and unoccupied for the main system
-							++matrix_data_counts[1];
-							--matrix_data_counts[2];
-
-							//if x,y,z lies within the boundary of the sub area, adjust the matrix data counts for it too
-							if ( x >= sub_xyz_min[1] && x <= sub_xyz_max[1] && y >= sub_xyz_min[2] && y <= sub_xyz_max[2] && z >= sub_xyz_min[3] && z <= sub_xyz_max[3] ) {
-								//adjust matrix data counts for occupied and unoccupied for the sub area
-								++matrix_data_counts[4];
-								--matrix_data_counts[5];
-							}
-						} else if ( space_fill_matrix_copy[x][y][z] == 2 ) {
-							//std::cout << x << "," << y << "," << z << std::endl;
-							//occupied by ligand in sub area
-							space_fill_matrix_copy[x][y][z] = 7;
-
-							//adjust matrix data counts for occupied and unoccupied for the main system
-							++matrix_data_counts[1];
-							--matrix_data_counts[2];
-
-							//if x,y,z lies within the boundary of the sub area, adjust the matrix data counts for it too
-							if ( x >= sub_xyz_min[1] && x <= sub_xyz_max[1] && y >= sub_xyz_min[2] && y <= sub_xyz_max[2] && z >= sub_xyz_min[3] && z <= sub_xyz_max[3] ) {
-								//adjust matrix data counts for occupied and unoccupied for the sub area
-								++matrix_data_counts[4];
-								--matrix_data_counts[5];
-							}
-						} else if ( space_fill_matrix_copy[x][y][z] == 3 ) {
-							//std::cout << x << "," << y << "," << z << std::endl;
-							//occupied by ligand and protein in sub area
-							space_fill_matrix_copy[x][y][z] = 11;
-
-							//adjust matrix data counts for occupied and unoccupied for the main system
-							++matrix_data_counts[1];
-							--matrix_data_counts[2];
-
-							//if x,y,z lies within the boundary of the sub area, adjust the matrix data counts for it too
-							if ( x >= sub_xyz_min[1] && x <= sub_xyz_max[1] && y >= sub_xyz_min[2] && y <= sub_xyz_max[2] && z >= sub_xyz_min[3] && z <= sub_xyz_max[3] ) {
-								//adjust matrix data counts for occupied and unoccupied for the sub area
-								++matrix_data_counts[4];
-								--matrix_data_counts[5];
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-
-	ms_tr.Debug << "matrix_data_counts: " << matrix_data_counts[1] << ", " << matrix_data_counts[2] << ", " << matrix_data_counts[3] << ", " << matrix_data_counts[4] << ", " << matrix_data_counts[5] << ", " << matrix_data_counts[6] << std::endl;
-
-	//derive space fill scores for whole and sub areas
-	occupied_ratios[1] = static_cast<core::Real>(matrix_data_counts[1])/static_cast<core::Real>(matrix_data_counts[3]);
-	occupied_ratios[2] = static_cast<core::Real>(matrix_data_counts[4])/static_cast<core::Real>(matrix_data_counts[6]);
-	return space_fill_matrix_copy;
-}
-
-
-// @brief debugging function to export a space fill matrix as a pdb. Occupied cells are represented as a nitrogen and unoccupied cells are represented as an oxygen (considering making one for a clash matrix too)
-// if printing the whole matrix and not just the sub-area, occupied cells are represented by hydrogens and unoccupied are represented by carbon
-//if desired, returns the pose created
-//highly recommended to only use this for debugging and small-scale purposes, as this method is extremely slow compared to the rest of the protocol
-pose::Pose LigandDiscoverySearch::export_space_fill_matrix_as_C_H_O_N_pdb(SpaceFillMatrix space_fill_matrix, utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
-	utility::vector1<core::Real> & occupied_ratios, std::string pdb_name_prefix, core::chemical::MutableResidueType dummylig_mrt)
-{
-	std::string matrix_pdb_name = pdb_name_prefix + "_WholeRatio_" + std::to_string(occupied_ratios[1]) + "_SubRatio_" + std::to_string(occupied_ratios[2]) + ".pdb";
-
-	ms_tr.Trace << "Preparing to make visualization pose for " << matrix_pdb_name << std::endl;
-
-
-	//create a new mutableresiduetype to work on adding atoms to
-	//base it from the dummy mrt that had all of its atoms deleted
-	//make a new mrt so it isn't a deep copy (and we can always build off of the original empty one)
-	core::chemical::MutableResidueType my_mrt( dummylig_mrt );
-
-	//declare strings to use for the atom name, type, and mm_type
-	std::string atom_name = "";
-	std::string atom_type_name = "";
-	std::string mm_atom_type_name = "";
-
-	//declare vector to hold atom coordinates
-	utility::vector1<core::Real> atom_xyz(3,0);
-
-	//declare a vector to hold the names of first 3 atoms so we can apply icoor data (especialy for the first 3 atoms)
-	utility::vector1<std::string> first_three_atoms;
-
-	//counter to determine the first 3 atoms so we can assign icoor_data to the first 3 atoms after we reach them (can't do beforehand, as we do not know atoms before we reach them)
-	core::Size atom_counter = 0;
-
-	//counter to count the total atom number for unique name tracking
-	core::Size total_atom_counter = 0;
-
-	//create pose for matrix
-	pose::Pose matrix_pose;
-
-	//iterate through the matrix cells to add atoms
-	//run through the boundaries and determine the space fill ratio of the sub-area
-	for ( core::Size x = 1; x <= xyz_bound[1]; ++x ) {
-		for ( core::Size y = 1; y <= xyz_bound[2]; ++y ) {
-			for ( core::Size z = 1; z <= xyz_bound[3]; ++z ) {
-
-				//opt to continue if the atom in question is not wanted for the export per flags
-				//use_empty_space_in_space_fill_pdb or use_whole_matrix_in_space_fill_pdb
-				//cases where the atom is indicated to be outside of the sub area
-				if ( option[ OptionKeys::motifs::use_whole_matrix_in_space_fill_pdb ]() == false && (space_fill_matrix[x][y][z] == 0 || space_fill_matrix[x][y][z] == 1 || space_fill_matrix[x][y][z] == 5 || space_fill_matrix[x][y][z] == 9 ) ) {
-					continue;
-				}
-				//cases where we do not want atoms to represent the empty space
-				//values that are even correspond to empty space (currently just 0 and 2)
-				if ( option[ OptionKeys::motifs::use_empty_space_in_space_fill_pdb ]() == false && space_fill_matrix[x][y][z] % 2 == 0 ) {
-					continue;
-				}
-
-				//derive unique atom name
-				atom_name = base_10_to_base_62(total_atom_counter);
-
-				//adjust the atom type based on the value in the matrix cells
-				/*
-				0 = empty and out of sub area, carbon, black
-				1 = protein and out of sub area, fluorine, icy blue
-				2 = empty and in sub area, oxygen, red
-				3 = protein and in sub area, nitrogen, blue
-				4 = do not use, keep even for unoccupied space
-				5 = ligand and out of sub area, sulphur, yellow
-				6 = do not use, keep even for unoccupied space
-				7 = ligand and in sub area, chlorine, green
-				8 = do not use, keep even for unoccupied space
-				9 = ligand and protein out of sub area, phosphorous, orange
-				10 = do not use, keep even for unoccupied space
-				11 = ligand and protein in sub area, iodine, purple
-				*/
-				//carbon
-				if ( space_fill_matrix[x][y][z] == 0 ) {
-					atom_type_name = "aroC";
-					mm_atom_type_name = "C";
-				}
-				//hydrogen
-				//hydrogen may be a problem, try fluorine instead (icy blue)
-				if ( space_fill_matrix[x][y][z] == 1 ) {
-					//atom_type_name = "Haro";
-					//mm_atom_type_name = "H";
-					atom_type_name = "F";
-					mm_atom_type_name = "F1";
-				}
-				//oxygen
-				if ( space_fill_matrix[x][y][z] == 2 ) {
-					atom_type_name = "OH";
-					mm_atom_type_name = "O";
-				}
-				//nitrogen
-				if ( space_fill_matrix[x][y][z] == 3 ) {
-					atom_type_name = "NH2O";
-					mm_atom_type_name = "N";
-				}
-				//sulphur
-				if ( space_fill_matrix[x][y][z] == 5 ) {
-					atom_type_name = "S";
-					mm_atom_type_name = "S";
-				}
-				//chlorine
-				if ( space_fill_matrix[x][y][z] == 7 ) {
-					atom_type_name = "Cl";
-					mm_atom_type_name = "CL";
-				}
-				//phosphorous
-				if ( space_fill_matrix[x][y][z] == 9 ) {
-					atom_type_name = "Pha";
-					mm_atom_type_name = "P";
-				}
-				//iodine
-				if ( space_fill_matrix[x][y][z] == 11 ) {
-					atom_type_name = "I";
-					mm_atom_type_name = "I";
-				}
-				//if true (occupied), nitrogen
-				//make the atom
-				//for simplicity sake, charge is 0
-				my_mrt.add_atom(atom_name, atom_type_name, mm_atom_type_name, 0);
-
-				//derive the coordinates of the atom
-				//divide matrix coordinates by resolution scalar and then subtract corresponding shift
-				atom_xyz[1] = (static_cast<core::Real>(x)/resolution_increase_factor) - xyz_shift[1];
-				atom_xyz[2] = (static_cast<core::Real>(y)/resolution_increase_factor) - xyz_shift[2];
-				atom_xyz[3] = (static_cast<core::Real>(z)/resolution_increase_factor) - xyz_shift[3];
-
-				//adjust the coordinates of the atom in the mrt
-				//TEST THIS: looks like I can use MutableResidueType::set_ideal_xyz to set the xyz (and hopefully not have to deal with icoor); use function that takes in the atom name string (it just calls the overload the uses the vertex anyway)
-				my_mrt.set_ideal_xyz(atom_name, Vector(atom_xyz[1],atom_xyz[2],atom_xyz[3]) );
-
-				//handle adding the icoor data for the atom
-				//skip if the atom name is "" (which will happen if you only look at the sub-matrix)
-
-				if ( atom_name != "" ) {
-					++atom_counter;
-					++total_atom_counter;
-
-					//if atom counter is <= 3, add the atom name to the first_three_atoms vector
-					//atom count must be >3 so we know the first 3 atoms and can retroactively add icoor for those first 3 atoms
-					if ( atom_counter <= 3 ) {
-						first_three_atoms.push_back(atom_name);
-
-						//if the count is 3, we can retroactively add icoor data for the first 3 atoms now
-						if ( atom_counter == 3 ) {
-
-							my_mrt.set_icoor(first_three_atoms[1],0,0,0,first_three_atoms[1],first_three_atoms[2],first_three_atoms[3],false);
-
-							my_mrt.set_icoor(first_three_atoms[2],0,0,0,first_three_atoms[1],first_three_atoms[2],first_three_atoms[3],false);
-							//flip order of stub2 and stub3 for 3rd atom (looking at some params files, it seems like they do this)
-							my_mrt.set_icoor(first_three_atoms[3],0,0,0,first_three_atoms[1],first_three_atoms[3],first_three_atoms[2],false);
-
-							//add bonds to connect these 3
-							my_mrt.add_bond(first_three_atoms[1],first_three_atoms[2]);
-							my_mrt.add_bond(first_three_atoms[2],first_three_atoms[3]);
-						}
-					} else {
-						//add icoor data for later atoms, using the first 3 atoms as the same stub atoms each time
-						my_mrt.set_icoor(first_three_atoms[1],0,0,0,first_three_atoms[1],first_three_atoms[2],first_three_atoms[3],false);
-
-						//bond everything else to the 3rd atom and hope things dont get wonky
-						//if they do, I can try another means to attach atoms to each other looking at previous atoms
-						my_mrt.add_bond(first_three_atoms[3],atom_name);
-
-					}
-
-					//cut off when my_mrt becomes 100 atoms and start a new residue so that the conversion for an rt doesn't take too long
-					//there might need to be some handling at the end if my_mrt only has 1-2 atoms
-					//handling would probably just be to add fake atoms in the place of the first atom to fill out to 3 for the icoor data
-					if ( atom_counter == 100 ) {
-						//convert my_mrt to a data type that can be added to a pose
-
-						//assign internal coordinates
-						my_mrt.assign_internal_coordinates();
-
-						//convert to residuetype
-						ResidueTypeCOP my_rt(ResidueType::make(my_mrt));
-
-						//convert to residue
-						core::conformation::ResidueOP my_res( core::conformation::ResidueFactory::create_residue(*my_rt));
-
-						//append residue to pose
-						matrix_pose.append_residue_by_jump( *my_res, 1 );
-
-						//reset atom counter
-						atom_counter = 0;
-
-						//pop back the entries to first_three_atoms so we can start again
-						first_three_atoms.pop_back();
-						first_three_atoms.pop_back();
-						first_three_atoms.pop_back();
-
-						//reset my_mrt
-						my_mrt = dummylig_mrt;
-					}
-
-					//set name back to "" so that we don't keep going after we finish the sub area
-					atom_name = "";
-
-				}
-
-
-
-			}
-		}
-	}
-
-
-	ms_tr.Trace << "Made all atoms for this matrix" << std::endl;
-
-
-	//handle rare case where the my_mrt that reaches this point only has 1-2 atoms and would have no icoor data
-	//if no atoms, move to dumping the pdb
-	if ( my_mrt.natoms() == 0 ) {
-
-		ms_tr.Trace << "Making viualization pdb " << matrix_pdb_name << std::endl;
-
-		matrix_pose.dump_pdb(matrix_pdb_name);
-
-		//add a comment to the working_pose about the name of the corresponding matrix
-		core::pose::add_comment(*working_pose_, "Corresponding space fill matrix file:", matrix_pdb_name);
-
-		return matrix_pose;
-	} else if ( my_mrt.natoms() == 1 ) {
-		//if only 1 atom, make 2 "copies" (atom in the same position as original) of the atom and assign icoor data
-		//make name of atom
-		atom_name = base_10_to_base_62(total_atom_counter + 1);
-		//add atom to mrt
-		//use same types as what was used last
-		my_mrt.add_atom(atom_name, atom_type_name, mm_atom_type_name, 0);
-		//add atom to the first three atoms list for tracking
-		first_three_atoms.push_back(atom_name);
-
-		//make name of atom
-		atom_name = base_10_to_base_62(total_atom_counter + 2);
-		//add atom to mrt
-		//use same types as what was used last
-		my_mrt.add_atom(atom_name, atom_type_name, mm_atom_type_name, 0);
-		//add atom to the first three atoms list for tracking
-		first_three_atoms.push_back(atom_name);
-
-		//set icoor data for these atoms
-		my_mrt.set_icoor(first_three_atoms[1],0,0,0,first_three_atoms[1],first_three_atoms[2],first_three_atoms[3],false);
-		my_mrt.set_icoor(first_three_atoms[2],0,0,0,first_three_atoms[1],first_three_atoms[2],first_three_atoms[3],false);
-		my_mrt.set_icoor(first_three_atoms[3],0,0,0,first_three_atoms[1],first_three_atoms[3],first_three_atoms[2],false);
-
-		//add bonds to connect these 3
-		my_mrt.add_bond(first_three_atoms[1],first_three_atoms[2]);
-		my_mrt.add_bond(first_three_atoms[2],first_three_atoms[3]);
-
-	} else if ( my_mrt.natoms() == 2 ) {
-		//if 2 atoms, make a 3rd atom that is a "copy" of the first atom
-		//make name of atom
-		atom_name = base_10_to_base_62(total_atom_counter + 1);
-		//add atom to mrt
-		//use same types as what was used last
-		my_mrt.add_atom(atom_name, atom_type_name, mm_atom_type_name, 0);
-		//add atom to the first three atoms list for tracking
-		first_three_atoms.push_back(atom_name);
-
-		//set icoor data for these atoms
-		my_mrt.set_icoor(first_three_atoms[1],0,0,0,first_three_atoms[1],first_three_atoms[2],first_three_atoms[3],false);
-		my_mrt.set_icoor(first_three_atoms[2],0,0,0,first_three_atoms[1],first_three_atoms[2],first_three_atoms[3],false);
-		my_mrt.set_icoor(first_three_atoms[3],0,0,0,first_three_atoms[1],first_three_atoms[3],first_three_atoms[2],false);
-
-		//add bonds to connect the 3 atoms
-		my_mrt.add_bond(first_three_atoms[1],first_three_atoms[2]);
-		my_mrt.add_bond(first_three_atoms[2],first_three_atoms[3]);
-	}
-	//now assign internal coordina
-
-	//try to use assign_internal_coordinates to see if that helps fix icoor
-	my_mrt.assign_internal_coordinates();
-
-	//convert my_mrt to a data type that can be added to a pose
-	//convert to residuetype
-	ResidueTypeCOP my_rt(ResidueType::make(my_mrt));
-
-	//convert to residue
-	core::conformation::ResidueOP my_res( core::conformation::ResidueFactory::create_residue(*my_rt));
-
-
-
-	//append residue to pose
-	matrix_pose.append_residue_by_jump( *my_res, 1 );
-
-	//export pose using custom name
-	//custom name based on prefix (i.e. motif used, "empty", etc.), occupied ratios
-
-
-
-	ms_tr.Trace << "Making viualization pdb " << matrix_pdb_name << std::endl;
-
-	matrix_pose.dump_pdb(matrix_pdb_name);
-
-	//add a comment to the working_pose about the name of the corresponding matrix
-	core::pose::add_comment(*working_pose_, "Corresponding space fill matrix file:", matrix_pdb_name);
-
-	return matrix_pose;
-}
-
-
-// @brief function to be used to convert a base 10 number to base 62 (as a string with characters represented by base_62_cipher_)
-//used in export_space_fill_matrix_as_C_H_O_N_pdb to assign a unique name to an atom (due to limitations in atom icoor data, an atom name can be no longer than 4 characters)
-std::string LigandDiscoverySearch::base_10_to_base_62(core::Size starting_num)
-{
-	//bool to indicate whether to keep processing the number
-	//stop processing once we fully build the string, which occurs when dividing the current number by 62 is <1 (integer would be 0)
-	bool keep_processing = true;
-
-	//string to hold the base 62 representation of the number
-	//characters represented by base_62_cipher_ vector in the .hh file
-	std::string base_62_number = "";
-
-	core::Size curr_num = starting_num;
-
-	while ( keep_processing )
-			{
-		//take the quotient of the current number by 62
-		core::Size quotient = curr_num / 62;
-
-		//derive the modulus of the current number by 62
-		core::Size mod = curr_num % 62;
-
-		//use the mod value to get the corresponding character from the cipher and append to the string
-		//character appends to the front of the string
-		base_62_number.insert(base_62_number.begin(),utility::code_to_6bit(mod + 1));
-
-		//if the quotient is under 62, get the number from the cipher, otherwise we have to repeat the processing operation
-		if ( quotient < 62 ) {
-			// use the quotient to add to the number, unless the quotient is 0 (no need to add a placeholder 0)
-			if ( quotient != 0 ) {
-				base_62_number.insert(base_62_number.begin(),utility::code_to_6bit(quotient + 1));
-			}
-
-			//we have now fully derived the base 62 number and can stop processing
-			keep_processing = false;
-		} else {
-			//set the quotient to the current number and we continue the operation off of it
-			curr_num = quotient;
-		}
-	}
-
-	return base_62_number;
 }

@@ -104,31 +104,6 @@ public:
 	////////////////////////////////////////////////////////////////////////////
 	//typedefs to help clean up data types that are really lengthy/convoluted, but not making them classes as reuse purpose may be limited and these are probably pretty specific usages
 
-	// @brief 3D matrix cubic representation of a protein as a vector of core::Size (unsigned ints); dubbed as a "protein space fill matrix"
-	// resolution of the matrix may be more refined than one cubic angstrom if using the motifs::resolution_scale_factor flag
-	// unsigned int values are used to denote status of each index within the vector as follows:
-	/*
-	0 = empty and out of sub area, carbon, black
-	1 = protein and out of sub area, fluorine, icy blue
-	2 = empty and in sub area, oxygen, red
-	3 = protein and in sub area, nitrogen, blue
-	4 = do not use, keep even for unoccupied space
-	5 = ligand and out of sub area, sulphur, yellow
-	6 = do not use, keep even for unoccupied space
-	7 = ligand and in sub area, chlorine, green
-	8 = do not use, keep even for unoccupied space
-	9 = ligand and protein out of sub area, phosphorous, orange
-	10 = do not use, keep even for unoccupied space
-	11 = ligand and protein in sub area, iodine, purple
-	*/
-	typedef utility::vector1<utility::vector1<utility::vector1<core::Size>>> SpaceFillMatrix;
-
-	// @brief 3D matrix cubic representation of a protein as a vector of bools; dubbed as a "clash matrix"
-	// resolution of the matrix is 1 cubic angstrom per index
-	// True values indicate that an atom of the protein receptor occupied the index, false indicates empty
-
-	typedef utility::vector1<utility::vector1<utility::vector1<bool>>> ClashMatrix;
-
 	// @brief 3D matrix of core::Size values to represent trios of a central atom and 2 adjacent atoms
 	// this is used to identify atom trios to iterate over for motifs to potentially align against on the ligand side of the motif
 	// this is functionally the same as the SpaceFillMatrix typedef, however this secondary typedef seems useful in avoiding using an object type whose name does not make sense in the given context
@@ -212,32 +187,6 @@ private:
 	// @brief this function is to be called by the constructor(s) to seed initial values to cutoffs that are used for scoring/evaluating metrics of placed ligands in discover() and the functions it calls
 	void seed_cutoff_values();
 
-	// @brief create protein_representation_matrix_
-	//uses working_pose to make the matrix
-	void create_protein_representation_matrix(core::Size & x_shift, core::Size & y_shift, core::Size & z_shift, int & x_bound_int, int & y_bound_int, int & z_bound_int);
-
-	// @brief create protein_representation_matrix_space_fill_
-	//uses working_pose to make the matrix
-	//condensing arguments in function to use vectors to hold xyz trios
-	void create_protein_representation_matrix_space_fill(utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
-		utility::vector1<core::Size> & sub_xyz_min, utility::vector1<core::Size> & sub_xyz_max, utility::vector1<core::Real> & occupied_ratios, utility::vector1<core::Size> & matrix_data_counts, core::Size working_position);
-
-	// @brief function to run a clash check of the placed ligand against the protein target
-	bool ligand_clash_check(core::conformation::ResidueOP ligresOP, core::Size x_shift, core::Size y_shift, core::Size z_shift, int x_bound_int, int y_bound_int, int z_bound_int);
-
-	// @brief function to determine if the placed ligand is satisfactory at filling the binding pocket in question
-	SpaceFillMatrix space_fill_analysis(core::conformation::ResidueOP ligresOP, utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
-		utility::vector1<core::Size> & sub_xyz_min, utility::vector1<core::Size> & sub_xyz_max, utility::vector1<core::Real> & occupied_ratios, utility::vector1<core::Size> & matrix_data_counts);
-
-	// @brief debugging function to export a space fill matrix as a pdb. Occupied cells are represented as a nitrogen and unoccupied cells are represented as an oxygen (considering making one for a clash matrix too)
-	// if printing the whole matrix and not just the sub-area, occupied cells are represented by hydrogens and unoccupied are represented by carbon
-	core::pose::Pose export_space_fill_matrix_as_C_H_O_N_pdb(SpaceFillMatrix space_fill_matrix, utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
-		utility::vector1<core::Real> & occupied_ratios, std::string pdb_name_prefix, core::chemical::MutableResidueType dummylig_mrt);
-
-	// @brief function to be used to convert a base 10 number to base 62 (as a string with characters that are derived by utility::Binary_Util.hh::code_to_6bit())
-	//used in export_space_fill_matrix_as_C_H_O_N_pdb to assign a unique name to an atom (due to limitations in atom icoor data, an atom name can be no longer than 4 characters)
-	std::string base_10_to_base_62(core::Size starting_num);
-
 	// @brief prepare score functions for usage in discovery function. Called within discover() and not in a constructor. This probably shouldn't be messed with, so it is kept private
 	// This previously just was code in discover(), but it is better to compartmentalize for readability
 	void setup_score_functions();
@@ -283,15 +232,6 @@ private:
 	// @brief vector to hold list of all indices to investigate/use as anchor residues, used to set value of working_position_
 	utility::vector1<core::Size> working_positions_;
 
-	// @brief 3D matrix to represent voxelized copy of atoms in pose, used in clash check of placement for quick ruling out of bad placements
-	ClashMatrix protein_representation_matrix_;
-
-	// @brief 3D matrix to represent voxelized copy of atoms in pose in a more geometrically-accurate means than protein_representation_matrix_, used in checking space fill analysis (of binding pocket)
-	SpaceFillMatrix protein_representation_matrix_space_fill_;
-
-	// @brief 1D vector to hold a list of residue indices to be considered in space fill function
-	utility::vector1<core::Size> target_residues_sf_;
-
 	// @brief variable to be used as a cutoff to define the maximum allowed fa_rep score for a placement to be considered
 	core::Real fa_rep_cutoff_;
 
@@ -331,4 +271,12 @@ private:
 
 	// @brief a copy of either whole_score_fxn_ or fa_atr_rep_fxn_ that is defined by the OptionKeys::motifs::highresdock_with_whole_score_fxn flag and is used in highresdock and scoring operations
 	core::scoring::ScoreFunctionOP working_fxn_;
+
+	// @brief a ProteinGrid of the empty working_pose_ to be used for protein-ligand clashing. This does not use the space_fill functionality
+	protocols::protein_grid::ProteinGridOP clash_pose_grid_;
+
+	// @brief a ProteinGrid of the empty working_pose_ to be used for space_fill functionality
+	//for the space fill analysis, another proteingrid will be cloned of this template in the discover function
+	//The clone is because it should be faster to clone to wipe placed ligand data, as opposed to call the wrap and space fill functions again as a form of wiping the object
+	protocols::protein_grid::ProteinGridOP sf_pose_grid_;
 };

@@ -252,6 +252,30 @@ namespace protein_grid {
 		return ((sub_region_max_[1] - sub_region_min_[1]) * (sub_region_max_[2] - sub_region_min_[2]) * (sub_region_max_[3] - sub_region_min_[3]));
 	}
 
+	// @brief simple function to derive the pre-calculated occpuied ratio of the full matrix
+	core::Real ProteinGrid::get_grid_occupied_cell_ratio()
+	{
+		return fullness_ratio_;
+	}
+
+	// @brief simple function to derive the pre-calculated occpuied ratio of the sub area matrix
+	core::Real ProteinGrid::get_sub_grid_occupied_cell_ratio()
+	{
+		return sub_fullness_ratio_;
+	}
+
+	// @brief simple function to derive the pre-calculated occpuied cell count of the full matrix
+	core::Real ProteinGrid::get_grid_occupied_cell_count()
+	{
+		return matrix_fullness_;
+	}
+
+	// @brief simple function to derive the pre-calculated occpuied cell count of the sub area matrix
+	core::Real ProteinGrid::get_sub_grid_occupied_cell_count()
+	{
+		return sub_matrix_fullness_;
+	}
+
 	// @brief overwrite the true sub area center and dimensions
 	//makes a call to reset the wrap matrix around pose to account for the change in the sub area
 	void ProteinGrid::set_sub_regions( numeric::xyzVector<int> sub_area_center, utility::vector1<core::Size> sub_region_dimensions )
@@ -428,6 +452,7 @@ namespace protein_grid {
 		
 		//reset the fullness count
 		matrix_fullness_ = 0;
+		sub_matrix_fullness_ = 0;
 
 		//iterate over each atom in working_pose
 		//translate the atom coordinates to where the center would be in the matrix
@@ -1371,6 +1396,8 @@ namespace protein_grid {
 
 		matrix_fullness_ = 0;
 		fullness_ratio_ = 0;
+		sub_matrix_fullness_ = 0;
+		sub_fullness_ratio_ = 0;
 
 		for ( core::Size x = 1; x <= xyz_bound_[1]; ++x ) {
 			//make a 2D  matrix
