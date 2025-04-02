@@ -747,14 +747,15 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 				binding_pocket_dimensions = option[ OptionKeys::motifs::binding_pocket_dimensions_sf ]();
 
 				//now derive the binding pocket center, and ensure the input is valid
-				utility::vector1<core::Size> binding_pocket_center_xyz = option[ OptionKeys::motifs::binding_pocket_center_sf ]();
+				numeric::xyzVector<int> bp_xyz;
+				utility::vector1<int> binding_pocket_center_xyz = option[ OptionKeys::motifs::binding_pocket_center_sf ]();
 
 				//ensure that there are enough entries in the center vector
 				if ( binding_pocket_center_xyz.size() <= 2 ) {
 					//handle if too small
 					ms_tr.Warning << "You have only inputted " << binding_pocket_center_xyz.size() << " coordinates for the binding pocket center xyz coordinates. We need exactly 3 to work. We can't do anything with this, and will skip this method and will not use a sub-area/binding pocket in analyses." << std::endl;
 					//make the proteingrid that just wraps around the working_pose_
-					clash_pose_grid_(new protocols::protein_grid::ProteinGrid(working_pose_, resolution_increase_factor));
+					clash_pose_grid_ = utility::pointer::make_shared<protocols::protein_grid::ProteinGrid>(working_pose_, resolution_increase_factor);
 				}
 				else
 				{
@@ -766,32 +767,48 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							ms_tr.Warning << "You have inputted an excess value using the motifs::binding_pocket_center_sf flag. This is value #" << coordinate << " in the input vector with a value of: " << binding_pocket_center_xyz[coordinate] << ". Ignoring this bad input, and you should review the proper usage for this flag." << std::endl;
 
 						}
+						else
+						{
+							//translation of contents of the input vector1 into a xyzvector to use in the ProteinGrid
+							if(coordinate == 0)
+							{
+								bp_xyz.x() = binding_pocket_center_xyz[coordinate];
+							}
+							if(coordinate == 1)
+							{
+								bp_xyz.y() = binding_pocket_center_xyz[coordinate];
+							}
+							if(coordinate == 2)
+							{
+								bp_xyz.z() = binding_pocket_center_xyz[coordinate];
+							}
+						}
 					}
 
 					//make the proteingrid that wraps around the working_pose_ and declares a sub area
-					clash_pose_grid_(new protocols::protein_grid::ProteinGrid(working_pose_, resolution_increase_factor, binding_pocket_center_xyz, binding_pocket_dimensions));				
+					clash_pose_grid_ = utility::pointer::make_shared<protocols::protein_grid::ProteinGrid>(working_pose_, resolution_increase_factor, bp_xyz, binding_pocket_dimensions);			
 				}
 			}
 			else
 			{
 				//make the proteingrid that just wraps around the working_pose_
-				clash_pose_grid_(new protocols::protein_grid::ProteinGrid(working_pose_, resolution_increase_factor));
+				clash_pose_grid_ = utility::pointer::make_shared<protocols::protein_grid::ProteinGrid>(working_pose_, resolution_increase_factor);
 			}
 		}
 		else
 		{
 			//make the proteingrid that just wraps around the working_pose_
-			clash_pose_grid_(new protocols::protein_grid::ProteinGrid(working_pose_, resolution_increase_factor));
+			clash_pose_grid_ = utility::pointer::make_shared<protocols::protein_grid::ProteinGrid>(working_pose_, resolution_increase_factor);
 		}
 
 		//now create the space fill matrix, first as a copy of the clash matrix
-		sf_pose_grid_(new protocols::protein_grid::ProteinGrid(*clash_pose_grid_));
+		sf_pose_grid_ = utility::pointer::make_shared<protocols::protein_grid::ProteinGrid>(*clash_pose_grid_);
 
 		//run space fill on the space fill grid
 		sf_pose_grid_->project_lj_radii();
 
 		//create a copy of the space fill matrix that will be used for checking the space fill with the ligand. The member sf_pose_grid will be used as a base to copy back over after the space fill analysis, since that should be faster than reverting the grid using built-in functions (since we have a copy to use as a shortcut)
-		protocols::protein_grid::ProteinGridOP working_sf_pose_grid(new protocols::protein_grid::ProteinGrid(*sf_pose_grid_));
+		protocols::protein_grid::ProteinGridOP working_sf_pose_grid = utility::pointer::make_shared<protocols::protein_grid::ProteinGrid>(*sf_pose_grid_);
 
 		//derive the occupied ratios of the empty system before placing any ligands, in case we are interested in deriving differentials in space fill
 		//index 1 corresponds to the occupied ratio for the whole system
@@ -980,7 +997,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						}
 
 						//at end before check, reset the working_sf_pose_grid to wipe the placed ligand
-						working_sf_pose_grid(new protocols::protein_grid::ProteinGrid(*sf_pose_grid_));
+						working_sf_pose_grid = utility::pointer::make_shared<protocols::protein_grid::ProteinGrid>(*sf_pose_grid_);
 
 						//run check for if the placement is passable based on score
 						//either the whole system score or the sub area score need to pass (one can fail)
