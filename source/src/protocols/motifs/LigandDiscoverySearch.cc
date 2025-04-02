@@ -770,15 +770,15 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						else
 						{
 							//translation of contents of the input vector1 into a xyzvector to use in the ProteinGrid
-							if(coordinate == 0)
+							if(coordinate == 1)
 							{
 								bp_xyz.x() = binding_pocket_center_xyz[coordinate];
 							}
-							if(coordinate == 1)
+							if(coordinate == 2)
 							{
 								bp_xyz.y() = binding_pocket_center_xyz[coordinate];
 							}
-							if(coordinate == 2)
+							if(coordinate == 3)
 							{
 								bp_xyz.z() = binding_pocket_center_xyz[coordinate];
 							}
