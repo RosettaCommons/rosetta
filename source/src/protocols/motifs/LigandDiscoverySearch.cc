@@ -821,7 +821,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		//export the empty space fill matrix if selected
 		if ( option[ OptionKeys::motifs::output_space_fill_matrix_pdbs ] ) {
 			//std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark() + "_rep_" + std::to_string(fa_rep) + "_atr_" + std::to_string(fa_atr) + "_delta_" + std::to_string(delta_score) + "_constr_" + std::to_string(sc_constraint_check) + ".pdb";
-			std::string matrix_pdb_prefix = output_prefix + "_empty_";
+			std::string matrix_pdb_prefix = output_prefix + "_empty";
 			//call function to export, use "empty" as the string prefix
 			working_sf_pose_grid->export_protein_matrix_to_pdb(matrix_pdb_prefix);
 		}
