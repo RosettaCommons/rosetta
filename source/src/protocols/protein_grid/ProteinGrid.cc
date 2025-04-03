@@ -436,8 +436,10 @@ namespace protein_grid {
 
 		std::cout << "Derived max and min, now adjusting sub area cells to be empty with value of 2." << std::endl;
 
-		std::cout << "Min values are: " << sub_region_min_[1] << "," << sub_region_min_[2] << "," << sub_region_min_[3] << std::endl;
-		std::cout << "Max values are: " << sub_region_max_[1] << "," << sub_region_max_[2] << "," << sub_region_max_[3] << std::endl;
+		std::cout << "Min sub values are: " << sub_region_min_[1] << "," << sub_region_min_[2] << "," << sub_region_min_[3] << std::endl;
+		std::cout << "Max sub values are: " << sub_region_max_[1] << "," << sub_region_max_[2] << "," << sub_region_max_[3] << std::endl;
+
+		std::cout << "Matrix boundaries are: " << xyz_bound_[1] << "," << xyz_bound_[2] << "," << xyz_bound_[3] << std::endl;
 
 		//with maxima and minima defined, set values within the sub area to 2 instead of 0
 		//2 is defined as empty and within the sub area
