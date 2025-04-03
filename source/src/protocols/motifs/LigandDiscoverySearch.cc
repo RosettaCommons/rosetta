@@ -812,6 +812,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		occupied_ratios[1] = working_sf_pose_grid->get_grid_occupied_cell_ratio();
 		occupied_ratios[2] = working_sf_pose_grid->get_sub_grid_occupied_cell_ratio();
 
+		std::cout << "confirmation of values in proteingrids" << std::endl;
+
 		//create and load in the space fill cutoff scores (if there are any), default to zero; zero can be an acceptable inputted score
 		//store as a vector
 		//index 1 is the cutoff for the whole system, index 2 is for the sub area, index 3 is for the sub area differential cutoff
