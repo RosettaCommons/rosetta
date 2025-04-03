@@ -1396,13 +1396,6 @@ namespace protein_grid {
 		xyz_bound_[2] = std::floor((xyz_shift_[2] + largest_y) * resolution_);
 		xyz_bound_[3] = std::floor((xyz_shift_[3] + largest_z) * resolution_);
 
-		//if the true_sub_area_dimension_ values are not 0, then we have a sub area that we want to work with and consider for investigation
-		if(using_sub_area_)
-		{
-			//apply the shift and resolution to the true center and dimension, and derive the sub area max and min
-			define_sub_regions();
-		}
-
 		//create 3D matrix to roughly represent 3D coordinate space of protein
 		ms_tr.Debug << "Creating protein clash coordinate matrix. Dimensions of matrix are " << xyz_bound_[1] << "," << xyz_bound_[2] << "," << xyz_bound_[3] << std::endl;
 		ms_tr.Debug << "Shift from from original coordinates, and multiplied by current resolution factor (" << resolution_ << ") are: " << xyz_shift_[1] << "," << xyz_shift_[2] << "," << xyz_shift_[3] << std::endl;
@@ -1433,6 +1426,14 @@ namespace protein_grid {
 			}
 			//push a 2D  matrix into the 3D matrix
 			protein_matrix_.push_back(sub_matrix);
+		}
+
+		//this needs to be defined after filling out the protein_matrix_
+		//if the true_sub_area_dimension_ values are not 0, then we have a sub area that we want to work with and consider for investigation
+		if(using_sub_area_)
+		{
+			//apply the shift and resolution to the true center and dimension, and derive the sub area max and min
+			define_sub_regions();
 		}
 
 		//seed the matrix with approximate coordinates of each atom
