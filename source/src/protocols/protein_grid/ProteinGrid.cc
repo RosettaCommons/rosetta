@@ -310,7 +310,7 @@ namespace protein_grid {
 	//leaving this function as public
 	void ProteinGrid::define_sub_regions()
 	{
-		ms_tr.Debug << "Adjusting sub area center." << std::endl;
+		std::cout << "Adjusting sub area center." << std::endl;
 
 		//first, set the center and then adjust based on the resolution and shift values
 		adjusted_sub_area_center_.x() = std::floor((xyz_shift_[1] + true_sub_area_center_.x()) * resolution_);
@@ -334,14 +334,14 @@ namespace protein_grid {
 		}
 
 	
-		ms_tr.Debug << "Prepared sub area center, adjusting dimensions." << std::endl;
+		std::cout << "Prepared sub area center, adjusting dimensions." << std::endl;
 
 		//now, set the adjusted dimensions
 		adjusted_sub_region_dimensions_[1] = std::floor(true_sub_region_dimensions_[1] * resolution_);
 		adjusted_sub_region_dimensions_[2] = std::floor(true_sub_region_dimensions_[2] * resolution_);
 		adjusted_sub_region_dimensions_[3] = std::floor(true_sub_region_dimensions_[3] * resolution_);
 
-		ms_tr.Debug << "Prepared sub area dimensions, deriving max and min." << std::endl;
+		std::cout << "Prepared sub area dimensions, deriving max and min." << std::endl;
 
 		//derive the min and max
 		//if the min or max are below 1 or beyond the dimension boundary, set the value to be that boundary
@@ -434,7 +434,7 @@ namespace protein_grid {
 			sub_region_min_[3] = adjusted_sub_area_center_.z() - adjusted_sub_region_dimensions_[3];
 		}
 
-		ms_tr.Debug << "Derived max and min, now adjusting sub area cells to be empty with value of 2." << std::endl;
+		std::cout << "Derived max and min, now adjusting sub area cells to be empty with value of 2." << std::endl;
 
 		//with maxima and minima defined, set values within the sub area to 2 instead of 0
 		//2 is defined as empty and within the sub area
@@ -449,7 +449,7 @@ namespace protein_grid {
 			}
 		}
 
-		ms_tr.Debug << "Done setting values." << std::endl;
+		std::cout << "Done setting values." << std::endl;
 
 		//set the sub_matrix_volume_
 		sub_matrix_volume_ = get_sub_area_grid_volume();
