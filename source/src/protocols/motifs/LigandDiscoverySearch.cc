@@ -971,7 +971,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 					//continue because we clash
 					if ( has_clashing == true ) {
-						continue;
+						//continue;
+						std::cout << "we have a clash here" << std::endl;
 					}
 
 					//space fill analysis block
