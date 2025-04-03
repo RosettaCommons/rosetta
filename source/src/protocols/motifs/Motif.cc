@@ -1153,7 +1153,7 @@ Motif::place_atoms_(
 bool
 Motif::motif_atom_match_lax(
 	Motif compare
-	) const
+) const
 {
 	if ( restype_name1_ != compare.restype_name1() ) return false;
 	if ( res1_atom1_name_ != compare.res1_atom1_name() ) return false;
@@ -1171,7 +1171,7 @@ Motif::motif_atom_match_lax(
 bool
 Motif::motif_atom_match_strict(
 	Motif compare
-	) const
+) const
 {
 	if ( restype_name2_ != compare.restype_name2() ) return false;
 	if ( motif_atom_match_lax(compare) == false ) return false;

@@ -735,7 +735,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		//next, identify if we want to define a sub-area (binding pocket) to explore further
 		//we will set up the ProteinGrid depending on whether we have the sub area or not
 		//use if we used binding_pocket_dimensions_sf and binding_pocket_center_sf flags to define the sub area dimensions and center
-		if ( option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].user() && option[ OptionKeys::motifs::binding_pocket_center_sf ].user()) {
+		if ( option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].user() && option[ OptionKeys::motifs::binding_pocket_center_sf ].user() ) {
 			//make sure dimensions vector is valid
 			//can not use if fewer than 3 values (do not use), warn if there are more than 3
 			if ( option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].size()<3 ) {
@@ -762,9 +762,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					ms_tr.Warning << "You have only inputted " << binding_pocket_center_xyz.size() << " coordinates for the binding pocket center xyz coordinates. We need exactly 3 to work. We can't do anything with this, and will skip this method and will not use a sub-area/binding pocket in analyses." << std::endl;
 					//make the proteingrid that just wraps around the working_pose_
 					clash_pose_grid_ = utility::pointer::make_shared<protocols::protein_grid::ProteinGrid>(working_pose_, resolution_increase_factor);
-				}
-				else
-				{
+				} else {
 					//throw potential warnings if there are more than 3 entries in the input, and then make the grid that also has a sub area
 					for ( core::Size coordinate = 1; coordinate <= binding_pocket_center_xyz.size(); ++coordinate ) {
 						//apply relevant xyz shift as long as the coordinate is between 1-3, otherwise throw a warning
@@ -772,32 +770,25 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 							ms_tr.Warning << "You have inputted an excess value using the motifs::binding_pocket_center_sf flag. This is value #" << coordinate << " in the input vector with a value of: " << binding_pocket_center_xyz[coordinate] << ". Ignoring this bad input, and you should review the proper usage for this flag." << std::endl;
 
-						}
-						else
-						{
+						} else {
 							//translation of contents of the input vector1 into a xyzvector to use in the ProteinGrid
-							if(coordinate == 1)
-							{
+							if ( coordinate == 1 ) {
 								bp_xyz.x() = binding_pocket_center_xyz[coordinate];
 							}
-							if(coordinate == 2)
-							{
+							if ( coordinate == 2 ) {
 								bp_xyz.y() = binding_pocket_center_xyz[coordinate];
 							}
-							if(coordinate == 3)
-							{
+							if ( coordinate == 3 ) {
 								bp_xyz.z() = binding_pocket_center_xyz[coordinate];
 							}
 						}
 					}
 
 					//make the proteingrid that wraps around the working_pose_ and declares a sub area
-					clash_pose_grid_ = utility::pointer::make_shared<protocols::protein_grid::ProteinGrid>(working_pose_, resolution_increase_factor, bp_xyz, binding_pocket_dimensions);			
+					clash_pose_grid_ = utility::pointer::make_shared<protocols::protein_grid::ProteinGrid>(working_pose_, resolution_increase_factor, bp_xyz, binding_pocket_dimensions);
 				}
 			}
-		}
-		else
-		{
+		} else {
 			//make the proteingrid that just wraps around the working_pose_
 			clash_pose_grid_ = utility::pointer::make_shared<protocols::protein_grid::ProteinGrid>(working_pose_, resolution_increase_factor);
 		}
@@ -825,7 +816,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			//call function to export, use "empty" as the string prefix
 			working_sf_pose_grid->export_protein_matrix_to_pdb(matrix_pdb_prefix);
 		}
-		
+
 
 		//create and load in the space fill cutoff scores (if there are any), default to zero; zero can be an acceptable inputted score
 		//store as a vector

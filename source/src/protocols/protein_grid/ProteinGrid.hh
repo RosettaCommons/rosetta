@@ -189,7 +189,7 @@ private:
 	core::Size matrix_volume_;
 
 	// @brief value to hold the number of cells/voxels within the sub area matrix, derived by the product of the xyz_bound_ dimensions
-	core::Size sub_matrix_volume_;	
+	core::Size sub_matrix_volume_;
 
 	// @brief floating value that can be used to scale the resolution of the protein grid, if desired
 	// default resolution of voxels are at 1 cubic angstrom (generally recommended)
@@ -245,4 +245,4 @@ private:
 }
 
 
-#endif 
+#endif
