@@ -441,6 +441,10 @@ namespace protein_grid {
 
 		std::cout << "Matrix boundaries are: " << xyz_bound_[1] << "," << xyz_bound_[2] << "," << xyz_bound_[3] << std::endl;
 
+		std::cout << "protein_matrix_.size()" << protein_matrix_.size() << std::endl;
+		std::cout << "protein_matrix_[1].size()" << protein_matrix_[1].size() << std::endl;
+		std::cout << "protein_matrix_[1][1].size()" << protein_matrix_[1][1].size() << std::endl;
+
 		//with maxima and minima defined, set values within the sub area to 2 instead of 0
 		//2 is defined as empty and within the sub area
 		for (core::Size i = sub_region_min_[1]; i <= sub_region_max_[1]; ++i)
