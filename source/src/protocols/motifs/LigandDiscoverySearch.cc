@@ -1075,6 +1075,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//score the minipose and set the value to a bool
 					bool minipose_scoring = score_minipose(minipose,fa_rep,fa_atr,fa_atr_rep_score_before);
 
+					//debug print of unique minipose
+					//DO NOT KEEP THIS IN THE final!
+					core::io::pdb::dump_pdb(*minipose, "minipose_" + output_prefix + "_ResPos_" + std::to_string(working_position) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark() + ".pdb"); //std::cout
+
 					//delete the last residue off minipose (the ligand), since we no longer need it and can recycle the minipose for further iterations
 					minipose->delete_residue_slow(minipose->size());
 
