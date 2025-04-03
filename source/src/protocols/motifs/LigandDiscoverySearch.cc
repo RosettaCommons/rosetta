@@ -812,7 +812,12 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		occupied_ratios[1] = working_sf_pose_grid->get_grid_occupied_cell_ratio();
 		occupied_ratios[2] = working_sf_pose_grid->get_sub_grid_occupied_cell_ratio();
 
+		
 		std::cout << "confirmation of values in proteingrids" << std::endl;
+		std::cout << "sf_pose_grid_->get_grid_occupied_cell_ratio() " << sf_pose_grid_->get_grid_occupied_cell_ratio() << std::endl;
+		std::cout << "sf_pose_grid_->get_sub_grid_occupied_cell_ratio() " << sf_pose_grid_->get_sub_grid_occupied_cell_ratio() << std::endl;
+		std::cout << "working_sf_pose_grid->get_grid_occupied_cell_ratio() " << working_sf_pose_grid->get_grid_occupied_cell_ratio() << std::endl;
+		std::cout << "working_sf_pose_grid->get_sub_grid_occupied_cell_ratio() " << working_sf_pose_grid->get_sub_grid_occupied_cell_ratio() << std::endl;
 
 		//create and load in the space fill cutoff scores (if there are any), default to zero; zero can be an acceptable inputted score
 		//store as a vector
