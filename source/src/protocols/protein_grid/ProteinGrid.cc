@@ -460,6 +460,9 @@ namespace protein_grid {
 	// a main argument for retaining this as-is is that there is less reason to look at the hwole pose, and usually working with the sub-area only is better, which is less likely to be cut off (only if it is at any edges)
 	void ProteinGrid::project_lj_radii(){
 		
+		//set using lj radii to true
+		using_lj_radii_ = true;
+
 		//reset the fullness count
 		matrix_fullness_ = 0;
 		sub_matrix_fullness_ = 0;
