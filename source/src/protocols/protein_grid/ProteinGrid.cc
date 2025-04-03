@@ -619,16 +619,28 @@ namespace protein_grid {
 								//check if the coordinate is within the sub-area, if so, then adjust the value if the point is within the sub area
 								if(using_sub_area_ && is_coordinate_in_sub_area(i,j,k))
 								{
+									//increment the both fullness if this cell was previously empty (and in the sub area)
+									if(protein_matrix_[i][j][k] == 2)
+									{
+										++sub_matrix_fullness_;
+										++matrix_fullness_;
+									}
+							
 									protein_matrix_[i][j][k] = 3;
-									//increment the sub area fullness
-									++sub_matrix_fullness_;
+
 								}
 								else
 								{
+									//increment the matrix fullness if this cell was previously empty
+									if(protein_matrix_[i][j][k] == 0)
+									{
+										++matrix_fullness_;
+									}
+
 									protein_matrix_[i][j][k] = 1;
 								}
-								//increment occupied cell count by 1
-								++matrix_fullness_;
+								
+								
 							}
 						}
 					}
@@ -1441,20 +1453,31 @@ namespace protein_grid {
 		//apply the shift to the coordinates
 		//approximated by flooring coordinates down
 		for ( core::Size xyzVec = 1; xyzVec <= atom_coordinates.size(); ++xyzVec ) {
-			protein_matrix_[floor((atom_coordinates[xyzVec].x() + xyz_shift_[1]) * resolution_)][floor((atom_coordinates[xyzVec].y() + xyz_shift_[2])  * resolution_)][floor((atom_coordinates[xyzVec].z() + xyz_shift_[3])  * resolution_)] = 1;
+			
 
 			//check if the coordinate is within the sub-area, if so, then adjust the value if the point is within the sub area
 			if(using_sub_area_ && is_coordinate_in_sub_area(floor((atom_coordinates[xyzVec].x() + xyz_shift_[1]) * resolution_), floor((atom_coordinates[xyzVec].y() + xyz_shift_[2])  * resolution_), floor((atom_coordinates[xyzVec].z() + xyz_shift_[3])  * resolution_)))
 			{
+				//increment the both fullness if this cell was previously empty (and in the sub area)
+				if(protein_matrix_[floor((atom_coordinates[xyzVec].x() + xyz_shift_[1]) * resolution_)][floor((atom_coordinates[xyzVec].y() + xyz_shift_[2])  * resolution_)][floor((atom_coordinates[xyzVec].z() + xyz_shift_[3])  * resolution_)] == 2)
+				{
+					++sub_matrix_fullness_;
+					++matrix_fullness_;
+				}
+
 				protein_matrix_[floor((atom_coordinates[xyzVec].x() + xyz_shift_[1]) * resolution_)][floor((atom_coordinates[xyzVec].y() + xyz_shift_[2])  * resolution_)][floor((atom_coordinates[xyzVec].z() + xyz_shift_[3])  * resolution_)] = 3;
-				
-				//increment the sub area fullness
-				++sub_matrix_fullness_;
 			}
+			else
+			{
+				//increment the main fullness if this cell was previously empty
+				if(protein_matrix_[floor((atom_coordinates[xyzVec].x() + xyz_shift_[1]) * resolution_)][floor((atom_coordinates[xyzVec].y() + xyz_shift_[2])  * resolution_)][floor((atom_coordinates[xyzVec].z() + xyz_shift_[3])  * resolution_)] == 2)
+				{
+					++matrix_fullness_;
+				}
 
-
-			//increment occupied cell count by 1
-			++matrix_fullness_;
+				//set to 1
+				protein_matrix_[floor((atom_coordinates[xyzVec].x() + xyz_shift_[1]) * resolution_)][floor((atom_coordinates[xyzVec].y() + xyz_shift_[2])  * resolution_)][floor((atom_coordinates[xyzVec].z() + xyz_shift_[3])  * resolution_)] = 1;
+			}
 		}
 
 		//safety check to ensure that we actually had atoms in the pose, and that the matrix has a nonzero volume
