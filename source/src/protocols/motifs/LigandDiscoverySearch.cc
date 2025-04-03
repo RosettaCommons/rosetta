@@ -826,11 +826,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			working_sf_pose_grid->export_protein_matrix_to_pdb(matrix_pdb_prefix);
 		}
 		
-		std::cout << "confirmation of values in proteingrids" << std::endl;
-		std::cout << "sf_pose_grid_->get_grid_occupied_cell_ratio() " << sf_pose_grid_->get_grid_occupied_cell_ratio() << std::endl;
-		std::cout << "sf_pose_grid_->get_sub_grid_occupied_cell_ratio() " << sf_pose_grid_->get_sub_grid_occupied_cell_ratio() << std::endl;
-		std::cout << "working_sf_pose_grid->get_grid_occupied_cell_ratio() " << working_sf_pose_grid->get_grid_occupied_cell_ratio() << std::endl;
-		std::cout << "working_sf_pose_grid->get_sub_grid_occupied_cell_ratio() " << working_sf_pose_grid->get_sub_grid_occupied_cell_ratio() << std::endl;
 
 		//create and load in the space fill cutoff scores (if there are any), default to zero; zero can be an acceptable inputted score
 		//store as a vector
@@ -1003,7 +998,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							fill_differential = space_fill_scores[2] - occupied_ratios[2];
 						}
 
-						std::cout << "Differential value: " << fill_differential <<std::endl;
 
 						//export the space fill matrix if selected
 						if ( option[ OptionKeys::motifs::output_space_fill_matrix_pdbs ] ) {
@@ -1075,9 +1069,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//score the minipose and set the value to a bool
 					bool minipose_scoring = score_minipose(minipose,fa_rep,fa_atr,fa_atr_rep_score_before);
 
-					//debug print of unique minipose
-					//DO NOT KEEP THIS IN THE final!
-					core::io::pdb::dump_pdb(*minipose, "minipose_" + output_prefix + "_ResPos_" + std::to_string(working_position) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark() + ".pdb"); //std::cout
+
 
 					//delete the last residue off minipose (the ligand), since we no longer need it and can recycle the minipose for further iterations
 					minipose->delete_residue_slow(minipose->size());

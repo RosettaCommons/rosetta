@@ -249,7 +249,7 @@ namespace protein_grid {
 	// @brief simple function to derive the volume of the sub area matrix
 	core::Size ProteinGrid::get_sub_area_grid_volume()
 	{
-		return ((sub_region_max_[1] - sub_region_min_[1]) * (sub_region_max_[2] - sub_region_min_[2]) * (sub_region_max_[3] - sub_region_min_[3]));
+		return ((sub_region_max_[1] - sub_region_min_[1] + 1) * (sub_region_max_[2] - sub_region_min_[2] + 1) * (sub_region_max_[3] - sub_region_min_[3] + 1));
 	}
 
 	// @brief simple function to derive the pre-calculated occpuied ratio of the full matrix
@@ -671,21 +671,7 @@ namespace protein_grid {
 			sub_fullness_ratio_ = static_cast<core::Real>(sub_matrix_fullness_) / sub_matrix_volume_;
 		}
 
-		std::cout << "end of project_lj_radius" <<std::endl;
-		std::cout << "whole fullness: " << matrix_fullness_ << std::endl;
-		std::cout << "whole fullness ratio: " << fullness_ratio_ << std::endl;
-		std::cout << "max volume member: " << matrix_volume_ << std::endl;
-		std::cout << "max volume function: " << get_grid_volume() << std::endl;
 
-		//if using a sub area, tack that onto the name
-		if(using_sub_area_)
-		{
-			std::cout << "sub fullness: " << sub_matrix_fullness_ << std::endl;
-			std::cout << "sub fullness ratio: " << sub_fullness_ratio_ << std::endl;
-			std::cout << "max sub volume member: " << sub_matrix_volume_ << std::endl;
-			std::cout << "max  subvolume function: " << get_sub_area_grid_volume() << std::endl;
-		}
-		std::cout << "=======================" <<std::endl;
 	}
 
 	//@brief function where a residue object (i.e. ligand) outside of a pose can be imposed upon the matrix, and the space filling volume of the system with the ligand can be analyzed
@@ -913,21 +899,7 @@ namespace protein_grid {
 			sub_fullness_ratio_ = static_cast<core::Real>(sub_matrix_fullness_) / sub_matrix_volume_;
 		}
 
-		std::cout << "end of space fill with ligand" <<std::endl;
-		std::cout << "whole fullness: " << matrix_fullness_ << std::endl;
-		std::cout << "whole fullness ratio: " << fullness_ratio_ << std::endl;
-		std::cout << "max volume member: " << matrix_volume_ << std::endl;
-		std::cout << "max volume function: " << get_grid_volume() << std::endl;
 
-		//if using a sub area, tack that onto the name
-		if(using_sub_area_)
-		{
-			std::cout << "sub fullness: " << sub_matrix_fullness_ << std::endl;
-			std::cout << "sub fullness ratio: " << sub_fullness_ratio_ << std::endl;
-			std::cout << "max sub volume member: " << sub_matrix_volume_ << std::endl;
-			std::cout << "max  subvolume function: " << get_sub_area_grid_volume() << std::endl;
-		}
-		std::cout << "=======================" <<std::endl;
 	}
 
 	//@brief function that takes in a residue object (i.e. ligand) and determines if the ligand clashes with the pose in this class
@@ -1283,21 +1255,14 @@ namespace protein_grid {
 		//create a file name to output the pose to
 		std::string matrix_pdb_name = pdb_name_prefix + "_WholeRatio_" + std::to_string(fullness_ratio_);
 
-		std::cout << pdb_name_prefix <<std::endl;
-		std::cout << "whole fullness: " << matrix_fullness_ << std::endl;
-		std::cout << "whole fullness ratio: " << fullness_ratio_ << std::endl;
-		std::cout << "max volume member: " << matrix_volume_ << std::endl;
-		std::cout << "max volume function: " << get_grid_volume() << std::endl;
+
 
 		//if using a sub area, tack that onto the name
 		if(using_sub_area_)
 		{
 			matrix_pdb_name = matrix_pdb_name + "_SubRatio_" + std::to_string(sub_fullness_ratio_);
 
-			std::cout << "sub fullness: " << sub_matrix_fullness_ << std::endl;
-			std::cout << "sub fullness ratio: " << sub_fullness_ratio_ << std::endl;
-			std::cout << "max sub volume member: " << sub_matrix_volume_ << std::endl;
-			std::cout << "max  subvolume function: " << get_sub_area_grid_volume() << std::endl;
+
 		}
 		
 		//tack on end 
