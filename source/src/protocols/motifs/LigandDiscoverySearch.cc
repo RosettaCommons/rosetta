@@ -516,6 +516,8 @@ bool LigandDiscoverySearch::score_minipose(const core::pose::PoseOP & minipose, 
 	//high fa_rep means clashing, want low fa_rep
 	fa_rep = minipose->energies().residue_total_energies(minipose->size())[core::scoring::fa_rep];
 
+	ms_tr.Debug << "fa_rep = " << fa_rep << std::endl;
+
 	//check if fa_rep is good
 	//positive score is bad
 	//best scores are negative and closest to 0
@@ -527,6 +529,8 @@ bool LigandDiscoverySearch::score_minipose(const core::pose::PoseOP & minipose, 
 
 	fa_atr = minipose->energies().residue_total_energies(minipose->size())[core::scoring::fa_atr];
 
+	ms_tr.Debug << "fa_atr = " << fa_rep << std::endl;
+
 	//run fa_atr check
 	//don't keep if fa_atr is greater than cutoff
 	if ( fa_atr > fa_atr_cutoff_ ) {
@@ -535,6 +539,8 @@ bool LigandDiscoverySearch::score_minipose(const core::pose::PoseOP & minipose, 
 
 	//score whole minipose with atr_rep function
 	fa_atr_rep_score_before = fa_atr_rep_fxn_->score(*minipose);
+
+	ms_tr.Debug << "fa_atr_rep = " << fa_rep << std::endl;
 
 	//check if worse than cutoff
 	if ( fa_atr_rep_score_before > fa_atr_rep_cutoff_ ) {
