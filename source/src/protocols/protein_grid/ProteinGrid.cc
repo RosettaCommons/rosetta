@@ -951,12 +951,12 @@ namespace protein_grid {
 			//if the value is odd, then it is occupied by the pose (or technically could be a placed ligand, but that would indicate a clash as well)
 			if(protein_matrix_[atom_xyz.x()][atom_xyz.y()][atom_xyz.z()] % 2 == 1)
 			{
-				return false;
+				return true;
 			}
 		}
 
 		//if we iterated over all atoms and made it to this point, return true
-		return true;
+		return false;
 	}
 
 	// @ brief function that prints out the current state of the ProteinMatrix as a Pose, so the user can do things like write the pose to a pdb
