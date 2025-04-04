@@ -1310,12 +1310,19 @@ void ProteinGrid::wrap_matrix_around_pose()
 	ms_tr.Debug << "Creating protein clash coordinate matrix. Dimensions of matrix are " << xyz_bound_[1] << "," << xyz_bound_[2] << "," << xyz_bound_[3] << std::endl;
 	ms_tr.Debug << "Shift from from original coordinates, and multiplied by current resolution factor (" << resolution_ << ") are: " << xyz_shift_[1] << "," << xyz_shift_[2] << "," << xyz_shift_[3] << std::endl;
 
+	std::cout << "Creating protein clash coordinate matrix. Dimensions of matrix are " << xyz_bound_[1] << "," << xyz_bound_[2] << "," << xyz_bound_[3] << std::endl;
+	std::cout << "Shift from from original coordinates, and multiplied by current resolution factor (" << resolution_ << ") are: " << xyz_shift_[1] << "," << xyz_shift_[2] << "," << xyz_shift_[3] << std::endl;
+
 	//wipe the current contents of the protein_matrix_ and reset fullness values
 	//create an empty dummy vector, and then assign protein_matrix_ with it
 	ProteinMatrix dummy_matrix;
 	protein_matrix_ = dummy_matrix;
 
+	std::cout << "pre volume: " << matrix_volume_ << std::endl;
+
 	matrix_volume_ = get_grid_volume();
+
+	std::cout << "post volume: " << matrix_volume_ << std::endl;
 
 	matrix_fullness_ = 0;
 	fullness_ratio_ = 0;
