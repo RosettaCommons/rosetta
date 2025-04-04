@@ -1340,24 +1340,31 @@ void ProteinGrid::wrap_matrix_around_pose()
 	//approximated by flooring coordinates down
 	for ( core::Size xyzVec = 1; xyzVec <= atom_coordinates.size(); ++xyzVec ) {
 
+		//declaring variables to more easily access coordinates in the protein_matrix_
+		core::Size x_idx = floor((atom_coordinates[xyzVec].x() + xyz_shift_[1]) * resolution_);
+		core::Size y_idx = floor((atom_coordinates[xyzVec].y() + xyz_shift_[2]) * resolution_);
+		core::Size z_idx = floor((atom_coordinates[xyzVec].z() + xyz_shift_[3]) * resolution_);
+
+		//test print of the atom coordinates in the matrix; probably don't keep in final
+		std::cout << "Atom " << xyzVec <<  " adjusted coordinates: " << x_idx << "," << y_idx << "," <<z_idx << std::endl;
 
 		//check if the coordinate is within the sub-area, if so, then adjust the value if the point is within the sub area
-		if ( using_sub_area_ && is_coordinate_in_sub_area(floor((atom_coordinates[xyzVec].x() + xyz_shift_[1]) * resolution_), floor((atom_coordinates[xyzVec].y() + xyz_shift_[2])  * resolution_), floor((atom_coordinates[xyzVec].z() + xyz_shift_[3])  * resolution_)) ) {
+		if ( using_sub_area_ && is_coordinate_in_sub_area(x_idx,y_idx,z_idx)) {
 			//increment the both fullness if this cell was previously empty (and in the sub area)
-			if ( protein_matrix_[floor((atom_coordinates[xyzVec].x() + xyz_shift_[1]) * resolution_)][floor((atom_coordinates[xyzVec].y() + xyz_shift_[2])  * resolution_)][floor((atom_coordinates[xyzVec].z() + xyz_shift_[3])  * resolution_)] == 2 ) {
+			if ( protein_matrix_[x_idx][y_idx][z_idx] == 2 ) {
 				++sub_matrix_fullness_;
 				++matrix_fullness_;
 			}
 
-			protein_matrix_[floor((atom_coordinates[xyzVec].x() + xyz_shift_[1]) * resolution_)][floor((atom_coordinates[xyzVec].y() + xyz_shift_[2])  * resolution_)][floor((atom_coordinates[xyzVec].z() + xyz_shift_[3])  * resolution_)] = 3;
+			protein_matrix_[x_idx][y_idx][z_idx] = 3;
 		} else {
 			//increment the main fullness if this cell was previously empty
-			if ( protein_matrix_[floor((atom_coordinates[xyzVec].x() + xyz_shift_[1]) * resolution_)][floor((atom_coordinates[xyzVec].y() + xyz_shift_[2])  * resolution_)][floor((atom_coordinates[xyzVec].z() + xyz_shift_[3])  * resolution_)] == 2 ) {
+			if ( protein_matrix_[x_idx][y_idx][z_idx] == 2 ) {
 				++matrix_fullness_;
 			}
 
 			//set to 1
-			protein_matrix_[floor((atom_coordinates[xyzVec].x() + xyz_shift_[1]) * resolution_)][floor((atom_coordinates[xyzVec].y() + xyz_shift_[2])  * resolution_)][floor((atom_coordinates[xyzVec].z() + xyz_shift_[3])  * resolution_)] = 1;
+			protein_matrix_[x_idx][y_idx][z_idx] = 1;
 		}
 	}
 
