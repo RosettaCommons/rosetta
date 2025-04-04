@@ -1345,6 +1345,23 @@ void ProteinGrid::wrap_matrix_around_pose()
 		core::Size y_idx = floor((atom_coordinates[xyzVec].y() + xyz_shift_[2]) * resolution_);
 		core::Size z_idx = floor((atom_coordinates[xyzVec].z() + xyz_shift_[3]) * resolution_);
 
+		//throw in a warning/check in case any of these values floor to 0
+		if(x_idx == 0)
+		{
+			ms_tr.Warning << "Warning, we floored an atom coordinate to 0. Going to automatically nudge it to 1." << std::endl;
+			++x_idx;
+		}
+		if(y_idx == 0)
+		{
+			ms_tr.Warning << "Warning, we floored an atom coordinate to 0. Going to automatically nudge it to 1." << std::endl;
+			++y_idx;
+		}
+		if(z_idx == 0)
+		{
+			ms_tr.Warning << "Warning, we floored an atom coordinate to 0. Going to automatically nudge it to 1." << std::endl;
+			++z_idx;
+		}
+
 		//test print of the atom coordinates in the matrix; probably don't keep in final
 		std::cout << "Atom " << xyzVec <<  " adjusted coordinates: " << x_idx << "," << y_idx << "," <<z_idx << std::endl;
 
