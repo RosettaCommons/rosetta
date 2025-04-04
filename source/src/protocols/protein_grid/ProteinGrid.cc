@@ -1346,24 +1346,21 @@ void ProteinGrid::wrap_matrix_around_pose()
 		core::Size z_idx = floor((atom_coordinates[xyzVec].z() + xyz_shift_[3]) * resolution_);
 
 		//throw in a warning/check in case any of these values floor to 0
-		if(x_idx == 0)
-		{
+		if ( x_idx == 0 ) {
 			ms_tr.Warning << "Warning, we floored an atom coordinate to 0. Going to automatically nudge it to 1." << std::endl;
 			++x_idx;
 		}
-		if(y_idx == 0)
-		{
+		if ( y_idx == 0 ) {
 			ms_tr.Warning << "Warning, we floored an atom coordinate to 0. Going to automatically nudge it to 1." << std::endl;
 			++y_idx;
 		}
-		if(z_idx == 0)
-		{
+		if ( z_idx == 0 ) {
 			ms_tr.Warning << "Warning, we floored an atom coordinate to 0. Going to automatically nudge it to 1." << std::endl;
 			++z_idx;
 		}
 
 		//check if the coordinate is within the sub-area, if so, then adjust the value if the point is within the sub area
-		if ( using_sub_area_ && is_coordinate_in_sub_area(x_idx,y_idx,z_idx)) {
+		if ( using_sub_area_ && is_coordinate_in_sub_area(x_idx,y_idx,z_idx) ) {
 			//increment the both fullness if this cell was previously empty (and in the sub area)
 			if ( protein_matrix_[x_idx][y_idx][z_idx] == 2 ) {
 				++sub_matrix_fullness_;
