@@ -241,7 +241,7 @@ void ProteinGrid::initialize()
 // @brief simple function to derive the volume of the matrix
 core::Size ProteinGrid::get_grid_volume()
 {
-	return (xyz_bound_[0] * xyz_bound_[1] * xyz_bound_[2]);
+	return (xyz_bound_[1] * xyz_bound_[2] * xyz_bound_[3]);
 }
 
 // @brief simple function to derive the volume of the sub area matrix
@@ -1220,8 +1220,6 @@ void ProteinGrid::wrap_matrix_around_pose()
 	//derive constant values based  on the most negative values in each dimension, and then add that constant to all coordinates
 	//to be safe, values need to be seeded with an initial value, or errors could be thrown when deriving shift values
 
-	std::cout << "bp1" << std::endl;
-
 	int smallest_x = 1;
 	int smallest_y = 1;
 	int smallest_z = 1;
@@ -1229,8 +1227,6 @@ void ProteinGrid::wrap_matrix_around_pose()
 	int largest_x = 1;
 	int largest_y = 1;
 	int largest_z = 1;
-
-	std::cout << "bp2" << std::endl;
 
 	//create a list of coordinates of each atom to hold and work with to fill the protein_representation_matrix
 	//can't seem to make a vector of xyzVector objects, so will need to just make a custome 2D vector  to  hold the data
@@ -1284,13 +1280,9 @@ void ProteinGrid::wrap_matrix_around_pose()
 		}
 	}
 
-	std::cout << "bp3" << std::endl;
-
 	//set (or reset) the shift and bound vectors to be 3 values of 0 before setting them
 	//this is necessary at least for the initial setting when the object is constructed
 	reset_xyz_vectors();
-
-	std::cout << "bp4" << std::endl;
 
 	//take negative values of the smallest values and then add 1 to derive the constants
 	//the logic here should apply, whether the smallest value is positive or negative
@@ -1304,32 +1296,21 @@ void ProteinGrid::wrap_matrix_around_pose()
 	xyz_bound_[2] = std::floor((xyz_shift_[2] + largest_y) * resolution_);
 	xyz_bound_[3] = std::floor((xyz_shift_[3] + largest_z) * resolution_);
 
-	std::cout << "bp5" << std::endl;
-
 	//create 3D matrix to roughly represent 3D coordinate space of protein
 	ms_tr.Debug << "Creating protein clash coordinate matrix. Dimensions of matrix are " << xyz_bound_[1] << "," << xyz_bound_[2] << "," << xyz_bound_[3] << std::endl;
 	ms_tr.Debug << "Shift from from original coordinates, and multiplied by current resolution factor (" << resolution_ << ") are: " << xyz_shift_[1] << "," << xyz_shift_[2] << "," << xyz_shift_[3] << std::endl;
-
-	std::cout << "Creating protein clash coordinate matrix. Dimensions of matrix are " << xyz_bound_[1] << "," << xyz_bound_[2] << "," << xyz_bound_[3] << std::endl;
-	std::cout << "Shift from from original coordinates, and multiplied by current resolution factor (" << resolution_ << ") are: " << xyz_shift_[1] << "," << xyz_shift_[2] << "," << xyz_shift_[3] << std::endl;
 
 	//wipe the current contents of the protein_matrix_ and reset fullness values
 	//create an empty dummy vector, and then assign protein_matrix_ with it
 	ProteinMatrix dummy_matrix;
 	protein_matrix_ = dummy_matrix;
 
-	std::cout << "pre volume: " << matrix_volume_ << std::endl;
-
 	matrix_volume_ = get_grid_volume();
-
-	std::cout << "post volume: " << matrix_volume_ << std::endl;
 
 	matrix_fullness_ = 0;
 	fullness_ratio_ = 0;
 	sub_matrix_fullness_ = 0;
 	sub_fullness_ratio_ = 0;
-
-	std::cout << "bp6" << std::endl;
 
 	for ( core::Size x = 1; x <= xyz_bound_[1]; ++x ) {
 		//make a 2D  matrix
@@ -1347,16 +1328,12 @@ void ProteinGrid::wrap_matrix_around_pose()
 		protein_matrix_.push_back(sub_matrix);
 	}
 
-	std::cout << "bp7" << std::endl;
-
 	//this needs to be defined after filling out the protein_matrix_
 	//if the true_sub_area_dimension_ values are not 0, then we have a sub area that we want to work with and consider for investigation
 	if ( using_sub_area_ ) {
 		//apply the shift and resolution to the true center and dimension, and derive the sub area max and min
 		define_sub_regions();
 	}
-
-	std::cout << "bp8" << std::endl;
 
 	//seed the matrix with approximate coordinates of each atom
 	//apply the shift to the coordinates
