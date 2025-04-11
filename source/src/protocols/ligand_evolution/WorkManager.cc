@@ -62,7 +62,7 @@ namespace ligand_evolution {
 		for( Individual const& individual : pop.individuals() ) {
 			LigandIdentifier const& identifier = individual.identifier();
 
-			bool ligand_is_duplicate = !encountered_ligands.count( identifier ) == 0;
+			bool ligand_is_duplicate = encountered_ligands.count( identifier ) != 0;
 			bool ligand_is_scored = scorer_->is_scored( identifier );
 			bool score_in_memory = scorer_->check_memory( identifier );
 
