@@ -790,7 +790,7 @@ def local_python_install(platform, config):
         '3.8'  : 'https://www.python.org/ftp/python/3.8.14/Python-3.8.14.tgz',
         '3.9'  : 'https://www.python.org/ftp/python/3.9.14/Python-3.9.14.tgz',
         '3.10' : 'https://www.python.org/ftp/python/3.10.10/Python-3.10.10.tgz',
-        '3.11' : 'https://www.python.org/ftp/python/3.11.2/Python-3.11.2.tgz',
+        '3.11' : 'https://www.python.org/ftp/python/3.11.12/Python-3.11.12.tgz',
         '3.12' : 'https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz',
         '3.13' : 'https://www.python.org/ftp/python/3.13.0/Python-3.13.0.tgz',
     }
