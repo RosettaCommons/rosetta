@@ -304,6 +304,7 @@ def assign_mm_types(atoms, peptoid):
             if len(attached_N) == 2: return False
             elif len(attached_N) == 1 and len(attached_C) == 1:
                 attached_C_N = [bond.a2 for bond in attached_C[0].bonds if  bond.order == Bond.AROMATIC and bond.a2.elem == "N"]
+                if len(attached_C_N) == 0: return False #The residue is not HIS
                 num_sat_N =  sum(1 for an  in attached_N   if len(an.bonds ) == 3 ) # catches H and CH3
                 num_sat_N += sum(1 for acn in attached_C_N if len(acn.bonds) == 3 ) # catches H and CH3
                 if num_sat_N == 1: return True
@@ -528,11 +529,13 @@ def assign_mm_types(atoms, peptoid):
         else: return False
     def is_charmm_NC2(atom):
         ''' For guanidinium nitrogen: nitrogen attached to carbon that is bonded to two other nitrogens'''
-        attached_C = [bond.a2 for bond in atom.bonds if bond.a2.elem == "C"]
-        if len(attached_C) == 1:
-            attached_C_N = [bond.a2 for bond in attached_C[0].bonds if bond.a2.elem == "N"]
-            if len(attached_C_N) == 3: return True
-            else:return False
+        attached_Cs = [bond.a2 for bond in atom.bonds if bond.a2.elem == "C"]
+        if len(attached_Cs) >= 1: #Some guanadinium N's are bound to multiple C's...
+            for attached_C in attached_Cs:
+                attached_C_N = [bond.a2 for bond in attached_C.bonds if bond.a2.elem == "N"]
+                attached_C_a = [bond.a2 for bond in attached_C.bonds] #Gets rid of sp3 central carbons
+                if len(attached_C_N) == 3 and len(attached_C_a) == 3: return True
+            return False
         else: return False
     def is_charmm_NY(atom):
         ''' For indol nitrogen: nitrogen with aro bond to a bridge carbon (atom type CPT) '''
