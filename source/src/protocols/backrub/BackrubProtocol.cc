@@ -101,39 +101,7 @@ BackrubProtocol::BackrubProtocol():
 	read_cmd_line_options();
 }
 
-BackrubProtocol::BackrubProtocol(BackrubProtocol const & bp):
-	Mover(bp),
-	scorefxn_(bp.scorefxn_),
-	main_task_factory_(bp.main_task_factory_),
-	backrubmover_(bp.backrubmover_),
-	smallmover_(bp.smallmover_),
-	sidechainmover_(bp.sidechainmover_),
-	packrotamersmover_(bp.packrotamersmover_),
-	recover_low_(bp.recover_low_),
-	trajectory_apply_mover_(bp.trajectory_apply_mover_),
-	pivots_residue_selector_(bp.pivots_residue_selector_)
-{
-	this->set_options(
-		bp.pivot_residues_,
-		bp.pivot_atoms_,
-		bp.minimize_movemap_,
-		bp.movemap_smallmover_,
-		bp.packing_operation_,
-		bp.min_atoms_,
-		bp.max_atoms_,
-		bp.initial_pack_,
-		bp.mm_bend_weight_,
-		bp.sm_prob_,
-		bp.sc_prob_,
-		bp.sc_prob_uniform_,
-		bp.sc_prob_withinrot_,
-		bp.mc_kt_,
-		bp.ntrials_,
-		bp.trajectory_,
-		bp.trajectory_gz_,
-		bp.trajectory_stride_
-	);
-}
+BackrubProtocol::BackrubProtocol(BackrubProtocol const & ) = default;
 
 BackrubProtocol::~BackrubProtocol()= default;
 
@@ -266,6 +234,11 @@ BackrubProtocol::set_scorefunction(core::scoring::ScoreFunctionCOP scorefxn){
 	scorefxn_ = scorefxn->clone();
 }
 
+void
+BackrubProtocol::set_dump_poses(bool setting) {
+	dump_poses_  = setting;
+}
+
 protocols::moves::MoverOP
 BackrubProtocol::clone() const {
 	return utility::pointer::make_shared< BackrubProtocol >( *this );
@@ -374,6 +347,7 @@ BackrubProtocol::parse_my_tag(
 	if ( tag->hasOption("recover_low") ) {
 		recover_low_ = tag->getOption<bool>("recover_low");
 	}
+	dump_poses_ = tag->getOption<bool>("dump_poses", false); // For XML, default to not dumping the pose
 
 	if ( tag->hasOption("task_operations") ) {
 		main_task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
@@ -629,8 +603,10 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 		pose = mc.last_accepted_pose();
 	}
 
-	mc.last_accepted_pose().dump_pdb(output_tag + "_last.pdb");
-	mc.lowest_score_pose().dump_pdb(output_tag + "_low.pdb");
+	if ( dump_poses_ ) {
+		mc.last_accepted_pose().dump_pdb(output_tag + "_last.pdb");
+		mc.lowest_score_pose().dump_pdb(output_tag + "_low.pdb");
+	}
 
 	if ( custom_fold_tree ) {
 		append_fold_tree_to_file(mc.lowest_score_pose().fold_tree(),  output_tag + "_low.pdb"); // this is the lowest scoring from MC trials
@@ -692,6 +668,9 @@ void BackrubProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 	attlist + XMLSchemaAttribute(
 		"recover_low", xsct_rosetta_bool,
 		"Set the return Pose to be the lowest scoring structure sampled (if false, will be left as last sampled structure)" );
+	attlist + XMLSchemaAttribute(
+		"dump_poses", xsct_rosetta_bool,
+		"Output the results of the MC trajectory to _low.pdb and _last.pdb files in the working directory" );
 	attlist + XMLSchemaAttribute(
 		"pivot_residue_selector", xs_string,
 		"Name of residue selector to use to select pivot residues" );
