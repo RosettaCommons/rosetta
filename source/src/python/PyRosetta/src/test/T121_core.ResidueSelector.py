@@ -33,7 +33,7 @@ class TestResidueSelectors(unittest.TestCase):
         chA = ChainSelector("A")
         chB = ChainSelector("B")
         chC = ChainSelector("C")
-        
+
         # Test AndResidueSelector
         chA_and_chB = AndResidueSelector(chA, chB)
         chA_and_chB_test = chA & chB
@@ -120,7 +120,7 @@ class TestResidueSelectors(unittest.TestCase):
 
         # Test in-place OrResidueSelector
         chA_or_chC = OrResidueSelector(chA, chC)
-        chA_or_chC_test = chA 
+        chA_or_chC_test = chA
         chA_or_chC_test |= chC
         self.assertListEqual(chA_or_chC.get_residues(pose), chA_or_chC_test.get_residues(pose))
 
@@ -130,6 +130,17 @@ class TestResidueSelectors(unittest.TestCase):
         xor_selector_test = selector_1
         xor_selector_test ^= selector_2
         self.assertListEqual([1, 2, 9, 10], xor_selector_test.get_residues(pose))
+
+    def test_residue_selector_ctors(self):
+        pose = pyrosetta.pose_from_sequence("TESTING/MANY/CHAINS")
+        #Not
+        primary_selector = ResidueIndexSelector("2,4,6")
+        not_primary_selector = NotResidueSelector(primary_selector)
+        # Case 1: Pass NotSelector to NotSelector
+        selector_1 = NotResidueSelector(not_primary_selector)
+        # Case 2: Pass AndSelector to NotSelector
+        selector_2 = NotResidueSelector(AndResidueSelector(not_primary_selector,TrueResidueSelector()))
+        self.assertListEqual(selector_1.get_residues(pose), selector_2.get_residues(pose))
 
 if __name__ == "__main__":
     unittest.main()

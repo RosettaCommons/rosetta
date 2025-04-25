@@ -2243,7 +2243,7 @@ settings = {
             "flags" : {
                 # Change 'abspath' to 'file' to use DYLD_LIBRARY_PATH environ-
                 # ment variable.
-                "compile" : [ "march=native", "mtune=native", "stdlib=libc++", ],
+                "compile" : ["mtune=native", "stdlib=libc++", ],
                 "shlink" : [ "install_name ${TARGET.abspath}", "stdlib=libc++", ],
                 "link"   : [ "stdlib=libc++"],
                 # There is at least one variable only used on non-Macs.
@@ -2272,6 +2272,11 @@ settings = {
                 "compile" : [ "march=native", "march=core2", ],
             },
         },
+        "appends" : {
+            "flags" : {
+                "link"   : [ "headerpad_max_install_names"],
+	    },
+	},
     },
 
 

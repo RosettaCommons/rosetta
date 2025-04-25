@@ -178,10 +178,14 @@ sources = {
 		"mr_protocols",
 		"grower_prep",
 		"dgdp",
+		"sim_cryo",
 	],
 	"public/enzdes": [
 		"CstfileToTheozymePDB",
 		"enzyme_design",
+	],
+	"public/ligand_design": [
+		"revold",
 	],
 	"public/motif_ligand_discovery": [
 		"identify_ligand_motifs",
