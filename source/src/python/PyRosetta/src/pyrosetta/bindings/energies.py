@@ -29,8 +29,8 @@ def _residue_selection_to_1ind(selection, total_count):
     else:
         selection = selection.astype(int)
 
-    assert numpy.alltrue(selection > 0), "Selection contained invalid indicies."
-    assert numpy.alltrue(selection <= total_count), "Selection contained invalid indicies."
+    assert numpy.all(selection > 0), "Selection contained invalid indicies."
+    assert numpy.all(selection <= total_count), "Selection contained invalid indicies."
 
     return selection
 

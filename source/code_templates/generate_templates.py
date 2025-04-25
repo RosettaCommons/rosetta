@@ -286,7 +286,7 @@ class GenerateRosettaTemplates(object):
         Get the end of the namespace declaration at end of file.
         :rtype: str
         """
-        
+
         return "\n".join(["} //"+n for n in self.get_option("namespace", fail_on_none=True)][::-1])
 
     def get_path_list(self):
@@ -348,7 +348,7 @@ class GenerateGeneralTemplates(GenerateRosettaTemplates):
                             choices = self.types)
 
         required.add_argument("--class_name", "-c",
-                            help = "The name of the class you are creating. In case of util type, this will be the prefix for util files.")
+                            help = "The name of the class you are creating. In case of util type, this will be the base name for the utility files. (e.g. 'util' to get 'util.hh')")
 
         required.add_argument("--brief", "-b",
                             help = "A brief description of the class/file.  Enclose in quotes.",

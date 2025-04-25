@@ -201,8 +201,10 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 	transform_into_memb->apply( pose );
 
 	/*-----------
+	if ( dump_structures_ ) {
 	std::string filename8( tempstr1+"_inmem_nopack"+".pdb" );
 	pose.dump_pdb( filename8 );
+	}
 	--------------*/
 	core::Vector peptide_center( 0,0,0 );
 	peptide_center = getcenter( pose, flag_axis_ );
@@ -240,8 +242,10 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 
 	PackRotamersMoverOP pack_mover = get_pH_aware_packer( sfxn_ );
 
-	std::string filename5( tempstr+"_posetomembrane_"+std::to_string( end_z_ ) + "_" + std::to_string( start_z_ ) +".pdb" );
-	pose.dump_pdb( filename5 );
+	if ( dump_structures_ ) {
+		std::string filename5( tempstr+"_posetomembrane_"+std::to_string( end_z_ ) + "_" + std::to_string( start_z_ ) +".pdb" );
+		pose.dump_pdb( filename5 );
+	}
 	//Side chains are packed once it is inside the membrane.
 
 	// Calculate the protein length to determine bounds
@@ -268,8 +272,12 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 	TranslationMoverOP initialize( utility::pointer::make_shared< TranslationMover >( initial_move, membrane_jump ) );
 	initialize->apply( pose );
 
-	/*std::string filename7( tempstr+"_poseafterinitimove"+".pdb" );
-	pose.dump_pdb( filename7 );*/
+	/*
+	if ( dump_structures_ ) {
+	std::string filename7( tempstr+"_poseafterinitimove"+".pdb" );
+	pose.dump_pdb( filename7 );
+	}
+	*/
 
 	Vector init_center( pose.conformation().membrane_info()->membrane_center( pose.conformation() ) );
 	TR << "Shifting the protein to a new center position of (" << initial_move.x() << "," << initial_move.y() << "," << initial_move.z() << ")" << std::endl;
@@ -323,8 +331,12 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 	peptide_normal = getaxis( pose, flag_axis_ );
 	peptide_center = getcenter( pose, flag_axis_ );
 
-	/*std::string filename_aa( tempstr + "_after_align_start" + std::to_string( end_z_ )  + "_end" + std::to_string( start_z_ ) + ".pdb" );
-	pose.dump_pdb( filename_aa );*/
+	/*
+	if ( dump_structures_ ) {
+	std::string filename_aa( tempstr + "_after_align_start" + std::to_string( end_z_ )  + "_end" + std::to_string( start_z_ ) + ".pdb" );
+	pose.dump_pdb( filename_aa );
+	}
+	*/
 
 	TR << " peptide normal after alignment is ::" << peptide_normal.x() << "i+ " << peptide_normal.y() << "j +" << peptide_normal.z() << "k" << std::endl;
 	TR << " peptide center after alignment is ::" << peptide_center.x() << "i+ " << peptide_center.y() << "j +" << peptide_center.z() << "k" << std::endl;
@@ -392,7 +404,7 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 				RotationMoverOP rotate( get_rotation( normal_angle, peptide_normal, peptide_center, membrane_jump, rotation_type_ ));
 				rotate->apply( *pose_copy );
 
-				if ( (z_coord == 0.0 || z_coord == 40.0) && (std::fmod(normal_angle,30.0) == 0.0) ) {
+				if ( dump_structures_ && (z_coord == 0.0 || z_coord == 40.0) && (std::fmod(normal_angle,30.0) == 0.0) ) {
 
 					std::string filename4( tempstr + "limit_" + std::to_string(z_coord) + "_norm" + std::to_string( normal_angle ) + "_azrot" + std::to_string( azimuthal_angle ) +".pdb" );
 					pose_copy->dump_pdb( filename4 );
@@ -407,7 +419,10 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 				} else {
 					core::Real nloop( 0.0 );
 
-					pack_mover->apply( *pose_copy );
+					if ( repack_ ) {
+						pack_mover->apply( *pose_copy );
+					}
+
 					// Write data to output file
 					output << nloop << " " << z_coord << " " << normal_angle << " " << azimuthal_angle;
 					output << " " << sfxn_->score( *pose_copy );
@@ -439,8 +454,10 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 								output2 << jj << " " << score << " " << res_score_6 << " " << res_score_7 << " " << res_score_8 << " " << res_score_1 << " " << res_score_2 << " " << res_score_3 << " " << res_score_5 << std::endl;
 								is_scoringres[ jj ] = false;
 							}
-							std::string filename4( tempstr + "limit_" + std::to_string(z_coord) + "_norm" + std::to_string( normal_angle ) + "_azrot" + std::to_string( azimuthal_angle )  + + "_nloop" + std::to_string( nloop ) + "afterdesign.pdb" );
-							pose_copy->dump_pdb( filename4 );
+							if ( dump_structures_ ) {
+								std::string filename4( tempstr + "limit_" + std::to_string(z_coord) + "_norm" + std::to_string( normal_angle ) + "_azrot" + std::to_string( azimuthal_angle )  + + "_nloop" + std::to_string( nloop ) + "afterdesign.pdb" );
+								pose_copy->dump_pdb( filename4 );
+							}
 							//    E.show(jj);
 
 						}
@@ -898,6 +915,10 @@ MembraneEnergyLandscapeSampler::parse_my_tag(
 		pH_mode_ = tag->getOption< bool >( "pH_mode" );
 	}
 
+	if ( tag->hasOption( "dump_structures" ) ) {
+		dump_structures_ = tag->getOption< bool >( "dump_structures" );
+	}
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -938,7 +959,8 @@ void MembraneEnergyLandscapeSampler::provide_xml_schema( utility::tag::XMLSchema
 		+ XMLSchemaAttribute( "flag_axis", xsct_real, "select the axis of rotation" )
 		+ XMLSchemaAttribute( "azimuthal_delta", xsct_real, "select the frequency of azimuthal/rotation angle" )
 		+ XMLSchemaAttribute( "repack", xsct_rosetta_bool, "Should I repack each pose prior to scoring?" )
-		+ XMLSchemaAttribute( "pH_mode", xsct_rosetta_bool, "Should I include protonation variants during packing?" );
+		+ XMLSchemaAttribute( "pH_mode", xsct_rosetta_bool, "Should I include protonation variants during packing?" )
+		+ XMLSchemaAttribute( "dump_structures", xsct_rosetta_bool, "Dump intermediate structures?" );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Sample the membrane energy function landscape using a given energy function", attlist );
 
