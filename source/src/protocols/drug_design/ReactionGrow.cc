@@ -130,8 +130,6 @@ ReactionGrow::prefilter_fragments() {
 void
 ReactionGrow::apply( core::chemical::MutableResidueType & rsdtype )
 {
-	// Fragment set may be empty, if someone is using a reaction set which is 1->1
-
 	core::chemical::rdkit::RestypeToRDMol to_converter(rsdtype); // Neutralize and remove hydrogens.
 	::RDKit::RWMOL_SPTR rdmol( to_converter.Mol() ); // Convert
 	core::chemical::rdkit::label_with_index(*rdmol, "Original_Index"); // (Re)Label with "Original_Index" to use quick mapping behavior.
