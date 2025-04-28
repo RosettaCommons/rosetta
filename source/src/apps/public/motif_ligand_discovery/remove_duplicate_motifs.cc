@@ -33,9 +33,6 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-
-//#include <protocols/motifs/FindMotifPositionsOnLigandHelper.cc>
-
 //#include <protocols/motifs/MotifLigandPacker.hh>
 #include <protocols/dna/PDBOutput.hh>
 #include <protocols/dna/util.hh>
