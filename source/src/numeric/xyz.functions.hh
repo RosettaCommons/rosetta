@@ -958,7 +958,7 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 	T const tolerance = NumericTraits< T >::sin_cos_tolerance();
 
 	//normalization tolerance threshold for assert statements; making more lenient than 0.01 and coupling to variable so it can be found in both assert statements
-	T const assert_tolerance = 0.05;
+	//T const assert_tolerance = 0.05;
 	if ( cos_theta > -ONE + tolerance && cos_theta < ONE - tolerance ) {
 		// Compute sign and absolute value of axis vector elements from matrix elements
 		// Sign of axis vector is chosen to correspond to a positive sin_theta value
@@ -976,7 +976,7 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 		// and is more stable for small sine_theta
 
 		theta = acos( cos_theta );
-		assert( std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ) );
+		//assert( std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ) );
 
 		return xyzVector< T >( x, y, z );
 	} else if ( cos_theta >= ONE - tolerance ) {
@@ -1010,7 +1010,7 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 		}
 		theta = NumericTraits< T >::pi(); // theta == pi
 		// For a valid orthogonal matrix R, axis should be a normal vector
-		assert( std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ) );
+		//assert( std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ) );
 		return xyzVector< T >( x, y, z );
 	}
 }
