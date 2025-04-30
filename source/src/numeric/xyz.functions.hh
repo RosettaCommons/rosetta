@@ -978,7 +978,7 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 		theta = acos( cos_theta );
 		
 		std::cout << x << "," << y << "," << z << std::endl;
-		std::cout << std::abs( x*x + y*y + z*z - 1 ) << "," << static_cast<T>( assert_tolerance ) << std::abs( x*x + y*y + z*z - 1 ) <= static_cast<T>( assert_tolerance ) << std::endl;
+		std::cout << std::abs( x*x + y*y + z*z - 1 ) << "," << static_cast<T>( assert_tolerance ) << (std::abs( x*x + y*y + z*z - 1 ) <= static_cast<T>( assert_tolerance )) << std::endl;
 		if(std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ))
 		{
 			std::cout << "within tolerance" << std::endl;
@@ -1024,7 +1024,7 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 		// For a valid orthogonal matrix R, axis should be a normal vector
 
 		std::cout << x << "," << y << "," << z << std::endl;
-		std::cout << std::abs( x*x + y*y + z*z - 1 ) << "," << static_cast<T>( assert_tolerance ) << std::abs( x*x + y*y + z*z - 1 ) <= static_cast<T>( assert_tolerance ) << std::endl;
+		std::cout << std::abs( x*x + y*y + z*z - 1 ) << "," << static_cast<T>( assert_tolerance ) << (std::abs( x*x + y*y + z*z - 1 ) <= static_cast<T>( assert_tolerance )) << std::endl;
 		if(std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ))
 		{
 			std::cout << "within tolerance" << std::endl;
