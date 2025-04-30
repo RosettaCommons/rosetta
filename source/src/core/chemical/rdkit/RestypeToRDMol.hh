@@ -12,11 +12,11 @@
 /// @brief
 /// A class for creating an RDKit RWMol object from a Rosetta ResidueType
 ///
-/// @author Rocco Moretti (rmorettiase@gmail.com
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 
-#ifndef INCLUDED_core_chemical_rdkit_RestypeToFragment_hh
-#define INCLUDED_core_chemical_rdkit_RestypeToFragment_hh
+#ifndef INCLUDED_core_chemical_rdkit_RestypeToRDMol_hh
+#define INCLUDED_core_chemical_rdkit_RestypeToRDMol_hh
 
 
 #include <core/chemical/MutableResidueType.fwd.hh>
