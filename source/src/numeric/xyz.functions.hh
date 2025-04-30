@@ -958,7 +958,7 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 	T const tolerance = NumericTraits< T >::sin_cos_tolerance();
 
 	//normalization tolerance threshold for assert statements; making more lenient than 0.01 and coupling to variable so it can be found in both assert statements
-	//T const assert_tolerance = 0.05;
+	T const assert_tolerance = 0.01;
 	if ( cos_theta > -ONE + tolerance && cos_theta < ONE - tolerance ) {
 		// Compute sign and absolute value of axis vector elements from matrix elements
 		// Sign of axis vector is chosen to correspond to a positive sin_theta value
