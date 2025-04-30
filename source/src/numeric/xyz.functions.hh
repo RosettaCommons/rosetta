@@ -976,6 +976,18 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 		// and is more stable for small sine_theta
 
 		theta = acos( cos_theta );
+		
+		std::cout << x << "," << y << "," << z << std::endl;
+		std::cout << std::abs( x*x + y*y + z*z - 1 ) << "," << T( assert_tolerance ) << std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ) << std::endl;
+		if(std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ))
+		{
+			std::cout << "within tolerance" << std::endl;
+		}
+		else
+		{
+			std::cout << "beyond tolerance" << std::endl;
+		}
+		
 		//assert( std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ) );
 
 		return xyzVector< T >( x, y, z );
@@ -1010,6 +1022,18 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 		}
 		theta = NumericTraits< T >::pi(); // theta == pi
 		// For a valid orthogonal matrix R, axis should be a normal vector
+
+		std::cout << x << "," << y << "," << z << std::endl;
+		std::cout << std::abs( x*x + y*y + z*z - 1 ) << "," << T( assert_tolerance ) << std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ) << std::endl;
+		if(std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ))
+		{
+			std::cout << "within tolerance" << std::endl;
+		}
+		else
+		{
+			std::cout << "beyond tolerance" << std::endl;
+		}
+		
 		//assert( std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ) );
 		return xyzVector< T >( x, y, z );
 	}
