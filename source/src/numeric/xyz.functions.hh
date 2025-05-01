@@ -957,6 +957,9 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 
 	T const tolerance = NumericTraits< T >::sin_cos_tolerance();
 
+	std::cout << "R.trace()" << "," << "cos_theta" << "," << "tolerance" << std::endl;
+	std::cout << R.trace() << "," << cos_theta << "," << tolerance << std::endl;
+	
 	//normalization tolerance threshold for assert statements; making more lenient than 0.01 and coupling to variable so it can be found in both assert statements
 	T const assert_tolerance = 0.01;
 	if ( cos_theta > -ONE + tolerance && cos_theta < ONE - tolerance ) {
