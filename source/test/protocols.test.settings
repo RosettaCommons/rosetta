@@ -1066,13 +1066,6 @@ testinputfiles = [
 	"docking/DockingSlideIntoContact.pdb",
 	"docking/DockingPacking.pdb",
 	"docking/DockingRigidBodyMinimize.pdb",
-<<<<<<< HEAD
-        "drug_design/4_1.smi",
-        "drug_design/4_2.smi",
-	"drug_design/amide_rxn.txt",
-	"drug_design/benzene.sdf",
-	"drug_design/benzene_stub.sdf",
-=======
 # 	"drug_design/amide_rxn.txt",
 # 	"drug_design/benzene.sdf",
 # 	"drug_design/benzene_stub.sdf",
@@ -1096,7 +1089,6 @@ testinputfiles = [
 # 	"drug_design/test_fragments2.sdf",
 # 	"drug_design/vinylpyrimidine_stub.sdf",
 # 	"drug_design/zim.100.sascore.txt",
->>>>>>> origin/main
 	"drug_design/carboxypyrimidine.sdf",
         "drug_design/enamine_rxn.txt",
 	"drug_design/ester_rxn.txt",
