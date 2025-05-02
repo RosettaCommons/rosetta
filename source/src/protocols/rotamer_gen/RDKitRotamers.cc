@@ -136,19 +136,6 @@ RDKitRotamers::generate_conformers( core::chemical::MutableResidueType const & r
 
 	TR << "Generated " << retval.size() << " rotamers for " << rsdtype.name() << " in " << double(std::clock()-begin)/ CLOCKS_PER_SEC << "s total." << std::endl;
 
-	// Somehow RDKit cannot generate any rotamer, add back the orignial coordinates from the ResidueType
-	if ( retval.size() == 0 ) {
-		std::map< std::string, core::Vector > single_rotamer_spec;
-
-		for ( core::chemical::VD atm: rsdtype.all_atoms() ) {
-			single_rotamer_spec[ rsdtype.atom_name(atm) ] = rsdtype.atom(atm).ideal_xyz();
-		}
-
-		retval.push_back( single_rotamer_spec );
-
-		TR << "Throw back the rotamer from the ResidueType." << std::endl;
-	}
-
 	return retval;
 }
 

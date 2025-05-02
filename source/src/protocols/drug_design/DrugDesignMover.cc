@@ -30,6 +30,8 @@
 #include <core/chemical/sdf/mol_writer.hh>
 #include <core/chemical/AtomRefMapping.hh>
 #include <core/chemical/icoor_support.hh>
+#include <core/chemical/rdkit/RestypeToRDMol.hh>
+#include <rdkit/GraphMol/SmilesParse/SmilesWrite.h> // For MolToSmiles
 
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -41,6 +43,8 @@
 
 // Utility headers
 #include <basic/datacache/DataMap.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/WeightedSampler.hh>
@@ -53,12 +57,6 @@
 // Debugging output
 #include <protocols/jd2/JobDistributor.hh>
 #include <utility/io/ozstream.hh>
-
-#include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-
-#include <core/chemical/rdkit/RestypeToRDMol.hh>
-#include <rdkit/GraphMol/SmilesParse/SmilesWrite.h> // For MolToSmiles
 
 // C/C++ headers
 #include <string>
@@ -313,8 +311,6 @@ DrugDesignMover::apply( Pose & pose )
 		MutableResidueTypeOP restype( new MutableResidueType( pose.residue_type( res_pos ) ) );
 		IndexVDMapping index_vd_mapping( combine( IndexNameMapping( pose.residue_type( res_pos ) ), NameVDMapping(*restype) ) ); // Starting index to current vds.
 
-//		std::string original_name( restype->name() ); // Need this as chemistries aren't necessarily all that good with naming.
-
 		if ( pre_process_restype(restype, index_vd_mapping, pose ) ) {
 			// ResidueType is unusable
 			continue;
@@ -407,7 +403,7 @@ DrugDesignMover::apply( Pose & pose )
 		}
 		mc.show_scores();
 
-	} // i<=maxtrials_g
+	} // i<=maxtrials_
 
 	pose = mc.lowest_score_pose();
 

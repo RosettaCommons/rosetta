@@ -71,6 +71,9 @@ public:
 protected: // methods
 
 	/// @brief Filter the reactions to just the ones which can be applied to rdmol
+	/// If the reactions are multi-component, is assumed that the rdmol
+	/// (derived from input residue passed to apply()) will be passed
+	/// as the first reactant to the reaction.
 	void
 	filter_reactions(
 		::RDKit::ROMol const & rdmol,
@@ -84,7 +87,6 @@ protected: // methods
 
 	utility::vector1< std::pair< ::RDKit::ChemicalReactionOP, core::Real > > const &
 	get_reactions() const;
-	
 
 private: // data
 

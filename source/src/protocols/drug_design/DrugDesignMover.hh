@@ -204,7 +204,7 @@ protected:
 //	/// @brief Return updated temperature if using simulated annealing
 //	core::Real
 //	update_temperature( core::Real currT, core::Real curr_accept_ratio );
-	
+
 private: // Data
 
 	/// @brief What chemistries can be done in the design

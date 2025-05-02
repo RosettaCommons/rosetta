@@ -159,7 +159,6 @@ ReactionChemistry::prefilter_reactions( utility::vector1< ::RDKit::ROMolOP > con
 	}
 }
 
-/// @brief Filter the reactions to just the ones which can be applied to rdmol
 void
 ReactionChemistry::filter_reactions(
 	::RDKit::ROMol const & rdmol,
@@ -243,6 +242,7 @@ utility::vector1< std::pair< ::RDKit::ChemicalReactionOP, core::Real > > const &
 ReactionChemistry::get_reactions() const {
 	return reactions_;
 }
+
 
 }
 }

@@ -228,11 +228,13 @@ public: // Assignment
 	operator =( vector1 const & v )
 	{
 		if ( this != &v ) {
+#if defined(__GNUC__) and __GNUC__ == 11
+			reserve( v.size() ); // Work around issue with GCC 11
+#endif
 			super::operator =( v );
 		}
 		return *this;
 	}
-
 
 	/// @brief Assignable copy assignment
 	template< ssize_type L_, typename T_, typename A_ >
