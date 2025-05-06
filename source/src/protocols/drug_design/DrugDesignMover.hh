@@ -185,6 +185,10 @@ protected:
 		core::chemical::MutableResidueTypeOP restype, // Can/will be modified!
 		core::chemical::IndexVDMapping const & index_VD_mapping
 	);
+	
+	/// @brief Helper function for calculating raw -> LE or LE -> raw score
+	void
+	compute_scores_for_logfile( core::Real score, core::chemical::MutableResidueTypeOP restype, core::Real & raw_score, core::Real & LE_score ) const;
 
 	/// @brief Find a new residue name, if the name already exists in the residue type set.
 	std::string
@@ -200,10 +204,6 @@ protected:
 
 	protocols::chemistries::ChemistryOP
 	chemistry_from_subtag( utility::tag::TagCOP const subtag, basic::datacache::DataMap & data  ) const;
-
-//	/// @brief Return updated temperature if using simulated annealing
-//	core::Real
-//	update_temperature( core::Real currT, core::Real curr_accept_ratio );
 
 private: // Data
 
@@ -227,6 +227,9 @@ private: // Data
 	
 	/// @brief if set true, a ligand efficiency interface score will be used for MC acceptance
 	bool lig_efficiency_;
+	
+	/// @brief if set true, output log files to the output path
+	bool output_logfile_;
 
 	/// @brief acceptance criterion temperature
 	core::Real temperature_;
@@ -234,19 +237,7 @@ private: // Data
 	/// @brief if set true, temperature varies throughout MC trials
 	bool simulated_annealing_;
 	/// @brief parameters for simulated annealing, in the order: min, max, step, OFF_after_n_trials
-	utility::vector0< core::Real > temperature_params;
-	
-//	/// @brief if use simulated annealing, the desired acceptance ratio
-//	core::Real target_accept_ratio_;
-	
-//	/// @brief if use simulated annealing, the update interval for temperature
-//	core::Real temp_update_interval_;
-	
-//	/// @brief if use simulated annealing, the update formula for temperature
-//	std::string cooling_scheme_;
-	
-//	/// @brief if use simulated annealing, use current accept ratio or cumulative ratio
-//	bool useCurrRatio_;
+	utility::vector1< core::Real > temperature_params_;
 
 	/// @brief the number of MC trials to run in the complete run.
 	core::Real maxtrials_;

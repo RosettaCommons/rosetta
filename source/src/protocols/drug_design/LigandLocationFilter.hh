@@ -53,7 +53,7 @@ public:
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
-	bool compute_circular( core::pose::Pose const &pose ) const;
+	core::Real compute_distance( core::pose::Pose const &pose ) const;
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & );
 
 	static std::string class_name();

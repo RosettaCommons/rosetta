@@ -114,8 +114,8 @@ ChemicalReaction::n_availible_reagents(core::Size reag_no) {
 	load_reagents();
 	//ASSERT_ALWAYS( reag_no < reagent_smiles_.size() );
 	//ASSERT_ALWAYS( 1 <= reag_index && reag_index <= reagent_smiles_[reag_no].size() );
-	if ( reag_no >= reagents_.size() ) {
-		reagents_.resize( reag_no + 1 ); // 0-indexed
+	if ( reag_no > reagents_.size() ) {
+		reagents_.resize( reag_no );
 	}
 	if ( reag_index > reagents_[ reag_no ].size() ) {
 		reagents_[ reag_no ].resize( reag_index );
@@ -128,7 +128,7 @@ ChemicalReaction::n_availible_reagents(core::Size reag_no) {
 	try {
 		reag = ::RDKit::RWMOL_SPTR( ::RDKit::SmilesToMol( reagent_smiles_[reag_no][reag_index] ) );
 	} catch ( ::RDKit::MolSanitizeException const& ) {
-		TR.Error << "PUZZLE SETUP ISSUE: issue reading SMILES string in reaction design panel " << reagent_smiles_[reag_no][reag_index] << std::endl;
+		TR.Error << "RDKit failed to sanitize this reagent: " << reagent_smiles_[reag_no][reag_index] << std::endl;
 		return nullptr;
 	}
 
@@ -157,8 +157,8 @@ ChemicalReaction::load_reagents() {
 
 	core::Size nloaded = 0;
 
-	for ( core::Size reag_no(0); reag_no < nreagents(); ++reag_no ) {
-		std::string reagent_file = name_ + "_" + std::to_string(reag_no+1) + ".smi";
+	for ( core::Size reag_no(1); reag_no <= nreagents(); ++reag_no ) {
+		std::string reagent_file = name_ + "_" + std::to_string(reag_no) + ".smi";
 
 		for ( std::string const & line: load_file( dir_, reagent_file ) ) {
 			utility::vector1< std::string > parts( utility::split_whitespace(line) );
@@ -224,12 +224,7 @@ bool ChemicalReaction::cleanup_product( ::RDKit::RWMol & prod ) const {
 	
 	::RDKit::MolOps::addHs( prod, /*explicitOnly=*/false,/*addCoords=*/false );
 
-	// Make a basic conformation - don't put too much effort in it, as we're probably just using it for ghost atoms.
-	// This long call is needed such that we can put "useExpTorsionAnglePrefs=true" and "useBasicKnowledge=true" so embedding doesn't mess up rings, etc.
-	// We also use a constant seed for embedding, to make the generated conformations consistent.
-	int conf_num = ::RDKit::DGeomHelpers::EmbedMolecule(prod, /*maxIterations*/ 0, /*seed*/ 111111, /*clearConfs*/ true,
-			/*useRandomCoords*/ false, /*boxSizeMult*/ 2.0, /*randNegEig*/ true, /*numZeroFail*/ 1, /*coordMap*/ 0, /*optimizerForceTol*/ 1e-3,
-			/*ignoreSmoothingFailures*/ false, /*enforceChirality*/ true, /*useExpTorsionAnglePrefs*/ true, /*useBasicKnowledge*/ true);
+	int conf_num = ::RDKit::DGeomHelpers::EmbedMolecule(prod, ::RDKit::DGeomHelpers::srETKDGv3);
 	if ( conf_num == -1 ) {
 		return true; // Can't make 3D for this product.
 	}

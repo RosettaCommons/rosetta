@@ -1,3 +1,0 @@
-Cc1cc(C)n2nc(S[Nd])nc2n1
-Cc1cc(C)nc(NN=[Nd])n1
-

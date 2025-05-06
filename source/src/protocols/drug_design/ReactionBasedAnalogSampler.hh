@@ -42,8 +42,7 @@ class ReactionBasedAnalogSampler : public protocols::chemistries::Chemistry {
 	struct Reagent
 	{
 		::RDKit::ROMolOP rdmol_;
-//		::RDKit::SparseIntVect<unsigned int>* ecfp_;
-		ExplicitBitVect* fp_;
+		std::shared_ptr<ExplicitBitVect> fp_;
 		std::string rxn_;
 		core::Size no_;		// component number
 
@@ -56,9 +55,8 @@ class ReactionBasedAnalogSampler : public protocols::chemistries::Chemistry {
 	{
 		::RDKit::RWMolOP rdmol_;
 		std::string smiles_;
-//		::RDKit::SparseIntVect<unsigned int>* ecfp_;
-		ExplicitBitVect* fp_;
-		utility::vector0< core::Size > frags_;
+		std::shared_ptr<ExplicitBitVect> fp_;
+		utility::vector1< core::Size > frags_;
 
 		bool operator==( const Product& p ) const {
 			return smiles_ == p.smiles_;
@@ -88,7 +86,7 @@ public:
 	core::chemical::VDVDMapping
 	get_mapping() const override;
 
-	void reset_spl_ratio() { geo_spl_ratio = dynamic_spl_ratios[0]; }
+	void reset_spl_ratio() { geo_spl_ratio_ = dynamic_spl_ratios_[1]; }
 
 	/// @brief load reaction files from a designated path (deprecated)
 	void load_reactions( std::string const & reaction_dir, std::string const & filename );
@@ -113,12 +111,12 @@ private:
 	/// @brief Draw samples given a list of fragment similarity to reference input
 	utility::vector1< Product > sample( std::list< std::pair< core::Real, core::Size > > & score_idx_set ) const;
 	/// @brief Draw samples given lists of fragment similarity to first round product reagents
-	utility::vector1< Product > sample_fragment( utility::vector0< std::list< std::pair< core::Real, core::Size > > > & score_idx_set ) const;
+	utility::vector1< Product > sample_fragment( utility::vector1< std::list< std::pair< core::Real, core::Size > > > & score_idx_set ) const;
 	/// @brief Draw a product from the given candidate set
 	Product sample_candidate( const utility::vector1< Product > & candidate_set, const ::RDKit::RWMOL_SPTR rdmol );
 
 	/// @brief A helper function to easily switch between using ECFP and FCFP
-	::RDKit::SparseIntVect<unsigned int>* getMorganFingerprint( ::RDKit::ROMol const & mol ) const;
+	std::shared_ptr<::RDKit::SparseIntVect<unsigned int>> getMorganFingerprint( ::RDKit::ROMol const & mol ) const;
 
 	/// @brief Find a common substructure mapping using RDKit Open3DAlign method
 	core::chemical::IndexIndexMapping find_O3A_mapping( ::RDKit::ROMOL_SPTR from, ::RDKit::ROMOL_SPTR to ) const;
@@ -130,12 +128,12 @@ private:
 	utility::vector1< Product > analog_search( const ReactionBasedAnalogSampler::Product & prod ) const;
 
 	/// @brief Find all pair of reagents that can undergo the specific reaction from the current sets.
-	void pair( core::Size r_no, utility::vector1< utility::vector0< core::Size > > const & sets, utility::vector1< Product > & candidates, int & revisits ) const;
+	void pair( core::Size r_no, utility::vector1< utility::vector1< core::Size > > const & sets, utility::vector1< Product > & candidates, int & revisits ) const;
 	/// @brief Helper function for pairing. Use a DFS to generate all pairs.
-	void pair( core::Size curr_no, core::Size r_no, utility::vector0< core::Size > single_pair, utility::vector0< utility::vector0< core::Size > > & all_pairs, utility::vector1< utility::vector0< core::Size > > const & sets ) const;
+	void pair( core::Size curr_no, core::Size r_no, utility::vector1< core::Size > single_pair, utility::vector1< utility::vector1< core::Size > > & all_pairs, utility::vector1< utility::vector1< core::Size > > const & sets ) const;
 
 	/// @brief Run the reaction given the list of reagent indices
-	Product run_reaction( utility::vector0< core::Size > const & reagents ) const;
+	Product run_reaction( utility::vector1< core::Size > const & reagents ) const;
 
 	/// @brief helper function for comparing score_index paires
 	static bool sortbySim( const std::pair< core::Real, core::Size >& a, const std::pair< core::Real, core::Size >& b );
@@ -151,14 +149,14 @@ private:
 	// The reactions objects
 	std::unordered_map< std::string, ChemicalReactionOP > rxns_;
 	utility::vector1< Reagent > reagents_;
-	numeric::random::WeightedSampler reagent_sampler;
+	numeric::random::WeightedSampler reagent_sampler_;
 
 	// parameter for geometric sampling that mimics the Pareto principle. Ex. ratio = 0.2 means first 20% of the fragments accounts for 80% of the weights.
 	// Should not exceeds 0.25 at any point so that the weight still sums to 1
-	core::Real geo_spl_ratio;
+	core::Real geo_spl_ratio_;
 	// parameters for dynamic sampling, in the order: min, max, step, OFF_after_n_step, base
 	bool dynamic_sampling_;
-	utility::vector0< core::Real > dynamic_spl_ratios;
+	utility::vector1< core::Real > dynamic_spl_ratios_;
 
 	// The minimum number of candidates required in the sampling set before the output is drawn
 	// This should be at least 4 times of the number of top samples in geometric sampling to ensure validity of the assumption that weights sum to 1.

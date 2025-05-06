@@ -96,6 +96,8 @@ DrugDesignMover::DrugDesignMover():
 	Mover(mover_name()),
 	redocker_( nullptr ),
 	scorer_( nullptr ),
+	lig_efficiency_(true),
+	output_logfile_(true),
 	temperature_( 1.0 ),
 	simulated_annealing_( false ),
 	maxtrials_( 10 ),
@@ -261,12 +263,14 @@ DrugDesignMover::apply( Pose & pose )
 	// log files
 	std::ofstream log_file;
 	std::ofstream temp_f;
-	std::string path = basic::options::option[ basic::options::OptionKeys::out::path::all ]().path();
-	std::string filename = path + get_jobname();
-	log_file.open(filename + ".log");
+	if ( output_logfile_ ) {
+		std::string path = basic::options::option[ basic::options::OptionKeys::out::path::all ]().path();
+		std::string filename = path + get_jobname();
+		log_file.open(filename + ".log");
 
-	if ( simulated_annealing_ ) {
-		temp_f.open(filename + ".temp");
+		if ( simulated_annealing_ ) {
+			temp_f.open(filename + ".temp");
+		}
 	}
 
 	// TODO: can I pull the trial number out of the MC object instead?
@@ -274,37 +278,15 @@ DrugDesignMover::apply( Pose & pose )
 		TR << "Trial number: " << ii << std::endl;
 
 		// If simulated annealing is on and if enough MC trial has reached, reset temperature to min and turn off simulated annealing
-		if ( simulated_annealing_ && ( temperature_params[3] > 0 ) && ( ii > temperature_params[3] ) ) {
-			mc.set_temperature( temperature_params[0] );
+		if ( simulated_annealing_ && ( temperature_params_[4] > 0 ) && ( ii > temperature_params_[4] ) ) {
+			mc.set_temperature( temperature_params_[1] );
 			simulated_annealing_ = false;
-			temp_f.close();
-			TR << "Simulated Annealing turned off. Temperature reset to " << temperature_params[0] << std::endl;
+			
+			if ( output_logfile_ ) {
+				temp_f.close();
+			}
+			TR << "Simulated Annealing turned off. Temperature reset to " << temperature_params_[1] << std::endl;
 		}
-//		// Simulated Annealing; Change temperature according to present accept ratio
-//		if ( simulated_annealing_ && (ii % int(temp_update_interval_) == 0) ) {
-//			core::Real curr_accept = 0;
-//			core::Real curr_attempt = 0;
-//			for ( core::Size cc(1); cc <= chemistries_.size(); ++ cc ) {
-//				std::string const & name( chemistries_[cc]->name() );
-//				curr_accept += stat_accepted[name];
-//				curr_attempt += stat_attempt[name];
-//			}
-//			core::Real curr_accept_ratio = ( curr_accept - cum_accept ) / ( curr_attempt - cum_attempt );
-//			cum_accept = curr_accept;
-//			cum_attempt = curr_attempt;
-//			core::Real cum_accept_ratio = cum_accept / cum_attempt;
-//			core::Real currT = mc.temperature();
-//			if ( useCurrRatio_ ) {
-//				currT = update_temperature( currT, curr_accept_ratio );
-//			} else {
-//				currT = update_temperature( currT, cum_accept_ratio );
-//			}
-//			//temperature_ = 10/std::log(ii + 1);
-//			mc.set_temperature( currT );
-//
-//			// benchmark
-//			temp_f << ii << "," << curr_accept_ratio << "," << mc.temperature() << "," << cum_accept_ratio << std::endl;
-//		}
 
 		// Make a working copy of the restype of interest. (Restypes in Poses should be treated as const.)
 		res_pos = find_design_position( pose );
@@ -362,15 +344,6 @@ DrugDesignMover::apply( Pose & pose )
 
 		// MonteCarlo
 		Real score = scorer_->report_sm( pose );
-		Real raw_score = score;
-		Real LE_score = score;
-
-		// Consider ligand efficiency and calculate the raw interface score / LE score for reporting purpose
-		if ( !lig_efficiency_ ) {	// lid_root2 as in Paul Eienhuth's ligand evolution method
-			LE_score = score / std::pow( pose.residue( res_pos ).nheavyatoms(), 1.0 / 2.0 );
-		} else {
-			raw_score = score * std::pow( pose.residue( res_pos ).nheavyatoms(), 1.0 / 2.0 );
-		}
 
 		std::string res_smiles;
 		if ( restype->properties().string_properties().count( "SMILES" ) > 0 ) {
@@ -383,23 +356,27 @@ DrugDesignMover::apply( Pose & pose )
 			TR << "Round " << ii << " ACCEPTED with ligand " << res_smiles << std::endl;
 			// Simulated Annealing; reset temperature to min if MC accepted
 			if ( simulated_annealing_ ) {
-				TR << "MC accepted. Reset temperature to " << temperature_params[0] << std::endl;
-				mc.set_temperature( temperature_params[0] );
-				temp_f << ii << "," << mc.temperature() << std::endl;
+				TR << "MC accepted. Reset temperature to " << temperature_params_[1] << std::endl;
+				mc.set_temperature( temperature_params_[1] );
 			}
-
-			log_file << ii << "," << raw_score << "," << LE_score << "," << res_smiles << std::endl;
-
+			if ( output_logfile_ ) {
+				Real raw_score, LE_score;
+				compute_scores_for_logfile( score, restype, raw_score, LE_score );
+				log_file << ii << "," << raw_score << "," << LE_score << "," << res_smiles << std::endl;
+			}
 		}
 		else {
 			TR << "Round " << ii << " REJECTED with ligand " << res_smiles << std::endl;
 			// Simulated Annealing; increase temperature by step if MC rejected
 			if ( simulated_annealing_ ) {
-				core::Real new_temperature = std::min( temperature_params[1], mc.temperature() + temperature_params[2]);
+				core::Real new_temperature = std::min( temperature_params_[2], mc.temperature() + temperature_params_[3]);
 				mc.set_temperature( new_temperature );
-				temp_f << ii << "," << mc.temperature() << std::endl;
 				TR << "MC rejected. Set temperature to " << new_temperature << std::endl;
 			}
+		}
+		
+		if ( simulated_annealing_ && output_logfile_ ) {
+			temp_f << ii << "," << mc.temperature() << std::endl;
 		}
 		mc.show_scores();
 
@@ -421,28 +398,32 @@ DrugDesignMover::apply( Pose & pose )
 			<< " Tested: " << stat_tested[name] << " (" << stat_tested[name]/float(stat_attempt[name]) << ")"
 			<< " Accepted: " << stat_accepted[name] << " (" << stat_accepted[name]/float(stat_attempt[name]) << ")" << std::endl;
 		// Output to log file
-		log_file << "Stats for " << name << ": Attempts: " << stat_attempt[name] << " (" << stat_attempt[name]/float(maxtrials_) << ")"
-				<< " Hard Fails: " << stat_failed[name] << " (" << stat_failed[name]/float(stat_attempt[name]) << ")"
-				<< " Tested: " << stat_tested[name] << " (" << stat_tested[name]/float(stat_attempt[name]) << ")"
-				<< " Accepted: " << stat_accepted[name] << " (" << stat_accepted[name]/float(stat_attempt[name]) << ")" << std::endl;
+		if ( output_logfile_ ) {
+			log_file << "Stats for " << name << ": Attempts: " << stat_attempt[name] << " (" << stat_attempt[name]/float(maxtrials_) << ")"
+							<< " Hard Fails: " << stat_failed[name] << " (" << stat_failed[name]/float(stat_attempt[name]) << ")"
+							<< " Tested: " << stat_tested[name] << " (" << stat_tested[name]/float(stat_attempt[name]) << ")"
+							<< " Accepted: " << stat_accepted[name] << " (" << stat_accepted[name]/float(stat_attempt[name]) << ")" << std::endl;
+		}
 	}
 
-	MutableResidueType rsdtype( pose.residue_type( res_pos ) );
-	if ( rsdtype.properties().string_properties().count( "SMILES" ) > 0 ) {
-		log_file << "The best scoring ligand is " << rsdtype.get_string_property( "SMILES" ) << std::endl;
-	}
+	if ( output_logfile_ ) {
+		ResidueType const & rsdtype = pose.residue_type( res_pos );
+		if ( rsdtype.properties().string_properties().count( "SMILES" ) > 0 ) {
+			log_file << "The best scoring ligand is " << rsdtype.get_string_property( "SMILES" ) << std::endl;
+		}
 
-	int frag_no(0);
-	bool hasProperty = rsdtype.properties().string_properties().count( "fragment" + std::to_string( frag_no ) ) > 0;
-	while ( hasProperty ) {
-		log_file << "Fragment" << std::to_string( frag_no ) << ": " << rsdtype.get_string_property( "fragment" + std::to_string( frag_no ) ) << std::endl;
-		++frag_no;
-		hasProperty = rsdtype.properties().string_properties().count( "fragment" + std::to_string( frag_no ) ) > 0;
-	}
+		int frag_no(1);
+		bool hasProperty = rsdtype.properties().string_properties().count( "fragment" + std::to_string( frag_no ) ) > 0;
+		while ( hasProperty ) {
+			log_file << "Fragment" << std::to_string( frag_no ) << ": " << rsdtype.get_string_property( "fragment" + std::to_string( frag_no ) ) << std::endl;
+			++frag_no;
+			hasProperty = rsdtype.properties().string_properties().count( "fragment" + std::to_string( frag_no ) ) > 0;
+		}
 
-	log_file.close();
-	if ( simulated_annealing_ ) {
-		temp_f.close();
+		log_file.close();
+		if ( simulated_annealing_ ) {
+			temp_f.close();
+		}
 	}
 
 	mc.show_scores();
@@ -579,6 +560,17 @@ DrugDesignMover::emplace_residue_type(
 	return false;
 }
 
+void
+DrugDesignMover::compute_scores_for_logfile( core::Real score, core::chemical::MutableResidueTypeOP restype, core::Real & raw_score, core::Real & LE_score ) const {
+  // Consider ligand efficiency and calculate the raw interface score / LE score for reporting purpose
+  core::Real factor = std::pow( restype->nheavyatoms(), 0.5 );
+	if ( !lig_efficiency_ ) {	// lid_root2 as in Paul Eienhuth's ligand evolution method
+		LE_score = score / factor;
+	} else {
+		raw_score = score * factor;
+	}
+}
+
 std::string
 DrugDesignMover::get_name() const {
 	return DrugDesignMover::mover_name();
@@ -645,37 +637,6 @@ DrugDesignMover::find_new_res_name( std::string original_name, core::Size iterat
 	return newresname;
 }
 
-/// @brief Return updated temperature if using simulated annealing
-//core::Real
-//DrugDesignMover::update_temperature( core::Real currT, core::Real curr_accept_ratio ) {
-//	core::Real x = curr_accept_ratio - target_accept_ratio_;
-//	core::Real multiply_ratio;
-//	//core::Real multiply_ratio = std::exp( 2 * (target_accept_ratio_ - curr_accept_ratio) );
-//	//core::Real multiply_ratio = std::min( 1 - ( curr_accept_ratio - target_accept_ratio_ ), 1.0 );
-//	if ( cooling_scheme_ == "HeatUpAtStall" ) {
-//		if ( curr_accept_ratio == 0 ) {
-//			currT += 0.1;
-//		} else {
-//			currT = temperature_;
-//		}
-//		return currT;
-//	}
-//
-//	if ( cooling_scheme_ == "1-x" ) {
-//		multiply_ratio = 1 - x;
-//	} else if ( cooling_scheme_ == "1-0.5x" ) {
-//		multiply_ratio = 1 - 0.5*x;
-//	} else if ( cooling_scheme_ == "1-0.25x" ) {
-//		multiply_ratio = 1 - 0.25*x;
-//	} else {
-//		TR << "Unknown input cooling scheme. Using default (1-x) instead..." << std::endl;
-//		multiply_ratio = 1 - x;
-//	}
-//
-//	assert( multiply_ratio );
-//	return currT * multiply_ratio;
-//}
-
 /// @brief Dump the ligand to the given file (appending)
 void
 DrugDesignMover::dump_molecule( core::chemical::MutableResidueType const & restype, std::string const & stage) const {
@@ -715,6 +676,7 @@ DrugDesignMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 		+ XMLSchemaAttribute::attribute_w_default( "temperature", xsct_real, "The Monte Carlo temperature", "0.1" )
 		+ XMLSchemaAttribute::attribute_w_default( "chain", xsct_char, "The chain of the ligand to use", "X" )
 		+ XMLSchemaAttribute::attribute_w_default( "lig_efficy", xsct_rosetta_bool, "Use ligand efficiency interface energy in MC acceptance", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "logfile", xsct_rosetta_bool, "Output log files", "true")
 		+ XMLSchemaAttribute( "prefilter", xs_string, "If set, apply this filter to the pose prior to the redocker mover." )
 		+ XMLSchemaAttribute::attribute_w_default( "redocker", xs_string, "The name of the mover to use prior to scoring", "null_mover" )
 		+ XMLSchemaAttribute( "postfilter", xs_string, "If set, apply this filter to the pose after the redocker mover has been applied." )
@@ -732,10 +694,6 @@ DrugDesignMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 
 	AttributeList temperature_attributes;
 	temperature_attributes
-//		+ XMLSchemaAttribute::attribute_w_default("accept_ratio", xsct_real, "Desired accept ratio in the end.", "0.2")
-//		+ XMLSchemaAttribute::attribute_w_default("update_interval", xsct_non_negative_integer, "Temperature update every nth trial.", "10")
-//		+ XMLSchemaAttribute::attribute_w_default("cooling_scheme", xs_string, "Formula for temperature update", "1-x")
-//		+ XMLSchemaAttribute::attribute_w_default("use_curr", xsct_rosetta_bool, "Use current accept ratio for temperature update", "true");
 		+ XMLSchemaAttribute::attribute_w_default("min", xsct_real, "min temperature for reset.", "0.1")
 		+ XMLSchemaAttribute::attribute_w_default("max", xsct_real, "max temperature limit.", "0.5")
 		+ XMLSchemaAttribute::attribute_w_default("step", xsct_real, "step temperature to increase every rejected MC cycle", "0.002")
@@ -774,6 +732,7 @@ DrugDesignMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 	chain_ = tag->getOption< char >( "chain", 'X' );
 	debug_prefix_ = tag->getOption< std::string >( "debug_prefix", "" );
 	lig_efficiency_ = tag->getOption< bool >( "lig_efficy", true );
+	output_logfile_ = tag->getOption< bool >( "logfile", true );
 
 	if ( ! tag->hasOption( "scorer" ) ) {
 		utility_exit_with_message("You must provide a scorer option to the DrugDesignMover for scoring.");
@@ -807,14 +766,10 @@ DrugDesignMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 			add_after_chemistry( chemistry_from_subtag( subtag, data ) );
 		} else if ( subtag->getName() == "SimulatedAnnealing" ) {
 			simulated_annealing_ = true;
-//			target_accept_ratio_ = subtag->getOption<core::Real>("accept_ratio", 0.2);
-//			temp_update_interval_ = subtag->getOption<core::Real>("update_interval", 10);
-//			cooling_scheme_ = subtag->getOption<std::string>("cooling_scheme", "1-x");
-//			useCurrRatio_ = subtag->getOption<bool>("use_curr", true);
-			temperature_params.push_back( subtag->getOption<core::Real>("min", 0.1) );
-			temperature_params.push_back( subtag->getOption<core::Real>("max", 0.5) );
-			temperature_params.push_back( subtag->getOption<core::Real>("step", 0.002) );
-			temperature_params.push_back( subtag->getOption<core::Real>("OFF_after_n_trials", -1.0) );
+			temperature_params_.push_back( subtag->getOption<core::Real>("min", 0.1) );
+			temperature_params_.push_back( subtag->getOption<core::Real>("max", 0.5) );
+			temperature_params_.push_back( subtag->getOption<core::Real>("step", 0.002) );
+			temperature_params_.push_back( subtag->getOption<core::Real>("OFF_after_n_trials", -1.0) );
 		} else {
 			utility_exit_with_message( "tag name " + subtag->getName() + " unrecognized." );
 		}

@@ -111,8 +111,8 @@ private:
 	// The outer list is indexed reaction reactant number.
 	// The inner list is the set of reagents
 	// This is dynamically loaded, as needed.
-	utility::vector0< utility::vector1< std::string > > reagent_smiles_;
-	utility::vector0< utility::vector1< ::RDKit::RWMolOP > > reagents_;
+	utility::vector1< utility::vector1< std::string > > reagent_smiles_;
+	utility::vector1< utility::vector1< ::RDKit::RWMolOP > > reagents_;
 
 	// A way to short-circuit re-trying the loading of reagents.
 	bool reagents_bad_ = false;

@@ -60,9 +60,7 @@ void LigandLocationFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	attlist
 		+ XMLSchemaAttribute::required_attribute( "chain", xs_string, "Chain ID" )
 		+ XMLSchemaAttribute( "radius", xsct_real,
-		"Filter is false if the distance between ligand centroid and center is greater than this value" )
-		+ XMLSchemaAttribute( "upper_threshold", xsct_real,
-		"Filter is false if the metric is greater than this value" );
+		"Filter is false if the distance between ligand centroid and center is greater than this value" );
 
 	// subelements
 	XMLSchemaSimpleSubelementList subelement_list;
@@ -98,34 +96,34 @@ LigandLocationFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 
 bool
 LigandLocationFilter::apply( core::pose::Pose const & pose ) const {
-	return compute_circular( pose );
+	core::Real distance = compute_distance( pose );
+	if ( distance > radius_ ) {
+		TR << "Failing LigandLocation filter with distance " << distance << " between centroid and center, which is outside the radius of " << radius_ << std::endl;
+		return false;
+	}
+	return true;
 }
 
 void
 LigandLocationFilter::report( std::ostream & out, core::pose::Pose const & pose ) const {
-	core::Real const value( compute_circular( pose ) );
-	out << "LigandLocation '" << "circular" << "' result is " << value << std::endl;
+	core::Real const distance( compute_distance( pose ) );
+	out << "The distance between the centroid of the ligand and the set center is " << distance << std::endl;
 }
 
 core::Real
 LigandLocationFilter::report_sm( core::pose::Pose const & pose ) const {
-	return( compute_circular( pose ) );
+	return( compute_distance( pose ) );
 }
 
 /*
- * Compute whether the centroid of the ligand is within a circular filter
+ * Compute the distance between the centroid of the ligand and a set center
  */
-bool
-LigandLocationFilter::compute_circular( core::pose::Pose const &pose ) const {
+core::Real
+LigandLocationFilter::compute_distance( core::pose::Pose const &pose ) const {
 	core::Size chain_id = core::pose::get_chain_id_from_chain( chain_, pose );
 	core::Vector const centroid = protocols::geometry::centroid_by_chain( pose, chain_id );
 	core::Real const distance = ( center_ - centroid ).length();
-
-	if ( distance > radius_ ) {
-		TR << "Failing LigandLocation circular filter with distance " << distance << " between centroid and center, which is outside the radius of " << radius_ << std::endl;
-		return false;
-	}
-	return true;
+	return distance;
 }
 
 }

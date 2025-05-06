@@ -84,5 +84,6 @@ xsd_type_definition_w_attributes_and_repeatable_subelements(
 		.write_complex_type_to_schema( xsd );
 }
 
+
 }
 }

@@ -196,7 +196,6 @@ output_interface_deltas(
 		if ( !scorefxn->has_nonzero_weight(ii) ) continue;
 
 		core::Real component_score = scorefxn->get_weight(ii) * (together_energies[ii] - separated_energies[ii]);
-
 		if ( normalization_function ) {
 			component_score = (*normalization_function)( component_score, residues );
 		}
