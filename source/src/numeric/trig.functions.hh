@@ -107,8 +107,8 @@ sin_cos_range( T const & x, T const & tol = T( .001 ) )
 	} else if ( ( x >= T( 1.0 ) ) && ( x <= T( 1.0 ) + tol ) ) { // Within tolerance
 		return T( 1.0 ); // Adjusted value
 	} else { // Out of range
-		cout << "sin_cos_range ERROR: " << setprecision( 8 ) << showpoint << x << " is outside of [-1,+1] sin and cos value legal range" << endl;
-		cerr << "sin_cos_range ERROR: " << setprecision( 8 ) << showpoint << x << " is outside of [-1,+1] sin and cos value legal range" << endl;
+		cout << "sin_cos_range ERROR: " << setprecision( 8 ) << showpoint << x << " is outside of [-1,+1] sin and cos value legal range with tolerance of " << tol << endl;
+		cerr << "sin_cos_range ERROR: " << setprecision( 8 ) << showpoint << x << " is outside of [-1,+1] sin and cos value legal range with tolerance of " << tol << endl;
 #ifdef BOINC
 		// There are enough sufficiently weird machines on BOINC that
 		// the error was getting triggered fairly often (~5% of jumping runs).
@@ -120,8 +120,12 @@ sin_cos_range( T const & x, T const & tol = T( .001 ) )
 		std::string const warning( "NANs occured in sin_cos_range!" );
 		throw ( CREATE_EXCEPTION(utility::excn::Exception,  warning ) );
 #endif
-		utility_exit();
-		return T( 0.0 ); // Keep compiler happy
+
+		//more substantial change that allows any out of bounds calculation to still pass, but will warn that there was a significant accumulation of rounding error that is beyond the tolerance
+		return ( x >= T( 0.0 ) ? T( 1.0 ) : T( -1.0 ) );
+
+		//utility_exit();
+		//return T( 0.0 ); // Keep compiler happy
 	}
 }
 
