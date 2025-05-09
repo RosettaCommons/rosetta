@@ -39,6 +39,7 @@ namespace protocols {
 namespace drug_design {
 
 class ReactionBasedAnalogSampler : public protocols::chemistries::Chemistry {
+public:
 	struct Reagent
 	{
 		::RDKit::ROMolOP rdmol_;
