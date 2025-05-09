@@ -409,17 +409,16 @@ ReactionBasedAnalogSampler::apply( core::chemical::MutableResidueType & rsdtype 
 }
 
 std::shared_ptr<::RDKit::SparseIntVect<unsigned int>>
-ReactionBasedAnalogSampler::getMorganFingerprint( ::RDKit::ROMol const & mol ) const {
+ReactionBasedAnalogSampler::getMorganFingerprint( ::RDKit::ROMol const & mol, bool useFeatures /*=false*/ ) const {
 	// Fingerprint properties
 	int radius = 2;
-	bool useFeatures = false;	// false for ECFP / true for FCFP
 
-	if ( useFeatures ) {
+	if ( useFeatures ) {	// FCFP
 		std::vector<unsigned int> invars( mol.getNumAtoms() );
 		::RDKit::MorganFingerprints::getFeatureInvariants( mol, invars );
 		return std::shared_ptr<::RDKit::SparseIntVect<unsigned int>>( ::RDKit::MorganFingerprints::getFingerprint( mol, radius, &invars ) );
 
-	} else {
+	} else {	// ECFP
 		return std::shared_ptr<::RDKit::SparseIntVect<unsigned int>>( ::RDKit::MorganFingerprints::getFingerprint( mol, radius ) );
 	}
 }

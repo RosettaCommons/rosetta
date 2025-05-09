@@ -116,7 +116,7 @@ private:
 	Product sample_candidate( const utility::vector1< Product > & candidate_set, const ::RDKit::RWMOL_SPTR rdmol );
 
 	/// @brief A helper function to easily switch between using ECFP and FCFP
-	std::shared_ptr<::RDKit::SparseIntVect<unsigned int>> getMorganFingerprint( ::RDKit::ROMol const & mol ) const;
+	std::shared_ptr<::RDKit::SparseIntVect<unsigned int>> getMorganFingerprint( ::RDKit::ROMol const & mol, bool useFeatures = false ) const;
 
 	/// @brief Find a common substructure mapping using RDKit Open3DAlign method
 	core::chemical::IndexIndexMapping find_O3A_mapping( ::RDKit::ROMOL_SPTR from, ::RDKit::ROMOL_SPTR to ) const;
