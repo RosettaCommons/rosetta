@@ -24,6 +24,7 @@
 #include <protocols/rotamer_gen/RDKitRotamersCreator.hh>
 
 #include <protocols/drug_design/RandomFragmentLigandCreator.hh>
+#include <protocols/drug_design/ReactionBasedAnalogSamplerCreator.hh>
 #include <protocols/drug_design/ReactionGrowCreator.hh>
 #include <protocols/drug_design/ReactionFragmentCreator.hh>
 #include <protocols/drug_design/ReactionMultiTransformCreator.hh>
