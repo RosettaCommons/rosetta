@@ -185,7 +185,7 @@ protected:
 		core::chemical::MutableResidueTypeOP restype, // Can/will be modified!
 		core::chemical::IndexVDMapping const & index_VD_mapping
 	);
-	
+
 	/// @brief Helper function for calculating raw -> LE or LE -> raw score
 	void
 	compute_scores_for_logfile( core::Real score, core::chemical::MutableResidueTypeOP restype, core::Real & raw_score, core::Real & LE_score ) const;
@@ -224,16 +224,16 @@ private: // Data
 
 	/// @brief The filter used to do scoring
 	protocols::filters::FilterOP scorer_;
-	
+
 	/// @brief if set true, a ligand efficiency interface score will be used for MC acceptance
 	bool lig_efficiency_;
-	
+
 	/// @brief if set true, output log files to the output path
 	bool output_logfile_;
 
 	/// @brief acceptance criterion temperature
 	core::Real temperature_;
-	
+
 	/// @brief if set true, temperature varies throughout MC trials
 	bool simulated_annealing_;
 	/// @brief parameters for simulated annealing, in the order: min, max, step, OFF_after_n_trials

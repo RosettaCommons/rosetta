@@ -37,15 +37,15 @@ static basic::Tracer TR("protocols.drug_design.ChemicalReaction");
 
 //Constructor
 ChemicalReaction::ChemicalReaction(
-		std::string const & dir,
-		std::string const & name,
-		std::string const & smirks
+	std::string const & dir,
+	std::string const & name,
+	std::string const & smirks
 ) :
-dir_( dir ),
-name_( name )
+	dir_( dir ),
+	name_( name )
 {
 	rxn_ = ::RDKit::ChemicalReactionOP( ::RDKit::RxnSmartsToChemicalReaction( smirks ) );
-	if( ! rxn_ ) {
+	if ( ! rxn_ ) {
 		TR.Error << "ERROR: Cannot parse as chemical reaction: " << smirks << std::endl;
 		return;
 	}
@@ -69,8 +69,8 @@ name_( name )
 }
 
 ChemicalReaction::ChemicalReaction(
-		std::string const & name,
-		std::string const & smirks
+	std::string const & name,
+	std::string const & smirks
 ) : ChemicalReaction( "", name, smirks )
 {}
 
@@ -110,7 +110,7 @@ ChemicalReaction::n_availible_reagents(core::Size reag_no) {
 
 // Get a specific reagent (deprecated)
 ::RDKit::ROMolOP
- ChemicalReaction::reagent(core::Size reag_no, core::Size reag_index) {
+ChemicalReaction::reagent(core::Size reag_no, core::Size reag_index) {
 	load_reagents();
 	//ASSERT_ALWAYS( reag_no < reagent_smiles_.size() );
 	//ASSERT_ALWAYS( 1 <= reag_index && reag_index <= reagent_smiles_[reag_no].size() );
@@ -162,12 +162,12 @@ ChemicalReaction::load_reagents() {
 
 		for ( std::string const & line: load_file( dir_, reagent_file ) ) {
 			utility::vector1< std::string > parts( utility::split_whitespace(line) );
-			if( parts.size() == 0 ) { continue; }
-			if( parts[1].size() < 1 || parts[1][0] == '#' ) { continue; }
+			if ( parts.size() == 0 ) { continue; }
+			if ( parts[1].size() < 1 || parts[1][0] == '#' ) { continue; }
 			//if ( parts.size() > 3 ) {
-			//	std::cout << "ERROR: Reaction line malformed: " << line << std::endl;
-			//	reagents_bad_ = true;
-			//	continue;
+			// std::cout << "ERROR: Reaction line malformed: " << line << std::endl;
+			// reagents_bad_ = true;
+			// continue;
 			//}
 
 			++nloaded;
@@ -197,7 +197,7 @@ ChemicalReaction::reaction_result( ::RDKit::MOL_SPTR_VECT const & reagents ) con
 		TR.Error << "ERROR: Product list empty? Should not happen." << std::endl;
 		return nullptr;
 	}
-//	std::cout << "Created " << products.size() << " products from reaction." << std::endl;
+	// std::cout << "Created " << products.size() << " products from reaction." << std::endl;
 	core::Size prod_num( numeric::random::random_range(0,products.size()-1) ); // Perhaps should shuffle and then iterate?
 
 	if ( products[ prod_num ].size() != 1 ) {
@@ -221,7 +221,7 @@ bool ChemicalReaction::cleanup_product( ::RDKit::RWMol & prod ) const {
 	} catch (::RDKit::MolSanitizeException const&se) {
 		return true; // Cleanup failed.
 	}
-	
+
 	::RDKit::MolOps::addHs( prod, /*explicitOnly=*/false,/*addCoords=*/false );
 
 	int conf_num = ::RDKit::DGeomHelpers::EmbedMolecule(prod, ::RDKit::DGeomHelpers::srETKDGv3);
@@ -229,7 +229,7 @@ bool ChemicalReaction::cleanup_product( ::RDKit::RWMol & prod ) const {
 		return true; // Can't make 3D for this product.
 	}
 
-//	std::cout << "Successfully cleaned up the product." << std::endl;
+	// std::cout << "Successfully cleaned up the product." << std::endl;
 	return false; // All good.
 }
 
@@ -250,14 +250,14 @@ ChemicalReaction::load_file( std::string const & reaction_dir, std::string const
 	}
 
 	std::string line;
-	while( getline( file, line ) ) {
+	while ( getline( file, line ) ) {
 		lines.push_back( line );
 	}
 	return lines;
 }
 
 ::RDKit::ChemicalReactionOP const &
- ChemicalReaction::get_reaction() const {
+ChemicalReaction::get_reaction() const {
 	return rxn_;
 }
 

@@ -41,8 +41,8 @@ public:
 	);
 
 	ChemicalReaction(
-			std::string const & reaction_name,
-			std::string const & reaction_smirks
+		std::string const & reaction_name,
+		std::string const & reaction_smirks
 	);
 
 	~ChemicalReaction();
@@ -86,7 +86,7 @@ public:
 	reaction_result( ::RDKit::MOL_SPTR_VECT const & reagents ) const;
 
 	::RDKit::ChemicalReactionOP const &
-	 get_reaction() const;
+	get_reaction() const;
 
 private:
 

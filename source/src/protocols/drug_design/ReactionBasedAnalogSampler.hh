@@ -44,9 +44,9 @@ class ReactionBasedAnalogSampler : public protocols::chemistries::Chemistry {
 		::RDKit::ROMolOP rdmol_;
 		std::shared_ptr<ExplicitBitVect> fp_;
 		std::string rxn_;
-		core::Size no_;		// component number
+		core::Size no_;  // component number
 
-		bool operator<( const Reagent& r ) const {	// for sorting components before running the reaction
+		bool operator<( const Reagent& r ) const { // for sorting components before running the reaction
 			return no_ < r.no_;
 		}
 	};
@@ -79,8 +79,8 @@ public:
 	/// @brief Initialize any data members of this instance from an input tag
 	/// and a DataMap object
 	void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & datacache
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & datacache
 	) override;
 
 	core::chemical::VDVDMapping

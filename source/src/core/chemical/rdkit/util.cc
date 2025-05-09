@@ -266,7 +266,7 @@ remove_most_charges(::RDKit::RWMol & rdmol) {
 				}
 			}
 			break;
-		case 15: // P
+		case 15 : // P
 			if ( valence > 3 ) {
 				atom.setFormalCharge( orig_charge );
 				atom.updatePropertyCache(false);

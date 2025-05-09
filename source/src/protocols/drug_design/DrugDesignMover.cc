@@ -245,7 +245,7 @@ DrugDesignMover::apply( Pose & pose )
 
 	// Statistics for attempts (MC won't show earlier aborts.)
 	std::map< std::string, core::Size > stat_attempt, stat_failed, stat_tested, stat_accepted;
-	
+
 	// score initial input pose
 	Real initial_score = scorer_->report_sm( pose );
 
@@ -259,7 +259,7 @@ DrugDesignMover::apply( Pose & pose )
 
 	//Setup data for the iteration
 	numeric::random::WeightedSampler sampler(weights_);
-	
+
 	// log files
 	std::ofstream log_file;
 	std::ofstream temp_f;
@@ -281,7 +281,7 @@ DrugDesignMover::apply( Pose & pose )
 		if ( simulated_annealing_ && ( temperature_params_[4] > 0 ) && ( ii > temperature_params_[4] ) ) {
 			mc.set_temperature( temperature_params_[1] );
 			simulated_annealing_ = false;
-			
+
 			if ( output_logfile_ ) {
 				temp_f.close();
 			}
@@ -364,8 +364,7 @@ DrugDesignMover::apply( Pose & pose )
 				compute_scores_for_logfile( score, restype, raw_score, LE_score );
 				log_file << ii << "," << raw_score << "," << LE_score << "," << res_smiles << std::endl;
 			}
-		}
-		else {
+		} else {
 			TR << "Round " << ii << " REJECTED with ligand " << res_smiles << std::endl;
 			// Simulated Annealing; increase temperature by step if MC rejected
 			if ( simulated_annealing_ ) {
@@ -374,7 +373,7 @@ DrugDesignMover::apply( Pose & pose )
 				TR << "MC rejected. Set temperature to " << new_temperature << std::endl;
 			}
 		}
-		
+
 		if ( simulated_annealing_ && output_logfile_ ) {
 			temp_f << ii << "," << mc.temperature() << std::endl;
 		}
@@ -400,9 +399,9 @@ DrugDesignMover::apply( Pose & pose )
 		// Output to log file
 		if ( output_logfile_ ) {
 			log_file << "Stats for " << name << ": Attempts: " << stat_attempt[name] << " (" << stat_attempt[name]/float(maxtrials_) << ")"
-							<< " Hard Fails: " << stat_failed[name] << " (" << stat_failed[name]/float(stat_attempt[name]) << ")"
-							<< " Tested: " << stat_tested[name] << " (" << stat_tested[name]/float(stat_attempt[name]) << ")"
-							<< " Accepted: " << stat_accepted[name] << " (" << stat_accepted[name]/float(stat_attempt[name]) << ")" << std::endl;
+				<< " Hard Fails: " << stat_failed[name] << " (" << stat_failed[name]/float(stat_attempt[name]) << ")"
+				<< " Tested: " << stat_tested[name] << " (" << stat_tested[name]/float(stat_attempt[name]) << ")"
+				<< " Accepted: " << stat_accepted[name] << " (" << stat_accepted[name]/float(stat_attempt[name]) << ")" << std::endl;
 		}
 	}
 
@@ -562,9 +561,9 @@ DrugDesignMover::emplace_residue_type(
 
 void
 DrugDesignMover::compute_scores_for_logfile( core::Real score, core::chemical::MutableResidueTypeOP restype, core::Real & raw_score, core::Real & LE_score ) const {
-  // Consider ligand efficiency and calculate the raw interface score / LE score for reporting purpose
-  core::Real factor = std::pow( restype->nheavyatoms(), 0.5 );
-	if ( !lig_efficiency_ ) {	// lid_root2 as in Paul Eienhuth's ligand evolution method
+	// Consider ligand efficiency and calculate the raw interface score / LE score for reporting purpose
+	core::Real factor = std::pow( restype->nheavyatoms(), 0.5 );
+	if ( !lig_efficiency_ ) { // lid_root2 as in Paul Eienhuth's ligand evolution method
 		LE_score = score / factor;
 	} else {
 		raw_score = score * factor;

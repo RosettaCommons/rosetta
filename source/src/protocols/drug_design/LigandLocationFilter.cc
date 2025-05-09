@@ -66,9 +66,9 @@ void LigandLocationFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	XMLSchemaSimpleSubelementList subelement_list;
 	AttributeList Coordinates_attributes;
 	Coordinates_attributes
-	+ XMLSchemaAttribute::required_attribute("x", xsct_real, "x coordinate of the center.")
-	+ XMLSchemaAttribute::required_attribute("y", xsct_real, "y coordinate of the center.")
-	+ XMLSchemaAttribute::required_attribute("z", xsct_real, "z coordinate of the center.");
+		+ XMLSchemaAttribute::required_attribute("x", xsct_real, "x coordinate of the center.")
+		+ XMLSchemaAttribute::required_attribute("y", xsct_real, "y coordinate of the center.")
+		+ XMLSchemaAttribute::required_attribute("z", xsct_real, "z coordinate of the center.");
 	subelement_list.add_simple_subelement("center", Coordinates_attributes, "Set x,y and z coordinates, center of filter.");
 
 	protocols::filters::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, class_name(),
@@ -86,9 +86,9 @@ LigandLocationFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 		std::string name= child_tag->getName();
 		if ( name == "center" ) {
 			center_ = core::Vector(
-					child_tag->getOption<core::Real>("x"),
-					child_tag->getOption<core::Real>("y"),
-					child_tag->getOption<core::Real>("z")
+				child_tag->getOption<core::Real>("x"),
+				child_tag->getOption<core::Real>("y"),
+				child_tag->getOption<core::Real>("z")
 			);
 		}
 	}
@@ -116,8 +116,8 @@ LigandLocationFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 /*
- * Compute the distance between the centroid of the ligand and a set center
- */
+* Compute the distance between the centroid of the ligand and a set center
+*/
 core::Real
 LigandLocationFilter::compute_distance( core::pose::Pose const &pose ) const {
 	core::Size chain_id = core::pose::get_chain_id_from_chain( chain_, pose );

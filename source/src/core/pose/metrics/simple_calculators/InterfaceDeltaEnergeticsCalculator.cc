@@ -149,16 +149,16 @@ void InterfaceDeltaEnergeticsCalculator::recompute( Pose const & this_pose ) {
 
 	// JK MAKE SURE THAT THE GRAPH STATE HERE IS "GOOD"
 
-//	// Get the first and last resnum of each chain, using name_of_InterfaceNeighborDefinitionCalculator_
-//	basic::MetricValue<Size> mv_size;
-//	this_pose.metric(name_of_InterfaceNeighborDefinitionCalculator_,"first_chain_first_resnum",mv_size);
-//	Size ch1_begin_num = mv_size.value();
-//	this_pose.metric(name_of_InterfaceNeighborDefinitionCalculator_,"first_chain_last_resnum",mv_size);
-//	Size ch1_end_num = mv_size.value();
-//	this_pose.metric(name_of_InterfaceNeighborDefinitionCalculator_,"second_chain_first_resnum",mv_size);
-//	Size ch2_begin_num = mv_size.value();
-//	this_pose.metric(name_of_InterfaceNeighborDefinitionCalculator_,"second_chain_last_resnum",mv_size);
-//	Size ch2_end_num = mv_size.value();
+	// // Get the first and last resnum of each chain, using name_of_InterfaceNeighborDefinitionCalculator_
+	// basic::MetricValue<Size> mv_size;
+	// this_pose.metric(name_of_InterfaceNeighborDefinitionCalculator_,"first_chain_first_resnum",mv_size);
+	// Size ch1_begin_num = mv_size.value();
+	// this_pose.metric(name_of_InterfaceNeighborDefinitionCalculator_,"first_chain_last_resnum",mv_size);
+	// Size ch1_end_num = mv_size.value();
+	// this_pose.metric(name_of_InterfaceNeighborDefinitionCalculator_,"second_chain_first_resnum",mv_size);
+	// Size ch2_begin_num = mv_size.value();
+	// this_pose.metric(name_of_InterfaceNeighborDefinitionCalculator_,"second_chain_last_resnum",mv_size);
+	// Size ch2_end_num = mv_size.value();
 
 
 	// Clear the energy-holders, get the (unweighted) energies from the pose
@@ -168,11 +168,11 @@ void InterfaceDeltaEnergeticsCalculator::recompute( Pose const & this_pose ) {
 	Size numChains = this_pose.num_chains();
 	Size ch2_begin_num = this_pose.chain_begin(numChains);
 	Size ch2_end_num = this_pose.chain_end(numChains);
-	
-	for (Size c = 1; c < numChains; c++) {
+
+	for ( Size c = 1; c < numChains; c++ ) {
 		Size ch1_begin_num = this_pose.chain_begin(c);
 		Size ch1_end_num = this_pose.chain_end(c);
-			
+
 		// Loop over interactions across the interface
 		for ( Size i = ch1_begin_num; i <= ch1_end_num; ++i ) {
 			for ( graph::Graph::EdgeListConstIter
@@ -239,7 +239,7 @@ void InterfaceDeltaEnergeticsCalculator::recompute( Pose const & this_pose ) {
 
 		} //loop over long range energy types
 	}
-	
+
 	// Save the most recently used weights
 	weights_ = this_pose.energies().weights();
 	//set weights of score types to ignore to 0

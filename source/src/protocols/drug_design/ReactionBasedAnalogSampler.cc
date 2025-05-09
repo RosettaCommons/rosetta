@@ -38,7 +38,7 @@
 #include <numeric/random/WeightedSampler.hh>
 #include <numeric/random/random.hh>
 
-#include <rdkit/DataStructs/BitOps.h>		// For similarity bit wrappers
+#include <rdkit/DataStructs/BitOps.h>  // For similarity bit wrappers
 #include <rdkit/DataStructs/ExplicitBitVect.h>
 #include <rdkit/GraphMol/ROMol.h>
 #include <rdkit/GraphMol/ChemReactions/Reaction.h>
@@ -115,12 +115,12 @@ ReactionBasedAnalogSampler::load_reactions( std::string const & reaction_dir, st
 	}
 
 	std::string line;
-	while( getline( file, line ) ) {
+	while ( getline( file, line ) ) {
 		//load all the reactions that are available
 		//set up for file is 1st column = reaction name, 2nd column = smirk string
 		utility::vector1< std::string > parts( utility::split_whitespace(line) );
-		if( parts.size() == 0 ) { continue; }
-		if( parts[1].size() < 1 || parts[1][0] == '#' ) { continue; }
+		if ( parts.size() == 0 ) { continue; }
+		if ( parts[1].size() < 1 || parts[1][0] == '#' ) { continue; }
 		if ( parts.size() != 2 ) {
 			std::cout << "ERROR: Reaction line malformed: " << line << std::endl;
 			continue;
@@ -148,12 +148,12 @@ ReactionBasedAnalogSampler::load_reactions( std::string const & filename ) {
 	}
 
 	std::string line;
-	getline( file, line );	//first line is column names
-	while( getline( file, line ) ) {
+	getline( file, line ); //first line is column names
+	while ( getline( file, line ) ) {
 		//set up for file is 1st column = reaction id, 2nd column = No. of components, 3rd column = reaction smirks
 		//2nd column (no. of components) is not used here since RDKit can detect this through reaction SMARTS. This is simply to line up with the format (used in REvoLd)
 		utility::vector1< std::string > parts( utility::split_whitespace(line) );
-		if( parts.size() == 0 ) { continue; }
+		if ( parts.size() == 0 ) { continue; }
 		if ( parts.size() < 3 ) {
 			TR.Error << "ERROR: Reaction line malformed: " << line << std::endl;
 			continue;
@@ -196,12 +196,12 @@ void
 ReactionBasedAnalogSampler::load_all_reagents( std::string const & filename ) {
 	utility::io::izstream file( filename );
 	std::string line;
-	getline( file, line );	//first line is column names
-	while( getline( file, line ) ) {
+	getline( file, line ); //first line is column names
+	while ( getline( file, line ) ) {
 		//set up for file is 1st column = SMILES, 2nd column = reactant id, 3rd column = component #, 4th column = reaction id
 		//again, 2nd column (reactant id) is not used here. This is simply to line up with the format (used in REvoLd)
 		utility::vector1< std::string > parts( utility::split_whitespace(line) );
-		if( parts.size() == 0 ) { continue; }
+		if ( parts.size() == 0 ) { continue; }
 		if ( parts.size() < 4 ) {
 			TR.Error << "ERROR: Reactant line malformed: " << line << std::endl;
 			continue;
@@ -209,7 +209,7 @@ ReactionBasedAnalogSampler::load_all_reagents( std::string const & filename ) {
 		struct Reagent reagent;
 		// Generate fingerprint for each availible reagent
 		::RDKit::ROMolOP reag = ::RDKit::RWMOL_SPTR( ::RDKit::SmilesToMol( parts[1] ) );
-		if ( check_reagent_validity( reag ) ) {			// Remove any invalid or problematic structures from the chemical database
+		if ( check_reagent_validity( reag ) ) {   // Remove any invalid or problematic structures from the chemical database
 			reagent.rdmol_ = reag;
 			reagent.fp_ = std::shared_ptr<ExplicitBitVect>( ::RDKit::RDKFingerprintMol(*reag) );
 			reagent.no_ = (core::Size)std::stoi(parts[3]);
@@ -227,7 +227,7 @@ ReactionBasedAnalogSampler::check_reagent_validity( ::RDKit::ROMOL_SPTR reag ) c
 	// A collection of SMARTS that will fail RDKit later on
 	static const utility::vector1< ::RDKit::ROMOL_SPTR > BAD_SMARTS {
 		::RDKit::RWMolOP(::RDKit::SmartsToMol("[*](S(F)(F)(F)(F)F)"))
-	};
+		};
 	::RDKit::MatchVectType matchvect;
 
 	for ( ::RDKit::ROMOL_SPTR const & bad_molOP : BAD_SMARTS ) {
@@ -282,10 +282,10 @@ ReactionBasedAnalogSampler::apply( core::chemical::MutableResidueType & rsdtype 
 			TR << "Dynamic sampling turned off." << std::endl;
 		} else {
 			std::string curr_smiles = ::RDKit::MolToSmiles( *rdmol );
-			if ( last_smiles_ != "" && last_smiles_ != curr_smiles ) {		// last MC cycle accepted
+			if ( last_smiles_ != "" && last_smiles_ != curr_smiles ) {  // last MC cycle accepted
 				reset_spl_ratio();
 				TR << "Last MC accepted. Reset sampling ratio to " << dynamic_spl_ratios_[1] << std::endl;
-			} else {														// last MC cycle rejected
+			} else {              // last MC cycle rejected
 				geo_spl_ratio_ = std::min( dynamic_spl_ratios_[2], geo_spl_ratio_ + dynamic_spl_ratios_[3]);
 				TR << "Last MC rejected. Sampling ratio set to " << geo_spl_ratio_ << std::endl;
 			}
@@ -297,7 +297,7 @@ ReactionBasedAnalogSampler::apply( core::chemical::MutableResidueType & rsdtype 
 	// Sample from the fragments and propose a small list of candidates
 	utility::vector1< Product > candidates = sample( score_idx_set );
 
-	if ( candidates.empty() ) {	// If no candidate found from last step
+	if ( candidates.empty() ) { // If no candidate found from last step
 		TR.Error << "ERROR: No candidate product yielded from sampling.";
 		set_last_status( core::chemical::modifications::FAIL_DO_NOT_RETRY );
 		return;
@@ -308,15 +308,15 @@ ReactionBasedAnalogSampler::apply( core::chemical::MutableResidueType & rsdtype 
 	visited_.insert( product );
 	::RDKit::RWMolOP prod = product.rdmol_;
 	utility::vector1< core::Size > prod_frags = product.frags_;
-	
-//	// Search for analog being deciding the final output product (deprecated)
-//	utility::vector1< Product > analogs = analog_search( product );
-//	Product ana = sample_candidate( analogs, rdmol );
-//	visited_.insert( ana );
-//	::RDKit::RWMolOP prod = ana.rdmol_;
-//	utility::vector1< core::Size > prod_frags = ana.frags_;
-//	TR << "Analog made: " << ana.smiles_ << std::endl;
-	
+
+	// // Search for analog being deciding the final output product (deprecated)
+	// utility::vector1< Product > analogs = analog_search( product );
+	// Product ana = sample_candidate( analogs, rdmol );
+	// visited_.insert( ana );
+	// ::RDKit::RWMolOP prod = ana.rdmol_;
+	// utility::vector1< core::Size > prod_frags = ana.frags_;
+	// TR << "Analog made: " << ana.smiles_ << std::endl;
+
 	// Find a mapping from the pre-reaction molecule to the post-reaction molecule. Possibly empty mapping at this time.
 	// Hopefully, the "Original_Index" property carries through, and can be used as a quick shortcut.
 	core::chemical::IndexIndexMapping rxn_map( find_O3A_mapping( rdmol, prod ) );
@@ -354,7 +354,7 @@ ReactionBasedAnalogSampler::apply( core::chemical::MutableResidueType & rsdtype 
 		nbr_queue.push( rsdtype.nbr_vertex() );
 
 		core::chemical::VD found_nbr = core::chemical::INVALID_VD;
-		while (!nbr_queue.empty()) {
+		while ( !nbr_queue.empty() ) {
 			for ( core::chemical::VD vd: rsdtype.bonded_heavyatoms( nbr_queue.front() ) ) {
 				if ( restype_prod_map[ vd ] != restype_prod_map.invalid_entry() ) {
 					found_nbr = vd;
@@ -387,8 +387,7 @@ ReactionBasedAnalogSampler::apply( core::chemical::MutableResidueType & rsdtype 
 	TR << "New residue conversion completed." << std::endl;
 
 	// Add each chosen fragment as a string property to the residue.
-	for ( core::Size rr(1); rr <= prod_frags.size(); ++rr )
-	{
+	for ( core::Size rr(1); rr <= prod_frags.size(); ++rr ) {
 		core::Size i = prod_frags[ rr ];
 		::RDKit::ROMolOP reag = reagents_[ i ].rdmol_;
 		rsdtype.add_string_property( "fragment" + std::to_string( rr ), ::RDKit::MolToSmiles( *reag ) );
@@ -413,12 +412,12 @@ ReactionBasedAnalogSampler::getMorganFingerprint( ::RDKit::ROMol const & mol, bo
 	// Fingerprint properties
 	int radius = 2;
 
-	if ( useFeatures ) {	// FCFP
+	if ( useFeatures ) { // FCFP
 		std::vector<unsigned int> invars( mol.getNumAtoms() );
 		::RDKit::MorganFingerprints::getFeatureInvariants( mol, invars );
 		return std::shared_ptr<::RDKit::SparseIntVect<unsigned int>>( ::RDKit::MorganFingerprints::getFingerprint( mol, radius, &invars ) );
 
-	} else {	// ECFP
+	} else { // ECFP
 		return std::shared_ptr<::RDKit::SparseIntVect<unsigned int>>( ::RDKit::MorganFingerprints::getFingerprint( mol, radius ) );
 	}
 }
@@ -453,10 +452,10 @@ ReactionBasedAnalogSampler::find_O3A_mapping( ::RDKit::ROMOL_SPTR from, ::RDKit:
 			// Get best conformer's atom mapping
 			retval = core::chemical::rdkit::convert_match_vect_to_index_index_map( *(O3As[ max_i ]->matches()) ).reverse();
 
-		}else {
+		} else {
 			TR.Error << "New product has invalid number of conformers.";
 		}
-	}else {
+	} else {
 		TR.Error << "Previous product has invalid number of conformers.";
 	}
 
@@ -468,7 +467,7 @@ utility::vector1< ReactionBasedAnalogSampler::Product >
 ReactionBasedAnalogSampler::sample( std::list< std::pair< core::Real, core::Size > > & score_idx_set ) const {
 	// Setup the sampling set where each reaction id has its own bucket of reagent indices
 	std::unordered_map< std::string, utility::vector1< utility::vector1< core::Size > > > sample_sets;
-	utility::vector1< Product > candidate_set; 	// Setup the candidate set
+	utility::vector1< Product > candidate_set;  // Setup the candidate set
 
 	int revisited = 0;
 	int nLoop = 0;
@@ -476,7 +475,7 @@ ReactionBasedAnalogSampler::sample( std::list< std::pair< core::Real, core::Size
 
 	while ( candidate_set.size() < minCandidates_ ) {
 		nLoop++;
-		core::Size choice = reagent_sampler_.random_sample() - 1;	//because std::list is 0-index
+		core::Size choice = reagent_sampler_.random_sample() - 1; //because std::list is 0-index
 		std::list< std::pair< core::Real, core::Size > >::iterator itr = score_idx_set.begin();
 		std::advance( itr, choice );
 		core::Size reag_idx = ( *itr ).second;
@@ -505,8 +504,8 @@ utility::vector1< ReactionBasedAnalogSampler::Product >
 ReactionBasedAnalogSampler::sample_fragment( utility::vector1< std::list< std::pair< core::Real, core::Size > > > & score_idx_set ) const {
 	// Setup the sampling set where each reaction id has its own bucket of reagent indices
 	std::unordered_map< std::string, utility::vector1< utility::vector1< core::Size > > > sample_sets;
-	utility::vector1< Product > candidate_set;			// Setup the candidate set
-	std::unordered_set< core::Size > sampled_reagents;	// Avoid resampling the same reagent
+	utility::vector1< Product > candidate_set;   // Setup the candidate set
+	std::unordered_set< core::Size > sampled_reagents; // Avoid resampling the same reagent
 
 	int revisited = 0;
 	int nLoop = 0;
@@ -593,24 +592,24 @@ ReactionBasedAnalogSampler::sample_candidate( const utility::vector1< Product > 
 	core::Real maxSim = 0;
 	for ( core::Size i(1); i <= candidate_set.size(); ++i ) {
 		core::Real sim = TanimotoSimilarity( *fp_rdmol, *(candidate_set[i].fp_) );
-//		core::Real sim = TanimotoSimilarity( *ecfp_rdmol, *(candidate_set[i].ecfp_) );
+		//  core::Real sim = TanimotoSimilarity( *ecfp_rdmol, *(candidate_set[i].ecfp_) );
 		score_idx_candidate_set.push_back( std::make_pair( sim, i ) );
 		totalSim += sim;
 		if ( sim < minSim ) { minSim = sim; }
-		if ( sim > maxSim ) { maxSim = sim;	}
+		if ( sim > maxSim ) { maxSim = sim; }
 	}
 
 	std::sort( score_idx_candidate_set.begin(), score_idx_candidate_set.end(), sortbySim );
 
 	core::Real meanSim = totalSim / ( candidate_set.size() );
 	core::Real medianSim = score_idx_candidate_set[ candidate_set.size() / 2 ].first;
-	
+
 	TR << "Candidate set statistics: similarity to current input [ ";
 	TR << boost::format("min = %.2f ") % minSim;
 	TR << boost::format("max = %.2f ") % maxSim;
 	TR << boost::format("mean = %.2f ") % meanSim;
 	TR << boost::format("median = %.2f ]") % medianSim << std::endl;
-	
+
 	// Pick a product and update the visited collector
 	geometric_sampling( product_sampler, candidate_set.size() );
 	core::Size choice = product_sampler.random_sample();
@@ -628,10 +627,10 @@ ReactionBasedAnalogSampler::sortbySim( const std::pair< core::Real, core::Size >
 /// @brief Find all pair of reagents that can undergo the specific reaction from the current sets.
 void
 ReactionBasedAnalogSampler::pair(
-		core::Size r_no,
-		utility::vector1< utility::vector1< core::Size > > const & sets,
-		utility::vector1< ReactionBasedAnalogSampler::Product > & candidates,
-		int & revisits
+	core::Size r_no,
+	utility::vector1< utility::vector1< core::Size > > const & sets,
+	utility::vector1< ReactionBasedAnalogSampler::Product > & candidates,
+	int & revisits
 ) const {
 	utility::vector1< utility::vector1< core::Size > > pairs;
 
@@ -662,11 +661,11 @@ ReactionBasedAnalogSampler::pair(
 /// @brief Helper function for pairing. Use a DFS to generate all pairs.
 void
 ReactionBasedAnalogSampler::pair(
-		core::Size curr_no, 											// current layer (component No.) of DFS
-		core::Size r_no, 												// component No. to locate the current sample
-		utility::vector1< core::Size > single_pair, 					// current pair to work on
-		utility::vector1< utility::vector1< core::Size > > & all_pairs, // collection of all pairs
-		utility::vector1< utility::vector1< core::Size > > const & sets // the current reaction bucket
+	core::Size curr_no,            // current layer (component No.) of DFS
+	core::Size r_no,             // component No. to locate the current sample
+	utility::vector1< core::Size > single_pair,      // current pair to work on
+	utility::vector1< utility::vector1< core::Size > > & all_pairs, // collection of all pairs
+	utility::vector1< utility::vector1< core::Size > > const & sets // the current reaction bucket
 ) const {
 	if ( curr_no > sets.size() ) {
 		all_pairs.push_back( single_pair );
@@ -733,11 +732,11 @@ ReactionBasedAnalogSampler::run_reaction( utility::vector1< core::Size > const &
 void
 ReactionBasedAnalogSampler::geometric_sampling( numeric::random::WeightedSampler & sampler, core::Size N ) {
 	sampler.clear();
-	core::Real min_ratio = std::max( geo_spl_ratio_, 5.0/N );	// sample among at least top 5
+	core::Real min_ratio = std::max( geo_spl_ratio_, 5.0/N ); // sample among at least top 5
 	core::Real n = N * min_ratio;
-	core::Real q = 1 - std::pow( min_ratio, 1/n );			// derived from geometric series summation formula, given sum of first n terms being 1-ratio
+	core::Real q = 1 - std::pow( min_ratio, 1/n );   // derived from geometric series summation formula, given sum of first n terms being 1-ratio
 	for ( unsigned int rank = 1; rank <= N; ++rank ) {
-		sampler.add_weight( q * std::pow( 1 - q, rank - 1 ) );	// An = A1 * r ^ ( n - 1 )
+		sampler.add_weight( q * std::pow( 1 - q, rank - 1 ) ); // An = A1 * r ^ ( n - 1 )
 	}
 }
 
@@ -756,16 +755,16 @@ ReactionBasedAnalogSampler::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	using namespace utility::tag;
 	AttributeList attlist;
 	attlist
-	+ XMLSchemaAttribute::attribute_w_default("dir", xs_string,
-			"The directory containing the SMARTS-based reactions file and corresponding reagent files.", "N/A" )
-	+ XMLSchemaAttribute::required_attribute("reactions", xs_string,
-			"The filename of the SMARTS-based reactions file.")
-	+ XMLSchemaAttribute::attribute_w_default("reagents", xs_string,
-			"The filename of the SMILES-based reacgents file.", "N/A" )
-	+ XMLSchemaAttribute::attribute_w_default( "sampling_ratio", xsct_real,
-			"Sampling ratio for geometric sampler when picking fragments. Assumption invalid when exceeds 0.25.", "0.001" )
-	+ XMLSchemaAttribute::attribute_w_default( "minCandidates", xsct_non_negative_integer,
-			"The minimum number of candidates required in the sampling set before the output is drawn from each MC cycle. Increasing this will slightly increase runtime. At minimum 20 candidates.", "20" );
+		+ XMLSchemaAttribute::attribute_w_default("dir", xs_string,
+		"The directory containing the SMARTS-based reactions file and corresponding reagent files.", "N/A" )
+		+ XMLSchemaAttribute::required_attribute("reactions", xs_string,
+		"The filename of the SMARTS-based reactions file.")
+		+ XMLSchemaAttribute::attribute_w_default("reagents", xs_string,
+		"The filename of the SMILES-based reacgents file.", "N/A" )
+		+ XMLSchemaAttribute::attribute_w_default( "sampling_ratio", xsct_real,
+		"Sampling ratio for geometric sampler when picking fragments. Assumption invalid when exceeds 0.25.", "0.001" )
+		+ XMLSchemaAttribute::attribute_w_default( "minCandidates", xsct_non_negative_integer,
+		"The minimum number of candidates required in the sampling set before the output is drawn from each MC cycle. Increasing this will slightly increase runtime. At minimum 20 candidates.", "20" );
 
 	AttributeList sampling_attributes;
 	sampling_attributes
@@ -780,17 +779,17 @@ ReactionBasedAnalogSampler::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 		.add_simple_subelement( "DynamicSampling", sampling_attributes, "Set parameters to perform dynamic sampling with varying MC step size");
 
 	protocols::chemistries::xsd_type_definition_w_attributes_and_repeatable_subelements(
-			xsd, class_name(),
-			"Reaction-based and similarity guided analoging in a given chemical library",
-			attlist, subelements );
+		xsd, class_name(),
+		"Reaction-based and similarity guided analoging in a given chemical library",
+		attlist, subelements );
 }
 
 /// @brief Initialize any data members of this instance from an input tag
 /// and a DataMap object
 void
 ReactionBasedAnalogSampler::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &) {
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &) {
 
 	geo_spl_ratio_ = tag->getOption<core::Real>("sampling_ratio", 0.001);
 	minCandidates_ = tag->getOption<int>("minCandidates", 20);
