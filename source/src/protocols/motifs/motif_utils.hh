@@ -34,7 +34,7 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/types.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/numeric/xyzMatrix.hh>
+#include <numeric/xyzMatrix.hh>
 
 // Utility Headers
 #include <utility/file/FileName.fwd.hh>
