@@ -33,8 +33,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/types.hh>
-#include <core/kinematics/Jump.hh>
-#include <numeric/xyzMatrix.hh>
 
 // Utility Headers
 #include <utility/file/FileName.fwd.hh>
@@ -282,11 +280,6 @@ write_motifs_to_disk(MotifCOPs motifcops, std::string filename);
 //map keys are tuples of 7 strings, which is the residue involved in the motif and then the names of the atoms involved (3 atoms on both sides of motif; we don't care about ligand name in key)
 void hash_motif_library_into_map(protocols::motifs::MotifCOPs & input_library, std::map<motif_atoms, protocols::motifs::MotifCOPs> & mymap);
 
-// @brief function to sanitize jumps in motifs that may hit edge cases in jump comparisons if not sanitized
-void sanitize_motif_jump(core::kinematics::Jump jump);
-
-// @brief function to orthonormalize rotation of motif jump
-numeric::xyzMatrix<core::Real> orthonormalize_rotation(const numeric::xyzMatrix<core::Real> & R);
 
 } // namespace motifs
 } // namespace protocols
