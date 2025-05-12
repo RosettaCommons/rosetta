@@ -961,9 +961,9 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 	std::cout << R.trace() << "," << cos_theta << "," << tolerance << std::endl;
 
 	std::cout << "R print" << std::endl;
-	std::cout << R << std::endl;
+	std::cout << R.xx() << "," << R.xy() << "," << R.xz() << "," << R.yx() << "," << R.yy() << "," << R.yz() << "," << R.zx() << "," << R.zy() << "," << R.zz() << "," << std::endl;
 
-	std::cout << "theta" << std::endl;
+	std::cout << "theta input" << std::endl;
 	std::cout << theta << std::endl;
 	
 	//normalization tolerance threshold for assert statements; making more lenient than 0.01 and coupling to variable so it can be found in both assert statements
@@ -987,7 +987,7 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 		theta = acos( cos_theta );
 		
 		std::cout << x << "," << y << "," << z << std::endl;
-		std::cout << std::abs( x*x + y*y + z*z - 1 ) << "," << static_cast<T>( assert_tolerance ) << (std::abs( x*x + y*y + z*z - 1 ) <= static_cast<T>( assert_tolerance )) << std::endl;
+		std::cout << std::abs( x*x + y*y + z*z - 1 ) << "," << static_cast<T>( assert_tolerance ) << "," << (std::abs( x*x + y*y + z*z - 1 ) <= static_cast<T>( assert_tolerance )) << std::endl;
 		if(std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ))
 		{
 			std::cout << "within tolerance" << std::endl;
@@ -1001,10 +1001,13 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 
 		return xyzVector< T >( x, y, z );
 	} else if ( cos_theta >= ONE - tolerance ) {
+		std::cout << "This is an identity matrix" << std::endl;
 		// R is the identity matrix, return an arbitrary axis of rotation
 		theta = ZERO;
 		return xyzVector< T >( ONE, ZERO, ZERO );
 	} else { // cos_theta <= -ONE + tolerance
+		std::cout << "180 degree rotation" << std::endl;
+		
 		// R is of the form 2*n*n^T - I, theta == pi
 		xyzMatrix< T > const nnT( xyzMatrix< T >( R ).add_diagonal( ONE, ONE, ONE ) /= TWO );
 		T x, y, z;
