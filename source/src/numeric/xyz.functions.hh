@@ -958,13 +958,17 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 	T const tolerance = NumericTraits< T >::sin_cos_tolerance();
 
 	std::cout << "R.trace()" << "," << "cos_theta" << "," << "tolerance" << std::endl;
-	std::cout << R.trace() << "," << cos_theta << "," << tolerance << std::endl;
+	std::cout << std::setprecision(12) << R.trace() << "," << cos_theta << "," << tolerance << std::endl;
 
 	std::cout << "R print" << std::endl;
-	std::cout << R.xx() << "," << R.xy() << "," << R.xz() << "," << R.yx() << "," << R.yy() << "," << R.yz() << "," << R.zx() << "," << R.zy() << "," << R.zz() << "," << std::endl;
+	std::cout << std::setprecision(12) << R.xx() << "," << R.xy() << "," << R.xz() << "," << R.yx() << "," << R.yy() << "," << R.yz() << "," << R.zx() << "," << R.zy() << "," << R.zz() << "," << std::endl;
 
 	std::cout << "theta input" << std::endl;
-	std::cout << theta << std::endl;
+	std::cout << std::setprecision(12) << theta << std::endl;
+
+	//if cos_theta ends up beyond range, manually push it back in range
+	if (cos_theta < T(-1.0)) cos_theta = T(-1.0);
+	if (cos_theta > T( 1.0)) cos_theta = T( 1.0);
 	
 	//normalization tolerance threshold for assert statements; making more lenient than 0.01 and coupling to variable so it can be found in both assert statements
 	T const assert_tolerance = 0.01;
@@ -985,9 +989,12 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 		// and is more stable for small sine_theta
 
 		theta = acos( cos_theta );
+
+		std::cout << "theta after arccos" << std::endl;
+		std::cout << std::setprecision(12) << theta << std::endl;
 		
-		std::cout << x << "," << y << "," << z << std::endl;
-		std::cout << std::abs( x*x + y*y + z*z - 1 ) << "," << static_cast<T>( assert_tolerance ) << "," << (std::abs( x*x + y*y + z*z - 1 ) <= static_cast<T>( assert_tolerance )) << std::endl;
+		std::cout << std::setprecision(12) << x << "," << y << "," << z << std::endl;
+		std::cout << std::setprecision(12) << std::abs( x*x + y*y + z*z - 1 ) << "," << static_cast<T>( assert_tolerance ) << "," << (std::abs( x*x + y*y + z*z - 1 ) <= static_cast<T>( assert_tolerance )) << std::endl;
 		if(std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ))
 		{
 			std::cout << "within tolerance" << std::endl;
@@ -995,6 +1002,12 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 		else
 		{
 			std::cout << "beyond tolerance" << std::endl;
+
+			//make a vector of x,y,z, normalize it, and return
+			xyzVector< T > axis(x, y, z);
+			axis.normalize();
+			std::cout << axis.x() << "," << axis.y() << "," << axis.z() << "," << std::endl;
+			return axis;
 		}
 		
 		//assert( std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ) );
@@ -1035,8 +1048,8 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 		theta = NumericTraits< T >::pi(); // theta == pi
 		// For a valid orthogonal matrix R, axis should be a normal vector
 
-		std::cout << x << "," << y << "," << z << std::endl;
-		std::cout << std::abs( x*x + y*y + z*z - 1 ) << "," << static_cast<T>( assert_tolerance ) << (std::abs( x*x + y*y + z*z - 1 ) <= static_cast<T>( assert_tolerance )) << std::endl;
+		std::cout << std::setprecision(12) << x << "," << y << "," << z << std::endl;
+		std::cout << std::setprecision(12) << std::abs( x*x + y*y + z*z - 1 ) << "," << static_cast<T>( assert_tolerance ) << (std::abs( x*x + y*y + z*z - 1 ) <= static_cast<T>( assert_tolerance )) << std::endl;
 		if(std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ))
 		{
 			std::cout << "within tolerance" << std::endl;
@@ -1044,6 +1057,12 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 		else
 		{
 			std::cout << "beyond tolerance" << std::endl;
+			
+			//make a vector of x,y,z, normalize it, and return
+			xyzVector< T > axis(x, y, z);
+			axis.normalize();
+			std::cout << axis.x() << "," << axis.y() << "," << axis.z() << "," << std::endl;
+			return axis;
 		}
 		
 		//assert( std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ) );
