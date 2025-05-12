@@ -959,6 +959,12 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 
 	std::cout << "R.trace()" << "," << "cos_theta" << "," << "tolerance" << std::endl;
 	std::cout << R.trace() << "," << cos_theta << "," << tolerance << std::endl;
+
+	std::cout << "R print" << std::endl;
+	std::cout << R << std::endl;
+
+	std::cout << "theta" << std::endl;
+	std::cout << theta << std::endl;
 	
 	//normalization tolerance threshold for assert statements; making more lenient than 0.01 and coupling to variable so it can be found in both assert statements
 	T const assert_tolerance = 0.01;
