@@ -1006,7 +1006,7 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 			//make a vector of x,y,z, normalize it, and return
 			xyzVector< T > axis(x, y, z);
 			axis.normalize();
-			std::cout << axis.x() << "," << axis.y() << "," << axis.z() << "," << std::endl;
+			std::cout << std::setprecision(12) << axis.x() << "," << axis.y() << "," << axis.z() << "," << std::endl;
 			return axis;
 		}
 		
@@ -1061,7 +1061,7 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 			//make a vector of x,y,z, normalize it, and return
 			xyzVector< T > axis(x, y, z);
 			axis.normalize();
-			std::cout << axis.x() << "," << axis.y() << "," << axis.z() << "," << std::endl;
+			std::cout << std::setprecision(12) << axis.x() << "," << axis.y() << "," << axis.z() << "," << std::endl;
 			return axis;
 		}
 		
