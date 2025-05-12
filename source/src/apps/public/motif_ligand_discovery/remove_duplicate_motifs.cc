@@ -132,6 +132,9 @@ remove_duplicate_motifs(
 		//single_motif->place_residue( *protres, *res );
 		bool broke( false );
 
+		//ensure the input motifs are orthonormalized
+		core::kinematics::Jump sanitized_initial_motif = sanitize_motif_jump(single_motif->forward_jump());
+
 		for ( auto motifcop : motif_library_no_duplicates ) {
 
 			//check if atoms match and ensure same residue names on both sides
@@ -139,11 +142,15 @@ remove_duplicate_motifs(
 
 			//motifcop->place_residue( *protres, *res2 );
 
+			//ensure the no duplicate library motifs are also orthonormalized
+			core::kinematics::Jump sanitized_no_dupe_motif = sanitize_motif_jump(motifcop->forward_jump());
 
 			core::Real distance = 0;
 			core::Real theta = 0;
 
-			jump_distance(single_motif->forward_jump(), motifcop->forward_jump(), distance, theta);
+
+
+			jump_distance(sanitized_initial_motif, sanitized_no_dupe_motif, distance, theta);
 			//ms_tr << "Comparing to motif " << motifcop->remark() << std::endl;
 			//ms_tr << "Distance: " << distance << std::endl;
 			//ms_tr << "Theta: " << theta << std::endl;
@@ -213,4 +220,3 @@ main( int argc, char * argv [] )
 	}
 	return 0;
 }
-

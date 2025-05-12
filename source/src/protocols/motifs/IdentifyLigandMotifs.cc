@@ -886,7 +886,10 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 					core::Real motif_distance = 0;
 					core::Real motif_theta = 0;
 
-					jump_distance(ligmotifcop->forward_jump(), realmotifcop->forward_jump(), motif_distance, motif_theta);
+					//sanitize the real motif jump to ensure the rotation is orthonormalized before trying to get distance
+					core::kinematics::Jump sanitized_real_motif = sanitize_motif_jump(realmotifcop->forward_jump());
+
+					jump_distance(ligmotifcop->forward_jump(), sanitized_real_motif, motif_distance, motif_theta);
 
 					ms_tr.Debug << "Comparing to motif " << realmotifcop->remark() << std::endl;
 					ms_tr.Debug << "Distance: " << motif_distance << std::endl;

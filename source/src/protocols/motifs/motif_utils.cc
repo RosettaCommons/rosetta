@@ -72,6 +72,8 @@
 
 // Numeric Headers
 #include <numeric/xyzVector.hh>
+#include <numeric/xyzMatrix.hh>
+#include <numeric/conversions.hh>
 
 // C++ Headers
 
@@ -1546,6 +1548,46 @@ void hash_motif_library_into_map(protocols::motifs::MotifCOPs & input_library, s
 	}
 }
 
+// @brief function to sanitize jumps in motifs that may hit edge cases in jump comparisons if not sanitized
+void sanitize_motif_jump(core::kinematics::Jump & jump)
+{
+	//extract rotation matrix and translation vector
+	numeric::xyzMatrix<core::Real> R = jump_op->get_rotation();
+
+	//orthonormalize the rotation of the jump
+	R = orthonormalize_rotation(R);
+
+	//set the new jump to the working jump
+	jump.set_rotation(R);
+}
+
+// @brief function to orthonormalize rotation of motif jump
+xyzMatrix<Real> orthonormalize_rotation(const xyzMatrix<Real> & R)
+{
+	//extract rotation matrix columns
+	xyzVector<Real> col1 = R.get_column(1);
+	xyzVector<Real> col2 = R.get_column(2);
+	xyzVector<Real> col3 = R.get_column(3);
+
+	//orthonormalize first column (simply normalize)
+	col1.normalize();
+
+	//orthonormalize second column by first
+	col2 = col2 - col1 * (col1.dot(col2));
+	col2.normalize();	
+
+	//orthonormalize third column by first and second
+	col3 = col3 - col1 * (col1.dot(col3)) - col2 * (col2.dot(col3));
+	col3.normalize();
+
+	//build a new orthonormalized matrix based on the orthonormalized columns
+	xyzMatrix<Real> R_orthonormalized;
+	R_orthonormalized.set_column(1, col1);
+	R_orthonormalized.set_column(2, col2);
+	R_orthonormalized.set_column(3, col3);
+
+	return R_orthonormalized;
+}
 
 } // namespace motifs
 } // namespace protocols
