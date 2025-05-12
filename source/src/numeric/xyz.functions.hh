@@ -965,13 +965,10 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 
 	std::cout << "theta input" << std::endl;
 	std::cout << std::setprecision(12) << theta << std::endl;
-<<<<<<< HEAD
 
 	//if cos_theta ends up beyond range, manually push it back in range
 	if (cos_theta < T(-1.0)) cos_theta = T(-1.0);
 	if (cos_theta > T( 1.0)) cos_theta = T( 1.0);
-=======
->>>>>>> 694be97f8a8b5553f6081522e624963a623d67cc
 	
 	//normalization tolerance threshold for assert statements; making more lenient than 0.01 and coupling to variable so it can be found in both assert statements
 	T const assert_tolerance = 0.01;
