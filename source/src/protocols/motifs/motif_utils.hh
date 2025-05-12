@@ -286,7 +286,7 @@ void hash_motif_library_into_map(protocols::motifs::MotifCOPs & input_library, s
 void sanitize_motif_jump(core::kinematics::Jump jump);
 
 // @brief function to orthonormalize rotation of motif jump
-xyzMatrix<Real> orthonormalize_rotation(const xyzMatrix<Real> & R);
+xyzMatrix<core::Real> orthonormalize_rotation(const xyzMatrix<core::Real> & R);
 
 } // namespace motifs
 } // namespace protocols

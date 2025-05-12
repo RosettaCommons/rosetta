@@ -1562,12 +1562,12 @@ void sanitize_motif_jump(core::kinematics::Jump & jump)
 }
 
 // @brief function to orthonormalize rotation of motif jump
-xyzMatrix<Real> orthonormalize_rotation(const xyzMatrix<Real> & R)
+xyzMatrix<core::Real> orthonormalize_rotation(const xyzMatrix<core::Real> & R)
 {
 	//extract rotation matrix columns
-	xyzVector<Real> col1 = R.get_column(1);
-	xyzVector<Real> col2 = R.get_column(2);
-	xyzVector<Real> col3 = R.get_column(3);
+	xyzVector<core::Real> col1 = R.get_column(1);
+	xyzVector<core::Real> col2 = R.get_column(2);
+	xyzVector<core::Real> col3 = R.get_column(3);
 
 	//orthonormalize first column (simply normalize)
 	col1.normalize();
@@ -1581,7 +1581,7 @@ xyzMatrix<Real> orthonormalize_rotation(const xyzMatrix<Real> & R)
 	col3.normalize();
 
 	//build a new orthonormalized matrix based on the orthonormalized columns
-	xyzMatrix<Real> R_orthonormalized;
+	xyzMatrix<core::Real> R_orthonormalized;
 	R_orthonormalized.set_column(1, col1);
 	R_orthonormalized.set_column(2, col2);
 	R_orthonormalized.set_column(3, col3);
