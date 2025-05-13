@@ -1011,7 +1011,7 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 			std::cout << std::setprecision(12) << axis.x() << "," << axis.y() << "," << axis.z() << "," << std::endl;
 
 			//check if the normalization did rescue
-			if(std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ))
+			if(std::abs( axis.x()*axis.x() + axis.y()*axis.y() + axis.z()*axis.z() - 1 ) <= T( assert_tolerance ))
 			{
 				std::cout << "normalize did rescue" << std::endl;
 			}
@@ -1077,7 +1077,7 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 			std::cout << std::setprecision(12) << axis.x() << "," << axis.y() << "," << axis.z() << "," << std::endl;
 
 			//check if the normalization did rescue
-			if(std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ))
+			if(std::abs( axis.x()*axis.x() + axis.y()*axis.y() + axis.z()*axis.z() - 1 ) <= T( assert_tolerance ))
 			{
 				std::cout << "normalize did rescue" << std::endl;
 			}
