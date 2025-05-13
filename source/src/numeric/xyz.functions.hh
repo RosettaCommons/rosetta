@@ -957,6 +957,8 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 
 	T const tolerance = NumericTraits< T >::sin_cos_tolerance();
 
+	std::cout << "==================================" << std::endl;
+
 	std::cout << "R.trace()" << "," << "cos_theta" << "," << "tolerance" << std::endl;
 	std::cout << std::setprecision(12) << R.trace() << "," << cos_theta << "," << tolerance << std::endl;
 
@@ -1007,6 +1009,17 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 			xyzVector< T > axis(x, y, z);
 			axis.normalize();
 			std::cout << std::setprecision(12) << axis.x() << "," << axis.y() << "," << axis.z() << "," << std::endl;
+
+			//check if the normalization did rescue
+			if(std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ))
+			{
+				std::cout << "normalize did rescue" << std::endl;
+			}
+			else
+			{
+				std::cout << "normalize did not rescue" << std::endl;
+			}
+
 			return axis;
 		}
 		
@@ -1062,6 +1075,17 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 			xyzVector< T > axis(x, y, z);
 			axis.normalize();
 			std::cout << std::setprecision(12) << axis.x() << "," << axis.y() << "," << axis.z() << "," << std::endl;
+
+			//check if the normalization did rescue
+			if(std::abs( x*x + y*y + z*z - 1 ) <= T( assert_tolerance ))
+			{
+				std::cout << "normalize did rescue" << std::endl;
+			}
+			else
+			{
+				std::cout << "normalize did not rescue" << std::endl;
+			}
+
 			return axis;
 		}
 		
