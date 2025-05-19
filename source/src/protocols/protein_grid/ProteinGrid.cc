@@ -844,8 +844,7 @@ core::pose::Pose ProteinGrid::export_protein_matrix_to_pose()
 	//delete all chis in the dummy ligand
 	//probably easiest to use delete_terminal_chi
 	while ( dummylig_mrt->nchi() > 0 )
-			{
-
+	{
 		ms_tr.Trace << "Number of chi in residue is currently: " << dummylig_mrt->nchi() << std::endl;
 
 		//delete the terminal chi
@@ -1195,14 +1194,6 @@ std::string ProteinGrid::base_10_to_base_62(core::Size starting_num)
 	}
 
 	return base_62_number;
-}
-
-// @brief default constructor
-//will need to use class functions to seed values for input pose and other potential input data
-//should only use parameterized or copy constructor
-ProteinGrid::ProteinGrid()
-{
-
 }
 
 // @brief critical function that builds/rebuilds (overwrites existing) the proteingrid protein_matrix_ around the pose in working_pose_
