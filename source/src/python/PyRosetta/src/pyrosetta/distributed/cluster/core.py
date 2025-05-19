@@ -40,24 +40,39 @@ Args:
     client: An initialized dask `distributed.client.Client` object to be used as
         the dask client interface to the local or remote compute cluster. If `None`,
         then PyRosettaCluster initializes its own dask client based on the
-        `PyRosettaCluster(scheduler=...)` class attribute.
+        `PyRosettaCluster(scheduler=...)` class attribute. Deprecated by the
+        `PyRosettaCluster(clients=...)` class attribute, but supported for legacy
+        purposes. Either or both of the `client` or `clients` attribute parameters
+        must be `None`.
+        Default: None
+    clients: A `list` or `tuple` object of initialized dask `distributed.client.Client`
+        objects to be used as the dask client interface(s) to the local or remote compute
+        cluster(s). If `None`, then PyRosettaCluster initializes its own dask client based
+        on the `PyRosettaCluster(scheduler=...)` class attribute. Optionally used in
+        combination with the `PyRosettaCluster().distribute(clients_indices=...)` method.
+        Either or both of the `client` or `clients` attribute parameters must be `None`.
+        See the `PyRosettaCluster().distribute()` method docstring for usage examples.
         Default: None
     scheduler: A `str` of either "sge" or "slurm", or `None`. If "sge", then
         PyRosettaCluster schedules jobs using `SGECluster` with `dask-jobqueue`.
         If "slurm", then PyRosettaCluster schedules jobs using `SLURMCluster` with
         `dask-jobqueue`. If `None`, then PyRosettaCluster schedules jobs using
         `LocalCluster` with `dask.distributed`. If `PyRosettaCluster(client=...)`
-        is provided, then `PyRosettaCluster(scheduler=...)` is ignored.
+        or `PyRosettaCluster(clients=...)` is provided, then 
+        `PyRosettaCluster(scheduler=...)` is ignored.
         Default: None
     cores: An `int` object specifying the total number of cores per job, which
-        is input to the `dask_jobqueue.SLURMCluster(cores=...)` argument.
+        is input to the `dask_jobqueue.SLURMCluster(cores=...)` argument or
+        the `dask_jobqueue.SGECluster(cores=...)` argument.
         Default: 1
     processes: An `int` object specifying the total number of processes per job,
-        which is input to the `dask_jobqueue.SLURMCluster(processes=...)` argument.
+        which is input to the `dask_jobqueue.SLURMCluster(processes=...)` argument
+        or the `dask_jobqueue.SGECluster(processes=...)` argument.
         This cuts the job up into this many processes.
         Default: 1
     memory: A `str` object specifying the total amount of memory per job, which
-        is input to the `dask_jobqueue.SLURMCluster(memory=...)` argument.
+        is input to the `dask_jobqueue.SLURMCluster(memory=...)` argument or
+        the `dask_jobqueue.SGECluster(memory=...)` argument.
         Default: "4g"
     scratch_dir: A `str` object specifying the path to a scratch directory where
         dask litter may go.
@@ -81,7 +96,7 @@ Args:
         user-provided PyRosetta protocol run later.
         Default: 1
     compressed: A `bool` object specifying whether or not to compress the output
-        .pdb files with bzip2, resulting in .pdb.bz2 files.
+        '.pdb' files with bzip2, resulting in '.pdb.bz2' files.
         Default: True
     compression: A `str` object of 'xz', 'zlib' or 'bz2', or a `bool` or `NoneType`
         object representing the internal compression library for pickled `PackedPose` 
@@ -120,7 +135,7 @@ Args:
         Default: datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f") if not specified,
             else "PyRosettaCluster" if None
     simulation_name: A `str` object specifying the name of this simulation.
-        This option just adds the user-provided simulation_name to the scorefile
+        This option just adds the user-provided `simulation_name` to the scorefile
         for accounting.
         Default: `project_name` if not specified, else "PyRosettaCluster" if None
     environment: A `NoneType` or `str` object specifying the active conda environment
@@ -138,10 +153,10 @@ Args:
         Default: "scores.json"
     simulation_records_in_scorefile: A `bool` object specifying whether or not to
         write full simulation records to the scorefile. If `True`, then write
-        full simulations records to the scorefile. This results in some redundant
+        full simulation records to the scorefile. This results in some redundant
         information on each line, allowing downstream reproduction of a decoy from
         the scorefile, but a larger scorefile. If `False`, then write
-        curtailed simulations records to the scorefile. This results in minimally
+        curtailed simulation records to the scorefile. This results in minimally
         redundant information on each line, disallowing downstream reproduction
         of a decoy from the scorefile, but a smaller scorefile. If `False`, also
         write the active conda environment to a YML file in 'output_path'. Full
@@ -172,15 +187,26 @@ Args:
         0.1 seconds seems reasonable. If each user-provided PyRosetta protocol is
         expected to run slowly, then >1 second seems reasonable.
         Default: 0.5
+    max_delay_time: A `float` or `int` object specifying the maximum number of seconds to 
+        sleep before returning the result(s) from each user-provided PyRosetta protocol
+        back to the client. If a dask worker returns the result(s) from a user-provided
+        PyRosetta protocol too quickly, the dask scheduler needs to first register that
+        the task is processing before it completes. In practice, in each user-provided
+        PyRosetta protocol the runtime is subtracted from `max_delay_time`, and the dask
+        worker sleeps for the remainder of the time, if any, before returning the result(s).
+        It's recommended to set this option to at least 1 second, but longer times may
+        be used as a safety throttle in cases of overwhelmed dask scheduler processes.
+        Default: 3.0
     save_all: A `bool` object specifying whether or not to save all of the returned
         or yielded `Pose` and `PackedPose` objects from all user-provided
         PyRosetta protocols. This option may be used for checkpointing trajectories.
         To save arbitrary poses to disk, from within any user-provided PyRosetta
         protocol:
-            `pose.dump_pdb(os.path.join(kwargs["output_path"], "checkpoint.pdb")`
+            `pose.dump_pdb(
+                os.path.join(kwargs["PyRosettaCluster_output_path"], "checkpoint.pdb"))`
         Default: False
-    dry_run: A `bool` object specifying whether or not to save .pdb files to
-        disk. If `True`, then do not write .pdb or .pdb.bz2 files to disk.
+    dry_run: A `bool` object specifying whether or not to save '.pdb' files to
+        disk. If `True`, then do not write '.pdb' or '.pdb.bz2' files to disk.
         Default: False
 
 Returns:
@@ -219,7 +245,6 @@ import logging
 import os
 
 from datetime import datetime
-from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.distributed.cluster.base import TaskBase, _get_residue_type_set
 from pyrosetta.distributed.cluster.converters import (
     _parse_decoy_ids,
@@ -232,7 +257,7 @@ from pyrosetta.distributed.cluster.converters import (
     _parse_system_info,
     _parse_tasks,
 )
-from pyrosetta.distributed.cluster.initialization import _get_pyrosetta_init_args, _maybe_init_master
+from pyrosetta.distributed.cluster.initialization import _get_pyrosetta_init_args, _maybe_init_client
 from pyrosetta.distributed.cluster.io import IO
 from pyrosetta.distributed.cluster.logging_support import LoggingSupport
 from pyrosetta.distributed.cluster.multiprocessing import user_spawn_thread
@@ -243,10 +268,12 @@ from pyrosetta.distributed.cluster.validators import (
     _validate_dirs,
     _validate_float,
     _validate_int,
+    _validate_min_len,
 )
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
     Any,
+    List,
     NoReturn,
     Optional,
     TypeVar,
@@ -302,11 +329,24 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         converter=attr.converters.optional(_parse_decoy_ids),
     )
     client = attr.ib(
-        type=distributed.client.Client,
+        type=Optional[distributed.client.Client],
         default=None,
         validator=attr.validators.optional(
             attr.validators.instance_of(distributed.client.Client)
         ),
+    )
+    clients = attr.ib(
+        type=Optional[List[distributed.client.Client]],
+        default=None,
+        validator=[
+            attr.validators.optional(
+                attr.validators.deep_iterable(
+                    member_validator=attr.validators.instance_of(distributed.client.Client),
+                    iterable_validator=attr.validators.instance_of((tuple, list)),
+                ),
+            ),
+            _validate_min_len,
+        ],
     )
     scheduler = attr.ib(
         type=str,
@@ -494,6 +534,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         validator=[_validate_float, attr.validators.instance_of((float, int))],
         converter=attr.converters.default_if_none(default=0.5),
     )
+    max_delay_time = attr.ib(
+        type=float,
+        default=3.0,
+        validator=[_validate_float, attr.validators.instance_of((float, int))],
+        converter=attr.converters.default_if_none(default=3.0),
+    )
     save_all = attr.ib(
         type=bool,
         default=False,
@@ -559,12 +605,13 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
     )
 
     def __attrs_post_init__(self):
-        _maybe_init_master()
+        _maybe_init_client()
         self._setup_logger()
         self._write_environment_file(self.environment_file)
         self.serializer = Serialization(compression=self.compression)
+        self.clients_dict = self._setup_clients_dict()
 
-    def distribute(self, *args: Any, protocols: Any = None) -> Optional[NoReturn]:
+    def distribute(self, *args: Any, protocols: Any = None, clients_indices: Any = None, resources: Any = None) -> Optional[NoReturn]:
         """
         Run user-provided PyRosetta protocols on a local or remote compute cluster using
         the user-customized PyRosettaCluster instance. Either arguments or the 'protocols'
@@ -578,6 +625,39 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             PyRosettaCluster().distribute(protocols=(protocol_1, protocol_2, protocol_3))
             PyRosettaCluster().distribute(protocol_1, protocol_2, protocols=[protocol_3, protocol_4])
 
+            # Run `protocol_1` on `client_1`,
+            # then `protocol_2` on `client_2`, 
+            # then `protocol_3` on `client_1`,
+            # then `protocol_4` on `client_2`:
+            PyRosettaCluster(clients=[client_1, client_2]).distribute(
+                protocols=[protocol_1, protocol_2, protocol_3, protocol_4],
+                clients_indices=[0, 1, 0, 1],
+            )
+
+            # Run `protocol_1` on `client_2`,
+            # then `protocol_2` on `client_3`,
+            # then `protocol_3` on `client_1`:
+            PyRosettaCluster(clients=[client_1, client_2, client_3]).distribute(
+                protocols=[protocol_1, protocol_2, protocol_3],
+                clients_indices=[1, 2, 0],
+            )
+
+            # Run `protocol_1` on `client_1` with dask worker resource constraints "GPU=2",
+            # then `protocol_2` on `client_1` with dask worker resource constraints "MEMORY=100e9",
+            # then `protocol_3` on `client_1` without dask worker resource constraints:
+            PyRosettaCluster(client=client_1).distribute(
+                protocols=[protocol_1, protocol_2, protocol_3],
+                resources=[{"GPU": 2}, {"MEMORY": 100e9}, None],
+            )
+
+            # Run `protocol_1` on `client_1` with dask worker resource constraints "GPU=2",
+            # then `protocol_2` on `client_2` with dask worker resource constraints "MEMORY=100e9":
+            PyRosettaCluster(clients=[client_1, client_2]).distribute(
+                protocols=[protocol_1, protocol_2],
+                clients_indices=[0, 1],
+                resources=[{"GPU": 2}, {"MEMORY": 100e9}],
+            )
+            
         Args:
             *args: Optional instances of type `types.GeneratorType` or `types.FunctionType`,
                 in the order of protocols to be executed.
@@ -586,15 +666,34 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                 `types.FunctionType` types; or a single instance of type
                 `types.GeneratorType` or `types.FunctionType`.
                 Default: None
+            clients_indices: An optional `list` or `tuple` object of `int` objects, where each `int` object represents
+                a zero-based index corresponding to the initialized dask `distributed.client.Client` object(s) passed 
+                to the `PyRosettaCluster(clients=...)` class attribute. If not `None`, then the length of the 
+                `clients_indices` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
+                method.
+                Default: None
+            resources: An optional `list` or `tuple` object of `dict` objects, where each `dict` object represents
+                an abstract, arbitrary resource to constrain which dask workers run the user-defined PyRosetta protocols.
+                If `None`, then do not impose resource constaints on any protocols. If not `None`, then the length
+                of the `resources` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
+                method, such that each resource specified indicates the unique resource constraints for the protocol at the
+                corresponding index of the protocols passed to `PyRosettaCluster().distribute`. Note that this feature is only 
+                useful when one passes in their own instantiated client(s) with dask workers set up with various resource
+                constraints. If dask workers were not instantiated to satisfy the specified resource constraints, protocols
+                will hang indefinitely because the dask scheduler is waiting for workers that meet the specified resource 
+                constraints so that it can schedule these protocols. Unless workers were created with these resource tags
+                applied, the protocols will not run. See https://distributed.dask.org/en/stable/resources.html for more
+                information.
+                Default: None
 
         Returns:
             None
         """
 
         compressed_input_packed_pose = self.serializer.compress_packed_pose(self.input_packed_pose)
-        protocols, protocol, seed = self._setup_protocols_protocol_seed(args, protocols)
-        client, cluster, adaptive = self._setup_client_cluster_adaptive()
-        master_residue_type_set = _get_residue_type_set()
+        protocols, protocol, seed, clients_index, resource = self._setup_protocols_protocol_seed(args, protocols, clients_indices, resources)
+        clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
+        client_residue_type_set = _get_residue_type_set()
         extra_args = (
             self.decoy_ids,
             self.protocols_key,
@@ -604,11 +703,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             self.logging_level,
             self.DATETIME_FORMAT,
             self.compression,
-            master_residue_type_set,
+            self.max_delay_time,
+            client_residue_type_set,
         )
         seq = as_completed(
             [
-                client.submit(
+                clients[clients_index].submit(
                     user_spawn_thread,
                     protocol,
                     compressed_input_packed_pose,
@@ -616,6 +716,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                     pyrosetta_init_kwargs,
                     *extra_args,
                     pure=False,
+                    resources=resource,
                 )
                 for compressed_kwargs, pyrosetta_init_kwargs in (
                     self._setup_initial_kwargs(protocols, seed, task_kwargs) for task_kwargs in self.tasks
@@ -642,21 +743,23 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                             compressed_packed_pose,
                             self.serializer.deepcopy_kwargs(kwargs),
                         )
-                    compressed_kwargs, pyrosetta_init_kwargs, protocol = self._setup_kwargs(kwargs)
-                    scatter = client.scatter(
+                    compressed_kwargs, pyrosetta_init_kwargs, protocol, clients_index, resource = self._setup_kwargs(
+                        kwargs, clients_indices, resources
+                    )
+                    scatter = clients[clients_index].scatter(
                         (
                             protocol,
                             compressed_packed_pose,
                             compressed_kwargs,
                             pyrosetta_init_kwargs,
                             *extra_args,
-                        )
+                        ), hash=False,
                     )
-                    seq.add(client.submit(user_spawn_thread, *scatter, pure=False,))
+                    seq.add(clients[clients_index].submit(user_spawn_thread, *scatter, pure=False, resources=resource))
                     self.tasks_size += 1
                     self._maybe_adapt(adaptive)
 
-        self._maybe_teardown(client, cluster)
+        self._maybe_teardown(clients, cluster)
         self._close_logger()
 
 

@@ -20,6 +20,7 @@
 #include <protocols/parser/ConstraintGeneratorLoaderCreator.hh>
 #include <protocols/parser/MoveMapFactoryLoaderCreator.hh>
 #include <protocols/parser/JumpSelectorLoaderCreator.hh>
+#include <protocols/chemistries/ChemistryLoaderCreator.hh>
 #include <protocols/parser/SimpleMetricLoaderCreator.hh>
 
 #include <protocols/chemistries/ChemistryLoaderCreator.hh>

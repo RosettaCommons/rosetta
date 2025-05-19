@@ -415,8 +415,11 @@ def reproduce(
     decoy_name: Optional[str] = None,
     protocols: Any = None,
     client: Optional[distributed.client.Client] = None,
+    clients: Optional[List[distributed.client.Client]] = None,
     input_packed_pose: Optional[Union[Pose, PackedPose]] = None,
     instance_kwargs: Optional[Dict[Any, Any]] = None,
+    clients_indices: Optional[List[int]] = None,
+    resources: Optional[Dict[Any, Any]] = None,
 ) -> Optional[NoReturn]:
     """
     Given an input file that was written by PyRosettaCluster (or a full scorefile
@@ -448,7 +451,14 @@ def reproduce(
         client: An optional initialized dask `distributed.client.Client` object to be used as
             the dask client interface to the local or remote compute cluster. If `None`,
             then PyRosettaCluster initializes its own dask client based on the settings
-            from the original production run.
+            from the original production run. Deprecated by the `clients` attribute, but
+            supported for legacy purposes.
+            Default: None
+        clients: A `list` or `tuple` object of initialized dask `distributed.client.Client`
+            objects to be used as the dask client interface(s) to the local or remote compute
+            cluster(s). If `None`, then PyRosettaCluster initializes its own dask client based
+            on the settings from the original production run. Optionally used in
+            combination with the `clients_indices` attribute.
             Default: None
         input_packed_pose: An optional input `PackedPose` object that is accessible via
             the first argument of the first user-defined PyRosetta protocol.
@@ -457,6 +467,25 @@ def reproduce(
             which will override any PyRosettaCluster attributes that were used to generate
             the original decoy.
             Default: None
+        clients_indices: An optional `list` or `tuple` object of `int` objects, where each `int` object represents
+            a zero-based index corresponding to the initialized dask `distributed.client.Client` object(s) passed 
+            to the `PyRosettaCluster(clients=...)` class attribute. If not `None`, then the length of the 
+            `clients_indices` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
+            method.
+            Default: None
+        resources: An optional `list` or `tuple` object of `dict` objects, where each `dict` object represents
+            an abstract, arbitrary resource to constrain which dask workers run the user-defined PyRosetta protocols.
+            If `None`, then do not impose resource constaints on any protocols. If not `None`, then the length
+            of the `resources` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
+            method, such that each resource specified indicates the unique resource constraints for the protocol at the
+            corresponding index of the protocols passed to `PyRosettaCluster().distribute`. Note that this feature is only 
+            useful when one passes in their own instantiated client(s) with dask workers set up with various resource
+            constraints. If dask workers were not instantiated to satisfy the specified resource constraints, protocols
+            will hang indefinitely because the dask scheduler is waiting for workers that meet the specified resource 
+            constraints so that it can schedule these protocols. Unless workers were created with these resource tags
+            applied, the protocols will not run. See https://distributed.dask.org/en/latest/resources.html for more
+            information.
+            Default: None
 
     Returns:
         None
@@ -464,7 +493,7 @@ def reproduce(
 
     PyRosettaCluster(
         **toolz.dicttoolz.keyfilter(
-            lambda a: a not in ["client", "input_packed_pose"],
+            lambda a: a not in ["client", "clients", "input_packed_pose"],
             toolz.dicttoolz.merge(
                 get_instance_kwargs(
                     input_file=input_file,
@@ -475,6 +504,7 @@ def reproduce(
             ),
         ),
         client=parse_client(client),
+        clients=clients,
         input_packed_pose=input_packed_pose,
     ).distribute(
         protocols=get_protocols(
@@ -482,27 +512,38 @@ def reproduce(
             input_file=input_file,
             scorefile=scorefile,
             decoy_name=decoy_name,
-        )
+        ),
+        clients_indices=clients_indices,
+        resources=resources,
     )
 
 
 def produce(**kwargs: Any) -> Optional[NoReturn]:
     """
-    PyRosettaCluster.distribute shim requiring the 'protocols' keyword argument and
-    optionally any PyRosettaCluster keyword arguments.
+    PyRosettaCluster.distribute shim requiring the 'protocols' keyword argument and optionally
+    any PyRosettaCluster keyword arguments or the 'clients_indices' keyword argument when using
+    the 'clients' keyword argument.
 
     Args:
         **kwargs: See PyRosettaCluster docstring. The keyword arguments must also include
             'protocols', an iterable object of function or generator objects specifying
             an ordered sequence of user-defined PyRosetta protocols to execute for
-            the simulation (see PyRosettaCluster.distribute docstring).
+            the simulation (see PyRosettaCluster.distribute docstring). The keyword arguments
+            may also optionally include 'clients_indices' (see PyRosettaCluster.distribute
+            docstring).
 
     Returns:
         None
     """
 
     protocols = kwargs.pop("protocols", None)
-    PyRosettaCluster(**kwargs).distribute(protocols=protocols)
+    clients_indices = kwargs.pop("clients_indices", None)
+    resources = kwargs.pop("resources", None)
+    PyRosettaCluster(**kwargs).distribute(
+        protocols=protocols,
+        clients_indices=clients_indices,
+        resources=resources,
+    )
 
 
 run: Callable[..., Optional[NoReturn]] = produce

@@ -11,7 +11,7 @@
 /// @brief A class for using the MIF-ST model developed by Yang et al.
 /// @author Moritz Ertelt (moritz.ertelt@gmail.com)
 
-#ifdef USE_PYTORCH
+#ifdef USE_TORCH
 
 // Project headers:
 #include <protocols/inverse_folding/MIFST.hh>
@@ -104,7 +104,7 @@ MIFST::predict( core::pose::Pose const & pose, core::select::residue_selector::R
     // checking whether inference can and should be run on GPU
     bool cuda_wanted_and_available = false;
     if ( use_gpu ) {
-#ifndef USE_PYTORCH_GPU
+#ifndef USE_TORCH_GPU
        TR.Warning << "If you'd like to run PyTorch on the GPU you need to download the appropriate libtorch library and compile with extras=pytorch_gpu! Falling back to CPU instead." << std::endl;
 #else
        if ( torch::hasCUDA() ) {
@@ -112,7 +112,7 @@ MIFST::predict( core::pose::Pose const & pose, core::select::residue_selector::R
        } else {
            TR.Warning << "You need to download the appropriate libtorch library to run inference on the GPU! Falling back to CPU instead." << std::endl;
        }
-#endif //USE_PYTORCH_GPU
+#endif //USE_TORCH_GPU
     }
 
     // Process coordinates and get features
@@ -235,7 +235,7 @@ MIFST::set_defaults() {
 void
 MIFST::auto_download( bool setting ) { auto_download_ = setting; }
 
-/// @brief Get the citation for ProteinMPNN
+/// @brief Get the citation for MIF-ST
 /*static*/
 basic::citation_manager::CitationCollectionBaseCOP
 MIFST::get_MIFST_neural_net_citation() {
@@ -317,4 +317,4 @@ MIFST::download_model_if_not_existing( std::string const & path_to_model, bool c
 } //inverse_folding
 } //protocols
 
-#endif //USE_PYTORCH
+#endif //USE_TORCH

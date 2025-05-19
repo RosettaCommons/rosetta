@@ -12,7 +12,7 @@
 ## @brief  Common constats and types for all test types
 ## @author Sergey Lyskov
 
-import os, time, sys, shutil, codecs, urllib.request, imp, subprocess, json, hashlib  # urllib.error, urllib.parse,
+import os, time, sys, shutil, codecs, urllib.request, subprocess, json, hashlib  # urllib.error, urllib.parse,
 import platform as  platform_module
 import types as types_module
 
@@ -175,25 +175,35 @@ def execute_through_pty(command_line):
 
     if sys.platform == "darwin":
 
-        master, slave = pty.openpty()
-        p = subprocess.Popen(command_line, shell=True, stdout=slave, stdin=slave,
-                             stderr=subprocess.STDOUT, close_fds=True)
-
-        buffer = []
-        while True:
+        try:
+            master, slave = pty.openpty()
+        except OSError:
+            time.sleep(60) # Wait a bit and see if a PTY opens up.
             try:
-                if select.select([master], [], [], 0.2)[0]:  # has something to read
-                    data = os.read(master, 1 << 22)
-                    if data: buffer.append(data)
+                master, slave = pty.openpty()
+            except OSError:
+                print("ERROR - can't open PTY -- falling back on regular subprocess approach.")
+                return execute_through_subprocess(command_line)
 
-                elif (p.poll() is not None)  and  (not select.select([master], [], [], 0.2)[0] ): break  # process is finished and output buffer if fully read
+        try:
+            p = subprocess.Popen(command_line, shell=True, stdout=slave, stdin=slave,
+                                 stderr=subprocess.STDOUT, close_fds=True)
 
-            except OSError: break  # OSError will be raised when child process close PTY descriptior
+            buffer = []
+            while True:
+                try:
+                    if select.select([master], [], [], 0.2)[0]:  # has something to read
+                        data = os.read(master, 1 << 22)
+                        if data: buffer.append(data)
 
-        output = b''.join(buffer).decode(encoding='utf-8', errors='backslashreplace')
+                    elif (p.poll() is not None)  and  (not select.select([master], [], [], 0.2)[0] ): break  # process is finished and output buffer if fully read
 
-        os.close(master)
-        os.close(slave)
+                except OSError: break  # OSError will be raised when child process close PTY descriptior
+
+            output = b''.join(buffer).decode(encoding='utf-8', errors='backslashreplace')
+        finally:
+            os.close(master)
+            os.close(slave)
 
         p.wait()
         exit_code = p.returncode
@@ -223,22 +233,34 @@ def execute_through_pty(command_line):
 
     else:
 
-        master, slave = pty.openpty()
-        p = subprocess.Popen(command_line, shell=True, stdout=slave, stdin=slave,
-                             stderr=subprocess.STDOUT, close_fds=True)
-
-        os.close(slave)
-
-        buffer = []
-        while True:
+        try:
+            master, slave = pty.openpty()
+        except OSError:
+            time.sleep(60) # Wait a bit and see if a PTY opens up.
             try:
-                data = os.read(master, 1 << 22)
-                if data: buffer.append(data)
-            except OSError: break  # OSError will be raised when child process close PTY descriptior
+                master, slave = pty.openpty()
+            except OSError:
+                print("ERROR - can't open PTY -- falling back on regular subprocess approach.")
+                return execute_through_subprocess(command_line)
 
-        output = b''.join(buffer).decode(encoding='utf-8', errors='backslashreplace')
+        try:
+            try:
+                p = subprocess.Popen(command_line, shell=True, stdout=slave, stdin=slave,
+                                 stderr=subprocess.STDOUT, close_fds=True)
+            finally:
+                os.close(slave)
 
-        os.close(master)
+            buffer = []
+            while True:
+                try:
+                    data = os.read(master, 1 << 22)
+                    if data: buffer.append(data)
+                except OSError: break  # OSError will be raised when child process close PTY descriptior
+
+            output = b''.join(buffer).decode(encoding='utf-8', errors='backslashreplace')
+
+        finally:
+            os.close(master)
 
         p.wait()
         exit_code = p.returncode
@@ -340,8 +362,10 @@ def platform_to_pretty_string(platform):
     ''' Take platform as json object and return normalized human-readable string '''
     return '{}.{}{}{}'.format(platform['os'], platform['compiler'], ('.'+'.'.join(platform['extras']) if 'extras' in platform  and  platform['extras'] else ''), ('.python'+platform['python'] if 'python' in platform else ''))
 
+
 def setup_for_compile(rosetta_dir):
     execute('Updating options, ResidueTypes and version info...', f'cd {rosetta_dir}/source && ' + ' && '.join(PRE_COMPILE_SETUP_SCRIPTS) )
+
 
 def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=False, verbose=False):
     ''' Compile Rosetta binaries on a given platform return (res, output, build_command_line) '''
@@ -395,6 +419,7 @@ def get_required_pyrosetta_python_packages_for_testing(platform):
     elif python_version == (3, 10): packages = 'numpy>=1.22.3'
     elif python_version == (3, 11): packages = 'numpy>=1.23.5'
     elif python_version == (3, 12): packages = 'numpy>=1.26.0'
+    elif python_version == (3, 13): packages = 'numpy>=2.1'
     else: packages = 'numpy>=1.23'
 
     if platform['os'] == 'mac' and python_version == (3, 7): packages = packages.replace('blosc>=1.8.3', 'blosc>=1.10.6')
@@ -439,6 +464,10 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda):
         if python_version == (3, 7): packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p, packages.split()))
         elif python_version == (3, 6): packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p.split(">=")[0], packages.split()))
 
+
+    # elif python_version >= (3, 13):
+    #     packages = 'numpy>=2.1'
+
     else:
         #packages = 'numpy>=1.19.2' if platform['os'] == 'mac' else 'numpy>=1.19.2'
         packages = 'numpy>=1.20.2'
@@ -472,6 +501,8 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', opti
 
     if 'cxx11thread'   in platform['extras']: extra += ' --multi-threaded'
     if 'serialization' in platform['extras']: extra += ' --serialization'
+    if 'torch' in platform['extras']: extra += ' --torch'
+    if 'tensorflow' in platform['extras']: extra += ' --tensorflow'
 
     if version: extra += " --version '{version}'".format(**vars())
 
@@ -759,8 +790,9 @@ def local_python_install(platform, config):
         '3.8'  : 'https://www.python.org/ftp/python/3.8.14/Python-3.8.14.tgz',
         '3.9'  : 'https://www.python.org/ftp/python/3.9.14/Python-3.9.14.tgz',
         '3.10' : 'https://www.python.org/ftp/python/3.10.10/Python-3.10.10.tgz',
-        '3.11' : 'https://www.python.org/ftp/python/3.11.2/Python-3.11.2.tgz',
+        '3.11' : 'https://www.python.org/ftp/python/3.11.12/Python-3.11.12.tgz',
         '3.12' : 'https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz',
+        '3.13' : 'https://www.python.org/ftp/python/3.13.0/Python-3.13.0.tgz',
     }
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')
@@ -935,15 +967,21 @@ def generate_version_information(rosetta_dir, **kwargs):
     This is a light wrapper around the generate_version_information() function in Rosetta/main/source/version.py -- see there for the interface definition.
     '''
 
-    version = imp.load_source('version', rosetta_dir + '/source/version.py')
-    return version.generate_version_information(rosetta_dir=rosetta_dir, **kwargs)
+    import importlib.util
 
+    spec = importlib.util.spec_from_file_location('rosetta_source_version', rosetta_dir + '/source/version.py' )
+    rosetta_source_version = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rosetta_source_version)
+
+    return rosetta_source_version.generate_version_information(rosetta_dir=rosetta_dir, **kwargs)
 
 
 def _get_path_to_conda_root(platform, config):
     ''' Perform local (prefix) install of miniconda and return NT(activate, conda_root_dir, conda)
         this function is for inner use only, - to setup custom conda environment inside your test use `setup_conda_virtual_environment` defined below
     '''
+    assert False, 'DO NOT USE, DEPRECATED'
+
     miniconda_sources = {
         'mac'    : 'https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh',
         'linux'  : 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh',
@@ -967,14 +1005,15 @@ def _get_path_to_conda_root(platform, config):
 
     url = miniconda_sources[platform_os]
 
-    version = '1'
-    channels = ''  # conda-forge
+    version = '1.0.1'
+    # https://stackoverflow.com/questions/67695893/how-do-i-completely-purge-and-disable-the-default-channel-in-anaconda-and-switch
+    channels = 'conda-forge nodefaults'.split()
 
     #packages = ['conda-build gcc libgcc', 'libgcc=5.2.0'] # libgcc installs is workaround for "Anaconda libstdc++.so.6: version `GLIBCXX_3.4.20' not found", see: https://stackoverflow.com/questions/48453497/anaconda-libstdc-so-6-version-glibcxx-3-4-20-not-found
     #packages = ['conda-build gcc'] # libgcc installs is workaround for "Anaconda libstdc++.so.6: version `GLIBCXX_3.4.20' not found", see: https://stackoverflow.com/questions/48453497/anaconda-libstdc-so-6-version-glibcxx-3-4-20-not-found
     packages = ['conda-build anaconda-client conda-verify',]
 
-    signature = f'url: {url}\nversion: {version}\channels: {channels}\npackages: {packages}\n'
+    signature = f'url: {url}\nversion: {version}\nchannels: {channels}\npackages: {packages}\n'
 
     root = calculate_unique_prefix_path(platform, config) + '/conda'
 
@@ -1010,7 +1049,16 @@ def _get_path_to_conda_root(platform, config):
 
         # conda update --yes --quiet -n base -c defaults conda
 
-        if channels: execute(f'Adding extra channles {channels}...', f'cd {build_prefix} && {activate} && conda config --add channels {channels}' )
+        #execute(f'Removing `defaults` channel...', f'cd {build_prefix} && {activate} && conda config --remove channels defaults || echo' )
+
+        o = execute(f'Removing `defaults` channel...', f'cd {build_prefix} && {activate} && conda config --show channels || echo', return_='output' )
+        current_channels = o.partition('channels:')[2]
+        for c in current_channels.split('\n'):
+            c = c.strip().partition('- ')[2]
+            if c:
+                execute(f'Removing channel {c!r}...', f'cd {build_prefix} && {activate} && conda config --remove channels {c} || echo' )
+
+        for c in channels: execute(f'Adding extra channel {c!r}...', f'cd {build_prefix} && {activate} && conda config --add channels {c}' )
 
         for p in packages: execute(f'Installing conda packages: {p}...', f'cd {build_prefix} && {activate} && conda install --quiet --yes {p}' )
 
@@ -1025,10 +1073,100 @@ def _get_path_to_conda_root(platform, config):
 
 
 
+def _get_path_to_miniforge_root(platform, config):
+    ''' Perform local (prefix) install of miniconda and return NT(activate, conda_root_dir, conda)
+        this function is for inner use only, - to setup custom conda environment inside your test use `setup_conda_virtual_environment` defined below
+    '''
+    miniforge_source_suffixes = {
+        'mac'    : 'MacOSX-x86_64.sh',
+        'linux'  : 'Linux-x86_64.sh',
+        'aarch64': 'Linux-aarch64.sh',
+        'ubuntu' : 'Linux-x86_64.sh',
+        'm1'     : 'MacOSX-arm64.sh',
+    }
+    platform_os = platform['os']
+    for o in 'alpine centos ubuntu'.split():
+        if platform_os.startswith(o): platform_os = 'linux'
+
+    url = 'https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-' + miniforge_source_suffixes[platform_os]
+
+    version = 'miniforge-0.0.1'
+    channels = 'conda-forge'.split()
+
+    # packages = ['conda-build anaconda-client conda-verify',]
+    packages = ['conda-build',]
+
+    signature = f'url: {url}\nversion: {version}\nchannels: {channels}\npackages: {packages}\n'
+
+    root = calculate_unique_prefix_path(platform, config) + '/miniforge'
+
+    signature_file_name = root + '/.signature'
+
+    # presense of __PYVENV_LAUNCHER__,PYTHONHOME, PYTHONPATH sometimes confuse Python so we have to unset them
+    unset = 'unset __PYVENV_LAUNCHER__ && unset PYTHONHOME && unset PYTHONPATH'
+    activate = unset + ' && . ' + root + '/bin/activate'
+
+    executable = root + '/bin/conda'
+
+    if os.path.isfile(signature_file_name) and open(signature_file_name).read() == signature:
+        print( f'Install for MiniForge is detected, skipping installation procedure...' )
+
+    else:
+        print( f'Installing MiniForge, using {url}...' )
+
+        if os.path.isdir(root): shutil.rmtree(root)
+
+        dot_conda_rc = os.path.expanduser('~/.condarc')
+        if os.path.isfile(dot_conda_rc):
+            os.replace(dot_conda_rc, f'{dot_conda_rc}.{datetime.datetime.now(datetime.timezone.utc).isoformat()}')
+            # os.remove(dot_conda_rc)
+
+        build_prefix = os.path.abspath(root + f'/../build-miniforge' )
+
+        #if not os.path.isdir(root): os.makedirs(root)
+        if not os.path.isdir(build_prefix): os.makedirs(build_prefix)
+
+        archive = build_prefix + '/' + url.split('/')[-1]
+
+        with open(archive, 'wb') as f:
+            response = urllib.request.urlopen(url)
+            f.write( response.read() )
+
+        execute('Installing miniforge...', f'cd {build_prefix} && {unset} && bash {archive} -b -p {root}' )
+
+        # conda update --yes --quiet -n base -c defaults conda
+
+        #execute(f'Removing `defaults` channel...', f'cd {build_prefix} && {activate} && conda config --remove channels defaults || echo' )
+
+        execute(f'Disabling auto-activation...', f'cd {build_prefix} && {activate} && conda config --set auto_activate_base false')
+
+        # o = execute(f'Removing `defaults` channel...', f'cd {build_prefix} && {activate} && conda config --show channels || echo', return_='output' )
+        # current_channels = o.partition('channels:')[2]
+        # for c in current_channels.split('\n'):
+        #     c = c.strip().partition('- ')[2]
+        #     if c:
+        #         execute(f'Removing channel {c!r}...', f'cd {build_prefix} && {activate} && conda config --remove channels {c} || echo' )
+
+        for c in channels: execute(f'Adding extra channel {c!r}...', f'cd {build_prefix} && {activate} && conda config --add channels {c}' )
+
+        for p in packages: execute(f'Installing conda packages: {p}...', f'cd {build_prefix} && {activate} && conda install --quiet --yes {p}' )
+
+        shutil.rmtree(build_prefix)
+
+        with open(signature_file_name, 'w') as f: f.write(signature)
+
+        print( f'Installing MiniForge, using {url}... Done.' )
+
+    execute(f'Updating conda base...', f'{activate} && conda update --all --yes' )
+    return NT(conda=executable, root=root, activate=activate, url=url)
+
+
+
 def setup_conda_virtual_environment(working_dir, platform, config, packages=''):
     ''' Deploy Conda virtual environment at working_dir
     '''
-    conda_root_env = _get_path_to_conda_root(platform, config)
+    #conda_root_env = _get_path_to_conda_root(platform, config)
+    conda_root_env = _get_path_to_miniforge_root(platform, config)
     activate = conda_root_env.activate
 
     python_version = platform.get('python', DEFAULT_PYTHON_VERSION)
@@ -1109,8 +1247,9 @@ def convert_submodule_urls_from_ssh_to_https(repository_root):
     with open(f'{repository_root}/.gitmodules', 'w') as f:
         f.write(
             m
-            .replace('url = git@github.com:', 'url = https://github.com/')
-            .replace('url = ../../../',       'url = https://github.com/RosettaCommons/')
-            .replace('url = ../../',          'url = https://github.com/RosettaCommons/')
-            .replace('url = ../',             'url = https://github.com/RosettaCommons/')
+            .replace('url = git@github.com:',       'url = https://github.com/')
+            .replace('url = ../../RosettaCommons/', 'url = https://github.com/RosettaCommons/')
+            .replace('url = ../../../',             'url = https://github.com/RosettaCommons/')
+            .replace('url = ../../',                'url = https://github.com/RosettaCommons/')
+            .replace('url = ../',                   'url = https://github.com/RosettaCommons/')
         )

@@ -64,14 +64,6 @@ struct StructInfo {
 	std::string ligandname;
 };
 
-struct DensStructInfo {
-	core::io::silent::SilentStructOP str;
-	core::scoring::constraints::ConstraintSetOP cst;
-	core::Real rms, E, ligandscore, recscore, lig_dens, native_hbond_ratio, hbond_count, pocket_cc;
-	core::Size ranking_prerelax;
-	std::string ligandname;
-};
-
 class StructInfoComp {
 public:
 	bool operator() ( StructInfo &a, StructInfo &b ) {  return (a.E > b.E); }
@@ -82,47 +74,10 @@ public:
 	bool operator() ( StructInfo &a, StructInfo &b ) {  return (a.dH > b.dH); }
 };
 
-class DensStructInfoComp {
-public:
-	bool operator() ( DensStructInfo &a, DensStructInfo &b ) {  return (a.E > b.E); }
-};
-
 /// @brief helper class to manage multiple outputs
 class OutputStructureStore {
 public:
 	OutputStructureStore() {}
-
-	void
-	dens_push( core::pose::Pose const &pose, core::Real E,
-		core::Real rms=0.0,
-		core::Real ligandscore=0.0,
-		core::Real recscore=0.0,
-		core::Size ranking_prerelax=0,
-		std::string ligandname="",
-		core::Real lig_dens = 0.0,
-		core::Real native_hbond_ratio = 0.0,
-		core::Real hbond_count = 0.0,
-		core::Real pocket_cc = 0.0
-	) {
-		DensStructInfo newstruct;
-
-		core::io::silent::SilentFileOptions opts;
-		newstruct.str = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts);
-		newstruct.str->fill_struct( pose );
-		newstruct.rms = rms;
-		newstruct.ligandscore = ligandscore;
-		newstruct.cst = pose.constraint_set()->clone();
-		newstruct.E = E;
-		newstruct.recscore = recscore;
-		newstruct.ranking_prerelax = ranking_prerelax;
-		newstruct.ligandname = ligandname;
-		newstruct.lig_dens = lig_dens;
-		newstruct.native_hbond_ratio = native_hbond_ratio;
-		newstruct.hbond_count = hbond_count;
-		newstruct.pocket_cc = pocket_cc;
-
-		dens_struct_store_.push( newstruct );
-	}
 
 	void
 	push( core::pose::Pose const &pose, core::Real E,
@@ -150,34 +105,6 @@ public:
 
 		struct_store_.push( newstruct );
 		struct_store_dH_.push( newstruct );
-	}
-
-	void
-	dens_pop( core::pose::Pose &pose, core::Real &E,
-		core::Real &rms, core::Real &ligandscore,
-		core::Real &recscore,
-		core::Size &ranking_prerelax,
-		std::string &ligandname,
-		core::Real &lig_dens,
-		core::Real &native_hbond_ratio,
-		core::Real &hbond_count,
-		core::Real &pocket_cc
-	)
-	{
-		dens_struct_store_.top().str->fill_pose( pose );
-		pose.constraint_set( dens_struct_store_.top().cst );
-		rms = dens_struct_store_.top().rms;
-		E = dens_struct_store_.top().E;
-		ligandscore = dens_struct_store_.top().ligandscore;
-		recscore = dens_struct_store_.top().recscore;
-		ranking_prerelax = dens_struct_store_.top().ranking_prerelax;
-		ligandname = dens_struct_store_.top().ligandname;
-		lig_dens = dens_struct_store_.top().lig_dens;
-		native_hbond_ratio = dens_struct_store_.top().native_hbond_ratio;
-		hbond_count = dens_struct_store_.top().hbond_count;
-		pocket_cc = dens_struct_store_.top().pocket_cc;
-
-		dens_struct_store_.pop();
 	}
 
 	void
@@ -227,31 +154,6 @@ public:
 	}
 
 	core::pose::PoseOP
-	dens_pop()
-	{
-		if ( !dens_has_data() ) return nullptr;
-		core::pose::PoseOP retval (new core::pose::Pose);
-
-		core::Real rms, E, ligscore, recscore, lig_dens, native_hbond_ratio, hbond_count, pocket_cc;
-		core::Size ranking_prerelax;
-		std::string ligandname;
-		dens_pop(*retval, E, rms, ligscore, recscore, ranking_prerelax, ligandname, lig_dens, native_hbond_ratio, hbond_count, pocket_cc );
-
-		core::pose::setPoseExtraScore( *retval, "ligandname", ligandname);
-		core::pose::setPoseExtraScore( *retval, "lig_rms", rms);
-		core::pose::setPoseExtraScore( *retval, "ligscore", ligscore );
-		core::pose::setPoseExtraScore( *retval, "recscore", recscore );
-		core::pose::setPoseExtraScore( *retval, "ranking_prerelax", ranking_prerelax );
-		core::pose::setPoseExtraScore( *retval, "dH", E-recscore-ligscore );
-		core::pose::setPoseExtraScore( *retval, "lig_density", lig_dens );
-		core::pose::setPoseExtraScore( *retval, "native_hbond_ratio", native_hbond_ratio );
-		core::pose::setPoseExtraScore( *retval, "hbond_count", hbond_count );
-		core::pose::setPoseExtraScore( *retval, "pocket_cc", pocket_cc );
-
-		return retval;
-	}
-
-	core::pose::PoseOP
 	pop( std::string metric="score" )
 	{
 		if ( !has_data() ) return nullptr;
@@ -282,51 +184,31 @@ public:
 		struct_store_ = std::priority_queue< StructInfo, std::vector<StructInfo> , StructInfoComp >();
 	}
 
-	void
-	dens_clear(){
-		dens_struct_store_ = std::priority_queue< DensStructInfo, std::vector<DensStructInfo> , DensStructInfoComp > ();
-	}
-
 	bool
 	has_data( ) {
 		return ( struct_store_.size() > 0 );
 	}
 
-	bool
-	dens_has_data( ) {
-		return ( dens_struct_store_.size() > 0 );
-	}
-
 	core::Size
 	size( ){ return struct_store_.size(); }
-
-	core::Size
-	dens_size( ){ return dens_struct_store_.size(); }
 
 	void
 	resize( core::Size n ) {
 		std::priority_queue< StructInfo, std::vector<StructInfo> , StructInfoComp > struct_store_temp_;
 		std::priority_queue< StructInfo, std::vector<StructInfo> , StructInfoCompdH > struct_store_dH_temp_;
-		std::priority_queue< DensStructInfo, std::vector<DensStructInfo> , DensStructInfoComp > dens_struct_store_temp_;
 		while ( struct_store_temp_.size()<n && struct_store_.size()>0 ) {
 			struct_store_temp_.push( struct_store_.top() );
 			struct_store_dH_temp_.push( struct_store_dH_.top() );
 			struct_store_.pop();
 			struct_store_dH_.pop();
 		}
-		while ( dens_struct_store_temp_.size()<n && dens_struct_store_.size()>0 ) {
-			dens_struct_store_temp_.push( dens_struct_store_.top() );
-			dens_struct_store_.pop();
-		}
 		struct_store_ = struct_store_temp_;
 		struct_store_dH_ = struct_store_dH_temp_;
-		dens_struct_store_ = dens_struct_store_temp_;
 	}
 
 private:
 	std::priority_queue< StructInfo, std::vector<StructInfo> , StructInfoComp > struct_store_;
 	std::priority_queue< StructInfo, std::vector<StructInfo> , StructInfoCompdH > struct_store_dH_;
-	std::priority_queue< DensStructInfo, std::vector<DensStructInfo> , DensStructInfoComp > dens_struct_store_;
 };
 
 
@@ -461,6 +343,13 @@ private:
 		bool simple=true
 	) const;
 
+	//calculates the fraction of matching atom types for two residues
+	//useful for similarity of pseudo-symmetiric lipids
+	core::Real
+	match_by_atomtype(
+		core::conformation::Residue const & rsd1,
+		core::conformation::Residue const & rsd2
+	);
 
 	std::pair < core::Real, core::Real >
 	compare_hbonds_to_native( HbondMap const& native_hbond_map,
@@ -603,10 +492,13 @@ private:
 
 	core::Real skeleton_threshold_const_; //constant used for determining skeleton threshold
 	core::Size neighborhood_size_; //size of neighborhood to search during erosion
+	core::Real skeleton_radius_;
+	std::string method_for_radius_;
+	bool advanced_map_erosion_;
 	bool print_initial_pool_;
-	core::Real rtmutationRate_;
-	core::Real rotmutWidth_;
-	core::Real transmutWidth_;
+	bool altcrossover_;
+	bool single_mutation_;
+	core::Real local_res_;
 
 	bool calculate_native_density_;
 

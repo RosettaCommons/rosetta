@@ -34,7 +34,7 @@ class LoggingSupport(Generic[G]):
         logging.captureWarnings(True)
 
     def _setup_logger(self) -> None:
-        """Open the logger for the master instance."""
+        """Open the logger for the client instance."""
 
         logger = logging.getLogger()
         logger.setLevel(self.logging_level)
@@ -56,7 +56,7 @@ class LoggingSupport(Generic[G]):
         logger.addHandler(fh)
 
     def _close_logger(self) -> None:
-        """Close the logger for the master instance."""
+        """Close the logger for the client instance."""
 
         logger = logging.getLogger()
         for handler in logger.handlers[:]:
@@ -80,7 +80,8 @@ def setup_target_logging(func: L) -> L:
         protocols_key,
         decoy_ids,
         compression,
-        master_residue_type_set,
+        client_residue_type_set,
+        client_repr,
         **pyrosetta_init_kwargs,
     ):
         """Wrapper function to setup_target_logging."""
@@ -116,7 +117,8 @@ def setup_target_logging(func: L) -> L:
             protocols_key,
             decoy_ids,
             compression,
-            master_residue_type_set,
+            client_residue_type_set,
+            client_repr,
             **pyrosetta_init_kwargs,
         )
 

@@ -1224,6 +1224,7 @@ public:
 				}
 			}
 		}
+		TS_ASSERT_DIFFERS(count_comparisons, 0);
 		//std::cout << "Total energy comparisons: " << count_comparisons << std::endl;
 	}
 

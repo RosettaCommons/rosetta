@@ -209,7 +209,9 @@ MembraneGeometry::f_imm1( core::Real z_position ) const {
 	t = membrane_thickness();
 	n = membrane_steepness();
 	pot = std::abs( z_position )/t;
-	f = std::pow( pot, n )/(1 + std::pow( pot, n ));
+	core::Real pot_n = std::pow( pot, n );
+
+	f = pot_n/(1 + pot_n);
 	return f;
 }
 
@@ -220,7 +222,9 @@ MembraneGeometry::f_imm1_deriv( core::Real z_position ) const {
 	core::Real n = membrane_steepness();
 	core::Real pot = std::abs( z_position )/t;
 	core::Real numerator = n*std::pow(pot, n-1);
-	core::Real denominator = t*(std::pow(1 + std::pow( pot, n ), 2));
+	core::Real pot_n_1 = 1 + std::pow( pot, n );
+	core::Real denominator = t*(pot_n_1*pot_n_1);
+	debug_assert( denominator != 0 );
 	core::Real f_dz_position = numerator/denominator;
 	return f_dz_position;
 }
@@ -233,6 +237,7 @@ core::Real
 MembraneGeometry::f_franklin( core::Real const z, core::Real tau, core::Real kappa ) const {
 	core::Real abs_z( std::abs(z) );
 	core::Real d( 1 + (tau*std::exp(-kappa*abs_z)));
+	debug_assert( d != 0 );
 	return 1/d;
 }
 
@@ -241,6 +246,7 @@ MembraneGeometry::f_franklin_gradient( core::Real const z, core::Real tau, core:
 	core::Real abs_z( std::abs(z) );
 	core::Real exp_bz( std::exp(-kappa*abs_z) );
 	core::Real denom = 1 + tau*exp_bz;
+	debug_assert( denom != 0 );
 	core::Real quotient( ( tau*kappa*exp_bz )/( denom * denom ) );
 	return quotient;
 }
@@ -349,7 +355,9 @@ MembraneGeometry::f_cavity( numeric::xyzVector< core::Real > const & p ) const {
 core::Real
 MembraneGeometry::f_cavity_gradient( core::Real const r ) const {
 	core::Real top( pore_transition_steepness_*std::pow( r, pore_transition_steepness_-1 ) );
-	core::Real bottom( std::pow( std::pow( r, pore_transition_steepness_) + 1, 2 ) );
+	core::Real r_trans_1 = std::pow( r, pore_transition_steepness_) + 1;
+	core::Real bottom( r_trans_1*r_trans_1 );
+	debug_assert( bottom != 0 );
 	return -top/bottom;
 }
 
@@ -363,10 +371,16 @@ MembraneGeometry::g_radius( numeric::xyzVector< core::Real > const & p ) const {
 	core::Real pore_major_radius( pore_params_->pore_major_radius( p.z() ) );
 	numeric::MathMatrix< core::Real > rotation( pore_params_->pore_rotation( p.z() ) );
 
-	core::Real lhs = (std::abs(p.x()-pore_center_x)*rotation(0,0) - std::abs(p.y()-pore_center_y)*rotation(0,1))/pore_major_radius;
-	core::Real rhs = (std::abs(p.x()-pore_center_x)*rotation(1,0) - std::abs(p.y()-pore_center_y)*rotation(0,0))/pore_minor_radius;
+	debug_assert( pore_minor_radius != 0 );
+	debug_assert( pore_major_radius != 0 );
 
-	core::Real result = std::pow( lhs, 2 ) + std::pow( rhs, 2 );
+	core::Real abs_x_dis = std::abs(p.x() - pore_center_x);
+	core::Real abs_y_dis = std::abs(p.y() - pore_center_y);
+
+	core::Real lhs = (abs_x_dis*rotation(0,0) - abs_y_dis*rotation(0,1))/pore_major_radius;
+	core::Real rhs = (abs_x_dis*rotation(1,0) - abs_y_dis*rotation(0,0))/pore_minor_radius;
+
+	core::Real result = lhs*lhs + rhs*rhs;
 
 	return result;
 }
@@ -383,6 +397,8 @@ MembraneGeometry::g_radius_gradient_dz( numeric::xyzVector< core::Real > const &
 	core::Real yo( pore_params_->pore_center_y( p.z() ) );
 	core::Real a( pore_params_->pore_major_radius( p.z() ) );
 	core::Real b( pore_params_->pore_minor_radius( p.z() ) );
+	debug_assert( a != 0 );
+	debug_assert( b != 0 );
 
 	core::Real d_theta( pore_params_->pore_rotation_deriv( p.z() ) );
 	core::Real d_xo( pore_params_->pore_center_x_deriv( p.z() ) );
@@ -390,14 +406,21 @@ MembraneGeometry::g_radius_gradient_dz( numeric::xyzVector< core::Real > const &
 	core::Real d_a( pore_params_->pore_major_radius_deriv( p.z() ) );
 	core::Real d_b( pore_params_->pore_minor_radius_deriv( p.z() ) );
 
-	core::Real h = (std::abs(p.x()-xo)*c + std::abs(p.y()-yo)*s);
-	core::Real j = (std::abs(p.x()-xo)*s - std::abs(p.y()-yo)*c);
+	core::Real x_dis = p.x()-xo;
+	core::Real y_dis = p.y()-yo;
+	core::Real abs_x_dis = std::abs(x_dis);
+	core::Real abs_y_dis = std::abs(y_dis);
+	core::Real sign_x_dis = std::copysign(1.0, x_dis);
+	core::Real sign_y_dis = std::copysign(1.0, y_dis);
 
-	core::Real dhdz = (((p.x()-xo)/std::abs(p.x()-xo))*(-d_xo * c) + std::abs(p.x() - xo)*(-s)*d_theta) + ( ((p.y()-yo)/std::abs(p.y()-yo))*(-d_yo * s) + std::abs(p.y() - yo)*c*d_theta);
-	core::Real djdz = (((p.x()-xo)/std::abs(p.x()-xo))*(-d_xo * s) + std::abs(p.x() - xo)*c*d_theta) - ( ((p.y()-yo)/std::abs(p.y()-yo))*(-d_yo * c) + std::abs(p.y() - yo)*(-s)*d_theta);
+	core::Real h = (abs_x_dis*c + abs_y_dis*s);
+	core::Real j = (abs_x_dis*s - abs_y_dis*c);
 
-	core::Real dlhs_dz = 2*((h/a)*((dhdz/a) - h*(1/std::pow(a,2))*d_a));
-	core::Real drhs_dz = 2*((j/b)*((djdz/b) - j*(1/std::pow(b,2))*d_b));
+	core::Real dhdz = (sign_x_dis*(-d_xo * c) + abs_x_dis*(-s)*d_theta) + ( sign_y_dis*(-d_yo * s) + abs_y_dis*(+c)*d_theta);
+	core::Real djdz = (sign_x_dis*(-d_xo * s) + abs_x_dis*(+c)*d_theta) - ( sign_y_dis*(-d_yo * c) + abs_y_dis*(-s)*d_theta);
+
+	core::Real dlhs_dz = 2*((h/a)*((dhdz/a) - h*d_a/(a*a) ));
+	core::Real drhs_dz = 2*((j/b)*((djdz/b) - j*d_b/(b*b) ));
 
 	core::Real dgdz = dlhs_dz + drhs_dz;
 
@@ -415,8 +438,13 @@ MembraneGeometry::g_radius_gradient_dx( numeric::xyzVector< core::Real > const &
 	core::Real yo( pore_params_->pore_center_y( p.z() ) );
 	core::Real a( pore_params_->pore_major_radius( p.z() ) );
 	core::Real b( pore_params_->pore_minor_radius( p.z() ) );
+	debug_assert( a != 0 );
+	debug_assert( b != 0 );
 
-	core::Real dgdx( 2 * ( c/std::pow(a,2) * ( c*std::abs(p.x() - xo) - ns*std::abs(p.y() - yo) ) + s/std::pow(b,2) * ( s*std::abs(p.x() - xo) - c*std::abs(p.y() - yo)) ) );
+	core::Real abs_x_dis = std::abs(p.x() - xo);
+	core::Real abs_y_dis = std::abs(p.y() - yo);
+
+	core::Real dgdx( 2 * ( c/(a*a) * ( c*abs_x_dis - ns*abs_y_dis ) + s/(b*b) * ( s*abs_x_dis - c*abs_y_dis) ) );
 
 	return dgdx;
 }
@@ -432,8 +460,13 @@ MembraneGeometry::g_radius_gradient_dy( numeric::xyzVector< core::Real > const &
 	core::Real yo( pore_params_->pore_center_y( p.z() ) );
 	core::Real a( pore_params_->pore_major_radius( p.z() ) );
 	core::Real b( pore_params_->pore_minor_radius( p.z() ) );
+	debug_assert( a != 0 );
+	debug_assert( b != 0 );
 
-	core::Real dgdy( 2 * ( -ns/std::pow(a,2) * ( c*std::abs(p.x() - xo) - ns*std::abs(p.y() - yo) ) + -c/std::pow(b,2) * ( s*std::abs(p.x() - xo) - c*std::abs(p.y() - yo)) ) );
+	core::Real abs_x_dis = std::abs(p.x() - xo);
+	core::Real abs_y_dis = std::abs(p.y() - yo);
+
+	core::Real dgdy( 2 * ( -ns/(a*a) * ( c*abs_x_dis - ns*abs_y_dis ) + -c/(b*b) * ( s*abs_x_dis - c*abs_y_dis) ) );
 
 	return dgdy;
 }

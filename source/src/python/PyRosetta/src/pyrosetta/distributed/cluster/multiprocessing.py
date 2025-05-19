@@ -10,17 +10,20 @@ __author__ = "Jason C. Klima"
 
 try:
     import billiard
+    from dask.distributed import get_client
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.multiprocessing' requires the "
-        + "third-party package 'billiard' as a dependency!\n"
+        + "third-party packages 'billiard' and 'dask.distributed' as a dependencies!\n"
         + "Please install the package into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/billiard/\n"
+        + "https://pypi.org/project/distributed/\n"
     )
     raise
 
 import tempfile
+import time
 
 from pyrosetta.distributed import requires_init
 from pyrosetta.distributed.cluster.base import (
@@ -57,6 +60,13 @@ from typing import (
 Q = TypeVar("Q", bound=billiard.Queue)
 P = TypeVar("P", bound=billiard.context.Process)
 S = TypeVar("S", bound=Serialization)
+
+
+def _maybe_delay(dt: float, max_delay_time: Union[float, int]) -> None:
+    """Maybe delay the user-provided PyRosetta protocol result(s)."""
+    delay_time = max_delay_time - dt
+    if delay_time > 0.0:
+        time.sleep(delay_time)
 
 
 @trace_protocol_exceptions
@@ -128,18 +138,20 @@ def target(
     protocols_key: str,
     decoy_ids: List[int],
     compression: Optional[Union[str, bool]],
-    master_residue_type_set: AbstractSet[str],
+    client_residue_type_set: AbstractSet[str],
+    client_repr: str,
     **pyrosetta_init_kwargs: Dict[str, Any],
 ) -> None:
     """A wrapper function for a user-provided PyRosetta protocol."""
     serializer = Serialization(compression=compression)
     packed_pose = serializer.decompress_packed_pose(compressed_packed_pose)
     kwargs = serializer.decompress_kwargs(compressed_kwargs)
+    kwargs["PyRosettaCluster_client_repr"] = client_repr
     results = run_protocol(
         protocol, packed_pose, DATETIME_FORMAT, ignore_errors, protocols_key, decoy_ids, serializer, **kwargs
     )
     _validate_residue_type_sets(
-        _get_residue_type_set(), master_residue_type_set,
+        _get_residue_type_set(), client_residue_type_set,
     )
     q.put(results)
 
@@ -157,9 +169,12 @@ def user_spawn_thread(
     logging_level: str,
     DATETIME_FORMAT: str,
     compression: Optional[Union[str, bool]],
-    master_residue_type_set: AbstractSet[str],
+    max_delay_time: Union[float, int],
+    client_residue_type_set: AbstractSet[str],
 ) -> List[Tuple[Optional[Union[PackedPose, bytes]], Union[Dict[Any, Any], bytes]]]:
     """Generic worker task using the billiard multiprocessing module."""
+    t0 = time.time()
+    client_repr = repr(get_client())
 
     q = billiard.Queue()
     p = billiard.context.Process(
@@ -176,7 +191,8 @@ def user_spawn_thread(
             protocols_key,
             decoy_ids,
             compression,
-            master_residue_type_set,
+            client_residue_type_set,
+            client_repr,
         ),
         kwargs=pyrosetta_init_kwargs,
     )
@@ -185,5 +201,8 @@ def user_spawn_thread(
         q, p, compressed_kwargs, protocol.__name__, timeout, ignore_errors
     )
     p.join()
+
+    dt = time.time() - t0
+    _maybe_delay(dt, max_delay_time)
 
     return results

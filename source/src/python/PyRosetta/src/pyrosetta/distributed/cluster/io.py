@@ -69,6 +69,7 @@ class IO(Generic[G]):
             instance_state = dict(zip(self.__slots__, self.__getstate__()))
         assert isinstance(instance_state, dict)
         instance_state.pop("client", None)
+        instance_state.pop("clients", None)
         instance_kwargs = self.serializer.deepcopy_kwargs(instance_state)
         for i in self.__attrs_attrs__:
             if not i.init:
@@ -172,6 +173,7 @@ class IO(Generic[G]):
         kwargs.pop("PyRosettaCluster_protocol_name", None)
         kwargs.pop("PyRosettaCluster_output_path", None)
         kwargs.pop("PyRosettaCluster_tmp_path", None)
+        kwargs.pop("PyRosettaCluster_client_repr", None)
         task_protocols = kwargs["PyRosettaCluster_protocols"]
         task_seeds = kwargs["PyRosettaCluster_seeds"]
         task_decoy_ids = kwargs["PyRosettaCluster_decoy_ids"]

@@ -13,7 +13,7 @@ cd %(workdir)s/output/trigger-00000.molfile_to_params/
 
 ln -s ../../input/conformers.sdf conformers.sdf
 
-%(pyapps)s/public/molfile_to_params.py -n LG --mm-as-virt --conformers-in-one-file conformers.sdf --chain X 2>&1 \
+%(python)s %(pyapps)s/public/molfile_to_params.py -n LG --mm-as-virt --conformers-in-one-file conformers.sdf --chain X 2>&1 \
     | egrep -vf ../../../../ignore_list \
     > molfile_to_params.log
 

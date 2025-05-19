@@ -23,7 +23,10 @@ def clean_env_for_external(env, requested = None):
 
     # Common flags for both C++ and C
     ccflags = env['CCFLAGS'].split()
+    has_Werror = len( [f for f in ccflags if f.startswith("-Wno") or f == "-Werror" or f == "-Wno-error"] ) > 0 # Compiler supports Werror designations?
     ccflags = [f for f in ccflags if not (f.startswith("-W") and not f.startswith("-Wno")) and f != '-pedantic' ]
+    if has_Werror > 0:
+        ccflags.append("-Wno-error")
     if requested is not None:
         if requested.ccflags:
           ccflags += requested['ccflags']
@@ -247,9 +250,9 @@ used by the build.
         something like 3.2b1."""
         version = str.split( str.split( version_string, ' ')[0], '.')
         v_major = int(version[0])
-        v_minor = int(re.match('\d+', version[1]).group())
+        v_minor = int(re.match(r'\d+', version[1]).group())
         if len(version) >= 3:
-            v_revision = int(re.match('\d+', version[2]).group())
+            v_revision = int(re.match(r'\d+', version[2]).group())
         else:
             v_revision = 0
         return v_major, v_minor, v_revision

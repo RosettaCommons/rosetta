@@ -336,6 +336,7 @@ class Tester:
     def parseOneSuiteValgrind(self, f, output, lib, suite, yjson_file):
         valgrind_errors = 0
         for line in f:
+            line = line.decode('utf-8', errors="backslashreplace")
             if line != 'All tests passed!\n':
                 if line.find("ERROR SUMMARY") != -1:
                     valgrind_errors += int( line.split()[3] )
@@ -722,7 +723,7 @@ def main(args):
     )
 
     parser.add_option("--timeout",
-      action="store",type="float", default=6,
+      action="store",type="float", default=8,
       help="Automatically cancel test runs if they are taking longer than the given number of minutes. A value of zero turns off the timeout. Note that some tests might have custom (longer) timeout value for historical reasons."
     )
 

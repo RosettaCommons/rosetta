@@ -124,8 +124,11 @@ PseudoPerplexityMetric::compute_perplexity(
 		}
 		core::Real aa_probability = position_pair.second.at( aa_type );
 		// if the probability is zero add a small constant to it to prevent -inf
-		if ( aa_probability == 0 ) {
-			aa_probability += std::numeric_limits< core::Real >::min();
+		if ( aa_probability == 0 || aa_probability < 0.00001 ) {
+			aa_probability += 0.00001;
+		}
+		if ( std::isnan(aa_probability) || std::isinf(aa_probability) ) {
+			aa_probability = 0.00001;
 		}
 		log_probabilities_sum += std::log( aa_probability );
 	}

@@ -260,7 +260,6 @@ void PDBDiagnosticMover::residue_type_statistics( core::pose::Pose const & pose,
 	core::Size is_metal(0);
 	core::Size is_metalbinding(0);
 	core::Size is_membrane(0);
-	core::Size is_surface(0);
 	core::Size has_sc_orbitals(0);
 	core::Size is_polar(0);
 	core::Size is_charged(0);
@@ -302,7 +301,6 @@ void PDBDiagnosticMover::residue_type_statistics( core::pose::Pose const & pose,
 		if ( pose.residue_type(i).is_metal() ) ++is_metal;
 		if ( pose.residue_type(i).is_metalbinding() ) ++is_metalbinding;
 		if ( pose.residue_type(i).is_membrane() ) ++is_membrane;
-		if ( pose.residue_type(i).is_surface() ) ++is_surface;
 		if ( pose.residue_type(i).has_sc_orbitals() ) ++has_sc_orbitals;
 		if ( pose.residue_type(i).is_polar() ) ++is_polar;
 		if ( pose.residue_type(i).is_charged() ) ++is_charged;
@@ -348,7 +346,6 @@ void PDBDiagnosticMover::residue_type_statistics( core::pose::Pose const & pose,
 	job_me->add_string_real_pair("is_metal", is_metal);
 	job_me->add_string_real_pair("is_metalbinding", is_metalbinding);
 	job_me->add_string_real_pair("is_membrane", is_membrane);
-	job_me->add_string_real_pair("is_surface", is_surface);
 	job_me->add_string_real_pair("has_sc_orbitals", has_sc_orbitals);
 	job_me->add_string_real_pair("is_polar", is_polar);
 	job_me->add_string_real_pair("is_charged", is_charged);
