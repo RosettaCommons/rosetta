@@ -953,9 +953,6 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 	static T const ONE( 1 );
 	static T const TWO( 2 );
 
-	//couple the vector xyz tolerance check value to a single variable
-	core::Real vector_tolerance = 0.01;
-
 	T const cos_theta = sin_cos_range( ( R.trace() - ONE ) / TWO );
 
 	T const tolerance = NumericTraits< T >::sin_cos_tolerance();
@@ -989,7 +986,7 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 		}
 
 		//run check to ensure that axis is normalized
-		assert( std::abs( axis.x()*axis.x() + axis.y()*axis.y() + axis.z()*axis.z() - 1 ) <= T( vector_tolerance ) );
+		assert( std::abs( axis.x()*axis.x() + axis.y()*axis.y() + axis.z()*axis.z() - 1 ) <= T( 0.01 ) );
 
 		//return the axis vector if it did not trip the normalization check
 		return axis;
@@ -1024,7 +1021,7 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 		}
 		theta = NumericTraits< T >::pi(); // theta == pi
 		// For a valid orthogonal matrix R, axis should be a normal vector
-		assert( std::abs( x*x + y*y + z*z - 1 ) <= T( vector_tolerance ) );
+		assert( std::abs( x*x + y*y + z*z - 1 ) <= T( 0.01 ) );
 		return xyzVector< T >( x, y, z );
 	}
 }
