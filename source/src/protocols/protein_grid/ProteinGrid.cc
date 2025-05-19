@@ -47,10 +47,6 @@ namespace protocols {
 namespace protein_grid {
 
 
-/// @brief condensing the data type name for the main 3D vector (or matrix) that represents the protein
-// currently laid out in that the matrix internal data can only be of Size. If flexibility is needed, this could be expanded upon later. The main reason for not doing this now is that operations that use the matrix data rely on the data being a discrete set of positive integers
-typedef utility::vector1<utility::vector1<utility::vector1<core::Size>>> ProteinMatrix;
-
 //key to values that can exist in the ProteinMatrix:
 //if the matrix is written to a pdb file, the different states will be translated to different atoms
 //notably, even numbers are relegated to define empty space, and odd numbers are relegated to define occupied space
