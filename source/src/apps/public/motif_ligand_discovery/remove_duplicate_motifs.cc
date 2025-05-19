@@ -126,9 +126,6 @@ remove_duplicate_motifs(
 
 	for ( auto single_motif : motif_library ) {
 
-		ms_tr <<  "========================================" << std::endl;
-		ms_tr << single_motif->print() <<std::endl;
-
 		//single_motif->place_residue( *protres, *res );
 		bool broke( false );
 

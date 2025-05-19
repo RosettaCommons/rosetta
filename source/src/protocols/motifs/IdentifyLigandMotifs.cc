@@ -776,10 +776,6 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 
 	core::pose::add_comment(*working_pose, "Placement motifs: Total motifs made:", std::to_string(placement_motifs_data[1]));
 
-
-
-
-
 	//set placement_motifs_data[2] to 1 to set default state that all mandatory residues did get a motif former against it
 	placement_motifs_data[2] = 1;
 
