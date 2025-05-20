@@ -180,7 +180,7 @@ ProteinGrid::ProteinGrid( ProteinGrid const & other )
 
 //@brief = operator overload
 ProteinGrid & ProteinGrid::operator=( ProteinGrid const & other ) {
-	other.clone( *this );
+	this->clone( other );
 	return *this;
 }
 
