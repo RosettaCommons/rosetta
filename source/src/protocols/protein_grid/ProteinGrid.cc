@@ -820,7 +820,7 @@ core::pose::Pose ProteinGrid::export_protein_matrix_to_pose()
 	//delete all chis in the dummy ligand
 	//probably easiest to use delete_terminal_chi
 	while ( dummylig_mrt->nchi() > 0 )
-	{
+			{
 		ms_tr.Trace << "Number of chi in residue is currently: " << dummylig_mrt->nchi() << std::endl;
 
 		//delete the terminal chi

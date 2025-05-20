@@ -140,7 +140,7 @@ remove_duplicate_motifs(
 			core::Real distance = 0;
 			core::Real theta = 0;
 
-			
+
 
 			jump_distance(single_motif->forward_jump(), motifcop->forward_jump(), distance, theta);
 			//ms_tr << "Comparing to motif " << motifcop->remark() << std::endl;

@@ -979,8 +979,7 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 
 		//check if theta is small, but not where it would have been considered within tolerance of being called 0
 		//if theta is small, normalize the corresponding vector, as numeric instability issues arise with a very small theta
-		if ( theta <= 0.01 )
-		{
+		if ( theta <= 0.01 ) {
 			//normalize the vector when theta is tiny
 			axis.normalize();
 		}
