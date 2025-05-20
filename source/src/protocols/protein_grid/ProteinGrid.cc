@@ -188,29 +188,29 @@ ProteinGrid & ProteinGrid::operator=( ProteinGrid const & other ) {
 ProteinGrid::~ProteinGrid() = default;
 
 // @brief function to clone the current ProteinGrid into inputted ProteinGrid
-void ProteinGrid::clone(ProteinGrid & copy) const {
-	// copy over all member variables
-	copy.protein_matrix_ = this->protein_matrix_;
-	copy.working_pose_ = this->working_pose_;
-	copy.xyz_shift_ = this->xyz_shift_;
-	copy.xyz_bound_ = this->xyz_bound_;
-	copy.matrix_volume_ = this->matrix_volume_;
-	copy.sub_matrix_volume_ = this->sub_matrix_volume_;
-	copy.resolution_ = this->resolution_;
-	copy.using_sub_area_ = this->using_sub_area_;
-	copy.using_lj_radii_ = this->using_lj_radii_;
-	copy.true_sub_area_center_ = this->true_sub_area_center_;
-	copy.adjusted_sub_area_center_ = this->adjusted_sub_area_center_;
-	copy.true_sub_region_dimensions_ = this->true_sub_region_dimensions_;
-	copy.adjusted_sub_region_dimensions_ = this->adjusted_sub_region_dimensions_;
-	copy.sub_region_max_ = this->sub_region_max_;
-	copy.sub_region_min_ = this->sub_region_min_;
-	copy.matrix_fullness_ = this->matrix_fullness_;
-	copy.fullness_ratio_ = this->fullness_ratio_;
-	copy.sub_matrix_fullness_ = this->sub_matrix_fullness_;
-	copy.sub_fullness_ratio_ = this->sub_fullness_ratio_;
-	copy.print_whole_matrix_ = this->print_whole_matrix_;
-	copy.print_empty_space_ = this->print_empty_space_;
+void ProteinGrid::clone(const ProteinGrid & copy) {
+	// copy over all member variables from copy to "this" object
+	this->protein_matrix_ = copy.protein_matrix_;
+	this->working_pose_ = copy.working_pose_;
+	this->xyz_shift_ = copy.xyz_shift_;
+	this->xyz_bound_ = copy.xyz_bound_;
+	this->matrix_volume_ = copy.matrix_volume_;
+	this->sub_matrix_volume_ = copy.sub_matrix_volume_;
+	this->resolution_ = copy.resolution_;
+	this->using_sub_area_ = copy.using_sub_area_;
+	this->using_lj_radii_ = copy.using_lj_radii_;
+	this->true_sub_area_center_ = copy.true_sub_area_center_;
+	this->adjusted_sub_area_center_ = copy.adjusted_sub_area_center_;
+	this->true_sub_region_dimensions_ = copy.true_sub_region_dimensions_;
+	this->adjusted_sub_region_dimensions_ = copy.adjusted_sub_region_dimensions_;
+	this->sub_region_max_ = copy.sub_region_max_;
+	this->sub_region_min_ = copy.sub_region_min_;
+	this->matrix_fullness_ = copy.matrix_fullness_;
+	this->fullness_ratio_ = copy.fullness_ratio_;
+	this->sub_matrix_fullness_ = copy.sub_matrix_fullness_;
+	this->sub_fullness_ratio_ = copy.sub_fullness_ratio_;
+	this->print_whole_matrix_ = copy.print_whole_matrix_;
+	this->print_empty_space_ = copy.print_empty_space_;
 }
 
 // @brief function to initialize member variables at constructor calls
