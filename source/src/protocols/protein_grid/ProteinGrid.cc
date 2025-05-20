@@ -72,7 +72,7 @@ static basic::Tracer ms_tr( "core.grid.ProteinGrid" );
 ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose)
 {
 	//seed initial values on member variables
-	initialize();
+	initialize_from_options();
 
 	working_pose_ = in_pose;
 
@@ -88,7 +88,7 @@ ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose)
 ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution)
 {
 	//seed initial values on member variables
-	initialize();
+	initialize_from_options();
 
 	working_pose_ = in_pose;
 	resolution_ = resolution;
@@ -107,7 +107,7 @@ ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution)
 ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, numeric::xyzVector<int> sub_area_center, utility::vector1<core::Size> sub_region_dimensions)
 {
 	//seed initial values on member variables
-	initialize();
+	initialize_from_options();
 
 	//set the working_pose_ to be the input pose
 	working_pose_ = in_pose;
@@ -140,7 +140,7 @@ ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, numeric::xyzVector<int> sub
 ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution, numeric::xyzVector<int> sub_area_center, utility::vector1<core::Size> sub_region_dimensions)
 {
 	//seed initial values on member variables
-	initialize();
+	initialize_from_options();
 
 	working_pose_ = in_pose;
 	resolution_ = resolution;
@@ -208,19 +208,8 @@ void ProteinGrid::clone(const ProteinGrid & copy) {
 
 // @brief function to initialize member variables at constructor calls
 //this sets initial and default values for member variables that we can build the matrix upon
-void ProteinGrid::initialize()
+void ProteinGrid::initialize_from_options()
 {
-
-	matrix_volume_ = 0;
-	sub_matrix_volume_ = 0;
-	resolution_ = 1;
-	using_sub_area_ = false;
-	using_lj_radii_ = false;
-	matrix_fullness_ = 0;
-	fullness_ratio_ = 0;
-	sub_matrix_fullness_ = 0;
-	sub_fullness_ratio_ = 0;
-
 	//seed variables that are relevant for how to output the matrix to a pdb for visualization
 	//not planning to have devoted constructors to define these variables
 	print_whole_matrix_ = basic::options::option[ basic::options::OptionKeys::protein_grid::output_whole_matrix ]();
