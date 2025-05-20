@@ -172,7 +172,7 @@ ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution, nume
 }
 
 //copy constructor
-(ProteinGrid::ProteinGrid( ProteinGrid const & other ) = default;
+ProteinGrid::ProteinGrid( ProteinGrid const & other ) = default;
 
 //@brief = operator overload
 ProteinGrid & ProteinGrid::operator=( ProteinGrid const & other ) = default;
