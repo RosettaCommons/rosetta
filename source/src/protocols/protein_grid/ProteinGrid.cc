@@ -175,7 +175,7 @@ ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution, nume
 ProteinGrid::ProteinGrid( ProteinGrid const & other )
 {
 	initialize();
-	other.clone( *this );
+	this->clone( other );
 }
 
 //@brief = operator overload
