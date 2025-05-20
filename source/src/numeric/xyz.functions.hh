@@ -973,9 +973,22 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 		// and is more stable for small sine_theta
 
 		theta = acos( cos_theta );
-		assert( std::abs( x*x + y*y + z*z - 1 ) <= T( 0.01 ) );
 
-		return xyzVector< T >( x, y, z );
+		//create axis vector that may or may not be normalized from derived x,y,z
+		xyzVector< T > axis(x, y, z);
+
+		//check if theta is small, but not where it would have been considered within tolerance of being called 0
+		//if theta is small, normalize the corresponding vector, as numeric instability issues arise with a very small theta
+		if ( theta <= 0.01 ) {
+			//normalize the vector when theta is tiny
+			axis.normalize();
+		}
+
+		//run check to ensure that axis is normalized
+		assert( std::abs( axis.x()*axis.x() + axis.y()*axis.y() + axis.z()*axis.z() - 1 ) <= T( 0.01 ) );
+
+		//return the axis vector if it did not trip the normalization check
+		return axis;
 	} else if ( cos_theta >= ONE - tolerance ) {
 		// R is the identity matrix, return an arbitrary axis of rotation
 		theta = ZERO;
