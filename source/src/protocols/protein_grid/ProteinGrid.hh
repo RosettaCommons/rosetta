@@ -62,10 +62,10 @@ public:
 	ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution, numeric::xyzVector<int> sub_area_center, utility::vector1<core::Size> sub_region_dimensions);
 
 	//copy constructor
-	ProteinGrid( ProteinGrid const & other );
+	ProteinGrid( ProteinGrid const & other ) = default;
 
 	//@brief = operator overload
-	ProteinGrid & operator=( ProteinGrid const & other );
+	ProteinGrid & operator=( ProteinGrid const & other ) = default;
 
 	// destructor
 	~ProteinGrid();
