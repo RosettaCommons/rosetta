@@ -189,7 +189,7 @@ Motif::Motif(
 {
 	if ( (res1.is_protein() && res2.is_ligand() ) || (res1.is_protein() && res2.is_protein() ) ) {
 		restype_name1_ = res1.name3();
-		mt << "Res1 name is " <<  restype_name1_ << std::endl;
+		mt.Debug << "Res1 name is " <<  restype_name1_ << std::endl;
 		res1_atom1_name_ = motifAtomIDs[restype_name1_][1];
 		res1_atom2_name_ = motifAtomIDs[restype_name1_][2];
 		res1_atom3_name_ = motifAtomIDs[restype_name1_][3];
@@ -199,11 +199,11 @@ Motif::Motif(
 		core::chemical::AtomType res2_atom3_type = res2.atom_type(res2_atoms[3]);
 
 		res2_atom1_name_ = res2_atom1_type.atom_type_name();
-		mt << "atom1 name is " <<  res2_atom1_name_  << std::endl;
+		mt.Debug << "atom1 name is " <<  res2_atom1_name_  << std::endl;
 		res2_atom2_name_ = res2_atom2_type.atom_type_name();
-		mt << "atom2 name is " <<   res2_atom2_name_  << std::endl;
+		mt.Debug << "atom2 name is " <<   res2_atom2_name_  << std::endl;
 		res2_atom3_name_ = res2_atom3_type.atom_type_name();
-		mt << "atom3 name is " <<   res2_atom3_name_  << std::endl;
+		mt.Debug << "atom3 name is " <<   res2_atom3_name_  << std::endl;
 		//Can't use motif atom name for
 		forward_jump_ = core::kinematics::Jump(
 			core::kinematics::Stub(  res1.atom( res1_atom2_name_ ).xyz(),
