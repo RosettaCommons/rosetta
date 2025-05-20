@@ -172,17 +172,10 @@ ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution, nume
 }
 
 //copy constructor
-ProteinGrid::ProteinGrid( ProteinGrid const & other )
-{
-	initialize();
-	this->clone( other );
-}
+(ProteinGrid::ProteinGrid( ProteinGrid const & other ) = default;
 
 //@brief = operator overload
-ProteinGrid & ProteinGrid::operator=( ProteinGrid const & other ) {
-	this->clone( other );
-	return *this;
-}
+ProteinGrid & ProteinGrid::operator=( ProteinGrid const & other ) = default;
 
 // destructor
 ProteinGrid::~ProteinGrid() = default;
