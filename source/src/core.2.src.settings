@@ -68,11 +68,10 @@ sources = {
 		"util",
 		"VariantType_mappings",
 	],
-
-       "core/chemical/bcl": [
-               "BCLFragmentHandler",
-               "util",
-    ],
+	"core/chemical/bcl": [
+		"BCLFragmentHandler",
+		"util",
+	],
 	"core/chemical/carbohydrates": [
 		"CarbohydrateInfo",
 		"CarbohydrateInfoManager",
@@ -94,8 +93,10 @@ sources = {
 		"MainchainScoreTable",
 		"util",
 	],
-	"core/chemical/modifications/": [
+	"core/chemical/modifications": [
 		"ChemistryBase",
+		"Reprotonate",
+		"ValenceHandler",
 	],
 	"core/chemical/rings": [
 		"ring_conformer_io",
