@@ -71,7 +71,8 @@ public:
 	~ProteinGrid();
 
 	// @brief function to clone the current ProteinGrid into inputted ProteinGrid
-	void clone(const ProteinGrid & copy) ;
+	//commenting out function, as it is likely inferior to just using the copy ctor or =, but keeping as a comment in case a clone function ends up being needed
+	//void clone(const ProteinGrid & copy) ;
 
 	// @brief simple function to derive the volume of the matrix
 	core::Size get_grid_volume();

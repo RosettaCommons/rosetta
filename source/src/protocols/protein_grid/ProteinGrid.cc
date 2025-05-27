@@ -174,6 +174,9 @@ ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution, nume
 // destructor
 ProteinGrid::~ProteinGrid() = default;
 
+//commenting out the clone function, since it is likely not as good as just using the copy ctor/=.
+//However, leaving it commented instead of a delete so that the bones are still there in case there ever is a need to revive a clone function, since it is only 25 lines
+/*
 // @brief function to clone the current ProteinGrid into inputted ProteinGrid
 void ProteinGrid::clone(const ProteinGrid & copy) {
 	// copy over all member variables from copy to "this" object
@@ -199,6 +202,7 @@ void ProteinGrid::clone(const ProteinGrid & copy) {
 	this->print_whole_matrix_ = copy.print_whole_matrix_;
 	this->print_empty_space_ = copy.print_empty_space_;
 }
+*/
 
 // @brief function to initialize member variables at constructor calls
 //this sets initial and default values for member variables that we can build the matrix upon
