@@ -16,6 +16,7 @@
 #include <sstream>
 #include <string>
 #include <iterator>
+#include <tuple>
 #include <devel/init.hh>
 #include <basic/options/option.hh>
 #include <utility/pointer/owning_ptr.hh>
@@ -56,6 +57,8 @@
 #include <utility/vectorL.hh>
 #include <utility/options/OptionCollection.hh>
 
+#include <basic/options/keys/sid_erms_simulate.OptionKeys.gen.hh>
+
 namespace protocols {
 namespace sid_erms_prediction {
 
@@ -69,25 +72,25 @@ using namespace basic::options::OptionKeys;
 core::Real calc_prob(core::Real x,core::Real a, core::Real b);
 
 //read in the complex type: subunits and connectivities (nodes and edges)
-void read_complex_type(core::Size &n_chains, utility::vector1<char> &nodes, utility::vector1<utility::vector1<std::string>> &edges);
+std::tuple<core::Size, utility::vector1<char>, utility::vector1<utility::vector1<std::string>>> read_complex_type(std::string &complex_type_filename, core::Size &n_chains, utility::vector1<char> &nodes, utility::vector1<utility::vector1<std::string>> &edges);
 
 //make sure intensities sum to 1
 void check_intensities( const utility::vector1<utility::vector1<core::Real>> &ERMS_data );
 
 //read in acceleration energies or full ERMS
-void read_ERMS(utility::vector1<core::Real> &ACE, utility::vector1<utility::vector1<core::Real>> &ERMS_read, const core::Size n_chains);
+std::tuple<utility::vector1<core::Real>, utility::vector1<utility::vector1<core::Real>>> read_ERMS(utility::vector1<core::Real> &ACE, utility::vector1<utility::vector1<core::Real>> &ERMS_read, const core::Size n_chains);
 
 //read in B values if given via file input
-void read_B_vals(utility::vector1<core::Real> &B);
+utility::vector1<core::Real> read_B_vals(utility::vector1<core::Real> &B);
 
 //check to make sure interfaces are symmetric
 void check_interface_symmetry(const core::pose::Pose pose_check, const utility::vector1<std::string> &edges_check, core::Real &dSASA, core::Real &PRE);
 
 //calculate B values from PDB (and check for disulfide bond if dimer to shift steepness)
-void calc_B_values(utility::vector1<core::Real>  &B, const utility::vector1<utility::vector1<std::string>> &edges, core::Real &A, const core::Size n_chains, const core::pose::Pose pose_ );
+utility::vector1<core::Real> calc_B_values(utility::vector1<core::Real>  &B, const utility::vector1<utility::vector1<std::string>> &edges, core::Real &A, const core::Size n_chains, const core::pose::Pose pose_ );
 
 //function to simulate ERMS
-void simulate_ERMS( utility::vector1<utility::vector1<core::Real>> &ERMS_prediction, const utility::vector1<core::Real> &ACE, const utility::vector1<core::Real> &B, const core::Size n_chains, const utility::vector1<utility::vector1<std::string>> &edges, const core::Real A, const core::Real breakage_cut, const utility::vector1<char> &nodes);
+utility::vector1<utility::vector1<core::Real>> simulate_ERMS( utility::vector1<utility::vector1<core::Real>> &ERMS_prediction, const utility::vector1<core::Real> &ACE, const utility::vector1<core::Real> &B, const core::Size n_chains, const utility::vector1<utility::vector1<std::string>> &edges, const core::Real A, const core::Real breakage_cut, const utility::vector1<char> &nodes);
 
 //calculate RMSE
 core::Real calc_RMSE(const utility::vector1<utility::vector1<core::Real>> & ERMS_prediction, const utility::vector1<utility::vector1<core::Real>> &ERMS, const core::Size n_chains, const core::Size n_ACE);

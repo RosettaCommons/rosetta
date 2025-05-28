@@ -18,6 +18,7 @@
 #include <sstream>
 #include <string>
 #include <iterator>
+#include <tuple>
 #include <devel/init.hh>
 #include <basic/options/option.hh>
 #include <utility/pointer/owning_ptr.hh>
@@ -58,6 +59,8 @@
 #include <utility/vectorL.hh>
 #include <utility/options/OptionCollection.hh>
 
+#include <basic/options/keys/sid_erms_simulate.OptionKeys.gen.hh>
+
 static basic::Tracer TR( "src.protocols.sid_erms_prediction.sid_erms_simulate" );
 
 namespace protocols {
@@ -66,22 +69,15 @@ namespace sid_erms_prediction {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-basic::options::FileOptionKey const complex_type( "complex_type" );
-basic::options::FileOptionKey const ERMS( "ERMS" );
-basic::options::BooleanOptionKey const RMSE( "RMSE");
-basic::options::FileOptionKey const B_vals( "B_vals" );
-basic::options::RealOptionKey const steepness( "steepness" );
-basic::options::RealOptionKey const breakage_cutoff( "breakage_cutoff" );
-
 //calculate probability
 core::Real calc_prob(core::Real x,core::Real a, core::Real b) {
 	return -1.0 / (1.0 + exp(a*(x-b)) ) + 1;
 }
 
 //read in the complex type: subunits and connectivities (nodes and edges)
-void read_complex_type(core::Size &n_chains, utility::vector1<char> &nodes, utility::vector1<utility::vector1<std::string>> &edges) {
-	std::string complex_type_filename;
-	complex_type_filename = option[ complex_type ].user();
+std::tuple<core::Size, utility::vector1<char>, utility::vector1<utility::vector1<std::string>>> read_complex_type(std::string &complex_type_filename, core::Size &n_chains, utility::vector1<char> &nodes, utility::vector1<utility::vector1<std::string>> &edges) {
+
+	TR << "pre function check " << n_chains << nodes << edges << complex_type_filename << std::endl;
 	utility::io::izstream input(complex_type_filename);
 
 	//error if invalid file
@@ -150,6 +146,8 @@ void read_complex_type(core::Size &n_chains, utility::vector1<char> &nodes, util
 			utility_exit_with_message( msg );
 		}
 	}
+	TR << "post function check " << n_chains << nodes << edges << complex_type_filename << std::endl;
+	return std::make_tuple(n_chains, nodes, edges);
 }
 
 
@@ -168,16 +166,16 @@ void check_intensities( const utility::vector1<utility::vector1<core::Real>> &ER
 }
 
 //read in acceleration energies or full ERMS
-void read_ERMS(utility::vector1<core::Real> &ACE, utility::vector1<utility::vector1<core::Real>> &ERMS_read, const core::Size n_chains) {
+std::tuple<utility::vector1<core::Real>, utility::vector1<utility::vector1<core::Real>>> read_ERMS(utility::vector1<core::Real> &ACE, utility::vector1<utility::vector1<core::Real>> &ERMS_read, const core::Size n_chains) {
 
 	bool input_ERMS = false;
-	if ( option[ RMSE ].user() ) {
+	if ( option[ basic::options::OptionKeys::sid_erms_simulate::RMSE ].user() ) {
 		input_ERMS = true;
 	} else {
 		TR.Warning << "Acceleration energies read in, but not ERMS values." << std::endl;
 	}
 	std::string ERMS_filename;
-	ERMS_filename = option[ ERMS ]();
+	ERMS_filename = option[ sid_erms_simulate::ERMS ]();
 	utility::io::izstream input(ERMS_filename);
 
 	//error if invalid file
@@ -220,12 +218,13 @@ void read_ERMS(utility::vector1<core::Real> &ACE, utility::vector1<utility::vect
 		ACE.push_back(ACE_current);
 	}
 	check_intensities(ERMS_read);
+	return std::make_tuple(ACE, ERMS_read);
 }
 
 //read in B values if given via file input
-void read_B_vals(utility::vector1<core::Real> &B) {
+utility::vector1<core::Real> read_B_vals(utility::vector1<core::Real> &B) {
 	std::string B_filename;
-	B_filename = option[ B_vals ]();
+	B_filename = option[ sid_erms_simulate::B_vals ]();
 	utility::io::izstream input(B_filename);
 
 	//error if invalid file
@@ -254,6 +253,7 @@ void read_B_vals(utility::vector1<core::Real> &B) {
 	if ( count-1 != B.size() ) {
 		utility_exit_with_message(err_msg.str()); //too few B values input
 	}
+	return B;
 }
 
 //check to make sure interfaces are symmetric
@@ -293,11 +293,11 @@ void check_interface_symmetry(const core::pose::Pose pose_check, const utility::
 }
 
 //calculate B values from PDB (and check for disulfide bond if dimer to shift steepness)
-void calc_B_values(utility::vector1<core::Real>  &B, const utility::vector1<utility::vector1<std::string>> &edges, core::Real &A, const core::Size n_chains, const core::pose::Pose pose_ ) {
+utility::vector1<core::Real> calc_B_values(utility::vector1<core::Real>  &B, const utility::vector1<utility::vector1<std::string>> &edges, core::Real &A, const core::Size n_chains, const core::pose::Pose pose_ ) {
 	core::Real w_SA(0.488748);
 	core::Real w_PRE(-457.753);
 	core::Real w_int(-1488.57);
-	if ( option[ breakage_cutoff ].user() ) {
+	if ( option[ sid_erms_simulate::breakage_cutoff ].user() ) {
 		w_SA = 0.464145;
 		w_PRE = -589.803;
 		w_int = -1834.75;
@@ -357,15 +357,16 @@ void calc_B_values(utility::vector1<core::Real>  &B, const utility::vector1<util
 			}
 		}
 		//if there is a disulfide bond, use different steepness
-		if ( is_DS && !option[ steepness ].user() ) {
+		if ( is_DS && !option[ sid_erms_simulate::steepness ].user() ) {
 			A = 0.015;
 			TR << "Disulfide bond detected for dimer. A = " << A << std::endl;
 		}
 	}
+	return B;
 }
 
 //function to simulate ERMS
-void simulate_ERMS( utility::vector1<utility::vector1<core::Real>> &ERMS_prediction, const utility::vector1<core::Real> &ACE, const utility::vector1<core::Real> &B, const core::Size n_chains, const utility::vector1<utility::vector1<std::string>> &edges, const core::Real A, const core::Real breakage_cut, const utility::vector1<char> &nodes) {
+utility::vector1<utility::vector1<core::Real>> simulate_ERMS( utility::vector1<utility::vector1<core::Real>> &ERMS_prediction, const utility::vector1<core::Real> &ACE, const utility::vector1<core::Real> &B, const core::Size n_chains, const utility::vector1<utility::vector1<std::string>> &edges, const core::Real A, const core::Real breakage_cut, const utility::vector1<char> &nodes) {
 	typedef boost::adjacency_list < boost::vecS, boost::vecS, boost::undirectedS > Graph;
 	core::Size n_sims = 1000;
 
@@ -444,6 +445,7 @@ void simulate_ERMS( utility::vector1<utility::vector1<core::Real>> &ERMS_predict
 			}
 		}
 	}
+	return ERMS_prediction;
 }
 
 core::Real calc_RMSE(const utility::vector1<utility::vector1<core::Real>> & ERMS_prediction, const utility::vector1<utility::vector1<core::Real>> &ERMS, const core::Size n_chains, const core::Size n_ACE) {
