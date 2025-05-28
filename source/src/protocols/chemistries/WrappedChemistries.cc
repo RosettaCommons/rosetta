@@ -17,6 +17,8 @@
 
 #include <core/chemical/AtomRefMapping.hh>
 
+#include <core/chemical/modifications/Reprotonate.hh>
+
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 namespace protocols {
@@ -52,6 +54,36 @@ WrappedBaseChemistry::get_mapping() const {
 	return sub_chemistry_->get_mapping();
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+
+ReprotonateChemistry::ReprotonateChemistry() :
+	WrappedBaseChemistry( class_name() )
+{
+	using namespace core::chemical::modifications;
+	set_subchemistry( ChemistryBaseOP( new Reprotonate ) );
+}
+
+void
+ReprotonateChemistry::parse_my_tag(
+	utility::tag::TagCOP,
+	basic::datacache::DataMap &) {
+	// Don't need to do anything.
+}
+
+std::string
+ReprotonateChemistry::class_name() {
+	return "ReprotonateChemistry";
+}
+
+void
+ReprotonateChemistry::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	utility::tag::AttributeList attributes;
+	xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"The Reprotonate chemistry will heuristically add and remove hydrogens and charges to change a ResidueType into a form that would be found at neutral pH.",
+		attributes );
+}
 
 }
 }

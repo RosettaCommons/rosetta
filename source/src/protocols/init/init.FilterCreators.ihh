@@ -69,6 +69,13 @@
 #include <protocols/hbnet/HBNetScoreFilterCreator.hh>
 #include <protocols/helical_bundle/BundleReporterFilterCreator.hh>
 
+#include <protocols/drug_design/AtomExistsFilterCreator.hh>
+#include <protocols/drug_design/HeteroHeteroBondFilterCreator.hh>
+#include <protocols/drug_design/LigandLocationFilterCreator.hh>
+#include <protocols/drug_design/NChiFilterCreator.hh>
+#include <protocols/drug_design/RDKitMetricFilterCreator.hh>
+#include <protocols/drug_design/SAScoreFilterCreator.hh>
+
 #include <protocols/indexed_structure_store/filters/FragmentLookupFilterCreator.hh>
 #include <protocols/frag_picker/FragmentScoreFilterCreator.hh>
 

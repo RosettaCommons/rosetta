@@ -184,4 +184,36 @@ public:
 
 	}
 
+	void test_vertex_index(){
+		core::chemical::ResidueGraph graph;
+		utility::vector0<core::chemical::VD> storage;
+		for ( core::Size i=0; i<= 9; ++i ) {
+			storage.push_back( graph.add_vertex());
+		}
+
+		for ( core::Size i=0; i<= 9; ++i ) {
+			TS_ASSERT_EQUALS(i, boost::get(boost::vertex_index, graph, storage[i]));
+		}
+
+		graph.remove_vertex(storage[5]);
+		graph.remove_vertex(storage[6]);
+
+		core::chemical::regenerate_graph_vertex_index(graph);
+		core::chemical::VIter itr, end;
+
+		core::Size count(0);
+		for ( boost::tie(itr,end) = boost::vertices(graph); itr !=end; ++itr ) {
+			TS_ASSERT_EQUALS(count, boost::get(boost::vertex_index, graph, *itr));
+			++count;
+			//boost::put(boost::vertex_index, graph, *itr, index);
+		}
+
+		core::chemical::VD vd = graph.add_vertex();
+		core::chemical::regenerate_graph_vertex_index(graph);
+
+		TS_ASSERT_EQUALS(boost::get(boost::vertex_index, graph, vd), 8);
+
+
+	}
+
 };

@@ -17,6 +17,7 @@
 #include <numeric/Calculator.hh>
 #include <numeric/NumericTraits.hh>
 #include <numeric/util.hh>
+#include <numeric/constants.hh>
 
 #include <utility>
 #include <utility/vector1.hh>
@@ -54,6 +55,23 @@ double do_max( std::vector<double> a ) { return numeric::max( utility::vector1<d
 double do_min( std::vector<double> a ) { return numeric::min( utility::vector1<double>(a) ); }
 double do_mean( std::vector<double> a ) { return numeric::mean( utility::vector1<double>(a) ); }
 double do_median( std::vector<double> a) { return numeric::median( utility::vector1<double>(a) ); }
+// Bandpass filter with a sine transition.
+// Min and max are the edges of the 1.0 region
+// min_trans and max_trans are the full width of the transition region
+double do_sinpass( double x, double min, double max, double min_trans, double max_trans ) {
+	runtime_assert( min <= max );
+	runtime_assert( min_trans >= 0 );
+	runtime_assert( max_trans >= 0 );
+	if ( x >= min && x <= max ) { return 1.0; }
+	if ( x <= min - min_trans || x >= max + max_trans ) { return 0.0; }
+	if ( x < min && x > min - min_trans ) {
+		return std::cos( (x-min) * constants::d::pi / min_trans )/2 + 0.5;
+	}
+	if ( x > max && x < max + max_trans ) {
+		return std::cos( (x-max) * constants::d::pi / max_trans )/2 + 0.5;
+	}
+	return 0.0; // Should never get here.
+}
 
 class CalculatorParser : qi::grammar<std::string::iterator, double(), ascii::space_type> {
 
@@ -127,6 +145,7 @@ public:
 			| ( no_case["median"]  >> '(' >> (expression % ',') >> ')' ) [ _val = phoenix::bind(do_median, qi::_1) ]
 			| ( no_case["min"]  >> '(' >> (expression % ',') >> ')' ) [ _val = phoenix::bind(do_min, qi::_1) ]
 			| ( no_case["max"]  >> '(' >> (expression % ',') >> ')' ) [ _val = phoenix::bind(do_max, qi::_1) ]
+			| ( no_case["sinpass"]  >> '(' >> expression >> ',' >> expression >> ',' >> expression >>',' >> expression >>',' >> expression >>')' ) [ _val = phoenix::bind(do_sinpass, qi::_1, qi::_2, qi::_3, qi::_4, qi::_5) ]
 			;
 
 		parser_ = *(assignment >> ';') >> expression; //assigment is omitted, so expression is the value for all.

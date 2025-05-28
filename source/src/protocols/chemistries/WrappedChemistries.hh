@@ -60,6 +60,18 @@ private:
 ///////////////////////////////////////////////////////////////
 // Actual usage
 
+class ReprotonateChemistry : public  WrappedBaseChemistry {
+public:
+	ReprotonateChemistry();
+
+	void parse_my_tag(
+		utility::tag::TagCOP,
+		basic::datacache::DataMap &) override;
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string class_name();
+};
+
 }
 }
 

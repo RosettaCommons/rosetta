@@ -15,7 +15,6 @@
 from __future__ import print_function
 
 import os
-import molfile_to_params
 from pyrosetta import Pose, pose_from_file, init
 
 ################################################################################
@@ -96,6 +95,8 @@ def sdf2mdl(sdfile, mdlfilename):
 # 4. convert .mdl to .params
 # quick wrapper for molfile_to_params with basic functionality
 def molfile2params_quick(mdlfile, name):
+    import molfile_to_params
+    
     molfile_to_params.main([mdlfile, "-n" + name])
 
 
@@ -118,14 +119,13 @@ def params_from_pubchem(cid, name):
 
 ################################################################################
 # Permanent solution, add the .params to the minirosetta_database of PyRosetta
-
 # this may not work if you manipulated your path variables
-database = os.path.abspath(os.environ["PYROSETTA_DATABASE"])
-fa_standard = database + "/chemical/residue_type_sets/fa_standard/"
-fa_custom = "residue_types/custom"
-
 
 def add_cid_to_database(cid, name):
+    database = os.path.abspath(os.environ["PYROSETTA_DATABASE"])
+    fa_standard = database + "/chemical/residue_type_sets/fa_standard/"
+    fa_custom = "residue_types/custom"
+
     # change directory to the custom database
     start_dir = os.getcwd()
     # if it does not exist
