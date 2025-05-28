@@ -1182,8 +1182,10 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 
 			residues.push_back( ii_rsd );
 			jump_connections.push_back( root_index );
-			if ( residues.size() > 1 ) {
-				chain_endings.push_back( residues.size() - 1 );
+
+			bool is_cutpoint = !last_residue_was_recognized( ii ) && !is_lower_terminus_[ ii ] && ii_rsd->is_polymer() && residues[ old_nres ]->is_polymer();
+			if ( !is_cutpoint ) {
+				chain_endings.push_back( old_nres );
 			}
 
 		} else { // Append residue to current chain dependent on bond length.
