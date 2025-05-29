@@ -45,11 +45,13 @@ get_designable_residues( core::pose::Pose & pose, std::string resfile ) {
 
 /// Based on a pose and the indices of all designable residues, get a
 /// string of all designable AAs concatenated
-std::string
+utility::vector1< std::string >
 get_designable_sequence ( core::pose::Pose & pose, utility::vector1< core::Size > designable_residues ) {
-	std::string sequence = "";
+	//std::string sequence = "";
+	utility::vector1< std::string > sequence;
 	for ( core::Size seqpos: designable_residues ) {
-		sequence += pose.residue( seqpos ).name1();
+		//sequence += pose.residue( seqpos ).name1();
+		sequence.push_back(pose.residue_type( seqpos ).base_name());
 	}
 	return sequence;
 }
@@ -57,17 +59,24 @@ get_designable_sequence ( core::pose::Pose & pose, utility::vector1< core::Size 
 /// Based on a list of sequences from poses, get all the AAs present at
 /// the position given by position_no
 utility::vector1< std::string >
-get_candidate_AAs( utility::vector1< std::string > other_pose_sequences,
+get_candidate_AAs( utility::vector1< utility::vector1< std::string > > const & other_pose_sequences,
 	core::Size position_no ) {
 
 	utility::vector1< std::string > candidate_AAs;
 
 	// Iterate through all poses in my collection and find their AA at this position
-	for ( std::string const & sequence: other_pose_sequences ) {
-		char current_AA = sequence[ position_no-1 ]; // string is zero indexed
-		std::string current_AA_3letter = core::chemical::name_from_aa( core::chemical::aa_from_oneletter_code( current_AA ) );
-		if ( std::find( candidate_AAs.begin(), candidate_AAs.end(), current_AA_3letter ) == candidate_AAs.end() ) {
-			candidate_AAs.push_back( current_AA_3letter );
+	//for ( std::string const & sequence: other_pose_sequences ) {
+	// char current_AA = sequence[ position_no-1 ]; // string is zero indexed
+	// std::string current_AA_3letter = core::chemical::name_from_aa( core::chemical::aa_from_oneletter_code( current_AA ) );
+	// if ( std::find( candidate_AAs.begin(), candidate_AAs.end(), current_AA_3letter ) == candidate_AAs.end() ) {
+	//  candidate_AAs.push_back( current_AA_3letter );
+	// }
+	//}
+	for ( utility::vector1< std::string > const & sequence: other_pose_sequences ) {
+		std::string current_AA = sequence[ position_no ]; // vector1 is 1 indexed
+		//std::string current_AA_3letter = core::chemical::name_from_aa( core::chemical::aa_from_oneletter_code( current_AA ) );
+		if ( std::find( candidate_AAs.begin(), candidate_AAs.end(), current_AA ) == candidate_AAs.end() ) {
+			candidate_AAs.push_back( current_AA );
 		}
 	}
 
