@@ -303,6 +303,25 @@ def write_param_file(f, molfile, name, frag_id, base_confs, max_confs):
     #
     if close_file: f.close()
 
+def get_bonded_distance_map(atoms, bonds, root_atom):
+    bonded_distance_map = {}
+    bonded_distance_map[ root_atom ] = 0
+
+    def update(ref, new):
+        '''Helper function to do the update -- will attempt to find the minimum distance'''
+        if ref in bonded_distance_map:
+            d = bonded_distance_map[ ref ] + 1
+            bonded_distance_map[ new ] = min( d, bonded_distance_map.get(new, 9999999999) )
+
+    for ii in range(len(atoms)): # At worst, we should add one atom per cycle
+        for b in bonds:
+            update( b.a1, b.a2 )
+            update( b.a2, b.a1 )
+        if len(bonded_distance_map) == len(atoms):
+            break # Early out if we've assigned everything.
+
+    return bonded_distance_map
+
 def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
     '''Writes a Molfile object to a file.
     f may be a file name or file handle.
@@ -336,6 +355,14 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
     assert(len(root_atoms) == 1)
     root_atom = root_atoms[0]
 
+    # Reorder atoms based on (bonded) distance to root
+    bonded_distance_map = get_bonded_distance_map(atoms, bonds, root_atom)
+    atoms.sort( key=lambda a: bonded_distance_map[a] )
+    atoms.sort( key=lambda a: a.poly_backbone, reverse=True  ) # Put backbone atoms in front
+    atoms.sort( key=lambda a: a.is_H ) # Put hydrogens to the back
+    # Reorder bonds based on the atom ordering
+    bonds.sort( key=lambda b: max( atoms.index(b.a1), atoms.index(b.a2) ) )
+
     # write atoms
     for atom in atoms:
         if atom.poly_lower != True and atom.poly_upper != True:
@@ -357,9 +384,22 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
                 f.write("BOND_TYPE %-4s %-4s %-4s\n" % (bond.a1.pdb_name, bond.a2.pdb_name, bond.order))
                 #f.write("BOND %-4s %-4s\n" % (bond.a1.pdb_name, bond.a2.pdb_name))
 
+    lower_connects = []
+    upper_connects = []
+    for bond in bonds:
+        if bond.a1.poly_lower: lower_connects.append( bond.a2.pdb_name )
+        if bond.a2.poly_lower: lower_connects.append( bond.a1.pdb_name )
+        if bond.a1.poly_upper: upper_connects.append( bond.a2.pdb_name )
+        if bond.a2.poly_upper: upper_connects.append( bond.a1.pdb_name )
+
+    if len(lower_connects) != 1:
+        print("WARNING: One and only one non-ignored atoms should be bonded to the POLY_LOWER atom. Found:", lower_connects)
+    if len(upper_connects) != 1:
+        print("WARNING: One and only one non-ignored atoms should be bonded to the POLY_UPPER atom. Found:", upper_connects)
 
     # write upper and lower connect
-    f.write("LOWER_CONNECT N\nUPPER_CONNECT C\n")
+    f.write("LOWER_CONNECT "+lower_connects[0].strip()+"\n")
+    f.write("UPPER_CONNECT "+upper_connects[0].strip()+"\n")
 
     # Define chi angles
     # Iterating over the bonds is non-trivial and we need multiple passes, so we define a generator:
@@ -394,6 +434,9 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
                 # So, use first child of c that's not b:
                 # ... again, unless C is root and the O of an ether bond (no other kids)
                 d = [k for k in c.children if k != b][0]
+            # If we connect backbone to backbone across the bond, then we're not a proper "rotatable" bond
+            if (d.poly_backbone == True or c.poly_backbone == True) and (b.poly_backbone == True or a.poly_backbone == True):
+                continue
             yield (bond, a, b, c, d)
     def is_sp2_proton(a, b, c, d):
         '''Crude guestimate of H-bonding geometry'''
@@ -406,10 +449,12 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
 
     # hacky check to see if chis in correct order else revese the order
     if not peptoid:
-        for bond, a, b, c, d in rot_bond_iter(sorted_bonds):
+        rotatable_bonds = list( rot_bond_iter(sorted_bonds) )
+        rotatable_bonds.reverse()
+        for bond, a, b, c, d in rotatable_bonds:
             if a.poly_upper == False and b.poly_upper == False and c.poly_upper == False and d.poly_upper == False and a.poly_lower == False and b.poly_lower == False and c.poly_lower == False and d.poly_lower == False:
                 #print( d.poly_n_bb, d.pdb_name, c.pdb_name, b.pdb_name, a.pdb_name )
-                if not d.poly_n_bb:
+                if d.poly_n_bb:
                     sorted_bonds.reverse()
                     print( "REVERSED!!!" )
                     break
@@ -421,9 +466,8 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
         if a.poly_upper == False and b.poly_upper == False and c.poly_upper == False and d.poly_upper == False and \
                 a.poly_lower == False and b.poly_lower == False and c.poly_lower == False and d.poly_lower == False:
 
-            # Do not include backbone chi (d and c cant be backbone atoms
-            if d.poly_backbone == True and c.poly_backbone == True and \
-                    b.poly_backbone == True and a.poly_backbone == True:
+            # Do not include backbone chi (where "both sides" of the bond are backbone)
+            if (d.poly_backbone == True or c.poly_backbone == True) and (b.poly_backbone == True or a.poly_backbone == True):
                 continue
             # in peptoid case, there should C backbone should not be in any CHI angles
             if peptoid:
@@ -442,8 +486,16 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
                 else:
                     f.write("PROTON_CHI %i SAMPLES 3 60 -60 180 EXTRA %s\n" % (num_chis, extra))
 
+    # determine first side chain atom order of atoms should be n ca c o upper lower [side chain heavys] [hydrogens]
+    non_bb_heavy_atoms = [a for a in atoms if a.poly_backbone == False and a.poly_lower == False and a.poly_upper == False and a.poly_ignore == False and a.elem != 'H']
+    if len(non_bb_heavy_atoms) > 0:
+        first_sidechain_atom = non_bb_heavy_atoms[0]
+    else:
+        first_sidechain_atom = None
+
     # choose neighbor atom first CB else CA
     nbr_list = [i for i,a in enumerate(molfile.atoms) if a.pdb_greek_dist == 'B']
+    nbr_atom = None
     if len(nbr_list) >= 1:
         nbr_atom_index = nbr_list[0]
         nbr_atom = atoms[nbr_atom_index]
@@ -453,8 +505,20 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
                 nbr_atom_index = i
                 nbr_atom = a
                 break
+    if nbr_atom is None and first_sidechain_atom is not None:
+        # We kinda assume that this is attached to the backbone -- perhaps we should be more explicit about it
+        nbr_atom = first_sidechain_atom
+        nbr_atom_index = [ i for i, a in enumerate(atoms) if a.pdb_name == nbr_atom.name ][ 0 ] # Should just be the one
+    if nbr_atom is None:
+        print("WARNING: Residue does not have a sidechain -- picking arbitrary neighbor atom from backbone")
+        # Attempt to pick an atom in the "middle" of the backbone
+        backbone_atoms = [ a for a in atoms if a.poly_backbone and not a.is_H and not a.poly_upper and not a.poly_lower ]
+        nbr_atom = backbone_atoms[ len(backbone_atoms) // 2 ]
+        nbr_atom_index = [ i for i, a in enumerate(atoms) if a.pdb_name == nbr_atom.name ][ 0 ] # Should just be the one
+        # There's probably a better way of dealing with this edge case
+
     f.write("NBR_ATOM %s\n" % nbr_atom.pdb_name)
-    
+
     #Using atoms here instead of molfile.atoms to ensure poly_ignore stays ignored
     na = len(atoms) # Number of Atoms
     all_all_dist = [ [1e100] * na for i in range(na) ]
@@ -465,7 +529,7 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
         all_all_dist[i] = dijkstra( start = atoms[i], nodes = atoms, nbr = lambda a: nbrs[a], dist = r3.distance )
     nbr_dist = max(all_all_dist[nbr_atom_index])
     f.write("NBR_RADIUS %f\n" % nbr_dist)
-    
+
     #Write formal charge
     formal_charge = int(round(sum(a.partial_charge for a in atoms if not (a.poly_upper or a.poly_lower))))
     if formal_charge != 0:
@@ -474,10 +538,8 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
         else:
             f.write("NET_FORMAL_CHARGE +%d\n"%formal_charge)
 
-    # determine first side chain atom order of atoms should be n ca c o upper lower [side chain heavys] [hydrogens]
-    non_bb_heavy_atoms = [a for a in atoms if a.poly_backbone == False and a.poly_lower == False and a.poly_upper == False and a.poly_ignore == False and a.elem != 'H']
-    if len(non_bb_heavy_atoms) > 0:
-        f.write("FIRST_SIDECHAIN_ATOM %s\n" % non_bb_heavy_atoms[0].pdb_name)
+    if first_sidechain_atom is not None:
+        f.write("FIRST_SIDECHAIN_ATOM %s\n" % first_sidechain_atom.pdb_name)
     else:
         f.write("FIRST_SIDECHAIN_ATOM NONE\n")
 
@@ -500,60 +562,17 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
     for p in properties_list: f.write(" %s" % p)
     f.write("\n")
 
-    # hacky hardcoding of stubs and icoords for backbone atoms and upper lower
-    nbb = cabb = cbb = obb = upper = lower = 0
-    for a in atoms:
-        if a.poly_n_bb == True: nbb = a
-        if a.poly_ca_bb == True: cabb = a
-        if a.poly_c_bb == True: cbb = a
-        if a.poly_o_bb == True: obb = a
-        if a.poly_upper == True: upper = a
-        if a.poly_lower == True: lower = a
-    #print(nbb)
-
-    # For writing the pdb names of atoms used to compute internal coords
-    nbb.input_stub1,  nbb.input_stub2,  nbb.input_stub3  = nbb, cabb, cbb
-    cabb.input_stub1, cabb.input_stub2, cabb.input_stub3 = nbb, cabb, cbb
-    cbb.input_stub1,  cbb.input_stub2,  cbb.input_stub3  = cabb, nbb, cbb
-    obb.input_stub1,  obb.input_stub2,  obb.input_stub3  = cbb, cabb, upper
-    upper.input_stub1, upper.input_stub2, upper.input_stub3 = cbb, cabb, nbb
-    lower.input_stub1, lower.input_stub2, lower.input_stub3 = nbb, cabb, cbb
-
-    # Calculate ideal values for icoords
-    # NOTE - these values are conformation-dependent, which means that unless the NCAAs are prepared identically
-    # between param generation steps, there may be differences in ideal values attributable to preparation;
-    # e.g., NCAAs may have different UPPER phi dihedral icoor values than the standard CAAs depending on how the
-    # dipeptide is prepared
-    nbb.d,  nbb.theta,  nbb.phi  = calc_internal_coords(nbb,  nbb.input_stub1,  nbb.input_stub2,  nbb.input_stub3)
-    cabb.d, cabb.theta, cabb.phi = calc_internal_coords(cabb, cabb.input_stub1, cabb.input_stub2, cabb.input_stub3)
-    cbb.d,  cbb.theta,  cbb.phi  = calc_internal_coords(cbb,  cbb.input_stub1,  cbb.input_stub2,  cbb.input_stub3)
-    obb.d,  obb.theta,  obb.phi  = calc_internal_coords(obb,  obb.input_stub1,  obb.input_stub2,  obb.input_stub3)
-    upper.d, upper.theta, upper.phi  = calc_internal_coords(upper, upper.input_stub1, upper.input_stub2, upper.input_stub3)
-    lower.d, lower.theta, lower.phi  = calc_internal_coords(lower, lower.input_stub1, lower.input_stub2, lower.input_stub3)
+    # Reporting
+    print("WRITING ICOOR_INTERNAL: ")
 
     def write_icoords(a):
-        if not a.poly_n_bb and not a.poly_ca_bb and not a.poly_c_bb and not a.poly_upper and not a.poly_o_bb:
-            #print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (a.pdb_name, a.phi, a.theta, a.d, a.input_stub1.pdb_name, a.input_stub2.pdb_name, a.input_stub3.pdb_name))
-            f.write("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s\n" % (a.pdb_name, a.phi, a.theta, a.d, a.input_stub1.pdb_name, a.input_stub2.pdb_name, a.input_stub3.pdb_name));
+        #print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (a.pdb_name, a.phi, a.theta, a.d, a.input_stub1.pdb_name, a.input_stub2.pdb_name, a.input_stub3.pdb_name))
+        f.write("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s\n" % (a.pdb_name, a.phi, a.theta, a.d, a.input_stub1.pdb_name, a.input_stub2.pdb_name, a.input_stub3.pdb_name));
         for child in a.children:
             if not child.poly_ignore:
                 write_icoords(child)
 
-    # Reporting
-    print("WRITING ICOOR_INTERNAL: ")
-    #print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (nbb.pdb_name, nbb.phi, nbb.theta, nbb.d, nbb.input_stub1.pdb_name, nbb.input_stub2.pdb_name, nbb.input_stub3.pdb_name))
-    #print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (cabb.pdb_name, cabb.phi, cabb.theta, cabb.d, cabb.input_stub1.pdb_name, cabb.input_stub2.pdb_name, cabb.input_stub3.pdb_name))
-    #print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (cbb.pdb_name, cbb.phi, cbb.theta, cbb.d, cbb.input_stub1.pdb_name, cbb.input_stub2.pdb_name, cbb.input_stub3.pdb_name))
-    #print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (upper.pdb_name, upper.phi, upper.theta, upper.d, upper.input_stub1.pdb_name, upper.input_stub2.pdb_name, upper.input_stub3.pdb_name))
-    #print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (obb.pdb_name, obb.phi, obb.theta, obb.d, obb.input_stub1.pdb_name, obb.input_stub2.pdb_name, obb.input_stub3.pdb_name))
-
-    # Writing
-    f.write("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s\n" % (nbb.pdb_name, nbb.phi, nbb.theta, nbb.d, nbb.input_stub1.pdb_name, nbb.input_stub2.pdb_name, nbb.input_stub3.pdb_name));
-    f.write("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s\n" % (cabb.pdb_name, cabb.phi, cabb.theta, cabb.d, cabb.input_stub1.pdb_name, cabb.input_stub2.pdb_name, cabb.input_stub3.pdb_name));
-    f.write("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s\n" % (cbb.pdb_name, cbb.phi, cbb.theta, cbb.d, cbb.input_stub1.pdb_name, cbb.input_stub2.pdb_name, cbb.input_stub3.pdb_name));
-    f.write("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s\n" % (upper.pdb_name, upper.phi, upper.theta, upper.d, upper.input_stub1.pdb_name, upper.input_stub2.pdb_name, upper.input_stub3.pdb_name));
-    f.write("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s\n" % (obb.pdb_name, obb.phi, obb.theta, obb.d, obb.input_stub1.pdb_name, obb.input_stub2.pdb_name, obb.input_stub3.pdb_name));
-    write_icoords(nbb)
+    write_icoords( root_atom )
 
     # End
     if close_file: f.close()

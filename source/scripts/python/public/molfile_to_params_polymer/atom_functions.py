@@ -131,7 +131,7 @@ def assign_rosetta_types(atoms):
             num_aro_C = count_bonded(a, lambda x: (x.elem == "C" and is_aromatic(x)) or x.ros_type == "aroC")
             num_NO = count_bonded(a, lambda x: x.elem == "N" or x.elem == "O")
             num_S = count_bonded(a, lambda x: x.elem == "S")
-            
+
             if any(bond.a2.poly_n_bb for bond in a.bonds): a.ros_type = "HNbb"
             elif num_S >= 1:    a.ros_type = "HS  "
             elif num_NO >= 1:   a.ros_type = "Hpol"
@@ -155,10 +155,10 @@ def assign_rosetta_types(atoms):
                         if bond.a2.elem != "O": num_aro_nonO += 1
                         if bond.a2.elem == "N": num_aro_N += 1 # really if, not elif
                 #print( i+1, a.name, num_aro_nonO, num_dbl_nonO, num_aro_N )
-                if num_aro_nonO >= 2: 
+                if num_aro_nonO >= 2:
                     if num_H > 0:       a.ros_type = "aroC"
                     else:               a.ros_type = "CH0 "
-                elif num_dbl_nonO >= 1: 
+                elif num_dbl_nonO >= 1:
                     if num_H > 0:       a.ros_type = "aroC"
                     else:               a.ros_type = "CH0 "
                 elif num_aro_N >= 1:    a.ros_type = "CNH2"
@@ -205,7 +205,7 @@ def assign_rosetta_types(atoms):
             # This is a non-standard rule introduced by IWD, agreed to by KWK:
             elif bonded_to_C_to_N:  a.ros_type = "ONH2"
             else:                   a.ros_type = "OOC "
-        elif "S"  == a.elem: 
+        elif "S"  == a.elem:
             num_H = count_bonded(a, lambda x: x.is_H)
             if num_H == 1:   a.ros_type = "SH1 "
             else:            a.ros_type = "S   "
@@ -630,7 +630,7 @@ def assign_mm_types(atoms, peptoid):
             assert(len(a.bonds) == 1) # hydrogen should only be attached to one atom
             at = a.bonds[0].a2
             #HC comes first because of delocalized/aromatic NH2
-            if   is_charmm_HC(a, at):  a.mm_type = "HC" 
+            if   is_charmm_HC(a, at):  a.mm_type = "HC"
             elif is_charmm_H(a, at):   a.mm_type = "H"
             elif is_charmm_HS(a, at):  a.mm_type = "HS"
             elif is_charmm_HB(a, at, peptoid):  a.mm_type = "HB"
@@ -724,12 +724,10 @@ def assign_partial_charges(atoms, partial_charges, net_charge=0.0):
     '''Assigns Rosetta standard partial charges, then
     corrects them so they sum to the desired net charge.
     Correction is distributed equally among all atoms.
-
-    If non-zero partial charges were already assigned, no change is made.
     '''
     # If the partial charges file is not provided
     if partial_charges == None:
-        
+
         std_charges = { # from Rosetta++ aaproperties_pack.cc
             "CNH2" : 0.550,
             "COO " : 0.620,
@@ -779,7 +777,7 @@ def assign_partial_charges(atoms, partial_charges, net_charge=0.0):
         for a in atoms:
             a.partial_charge = std_charges[ a.ros_type ]
     null_charge = [a for a in atoms if a.partial_charge is None]
-    if 0 < len(null_charge): 
+    if 0 < len(null_charge):
         if len(null_charge) < len(atoms):
             raise ValueError("Only some partial charges were assigned -- must be all or none.")
         else:
