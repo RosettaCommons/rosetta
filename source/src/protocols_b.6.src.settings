@@ -146,6 +146,9 @@ sources = {
 		"StructureIndependentPeakCalibrator",
 		"util",
 	],
+	"protocols/protein_grid/": [
+		"ProteinGrid",
+	],
 	"protocols/rbsegment_relax": [
 		"AutoRBRelaxMover",
         "ConfChangeMover",
