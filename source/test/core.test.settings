@@ -1087,6 +1087,7 @@ testinputfiles = [
 	"io/pose_from_sfr/ace_from_1VDN.pdb",
 	"io/pose_from_sfr/acetylated_and_methylated_alanine.pdb",
 	"io/pose_from_sfr/cyclic_pep_with_link.pdb",
+	"io/pose_from_sfr/cycle_chain_test.pdb",
 	"io/pose_from_sfr/1rgr_apo.pdb",
 	"io/pose_from_sfr/1IJ3_cleaned.pdb",
 	"io/pose_to_sfr/2_peptides_2_glycan_ligands.pdb",
