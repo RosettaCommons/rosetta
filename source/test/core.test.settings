@@ -52,6 +52,8 @@ sources = {
 		"GasteigerAtomTyper",
 	],
 	"chemical/modifications" :[
+		"Reprotonate",
+		"ValenceHandler",
 	],
 	"chemical/rdkit" : [
 		"RDMolToRestype",
@@ -760,6 +762,7 @@ testinputfiles = [
 	"chemical/atom_properties.txt",
 	"chemical/ASX.params", # remove if the database version gets permanently enabled
 	"chemical/LYX.params", # remove if the database version gets permanently enabled
+	"chemical/bad_atom_ordering.patch",
 	"chemical/conflict_patch.txt",
 	"chemical/conn.pdb",
 	"chemical/carbohydrates/amylopectin_fragment.pdb",
@@ -793,6 +796,7 @@ testinputfiles = [
 	"chemical/gasteiger/THI.params",
 	"chemical/mm_atom_properties.txt",
 	"chemical/modifications/foldit_ligand.params",
+	"chemical/modifications/test_in.pdb",
 	"chemical/modifications/1p1m0.params",
 	"chemical/modifications/1p1m1.params",
 	"chemical/modifications/1p2m0.params",
@@ -812,6 +816,7 @@ testinputfiles = [
 	"chemical/modifications/3p3m1.params",
 	"chemical/modifications/DEP.params",
 	"chemical/modifications/PRO.params",
+	"chemical/orbitals/orbital_properties.txt",
 	"chemical/params/1aq1.mol2.params",
 	"chemical/params/1dwc.mol2.params",
 	"chemical/params/1dwd.mol2.params",
@@ -984,7 +989,6 @@ testinputfiles = [
 	"chemical/params/U32.cen.params",
 	"chemical/params/U33.cen.params",
 	"chemical/params/U34.cen.params",
-	"chemical/orbitals/orbital_properties.txt",
 	"chemical/rdkit/ATP.sdf",
 	"chemical/rdkit/benzoate.sdf",
 	"chemical/rdkit/nitro.sdf",
