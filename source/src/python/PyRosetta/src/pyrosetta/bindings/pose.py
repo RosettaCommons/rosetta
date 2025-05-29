@@ -23,6 +23,7 @@ from pyrosetta.rosetta.core.pose import (
     getPoseExtraStringScores,
     setPoseExtraScore,
     hasPoseExtraScore,
+    hasPoseExtraScore_str,
     clearPoseExtraScore,
     clearPoseExtraScores,
 )
@@ -455,7 +456,7 @@ class PoseScoreAccessor(MutableMapping):
                 "Consider 'pose.scores.clear()' or 'pose.energies().clear()'" % key
             )
 
-        if not hasPoseExtraScore(self.pose, key):
+        if not hasPoseExtraScore(self.pose, key) and not hasPoseExtraScore_str(self.pose, key):
             raise KeyError(key)
 
         clearPoseExtraScore(self.pose, key)
