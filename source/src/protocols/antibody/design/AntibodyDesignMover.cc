@@ -912,7 +912,7 @@ AntibodyDesignMover::apply_to_cdr(Pose & pose, CDRNameEnum cdr, core::Size index
 
 			TR << "Grafting CDR from cluster " << ab_info_->get_cluster_name(cdr_pose.cluster) << " fragment "<< cdr_pose.pdb << std::endl;
 
-			utility::to_string(index)+"_"+ab_info_->get_cluster_name(cdr_pose.cluster)+"_"+cdr_pose.pdb;
+			//utility::to_string(index)+"_"+ab_info_->get_cluster_name(cdr_pose.cluster)+"_"+cdr_pose.pdb;
 			core::Size start = ab_info_->get_CDR_start(cdr, pose)-1;
 			core::Size end = ab_info_->get_CDR_end(cdr, pose)+1;
 			graft_mover_->set_insert_region(start, end);
