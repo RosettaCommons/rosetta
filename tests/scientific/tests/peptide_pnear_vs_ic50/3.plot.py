@@ -166,8 +166,8 @@ def plot_one_dataset( fig, axs, suffix='1A', row=1 ) :
 
     pnear_val = float( key_values[ 'PNear:' ] )
     pnear_val_to_lowest = float( key_values[ 'PNearLowest:' ] )
-    delta_g_folding_val = float( key_values[ 'kB\*T\*ln(Keq):' ] )
-    delta_g_folding_val_to_lowest = float( key_values[ 'kB\*T\*ln(KeqLowest):' ] )
+    delta_g_folding_val = float( key_values[ '-kB*T*ln(Keq):' ] )
+    delta_g_folding_val_to_lowest = float( key_values[ '-kB*T*ln(KeqLowest):' ] )
     minenergy = min(energy_vals)
     maxrms = max( rmsd_vals )
     maxrms_to_lowest = max( rmsd_vals_to_lowest )
