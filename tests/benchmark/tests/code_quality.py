@@ -245,7 +245,7 @@ def run_clang_tidy_test(rosetta_dir, working_dir, platform, config, hpc_driver=N
         #'src/ObjexxFCL/FArray2A.hh:567:3: warning: Returning null reference',
     ]
 
-    CLANG_TIDY_OPTIONS="-quiet -header-filter='.*' --external-header-filter='.*external/.*'"
+    CLANG_TIDY_OPTIONS="-quiet -header-filter='.*'"
     CLANG_TIDY_TESTS = ["clang-diagnostic-*",
                         "clang-analyzer-*",
                         "bugprone-*",
