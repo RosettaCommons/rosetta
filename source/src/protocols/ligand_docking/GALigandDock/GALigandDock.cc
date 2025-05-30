@@ -89,7 +89,7 @@
 
 #include <ctime>
 #include <fstream>
-#include <math.h>
+#include <cmath>
 
 #include <core/kinematics/Jump.hh> // AUTO IWYU For Jump
 #include <core/optimization/MinimizerOptions.hh> // AUTO IWYU For MinimizerOptions
@@ -594,6 +594,11 @@ GALigandDock::apply( pose::Pose & pose )
 				core::pose::getPoseExtraScore( pose, "dG", dG );
 
 				core::Size nheavyatoms = pose.residue( lig_resno ).nheavyatoms() - pose.residue( lig_resno ).n_virtual_atoms();
+				
+				//Sources for all values used to calculate expected values and Z-scores
+				//can be found in the EMERALD-ID manuscript (Muenks et al. 2025).
+				//Constants in expected value calculations stem from a linear regression model
+				//determined from ligand-bound cryoEM structures 
 				core::Real expected_dG = -12.4443 + (-0.4918 * nheavyatoms);
 
 				core::Real pose_cc = gridscore->calculate_pose_density_correlation( pose );
@@ -605,8 +610,9 @@ GALigandDock::apply( pose::Pose & pose )
 
 				core::Real expected_dens = 0.3428443 - 0.0372441 * local_res_ + 1.1934549 * pose_cc  -0.0014546 * nheavyatoms;
 
-				core::Real dG_z = ((dG - expected_dG)/15.8 * -1 * 0.8);
-				core::Real dens_z = ((atanh(penalized_density) - expected_dens)/(0.1531 * 1.1));
+				core::Real dG_z = ((dG - expected_dG)/15.8 * -1 * 0.8); //std dev: 15.8, tuning constant: 0.8
+				//atanh used to convert [-1,1] values to [-inf,inf]
+				core::Real dens_z = ((std::atanh(penalized_density) - expected_dens)/(0.1531 * 1.1)); //std dev: 0.1531, tuning constant: 1.1
 
 				core::Real zscore = ((dG_z + dens_z)/2)/(std::pow( (0.5 + 0.5*0.261), 0.5) );
 
