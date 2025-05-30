@@ -45,7 +45,7 @@ public:
 		std::string const & reaction_smirks
 	);
 
-	~ChemicalReaction();
+	~ChemicalReaction() override;
 
 	/// @brief Is the reaction valid, or was there an error loading the reaction?
 	/// (Doesn't look at reactants.)

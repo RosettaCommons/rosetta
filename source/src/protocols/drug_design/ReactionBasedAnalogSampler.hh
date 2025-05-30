@@ -73,7 +73,7 @@ public:
 
 public:
 	ReactionBasedAnalogSampler();
-	virtual ~ReactionBasedAnalogSampler();
+	~ReactionBasedAnalogSampler() override;
 
 	void apply( core::chemical::MutableResidueType & ) override;
 

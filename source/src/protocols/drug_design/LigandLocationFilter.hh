@@ -40,21 +40,21 @@ public:
 		center_(0.0)
 	{}
 
-	virtual ~LigandLocationFilter() {}
+	~LigandLocationFilter() override {}
 
-	bool apply( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
 
-	filters::FilterOP clone() const {
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new LigandLocationFilter( *this ) );
 	}
-	filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override {
 		return filters::FilterOP( new LigandLocationFilter() );
 	}
 
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute_distance( core::pose::Pose const &pose ) const;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	static std::string class_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

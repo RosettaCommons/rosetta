@@ -174,7 +174,7 @@ ReactionMultiTransform::get_additional_output() {
 		if ( get_last_status() == core::chemical::modifications::SUCCESS ) {
 			set_last_status( core::chemical::modifications::FAIL_RETRY );
 		}
-		return core::chemical::MutableResidueTypeOP( 0 );
+		return nullptr;
 	}
 	last_product_ += 1;
 	debug_assert( last_product_ <= products_.size() );

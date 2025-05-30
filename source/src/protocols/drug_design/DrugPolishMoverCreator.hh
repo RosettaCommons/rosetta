@@ -21,8 +21,8 @@ namespace drug_design {
 
 class DrugPolishMoverCreator : public protocols::moves::MoverCreator {
 public:
-	moves::MoverOP create_mover() const;
-	std::string keyname() const;
+	moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static std::string mover_name();
 };
 

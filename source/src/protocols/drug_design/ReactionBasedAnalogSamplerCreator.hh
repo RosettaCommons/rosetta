@@ -29,9 +29,9 @@ namespace drug_design {
 
 class ReactionBasedAnalogSamplerCreator : public protocols::chemistries::ChemistryCreator {
 public:
-	virtual protocols::chemistries::ChemistryOP create_chemistry() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
+	protocols::chemistries::ChemistryOP create_chemistry() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
 };
 
 
