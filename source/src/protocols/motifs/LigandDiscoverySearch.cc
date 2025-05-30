@@ -753,7 +753,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 				binding_pocket_dimensions = option[ OptionKeys::motifs::binding_pocket_dimensions_sf ]();
 
 				//now derive the binding pocket center, and ensure the input is valid
-				numeric::xyzVector<int> bp_xyz;
+				numeric::xyzVector<int> bp_xyz(0, 0, 0);
 				utility::vector1<int> binding_pocket_center_xyz = option[ OptionKeys::motifs::binding_pocket_center_sf ]();
 
 				//ensure that there are enough entries in the center vector
