@@ -296,6 +296,22 @@ public:
 		bool one_three = true
 	) const;
 
+	// check if atom types between this object and another motif match; returns a boolean
+	// if amino acid residue names on each motif and atoms involved match, then this returns true, otherwise it returns false
+	// notably, this match does not check if the ligand name side matches
+	virtual bool
+	motif_atom_match_lax(
+		Motif compare
+	) const;
+
+	// check if atom types between this object and another motif match; returns a boolean
+	// if residue names on each side of each motif and atoms involved match, then this returns true, otherwise it returns false
+	// notably, this match does  check if the ligand name side matches
+	virtual bool
+	motif_atom_match_strict(
+		Motif compare
+	) const;
+
 	// For output
 	virtual void
 	print(

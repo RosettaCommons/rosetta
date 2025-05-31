@@ -71,6 +71,7 @@
 
 #include <protocols/drug_design/AtomExistsFilterCreator.hh>
 #include <protocols/drug_design/HeteroHeteroBondFilterCreator.hh>
+#include <protocols/drug_design/LigandLocationFilterCreator.hh>
 #include <protocols/drug_design/NChiFilterCreator.hh>
 #include <protocols/drug_design/RDKitMetricFilterCreator.hh>
 #include <protocols/drug_design/SAScoreFilterCreator.hh>

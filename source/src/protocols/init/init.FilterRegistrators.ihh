@@ -95,6 +95,7 @@ static FilterRegistrator< protocols::helical_bundle::BundleReporterFilterCreator
 
 static FilterRegistrator< protocols::drug_design::AtomExistsFilterCreator > reg_AtomExistsFilterCreator;
 static FilterRegistrator< protocols::drug_design::HeteroHeteroBondFilterCreator > reg_HeteroHeteroBondFilterCreator;
+static FilterRegistrator< protocols::drug_design::LigandLocationFilterCreator > reg_LigandLocationFilterCreator;
 static FilterRegistrator< protocols::drug_design::NChiFilterCreator > reg_NChiFilterCreator;
 static FilterRegistrator< protocols::drug_design::RDKitMetricFilterCreator > reg_RDKitMetricFilterCreator;
 static FilterRegistrator< protocols::drug_design::SAScoreFilterCreator > reg_SAScoreFilterCreator;

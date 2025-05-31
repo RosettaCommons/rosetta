@@ -1,0 +1,5 @@
+-out::overwrite true
+-motif_filename 5000_motifs.motifs
+-output_file 5000_motifs_duplicates_removed.motifs
+-duplicate_dist_cutoff 0.8
+-duplicate_angle_cutoff 0.3

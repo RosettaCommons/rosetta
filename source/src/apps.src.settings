@@ -188,8 +188,10 @@ sources = {
 		"revold",
 	],
 	"public/motif_ligand_discovery": [
+		"determine_real_motifs",
 		"identify_ligand_motifs",
 		"ligand_discovery_search_protocol",
+		"remove_duplicate_motifs",
 	],
 	"public/pose_sewing": [
 		"MakeSegmentFile"
