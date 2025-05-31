@@ -7,9 +7,11 @@
 #
 # Pose bindings
 
+import base64
+import itertools
+import pickle
 import warnings
 
-import itertools
 
 try:
     from collections.abc import Sized, Iterable, MutableSet, MutableMapping, Mapping
@@ -381,7 +383,43 @@ def __reslabels_accessor(self, accessor):
 Pose.reslabels = __reslabels_accessor
 
 
-class PoseScoreAccessor(MutableMapping):
+class PoseScoreSerializer(object):
+    _start_str = "[PoseScoreSerializer]"
+    _reserved_types = (str, float, int, bool)
+
+    @staticmethod
+    def encode(value):
+        return base64.b64encode(pickle.dumps(value)).decode()
+
+    @staticmethod
+    def decode(value):
+        return pickle.loads(base64.b64decode(value))
+
+    def maybe_encode(self, value):
+        if not isinstance(value, self._reserved_types):
+            try:
+                value = "".join([self._start_str, PoseScoreSerializer.encode(value)])
+            except (TypeError, OverflowError, MemoryError, pickle.PicklingError) as ex:
+                raise TypeError(
+                    "Only `str`, `float`, `int`, and pickle-serializable object types are allowed "
+                    "to be set as score values. Received: %r. %s" % (type(value), ex)
+               )
+
+        return value
+
+    def maybe_decode(self, value):
+        if isinstance(value, str) and value.startswith(self._start_str):
+            try:
+                value = PoseScoreSerializer.decode(value.split(self._start_str)[1])
+            except (TypeError, OverflowError, MemoryError, EOFError, pickle.UnpicklingError) as ex:
+                raise TypeError(
+                    "Could not deserialize score value of type %r. %s" % (type(value), ex)
+                )
+
+        return value
+
+
+class PoseScoreAccessor(MutableMapping, PoseScoreSerializer):
     """Accessor wrapper for pose energies and extra scores."""
 
     __slots__ = ("pose",)
@@ -427,7 +465,7 @@ class PoseScoreAccessor(MutableMapping):
         return iter(self.all)
 
     def __getitem__(self, key):
-        return self.all[key]
+        return self.maybe_decode(self.all[key])
 
     def __setitem__(self, key, value):
         if key in self._reserved:
@@ -435,6 +473,7 @@ class PoseScoreAccessor(MutableMapping):
                 "Can not set score key with reserved energy name: %r" % key
             )
 
+        value = self.maybe_encode(value)
         # Bit of a two-step to deal with potential duplicate keys in the
         # score maps. First check if a key, of either type, exists. If so
         # *try* to set the extra score, triggering type conversion checking

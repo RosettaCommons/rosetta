@@ -74,6 +74,12 @@ class LoggingTest(unittest.TestCase):
                 output,
                 msg="rosetta logs not going to logger",
             )
+            # Testing that warnings are emitted when attempting to serialize incompatible score values while saving scorefile
+            packed_pose = packed_pose.update_scores(
+                test_warning_with_complex=10j,
+                test_warning_with_pose=packed_pose.pose.clone(),
+                test_warning_with_packed_pose=io.to_packed(packed_pose.pose.clone()),
+            )
 
             return packed_pose
 
@@ -143,6 +149,24 @@ class LoggingTest(unittest.TestCase):
                         last = line
                     log_fields = last.split()
                     self.assertEqual(log_fields[-1], "complete!")
+                # Ensure warnings are emitted
+                score_key_class_name_dict = {
+                    "test_warning_with_complex": "complex",
+                    "test_warning_with_pose": "pyrosetta.rosetta.core.pose.Pose",
+                    "test_warning_with_packed_pose": "pyrosetta.distributed.packed_pose.core.PackedPose",
+                }
+                with open(prc_log, "r") as f:
+                    lines = f.readlines()
+                    warning_msgs = [line.split("WARNING:root: ")[-1].rstrip() for line in lines if "WARNING:root: " in line]
+                    self.assertGreater(len(warning_msgs), 0, msg="PyRosettaCluster log file did not log warnings")
+                    for key, class_name in score_key_class_name_dict.items():
+                        expected_msg = (
+                            f"Removing score key '{key}' with value of type '<class '{class_name}'>' before "
+                            "saving PyRosettaCluster result! Only JSON-serializable score values can be written to output files. "
+                            "Consider custom serializing the value to save this score or removing the key from the `pose.scores` "
+                            "dictionary to remove this warning message."
+                        )
+                        self.assertIn(expected_msg, warning_msgs)
             else:
                 print(prc_log + " doesn't exist!")
 
