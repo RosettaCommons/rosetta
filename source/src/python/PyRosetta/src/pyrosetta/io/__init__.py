@@ -8,8 +8,12 @@
 
 import pyrosetta.rosetta as rosetta
 import sys
+import warnings
 
-from pyrosetta.rosetta.core.import_pose import pose_from_file
+from pyrosetta.rosetta.core.import_pose import pose_from_file, pose_from_pdbstring
+from pyrosetta.rosetta.core.io.mmcif import dump_cif
+from pyrosetta.rosetta.core.io.mmtf import dump_mmtf
+from pyrosetta.rosetta.core.io.pdb import dump_pdb
 from pyrosetta.rosetta.core.pose import make_pose_from_sequence, Pose
 from pyrosetta.io.silent_file_map import SilentFileMap
 
@@ -95,6 +99,42 @@ def poses_from_silent(silent_filename):
         yield pose
 
 
+def poses_from_multimodel_pdb(filename, *args, **kwargs):
+    """Returns an Iterator object which is composed of Pose objects from an input
+    multimodel PDB file. Poses are generated in the order in which they appear in
+    the input multimodel PDB file. Any models without lines are skipped with a warning.
+    Additional input `*args` and `**kwargs` are passed to `pose_from_pdbstring`.
+
+    Example:
+    poses = pyrosetta.io.poses_from_multimodel_pdb(filename)
+    for pose in poses:
+        name = pose.pdb_info().name()
+
+    @klimaj
+    """
+    with open(filename, "r") as f:
+        found_model = False
+        for line in f:
+            if line.startswith("MODEL"):
+                found_model = True
+                model_lines = []
+                model_number = line.split()[-1]
+            elif line.startswith("ENDMDL"):
+                if not found_model:
+                    raise ValueError(f"Multimodel PDB file is not formatted correctly: {filename}")
+                if model_lines:
+                    pose = Pose()
+                    pdbstring = "".join(model_lines)
+                    pose_from_pdbstring(pose, pdbstring, *args, **kwargs)
+                    pose.pdb_info().name(f"{filename} MODEL {model_number}")
+                    yield pose
+                else: # Otherwise raises: "ERROR: Assertion `! lines.empty()` failed."
+                    warnings.warn(f"Skipping empty model {model_number} in multimodel PDB file: {filename}")
+                found_model = False
+            elif found_model:
+                model_lines.append(line)
+
+
 def poses_to_silent(poses, output_filename):
     """Takes a Pose or list of poses and outputs them as a binary silent file.
     This method requires a Pose object.
@@ -130,3 +170,27 @@ def poses_to_silent(poses, output_filename):
             output_silent(pose=pose)
     else:
         output_silent(pose=poses)
+
+
+def dump_multimodel_pdb(poses, output_filename):
+    """
+    Dump a multimodel PDB file from a `list`, `tuple`, or `set` of `Pose` objects,
+    and an output filename.
+
+    Inputs:
+    poses: `Pose` or iterable of `Pose` objects. This function automatically detects which one.
+    output_filename: The desired name of the output PDB file.
+
+    Example:
+    dump_multimodel_pdb(poses, "designs.pdb")
+
+    @klimaj
+    """
+    v1 = rosetta.utility.vector1_std_shared_ptr_const_core_pose_Pose_t()
+    if isinstance(poses, (list, tuple, set)):
+        for p in poses:
+            v1.append(p)
+    else:
+        v1.append(poses)
+
+    return rosetta.core.io.pdb.dump_multimodel_pdb(v1, output_filename)
