@@ -174,3 +174,92 @@ class SmokeTestDistributed(unittest.TestCase):
                     pyrosetta.rosetta.core.scoring.all_atom_rmsd(test_poses[i],returned_poses[i]), 
                     places=3,
                     msg="List position recovery failed.")
+
+    def test_io(self):
+        # Test PackedPose cloning
+        packed_pose_1 = io.pose_from_sequence("DNA")
+        packed_pose_1.scores["key"] = 37.0
+        packed_pose_2 = packed_pose_1.clone()
+        self.assertNotEqual(
+            id(packed_pose_1),
+            id(packed_pose_2),
+            msg="Clone failed.",
+        )
+        self.assertEqual(
+            packed_pose_1.scores["key"],
+            packed_pose_2.scores["key"],
+            msg="Scores differ after clone.",
+        )
+        self.assertNotEqual(
+            id(packed_pose_1.scores["key"]),
+            id(packed_pose_2.scores["key"]),
+            msg="Score memory address is identical after clone.",
+        )
+
+        # Test PackedPose I/O
+        with tempfile.TemporaryDirectory() as workdir:
+            def roundtrip(func, ext, input_packed_pose):
+                out_file = os.path.join(workdir, f"tmp.{ext}")
+                func(input_packed_pose, out_file)
+                output_packed_pose = io.pose_from_file(out_file)
+                # Test annotated sequence recovery
+                self.assertEqual(
+                    input_packed_pose.pose.annotated_sequence(),
+                    output_packed_pose.pose.annotated_sequence(),
+                    msg=f"Sequence recovery failed for extension '{ext}'."
+                )
+                # Test coordiante recovery
+                for res in range(1, input_packed_pose.pose.size() + 1):
+                    for atom in range(1, input_packed_pose.pose.residue(res).natoms() + 1):
+                        atom_input = input_packed_pose.pose.residue(res).xyz(atom)
+                        atom_output = output_packed_pose.pose.residue(res).xyz(atom)
+                        for axis in "xyz":
+                            self.assertAlmostEqual(
+                                getattr(atom_input, axis),
+                                getattr(atom_output, axis),
+                                places=2,
+                                msg=f"Coordinate recovery failed for extension '{ext}'."
+                            )
+                # Test score recovery
+                self.assertTrue(dict(input_packed_pose.pose.scores), msg=f"Pose scores dictionary is empty for extension '{ext}'.")
+                if ext in ("pdb", "cif", "mmtf", "pdb.bz2", "bz2"):
+                    self.assertFalse(dict(output_packed_pose.pose.scores), msg=f"Pose scores dictionary has items for extension '{ext}'.")
+                    self.assertNotEqual(
+                        input_packed_pose.scores,
+                        output_packed_pose.scores,
+                        msg=f"PackedPose scores dictionaries differ for extension '{ext}'."
+                    )
+                else: # base64-encoded and pickle-encoded files save the `pose.scores` dictionary
+                    self.assertTrue(output_packed_pose.scores, msg=f"PackedPose scores dictionary is empty for extension '{ext}'.")
+                    self.assertTrue(dict(output_packed_pose.pose.scores), msg=f"Pose scores dictionary is empty for extension '{ext}'.")
+                    self.assertDictEqual(
+                        input_packed_pose.scores,
+                        output_packed_pose.scores,
+                        msg=f"Pose scores dictionaries differ for extension '{ext}'."
+                    )
+                    self.assertDictEqual(
+                        dict(input_packed_pose.pose.scores),
+                        dict(output_packed_pose.pose.scores),
+                        msg=f"Pose scores dictionaries differ for extension '{ext}'."
+                    )
+
+            ext_func_dict = {
+                "pdb": io.dump_pdb,
+                "cif": io.dump_cif,
+                "mmtf": io.dump_mmtf,
+                "pdb.bz2": io.dump_pdb_bz2,
+                "bz2": io.dump_pdb_bz2,
+                "base64": io.dump_base64,
+                "b64": io.dump_base64,
+                "B64": io.dump_base64,
+                "pose": io.dump_base64,
+                "pickle": io.dump_pickle,
+                "pickled_pose": io.dump_pickle,
+            }
+            input_packed_pose = io.pose_from_sequence("CATALYST/X[ATP]")
+            scorefxn = pyrosetta.create_score_function("ref2015")
+            input_pose = input_packed_pose.pose
+            scorefxn(input_pose)
+            input_packed_pose = io.to_packed(input_pose)
+            for ext, func in ext_func_dict.items():
+                roundtrip(func, ext, input_packed_pose.clone())
