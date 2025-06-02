@@ -401,7 +401,7 @@ class PoseScoreSerializer(object):
                 value = "".join([self._start_str, PoseScoreSerializer.encode(value)])
             except (TypeError, OverflowError, MemoryError, pickle.PicklingError) as ex:
                 raise TypeError(
-                    "Only `str`, `float`, `int`, and pickle-serializable object types are allowed "
+                    "Only `str`, `float`, `int`, `bool` and pickle-serializable object types are allowed "
                     "to be set as score values. Received: %r. %s" % (type(value), ex)
                )
 
