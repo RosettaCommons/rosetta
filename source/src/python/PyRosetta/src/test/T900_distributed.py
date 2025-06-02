@@ -6,9 +6,9 @@ if tuple(sys.version_info) < (3, 5):
     print("Unsupported python version for pyrosetta.distributed: %s" % str( sys.version_info ) )
     sys.exit(0)
 
-elif tuple(sys.version_info) > (3, 8):
-    print("Unsupported python version for pyrosetta.distributed: %s" % str( sys.version_info ) )
-    sys.exit(0)
+# elif tuple(sys.version_info) > (3, 8):
+#     print("Unsupported python version for pyrosetta.distributed: %s" % str( sys.version_info ) )
+#     sys.exit(0)
 
 else:
     print("sys.version_info: {0}".format(sys.version_info))
