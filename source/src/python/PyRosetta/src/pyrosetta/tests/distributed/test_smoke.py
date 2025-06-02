@@ -197,7 +197,7 @@ class SmokeTestDistributed(unittest.TestCase):
             msg="Score memory address is identical after clone.",
         )
 
-    @unittest.skip("Used in `test_io` testing framework.")
+    @unittest.skip("Used in `test_packed_pose_io` testing framework.")
     def roundtrip(self, func, ext, input_packed_pose, workdir):
         out_file = os.path.join(workdir, f"tmp.{ext}")
         func(input_packed_pose, out_file)
