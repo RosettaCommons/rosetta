@@ -269,6 +269,34 @@ class TestPoseIO(unittest.TestCase):
                             msg="Coordinate recovery failed."
                         )
 
+    def test_file_io(self):
+        scorefxn = pyrosetta.create_score_function("ref2015")
+        with tempfile.TemporaryDirectory() as workdir:
+            in_pose = pyrosetta.io.pose_from_sequence("TEST/FILE")
+            for filetype in ("pdb", "mmtf", "cif"):
+                file = os.path.join(workdir, f"tmp.{filetype}")
+                if filetype == "pdb":
+                    pyrosetta.io.dump_scored_pdb(in_pose, file, scorefxn)
+                else:
+                    pyrosetta.io.dump_file(in_pose, file)
+                out_pose = pyrosetta.io.pose_from_file(file)
+                self.assertEqual(
+                    in_pose.annotated_sequence(),
+                    out_pose.annotated_sequence(),
+                    msg="Sequence recovery failed."
+                )
+                for res in range(1, in_pose.size() + 1):
+                    for atom in range(1, in_pose.residue(res).natoms() + 1):
+                        atom_input = in_pose.residue(res).xyz(atom)
+                        atom_output = out_pose.residue(res).xyz(atom)
+                        for axis in "xyz":
+                            self.assertAlmostEqual(
+                                getattr(atom_input, axis),
+                                getattr(atom_output, axis),
+                                places=3,
+                                msg="Coordinate recovery failed."
+                            )
+
     def test_multimodel_pdb_io(self):
         with tempfile.TemporaryDirectory() as workdir:
             seqs = ["TESTING/" + "MANY" * i + "/SEQS" for i in range(1, 8)]

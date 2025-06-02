@@ -49,7 +49,7 @@ from pyrosetta.rosetta.protocols.moves import PyMOLMover, SequenceMover, RepeatM
 from pyrosetta.rosetta.protocols.simple_moves import SwitchResidueTypeSetMover
 from pyrosetta.rosetta.protocols.loops import get_fa_scorefxn
 
-from pyrosetta.io import pose_from_pdb, pose_from_file, poses_from_files, pose_from_sequence, poses_from_sequences, poses_from_silent, poses_from_multimodel_pdb, poses_to_silent, dump_pdb, dump_multimodel_pdb, dump_cif, dump_mmtf, Pose
+from pyrosetta.io import pose_from_pdb, pose_from_file, poses_from_files, pose_from_sequence, poses_from_sequences, poses_from_silent, poses_from_multimodel_pdb, poses_to_silent, dump_file, dump_scored_pdb, dump_pdb, dump_multimodel_pdb, dump_cif, dump_mmtf, Pose
 
 from pyrosetta.rosetta.core.scoring import get_score_function
 create_score_function = pyrosetta.rosetta.core.scoring.ScoreFunctionFactory.create_score_function

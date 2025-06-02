@@ -6,6 +6,7 @@
 # (c) For more information, see http://www.rosettacommons.org.
 # (c) Questions about this can be addressed to University of Washington CoMotion, email: license@uw.edu.
 
+import functools
 import pyrosetta.rosetta as rosetta
 import sys
 import warnings
@@ -170,6 +171,16 @@ def poses_to_silent(poses, output_filename):
             output_silent(pose=pose)
     else:
         output_silent(pose=poses)
+
+
+@functools.wraps(Pose.dump_file)
+def dump_file(pose, output_filename):
+    return pose.dump_file(output_filename)
+
+
+@functools.wraps(Pose.dump_scored_pdb)
+def dump_scored_pdb(pose, output_filename, scorefxn):
+    return pose.dump_scored_pdb(output_filename, scorefxn)
 
 
 def dump_multimodel_pdb(poses, output_filename):

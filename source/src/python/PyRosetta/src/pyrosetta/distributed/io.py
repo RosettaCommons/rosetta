@@ -31,7 +31,9 @@ __all__ = [
     "to_silent",
     "to_pdbstring",
     "to_output_record"
+    "dump_file",
     "dump_pdb",
+    "dump_scored_pdb",
     "dump_multimodel_pdb",
     "dump_cif",
     "dump_mmtf",
@@ -219,12 +221,29 @@ register_container_traversal(to_output_record, lambda d: to_output_record(to_pac
 
 
 @requires_init
+def dump_file(inp, output_filename):
+    """Dump a file from a `PackedPose` or `Pose` object and output filename.
+
+    @klimaj
+    """
+    return pyrosetta.io.dump_file(to_pose(inp), output_filename)
+
+@requires_init
 def dump_pdb(inp, output_filename):
     """Dump a PDB file from a `PackedPose` or `Pose` object and output filename.
 
     @klimaj
     """
     return pyrosetta.io.dump_pdb(to_pose(inp), output_filename)
+
+@requires_init
+def dump_scored_pdb(inp, output_filename, scorefxn):
+    """Dump a scored PDB file from a `PackedPose` or `Pose` object, output filename
+    and score function.
+
+    @klimaj
+    """
+    return pyrosetta.io.dump_scored_pdb(to_pose(inp), output_filename, scorefxn)
 
 @requires_init
 def dump_multimodel_pdb(inp, output_filename):

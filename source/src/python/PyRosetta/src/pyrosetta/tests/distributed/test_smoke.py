@@ -198,9 +198,12 @@ class SmokeTestDistributed(unittest.TestCase):
         )
 
     @unittest.skip("Used in `test_packed_pose_io` testing framework.")
-    def roundtrip(self, func, ext, input_packed_pose, workdir):
+    def roundtrip(self, func, ext, input_packed_pose, workdir, scorefxn):
         out_file = os.path.join(workdir, f"tmp.{ext}")
-        func(input_packed_pose, out_file)
+        if ext == "scored.pdb":
+            func(input_packed_pose, out_file, scorefxn)
+        else:
+            func(input_packed_pose, out_file)
         output_packed_pose = io.pose_from_file(out_file)
         # Test annotated sequence recovery
         self.assertEqual(
@@ -248,6 +251,7 @@ class SmokeTestDistributed(unittest.TestCase):
         # Test PackedPose I/O
         ext_func_dict = {
             "pdb": io.dump_pdb,
+            "scored.pdb": io.dump_scored_pdb,
             "cif": io.dump_cif,
             "mmtf": io.dump_mmtf,
             "pdb.bz2": io.dump_pdb_bz2,
@@ -266,7 +270,7 @@ class SmokeTestDistributed(unittest.TestCase):
         input_packed_pose = io.to_packed(input_pose)
         with tempfile.TemporaryDirectory() as workdir:
             for ext, func in ext_func_dict.items():
-                self.roundtrip(func, ext, input_packed_pose.clone(), workdir)
+                self.roundtrip(func, ext, input_packed_pose.clone(), workdir, scorefxn)
 
     def test_poses_from_sequences_io(self):
         # Test `io.poses_from_sequences`
