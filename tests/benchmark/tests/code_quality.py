@@ -261,6 +261,7 @@ def run_clang_tidy_test(rosetta_dir, working_dir, platform, config, hpc_driver=N
                         "-clang-analyzer-cplusplus.NewDeleteLeaks", # Ibid.
                             # (These are likely also covered by the ClangSA tests, but with better system header exclusion.)
                         "-clang-diagnostic-c++17-extensions", # Skip - do not warn for using C++17 features without -std=c++17 being enabled.
+                        "-clang-analyzer-optin.cplusplus.VirtualCall", # Issue with RDKit -- if we get better system header exclusion we should reactivate this.
                         ]
     CLANG_TIDY_TESTS = ','.join( CLANG_TIDY_TESTS )
 
