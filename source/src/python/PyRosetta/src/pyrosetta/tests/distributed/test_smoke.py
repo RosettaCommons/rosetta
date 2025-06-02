@@ -209,6 +209,7 @@ class SmokeTestDistributed(unittest.TestCase):
             msg=f"Sequence recovery failed for extension '{ext}'."
         )
         # Test coordiante recovery
+        places = 32 if ext in ("b64", "base64", "B64", "pose", "pickle", "pickled_pose") else 2
         for res in range(1, input_packed_pose.pose.size() + 1):
             for atom in range(1, input_packed_pose.pose.residue(res).natoms() + 1):
                 atom_input = input_packed_pose.pose.residue(res).xyz(atom)
@@ -217,7 +218,7 @@ class SmokeTestDistributed(unittest.TestCase):
                     self.assertAlmostEqual(
                         getattr(atom_input, axis),
                         getattr(atom_output, axis),
-                        places=2,
+                        places=places,
                         msg=f"Coordinate recovery failed for extension '{ext}'."
                     )
         # Test score recovery
