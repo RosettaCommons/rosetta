@@ -18,11 +18,14 @@ __all__ = [
     "pose_result",
     "pose_from_file",
     "pose_from_sequence",
-    "poses_from_silent",
     "pose_from_pdbstring",
     "pose_from_pdb_bz2",
     "pose_from_base64",
     "pose_from_pickle",
+    "poses_from_files",
+    "poses_from_sequences",
+    "poses_from_multimodel_pdb",
+    "poses_from_silent",
     "to_base64",
     "to_pickle",
     "to_silent",
@@ -71,8 +74,14 @@ def pose_from_file(*args, **kwargs):
 
 pose_from_sequence = requires_init(pack_result(
     pyrosetta.io.pose_from_sequence))
+poses_from_files = requires_init(pack_result(
+    pyrosetta.io.poses_from_files))
+poses_from_sequences = requires_init(pack_result(
+    pyrosetta.io.poses_from_sequences))
 poses_from_silent = requires_init(pack_result(
     pyrosetta.io.poses_from_silent))
+poses_from_multimodel_pdb = requires_init(pack_result(
+    pyrosetta.io.poses_from_multimodel_pdb))
 
 
 @functools.wraps(import_pose.pose_from_pdbstring)
