@@ -158,7 +158,7 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
         set_logging_handler = "interactive"
     elif notebook is not None:
         warnings.warn(
-            "pyrosetta.init 'notebook' argument is deprecated and may be removed in 2018. "
+            "pyrosetta.init 'notebook' argument is deprecated and may be removed in a future release. "
             "See set_logging_handler='interactive'.",
             stacklevel=2
         )
@@ -188,8 +188,9 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
     v = rosetta.utility.vector1_string()
     v.extend(args)
 
-    if not silent: print( version() )
-    logger.info( version() )
+    if not silent:
+        print( version() )
+        logger.info( version() )
     rosetta.protocols.init.init(v)
     pyrosetta.protocols.h5_fragment_store_provider.init_H5FragmentStoreProvider()
     pyrosetta.protocols.h5_structure_store_provider.init_H5StructureStoreProvider()
