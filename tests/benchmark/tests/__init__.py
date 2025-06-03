@@ -425,9 +425,15 @@ def get_required_pyrosetta_python_packages_for_testing(platform):
     if platform['os'] == 'mac' and python_version == (3, 7): packages = packages.replace('blosc>=1.8.3', 'blosc>=1.10.6')
     if platform['os'] == 'mac' and python_version == (3, 8): packages = packages.replace('blosc>=1.8.3', 'blosc>=1.10.6')
 
+    distributed_packages_without_versions = 'numpy attrs billiard cloudpickle dask dask-jobqueue distributed gitpython jupyter traitlets blosc pandas scipy python-xz'
+
+    if platform['os'] == 'ubuntu' and python_version == (3, 8): packages = packages.replace('blosc>=1.8.3', 'blosc') + ' ' + distributed_packages_without_versions.replace('numpy', '')
+
+    if python_version > (3, 8): packages = distributed_packages_without_versions
+
     packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else []
 
-    if python_version >= (3, 7):
+    if python_version < (3, 8):
         for p in packages: assert '=' in p
 
     return packages
