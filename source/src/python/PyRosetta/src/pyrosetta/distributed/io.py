@@ -57,8 +57,9 @@ def pose_from_file(*args, **kwargs):
 
     @klimaj
     """
-    if not (filename := kwargs.get("filename", False)) \
-        and not any(isinstance((filename := arg), str) and os.path.isfile(filename) for arg in args):
+    try:
+        filename = kwargs.get("filename", False) or next(iter(filter(os.path.isfile, args)))
+    except:
         raise FileNotFoundError(
             f"Could not find filename in arguments '{args}' or keyword arguments '{kwargs}'."
         )
