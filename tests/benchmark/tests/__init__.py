@@ -427,7 +427,7 @@ def get_required_pyrosetta_python_packages_for_testing(platform):
 
     distributed_packages_without_versions = 'numpy attrs billiard cloudpickle dask dask-jobqueue distributed gitpython jupyter traitlets blosc pandas scipy python-xz'
 
-    if platform['os'] == 'ubuntu' and python_version == (3, 8): packages = packages.replace('blosc>=1.8.3', 'blosc') + ' ' + distributed_packages_without_versions.replace('numpy', '')
+    if platform['os'] == 'ubuntu' and python_version == (3, 8): packages = packages.replace('blosc>=1.8.3', 'blosc')
 
     if python_version > (3, 8): packages = distributed_packages_without_versions
 

@@ -1,5 +1,6 @@
 from __future__ import print_function
 import sys
+import shutil
 
 
 if tuple(sys.version_info) < (3, 5):
@@ -39,7 +40,6 @@ test_suites = [
     "pyrosetta.tests.bindings.core.test_pose",
     "pyrosetta.tests.distributed.cluster.test_logging",
     "pyrosetta.tests.distributed.cluster.test_reproducibility",
-    "pyrosetta.tests.distributed.cluster.test_smoke",
     "pyrosetta.tests.distributed.test_concurrency",
     "pyrosetta.tests.distributed.test_dask",
     "pyrosetta.tests.distributed.test_gil",
@@ -47,6 +47,13 @@ test_suites = [
     "pyrosetta.tests.distributed.test_viewer",
     "pyrosetta.tests.numeric.test_alignment",
 ]
+
+if shutil.which("conda"):  # Conda or compatible is installed
+    test_suites.extend([
+    "pyrosetta.tests.distributed.cluster.test_smoke",
+    ])
+else:
+    print('Conda environment is not detected, skipping some tests...')
 
 
 for test_suite in test_suites:
