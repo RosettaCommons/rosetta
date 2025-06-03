@@ -41,7 +41,6 @@ test_suites = [
     "pyrosetta.tests.distributed.cluster.test_logging",
     "pyrosetta.tests.distributed.cluster.test_reproducibility",
     "pyrosetta.tests.distributed.test_concurrency",
-    "pyrosetta.tests.distributed.test_dask",
     "pyrosetta.tests.distributed.test_gil",
     "pyrosetta.tests.distributed.test_smoke",
     "pyrosetta.tests.distributed.test_viewer",
@@ -51,6 +50,7 @@ test_suites = [
 if shutil.which("conda"):  # Conda or compatible is installed
     test_suites.extend([
     "pyrosetta.tests.distributed.cluster.test_smoke",
+    "pyrosetta.tests.distributed.test_dask",
     ])
 else:
     print('Conda environment is not detected, skipping some tests...')
