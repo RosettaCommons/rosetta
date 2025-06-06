@@ -292,7 +292,10 @@ class SmokeTestMulti(unittest.TestCase):
             import pyrosetta  # noqa
             import pyrosetta.distributed.io as io  # noqa
 
-            self.assertDictContainsSubset({"test_setPoseExtraScore": 123}, packed_pose.scores)
+            self.assertEqual(
+                dict(packed_pose.scores),
+                {**dict(packed_pose.scores), **{"test_setPoseExtraScore": 123}},
+            )
             packed_pose.scores.clear()
             self.assertDictEqual({}, packed_pose.scores)
             pose = io.to_pose(packed_pose)
@@ -336,7 +339,10 @@ class SmokeTestMulti(unittest.TestCase):
             import pyrosetta
             import pyrosetta.distributed.io as io
 
-            self.assertDictContainsSubset({"test_setPoseExtraScore": 123}, packed_pose.scores)
+            self.assertEqual(
+                dict(packed_pose.scores),
+                {**dict(packed_pose.scores), **{"test_setPoseExtraScore": 123}},
+            )
 
             self.assertIn("task_packed_pose", kwargs)
             self.assertIsInstance(kwargs["task_packed_pose"], PackedPose)
@@ -513,7 +519,10 @@ class SmokeTestMulti(unittest.TestCase):
             import pyrosetta  # noqa
             import pyrosetta.distributed.io as io
 
-            self.assertDictContainsSubset({"test_setPoseExtraScore": 123}, packed_pose.scores)
+            self.assertEqual(
+                dict(packed_pose.scores),
+                {**dict(packed_pose.scores), **{"test_setPoseExtraScore": 123}},
+            )
             packed_pose.scores.clear()
             self.assertDictEqual({}, packed_pose.scores)
             self.assertIn(kwargs["PyRosettaCluster_protocol_number"], [1, 2])
@@ -522,7 +531,10 @@ class SmokeTestMulti(unittest.TestCase):
                 yield pose.clone()
 
         def my_third_protocol(packed_pose, **kwargs):
-            self.assertDictContainsSubset({"test_setPoseExtraScore": 123}, packed_pose.scores)
+            self.assertEqual(
+                dict(packed_pose.scores),
+                {**dict(packed_pose.scores), **{"test_setPoseExtraScore": 123}},
+            )
             self.assertEqual(kwargs["PyRosettaCluster_protocol_number"], 2)
             return my_second_protocol(packed_pose, **kwargs)
 
