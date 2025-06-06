@@ -2,11 +2,7 @@ from __future__ import print_function
 import sys
 
 
-if tuple(sys.version_info) < (3, 5):
-    print("Unsupported python version for pyrosetta.distributed: %s" % str( sys.version_info ) )
-    sys.exit(0)
-
-elif tuple(sys.version_info) > (3, 8):
+if tuple(sys.version_info) < (3, 6):
     print("Unsupported python version for pyrosetta.distributed: %s" % str( sys.version_info ) )
     sys.exit(0)
 
