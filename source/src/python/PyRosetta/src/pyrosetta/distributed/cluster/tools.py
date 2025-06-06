@@ -395,6 +395,8 @@ def reserve_scores(func: P) -> Union[P, NoReturn]:
     Returns:
         The output from the user-provided PyRosetta function, reserving the scores.
     """
+    import pyrosetta  # noqa
+    import pyrosetta.distributed.io as io  # noqa
 
     @wraps(func)
     def wrapper(pose, **kwargs):
