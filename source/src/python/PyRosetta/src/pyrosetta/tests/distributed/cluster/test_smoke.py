@@ -756,6 +756,155 @@ class SaveAllTest(unittest.TestCase):
                 [],
             )
 
+    def test_yield_results(self):
+        """
+        Smoke test for PyRosettaCluster usage with the yield_results attribute and
+        dry_run attribute enabled.
+        """       
+        pyrosetta.distributed.init(
+            options="-run:constant_seed 1 -multithreading:total_threads 1",
+            extra_options="-out:level 200",
+            set_logging_handler="logging",
+        )
+
+        _n_tasks = 2
+        _n_output_packed_poses = 2
+        parameters = (0.0, 100.0) # `float` instances for `packed_pose.update_scores` values
+
+        def create_tasks(parameter=None):
+            for i in range(_n_tasks):
+                yield {
+                    "extra_options": "-ex1 -multithreading:total_threads 1",
+                    "set_logging_handler": "logging",
+                    "seq": "MYSEQS" * (i + 1),
+                    "n_output_packed_poses": _n_output_packed_poses,
+                    "parameter": parameter,
+                }
+
+        def my_pyrosetta_protocol_1(packed_pose, **kwargs):
+            kwargs["kwargs_key_1"] = 1.0
+            packed_pose = packed_pose.update_scores(scores_key_1=1.0)
+            return packed_pose, kwargs
+
+        def my_pyrosetta_protocol_2(packed_pose, **kwargs):
+            self.assertIn("kwargs_key_1", kwargs)
+            self.assertIn("scores_key_1", list(packed_pose.pose.scores))
+            kwargs["kwargs_key_2"] = 2.0
+            parameter = kwargs.get("parameter", "string")
+            packed_pose = packed_pose.update_scores(
+                {
+                    "scores_key_2": 2.0,
+                    "parameter": parameter,
+                    f"stored_key_{parameter}": "string",
+                }
+            )
+            packed_poses = [packed_pose.pose.clone() for _ in range(kwargs["n_output_packed_poses"])]
+            return (*packed_poses, kwargs)
+
+        with tempfile.TemporaryDirectory() as workdir:
+            input_packed_pose = io.pose_from_sequence("TESTING")
+            protocols = [my_pyrosetta_protocol_1, my_pyrosetta_protocol_2]
+            clients_indices = None
+            resources = None
+            instance_kwargs = dict(
+                seeds=None,
+                decoy_ids=None,
+                client=None,
+                scheduler=None,
+                scratch_dir=workdir,
+                cores=None,
+                processes=None,
+                memory=None,
+                min_workers=1,
+                max_workers=1,
+                nstruct=1,
+                dashboard_address=None,
+                compression=True,
+                compressed=True,
+                logging_level="DEBUG",
+                scorefile_name=None,
+                project_name="PyRosettaCluster_Tests",
+                simulation_name=None,
+                environment=None,
+                output_path=os.path.join(workdir, "outputs"),
+                simulation_records_in_scorefile=False,
+                decoy_dir_name="decoys",
+                logs_dir_name="logs",
+                ignore_errors=False,
+                timeout=0.1,
+                max_delay_time=1.0,
+                sha1=None,
+                system_info=None,
+                pyrosetta_build=None,
+                yield_results=True,
+                dry_run=False,
+                save_all=False,
+            )
+            output_packed_pose_results = []
+            output_kwargs_results = []
+            instance_kwargs_update = {
+                **instance_kwargs,
+                "tasks": create_tasks(parameter=parameters[0]),
+                "input_packed_pose": input_packed_pose,
+            }
+            instance = PyRosettaCluster(**instance_kwargs_update)
+            for output_packed_pose, output_kwargs in instance.distribute(
+                protocols=protocols,
+                clients_indices=clients_indices,
+                resources=resources,
+            ):
+                self.assertIsInstance(output_packed_pose, PackedPose)
+                self.assertIsInstance(output_kwargs, dict)
+                self.assertIn("kwargs_key_1", output_kwargs)
+                self.assertIn("kwargs_key_2", output_kwargs)
+                self.assertIn("scores_key_1", list(output_packed_pose.pose.scores))
+                self.assertIn("scores_key_2", list(output_packed_pose.pose.scores))
+                instance_kwargs_update = {
+                    **instance_kwargs,
+                    "tasks": create_tasks(parameter=parameters[1]),
+                    "input_packed_pose": output_packed_pose,
+                    "protocols": protocols,
+                    "clients_indices": clients_indices,
+                    "resources": resources,
+                }
+                for output_packed_pose, output_kwargs in produce(**instance_kwargs_update):
+                    self.assertIsInstance(output_packed_pose, PackedPose)
+                    self.assertIsInstance(output_kwargs, dict)
+                    self.assertIn("kwargs_key_1", output_kwargs)
+                    self.assertIn("kwargs_key_2", output_kwargs)
+                    self.assertIn("scores_key_1", list(output_packed_pose.pose.scores))
+                    self.assertIn("scores_key_2", list(output_packed_pose.pose.scores))
+                    output_packed_pose_results.append(output_packed_pose)
+                    output_kwargs_results.append(output_kwargs)
+            _n_results_per_parameter = (_n_tasks * _n_output_packed_poses)
+            _n_output_results = _n_results_per_parameter ** 2
+            self.assertEqual(len(output_packed_pose_results), _n_output_results)
+            self.assertEqual(len(output_kwargs_results), _n_output_results)
+            for packed_pose in output_packed_pose_results:
+                print(dict(packed_pose.pose.scores))
+            for packed_pose in output_packed_pose_results:
+                self.assertEqual(
+                    packed_pose.pose.scores.get("parameter", None),
+                    parameters[1],
+                    msg="Output packed pose does not have the correct value for the 'parameter' scores key."
+                )
+            for kwargs in output_kwargs_results:
+                self.assertEqual(
+                    kwargs["PyRosettaCluster_task"].get("parameter", None),
+                    parameters[1],
+                    msg="Output kwargs do not have the correct value for the 'parameter' task key."
+                )
+            # for parameter in parameters:
+            #     self.assertEqual(
+            #         sum(
+            #             1 for packed_pose in output_packed_pose_results
+            #             if f"stored_key_{parameter}" in packed_pose.pose.scores
+            #         ),
+            #         _n_output_results / len(parameters),
+            #         msg=f"Packed poses do not have the correct values for the 'stored_key_{parameter}' scores key."
+            #     )
+            # TODO all outputs have both 'stored_key_0.0' and 'stored_key_100.0', as expected. Remove final test?
+
 
 class SerializationTest(unittest.TestCase):
     def test_serialization(self):

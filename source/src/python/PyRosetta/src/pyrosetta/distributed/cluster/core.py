@@ -552,6 +552,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         validator=attr.validators.instance_of(bool),
         converter=attr.converters.default_if_none(False),
     )
+    yield_results = attr.ib(
+        type=bool,
+        default=False,
+        validator=attr.validators.instance_of(bool),
+        converter=attr.converters.default_if_none(False),
+    )
     protocols_key = attr.ib(
         type=str,
         default="PyRosettaCluster_protocols_container",
@@ -736,9 +742,13 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             for compressed_packed_pose, compressed_kwargs in results:
                 kwargs = self.serializer.decompress_kwargs(compressed_kwargs)
                 if not kwargs[self.protocols_key]:
+                    if self.yield_results:
+                        yield self.serializer.decompress_packed_pose(compressed_packed_pose), self.serializer.deepcopy_kwargs(kwargs)
                     self._save_results(compressed_packed_pose, kwargs)
                 else:
                     if self.save_all:
+                        if self.yield_results:
+                            yield self.serializer.decompress_packed_pose(compressed_packed_pose), self.serializer.deepcopy_kwargs(kwargs)
                         self._save_results(
                             compressed_packed_pose,
                             self.serializer.deepcopy_kwargs(kwargs),

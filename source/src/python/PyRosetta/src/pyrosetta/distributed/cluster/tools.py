@@ -539,11 +539,21 @@ def produce(**kwargs: Any) -> Optional[NoReturn]:
     protocols = kwargs.pop("protocols", None)
     clients_indices = kwargs.pop("clients_indices", None)
     resources = kwargs.pop("resources", None)
-    PyRosettaCluster(**kwargs).distribute(
-        protocols=protocols,
-        clients_indices=clients_indices,
-        resources=resources,
-    )
+    yield_results = kwargs.get("yield_results")
+    if yield_results:
+        for results in PyRosettaCluster(**kwargs).distribute(
+            protocols=protocols,
+            clients_indices=clients_indices,
+            resources=resources,
+        ):
+            yield results
+    else:
+        PyRosettaCluster(**kwargs).distribute(
+            protocols=protocols,
+            clients_indices=clients_indices,
+            resources=resources,
+        )
+        return None
 
 
 run: Callable[..., Optional[NoReturn]] = produce
