@@ -268,8 +268,10 @@ class SmokeTestMulti(unittest.TestCase):
             import pyrosetta
             import pyrosetta.distributed.io as io
 
+            from pyrosetta.rosetta.core.pose import setPoseExtraScore
+
             pose = pyrosetta.io.pose_from_sequence(kwargs["seq"])
-            pyrosetta.rosetta.core.pose.setPoseExtraScore(pose, "test_setPoseExtraScore", 123)
+            setPoseExtraScore(pose, "test_setPoseExtraScore", 123)
 
             self.assertIn("task_packed_pose", kwargs)
             self.assertIsInstance(kwargs["task_packed_pose"], PackedPose)
@@ -509,8 +511,10 @@ class SmokeTestMulti(unittest.TestCase):
         def my_first_protocol(packed_pose, **kwargs):
             import pyrosetta
 
+            from pyrosetta.rosetta.core.pose import setPoseExtraScore
+
             pose = pyrosetta.io.pose_from_sequence(kwargs["seq"])
-            pyrosetta.rosetta.core.pose.setPoseExtraScore(pose, "test_setPoseExtraScore", 123)
+            setPoseExtraScore(pose, "test_setPoseExtraScore", 123)
             self.assertEqual(kwargs["PyRosettaCluster_protocol_number"], 0)
             return [pose.clone() for _ in range(3)]
 
