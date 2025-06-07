@@ -33,7 +33,6 @@ from pyrosetta.distributed.cluster.validators import (
     _validate_clients_indices,
     _validate_protocols_seeds_decoy_ids,
     _validate_resources,
-    _validate_yield_results,
 )
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
