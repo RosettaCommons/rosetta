@@ -23,21 +23,21 @@ if shutil.which("conda"):
         export = subprocess.check_output(
             "conda env export --prefix $(conda env list | grep '*' | awk '{print $NF}')",
             shell=True,
-            text=True
+            text=True,
         )
         print("Current conda environment:", export, sep="\n")
     except subprocess.CalledProcessError as ex:
-        print(f"Printing conda environment failed with return code {ex.returncode}")
+        print("Printing conda environment failed with return code: {0}.".format(ex.returncode))
 else:
     try:
         freeze = subprocess.check_output(
             "{0} -m pip freeze".format(sys.executable),
             shell=True,
-            text=True
+            text=True,
         )
         print("Current pip environment:", freeze, sep="\n")
     except subprocess.CalledProcessError as ex:
-        print(f"Printing pip environment failed with return code {ex.returncode}")
+        print("Printing pip environment failed with return code: {0}.".format(ex.returncode))
 
 
 def e(cmd):
