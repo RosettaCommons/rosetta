@@ -1,4 +1,5 @@
 from __future__ import print_function
+import shutil
 import sys
 
 
@@ -16,6 +17,27 @@ import subprocess
 if not hasattr(pyrosetta.rosetta, "cereal"):
     print("Unsupported non-serialization build for pyrosetta.distributed.")
     sys.exit(0)
+
+if shutil.which("conda"):
+    try:
+        export = subprocess.check_output(
+            "conda env export --prefix $(conda env list | grep '*' | awk '{print $NF}')",
+            shell=True,
+            text=True
+        )
+        print("Current conda environment:", export, sep="\n")
+    except subprocess.CalledProcessError as ex:
+        print(f"Printing conda environment failed with return code {ex.returncode}")
+else:
+    try:
+        freeze = subprocess.check_output(
+            "{0} -m pip freeze".format(sys.executable),
+            shell=True,
+            text=True
+        )
+        print("Current pip environment:", freeze, sep="\n")
+    except subprocess.CalledProcessError as ex:
+        print(f"Printing pip environment failed with return code {ex.returncode}")
 
 
 def e(cmd):
