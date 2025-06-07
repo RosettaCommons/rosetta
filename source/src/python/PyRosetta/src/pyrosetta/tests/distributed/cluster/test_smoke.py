@@ -18,25 +18,29 @@ import os
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
 import random
+import subprocess
 import sys
 import tempfile
 import unittest
 import warnings
 
 try:
+    import cloudpickle
     from dask.distributed import Client, LocalCluster
 except ImportError:
     print(
         "Importing 'pyrosetta.tests.distributed.cluster.test_smoke' requires the "
-        + "third-party package 'dask' as a dependency!\n"
+        + "third-party packages 'dask' and 'cloudpickle' as dependencies!\n"
         + "Please install these packages into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/dask/\n"
+        + "https://pypi.org/project/cloudpickle/\n"
     )
     raise
 
 from pyrosetta import Pose
 from pyrosetta.distributed.packed_pose.core import PackedPose
+from pyrosetta.utility import get_package_version
 
 from pyrosetta.distributed.cluster import (
     PyRosettaCluster,
@@ -239,6 +243,28 @@ class SmokeTestMulti(unittest.TestCase):
         "test_none": None,
         "test_memoryview": memoryview(bytes(3)),
     }
+
+    @classmethod
+    def setUpClass(cls):
+        cloudpickle_version = get_package_version("cloudpickle")
+        test_script = os.path.join(os.path.dirname(__file__), "skip_cloudpickle_version.py")
+        p = subprocess.run("{0} {1}".format(sys.executable, test_script), shell=True)
+        if p.returncode == 0:
+            print("Running {0} tests because cloudpickle version {1} can pickle Pose objects.".format(
+                    cls.__name__, cloudpickle_version
+                )
+            )
+        elif p.returncode == 1:
+            raise unittest.SkipTest(
+                "Skipping {0} tests because cloudpickle version {0} cannot pickle Pose objects.".format(
+                    cls.__name__, cloudpickle_version
+                )
+            )
+        else:
+            raise NotImplementedError("Got exit code {0} from running {1}".format(
+                    p.returncode, test_script
+                )
+            )
 
     def test_smoke_multi(self):
         """Smoke test for PyRosettaCluster usage with multiple protocols."""
