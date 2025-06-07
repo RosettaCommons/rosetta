@@ -760,7 +760,7 @@ class SaveAllTest(unittest.TestCase):
         """
         Smoke test for PyRosettaCluster usage with the yield_results attribute and
         dry_run attribute enabled.
-        """       
+        """
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
             extra_options="-out:level 200",
