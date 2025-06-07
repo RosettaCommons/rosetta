@@ -243,6 +243,7 @@ except ImportError:
 
 import logging
 import os
+import types
 
 from datetime import datetime
 from pyrosetta.distributed.cluster.base import TaskBase, _get_residue_type_set
@@ -273,7 +274,6 @@ from pyrosetta.distributed.cluster.validators import (
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
     Any,
-    GeneratorType,
     List,
     NoReturn,
     Optional,
@@ -283,6 +283,7 @@ from typing import (
 
 
 G = TypeVar("G")
+R = TypeVar("R", bound=types.GeneratorType)
 
 
 @attr.s(kw_only=True, slots=True, frozen=False)
@@ -612,6 +613,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         self.serializer = Serialization(compression=self.compression)
         self.clients_dict = self._setup_clients_dict()
 
+    
     def distribute(
         self,
         *args: Any,
@@ -619,7 +621,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         clients_indices: Any = None,
         resources: Any = None,
         yield_results: Any = None,
-    ) -> Optional[Union[NoReturn, GeneratorType]]:
+    ) -> Optional[Union[NoReturn, R]]:
         """
         Run user-provided PyRosetta protocols on a local or remote compute cluster using
         the user-customized PyRosettaCluster instance. Either arguments or the 'protocols'

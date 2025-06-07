@@ -179,7 +179,7 @@ class TaskBase(Generic[G]):
         _validate_resources(resources, _protocols)
         _clients_index = self._get_clients_index(clients_indices, _protocols)
         _resource = self._get_resource(resources, _protocols)
-        _yield_results = self._parse_yield_results(yield_results)
+        _yield_results = _parse_yield_results(yield_results)
 
         _protocols, _protocol, _seed = self._get_task_state(
             _validate_protocols_seeds_decoy_ids(_protocols, self.seeds, self.decoy_ids)
