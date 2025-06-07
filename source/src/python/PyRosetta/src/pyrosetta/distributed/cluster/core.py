@@ -699,7 +699,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                 applied, the protocols will not run. See https://distributed.dask.org/en/stable/resources.html for more
                 information.
                 Default: None
-            yield_results: An optional `bool` object specifying whether or not to use the `PyRosettaCluster.distribute()`
+            yield_results: An optional `bool` object specifying whether or not to use the `PyRosettaCluster().distribute()`
                 method as a generator, where each yielded result is a `tuple` object with a `PackedPose` object as the 
                 first element and a `dict` object as the second element. The `PackedPose` object represents a returned 
                 or yielded `PackedPose` (or `Pose` or `NoneType`) object from the most recently run user-provided PyRosetta
@@ -714,7 +714,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                 Default: None
 
         Yields:
-            (PackedPose, dict) tuple from the most recently run user-provided PyRosetta protocol if 
+            (PackedPose, dict) tuples from the most recently run user-provided PyRosetta protocol if 
             `PyRosettaCluster(save_all=True)` otherwise from the final user-defined PyRosetta protocol.
 
         Returns:
