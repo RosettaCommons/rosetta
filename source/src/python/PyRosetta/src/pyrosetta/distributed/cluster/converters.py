@@ -180,9 +180,10 @@ def _parse_yield_results(yield_results: Any) -> bool:
     
     @converter.register(int)
     @converter.register(float)
-    def _int_to_bool(objs: Union[int, float]) -> bool:
+    @converter.register(str)
+    def _int_to_bool(objs: Union[int, float, str]) -> bool:
         return bool(objs)
-
+    
     @converter.register(type(None))
     def _none_to_bool(objs: None) -> bool:
         return False
