@@ -758,8 +758,7 @@ class SaveAllTest(unittest.TestCase):
 
     def test_yield_results(self):
         """
-        Smoke test for PyRosettaCluster usage with the yield_results attribute and
-        dry_run attribute enabled.
+        Smoke test for `PyRosettaCluster().distribute(yield_results=True)` keyword argument usage.
         """
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
@@ -769,7 +768,10 @@ class SaveAllTest(unittest.TestCase):
 
         _n_tasks = 2
         _n_output_packed_poses = 2
-        parameters = (0.0, 100.0) # `float` instances for `packed_pose.update_scores` values
+        parameters = (0.0, 100.0) # `float` objects for `packed_pose.update_scores` values
+
+        def parameter_to_str(parameter):
+            return f"stored_{int(parameter)}"
 
         def create_tasks(parameter=None):
             for i in range(_n_tasks):
@@ -784,7 +786,8 @@ class SaveAllTest(unittest.TestCase):
         def my_pyrosetta_protocol_1(packed_pose, **kwargs):
             kwargs["kwargs_key_1"] = 1.0
             packed_pose = packed_pose.update_scores(scores_key_1=1.0)
-            return packed_pose, kwargs
+            yield packed_pose
+            yield kwargs
 
         def my_pyrosetta_protocol_2(packed_pose, **kwargs):
             self.assertIn("kwargs_key_1", kwargs)
@@ -795,7 +798,7 @@ class SaveAllTest(unittest.TestCase):
                 {
                     "scores_key_2": 2.0,
                     "parameter": parameter,
-                    f"stored_key_{parameter}": "string",
+                    parameter_to_str(parameter): "test",
                 }
             )
             packed_poses = [packed_pose.pose.clone() for _ in range(kwargs["n_output_packed_poses"])]
@@ -806,6 +809,8 @@ class SaveAllTest(unittest.TestCase):
             protocols = [my_pyrosetta_protocol_1, my_pyrosetta_protocol_2]
             clients_indices = None
             resources = None
+            yield_results = True
+            decoy_dir_name = "test_decoy_dir"
             instance_kwargs = dict(
                 seeds=None,
                 decoy_ids=None,
@@ -821,14 +826,14 @@ class SaveAllTest(unittest.TestCase):
                 dashboard_address=None,
                 compression=True,
                 compressed=True,
-                logging_level="DEBUG",
+                logging_level="INFO",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Tests",
                 simulation_name=None,
                 environment=None,
                 output_path=os.path.join(workdir, "outputs"),
                 simulation_records_in_scorefile=False,
-                decoy_dir_name="decoys",
+                decoy_dir_name=decoy_dir_name,
                 logs_dir_name="logs",
                 ignore_errors=False,
                 timeout=0.1,
@@ -836,7 +841,6 @@ class SaveAllTest(unittest.TestCase):
                 sha1=None,
                 system_info=None,
                 pyrosetta_build=None,
-                yield_results=True,
                 dry_run=False,
                 save_all=False,
             )
@@ -852,6 +856,7 @@ class SaveAllTest(unittest.TestCase):
                 protocols=protocols,
                 clients_indices=clients_indices,
                 resources=resources,
+                yield_results=yield_results,
             ):
                 self.assertIsInstance(output_packed_pose, PackedPose)
                 self.assertIsInstance(output_kwargs, dict)
@@ -866,6 +871,7 @@ class SaveAllTest(unittest.TestCase):
                     "protocols": protocols,
                     "clients_indices": clients_indices,
                     "resources": resources,
+                    "yield_results": yield_results,
                 }
                 for output_packed_pose, output_kwargs in produce(**instance_kwargs_update):
                     self.assertIsInstance(output_packed_pose, PackedPose)
@@ -881,8 +887,6 @@ class SaveAllTest(unittest.TestCase):
             self.assertEqual(len(output_packed_pose_results), _n_output_results)
             self.assertEqual(len(output_kwargs_results), _n_output_results)
             for packed_pose in output_packed_pose_results:
-                print(dict(packed_pose.pose.scores))
-            for packed_pose in output_packed_pose_results:
                 self.assertEqual(
                     packed_pose.pose.scores.get("parameter", None),
                     parameters[1],
@@ -894,16 +898,54 @@ class SaveAllTest(unittest.TestCase):
                     parameters[1],
                     msg="Output kwargs do not have the correct value for the 'parameter' task key."
                 )
-            # for parameter in parameters:
-            #     self.assertEqual(
-            #         sum(
-            #             1 for packed_pose in output_packed_pose_results
-            #             if f"stored_key_{parameter}" in packed_pose.pose.scores
-            #         ),
-            #         _n_output_results / len(parameters),
-            #         msg=f"Packed poses do not have the correct values for the 'stored_key_{parameter}' scores key."
-            #     )
-            # TODO all outputs have both 'stored_key_0.0' and 'stored_key_100.0', as expected. Remove final test?
+            for parameter in parameters:
+                scores_key = parameter_to_str(parameter)
+                self.assertEqual(
+                    sum(
+                        1 for packed_pose in output_packed_pose_results
+                        if scores_key in packed_pose.pose.scores
+                    ),
+                    _n_output_results,
+                    msg=f"Packed poses do not have the correct values for the '{scores_key}' scores key."
+                )
+
+            # Test yielding results with save_all=True and dry_run=True
+            output_path = os.path.join(workdir, "outputs_dry_run")
+            instance_kwargs = {
+                **instance_kwargs,
+                "tasks": create_tasks(parameter=parameters[0]),
+                "input_packed_pose": input_packed_pose,
+                "protocols": protocols,
+                "clients_indices": clients_indices,
+                "resources": resources,
+                "yield_results": yield_results,
+                "save_all": True,
+                "dry_run": True,
+                "output_path": output_path,
+            }
+            results = []
+            for i, (output_packed_pose, _) in enumerate(produce(**instance_kwargs)):
+                instance_kwargs_update = {
+                    **instance_kwargs,
+                    "input_packed_pose": output_packed_pose,
+                    "tasks": create_tasks(parameter=parameters[1])
+                }
+                for j, result in enumerate(produce(**instance_kwargs_update)):
+                    results.append(result)
+            _n_output_packed_poses_save_all = (_n_output_packed_poses + 1) # Plus one from my_pyrosetta_protocol_1
+            _n_results_per_parameter = (_n_tasks * _n_output_packed_poses_save_all)
+            _n_output_results = _n_results_per_parameter ** 2
+            self.assertEqual(
+                len(results), _n_output_results, msg="Number of results with save_all failed."
+            )
+            self.assertListEqual(
+                os.listdir(os.path.join(output_path, decoy_dir_name)), [],
+                msg="Dry run failed while yielding results.",
+            )
+            self.assertFalse(
+                os.path.isfile(os.path.join(output_path, "scores.json")),
+                msg="Dry run failed while yielding results.",
+            )
 
 
 class SerializationTest(unittest.TestCase):
