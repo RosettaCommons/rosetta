@@ -66,18 +66,19 @@ DEFAULT_PYTHON_VERSION='3.9'
 DEFAULT_PACKAGE_VERSIONS = {
     "attrs": ">=19.3.0",
     "billiard": ">=3.6.3.0",
+    "blosc": ">=1.8.3",
     "cloudpickle": ">=1.5.0",
     "dask": ">=2.16.0",
     "dask-jobqueue": ">=0.7.0",
     "distributed": ">=2.16.0",
     "gitpython": ">=3.1.1",
     "jupyter": ">=1.0.0",
-    "traitlets": ">=4.3.3",
-    "blosc": ">=1.8.3",
     "numpy": ">=1.17.3",
     "pandas": ">=0.25.2",
-    "scipy": ">=1.4.1",
+    "py3Dmol": ">=0.8.0",
     "python-xz": ">=0.4.0",
+    "scipy": ">=1.4.1",
+    "traitlets": ">=4.3.3",
 }
 
 
@@ -433,7 +434,7 @@ def get_packages_list(packages):
     return list(k + v for k, v in sorted(packages.items()))
 
 
-def update_packages_by_python_version(packages, python_version):
+def update_packages_for_python_version(packages, python_version):
     if python_version >= (3, 13):
         # Allow the latest python version to install the latest compatible third-party dependencies
         packages = remove_package_versions(packages, keep=None)
@@ -458,6 +459,20 @@ def update_packages_by_python_version(packages, python_version):
     return packages
 
 
+def update_packages_for_conda(packages, conda):
+    if conda:
+        # See python-blosc on conda-forge channel: https://anaconda.org/conda-forge/python-blosc
+        packages["python-blosc"] = packages.pop("blosc", DEFAULT_PACKAGE_VERSIONS["blosc"])
+
+        # See xz on conda-forge channel: https://anaconda.org/conda-forge/xz
+        packages["xz"] = packages.pop("python-xz", DEFAULT_PACKAGE_VERSIONS["python-xz"])
+
+        # See py3dmol on conda-forge channel: https://anaconda.org/conda-forge/py3dmol
+        packages["py3dmol"] = packages.pop("py3Dmol", DEFAULT_PACKAGE_VERSIONS["py3Dmol"])
+
+    return packages
+
+
 def get_required_pyrosetta_python_packages_for_testing(platform, conda=False, static_versions=True):
     ''' return str of Python packages that is required to run PyRosetta for given platform
 
@@ -466,20 +481,14 @@ def get_required_pyrosetta_python_packages_for_testing(platform, conda=False, st
 
         IMPORTANT: there should be no spaces between package name and version number
     '''
-    # not available in standard Conda channels:
-    #    blosc==1.8.3         \
-    #    py3Dmol>=0.8.0       \
-
     python_version = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
     packages = copy.deepcopy(DEFAULT_PACKAGE_VERSIONS)
-    packages = update_packages_by_python_version(packages, python_version)
+    packages = update_packages_for_python_version(packages, python_version)
+    packages = update_packages_for_conda(packages, conda)
 
     if platform['os'] == 'mac' and python_version >= (3, 7):
-        packages['blosc'] = '>=1.10.6'
-
-    if not conda:
-        packages['py3Dmol'] = '>=0.8.0'
+        packages['python-blosc' if conda else 'blosc'] = '>=1.10.6'
 
     if static_versions:
         packages = set_static_versions(packages)
@@ -501,11 +510,8 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda=T
     python_version = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
     packages = copy.deepcopy(DEFAULT_PACKAGE_VERSIONS)
-    packages = update_packages_by_python_version(packages, python_version)
-
-    if conda:
-        packages['python-blosc'] = packages.pop('blosc', DEFAULT_PACKAGE_VERSIONS['blosc'])
-        packages['xz'] = packages.pop('python-xz', DEFAULT_PACKAGE_VERSIONS['python-xz'])
+    packages = update_packages_for_python_version(packages, python_version)
+    packages = update_packages_for_conda(packages, conda)
 
     if static_versions:
         packages = set_static_versions(packages)
