@@ -409,26 +409,30 @@ def get_required_pyrosetta_python_packages_for_testing(platform):
 
     python_version = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
+    packages = 'attrs>=19.3.0 billiard>=3.6.3.0 cloudpickle>=1.4.1 dask>=2.16.0 dask-jobqueue>=0.7.0 distributed>=2.16.0 gitpython>=3.1.1 jupyter>=1.0.0 traitlets>=4.3.3 blosc>=1.8.3 numpy>=1.17.3 pandas>=0.25.2 scipy>=1.4.1 python-xz>=0.4.0'
+    if python_version >= (3, 8):
+        packages = " ".join(map(lambda p: "cloudpickle>=1.5.0" if p.startswith("cloudpickle") else p.split(">=")[0], packages.split()))
+    elif python_version == (3, 7):
+        packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p, packages.split()))
+    elif python_version == (3, 6):
+        packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p.split(">=")[0], packages.split()))
+    # elif python_version == (3, 9): packages = 'numpy>=1.20.2'
+    # elif python_version == (3, 10): packages = 'numpy>=1.22.3'
+    # elif python_version == (3, 11): packages = 'numpy>=1.23.5'
+    # elif python_version == (3, 12): packages = 'numpy>=1.26.0'
+    # elif python_version == (3, 13): packages = 'numpy>=2.1'
+    else:
+        packages = 'numpy>=1.23'
 
-    if python_version <= (3, 8):
-        packages = 'attrs>=19.3.0 billiard>=3.6.3.0 cloudpickle>=1.4.1 dask>=2.16.0 dask-jobqueue>=0.7.0 distributed>=2.16.0 gitpython>=3.1.1 jupyter>=1.0.0 traitlets>=4.3.3 blosc>=1.8.3 numpy>=1.17.3 pandas>=0.25.2 scipy>=1.4.1 python-xz>=0.4.0'
-        if python_version == (3, 7): packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p, packages.split()))
-        elif python_version == (3, 6): packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p.split(">=")[0], packages.split()))
-
-    elif python_version == (3, 9): packages = 'numpy>=1.20.2'
-    elif python_version == (3, 10): packages = 'numpy>=1.22.3'
-    elif python_version == (3, 11): packages = 'numpy>=1.23.5'
-    elif python_version == (3, 12): packages = 'numpy>=1.26.0'
-    elif python_version == (3, 13): packages = 'numpy>=2.1'
-    else: packages = 'numpy>=1.23'
-
-    if platform['os'] == 'mac' and python_version == (3, 7): packages = packages.replace('blosc>=1.8.3', 'blosc>=1.10.6')
-    if platform['os'] == 'mac' and python_version == (3, 8): packages = packages.replace('blosc>=1.8.3', 'blosc>=1.10.6')
+    #if platform['os'] == 'mac' and python_version == (3, 7): packages = packages.replace('blosc>=1.8.3', 'blosc>=1.10.6')
+    #if platform['os'] == 'mac' and python_version == (3, 8): packages = packages.replace('blosc>=1.8.3', 'blosc>=1.10.6')
+    if platform['os'] == 'mac' and python_version >= (3, 7):
+        packages = packages.replace('blosc>=1.8.3', 'blosc>=1.10.6')
 
     packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else []
 
-    if python_version >= (3, 7):
-        for p in packages: assert '=' in p
+    #if python_version >= (3, 7):
+    #    for p in packages: assert '=' in p
 
     return packages
 
