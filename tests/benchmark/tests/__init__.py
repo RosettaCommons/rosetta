@@ -63,7 +63,7 @@ PRE_COMPILE_SETUP_SCRIPTS = [ "./update_options.sh", "./update_submodules.sh", "
 
 DEFAULT_PYTHON_VERSION='3.9'
 
-DEFAULT_PACKAGES = {
+DEFAULT_PACKAGE_VERSIONS = {
     "attrs": ">=19.3.0",
     "billiard": ">=3.6.3.0",
     "cloudpickle": ">=1.5.0",
@@ -472,7 +472,7 @@ def get_required_pyrosetta_python_packages_for_testing(platform, conda=False, st
 
     python_version = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
-    packages = copy.deepcopy(DEFAULT_PACKAGES)
+    packages = copy.deepcopy(DEFAULT_PACKAGE_VERSIONS)
     packages = update_packages_by_python_version(packages, python_version)
 
     if platform['os'] == 'mac' and python_version >= (3, 7):
@@ -500,12 +500,12 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda=T
 
     python_version = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
-    packages = copy.deepcopy(DEFAULT_PACKAGES)
+    packages = copy.deepcopy(DEFAULT_PACKAGE_VERSIONS)
     packages = update_packages_by_python_version(packages, python_version)
 
     if conda:
-        packages['python-blosc'] = packages.pop('blosc', DEFAULT_PACKAGES['blosc'])
-        packages['xz'] = packages.pop('python-xz', DEFAULT_PACKAGES['python-xz'])
+        packages['python-blosc'] = packages.pop('blosc', DEFAULT_PACKAGE_VERSIONS['blosc'])
+        packages['xz'] = packages.pop('python-xz', DEFAULT_PACKAGE_VERSIONS['python-xz'])
 
     if static_versions:
         packages = set_static_versions(packages)
