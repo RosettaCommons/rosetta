@@ -447,8 +447,7 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda):
 
     python_version = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
-    if python_version < (3, 9):
-        packages = '\
+    packages = '\
         blosc>=1.8.3         \
         cloudpickle>=1.4.1   \
         dask>=2.16.0         \
@@ -460,9 +459,13 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda):
         python-xz>=0.4.0     \
         scipy>=1.4.1         \
         traitlets>=4.3.3     \
-        '
-        if python_version == (3, 7): packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p, packages.split()))
-        elif python_version == (3, 6): packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p.split(">=")[0], packages.split()))
+    '
+    if python_version >= (3, 8):
+        packages = " ".join(map(lambda p: "cloudpickle>=1.5.0" if p.startswith("cloudpickle") else p.split(">=")[0], packages.split()))
+    elif python_version == (3, 7):
+        packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p, packages.split()))
+    elif python_version == (3, 6):
+        packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p.split(">=")[0], packages.split()))
 
 
     # elif python_version >= (3, 13):
@@ -478,8 +481,8 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda):
 
     packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else []
 
-    if not conda:
-        for p in packages: assert '=' in p
+    #if not conda:
+    #    for p in packages: assert '=' in p
 
     return packages
 
