@@ -63,6 +63,8 @@ PRE_COMPILE_SETUP_SCRIPTS = [ "./update_options.sh", "./update_submodules.sh", "
 
 DEFAULT_PYTHON_VERSION='3.9'
 
+# Default package names (keys) and versions (values) from The Python Package Index (PyPI), not from conda channels
+# Versions must start with either '==', '<=', or '>='
 DEFAULT_PACKAGE_VERSIONS = {
     "attrs": ">=19.3.0",
     "billiard": ">=3.6.3.0",
@@ -80,7 +82,8 @@ DEFAULT_PACKAGE_VERSIONS = {
     "scipy": ">=1.4.1",
     "traitlets": ">=4.3.3",
 }
-
+assert all(any(v.startswith(operator) for operator in ('==', '<=', '>=')) for v in DEFAULT_PACKAGE_VERSIONS.values()), \
+    "Default package version values must start with either '==', '<=', or '>='."
 
 # Standard funtions and classes below ---------------------------------------------------------------------------------
 
@@ -414,6 +417,7 @@ def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=Fals
 
 
 def remove_package_versions(packages, keep=None):
+    ''' Remove all pinned package versions, except for package names in the 'keep' keyword argument. '''
     for k in list(packages.keys()):
         if keep and k not in keep:
             packages[k] = ""
@@ -421,20 +425,34 @@ def remove_package_versions(packages, keep=None):
 
 
 def set_static_versions(packages):
+    ''' Replace '>=' and '<=' with '==' for static package version installation. '''
     for k in list(packages.keys()):
-        packages[k] = packages[k].replace(">", "=").replace("<", "=")
+        packages[k] = packages[k].replace(">=", "==").replace("<=", "==")
     return packages
 
 
+def validate_packages(packages):
+    ''' Validate that packages have correct version formatting. '''
+    if not all(v == "" or any(v.startswith(operator) for operator in ("==", "<=", ">=")) for v in packages.values()):
+        raise ValueError(
+            "Package version values must be empty strings or start with either '==', '<=', or '>='. Received: {0}".format(packages)
+        )
+
+
 def get_packages_str(packages):
+    ''' Return a str of sorted packages. '''
+    validate_packages(packages)
     return " ".join(k + v for k, v in sorted(packages.items()))
 
 
 def get_packages_list(packages):
+    ''' Return a list of sorted packages. '''
+    validate_packages(packages)
     return list(k + v for k, v in sorted(packages.items()))
 
 
 def update_packages_for_python_version(packages, python_version):
+    ''' Update package versions given the Python version. '''
     if python_version >= (3, 13):
         # Allow the latest python version to install the latest compatible third-party dependencies
         packages = remove_package_versions(packages, keep=None)
@@ -460,6 +478,7 @@ def update_packages_for_python_version(packages, python_version):
 
 
 def update_packages_for_conda(packages, conda):
+    ''' Update package versions if installation uses conda. '''
     if conda:
         # See python-blosc on conda-forge channel: https://anaconda.org/conda-forge/python-blosc
         packages["python-blosc"] = packages.pop("blosc", DEFAULT_PACKAGE_VERSIONS["blosc"])
