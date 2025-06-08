@@ -426,11 +426,11 @@ def set_static_versions(packages):
 
 
 def get_packages_str(packages):
-    return " ".join(k + v for k, v in packages.items())
+    return " ".join(k + v for k, v in sorted(packages.items()))
 
 
 def get_packages_list(packages):
-    return list(k + v for k, v in packages.items())
+    return list(k + v for k, v in sorted(packages.items()))
 
 
 def update_packages_by_python_version(packages, python_version):
@@ -504,8 +504,8 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda=T
     packages = update_packages_by_python_version(packages, python_version)
 
     if conda:
-        packages['python-blosc'] = packages.pop('blosc', DEFAULT_PYTHON_VERSION['blosc'])
-        packages['xz'] = packages.pop('python-xz', DEFAULT_PYTHON_VERSION['python-xz'])
+        packages['python-blosc'] = packages.pop('blosc', DEFAULT_PACKAGES['blosc'])
+        packages['xz'] = packages.pop('python-xz', DEFAULT_PACKAGES['python-xz'])
 
     if static_versions:
         packages = set_static_versions(packages)
