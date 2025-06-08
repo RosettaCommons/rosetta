@@ -256,12 +256,12 @@ class SmokeTestMulti(unittest.TestCase):
             )
         elif p.returncode == 1:
             raise unittest.SkipTest(
-                "Skipping {0} tests because cloudpickle version {0} cannot pickle Pose objects.".format(
+                "Skipping {0} tests because cloudpickle version {1} cannot pickle Pose objects.".format(
                     cls.__name__, cloudpickle_version
                 )
             )
         else:
-            raise NotImplementedError("Got exit code {0} from running {1}".format(
+            raise RuntimeError("Got exit code {0} from running {1}".format(
                     p.returncode, test_script
                 )
             )
