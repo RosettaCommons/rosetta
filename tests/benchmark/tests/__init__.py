@@ -478,8 +478,8 @@ def get_required_pyrosetta_python_packages_for_testing(platform, conda=False, st
     if platform['os'] == 'mac' and python_version >= (3, 7):
         packages['blosc'] = '>=1.10.6'
 
-    # if not conda:
-    #     packages['py3Dmol'] = '>=0.8.0'
+    if not conda:
+        packages['py3Dmol'] = '>=0.8.0'
 
     if static_versions:
         packages = set_static_versions(packages)
