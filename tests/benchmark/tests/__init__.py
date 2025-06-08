@@ -12,7 +12,7 @@
 ## @brief  Common constats and types for all test types
 ## @author Sergey Lyskov
 
-import os, time, sys, shutil, codecs, urllib.request, subprocess, json, hashlib  # urllib.error, urllib.parse,
+import os, time, sys, shutil, codecs, urllib.request, subprocess, json, hashlib, copy  # urllib.error, urllib.parse,
 import platform as  platform_module
 import types as types_module
 
@@ -62,6 +62,24 @@ PyRosetta_unix_unit_test_memory_requirement_per_cpu = 3.0  # Memory per sub-proc
 PRE_COMPILE_SETUP_SCRIPTS = [ "./update_options.sh", "./update_submodules.sh", "./update_ResidueType_enum_files.sh", "python version.py" ]
 
 DEFAULT_PYTHON_VERSION='3.9'
+
+DEFAULT_PACKAGES = {
+    "attrs": ">=19.3.0",
+    "billiard": ">=3.6.3.0",
+    "cloudpickle": ">=1.5.0",
+    "dask": ">=2.16.0",
+    "dask-jobqueue": ">=0.7.0",
+    "distributed": ">=2.16.0",
+    "gitpython": ">=3.1.1",
+    "jupyter": ">=1.0.0",
+    "traitlets": ">=4.3.3",
+    "blosc": ">=1.8.3",
+    "numpy": ">=1.17.3",
+    "pandas": ">=0.25.2",
+    "scipy": ">=1.4.1",
+    "python-xz": ">=0.4.0",
+}
+
 
 # Standard funtions and classes below ---------------------------------------------------------------------------------
 
@@ -394,9 +412,54 @@ def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=Fals
     return res, output, build_command_line
 
 
+def remove_package_versions(packages, keep=None):
+    for k in list(packages.keys()):
+        if keep and k not in keep:
+            packages[k] = ""
+    return packages
 
-def get_required_pyrosetta_python_packages_for_testing(platform):
-    ''' return list of Python packages that is required to run PyRosetta for given platform
+
+def set_static_versions(packages):
+    for k in list(packages.keys()):
+        packages[k] = packages[k].replace(">", "=").replace("<", "=")
+    return packages
+
+
+def get_packages_str(packages):
+    return " ".join(k + v for k, v in packages.items())
+
+
+def get_packages_list(packages):
+    return list(k + v for k, v in packages.items())
+
+
+def update_packages_by_python_version(packages, python_version):
+    if python_version >= (3, 13):
+        # Allow the latest python version to install the latest compatible third-party dependencies
+        packages = remove_package_versions(packages, keep=None)
+        packages["numpy"] = ">=2.1"
+    elif python_version == (3, 12):
+        packages["numpy"] = ">=1.26.0"
+    elif python_version == (3, 11):
+        packages["numpy"] = ">=1.23.5"
+    elif python_version == (3, 10):
+        packages["numpy"] = ">=1.22.3"
+    elif python_version == (3, 9):
+        packages["numpy"] = ">=1.20.2"
+    elif python_version == (3, 8):
+        packages = remove_package_versions(packages, keep=["cloudpickle"])
+    elif python_version == (3, 7):
+        packages["cloudpickle"] = "<=0.7.0"
+    elif python_version == (3, 6):
+        # Allow the oldest python version to install the oldest compatible third-party dependencies
+        packages = remove_package_versions(packages, keep=None)
+        packages["cloudpickle"] = "<=0.7.0"
+
+    return packages
+
+
+def get_required_pyrosetta_python_packages_for_testing(platform, conda=False, static_versions=True):
+    ''' return str of Python packages that is required to run PyRosetta for given platform
 
         IMPORTANT: each package should have version specification in it by either using ==, >= or <=
         so we can have reproducible test enviroment
@@ -409,36 +472,22 @@ def get_required_pyrosetta_python_packages_for_testing(platform):
 
     python_version = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
-    packages = 'attrs>=19.3.0 billiard>=3.6.3.0 cloudpickle>=1.4.1 dask>=2.16.0 dask-jobqueue>=0.7.0 distributed>=2.16.0 gitpython>=3.1.1 jupyter>=1.0.0 traitlets>=4.3.3 blosc>=1.8.3 numpy>=1.17.3 pandas>=0.25.2 scipy>=1.4.1 python-xz>=0.4.0'
-    if python_version >= (3, 8):
-        packages = " ".join(map(lambda p: "cloudpickle>=1.5.0" if p.startswith("cloudpickle") else p.split(">=")[0], packages.split()))
-    elif python_version == (3, 7):
-        packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p, packages.split()))
-    elif python_version == (3, 6):
-        packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p.split(">=")[0], packages.split()))
-    # elif python_version == (3, 9): packages = 'numpy>=1.20.2'
-    # elif python_version == (3, 10): packages = 'numpy>=1.22.3'
-    # elif python_version == (3, 11): packages = 'numpy>=1.23.5'
-    # elif python_version == (3, 12): packages = 'numpy>=1.26.0'
-    # elif python_version == (3, 13): packages = 'numpy>=2.1'
-    else:
-        packages = 'numpy>=1.23'
+    packages = copy.deepcopy(DEFAULT_PACKAGES)
+    packages = update_packages_by_python_version(packages, python_version)
 
-    #if platform['os'] == 'mac' and python_version == (3, 7): packages = packages.replace('blosc>=1.8.3', 'blosc>=1.10.6')
-    #if platform['os'] == 'mac' and python_version == (3, 8): packages = packages.replace('blosc>=1.8.3', 'blosc>=1.10.6')
     if platform['os'] == 'mac' and python_version >= (3, 7):
-        packages = packages.replace('blosc>=1.8.3', 'blosc>=1.10.6')
+        packages['blosc'] = '>=1.10.6'
 
-    packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else []
+    # if not conda:
+    #     packages['py3Dmol'] = '>=0.8.0'
 
-    #if python_version >= (3, 7):
-    #    for p in packages: assert '=' in p
+    if static_versions:
+        packages = set_static_versions(packages)
 
-    return packages
+    return get_packages_str(packages) if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else ''
 
 
-
-def get_required_pyrosetta_python_packages_for_release_package(platform, conda):
+def get_required_pyrosetta_python_packages_for_release_package(platform, conda=True, static_versions=True):
     ''' return list of Python packages that is required to run PyRosetta for given platform
 
         IMPORTANT: each package should have version specification in it by either using ==, >= or <=
@@ -451,44 +500,17 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda):
 
     python_version = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
-    packages = '\
-        blosc>=1.8.3         \
-        cloudpickle>=1.4.1   \
-        dask>=2.16.0         \
-        dask-jobqueue>=0.7.0 \
-        distributed>=2.16.0  \
-        jupyter>=1.0.0       \
-        numpy>=1.17.3        \
-        pandas>=0.25.2       \
-        python-xz>=0.4.0     \
-        scipy>=1.4.1         \
-        traitlets>=4.3.3     \
-    '
-    if python_version >= (3, 8):
-        packages = " ".join(map(lambda p: "cloudpickle>=1.5.0" if p.startswith("cloudpickle") else p.split(">=")[0], packages.split()))
-    elif python_version == (3, 7):
-        packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p, packages.split()))
-    elif python_version == (3, 6):
-        packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p.split(">=")[0], packages.split()))
-
-
-    # elif python_version >= (3, 13):
-    #     packages = 'numpy>=2.1'
-
-    else:
-        #packages = 'numpy>=1.19.2' if platform['os'] == 'mac' else 'numpy>=1.19.2'
-        packages = 'numpy>=1.20.2'
+    packages = copy.deepcopy(DEFAULT_PACKAGES)
+    packages = update_packages_by_python_version(packages, python_version)
 
     if conda:
-        packages = packages.replace('blosc', 'python-blosc')
-        packages = " ".join(map(lambda p: "xz" if p.startswith("python-xz") else p, packages.split()))
+        packages['python-blosc'] = packages.pop('blosc', DEFAULT_PYTHON_VERSION['blosc'])
+        packages['xz'] = packages.pop('python-xz', DEFAULT_PYTHON_VERSION['python-xz'])
 
-    packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else []
+    if static_versions:
+        packages = set_static_versions(packages)
 
-    #if not conda:
-    #    for p in packages: assert '=' in p
-
-    return packages
+    return get_packages_list(packages) if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else []
 
 
 def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', options='', conda=None, verbose=False, skip_compile=False, version=None):
