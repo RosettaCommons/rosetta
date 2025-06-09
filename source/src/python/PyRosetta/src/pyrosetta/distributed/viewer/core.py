@@ -168,7 +168,7 @@ class Viewer:
             _pose = self.poses[i]
             _pdbstring = self.pdbstrings[i]
 
-            if _pose:
+            if isinstance(_pose, Pose):
                 _viewer.addModels(io.to_pdbstring(_pose), "pdb")
             else:
                 _viewer.addModels(_pdbstring, "pdb")
@@ -179,7 +179,7 @@ class Viewer:
 
             self._clear_output()
 
-            if _pose and _pose.pdb_info() and _pose.pdb_info().name():
+            if isinstance(_pose, Pose) and _pose.pdb_info() and _pose.pdb_info().name():
                 _logger.debug("Decoy {0}: {1}".format(i, _pose.pdb_info().name()))
 
             return _viewer.show()
