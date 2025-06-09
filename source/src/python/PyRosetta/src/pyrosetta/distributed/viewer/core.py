@@ -286,8 +286,7 @@ def init(
     def to_pdbstring(obj):
         raise ViewerInputError(obj)
 
-    to_pdbstring.register(type(None))
-
+    @to_pdbstring.register(type(None))
     def _(obj):
         raise ViewerInputError(obj)
 
