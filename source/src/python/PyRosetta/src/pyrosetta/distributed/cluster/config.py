@@ -15,6 +15,7 @@ from typing import List, Tuple
 
 
 __dask_version__: Tuple[int, int, int] = get_package_version("dask")
+__dask_jobqueue_version__: Tuple[int, int, int] = get_package_version("dask-jobqueue")
 
 environment_cmd: str = "conda env export --prefix {0}".format(
     sys.prefix

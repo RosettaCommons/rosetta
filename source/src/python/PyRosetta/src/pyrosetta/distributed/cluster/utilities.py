@@ -40,7 +40,7 @@ from typing import (
     Union,
 )
 
-from pyrosetta.distributed.cluster.config import __dask_version__
+from pyrosetta.distributed.cluster.config import __dask_version__, __dask_jobqueue_version__
 
 
 AdaptiveType = TypeVar("AdaptiveType", bound=Adaptive)
@@ -95,18 +95,21 @@ class SchedulerManager(Generic[G]):
             elif self.scheduler == "slurm":
                 cluster_func = SLURMCluster
                 log_files = os.path.join(self.logs_path, "dask-worker.o%j")
+            _job_extra_directives = [f"-o {log_files}",]
             _cluster_kwargs = dict(
                 cores=self.cores,
                 processes=self.processes,
                 memory=self.memory,
                 local_directory=self.scratch_dir,
-                job_extra=[f"-o {log_files}",],
+                job_extra_directives=_job_extra_directives,
                 walltime="99999:0:0",
                 death_timeout=9999,
                 dashboard_address=self.dashboard_address,
             )
             if __dask_version__ <= (2, 1, 0):
                 _cluster_kwargs["local_dir"] = _cluster_kwargs.pop("local_directory", self.scratch_dir)
+            if __dask_jobqueue_version__ < (0, 8, 0):
+                _cluster_kwargs["job_extra"] = _cluster_kwargs.pop("job_extra_directives", _job_extra_directives)
             cluster = cluster_func(**_cluster_kwargs)
         logging.info(f"Dashboard link: {cluster.dashboard_link}")
 
