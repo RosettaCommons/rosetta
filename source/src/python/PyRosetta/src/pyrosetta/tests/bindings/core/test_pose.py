@@ -7,6 +7,7 @@
 # (c) Questions about this can be addressed to University of Washington CoMotion, email: license@uw.edu.
 
 import glob
+import math
 import os
 import pyrosetta
 import pyrosetta.rosetta.core.pose as pose
@@ -148,7 +149,74 @@ class TestPoseScoresAccessor(unittest.TestCase):
         test_pose.scores.clear()
         self.assertDictEqual(dict(test_pose.scores), dict())
         
+        # Test score value serialization
+        test_pose.scores.clear()
+        save_pose = pyrosetta.pose_from_sequence("SET/GET/TEST")
+        save_pose.scores["test_str"] = "foo"
+        save_pose.scores["test_float"] = math.pi
+        save_pose.scores["test_int"] = 1111111
+        type_value_dict = {
+            str: "SomeString",
+            float: math.pi,
+            int: 42,
+            dict: {"foo": 123, "bar": 456},
+            tuple: (math.pi, math.pi,),
+            list: ["foo", "bar", "baz"],
+            set: {1, 2, 3},
+            frozenset: frozenset(["a", "b", "c"]),
+            bool: True,
+            bytes: b"Bytes",
+            bytearray: bytearray(123),
+            complex: 1 + 3j,
+            type(None): None,
+            pyrosetta.Pose: save_pose,
+            pyrosetta.rosetta.core.scoring.ScoreFunction: pyrosetta.get_score_function(),
+            type(pyrosetta.rosetta.protocols.moves.NullMover): pyrosetta.rosetta.protocols.moves.NullMover, # Test `pybind11_builtins.pybind11_type` type
+        }
+        for obj_type, value_input in type_value_dict.items():
+            # Round-trip set/get scoretype value
+            if obj_type == pyrosetta.rosetta.core.scoring.ScoreFunction:
+                # `ScoreFunction` instances (and some other PyRosetta instances besides `Pose()`) cannot be serialized
+                with self.assertRaises(TypeError):
+                    test_pose.scores[str(obj_type)] = value_input
+                continue
+            else:
+                test_pose.scores[str(obj_type)] = value_input
+                value_output = test_pose.scores[str(obj_type)]
 
+            # Test instance types
+            self.assertIsInstance(value_input, obj_type)
+            if obj_type in (int, bool):
+                # `int` and `bool` objects are cast to `float` objects during round-trip
+                self.assertNotIsInstance(value_output, obj_type)
+                self.assertIsInstance(value_output, float)
+            else:
+                self.assertIsInstance(value_output, obj_type)
+
+            # Test values
+            if obj_type == float:
+                # `float` objects might change precision after round-trip
+                self.assertAlmostEqual(value_output, value_input, places=6)
+            elif obj_type == pyrosetta.Pose:
+                # `Pose` objects change memory address after round-trip
+                self.assertNotEqual(value_output, value_input)
+                self.assertNotEqual(id(value_output), id(value_input))
+                # `Pose` object properties are identical after round-trip
+                self.assertEqual(value_output.size(), value_input.size()) # Test size
+                self.assertEqual(value_output.annotated_sequence(), value_input.annotated_sequence()) # Test sequence
+                for res in range(1, value_input.size() + 1): # Test coordinates
+                    for atom in range(1, value_input.residue(res).natoms() + 1):
+                        atom_input = value_input.residue(res).xyz(atom)
+                        atom_output = value_output.residue(res).xyz(atom)
+                        for axis in "xyz":
+                            self.assertEqual(getattr(atom_input, axis), getattr(atom_output, axis))
+                # `Pose` object scores are identical after round-trip
+                self.assertEqual(len(value_output.scores), len(value_input.scores))
+                for k in list(value_input.scores.keys()):
+                    self.assertIsInstance(value_output.scores[k], type(value_input.scores[k]))
+                    self.assertEqual(value_output.scores[k], value_input.scores[k])
+            else:
+                self.assertEqual(value_output, value_input)
 
 
 class TestPoseResidueLabelAccessor(unittest.TestCase):
