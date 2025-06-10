@@ -515,7 +515,7 @@ def get_required_pyrosetta_python_packages_for_testing(platform, conda=False, st
     return get_packages_str(packages) if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else ''
 
 
-def get_required_pyrosetta_python_packages_for_release_package(platform, conda=True, static_versions=True):
+def get_required_pyrosetta_python_packages_for_release_package(platform, conda=True, static_versions=True, distributed_packages=False):
     ''' return list of Python packages that is required to run PyRosetta for given platform
 
         IMPORTANT: each package should have version specification in it by either using ==, >= or <=
@@ -531,6 +531,11 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda=T
     packages = copy.deepcopy(DEFAULT_PACKAGE_VERSIONS)
     packages = update_packages_for_python_version(packages, python_version)
     packages = update_packages_for_conda(packages, conda)
+
+    if not distributed_packages:
+        # Keep packages list lean by removing extra dependencies
+        if python_version >= (3, 9):
+            packages = {'numpy': packages.get('numpy', DEFAULT_PACKAGE_VERSIONS['numpy'])}
 
     if static_versions:
         packages = set_static_versions(packages)
