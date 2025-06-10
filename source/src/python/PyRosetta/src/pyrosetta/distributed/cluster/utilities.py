@@ -12,8 +12,6 @@ try:
     import psutil
     from dask.distributed import Adaptive, Client, LocalCluster
     from dask_jobqueue import SGECluster, SLURMCluster
-    from distributed.protocol import dask_serialize, dask_deserialize
-    from distributed.protocol.serialize import register_serialization_family
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.utilities' requires the "
