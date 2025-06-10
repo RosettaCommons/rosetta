@@ -148,7 +148,7 @@ class SchedulerManager(Generic[G]):
         if (
             not self.clients_dict
             and self.scheduler
-            and (self.max_workers >= 1000)
+            and (self.max_workers >= self.adapt_threshold)
             and adaptive
         ):
             adaptive.maximum = self.tasks_size
