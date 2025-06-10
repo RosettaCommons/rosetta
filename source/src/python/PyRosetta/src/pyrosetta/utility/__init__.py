@@ -10,8 +10,9 @@ __author__ = "Jason C. Klima"
 
 
 def get_package_version(distribution_name):
+    import sys
+
     from functools import singledispatch
-    from importlib.metadata import PackageNotFoundError, version
 
     @singledispatch
     def to_tuple(v):
@@ -36,9 +37,25 @@ def get_package_version(distribution_name):
     def _from_none(none):
         return None
 
-    try:
-        _version = version(distribution_name)
-    except PackageNotFoundError:
-        _version = None
+    if tuple(sys.version_info) >= (3, 8):
+        from importlib.metadata import PackageNotFoundError, version
+
+        try:
+            _version = version(distribution_name)
+        except PackageNotFoundError:
+            _version = None
+
+    else:
+        try:
+            from pkg_resources import DistributionNotFound, get_distribution
+        except ImportError as ex:
+            raise ImportError(
+                "{0}. Please install 'setuptools' if using python version < 3.8".format(ex)
+            )
+
+        try:
+            _version = get_distribution(distribution_name).version
+        except DistributionNotFound:
+            _version = None
 
     return to_tuple(_version)
