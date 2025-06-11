@@ -17,20 +17,24 @@ import time
 
 from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.distributed.packed_pose.core import PackedPose
+from pyrosetta.utility import get_package_version
 
 if sys.version_info.major >= 3:
     from functools import singledispatch
 else:
     from pkgutil import simplegeneric as singledispatch
 
-
 _logger = logging.getLogger("pyrosetta.distributed.viewer")
 
 try:
-    from IPython.core.display import display, HTML
-    from IPython.display import clear_output
+    __ipython_version__ = get_package_version("ipython")
+    if __ipython_version__ and __ipython_version__ < (7, 14):
+        from IPython.core.display import display, HTML
+        from IPython.display import clear_output
+    else:
+        from IPython.display import clear_output, display, HTML
 except (ImportError, AttributeError) as e:
-    _logger.error("IPython.core.display or IPython.display module cannot be imported.")
+    _logger.error("{0}. IPython.core.display or IPython.display module cannot be imported.".format(e))
 
 try:
     import numpy
@@ -386,7 +390,7 @@ def init(
 def expand_notebook():
     """Expand Jupyter notebook cell to maximum width."""
     try:
-        _logger.debug("IPython.core.display expanding Jupyter notebook cell width.")
+        _logger.debug("IPython.display expanding Jupyter notebook cell width.")
         display(HTML("<style>.container { width:100% !important; }</style>"))
     except NameError:
-        _logger.exception("IPython.core.display module not imported.")
+        _logger.exception("IPython.display module not imported.")
