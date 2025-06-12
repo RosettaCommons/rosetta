@@ -416,7 +416,7 @@ def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=Fals
     return res, output, build_command_line
 
 
-def remove_package_versions(packages, keep=None):
+def remove_package_versions_for_python_packages(packages, keep=None):
     ''' Remove all pinned package versions, except for package names in the 'keep' keyword argument. '''
     for k in list(packages.keys()):
         if keep and k not in keep:
@@ -424,14 +424,14 @@ def remove_package_versions(packages, keep=None):
     return packages
 
 
-def set_static_versions(packages):
+def set_static_versions_for_python_packages(packages):
     ''' Replace '>=' and '<=' with '==' for static package version installation. '''
     for k in list(packages.keys()):
         packages[k] = packages[k].replace(">=", "==").replace("<=", "==")
     return packages
 
 
-def validate_packages(packages):
+def validate_packages_for_python_packages(packages):
     ''' Validate that packages have correct version formatting. '''
     if not all(v == "" or any(v.startswith(operator) for operator in ("==", "<=", ">=")) for v in packages.values()):
         raise ValueError(
@@ -439,15 +439,15 @@ def validate_packages(packages):
         )
 
 
-def get_packages_str(packages):
+def get_packages_str_for_python_packages(packages):
     ''' Return a str of sorted packages. '''
-    validate_packages(packages)
+    validate_packages_for_python_packages(packages)
     return " ".join(k + v for k, v in sorted(packages.items()))
 
 
-def get_packages_list(packages):
+def get_packages_list_for_python_packages(packages):
     ''' Return a list of sorted packages. '''
-    validate_packages(packages)
+    validate_packages_for_python_packages(packages)
     return list(k + v for k, v in sorted(packages.items()))
 
 
@@ -455,7 +455,7 @@ def update_packages_for_python_version(packages, python_version):
     ''' Update package versions given the Python version. '''
     if python_version >= (3, 13):
         # Allow the latest python version to install the latest compatible third-party dependencies
-        packages = remove_package_versions(packages, keep=None)
+        packages = remove_package_versions_for_python_packages(packages, keep=None)
         packages["numpy"] = ">=2.1"
     elif python_version == (3, 12):
         packages["numpy"] = ">=1.26.0"
@@ -466,12 +466,12 @@ def update_packages_for_python_version(packages, python_version):
     elif python_version == (3, 9):
         packages["numpy"] = ">=1.20.2"
     elif python_version == (3, 8):
-        packages = remove_package_versions(packages, keep=["cloudpickle"])
+        packages = remove_package_versions_for_python_packages(packages, keep=["cloudpickle"])
     elif python_version == (3, 7):
         packages["cloudpickle"] = "<=0.7.0"
     elif python_version == (3, 6):
         # Allow the oldest python version to install the oldest compatible third-party dependencies
-        packages = remove_package_versions(packages, keep=None)
+        packages = remove_package_versions_for_python_packages(packages, keep=None)
         packages["cloudpickle"] = "<=0.7.0"
 
     return packages
@@ -510,9 +510,9 @@ def get_required_pyrosetta_python_packages_for_testing(platform, conda=False, st
         packages['python-blosc' if conda else 'blosc'] = '>=1.10.6'
 
     if static_versions:
-        packages = set_static_versions(packages)
+        packages = set_static_versions_for_python_packages(packages)
 
-    return get_packages_str(packages) if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else ''
+    return get_packages_str_for_python_packages(packages) if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else ''
 
 
 def get_required_pyrosetta_python_packages_for_release_package(platform, conda=True, static_versions=True, distributed_packages=False):
@@ -538,9 +538,9 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda=T
             packages = {'numpy': packages.get('numpy', DEFAULT_PACKAGE_VERSIONS['numpy'])}
 
     if static_versions:
-        packages = set_static_versions(packages)
+        packages = set_static_versions_for_python_packages(packages)
 
-    return get_packages_list(packages) if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else []
+    return get_packages_list_for_python_packages(packages) if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else []
 
 
 def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', options='', conda=None, verbose=False, skip_compile=False, version=None):
