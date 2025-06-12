@@ -41,7 +41,6 @@ from pyrosetta.toolbox import etable_atom_pair_energies, PyJobDistributor
 # PyRosetta-3 comapatability
 # WARNING WARNING WARNING: do not add anything extra imports/names here! If you feel strongly that something needs to be added please contact author first!
 from pyrosetta.rosetta.core.kinematics import FoldTree, MoveMap
-from pyrosetta.rosetta.core.io.pdb import dump_pdb
 from pyrosetta.rosetta.core.id import AtomID
 from pyrosetta.rosetta.core.scoring import ScoreFunction
 
