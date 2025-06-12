@@ -18,25 +18,29 @@ import os
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
 import random
+import subprocess
 import sys
 import tempfile
 import unittest
 import warnings
 
 try:
+    import cloudpickle
     from dask.distributed import Client, LocalCluster
 except ImportError:
     print(
         "Importing 'pyrosetta.tests.distributed.cluster.test_smoke' requires the "
-        + "third-party package 'dask' as a dependency!\n"
+        + "third-party packages 'dask' and 'cloudpickle' as dependencies!\n"
         + "Please install these packages into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/dask/\n"
+        + "https://pypi.org/project/cloudpickle/\n"
     )
     raise
 
 from pyrosetta import Pose
 from pyrosetta.distributed.packed_pose.core import PackedPose
+from pyrosetta.utility import get_package_version
 
 from pyrosetta.distributed.cluster import (
     PyRosettaCluster,
@@ -240,6 +244,28 @@ class SmokeTestMulti(unittest.TestCase):
         "test_memoryview": memoryview(bytes(3)),
     }
 
+    @classmethod
+    def setUpClass(cls):
+        cloudpickle_version = get_package_version("cloudpickle")
+        test_script = os.path.join(os.path.dirname(__file__), "skip_cloudpickle_version.py")
+        p = subprocess.run("{0} {1}".format(sys.executable, test_script), shell=True)
+        if p.returncode == 0:
+            print("Running {0} tests because cloudpickle version {1} can pickle Pose objects.".format(
+                    cls.__name__, cloudpickle_version
+                )
+            )
+        elif p.returncode == 1:
+            raise unittest.SkipTest(
+                "Skipping {0} tests because cloudpickle version {1} cannot pickle Pose objects.".format(
+                    cls.__name__, cloudpickle_version
+                )
+            )
+        else:
+            raise RuntimeError("Got exit code {0} from running {1}".format(
+                    p.returncode, test_script
+                )
+            )
+
     def test_smoke_multi(self):
         """Smoke test for PyRosettaCluster usage with multiple protocols."""
         import pyrosetta
@@ -268,8 +294,10 @@ class SmokeTestMulti(unittest.TestCase):
             import pyrosetta
             import pyrosetta.distributed.io as io
 
+            from pyrosetta.rosetta.core.pose import setPoseExtraScore
+
             pose = pyrosetta.io.pose_from_sequence(kwargs["seq"])
-            pyrosetta.rosetta.core.pose.setPoseExtraScore(pose, "test_setPoseExtraScore", 123)
+            setPoseExtraScore(pose, "test_setPoseExtraScore", 123)
 
             self.assertIn("task_packed_pose", kwargs)
             self.assertIsInstance(kwargs["task_packed_pose"], PackedPose)
@@ -292,7 +320,10 @@ class SmokeTestMulti(unittest.TestCase):
             import pyrosetta  # noqa
             import pyrosetta.distributed.io as io  # noqa
 
-            self.assertDictContainsSubset({"test_setPoseExtraScore": 123}, packed_pose.scores)
+            self.assertEqual(
+                dict(packed_pose.scores),
+                {**dict(packed_pose.scores), **{"test_setPoseExtraScore": 123}},
+            )
             packed_pose.scores.clear()
             self.assertDictEqual({}, packed_pose.scores)
             pose = io.to_pose(packed_pose)
@@ -336,7 +367,10 @@ class SmokeTestMulti(unittest.TestCase):
             import pyrosetta
             import pyrosetta.distributed.io as io
 
-            self.assertDictContainsSubset({"test_setPoseExtraScore": 123}, packed_pose.scores)
+            self.assertEqual(
+                dict(packed_pose.scores),
+                {**dict(packed_pose.scores), **{"test_setPoseExtraScore": 123}},
+            )
 
             self.assertIn("task_packed_pose", kwargs)
             self.assertIsInstance(kwargs["task_packed_pose"], PackedPose)
@@ -503,8 +537,10 @@ class SmokeTestMulti(unittest.TestCase):
         def my_first_protocol(packed_pose, **kwargs):
             import pyrosetta
 
+            from pyrosetta.rosetta.core.pose import setPoseExtraScore
+
             pose = pyrosetta.io.pose_from_sequence(kwargs["seq"])
-            pyrosetta.rosetta.core.pose.setPoseExtraScore(pose, "test_setPoseExtraScore", 123)
+            setPoseExtraScore(pose, "test_setPoseExtraScore", 123)
             self.assertEqual(kwargs["PyRosettaCluster_protocol_number"], 0)
             return [pose.clone() for _ in range(3)]
 
@@ -513,7 +549,10 @@ class SmokeTestMulti(unittest.TestCase):
             import pyrosetta  # noqa
             import pyrosetta.distributed.io as io
 
-            self.assertDictContainsSubset({"test_setPoseExtraScore": 123}, packed_pose.scores)
+            self.assertEqual(
+                dict(packed_pose.scores),
+                {**dict(packed_pose.scores), **{"test_setPoseExtraScore": 123}},
+            )
             packed_pose.scores.clear()
             self.assertDictEqual({}, packed_pose.scores)
             self.assertIn(kwargs["PyRosettaCluster_protocol_number"], [1, 2])
@@ -522,7 +561,10 @@ class SmokeTestMulti(unittest.TestCase):
                 yield pose.clone()
 
         def my_third_protocol(packed_pose, **kwargs):
-            self.assertDictContainsSubset({"test_setPoseExtraScore": 123}, packed_pose.scores)
+            self.assertEqual(
+                dict(packed_pose.scores),
+                {**dict(packed_pose.scores), **{"test_setPoseExtraScore": 123}},
+            )
             self.assertEqual(kwargs["PyRosettaCluster_protocol_number"], 2)
             return my_second_protocol(packed_pose, **kwargs)
 
