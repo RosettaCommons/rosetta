@@ -65,7 +65,7 @@ DEFAULT_PYTHON_VERSION='3.9'
 
 # Default package names (keys) and versions (values) from The Python Package Index (PyPI), not from conda channels
 # Versions must start with either '==', '<=', or '>='
-DEFAULT_PACKAGE_VERSIONS = {
+DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED = {
     "attrs": ">=19.3.0",
     "billiard": ">=3.6.3.0",
     "blosc": ">=1.8.3",
@@ -82,7 +82,7 @@ DEFAULT_PACKAGE_VERSIONS = {
     "scipy": ">=1.4.1",
     "traitlets": ">=4.3.3",
 }
-assert all(any(v.startswith(operator) for operator in ('==', '<=', '>=')) for v in DEFAULT_PACKAGE_VERSIONS.values()), \
+assert all(any(v.startswith(operator) for operator in ('==', '<=', '>=')) for v in DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED.values()), \
     "Default package version values must start with either '==', '<=', or '>='."
 
 # Standard funtions and classes below ---------------------------------------------------------------------------------
@@ -481,13 +481,13 @@ def update_packages_for_conda(packages, conda):
     ''' Update package versions if installation uses conda. '''
     if conda:
         # See python-blosc on conda-forge channel: https://anaconda.org/conda-forge/python-blosc
-        packages["python-blosc"] = packages.pop("blosc", DEFAULT_PACKAGE_VERSIONS["blosc"])
+        packages["python-blosc"] = packages.pop("blosc", DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED["blosc"])
 
         # See xz on conda-forge channel: https://anaconda.org/conda-forge/xz
-        packages["xz"] = packages.pop("python-xz", DEFAULT_PACKAGE_VERSIONS["python-xz"])
+        packages["xz"] = packages.pop("python-xz", DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED["python-xz"])
 
         # See py3dmol on conda-forge channel: https://anaconda.org/conda-forge/py3dmol
-        packages["py3dmol"] = packages.pop("py3Dmol", DEFAULT_PACKAGE_VERSIONS["py3Dmol"])
+        packages["py3dmol"] = packages.pop("py3Dmol", DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED["py3Dmol"])
 
     return packages
 
@@ -502,7 +502,7 @@ def get_required_pyrosetta_python_packages_for_testing(platform, conda=False, st
     '''
     python_version = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
-    packages = copy.deepcopy(DEFAULT_PACKAGE_VERSIONS)
+    packages = copy.deepcopy(DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED)
     packages = update_packages_for_python_version(packages, python_version)
     packages = update_packages_for_conda(packages, conda)
 
@@ -528,14 +528,14 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda=T
 
     python_version = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
-    packages = copy.deepcopy(DEFAULT_PACKAGE_VERSIONS)
+    packages = copy.deepcopy(DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED)
     packages = update_packages_for_python_version(packages, python_version)
     packages = update_packages_for_conda(packages, conda)
 
     if not distributed_packages:
         # Keep packages list lean by removing extra dependencies
         if python_version >= (3, 9):
-            packages = {'numpy': packages.get('numpy', DEFAULT_PACKAGE_VERSIONS['numpy'])}
+            packages = {'numpy': packages.get('numpy', DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED['numpy'])}
 
     if static_versions:
         packages = set_static_versions_for_python_packages(packages)
