@@ -464,7 +464,7 @@ def pyrosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_driv
         #if debug: res, output = 0, 'Release script was invoked with `--debug` flag, - skipping PyRosetta unit tests run...\n'
         if False  and  kind == 'Debug': res, output = 0, 'Debug build, skipping PyRosetta unit tests run...\n'
         else:
-            packages = ' '.join( get_required_pyrosetta_python_packages_for_testing(platform) ).replace('>', '=').replace('<', '=')
+            packages: str = get_required_pyrosetta_python_packages_for_testing(platform)
             python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
 
             command_line = f'{python_virtual_environment.activate} && cd {result.pyrosetta_path}/build && {python_virtual_environment.python} {rosetta_dir}/source/test/timelimit.py {suite_timeout} {python_virtual_environment.python} self-test.py {gui_flag} -j{jobs} --timeout {test_timeout}'
@@ -553,7 +553,7 @@ def pyrosetta_documentation(kind, rosetta_dir, working_dir, platform, config, hp
 
     result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, skip_compile=debug, version=version_file)
 
-    packages = ' '.join( get_required_pyrosetta_python_packages_for_testing(platform) ).replace('>', '=').replace('<', '=') + ' sphinx==5.2.3'
+    packages: str = get_required_pyrosetta_python_packages_for_testing(platform) + ' sphinx==5.2.3'
     python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
 
     res = result.exitcode
@@ -701,7 +701,7 @@ def native_libc_pyrosetta_conda_release(kind, rosetta_dir, working_dir, platform
         else:
             distr_file_list = os.listdir(pyrosetta_path+'/build')
 
-            packages = ' '.join( get_required_pyrosetta_python_packages_for_testing(platform) ).replace('>', '=').replace('<', '=')
+            packages: str = get_required_pyrosetta_python_packages_for_testing(platform, conda=True)
 
             local_python = local_python_install(platform, config)
             python_virtual_environment = setup_persistent_python_virtual_environment(local_python, packages)

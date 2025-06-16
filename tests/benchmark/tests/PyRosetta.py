@@ -78,7 +78,7 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
         distr_file_list = os.listdir(result.pyrosetta_path+'/build')
 
-        packages = ' '.join( get_required_pyrosetta_python_packages_for_testing(platform) ).replace('>', '=').replace('<', '=')
+        packages: str = get_required_pyrosetta_python_packages_for_testing(platform, static_versions=False)
 
         python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
 

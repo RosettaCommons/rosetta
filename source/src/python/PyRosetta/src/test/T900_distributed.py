@@ -1,12 +1,9 @@
 from __future__ import print_function
+import shutil
 import sys
 
 
-if tuple(sys.version_info) < (3, 5):
-    print("Unsupported python version for pyrosetta.distributed: %s" % str( sys.version_info ) )
-    sys.exit(0)
-
-elif tuple(sys.version_info) > (3, 8):
+if tuple(sys.version_info) < (3, 6):
     print("Unsupported python version for pyrosetta.distributed: %s" % str( sys.version_info ) )
     sys.exit(0)
 
@@ -20,6 +17,27 @@ import subprocess
 if not hasattr(pyrosetta.rosetta, "cereal"):
     print("Unsupported non-serialization build for pyrosetta.distributed.")
     sys.exit(0)
+
+if shutil.which("conda"):
+    try:
+        export = subprocess.check_output(
+            "conda env export --prefix $(conda env list | grep '*' | awk '{print $NF}')",
+            shell=True,
+            text=True,
+        )
+        print("Current conda environment:", export, sep="\n")
+    except subprocess.CalledProcessError as ex:
+        print("Printing conda environment failed with return code: {0}.".format(ex.returncode))
+else:
+    try:
+        freeze = subprocess.check_output(
+            "{0} -m pip freeze".format(sys.executable),
+            shell=True,
+            text=True,
+        )
+        print("Current pip environment:", freeze, sep="\n")
+    except subprocess.CalledProcessError as ex:
+        print("Printing pip environment failed with return code: {0}.".format(ex.returncode))
 
 
 def e(cmd):
