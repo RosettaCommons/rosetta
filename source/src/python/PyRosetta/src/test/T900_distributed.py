@@ -18,6 +18,18 @@ if not hasattr(pyrosetta.rosetta, "cereal"):
     print("Unsupported non-serialization build for pyrosetta.distributed.")
     sys.exit(0)
 
+
+# check if required packages was installed
+try:
+    import attrs
+    import cloudpickle
+    import dask
+    import pandas
+except ImportError as e:
+    print(f"{e}\nSome packages required for pyrosetta.distributed is missing, skipping the tests...")
+    sys.exit(0)
+
+
 if shutil.which("conda"):
     try:
         export = subprocess.check_output(
