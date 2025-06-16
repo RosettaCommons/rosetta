@@ -208,11 +208,6 @@ Args:
     dry_run: A `bool` object specifying whether or not to save '.pdb' files to
         disk. If `True`, then do not write '.pdb' or '.pdb.bz2' files to disk.
         Default: False
-    yield_results: A `bool` object specifying whether or not to yield results when calling
-        a PyRosettaCluster instance. Using the `PyRosettaCluster().distribute()` method
-        automatically sets this attribute to `False`, and using the `PyRosettaCluster()
-        .generate()` method automatically sets this attribute to `True`.
-        Default: False
 
 Returns:
     A PyRosettaCluster instance.
@@ -562,6 +557,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
     )
     yield_results = attr.ib(
         type=bool,
+        init=False,
         default=False,
         validator=attr.validators.instance_of(bool),
         converter=_parse_yield_results,
@@ -625,7 +621,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         self.serializer = Serialization(compression=self.compression)
         self.clients_dict = self._setup_clients_dict()
 
-    def __call__(
+    def _run(
         self,
         *args: Any,
         protocols: Any = None,
@@ -793,7 +789,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         resources: Any = None,
     ) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[Any, Any]], None, None]]:
         self.yield_results = True
-        for result in self.__call__(
+        for result in self._run(
             *args,
             protocols=protocols,
             clients_indices=clients_indices,
@@ -809,7 +805,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         resources: Any = None,
     ) -> Optional[NoReturn]:
         self.yield_results = False
-        for _ in self.__call__(
+        for _ in self._run(
             *args,
             protocols=protocols,
             clients_indices=clients_indices,
@@ -817,12 +813,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         ):
             pass
 
-    distribute.__doc__ = __call__.__doc__ + """
+    distribute.__doc__ = _run.__doc__ + """
         Returns:
             None
         """
 
-    generate.__doc__ = __call__.__doc__ + """
+    generate.__doc__ = _run.__doc__ + """
         Extra examples:
 
         # Iterate over results in real-time as they are yielded from the cluster:
