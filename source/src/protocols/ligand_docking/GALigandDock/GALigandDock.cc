@@ -594,11 +594,11 @@ GALigandDock::apply( pose::Pose & pose )
 				core::pose::getPoseExtraScore( pose, "dG", dG );
 
 				core::Size nheavyatoms = pose.residue( lig_resno ).nheavyatoms() - pose.residue( lig_resno ).n_virtual_atoms();
-				
+
 				//Sources for all values used to calculate expected values and Z-scores
 				//can be found in the EMERALD-ID manuscript (Muenks et al. 2025).
 				//Constants in expected value calculations stem from a linear regression model
-				//determined from ligand-bound cryoEM structures 
+				//determined from ligand-bound cryoEM structures
 				core::Real expected_dG = -12.4443 + (-0.4918 * nheavyatoms);
 
 				core::Real pose_cc = gridscore->calculate_pose_density_correlation( pose );
