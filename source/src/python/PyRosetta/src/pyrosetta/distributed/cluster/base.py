@@ -25,7 +25,7 @@ import pyrosetta.distributed
 
 from datetime import datetime
 from functools import wraps
-from pyrosetta.distributed.cluster.converters import _parse_protocols, _parse_yield_results
+from pyrosetta.distributed.cluster.converters import _parse_protocols
 from pyrosetta.distributed.cluster.initialization import (
     _get_residue_type_set_name3 as _get_residue_type_set,
 )
@@ -169,7 +169,7 @@ class TaskBase(Generic[G]):
         return kwargs
 
     def _setup_protocols_protocol_seed(
-        self, args: Tuple[Any, ...], protocols: Any, clients_indices: Any, resources: Any, yield_results: Any
+        self, args: Tuple[Any, ...], protocols: Any, clients_indices: Any, resources: Any,
     ) -> Tuple[List[Callable[..., Any]], Callable[..., Any], Optional[str], int, Optional[Dict[Any, Any]]]:
         """Parse, validate, and setup the user-provided PyRosetta protocol(s)."""
 
@@ -179,13 +179,12 @@ class TaskBase(Generic[G]):
         _validate_resources(resources, _protocols)
         _clients_index = self._get_clients_index(clients_indices, _protocols)
         _resource = self._get_resource(resources, _protocols)
-        _yield_results = _parse_yield_results(yield_results)
 
         _protocols, _protocol, _seed = self._get_task_state(
             _validate_protocols_seeds_decoy_ids(_protocols, self.seeds, self.decoy_ids)
         )
 
-        return _protocols, _protocol, _seed, _clients_index, _resource, _yield_results
+        return _protocols, _protocol, _seed, _clients_index, _resource
 
 
 def capture_task_metadata(func: M) -> M:

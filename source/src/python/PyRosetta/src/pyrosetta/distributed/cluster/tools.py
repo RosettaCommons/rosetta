@@ -28,7 +28,6 @@ import os
 import shutil
 import subprocess
 import tempfile
-import types
 
 from datetime import datetime
 from functools import wraps
@@ -54,9 +53,11 @@ from typing import (
     Any,
     Callable,
     Dict,
+    Generator,
     List,
     NoReturn,
     Optional,
+    Tuple,
     TypeVar,
     Union,
     cast,
@@ -64,7 +65,6 @@ from typing import (
 
 
 P = TypeVar("P", bound=Callable[..., Any])
-R = TypeVar("R", bound=types.GeneratorType)
 
 
 def _print_conda_warnings() -> None:
@@ -520,49 +520,51 @@ def reproduce(
     )
 
 
-def produce(**kwargs: Any) -> Optional[Union[NoReturn, R]]:
+def produce(**kwargs: Any) -> Optional[NoReturn]:
     """
     `PyRosettaCluster().distribute()` shim requiring the 'protocols' keyword argument, and optionally
     any PyRosettaCluster keyword arguments or the 'clients_indices' keyword argument (when using
-    the `PyRosettaCluster(clients=...)` keyword argument), or the 'resources' or the 'yield_results' 
-    keyword arguments.
+    the `PyRosettaCluster(clients=...)` keyword argument), or the 'resources' keyword argument.
 
     Args:
         **kwargs: See `PyRosettaCluster` docstring. The keyword arguments must also include
             'protocols', an iterable object of function or generator objects specifying
             an ordered sequence of user-defined PyRosetta protocols to execute for
             the simulation (see `PyRosettaCluster().distribute` docstring). The keyword arguments
-            may also optionally include 'clients_indices', 'resources', and/or 'yield_results'
-            (see `PyRosettaCluster().distribute` docstring).
-
-    Yields:
-        If the 'yield_results' parameter is `True`, yield (PackedPose, dict) tuples from the most 
-        recently run user-provided PyRosetta protocol if `PyRosettaCluster(save_all=True)`
-        otherwise yield results from the final user-defined PyRosetta protocol.
-
-    Returns:
-        None
+            may also optionally include 'clients_indices' or 'resources' (see
+            `PyRosettaCluster().distribute` docstring).
     """
-
     protocols = kwargs.pop("protocols", None)
     clients_indices = kwargs.pop("clients_indices", None)
     resources = kwargs.pop("resources", None)
-    yield_results = kwargs.pop("yield_results", None)
-    if _parse_yield_results(yield_results):
-        for result in PyRosettaCluster(**kwargs).distribute(
-            protocols=protocols,
-            clients_indices=clients_indices,
-            resources=resources,
-            yield_results=yield_results,
-        ):
-            yield result
-    else:
-        PyRosettaCluster(**kwargs).distribute(
-            protocols=protocols,
-            clients_indices=clients_indices,
-            resources=resources,
-            yield_results=yield_results,
-        )
+    PyRosettaCluster(**kwargs).distribute(
+        protocols=protocols,
+        clients_indices=clients_indices,
+        resources=resources,
+    )
 
+run: Callable[..., Optional[NoReturn]] = produce
 
-run: Callable[..., Optional[Union[NoReturn, R]]] = produce
+@wraps(produce, assigned=("__doc__",), updated=())
+def iterate(**kwargs: Any) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[Any, Any]], None, None]]:
+    protocols = kwargs.pop("protocols", None)
+    clients_indices = kwargs.pop("clients_indices", None)
+    resources = kwargs.pop("resources", None)
+    for result in PyRosettaCluster(**kwargs).generate(
+        protocols=protocols,
+        clients_indices=clients_indices,
+        resources=resources,
+    ):
+        yield result
+
+produce.__doc__ += """
+    Returns:
+        None
+    """
+iterate.__doc__ = iterate.__doc__.replace(
+    "PyRosettaCluster().distribute", "PyRosettaCluster().generate"
+) + """
+    Yields:
+        (PackedPose, dict) tuples from the most recently run user-provided PyRosetta protocol if
+        `PyRosettaCluster(save_all=True)` otherwise from the final user-defined PyRosetta protocol.
+    """

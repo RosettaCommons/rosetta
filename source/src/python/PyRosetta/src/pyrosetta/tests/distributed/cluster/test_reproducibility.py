@@ -465,7 +465,7 @@ class TestReproducibilityMulti(unittest.TestCase):
             self.assertEqual(len(seeds), len(protocols))
 
             _ = list(
-                    PyRosettaCluster(
+                PyRosettaCluster(
                     tasks=tasks,
                     input_packed_pose=input_pose,
                     seeds=seeds,
@@ -497,7 +497,7 @@ class TestReproducibilityMulti(unittest.TestCase):
                     save_all=False,
                     system_info=None,
                     pyrosetta_build=None,
-                ).distribute(*protocols, yield_results=True)
+                ).generate(*protocols)
             )
 
             with open(os.path.join(output_path, "scores.json"), "r") as f:
