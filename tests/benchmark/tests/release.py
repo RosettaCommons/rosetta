@@ -464,7 +464,7 @@ def pyrosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_driv
         #if debug: res, output = 0, 'Release script was invoked with `--debug` flag, - skipping PyRosetta unit tests run...\n'
         if False  and  kind == 'Debug': res, output = 0, 'Debug build, skipping PyRosetta unit tests run...\n'
         else:
-            packages: str = get_required_pyrosetta_python_packages_for_testing(platform)
+            packages: str = get_required_pyrosetta_python_packages_for_release_package(platform, conda=False)
             python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
 
             command_line = f'{python_virtual_environment.activate} && cd {result.pyrosetta_path}/build && {python_virtual_environment.python} {rosetta_dir}/source/test/timelimit.py {suite_timeout} {python_virtual_environment.python} self-test.py {gui_flag} -j{jobs} --timeout {test_timeout}'
@@ -701,7 +701,7 @@ def native_libc_pyrosetta_conda_release(kind, rosetta_dir, working_dir, platform
         else:
             distr_file_list = os.listdir(pyrosetta_path+'/build')
 
-            packages: str = get_required_pyrosetta_python_packages_for_testing(platform, conda=True)
+            packages: str = get_required_pyrosetta_python_packages_for_release_package(platform, conda=True)
 
             local_python = local_python_install(platform, config)
             python_virtual_environment = setup_persistent_python_virtual_environment(local_python, packages)
