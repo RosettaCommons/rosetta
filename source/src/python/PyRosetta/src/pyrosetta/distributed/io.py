@@ -7,6 +7,7 @@ import pyrosetta.io
 import pyrosetta.rosetta.utility as utility
 import pyrosetta.rosetta.core.pose as pose
 import pyrosetta.rosetta.core.import_pose as import_pose
+import pyrosetta.rosetta.protocols.loops as loops
 import pyrosetta.rosetta.core.scoring as scoring
 import pyrosetta.distributed.tasks.score as score
 
@@ -42,6 +43,9 @@ __all__ = [
     "dump_pdb_bz2",
     "dump_base64",
     "dump_pickle",
+    "create_score_function",
+    "get_fa_scorefxn",
+    "get_score_function",
 ]
 
 # Input functions
@@ -317,3 +321,31 @@ def dump_pickle(inp, output_filename):
     with open(output_filename, "wb") as f:
         f.write(to_pickle(inp))
     return True
+
+def create_score_function(*args, **kwargs):
+    """
+    Returns a `ScorePoseTask` instance.
+    Input `*args` and `**kwargs` are passed to `ScorePoseTask`.
+
+    @klimaj
+    """
+    return score.ScorePoseTask(*args, **kwargs)
+
+def get_fa_scorefxn():
+    """
+    Returns a `ScorePoseTask` instance with `weights`
+    from `pyrosetta.rosetta.protocols.loops.get_fa_scorefxn()`.
+
+    @klimaj
+    """
+    weights = loops.get_fa_scorefxn().get_name()
+    return score.ScorePoseTask(weights=weights, patch=None)
+
+def get_score_function():
+    """
+    Returns a `ScorePoseTask` instance with `weights` and `patch`
+    from `pyrosetta.rosetta.core.scoring.get_score_function()`.
+
+    @klimaj
+    """
+    return score.ScorePoseTask(weights=None, patch=None)

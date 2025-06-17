@@ -6,8 +6,6 @@ import pyrosetta.distributed.packed_pose as packed_pose
 import pyrosetta.distributed.tasks.taskbase as taskbase
 import pyrosetta.rosetta.core.scoring as scoring
 
-from pyrosetta.rosetta.protocols.loops import get_fa_scorefxn
-
 
 class ScorePoseTask(taskbase.TaskBase):
     weights = traitlets.CUnicode(allow_none=True)
@@ -39,34 +37,3 @@ class ScorePoseTask(taskbase.TaskBase):
         with self.protocol_lock:
             self.score_function(work_pose)
         return packed_pose.PackedPose(work_pose)
-
-
-def create_score_function(*args, **kwargs):
-    """
-    Returns a `ScorePoseTask` instance.
-    Input `*args` and `**kwargs` are passed to `ScorePoseTask`.
-
-    @klimaj
-    """
-    return ScorePoseTask(*args, **kwargs)
-
-
-def get_fa_scorefxn():
-    """
-    Returns a `ScorePoseTask` instance with `weights`
-    from `pyrosetta.rosetta.protocols.loops.get_fa_scorefxn()`.
-
-    @klimaj
-    """
-    weights = get_fa_scorefxn().get_name()
-    return ScorePoseTask(weights=weights, patch=None)
-
-
-def get_score_function():
-    """
-    Returns a `ScorePoseTask` instance with `weights` and `patch`
-    from `pyrosetta.rosetta.core.scoring.get_score_function()`.
-
-    @klimaj
-    """
-    return ScorePoseTask(weights=None, patch=None)
