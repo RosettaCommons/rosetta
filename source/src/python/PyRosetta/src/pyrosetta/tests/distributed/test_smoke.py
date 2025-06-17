@@ -81,6 +81,15 @@ class SmokeTestDistributed(unittest.TestCase):
             score_result["total_score"], rs_result["total_score"]
         )
 
+        score_task = io.create_score_function("score12")
+        self.assertIsInstance(score_task, score.ScorePoseTask)
+
+        score_task = io.get_fa_scorefxn()
+        self.assertIsInstance(score_task, score.ScorePoseTask)
+
+        score_task = io.get_score_function()
+        self.assertIsInstance(score_task, score.ScorePoseTask)
+
     def test_update_score(self):
         """PackedPose.update_score returns an updated copy.
 
