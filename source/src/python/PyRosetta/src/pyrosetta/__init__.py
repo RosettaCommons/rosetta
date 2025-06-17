@@ -158,7 +158,7 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
         set_logging_handler = "interactive"
     elif notebook is not None:
         warnings.warn(
-            "pyrosetta.init 'notebook' argument is deprecated and may be removed in 2018. "
+            "pyrosetta.init 'notebook' argument is deprecated and may be removed in a future release. "
             "See set_logging_handler='interactive'.",
             stacklevel=2
         )
@@ -188,8 +188,11 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
     v = rosetta.utility.vector1_string()
     v.extend(args)
 
-    if not silent: print( version() )
-    logger.info( version() )
+    if not silent:
+        print( version() )
+        logger.info( version() )
+    else:
+        logger.debug( version() )
     rosetta.protocols.init.init(v)
     pyrosetta.protocols.h5_fragment_store_provider.init_H5FragmentStoreProvider()
     pyrosetta.protocols.h5_structure_store_provider.init_H5StructureStoreProvider()
@@ -206,14 +209,14 @@ def _version_string():
 
 def version():
     return (
-        '┌──────────────────────────────────────────────────────────────────────────────┐\n'
-        '│                                 PyRosetta-4                                  │\n'
-        '│              Created in JHU by Sergey Lyskov and PyRosetta Team              │\n'
-        '│              (C) Copyright Rosetta Commons Member Institutions               │\n'
-        '│                                                                              │\n'
-        '│ NOTE: USE OF PyRosetta FOR COMMERCIAL PURPOSES REQUIRE PURCHASE OF A LICENSE │\n'
-        '│         See LICENSE.PyRosetta.md or email license@uw.edu for details         │\n'
-        '└──────────────────────────────────────────────────────────────────────────────┘\n'
+        '┌───────────────────────────────────────────────────────────────────────────────┐\n'
+        '│                                  PyRosetta-4                                  │\n'
+        '│               Created in JHU by Sergey Lyskov and PyRosetta Team              │\n'
+        '│               (C) Copyright Rosetta Commons Member Institutions               │\n'
+        '│                                                                               │\n'
+        '│ NOTE: USE OF PyRosetta FOR COMMERCIAL PURPOSES REQUIRES PURCHASE OF A LICENSE │\n'
+        '│          See LICENSE.PyRosetta.md or email license@uw.edu for details         │\n'
+        '└───────────────────────────────────────────────────────────────────────────────┘\n'
     ) + \
     'PyRosetta-4 ' + rosetta.utility.Version.date().split('-').pop(0) + \
     ' [Rosetta ' + _version_string() + ' ' + rosetta.utility.Version.date() + \
