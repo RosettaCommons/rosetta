@@ -7,6 +7,8 @@ import pyrosetta.io
 import pyrosetta.rosetta.utility as utility
 import pyrosetta.rosetta.core.pose as pose
 import pyrosetta.rosetta.core.import_pose as import_pose
+import pyrosetta.rosetta.core.scoring as scoring
+import pyrosetta.distributed.tasks.score as score
 
 from pyrosetta.distributed import requires_init
 from pyrosetta.distributed.packed_pose import (
@@ -239,12 +241,22 @@ def dump_pdb(inp, output_filename):
 
 @requires_init
 def dump_scored_pdb(inp, output_filename, scorefxn):
-    """Dump a scored PDB file from a `PackedPose` or `Pose` object, output filename
-    and score function.
+    """
+    Dump a scored PDB file from a `PackedPose` or `Pose` object, output filename
+    and score function. The score function may be a `str` object representing the
+    weights passed to `ScorePoseTask`, a `ScorePoseTask` instance, or a
+    `ScoreFunction` instance.
 
     @klimaj
     """
-    return pyrosetta.io.dump_scored_pdb(to_pose(inp), output_filename, scorefxn)
+    if isinstance(scorefxn, str):
+        scorefxn = score.ScorePoseTask(weights=scorefxn, patch=None)
+    if isinstance(scorefxn, score.ScorePoseTask):
+        return pyrosetta.io.dump_pdb(scorefxn(inp).pose, output_filename)
+    elif isinstance(scorefxn, scoring.ScoreFunction):
+        return pyrosetta.io.dump_scored_pdb(to_pose(inp), output_filename, scorefxn)
+    else:
+        raise ValueError(f"Unsupported argument parameter type for 'scorefxn': {type(scorefxn)}")
 
 @requires_init
 def dump_multimodel_pdb(inp, output_filename):
