@@ -534,7 +534,7 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda=T
 
     if not distributed_packages:
         # Keep packages list lean by removing extra dependencies
-        if python_version >= (3, 9):
+        if python_version >= (3, 9) or ( platform['os'] == 'mac' and python_version >= (3, 8) ):
             packages = {'numpy': packages.get('numpy', DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED['numpy'])}
 
     if static_versions:
