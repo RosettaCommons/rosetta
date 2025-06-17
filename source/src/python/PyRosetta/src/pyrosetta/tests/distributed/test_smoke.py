@@ -197,10 +197,12 @@ class SmokeTestDistributed(unittest.TestCase):
             msg="Score memory address is identical after clone.",
         )
 
-    @unittest.skip("Used in `test_packed_pose_io` testing framework.")
     def roundtrip(self, func, ext, input_packed_pose, workdir, scorefxn):
+        """Used in `test_packed_pose_io` testing framework."""
         out_file = os.path.join(workdir, f"tmp.{ext}")
         if ext == "scored.pdb":
+            func(input_packed_pose.pose, out_file, "score12")
+            func(input_packed_pose, out_file, score.ScorePoseTask(weights="ref2015_cart"))
             func(input_packed_pose, out_file, scorefxn)
         else:
             func(input_packed_pose, out_file)
@@ -226,7 +228,7 @@ class SmokeTestDistributed(unittest.TestCase):
                     )
         # Test score recovery
         self.assertTrue(dict(input_packed_pose.pose.scores), msg=f"Pose scores dictionary is empty for extension '{ext}'.")
-        if ext in ("pdb", "cif", "mmtf", "pdb.bz2", "bz2"):
+        if ext in ("pdb", "scored.pdb", "cif", "mmtf", "pdb.bz2", "bz2"):
             self.assertFalse(dict(output_packed_pose.pose.scores), msg=f"Pose scores dictionary has items for extension '{ext}'.")
             self.assertNotEqual(
                 input_packed_pose.scores,
