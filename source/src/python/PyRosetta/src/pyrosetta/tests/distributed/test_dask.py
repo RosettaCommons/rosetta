@@ -16,7 +16,12 @@ import pyrosetta.distributed.io as io
 import pyrosetta.distributed.packed_pose as packed_pose
 import pyrosetta.distributed.tasks.rosetta_scripts as rosetta_scripts
 
+from pyrosetta.utility import get_package_version
 
+
+__dask_version__ = get_package_version("dask")
+
+@unittest.skipIf(__dask_version__ is None, "Skipping because 'dask' version is undetermined.")
 class TestDaskDistribution(unittest.TestCase):
     
     _dask_scheduler = None
@@ -25,9 +30,23 @@ class TestDaskDistribution(unittest.TestCase):
         
         def setUp(self, local_dir=workdir):
             if not self._dask_scheduler:
-                self.local_cluster = dask.distributed.LocalCluster(
-                    n_workers=2, threads_per_worker=2, diagnostics_port=None, local_dir=local_dir
-                )
+                n_workers = 2
+                threads_per_worker = 2
+                diagnostics_port = None
+                if __dask_version__ <= (2, 1, 0):
+                    self.local_cluster = dask.distributed.LocalCluster(
+                        n_workers=n_workers,
+                        threads_per_worker=threads_per_worker,
+                        diagnostics_port=diagnostics_port,
+                        local_dir=local_dir,
+                    )
+                else:
+                    self.local_cluster = dask.distributed.LocalCluster(
+                        n_workers=n_workers,
+                        threads_per_worker=threads_per_worker,
+                        diagnostics_port=diagnostics_port,
+                        local_directory=local_dir,
+                    )
                 cluster = self.local_cluster
             else:
                 self.local_cluster = None
