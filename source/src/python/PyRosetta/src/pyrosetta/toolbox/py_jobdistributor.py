@@ -10,9 +10,13 @@ import json
 import os
 import pyrosetta
 import random
+import warnings
+from pyrosetta.bindings.pose import PoseScoreSerializer
 from pyrosetta.rosetta.core.io.raw_data import ScoreMap
 from sys import exit
 
+
+_serializer = PoseScoreSerializer()
 
 def output_scorefile(pose, pdb_name, current_name, scorefilepath, scorefxn, nstruct,
                      native_pose=None, additional_decoy_info=None, json_format=True):
@@ -43,6 +47,20 @@ def output_scorefile(pose, pdb_name, current_name, scorefilepath, scorefxn, nstr
         + list(ScoreMap.get_arbitrary_score_data_from_pose(pose).items())
         + list(ScoreMap.get_energies_map_from_scored_pose(pose).items())
     )
+    # Deserialize arbitrary python types from `ScoreMap.get_arbitrary_string_data_from_pose`
+    scores = {scoretype: _serializer.maybe_decode(value) for scoretype, value in scores.items()}
+    # Confirm that arbitrary python types can be JSON-encoded, otherwise remove them
+    for key in list(scores.keys()):
+        try:
+            json.dumps(scores[key])
+        except:
+            warnings.warn(
+                "Removing score key '{0}' with value of type '{1}' before ".format(key, type(scores[key]))
+                + "saving the score file! Only JSON-serializable score values can be written to the "
+                + "score file. Consider custom serializing the value to save this score or removing the "
+                + "key from the `pose.scores` dictionary to remove this warning message."
+            )
+            scores.pop(key, None)
 
     entries.update(scores)
     if native_pose and "rmsd" not in entries:
