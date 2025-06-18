@@ -223,6 +223,121 @@ class TestPoseIO(unittest.TestCase):
                 msg="Sequences diverge with IO.",
             )
 
+    def test_cif_io(self):
+        with tempfile.TemporaryDirectory() as workdir:
+            in_pose = pyrosetta.io.pose_from_sequence("TEST/CIF")
+            cif_file = os.path.join(workdir, "tmp.cif")
+            pyrosetta.io.dump_cif(in_pose, cif_file)
+            out_pose = pyrosetta.io.pose_from_file(cif_file)
+            self.assertEqual(
+                in_pose.annotated_sequence(),
+                out_pose.annotated_sequence(),
+                msg="Sequence recovery failed."
+            )
+            for res in range(1, in_pose.size() + 1):
+                for atom in range(1, in_pose.residue(res).natoms() + 1):
+                    atom_input = in_pose.residue(res).xyz(atom)
+                    atom_output = out_pose.residue(res).xyz(atom)
+                    for axis in "xyz":
+                        self.assertAlmostEqual(
+                            getattr(atom_input, axis),
+                            getattr(atom_output, axis),
+                            places=4,
+                            msg="Coordinate recovery failed."
+                        )
+
+    def test_mmtf_io(self):
+        with tempfile.TemporaryDirectory() as workdir:
+            in_pose = pyrosetta.io.pose_from_sequence("TEST/MMTF")
+            mmtf_file = os.path.join(workdir, "tmp.mmtf")
+            pyrosetta.io.dump_mmtf(in_pose, mmtf_file)
+            out_pose = pyrosetta.io.pose_from_file(mmtf_file)
+            self.assertEqual(
+                in_pose.annotated_sequence(),
+                out_pose.annotated_sequence(),
+                msg="Sequence recovery failed."
+            )
+            for res in range(1, in_pose.size() + 1):
+                for atom in range(1, in_pose.residue(res).natoms() + 1):
+                    atom_input = in_pose.residue(res).xyz(atom)
+                    atom_output = out_pose.residue(res).xyz(atom)
+                    for axis in "xyz":
+                        self.assertAlmostEqual(
+                            getattr(atom_input, axis),
+                            getattr(atom_output, axis),
+                            places=3,
+                            msg="Coordinate recovery failed."
+                        )
+
+    def test_file_io(self):
+        scorefxn = pyrosetta.create_score_function("ref2015")
+        with tempfile.TemporaryDirectory() as workdir:
+            in_pose = pyrosetta.io.pose_from_sequence("TEST/FILE")
+            for filetype in ("pdb", "mmtf", "cif"):
+                file = os.path.join(workdir, f"tmp.{filetype}")
+                if filetype == "pdb":
+                    pyrosetta.io.dump_scored_pdb(in_pose, file, scorefxn)
+                else:
+                    pyrosetta.io.dump_file(in_pose, file)
+                out_pose = pyrosetta.io.pose_from_file(file)
+                self.assertEqual(
+                    in_pose.annotated_sequence(),
+                    out_pose.annotated_sequence(),
+                    msg="Sequence recovery failed."
+                )
+                for res in range(1, in_pose.size() + 1):
+                    for atom in range(1, in_pose.residue(res).natoms() + 1):
+                        atom_input = in_pose.residue(res).xyz(atom)
+                        atom_output = out_pose.residue(res).xyz(atom)
+                        for axis in "xyz":
+                            self.assertAlmostEqual(
+                                getattr(atom_input, axis),
+                                getattr(atom_output, axis),
+                                places=3,
+                                msg="Coordinate recovery failed."
+                            )
+
+    def test_multimodel_pdb_io(self):
+        with tempfile.TemporaryDirectory() as workdir:
+            seqs = ["TESTING/" + "MANY" * i + "/SEQS" for i in range(1, 8)]
+            in_poses = list(pyrosetta.io.poses_from_sequences(seqs))
+            pdb_file = os.path.join(workdir, "tmp.pdb")
+            pyrosetta.io.dump_multimodel_pdb(in_poses, pdb_file)
+            with open(pdb_file, "r") as f:
+                lines = f.readlines()
+            model_lines = [line for line in lines if line.startswith("MODEL")]
+            self.assertEqual(
+                len(model_lines),
+                len(in_poses),
+                msg="Number of models recovery failed."
+            )
+            out_poses = list(pyrosetta.io.poses_from_multimodel_pdb(pdb_file))
+            self.assertEqual(
+                len(out_poses),
+                len(in_poses),
+                msg="Number of poses recovery failed."
+            )
+            for i in range(len(out_poses)):
+                in_pose = in_poses[i]
+                out_pose = out_poses[i]
+                model = i + 1
+                self.assertEqual(
+                    out_pose.annotated_sequence(),
+                    in_pose.annotated_sequence(),
+                    msg=f"Annotated sequence recovery failed for model {model}."
+                )
+                for res in range(1, in_pose.size() + 1):
+                    for atom in range(1, in_pose.residue(res).natoms() + 1):
+                        atom_input = in_pose.residue(res).xyz(atom)
+                        atom_output = out_pose.residue(res).xyz(atom)
+                        for axis in "xyz":
+                            self.assertAlmostEqual(
+                                getattr(atom_input, axis),
+                                getattr(atom_output, axis),
+                                places=3,
+                                msg=f"Coordinate recovery failed for model {model}."
+                            )
+
 
 class TestPosesToSilent(unittest.TestCase):
 

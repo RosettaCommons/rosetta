@@ -41,7 +41,6 @@ from pyrosetta.toolbox import etable_atom_pair_energies, PyJobDistributor
 # PyRosetta-3 comapatability
 # WARNING WARNING WARNING: do not add anything extra imports/names here! If you feel strongly that something needs to be added please contact author first!
 from pyrosetta.rosetta.core.kinematics import FoldTree, MoveMap
-from pyrosetta.rosetta.core.io.pdb import dump_pdb
 from pyrosetta.rosetta.core.id import AtomID
 from pyrosetta.rosetta.core.scoring import ScoreFunction
 
@@ -49,7 +48,23 @@ from pyrosetta.rosetta.protocols.moves import PyMOLMover, SequenceMover, RepeatM
 from pyrosetta.rosetta.protocols.simple_moves import SwitchResidueTypeSetMover
 from pyrosetta.rosetta.protocols.loops import get_fa_scorefxn
 
-from pyrosetta.io import pose_from_pdb, pose_from_file, poses_from_files, pose_from_sequence, poses_from_sequences, poses_from_silent, poses_to_silent, Pose
+from pyrosetta.io import (
+    pose_from_pdb,
+    pose_from_file,
+    poses_from_files,
+    pose_from_sequence,
+    poses_from_sequences,
+    poses_from_silent,
+    poses_from_multimodel_pdb,
+    poses_to_silent,
+    dump_file,
+    dump_scored_pdb,
+    dump_pdb,
+    dump_multimodel_pdb,
+    dump_cif,
+    dump_mmtf,
+    Pose,
+)
 
 from pyrosetta.rosetta.core.scoring import get_score_function
 create_score_function = pyrosetta.rosetta.core.scoring.ScoreFunctionFactory.create_score_function
