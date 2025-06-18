@@ -13,6 +13,8 @@ import pyrosetta.distributed.viewer as viewer
 import tempfile
 import unittest
 
+from pyrosetta.distributed.viewer.core import ViewerInputError
+
 
 class TestViewer(unittest.TestCase):
 
@@ -35,6 +37,10 @@ class TestViewer(unittest.TestCase):
                 for pdbfile in pdbfiles:
                     os.remove(pdbfile)
                 os.rmdir(local_dir)
+
+        def test_viewer_with_none(self):
+            with self.assertRaises(ViewerInputError):
+                viewer.init(None)
 
         def test_viewer_with_pdbfiles(self, local_dir=workdir):
 

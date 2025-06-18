@@ -163,7 +163,6 @@ def active_total_energies(energies):
         return {}
 
     total_array = energies.total_energies_array()
- 
     return { n : float(total_array[n].item()) for n in total_array.dtype.names }
 
 @bind_method(pyrosetta.rosetta.core.scoring.Energies)
