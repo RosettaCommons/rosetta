@@ -422,8 +422,16 @@ def _parse_dict(obj: Dict[Any, Any]) -> Dict[Any, Any]:
     for k in obj.keys():
         if k in ["client", "clients", "input_packed_pose"]:
             raise NotImplementedError(
-                f"The parameter '{k}' must be passed directly to reproduce(), "
+                f"The parameter '{k}' must be passed directly to `reproduce()`, "
                 + "not as a member of the 'instance_kwargs' dictionary."
+            )
+        elif k == "filter_results":
+            raise ValueError(
+                f"The parameter '{k}' cannot be set as a PyRosettaCluster attribute "
+                + "in `reproduce()` because the saved 'decoy_ids' attribute from the "
+                + "original simulation depends on the original decoy output order from "
+                + "each protocol, so results must be filtered identically. Please remove "
+                + "this keyword argument to run `reproduce()`."
             )
     return obj
 
@@ -431,6 +439,19 @@ def _parse_dict(obj: Dict[Any, Any]) -> Dict[Any, Any]:
 @parse_instance_kwargs.register(type(None))
 def _default_none(obj: None) -> Dict[Any, Any]:
     return {}
+
+
+@singledispatch
+def is_empty(obj: Any) -> NoReturn:
+    raise NotImplementedError(type(obj))
+
+@is_empty.register(type(None))
+def _from_none(obj: None) -> bool:
+    return False
+
+@is_empty.register(PackedPose)
+def _from_packed(obj: PackedPose) -> bool:
+    return obj.empty()
 
 
 def is_bytes(obj: Any) -> bool:
