@@ -698,7 +698,7 @@ class PoseScoreAccessor(MutableMapping, PoseScoreSerializer):
                     elif _attr == "string_data_":
                         m = self.custom_string_value_metric
                     else:
-                        raise NotImplementedError(_k)
+                        raise NotImplementedError(_attr)
                     m.set_value(_v)
                     m.apply(out_label=_k, pose=self.pose, override_existing_data=True)
 
