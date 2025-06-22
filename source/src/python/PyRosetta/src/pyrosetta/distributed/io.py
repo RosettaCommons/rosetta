@@ -31,7 +31,7 @@ __all__ = [
     "pose_from_file",
     "pose_from_sequence",
     "pose_from_pdbstring",
-    "pose_from_pdb_bz2",
+    "pose_from_pdb",
     "pose_from_base64",
     "pose_from_pickle",
     "poses_from_files",
@@ -50,6 +50,8 @@ __all__ = [
     "dump_cif",
     "dump_mmtf",
     "dump_pdb_bz2",
+    "dump_pdb_gz",
+    "dump_pdb_xz",
     "dump_base64",
     "dump_pickle",
     "create_score_function",
@@ -140,8 +142,8 @@ def _pose_from_str(filename):
         with open(filename, "rb") as f:
             pdbstring = bz2.decompress(f.read()).decode()
     elif filename.endswith((".pdb.gz", ".gz")):
-        with open(filename, "rb") as f:
-            pdbstring = gzip.decompress(f.read()).decode()
+        with gzip.open(filename, "rb") as gz:
+            pdbstring = gz.read()
     elif filename.endswith((".pdb.xz", ".xz")):
         if "lzma" not in sys.modules:
             raise ImportError(
@@ -391,8 +393,8 @@ def dump_pdb_gz(inp, output_filename):
             "Output filename does not end with '.pdb.gz' or '.gz', "
             + "which `pyrosetta.distributed.io.pose_from_file` expects."
         )
-    with open(output_filename, "wb") as f:
-        f.write(gzip.compress(str.encode(to_pdbstring(inp)), compresslevel=9))
+    with gzip.open(output_filename, mode="wt", compresslevel=9) as gz:
+        gz.write(to_pdbstring(inp))
     return True
 
 @requires_init
