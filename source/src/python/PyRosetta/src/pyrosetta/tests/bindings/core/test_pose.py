@@ -14,6 +14,7 @@ import pyrosetta.rosetta.core.pose as pose
 import tempfile
 import unittest
 
+from pyrosetta.bindings.pose import PoseScoreSerializer
 from pyrosetta.rosetta.core.scoring import all_atom_rmsd
 from pyrosetta.rosetta.core.simple_metrics import TestRealMetric, TestStringMetric
 
@@ -105,11 +106,12 @@ class TestPoseScoresAccessor(unittest.TestCase):
         # Test proper overwrite of extra scores of varying types.
         test_pose.scores["foo"] = "bar"
         self.assertDictEqual(dict(test_pose.scores), {"foo" : "bar"})
-        test_pose.scores["foo"] = 1
-        self.assertDictEqual(dict(test_pose.scores), {"foo" : 1.0})
 
-        test_pose.scores["bar"] = 2
-        self.assertDictEqual(dict(test_pose.scores), {"foo" : 1.0, "bar" : 2.0})
+        test_pose.scores["foo"] = 1
+        self.assertDictEqual(dict(test_pose.scores), {"foo" : 1})
+
+        test_pose.scores["bar"] = 2.0
+        self.assertDictEqual(dict(test_pose.scores), {"foo" : 1, "bar" : 2.0})
 
         # Test score deletion
         del test_pose.scores["foo"]
@@ -187,16 +189,16 @@ class TestPoseScoresAccessor(unittest.TestCase):
             # Test instance types
             self.assertIsInstance(value_input, obj_type)
             if obj_type in (int, bool):
-                # `int` and `bool` objects are cast to `float` objects during round-trip
-                self.assertNotIsInstance(value_output, obj_type)
-                self.assertIsInstance(value_output, float)
+                # `int` and `bool` objects no longer cast to `float` objects during round-trip
+                self.assertIsInstance(value_output, obj_type)
+                self.assertNotIsInstance(value_output, float)
             else:
                 self.assertIsInstance(value_output, obj_type)
 
             # Test values
             if obj_type == float:
-                # `float` objects might change precision after round-trip
-                self.assertAlmostEqual(value_output, value_input, places=6)
+                # `float` objects no longer change precision after round-trip
+                self.assertEqual(value_output, value_input)
             elif obj_type == pyrosetta.Pose:
                 # `Pose` objects change memory address after round-trip
                 self.assertNotEqual(value_output, value_input)
@@ -217,6 +219,99 @@ class TestPoseScoresAccessor(unittest.TestCase):
                     self.assertEqual(value_output.scores[k], value_input.scores[k])
             else:
                 self.assertEqual(value_output, value_input)
+
+        # Test custom score deserialization from SimpleMetrics data
+        test_pose = test_pose.clone()
+        test_pose.scores.clear()
+        test_pose.scores["str"] = type_value_dict[str]
+        test_pose.scores["float"] = type_value_dict[float]
+        test_pose.scores["bool"] = type_value_dict[bool]
+        test_pose.scores["int"] = type_value_dict[int]
+        test_pose.scores["bytes"] = type_value_dict[bytes]
+        test_pose.scores["complex"] = type_value_dict[complex]
+        str_scores = dict(pyrosetta.rosetta.core.pose.getPoseExtraStringScores(test_pose).items())
+        float_scores = dict(pyrosetta.rosetta.core.pose.getPoseExtraFloatScores(test_pose).items())
+        self.assertEqual(str_scores, {}, msg="String data was not stored as SimpleMetrics data.")
+        self.assertEqual(float_scores, {}, msg="Float data was not stored as SimpleMetrics data.")
+        sm_data = pyrosetta.rosetta.core.simple_metrics.get_sm_data(test_pose)
+        sm_real_data = dict(sm_data.get_real_metric_data())
+        sm_string_data = dict(sm_data.get_string_metric_data())
+        prefixes = tuple(_m.prefix for _m in PoseScoreSerializer._custom_type_metrics.values())
+        self.assertIsInstance(sm_string_data["str"], str)
+        self.assertFalse(sm_string_data["str"].startswith(prefixes))
+        self.assertIsInstance(sm_real_data["float"], float)
+        self.assertIsInstance(sm_string_data["bool"], str)
+        self.assertTrue(sm_string_data["bool"].startswith(PoseScoreSerializer._custom_type_metrics["bool"].prefix))
+        self.assertIsInstance(sm_string_data["int"], str)
+        self.assertTrue(sm_string_data["int"].startswith(PoseScoreSerializer._custom_type_metrics["int"].prefix))
+        self.assertIsInstance(sm_string_data["bytes"], str)
+        self.assertTrue(sm_string_data["bytes"].startswith(PoseScoreSerializer._custom_type_metrics["bytes"].prefix))
+        self.assertIsInstance(sm_string_data["complex"], str)
+        self.assertTrue(sm_string_data["complex"].startswith(PoseScoreSerializer._custom_type_metrics["object"].prefix))
+        # Test custom deserialization
+        _custom_bool_metric = PoseScoreSerializer._custom_type_metrics["bool"]
+        self.assertEqual(
+            _custom_bool_metric.decode_func(sm_string_data["bool"][len(_custom_bool_metric.prefix):]),
+            type_value_dict[bool],
+            msg="Could not manually deserialize `bool` object."
+        )
+        _custom_int_metric = PoseScoreSerializer._custom_type_metrics["int"]
+        self.assertEqual(
+            _custom_int_metric.decode_func(sm_string_data["int"][len(_custom_int_metric.prefix):]),
+            type_value_dict[int],
+            msg="Could not manually deserialize `int` object."
+        )
+        _custom_bytes_metric = PoseScoreSerializer._custom_type_metrics["bytes"]
+        self.assertEqual(
+            _custom_bytes_metric.decode_func(sm_string_data["bytes"][len(_custom_bytes_metric.prefix):]),
+            type_value_dict[bytes],
+            msg="Could not manually deserialize `bytes` object."
+        )
+        _custom_arbitrary_metric = PoseScoreSerializer._custom_type_metrics["object"]
+        self.assertEqual(
+            _custom_arbitrary_metric.decode_func(sm_string_data["complex"][len(_custom_arbitrary_metric.prefix):]),
+            type_value_dict[complex],
+            msg="Could not manually deserialize `complex` object."
+        )
+        # Test automatic deserialization
+        self.assertEqual(
+            PoseScoreSerializer.maybe_decode(sm_string_data["str"]),
+            type_value_dict[str],
+            msg="Could not automatically deserialize `str` object."
+        )
+        self.assertEqual(
+            PoseScoreSerializer.maybe_decode(sm_real_data["float"]),
+            type_value_dict[float],
+            msg="Could not automatically deserialize `float` object."
+        )
+        self.assertEqual(
+            PoseScoreSerializer.maybe_decode(sm_string_data["bool"]),
+            type_value_dict[bool],
+            msg="Could not automatically deserialize `bool` object."
+        )
+        self.assertEqual(
+            PoseScoreSerializer.maybe_decode(sm_string_data["int"]),
+            type_value_dict[int],
+            msg="Could not automatically deserialize `int` object."
+        )
+        self.assertEqual(
+            PoseScoreSerializer.maybe_decode(sm_string_data["bytes"]),
+            type_value_dict[bytes],
+            msg="Could not automatically deserialize `bytes` object."
+        )
+        self.assertEqual(
+            PoseScoreSerializer.maybe_decode(sm_string_data["complex"]),
+            type_value_dict[complex],
+            msg="Could not automatically deserialize `complex` object."
+        )
+
+        # Test deleting SimpleMetrics raising KeyError
+        test_pose = test_pose.clone()
+        test_pose.scores.clear()
+        m = pyrosetta.rosetta.core.simple_metrics.per_residue_metrics.PerResidueClashMetric()
+        m.apply(test_pose)
+        with self.assertRaises(KeyError):
+            test_pose.scores.pop("atomic_clashes_1")
 
 
 class TestPoseResidueLabelAccessor(unittest.TestCase):

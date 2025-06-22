@@ -8,6 +8,7 @@
 # Pose bindings
 
 import base64
+import collections
 import itertools
 import pickle
 import warnings
@@ -31,7 +32,11 @@ from pyrosetta.rosetta.core.pose import (
 )
 
 from pyrosetta.rosetta.core.io.raw_data import ScoreMap
-from pyrosetta.rosetta.core.simple_metrics import clear_sm_data
+from pyrosetta.rosetta.core.simple_metrics import clear_sm_data, get_sm_data
+from pyrosetta.rosetta.core.simple_metrics.metrics import (
+    CustomRealValueMetric,
+    CustomStringValueMetric,
+)
 from pyrosetta.rosetta.core.pose import remove_upper_terminus_type_from_pose_residue
 from pyrosetta.rosetta.core.pose import add_upper_terminus_type_to_pose_residue
 from pyrosetta.rosetta.core.conformation import Residue
@@ -55,7 +60,6 @@ from pyrosetta.rosetta.core.select.residue_selector import (
     PrimarySequenceNeighborhoodSelector,
 )
 from pyrosetta.rosetta.core.select.residue_selector import NotResidueSelector
-
 
 def __pose_getstate__(pose):
     if pose.constraint_set().n_sequence_constraints() > 0:
@@ -383,38 +387,135 @@ def __reslabels_accessor(self, accessor):
 Pose.reslabels = __reslabels_accessor
 
 
-class PoseScoreSerializer(object):
-    _start_str = "[PoseScoreSerializer]"
-    _reserved_types = (str, float, int, bool)
+class PoseScoreSerializerBase(object):
+    """Base class for `PoseScoreSerializer` methods."""
+    __author__ = "Jason C. Klima"
 
     @staticmethod
-    def encode(value):
-        return base64.b64encode(pickle.dumps(value)).decode()
+    def to_pickle(value):
+        try:
+            return pickle.dumps(value)
+        except (TypeError, OverflowError, MemoryError, pickle.PicklingError) as ex:
+            raise TypeError(
+                "Only pickle-serializable object types are allowed to be set "
+                + "as score values. Received: %r. %s" % (type(value), ex)
+            )
 
     @staticmethod
-    def decode(value):
-        return pickle.loads(base64.b64decode(value))
+    def from_pickle(value):
+        try:
+            return pickle.loads(value)
+        except (TypeError, OverflowError, MemoryError, EOFError, pickle.UnpicklingError) as ex:
+            raise TypeError(
+                "Could not deserialize score value of type %r. %s" % (type(value), ex)
+            )
 
-    def maybe_encode(self, value):
-        if not isinstance(value, self._reserved_types):
-            try:
-                value = "".join([self._start_str, PoseScoreSerializer.encode(value)])
-            except (TypeError, OverflowError, MemoryError, pickle.PicklingError) as ex:
-                raise TypeError(
-                    "Only `str`, `float`, `int`, `bool` and pickle-serializable object types are allowed "
-                    "to be set as score values. Received: %r. %s" % (type(value), ex)
-               )
+    @staticmethod
+    def to_base64(value):
+        return base64.b64encode(value).decode()
+
+    @staticmethod
+    def from_base64(value):
+        return base64.b64decode(value)
+
+    @staticmethod
+    def to_base64_pickle(value):
+        return PoseScoreSerializerBase.to_base64(PoseScoreSerializerBase.to_pickle(value))
+
+    @staticmethod
+    def from_base64_pickle(value):
+        return PoseScoreSerializerBase.from_pickle(PoseScoreSerializerBase.from_base64(value))
+
+    @staticmethod
+    def bool_from_str(value):
+        if value == "True":
+            return True
+        elif value == "False":
+            return False
+        else:
+            raise NotImplementedError(value)
+
+
+class PoseScoreSerializer(PoseScoreSerializerBase):
+    """
+    Serialize and deserialize score values for CustomStringValueMetric SimpleMetric.
+
+    Examples:
+        # Automatically serialize an arbitrary score value:
+        pose.scores["foo"] = value
+
+        # Manually serialize an arbitrary score value:
+        value = PoseScoreSerializer.maybe_encode(value)
+
+        # Automatically deserialize an arbitrary score value:
+        value = pose.scores["foo"]
+
+        # Manually deserialize an arbitrary score value:
+        value = PoseScoreSerializer.maybe_decode(value)
+    """
+    __author__ = "Jason C. Klima"
+
+    # Define different data types with human-readable custom prefixes in case anyone
+    # accesses the serialized score values outside the scope of the `PoseScoreSerializer`
+    _CustomTypeMetric = collections.namedtuple(
+        "CustomTypeMetric", ["type", "prefix", "encode_func", "decode_func"],
+    )
+    _reserved_types = (str, float)
+    _custom_type_metrics = {
+        "bool": _CustomTypeMetric(
+            type=bool,
+            prefix="[CustomBoolMetric]",
+            encode_func=str,
+            decode_func=PoseScoreSerializerBase.bool_from_str,
+        ),
+        "int": _CustomTypeMetric(
+            type=int,
+            prefix="[CustomIntMetric]",
+            encode_func=str,
+            decode_func=int,
+        ),
+        "bytes": _CustomTypeMetric(
+            type=bytes,
+            prefix="[CustomBytesMetric]",
+            encode_func=PoseScoreSerializerBase.to_base64,
+            decode_func=PoseScoreSerializerBase.from_base64,
+        ),
+        "object": _CustomTypeMetric(
+            type=object,
+            prefix="[CustomArbitraryMetric]",
+            encode_func=PoseScoreSerializerBase.to_base64_pickle,
+            decode_func=PoseScoreSerializerBase.from_base64_pickle,
+        ),
+    }
+
+    @staticmethod
+    def maybe_encode(value):
+        """Serialize the input value into a `str` object if it's not a `str` or `float` object."""
+        if not isinstance(value, PoseScoreSerializer._reserved_types):
+            for _custom_type_metric in PoseScoreSerializer._custom_type_metrics.values():
+                if isinstance(value, _custom_type_metric.type):
+                    value = "{0}{1}".format(
+                        _custom_type_metric.prefix,
+                        _custom_type_metric.encode_func(value)
+                    )
+                    break
+            else:
+                raise NotImplementedError("Unsupported object type: {0}".format(type(value)))
 
         return value
 
-    def maybe_decode(self, value):
-        if isinstance(value, str) and value.startswith(self._start_str):
-            try:
-                value = PoseScoreSerializer.decode(value.split(self._start_str)[1])
-            except (TypeError, OverflowError, MemoryError, EOFError, pickle.UnpicklingError) as ex:
-                raise TypeError(
-                    "Could not deserialize score value of type %r. %s" % (type(value), ex)
-                )
+    @staticmethod
+    def maybe_decode(value):
+        """Deserialize the input value if it's serialized."""
+        if isinstance(value, str):
+            for _custom_type_metric in PoseScoreSerializer._custom_type_metrics.values():
+                if value.startswith(_custom_type_metric.prefix):
+                    value = _custom_type_metric.decode_func(
+                        value[len(_custom_type_metric.prefix):]
+                    )
+                    break
+            else:
+                pass # Return without decoding because string doesn't start with a prefix
 
         return value
 
@@ -426,17 +527,29 @@ class PoseScoreAccessor(MutableMapping, PoseScoreSerializer):
 
     _reserved = {k for k in ScoreType.__dict__.keys() if not k.startswith("_")}
 
+
     def __init__(self, pose):
         self.pose = pose
+        self.custom_real_value_metric = CustomRealValueMetric()
+        self.custom_string_value_metric = CustomStringValueMetric()
 
     @property
     def extra(self):
         import types
 
+        _arbitrary_string_data = dict(ScoreMap.get_arbitrary_string_data_from_pose(self.pose).items())
+        _arbitrary_score_data = dict(ScoreMap.get_arbitrary_score_data_from_pose(self.pose).items())
+
+        for k in _arbitrary_string_data.keys():
+            if k in _arbitrary_score_data.keys():
+                warnings.warn(
+                    "Arbitrary score data key is clobbering arbitrary string data key: '{0}'".format(k)
+                )
+
         return types.MappingProxyType(
             dict(
-                list(ScoreMap.get_arbitrary_string_data_from_pose(self.pose).items())
-                + list(ScoreMap.get_arbitrary_score_data_from_pose(self.pose).items())
+                list(_arbitrary_string_data.items())
+                + list(_arbitrary_score_data.items())
             )
         )
 
@@ -450,12 +563,51 @@ class PoseScoreAccessor(MutableMapping, PoseScoreSerializer):
     def all(self):
         import types
 
+        _arbitrary_string_data = dict(ScoreMap.get_arbitrary_string_data_from_pose(self.pose).items())
+        _arbitrary_score_data = dict(ScoreMap.get_arbitrary_score_data_from_pose(self.pose).items())
+        _active_total_energies = dict(self.pose.energies().active_total_energies().items())
+
+        for k in _arbitrary_string_data.keys():
+            if k in _arbitrary_score_data.keys():
+                warnings.warn(
+                    "Arbitrary score data key is clobbering arbitrary string data key: '{0}'".format(k)
+                )
+            if k in _active_total_energies.keys():
+                warnings.warn(
+                    "Active total energy score key is clobbering arbitrary string data key: '{0}'".format(k)
+                )
+        for k in _arbitrary_score_data.keys():
+            if k in _active_total_energies.keys():
+                warnings.warn(
+                    "Active total energy score key is clobbering arbitrary score data key: '{0}'".format(k)
+                )
+
         return types.MappingProxyType(
             dict(
-                list(ScoreMap.get_arbitrary_string_data_from_pose(self.pose).items())
-                + list(ScoreMap.get_arbitrary_score_data_from_pose(self.pose).items())
-                + list(self.pose.energies().active_total_energies().items())
+                list(_arbitrary_string_data.items())
+                + list(_arbitrary_score_data.items())
+                + list(_active_total_energies.items())
             )
+        )
+
+    @property
+    def _sm_data_attrs(self):
+        """Supported `SimpleMetricStruct` attributes to reset after `clear_sm_data`."""
+        return (
+            'real_data_',
+            'string_data_',
+        )
+
+    @property
+    def _unsupported_sm_data_attrs(self):
+        """Unsupported `SimpleMetricStruct` attributes that cannot be reset after `clear_sm_data`."""
+        return (
+            'composite_real_data_',
+            'composite_string_data_',
+            'per_residue_real_data_',
+            'per_residue_real_output_',
+            'per_residue_string_data_',
+            'per_residue_string_output_',
         )
 
     def __len__(self):
@@ -473,20 +625,12 @@ class PoseScoreAccessor(MutableMapping, PoseScoreSerializer):
                 "Can not set score key with reserved energy name: %r" % key
             )
 
-        value = self.maybe_encode(value)
-        # Bit of a two-step to deal with potential duplicate keys in the
-        # score maps. First check if a key, of either type, exists. If so
-        # *try* to set the extra score, triggering type conversion checking
-        # etc...
-        #
-        # If set is successful then clear the score cache and set again,
-        # eliminating any potential duplicate keys.
-        had_score = key in self
-
-        setPoseExtraScore(self.pose, key, value)
-        if had_score:
-            self.__delitem__(key)
-            setPoseExtraScore(self.pose, key, value)
+        if isinstance(value, float):
+            m = self.custom_real_value_metric
+        else:
+            m = self.custom_string_value_metric
+        m.set_value(self.maybe_encode(value))
+        m.apply(out_label=key, pose=self.pose, override_existing_data=True)
 
     def __delitem__(self, key):
         if key in self._reserved:
@@ -495,18 +639,68 @@ class PoseScoreAccessor(MutableMapping, PoseScoreSerializer):
                 "Consider 'pose.scores.clear()' or 'pose.energies().clear()'" % key
             )
 
-        if not hasPoseExtraScore(self.pose, key) and not hasPoseExtraScore_str(self.pose, key):
+        sm_data = get_sm_data(self.pose).get_all_sm_data()
+        if hasPoseExtraScore(self.pose, key) or hasPoseExtraScore_str(self.pose, key):
+            clearPoseExtraScore(self.pose, key)
+        elif sm_data.has_data():
+            # SimpleMetric data cannot be mutated by anything other than a SimpleMetric.
+            self._maybe_delete_key_from_sm_data(key, sm_data)
+        else:
             raise KeyError(key)
-
-        clearPoseExtraScore(self.pose, key)
-
-        # SimpleMetric data cannot be mutated by anything other than a SimpleMetric.
 
     def clear(self):
         """ Clear pose energies, extra scores, and SimpleMetric data"""
         self.pose.energies().clear()
         clearPoseExtraScores(self.pose)
         clear_sm_data(self.pose)
+
+    def _get_sm_data(self, sm_data, attributes):
+        """Get `SimpleMetricStruct` attributes as a dictionary."""
+        return {
+            _attr: dict(getattr(sm_data, _attr))
+            for _attr in attributes
+        }
+
+    def _maybe_delete_key_from_sm_data(self, key, sm_data):
+        """
+        Cache, clear, and restore all SimpleMetric data except the deleted key.
+        This is necessary to delete a single key, since `clear_sm_data` clears all
+        SimpleMetric data.
+        """
+        # Cache SimpleMetric data
+        _sm_data_dict = self._get_sm_data(sm_data, self._sm_data_attrs)
+        _unsupported_sm_data_dict = self._get_sm_data(sm_data, self._unsupported_sm_data_attrs)
+        # Raise if deleting an item we cannot restore
+        for _attr, _d in _unsupported_sm_data_dict.items():
+            for _k, _v in _d.items():
+                if key == _k:
+                    raise KeyError(
+                        "'{0}'. Cannot delete a SimpleMetric data item from: {1}. ".format(
+                            key, self._unsupported_sm_data_attrs
+                        ) + "Consider using `pose.scores.clear()` or "
+                        + "`pyrosetta.rosetta.core.simple_metrics.clear_sm_data(pose)`."
+                    )
+        if any(map(len, _unsupported_sm_data_dict.values())):
+            raise KeyError(
+                "'{0}'. Cannot delete item because Pose contains SimpleMetric data from: {1}".format(
+                    key, self._unsupported_sm_data_attrs
+                ) + "Consider using `pose.scores.clear()` or "
+                + "`pyrosetta.rosetta.core.simple_metrics.clear_sm_data(pose)`."
+            )
+        # Clear SimpleMetric data
+        clear_sm_data(self.pose)
+        # Reapply all SimpleMetric data except the deleted item
+        for _attr, _d in _sm_data_dict.items():
+            for _k, _v in _d.items():
+                if _k != key:
+                    if _attr == "real_data_":
+                        m = self.custom_real_value_metric
+                    elif _attr == "string_data_":
+                        m = self.custom_string_value_metric
+                    else:
+                        raise NotImplementedError(_k)
+                    m.set_value(_v)
+                    m.apply(out_label=_k, pose=self.pose, override_existing_data=True)
 
     def __str__(self):
         return str(dict(self))
