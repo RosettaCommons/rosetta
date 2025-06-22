@@ -1,7 +1,9 @@
 """IO routines operating on PackedPose representations."""
 import bz2
 import functools
+import gzip
 import os
+import sys
 import warnings
 
 import pyrosetta.io
@@ -16,6 +18,12 @@ from pyrosetta.distributed import requires_init
 from pyrosetta.distributed.packed_pose import (
     pack_result, pose_result, to_pose, to_packed, to_dict, to_base64, to_pickle, register_container_traversal
 )
+
+try:
+    import lzma as xz
+except ImportError:
+    pass
+
 
 __all__ = [
     "pack_result",
@@ -58,6 +66,8 @@ def pose_from_file(*args, **kwargs):
     Uses the input filename from `*args` or `**kwargs` and returns a `PackedPose` object from it,
     deserializing:
         - bz2-encoded files ending with file extensions: (".pdb.bz2", ".bz2")
+        - gzip-encoded files ending with file extensions: (".pdb.gz", ".gz")
+        - xz-encoded files ending with file extensions: (".pdb.xz", ".xz")
         - base64-encoded files ending with file extensions: (".base64", ".b64", ".B64", ".pose")
         - pickle-encoded files ending with file extensions: (".pickle", ".pickled_pose")
     Otherwise, implements `io.to_packed(pyrosetta.io.pose_from_file(*args, **kwargs))`.
@@ -71,8 +81,8 @@ def pose_from_file(*args, **kwargs):
             f"Could not find filename in arguments '{args}' or keyword arguments '{kwargs}'."
         )
 
-    if filename.endswith((".pdb.bz2", ".bz2")):
-        pose = pose_from_pdb_bz2(filename)
+    if filename.endswith((".pdb.bz2", ".bz2", ".pdb.gz", ".gz", ".pdb.xz", ".xz")):
+        pose = pose_from_pdb(filename)
     elif filename.endswith((".base64", ".b64", ".B64", ".pose")):
         pose = pose_from_base64(filename)
     elif filename.endswith((".pickle", ".pickled_pose")):
@@ -104,25 +114,52 @@ def pose_from_pdbstring(*args, **kwargs):
 
 
 @functools.singledispatch
-@requires_init
-def pose_from_pdb_bz2(filename):
-    """Load a `PackedPose` object from a bz2-encoded PDB file.
+def pose_from_pdb(filename):
+    """
+    Load a `PackedPose` object from a bz2-, gzip-, or xz-encoded PDB file.
+    Otherwise, implements `io.to_packed(pyrosetta.io.pose_from_file(filename))`.
 
     @klimaj
     """
-    with open(filename, "rb") as f:
-        pdbstring = bz2.decompress(f.read()).decode()
-    return pose_from_pdbstring(pdbstring)
+    raise FileNotFoundError(
+        f"The input filename must be an instance of `str`. Recieved: {type(filename)}"
+    )
 
-@pose_from_pdb_bz2.register(type(None))
-def pose_from_none(none):
+@pose_from_pdb.register(type(None))
+def _pose_from_none(none):
     return None
+
+@pose_from_pdb.register(str)
+@requires_init
+@pack_result
+def _pose_from_str(filename):
+    if not os.path.isfile(filename):
+        raise FileNotFoundError(f"Input filename does not exist: {filename}")
+
+    if filename.endswith((".pdb.bz2", ".bz2")):
+        with open(filename, "rb") as f:
+            pdbstring = bz2.decompress(f.read()).decode()
+    elif filename.endswith((".pdb.gz", ".gz")):
+        with open(filename, "rb") as f:
+            pdbstring = gzip.decompress(f.read()).decode()
+    elif filename.endswith((".pdb.xz", ".xz")):
+        if "lzma" not in sys.modules:
+            raise ImportError(
+                (
+                    "Using 'xz' for decompression requires installing the 'xz' package into your python environment. "
+                    + "For installation instructions, visit:\n"
+                    + "https://anaconda.org/anaconda/xz\n"
+                )
+            )
+        with open(filename, "rb") as f:
+            pdbstring = xz.decompress(f.read()).decode()
+    else:
+        return pyrosetta.io.pose_from_file(filename)
+
+    return pose_from_pdbstring(pdbstring)
 
 
 @functools.singledispatch
-@requires_init
-@pack_result
-@pose_result
 def pose_from_base64(filename):
     """
     Load a `PackedPose` object from a base64-encoded file.
@@ -132,18 +169,24 @@ def pose_from_base64(filename):
 
     @klimaj
     """
-    with open(filename, "r") as f:
-        return f.read()
+    raise FileNotFoundError(
+        f"The input filename must be an instance of `str`. Recieved: {type(filename)}"
+    )
 
 @pose_from_base64.register(type(None))
-def pose_from_none(none):
+def _pose_from_none(none):
     return None
 
-
-@functools.singledispatch
+@pose_from_base64.register(str)
 @requires_init
 @pack_result
 @pose_result
+def _pose_from_str(filename):
+    with open(filename, "r") as f:
+        return f.read()
+
+
+@functools.singledispatch
 def pose_from_pickle(filename):
     """
     Load a `PackedPose` object from a pickle-encoded binary file.
@@ -153,12 +196,21 @@ def pose_from_pickle(filename):
 
     @klimaj
     """
-    with open(filename, "rb") as f:
-        return f.read()
+    raise FileNotFoundError(
+        f"The input filename must be an instance of `str`. Recieved: {type(filename)}"
+    )
 
 @pose_from_pickle.register(type(None))
-def pose_from_none(none):
+def _pose_from_none(none):
     return None
+
+@pose_from_pickle.register(str)
+@requires_init
+@pack_result
+@pose_result
+def _pose_from_str(filename):
+    with open(filename, "rb") as f:
+        return f.read()
 
 
 # Output functions
@@ -326,6 +378,44 @@ def dump_pdb_bz2(inp, output_filename):
         )
     with open(output_filename, "wb") as f:
         f.write(bz2.compress(str.encode(to_pdbstring(inp))))
+    return True
+
+@requires_init
+def dump_pdb_gz(inp, output_filename):
+    """Dump a gzip-encoded PDB file from a `PackedPose` or `Pose` object and output filename.
+
+    @klimaj
+    """
+    if not output_filename.endswith((".pdb.gz", ".gz")):
+        warnings.warn(
+            "Output filename does not end with '.pdb.gz' or '.gz', "
+            + "which `pyrosetta.distributed.io.pose_from_file` expects."
+        )
+    with open(output_filename, "wb") as f:
+        f.write(gzip.compress(str.encode(to_pdbstring(inp)), compresslevel=9))
+    return True
+
+@requires_init
+def dump_pdb_xz(inp, output_filename):
+    """Dump a xz-encoded PDB file from a `PackedPose` or `Pose` object and output filename.
+
+    @klimaj
+    """
+    if "lzma" not in sys.modules:
+        raise ImportError(
+            (
+                "Using 'xz' for compression requires installing the 'xz' package into your python environment. "
+                + "For installation instructions, visit:\n"
+                + "https://anaconda.org/anaconda/xz\n"
+            )
+        )
+    if not output_filename.endswith((".pdb.xz", ".xz")):
+        warnings.warn(
+            "Output filename does not end with '.pdb.xz' or '.xz', "
+            + "which `pyrosetta.distributed.io.pose_from_file` expects."
+        )
+    with open(output_filename, "wb") as f:
+        f.write(xz.compress(str.encode(to_pdbstring(inp))))
     return True
 
 @requires_init
