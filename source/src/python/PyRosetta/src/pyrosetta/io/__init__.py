@@ -197,6 +197,8 @@ def dump_multimodel_pdb(poses, output_filename):
 
     @klimaj
     """
+    if not output_filename.endswith(".pdb"):
+        warnings.warn("Output filename does not end with '.pdb'.")
     v1 = rosetta.utility.vector1_std_shared_ptr_const_core_pose_Pose_t()
     if isinstance(poses, (list, tuple, set)):
         for p in poses:

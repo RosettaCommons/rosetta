@@ -2,6 +2,7 @@
 import bz2
 import functools
 import os
+import warnings
 
 import pyrosetta.io
 import pyrosetta.rosetta.utility as utility
@@ -241,6 +242,11 @@ def dump_pdb(inp, output_filename):
 
     @klimaj
     """
+    if not output_filename.endswith(".pdb"):
+        warnings.warn(
+            "Output filename does not end with '.pdb', "
+            + "which `pyrosetta.distributed.io.pose_from_file` expects."
+        )
     return pyrosetta.io.dump_pdb(to_pose(inp), output_filename)
 
 @requires_init
@@ -253,6 +259,11 @@ def dump_scored_pdb(inp, output_filename, scorefxn):
 
     @klimaj
     """
+    if not output_filename.endswith(".pdb"):
+        warnings.warn(
+            "Output filename does not end with '.pdb', "
+            + "which `pyrosetta.distributed.io.pose_from_file` expects."
+        )
     if isinstance(scorefxn, str):
         scorefxn = score.ScorePoseTask(weights=scorefxn, patch=None)
     if isinstance(scorefxn, score.ScorePoseTask):
@@ -282,6 +293,11 @@ def dump_cif(inp, output_filename):
 
     @klimaj
     """
+    if not output_filename.endswith((".cif", ".mmcif")):
+        warnings.warn(
+            "Output filename does not end with '.cif' or '.mmcif', "
+            + "which `pyrosetta.distributed.io.pose_from_file` expects."
+        )
     return pyrosetta.io.dump_cif(to_pose(inp), output_filename)
 
 @requires_init
@@ -290,6 +306,11 @@ def dump_mmtf(inp, output_filename):
 
     @klimaj
     """
+    if not output_filename.endswith(".mmtf"):
+        warnings.warn(
+            "Output filename does not end with '.mmtf', "
+            + "which `pyrosetta.distributed.io.pose_from_file` expects."
+        )
     return pyrosetta.io.dump_mmtf(to_pose(inp), output_filename)
 
 @requires_init
@@ -298,6 +319,11 @@ def dump_pdb_bz2(inp, output_filename):
 
     @klimaj
     """
+    if not output_filename.endswith((".pdb.bz2", ".bz2")):
+        warnings.warn(
+            "Output filename does not end with '.pdb.bz2' or '.bz2', "
+            + "which `pyrosetta.distributed.io.pose_from_file` expects."
+        )
     with open(output_filename, "wb") as f:
         f.write(bz2.compress(str.encode(to_pdbstring(inp))))
     return True
@@ -308,6 +334,11 @@ def dump_base64(inp, output_filename):
 
     @klimaj
     """
+    if not output_filename.endswith((".base64", ".b64", ".B64", ".pose")):
+        warnings.warn(
+            "Output filename does not end with '.base64', '.b64', '.B64', or '.pose', "
+            + "which `pyrosetta.distributed.io.pose_from_file` expects."
+        )
     with open(output_filename, "w") as f:
         f.write(to_base64(inp))
     return True
@@ -318,6 +349,11 @@ def dump_pickle(inp, output_filename):
 
     @klimaj
     """
+    if not output_filename.endswith((".pickle", ".pickled_pose")):
+        warnings.warn(
+            "Output filename does not end with '.pickle' or '.pickled_pose', "
+            + "which `pyrosetta.distributed.io.pose_from_file` expects."
+        )
     with open(output_filename, "wb") as f:
         f.write(to_pickle(inp))
     return True
