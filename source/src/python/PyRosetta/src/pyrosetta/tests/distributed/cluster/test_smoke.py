@@ -836,10 +836,7 @@ class SerializationTest(unittest.TestCase):
                     self.assertEqual(id(input_packed_pose), id(output_packed_pose), msg=_error_msg)
                 else:
                     self.assertNotEqual(id(input_packed_pose), id(output_packed_pose), msg=_error_msg)
-                if _test_case == 0 and _compression in (False, None):
-                    self.assertEqual(scores, output_packed_pose.scores, msg=_error_msg)
-                else:
-                    self.assertNotEqual(scores, output_packed_pose.scores, msg=_error_msg)
+                self.assertEqual(scores, output_packed_pose.scores, msg=_error_msg)
                 self.assertSetEqual(
                     set(input_packed_pose.scores.keys()),
                     set(output_packed_pose.scores.keys()),
@@ -856,7 +853,7 @@ class SerializationTest(unittest.TestCase):
                 if _compression not in (False, None):
                     if _test_case == 0:
                         self.assertEqual(scores, input_packed_pose.scores, msg=_error_msg)
-                        self.assertNotEqual(
+                        self.assertEqual(
                             input_packed_pose.scores, output_packed_pose.scores, msg=_error_msg
                         )
                         self.assertNotEqual(
@@ -865,7 +862,7 @@ class SerializationTest(unittest.TestCase):
                             msg=_error_msg,
                         )
                     elif _test_case in (1, 2):
-                        self.assertNotEqual(scores, input_packed_pose.scores, msg=_error_msg)
+                        self.assertEqual(scores, input_packed_pose.scores, msg=_error_msg)
                         self.assertEqual(input_packed_pose.scores, output_packed_pose.scores, msg=_error_msg)
                         self.assertEqual(
                             input_packed_pose.pickled_pose,
