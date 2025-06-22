@@ -208,6 +208,7 @@ class SmokeTestDistributed(unittest.TestCase):
 
     def roundtrip(self, func, ext, input_packed_pose, workdir, scorefxn):
         """Used in `test_packed_pose_io` testing framework."""
+        # Dump PackedPose to disk
         out_file = os.path.join(workdir, f"tmp.{ext}")
         if ext == "scored.pdb":
             func(input_packed_pose.pose, out_file, "score12")
@@ -215,7 +216,16 @@ class SmokeTestDistributed(unittest.TestCase):
             func(input_packed_pose, out_file, scorefxn)
         else:
             func(input_packed_pose, out_file)
-        output_packed_pose = io.pose_from_file(out_file)
+        # Load PackedPose from disk
+        if ext in ("pdb.bz2", "bz2", "pdb.gz", "gz", "pdb.xz", "xz"):
+            with self.assertRaises(FileNotFoundError):
+                io.pose_from_pdb(123)
+            with self.assertRaises(FileNotFoundError):
+                io.pose_from_pdb(os.path.join(workdir, f"nonexistent_file.{ext}"))
+            self.assertIsNone(io.pose_from_pdb(None))
+            output_packed_pose = io.pose_from_pdb(out_file)
+        else:
+            output_packed_pose = io.pose_from_file(out_file)
         # Test annotated sequence recovery
         self.assertEqual(
             input_packed_pose.pose.annotated_sequence(),
@@ -237,7 +247,7 @@ class SmokeTestDistributed(unittest.TestCase):
                     )
         # Test score recovery
         self.assertTrue(dict(input_packed_pose.pose.scores), msg=f"Pose scores dictionary is empty for extension '{ext}'.")
-        if ext in ("pdb", "scored.pdb", "cif", "mmtf", "pdb.bz2", "bz2"):
+        if ext in ("pdb", "scored.pdb", "cif", "mmcif", "mmtf", "pdb.bz2", "bz2", "pdb.gz", "gz", "pdb.xz", "xz"):
             self.assertFalse(dict(output_packed_pose.pose.scores), msg=f"Pose scores dictionary has items for extension '{ext}'.")
             self.assertNotEqual(
                 input_packed_pose.scores,
@@ -264,9 +274,14 @@ class SmokeTestDistributed(unittest.TestCase):
             "pdb": io.dump_pdb,
             "scored.pdb": io.dump_scored_pdb,
             "cif": io.dump_cif,
+            "mmcif": io.dump_cif,
             "mmtf": io.dump_mmtf,
             "pdb.bz2": io.dump_pdb_bz2,
             "bz2": io.dump_pdb_bz2,
+            "pdb.gz": io.dump_pdb_gz,
+            "gz": io.dump_pdb_gz,
+            "pdb.xz": io.dump_pdb_xz,
+            "xz": io.dump_pdb_xz,
             "base64": io.dump_base64,
             "b64": io.dump_base64,
             "B64": io.dump_base64,
