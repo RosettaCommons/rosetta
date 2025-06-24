@@ -9,11 +9,12 @@
 import bz2
 import functools
 import gzip
+import os
 import pyrosetta.rosetta as rosetta
 import sys
 import warnings
 
-from pyrosetta.rosetta.core.import_pose import pose_from_file, pose_from_pdbstring
+from pyrosetta.rosetta.core.import_pose import pose_from_pdbstring
 from pyrosetta.rosetta.core.io.mmcif import dump_cif
 from pyrosetta.rosetta.core.io.mmtf import dump_mmtf
 from pyrosetta.rosetta.core.pose import make_pose_from_sequence, Pose
@@ -25,11 +26,72 @@ except ImportError:
     pass
 
 
-# for backward-compatibility
-# This needs to be here because of all the people using the Workshops and
-# because otherwise, it wrecks a lot of people's scripts.  ~Labonte
+def pose_from_file(*args, **kwargs):
+    """
+    Uses the input filename from `*args` or `**kwargs` and returns a `Pose` object from it,
+    deserializing:
+        - bz2-encoded files ending with file extensions: (".pdb.bz2", ".bz2")
+        - gzip-encoded files ending with file extensions: (".pdb.gz", ".gz")
+        - xz-encoded files ending with file extensions: (".pdb.xz", ".xz")
+    Otherwise, implements `pyrosetta.rosetta.core.import_pose.pose_from_file(*args, **kwargs))`.
+
+    @klimaj
+    """
+    try:
+        filename = kwargs.get("filename", False) or next(iter(filter(os.path.isfile, args)))
+    except:
+        raise FileNotFoundError(
+            f"Could not find filename in arguments '{args}' or keyword arguments '{kwargs}'."
+        )
+
+    if filename.endswith((".pdb.bz2", ".bz2", ".pdb.gz", ".gz", ".pdb.xz", ".xz")):
+        return pose_from_pdb(filename)
+    else:
+        return rosetta.core.import_pose.pose_from_file(*args, **kwargs)
+
+
+@functools.singledispatch
 def pose_from_pdb(filename):
-    return pose_from_file(filename)
+    """
+    Load a `Pose` object from a bz2-, gzip-, or xz-encoded PDB file.
+    Otherwise, implements `pyrosetta.io.pose_from_file(filename)`.
+
+    @klimaj
+    """
+    raise FileNotFoundError(
+        f"The input filename must be an instance of `str`. Recieved: {type(filename)}"
+    )
+
+@pose_from_pdb.register(type(None))
+def _pose_from_none(none):
+    return None
+
+@pose_from_pdb.register(str)
+def _pose_from_str(filename):
+    if not os.path.isfile(filename):
+        raise FileNotFoundError(f"Input filename does not exist: {filename}")
+
+    if filename.endswith((".pdb.bz2", ".bz2")):
+        with open(filename, "rb") as f:
+            pdbstring = bz2.decompress(f.read()).decode()
+    elif filename.endswith((".pdb.gz", ".gz")):
+        with gzip.open(filename, "rb") as gz:
+            pdbstring = gz.read()
+    elif filename.endswith((".pdb.xz", ".xz")):
+        if "lzma" not in sys.modules:
+            raise ImportError(
+                (
+                    "Using 'xz' for decompression requires installing the 'xz' package into your python environment. "
+                    + "For installation instructions, visit:\n"
+                    + "https://anaconda.org/anaconda/xz\n"
+                )
+            )
+        with open(filename, "rb") as f:
+            pdbstring = xz.decompress(f.read()).decode()
+    else:
+        return pose_from_file(filename)
+
+    return pose_from_pdbstring(pdbstring)
 
 
 def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):

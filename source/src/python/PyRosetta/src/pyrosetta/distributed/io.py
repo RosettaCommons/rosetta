@@ -80,16 +80,14 @@ def pose_from_file(*args, **kwargs):
             f"Could not find filename in arguments '{args}' or keyword arguments '{kwargs}'."
         )
 
-    if filename.endswith((".pdb.bz2", ".bz2", ".pdb.gz", ".gz", ".pdb.xz", ".xz")):
-        pose = pose_from_pdb(filename)
-    elif filename.endswith((".base64", ".b64", ".B64", ".pose")):
-        pose = pose_from_base64(filename)
+    if filename.endswith((".base64", ".b64", ".B64", ".pose")):
+        pack_or_pose = pose_from_base64(filename)  # returns `PackedPose` object
     elif filename.endswith((".pickle", ".pickled_pose")):
-        pose = pose_from_pickle(filename)
+        pack_or_pose = pose_from_pickle(filename)  # returns `PackedPose` object
     else:
-        pose = pyrosetta.io.pose_from_file(*args, **kwargs)
+        pack_or_pose = pyrosetta.io.pose_from_file(*args, **kwargs)  # returns `Pose` object
 
-    return pose
+    return pack_or_pose
 
 pose_from_sequence = requires_init(pack_result(
     pyrosetta.io.pose_from_sequence))
@@ -112,50 +110,10 @@ def pose_from_pdbstring(*args, **kwargs):
     return result
 
 
-@functools.singledispatch
-def pose_from_pdb(filename):
-    """
-    Load a `PackedPose` object from a bz2-, gzip-, or xz-encoded PDB file.
-    Otherwise, implements `io.to_packed(pyrosetta.io.pose_from_file(filename))`.
-
-    @klimaj
-    """
-    raise FileNotFoundError(
-        f"The input filename must be an instance of `str`. Recieved: {type(filename)}"
-    )
-
-@pose_from_pdb.register(type(None))
-def _pose_from_none(none):
-    return None
-
-@pose_from_pdb.register(str)
 @requires_init
 @pack_result
-def _pose_from_str(filename):
-    if not os.path.isfile(filename):
-        raise FileNotFoundError(f"Input filename does not exist: {filename}")
-
-    if filename.endswith((".pdb.bz2", ".bz2")):
-        with open(filename, "rb") as f:
-            pdbstring = bz2.decompress(f.read()).decode()
-    elif filename.endswith((".pdb.gz", ".gz")):
-        with gzip.open(filename, "rb") as gz:
-            pdbstring = gz.read()
-    elif filename.endswith((".pdb.xz", ".xz")):
-        if "lzma" not in sys.modules:
-            raise ImportError(
-                (
-                    "Using 'xz' for decompression requires installing the 'xz' package into your python environment. "
-                    + "For installation instructions, visit:\n"
-                    + "https://anaconda.org/anaconda/xz\n"
-                )
-            )
-        with open(filename, "rb") as f:
-            pdbstring = xz.decompress(f.read()).decode()
-    else:
-        return pyrosetta.io.pose_from_file(filename)
-
-    return pose_from_pdbstring(pdbstring)
+def pose_from_pdb(*args, **kwargs):
+    return pose_from_file(*args, **kwargs)
 
 
 @functools.singledispatch
@@ -277,6 +235,7 @@ def dump_file(inp, output_filename):
     """
     return pyrosetta.io.dump_file(to_pose(inp), output_filename)
 
+
 @requires_init
 def dump_pdb(inp, output_filename):
     """Dump a PDB file from a `PackedPose` or `Pose` object and output filename.
@@ -284,6 +243,7 @@ def dump_pdb(inp, output_filename):
     @klimaj
     """
     return pyrosetta.io.dump_pdb(to_pose(inp), output_filename)
+
 
 @requires_init
 def dump_scored_pdb(inp, output_filename, scorefxn):
@@ -304,6 +264,7 @@ def dump_scored_pdb(inp, output_filename, scorefxn):
     else:
         raise ValueError(f"Unsupported argument parameter type for 'scorefxn': {type(scorefxn)}")
 
+
 @requires_init
 def dump_multimodel_pdb(inp, output_filename):
     """
@@ -318,6 +279,7 @@ def dump_multimodel_pdb(inp, output_filename):
         poses = to_pose(inp)
     return pyrosetta.io.dump_multimodel_pdb(poses, output_filename)
 
+
 @requires_init
 def dump_cif(inp, output_filename):
     """Dump a CIF file from a `PackedPose` or `Pose` object and output filename.
@@ -331,6 +293,7 @@ def dump_cif(inp, output_filename):
         )
     return pyrosetta.io.dump_cif(to_pose(inp), output_filename)
 
+
 @requires_init
 def dump_mmtf(inp, output_filename):
     """Dump a MMTF file from a `PackedPose` or `Pose` object and output filename.
@@ -343,6 +306,7 @@ def dump_mmtf(inp, output_filename):
             + "which `pyrosetta.distributed.io.pose_from_file` expects."
         )
     return pyrosetta.io.dump_mmtf(to_pose(inp), output_filename)
+
 
 @requires_init
 def dump_base64(inp, output_filename):
@@ -359,6 +323,7 @@ def dump_base64(inp, output_filename):
         f.write(to_base64(inp))
     return True
 
+
 @requires_init
 def dump_pickle(inp, output_filename):
     """Dump a pickle-encoded file from a `PackedPose` or `Pose` object and output filename.
@@ -374,6 +339,7 @@ def dump_pickle(inp, output_filename):
         f.write(to_pickle(inp))
     return True
 
+
 def create_score_function(*args, **kwargs):
     """
     Returns a `ScorePoseTask` instance.
@@ -382,6 +348,7 @@ def create_score_function(*args, **kwargs):
     @klimaj
     """
     return score.ScorePoseTask(*args, **kwargs)
+
 
 def get_fa_scorefxn():
     """
@@ -392,6 +359,7 @@ def get_fa_scorefxn():
     """
     weights = loops.get_fa_scorefxn().get_name()
     return score.ScorePoseTask(weights=weights, patch=None)
+
 
 def get_score_function():
     """
