@@ -49,9 +49,6 @@ __all__ = [
     "dump_multimodel_pdb",
     "dump_cif",
     "dump_mmtf",
-    "dump_pdb_bz2",
-    "dump_pdb_gz",
-    "dump_pdb_xz",
     "dump_base64",
     "dump_pickle",
     "create_score_function",
@@ -251,17 +248,7 @@ def to_silent(inp, output_filename):
 def to_pdbstring(inp):
     """Convert to pdb-formatted string with score and energy data.
     """
-    from pyrosetta.rosetta.core.io import StructFileRepOptions
-    from pyrosetta.rosetta.std import ostringstream
-
-    sfro = StructFileRepOptions()
-    sfro.set_output_pose_cache_data(True)
-    sfro.set_output_pose_energies_table(True)
-
-    oss = ostringstream()
-    pyrosetta.io.dump_pdb(to_pose(inp), oss, sfro)
-
-    return oss.bytes().decode()
+    return pyrosetta.io.to_pdbstring(to_pose(inp))
 
 
 register_container_traversal(to_pdbstring, lambda d: to_pdbstring(to_packed(d)))
@@ -296,11 +283,6 @@ def dump_pdb(inp, output_filename):
 
     @klimaj
     """
-    if not output_filename.endswith(".pdb"):
-        warnings.warn(
-            "Output filename does not end with '.pdb', "
-            + "which `pyrosetta.distributed.io.pose_from_file` expects."
-        )
     return pyrosetta.io.dump_pdb(to_pose(inp), output_filename)
 
 @requires_init
@@ -366,59 +348,6 @@ def dump_mmtf(inp, output_filename):
             + "which `pyrosetta.distributed.io.pose_from_file` expects."
         )
     return pyrosetta.io.dump_mmtf(to_pose(inp), output_filename)
-
-@requires_init
-def dump_pdb_bz2(inp, output_filename):
-    """Dump a bz2-encoded PDB file from a `PackedPose` or `Pose` object and output filename.
-
-    @klimaj
-    """
-    if not output_filename.endswith((".pdb.bz2", ".bz2")):
-        warnings.warn(
-            "Output filename does not end with '.pdb.bz2' or '.bz2', "
-            + "which `pyrosetta.distributed.io.pose_from_file` expects."
-        )
-    with open(output_filename, "wb") as f:
-        f.write(bz2.compress(str.encode(to_pdbstring(inp))))
-    return True
-
-@requires_init
-def dump_pdb_gz(inp, output_filename):
-    """Dump a gzip-encoded PDB file from a `PackedPose` or `Pose` object and output filename.
-
-    @klimaj
-    """
-    if not output_filename.endswith((".pdb.gz", ".gz")):
-        warnings.warn(
-            "Output filename does not end with '.pdb.gz' or '.gz', "
-            + "which `pyrosetta.distributed.io.pose_from_file` expects."
-        )
-    with gzip.open(output_filename, mode="wt", compresslevel=9) as gz:
-        gz.write(to_pdbstring(inp))
-    return True
-
-@requires_init
-def dump_pdb_xz(inp, output_filename):
-    """Dump a xz-encoded PDB file from a `PackedPose` or `Pose` object and output filename.
-
-    @klimaj
-    """
-    if "lzma" not in sys.modules:
-        raise ImportError(
-            (
-                "Using 'xz' for compression requires installing the 'xz' package into your python environment. "
-                + "For installation instructions, visit:\n"
-                + "https://anaconda.org/anaconda/xz\n"
-            )
-        )
-    if not output_filename.endswith((".pdb.xz", ".xz")):
-        warnings.warn(
-            "Output filename does not end with '.pdb.xz' or '.xz', "
-            + "which `pyrosetta.distributed.io.pose_from_file` expects."
-        )
-    with open(output_filename, "wb") as f:
-        f.write(xz.compress(str.encode(to_pdbstring(inp))))
-    return True
 
 @requires_init
 def dump_base64(inp, output_filename):

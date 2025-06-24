@@ -6,7 +6,9 @@
 # (c) For more information, see http://www.rosettacommons.org.
 # (c) Questions about this can be addressed to University of Washington CoMotion, email: license@uw.edu.
 
+import bz2
 import functools
+import gzip
 import pyrosetta.rosetta as rosetta
 import sys
 import warnings
@@ -14,9 +16,14 @@ import warnings
 from pyrosetta.rosetta.core.import_pose import pose_from_file, pose_from_pdbstring
 from pyrosetta.rosetta.core.io.mmcif import dump_cif
 from pyrosetta.rosetta.core.io.mmtf import dump_mmtf
-from pyrosetta.rosetta.core.io.pdb import dump_pdb
 from pyrosetta.rosetta.core.pose import make_pose_from_sequence, Pose
 from pyrosetta.io.silent_file_map import SilentFileMap
+
+try:
+    import lzma as xz
+except ImportError:
+    pass
+
 
 # for backward-compatibility
 # This needs to be here because of all the people using the Workshops and
@@ -173,6 +180,23 @@ def poses_to_silent(poses, output_filename):
         output_silent(pose=poses)
 
 
+def to_pdbstring(pose):
+    """Convert to pdb-formatted string with score and energy data.
+    """
+    from pyrosetta.rosetta.core.io import StructFileRepOptions
+    from pyrosetta.rosetta.core.io.pdb import dump_pdb as _dump_pdb
+    from pyrosetta.rosetta.std import ostringstream
+
+    sfro = StructFileRepOptions()
+    sfro.set_output_pose_cache_data(True)
+    sfro.set_output_pose_energies_table(True)
+
+    oss = ostringstream()
+    _dump_pdb(pose, oss, sfro)
+
+    return oss.bytes().decode()
+
+
 @functools.wraps(Pose.dump_file)
 def dump_file(pose, output_filename):
     return pose.dump_file(output_filename)
@@ -181,6 +205,46 @@ def dump_file(pose, output_filename):
 @functools.wraps(Pose.dump_scored_pdb)
 def dump_scored_pdb(pose, output_filename, scorefxn):
     return pose.dump_scored_pdb(output_filename, scorefxn)
+
+
+def dump_pdb(pose, output_filename):
+    """
+    Dump a PDB file from a `Pose` object and output filename.
+    If the output filename ends with ".pdb.bz2" or ".bz2", then dump a bz2-encoded PDB file.
+    If the output filename ends with ".pdb.gz" or ".gz", then dump a gzip-encoded PDB file.
+    If the output filename ends with ".pdb.xz" or ".xz", then dump a xz-encoded PDB file.
+
+    @klimaj
+    """
+    from pyrosetta.rosetta.core.io.pdb import dump_pdb as _dump_pdb
+
+    if not output_filename.endswith((".pdb", ".pdb.bz2", ".bz2", ".pdb.gz", ".gz", ".pdb.xz", ".xz")):
+        warnings.warn(
+            "Output filename does not end with '.pdb', '.pdb.bz2', '.bz2', '.pdb.gz', '.gz', '.pdb.xz', or '.xz', "
+            + "which `pyrosetta.io.pose_from_file` expects."
+        )
+
+    if output_filename.endswith((".pdb.bz2", ".bz2")):
+        with open(output_filename, "wb") as f:
+            f.write(bz2.compress(str.encode(to_pdbstring(pose))))
+    elif output_filename.endswith((".pdb.gz", ".gz")):
+        with gzip.open(output_filename, mode="wt", compresslevel=9) as gz:
+            gz.write(to_pdbstring(pose))
+    elif output_filename.endswith((".pdb.xz", ".xz")):
+        if "lzma" not in sys.modules:
+            raise ImportError(
+                (
+                    "Using 'xz' for compression requires installing the 'xz' package into your python environment. "
+                    + "For installation instructions, visit:\n"
+                    + "https://anaconda.org/anaconda/xz\n"
+                )
+            )
+        with open(output_filename, "wb") as f:
+            f.write(xz.compress(str.encode(to_pdbstring(pose))))
+    else:
+        return _dump_pdb(pose, output_filename)
+
+    return True
 
 
 def dump_multimodel_pdb(poses, output_filename):
