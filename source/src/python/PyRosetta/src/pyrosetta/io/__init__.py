@@ -197,16 +197,6 @@ def to_pdbstring(pose):
     return oss.bytes().decode()
 
 
-@functools.wraps(Pose.dump_file)
-def dump_file(pose, output_filename):
-    return pose.dump_file(output_filename)
-
-
-@functools.wraps(Pose.dump_scored_pdb)
-def dump_scored_pdb(pose, output_filename, scorefxn):
-    return pose.dump_scored_pdb(output_filename, scorefxn)
-
-
 def dump_pdb(pose, output_filename):
     """
     Dump a PDB file from a `Pose` object and output filename.
@@ -271,3 +261,30 @@ def dump_multimodel_pdb(poses, output_filename):
         v1.append(poses)
 
     return rosetta.core.io.pdb.dump_multimodel_pdb(v1, output_filename)
+
+
+@functools.wraps(Pose.dump_file)
+def dump_file(pose, output_filename):
+    return pose.dump_file(output_filename)
+
+
+def dump_scored_pdb(pose, output_filename, scorefxn):
+    """
+    Dump a scored PDB file from a `Pose` object, output filename, and score function.
+    If the output filename ends with ".pdb.bz2" or ".bz2", then dump a bz2-encoded PDB file.
+    If the output filename ends with ".pdb.gz" or ".gz", then dump a gzip-encoded PDB file.
+    If the output filename ends with ".pdb.xz" or ".xz", then dump a xz-encoded PDB file.
+    Otherwise, implement the `Pose.dump_scored_pdb` method.
+
+    @klimaj
+    """
+    if output_filename.endswith((".pdb.bz2", ".bz2", ".pdb.gz", ".gz", ".pdb.xz", ".xz")):
+        scorefxn(pose)
+        return dump_pdb(pose, output_filename)
+    else:
+        if not output_filename.endswith(".pdb"):
+            warnings.warn(
+                "Output filename does not end with '.pdb', "
+                + "which `pyrosetta.io.pose_from_file` expects."
+            )
+        return pose.dump_scored_pdb(output_filename, scorefxn)

@@ -295,11 +295,6 @@ def dump_scored_pdb(inp, output_filename, scorefxn):
 
     @klimaj
     """
-    if not output_filename.endswith(".pdb"):
-        warnings.warn(
-            "Output filename does not end with '.pdb', "
-            + "which `pyrosetta.distributed.io.pose_from_file` expects."
-        )
     if isinstance(scorefxn, str):
         scorefxn = score.ScorePoseTask(weights=scorefxn, patch=None)
     if isinstance(scorefxn, score.ScorePoseTask):
