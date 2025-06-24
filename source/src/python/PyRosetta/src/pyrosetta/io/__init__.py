@@ -14,7 +14,6 @@ import pyrosetta.rosetta as rosetta
 import sys
 import warnings
 
-from pyrosetta.rosetta.core.import_pose import pose_from_pdbstring
 from pyrosetta.rosetta.core.io.mmcif import dump_cif
 from pyrosetta.rosetta.core.io.mmtf import dump_mmtf
 from pyrosetta.rosetta.core.pose import make_pose_from_sequence, Pose
@@ -50,7 +49,6 @@ def pose_from_file(*args, **kwargs):
         return rosetta.core.import_pose.pose_from_file(*args, **kwargs)
 
 
-@functools.singledispatch
 def pose_from_pdb(filename):
     """
     Load a `Pose` object from a bz2-, gzip-, or xz-encoded PDB file.
@@ -58,16 +56,6 @@ def pose_from_pdb(filename):
 
     @klimaj
     """
-    raise FileNotFoundError(
-        f"The input filename must be an instance of `str`. Recieved: {type(filename)}"
-    )
-
-@pose_from_pdb.register(type(None))
-def _pose_from_none(none):
-    return None
-
-@pose_from_pdb.register(str)
-def _pose_from_str(filename):
     if not os.path.isfile(filename):
         raise FileNotFoundError(f"Input filename does not exist: {filename}")
 
@@ -92,6 +80,13 @@ def _pose_from_str(filename):
         return pose_from_file(filename)
 
     return pose_from_pdbstring(pdbstring)
+
+
+@functools.wraps(rosetta.core.import_pose.pose_from_pdbstring)
+def pose_from_pdbstring(*args, **kwargs):
+    result = Pose()
+    rosetta.core.import_pose.pose_from_pdbstring(result, *args, **kwargs)
+    return result
 
 
 def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
