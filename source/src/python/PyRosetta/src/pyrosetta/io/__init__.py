@@ -194,9 +194,8 @@ def poses_from_multimodel_pdb(filename, *args, **kwargs):
                 if not found_model:
                     raise ValueError(f"Multimodel PDB file is not formatted correctly: {filename}")
                 if model_lines:
-                    pose = Pose()
                     pdbstring = "".join(model_lines)
-                    pose_from_pdbstring(pose, pdbstring, *args, **kwargs)
+                    pose = pose_from_pdbstring(pdbstring, *args, **kwargs)
                     pose.pdb_info().name(f"{filename} MODEL {model_number}")
                     yield pose
                 else: # Otherwise raises: "ERROR: Assertion `! lines.empty()` failed."
