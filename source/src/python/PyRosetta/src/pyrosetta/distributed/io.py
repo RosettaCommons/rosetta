@@ -10,7 +10,6 @@ import pyrosetta.io
 import pyrosetta.rosetta.utility as utility
 import pyrosetta.rosetta.core.pose as pose
 import pyrosetta.rosetta.core.import_pose as import_pose
-import pyrosetta.rosetta.protocols.loops as loops
 import pyrosetta.rosetta.core.scoring as scoring
 import pyrosetta.distributed.tasks.score as score
 
@@ -362,7 +361,7 @@ def get_fa_scorefxn():
 
     @klimaj
     """
-    weights = loops.get_fa_scorefxn().get_name()
+    weights = pyrosetta.io.get_fa_scorefxn().get_name()
     return score.ScorePoseTask(weights=weights, patch=None)
 
 

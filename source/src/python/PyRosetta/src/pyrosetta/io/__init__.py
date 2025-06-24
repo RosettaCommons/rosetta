@@ -17,12 +17,17 @@ import warnings
 from pyrosetta.rosetta.core.io.mmcif import dump_cif
 from pyrosetta.rosetta.core.io.mmtf import dump_mmtf
 from pyrosetta.rosetta.core.pose import make_pose_from_sequence, Pose
+from pyrosetta.rosetta.core.scoring import get_score_function
+from pyrosetta.rosetta.protocols.loops import get_fa_scorefxn
 from pyrosetta.io.silent_file_map import SilentFileMap
 
 try:
     import lzma as xz
 except ImportError:
     pass
+
+
+create_score_function = rosetta.core.scoring.ScoreFunctionFactory.create_score_function
 
 
 def pose_from_file(*args, **kwargs):

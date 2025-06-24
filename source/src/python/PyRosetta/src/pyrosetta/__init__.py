@@ -46,7 +46,6 @@ from pyrosetta.rosetta.core.scoring import ScoreFunction
 
 from pyrosetta.rosetta.protocols.moves import PyMOLMover, SequenceMover, RepeatMover, TrialMover, MonteCarlo
 from pyrosetta.rosetta.protocols.simple_moves import SwitchResidueTypeSetMover
-from pyrosetta.rosetta.protocols.loops import get_fa_scorefxn
 
 from pyrosetta.io import (
     pose_from_pdb,
@@ -63,11 +62,11 @@ from pyrosetta.io import (
     dump_multimodel_pdb,
     dump_cif,
     dump_mmtf,
+    create_score_function,
+    get_fa_scorefxn,
+    get_score_function,
     Pose,
 )
-
-from pyrosetta.rosetta.core.scoring import get_score_function
-create_score_function = pyrosetta.rosetta.core.scoring.ScoreFunctionFactory.create_score_function
 
 ###############################################################################
 # Exception handling.
