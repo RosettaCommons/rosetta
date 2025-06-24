@@ -85,7 +85,7 @@ class LoadPDBTest(unittest.TestCase):
 
     def test_roundtrip_file(self):
         for ext in (".cif", ".mmcif", ".mmtf"):
-            pdb_file = os.path.join(self.workdir.name, "tmp_scored_pdb{0}".format(ext))
+            pdb_file = os.path.join(self.workdir.name, "tmp_file{0}".format(ext))
             pyrosetta.dump_file(self.pose, pdb_file)
             pose_out = pyrosetta.pose_from_file(pdb_file)
             self.assertEqual(pose_out.size(), self.pose.size())
