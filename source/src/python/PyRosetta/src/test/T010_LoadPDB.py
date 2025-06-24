@@ -22,6 +22,13 @@ import pyrosetta.rosetta as rosetta
 import tempfile
 import unittest
 
+try:
+    import lzma as xz
+    _skip_xz = False
+except ImportError:
+    _skip_xz = True
+
+
 class LoadPDBTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -36,6 +43,8 @@ class LoadPDBTest(unittest.TestCase):
         cls.workdir.cleanup()
 
     def test_load_pdb(self):
+        import pyrosetta
+
         os.chdir('.test.output')
         pose = rosetta.core.import_pose.pose_from_file("../test/data/test_in.pdb")
 
@@ -69,6 +78,7 @@ class LoadPDBTest(unittest.TestCase):
         # commenting this out for now to avoid release failures during debug builds when network is out
         # pyrosetta.toolbox.pose_from_rcsb('1brs')
 
+    @unittest.skipIf(_skip_xz, "The package 'xz' is not installed.")
     def test_roundtrip_pdb(self):
         for ext in (".pdb", ".pdb.bz2", ".bz2", ".pdb.gz", ".gz", ".pdb.xz", ".xz"):
             pdb_file = os.path.join(self.workdir.name, "tmp_pdb{0}".format(ext))
@@ -76,6 +86,7 @@ class LoadPDBTest(unittest.TestCase):
             pose_out = pyrosetta.pose_from_file(pdb_file)
             self.assertEqual(pose_out.size(), self.pose.size())
 
+    @unittest.skipIf(_skip_xz, "The package 'xz' is not installed.")
     def test_roundtrip_scored_pdb(self):
         for ext in (".pdb", ".pdb.bz2", ".bz2", ".pdb.gz", ".gz", ".pdb.xz", ".xz"):
             pdb_file = os.path.join(self.workdir.name, "tmp_scored_pdb{0}".format(ext))
