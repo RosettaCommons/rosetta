@@ -110,10 +110,15 @@ def pose_from_pdbstring(*args, **kwargs):
     return result
 
 
+@functools.singledispatch
 @requires_init
 @pack_result
 def pose_from_pdb(*args, **kwargs):
     return pose_from_file(*args, **kwargs)
+
+@pose_from_pdb.register(type(None))
+def _pose_from_none(none):
+    return None
 
 
 @functools.singledispatch
