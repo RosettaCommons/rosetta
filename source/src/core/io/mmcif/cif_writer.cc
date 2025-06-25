@@ -42,18 +42,17 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/gemmi_util.hh>
+#include <gemmi/to_cif.hpp>
 
 // Numeric headers
 
 // External headers
-#include <cifparse/CifFile.h>
+#include <gemmi/cif.hpp>
 
 #include <core/io/AtomInformation.hh> // AUTO IWYU For AtomInformation
 
-using CifFileOP = utility::pointer::shared_ptr<CifFile>;
-
 // C++ headers
-
 
 #include <basic/Tracer.hh>
 
@@ -62,6 +61,8 @@ static basic::Tracer TR( "core.io.mmcif.cif_writer.hh" );
 namespace core {
 namespace io {
 namespace mmcif {
+
+using utility::gemmi_add_table;
 
 using utility::to_string;
 
@@ -177,94 +178,61 @@ dump_cif(
 	StructFileRepOP sfr,
 	StructFileRepOptions const & options
 ) {
-	// ALERT: do not delete pointers. block.WriteTable takes ownership.
-	CifFile cifFile;
-	cifFile.AddBlock( "Rosetta" );
-	Block& block = cifFile.GetBlock( "Rosetta" );
+	////// NOTES:
+	// It's important to wrap any strings possibly containing spaces in gemmi:cif::quote() -- This should be safe for non-space strings
+	using gemmi::cif::quote;
+
+	gemmi::cif::Document cifdoc;
+	gemmi::cif::Block & block = cifdoc.add_new_block("Rosetta");
 
 	// "header information", i.e., is from the Title Section of the PDB file.
 	if ( options.preserve_header() ) {
-		ISTable* citation = new ISTable( "citation" );
-		citation->AddColumn( "title" );
-		citation->AddRow( std::vector< std::string >( 1, sfr->header()->title() ) );
-		block.WriteTable( citation );
+		gemmi::cif::Loop & citation = gemmi_add_table(block, "citation", {"title"});
+		citation.add_row( { quote(sfr->header()->title()) } );
 
-		ISTable* entry = new ISTable( "entry" );
-		entry->AddColumn( "id" );
-		entry->AddRow( std::vector< std::string >( 1, sfr->header()->idCode() ) );
-		block.WriteTable( entry );
+		gemmi::cif::Loop & entry = gemmi_add_table(block, "entry", {"id"});
+		entry.add_row( { quote(sfr->header()->idCode()) } );
 
-		ISTable* entity = new ISTable( "entity" );
-		entity->AddColumn( "pdbx_description" );
-		for ( Size i = 0; i < sfr->header()->compounds().size(); ++i ) {
-			entity->AddRow( std::vector< std::string >( 1, sfr->header()->compounds()[ i ].second ) );
+		gemmi::cif::Loop & entity = gemmi_add_table(block, "entity", {"pdbx_description"});
+		for ( auto e: sfr->header()->compounds() ) {
+			entity.add_row( {quote(e.second)} );
 		}
-		block.WriteTable( entity );
 
-		ISTable* struct_keywords = new ISTable( "struct_keywords" );
-		struct_keywords->AddColumn( "pdbx_keywords" );
-		struct_keywords->AddColumn( "text" );
-		std::vector< std::string > struct_keywords_vec;
-		struct_keywords_vec.push_back( sfr->header()->classification() );
-		std::string keyword_str = "";
-		// keywords is a std::set, so <
-		std::list< std::string >::const_iterator iter, end;
-		for ( iter = sfr->header()->keywords().begin(),
-				end = --sfr->header()->keywords().end(); iter != end; ++iter ) {
-			keyword_str += *iter + ", ";
+		gemmi::cif::Loop & struct_keywords = gemmi_add_table(block, "struct_keywords", {"pdbx_keywords","text"});
+		struct_keywords.add_row( {sfr->header()->classification(), quote(utility::join(sfr->header()->keywords(), ", "))} );
+
+		gemmi::cif::Loop & database_PDB_rev = gemmi_add_table(block, "database_PDB_rev", {"date_original"});
+		database_PDB_rev.add_row( {quote(sfr->header()->deposition_date())} );
+
+		utility::vector1< std::string > expt_tech;
+		for ( auto e: sfr->header()->experimental_techniques() ) {
+			expt_tech.push_back( rcsb::experimental_technique_to_string(e) );
 		}
-		keyword_str += *++iter;
-
-		struct_keywords_vec.push_back( keyword_str );
-		struct_keywords->AddRow( struct_keywords_vec );
-		block.WriteTable( struct_keywords );
-
-		ISTable* database_PDB_rev = new ISTable( "database_PDB_rev" );
-		database_PDB_rev->AddColumn( "date_original" );
-		database_PDB_rev->AddRow( std::vector< std::string >( 1, sfr->header()->deposition_date() ) );
-		block.WriteTable( database_PDB_rev );
-
-		ISTable* exptl = new ISTable( "exptl" );
-		exptl->AddColumn( "method" );
-		std::string tech_str = "";
-		// keywords is a std::list, so <
-		std::list< rcsb::ExperimentalTechnique >::const_iterator iter3, end3;
-		for ( iter3 = sfr->header()->experimental_techniques().begin(),
-				end3 = --sfr->header()->experimental_techniques().end(); iter3 != end3; ++iter3 ) {
-			tech_str += rcsb::experimental_technique_to_string(
-				*iter3 ) + ", ";
-		}
-		tech_str += rcsb::experimental_technique_to_string( *++iter3 );
-		exptl->AddRow( std::vector< std::string >( 1, tech_str ) );
-		block.WriteTable( exptl );
+		gemmi::cif::Loop & exptl = gemmi_add_table(block, "exptl", {"method"} );
+		exptl.add_row( {quote(utility::join(expt_tech,", "))} );
 	}
 
 	// HETNAM
-	ISTable* chem_comp = new ISTable( "chem_comp" );
-	chem_comp->AddColumn( "id" );
-	chem_comp->AddColumn( "name" );
+	gemmi::cif::Loop & chem_comp = gemmi_add_table(block, "chem_comp", {"id","name"} );
 	for ( auto const & elem : sfr->heterogen_names() ) {
-		std::vector< std::string > vec;
-		vec.push_back( elem.first );
-		vec.push_back( elem.second );
-		chem_comp->AddRow( vec );
+		chem_comp.add_row( {elem.first, elem.second} );
 	}
-	block.WriteTable( chem_comp );
 
 	// LINK
-	ISTable* struct_conn = new ISTable( "struct_conn" );
-	struct_conn->AddColumn( "ptnr1_label_atom_id" );
-	struct_conn->AddColumn( "ptnr1_label_comp_id" );
-	struct_conn->AddColumn( "ptnr1_label_asym_id" );
-	struct_conn->AddColumn( "ptnr1_label_seq_id" );
-	struct_conn->AddColumn( "pdbx_ptnr1_PDB_ins_code" );
-	struct_conn->AddColumn( "ptnr2_label_atom_id" );
-	struct_conn->AddColumn( "ptnr2_label_comp_id" );
-	struct_conn->AddColumn( "ptnr2_label_asym_id" );
-	struct_conn->AddColumn( "ptnr2_label_seq_id" );
-	struct_conn->AddColumn( "pdbx_ptnr2_PDB_ins_code" );
-	struct_conn->AddColumn( "pdbx_dist_value" );
-	struct_conn->AddColumn( "conn_type_id" );
+	gemmi::cif::Loop & struct_conn = gemmi_add_table(block, "struct_conn", {
+			"ptnr1_label_atom_id",
+			"ptnr1_label_comp_id",
+			"ptnr1_label_asym_id",
+			"ptnr1_label_seq_id",
+			"pdbx_ptnr1_PDB_ins_code",
+			"ptnr2_label_atom_id",
+			"ptnr2_label_comp_id",
+			"ptnr2_label_asym_id",
+			"ptnr2_label_seq_id",
+			"pdbx_ptnr2_PDB_ins_code",
+			"pdbx_dist_value",
+			"conn_type_id"
+	} );
 
 	for ( auto const & elem : sfr->ssbond_map() ) {
 		for ( auto const & iter2 : elem.second ) {
@@ -289,7 +257,7 @@ dump_cif(
 			vec.push_back( ss.str() );
 			vec.emplace_back("disulf" );
 
-			struct_conn->AddRow( vec );
+			struct_conn.add_row( vec );
 		}
 	}
 
@@ -315,19 +283,19 @@ dump_cif(
 			vec.push_back( ss.str() );
 			vec.emplace_back("covale" );
 
-			struct_conn->AddRow( vec );
+			struct_conn.add_row( vec );
 		}
 	}
-	block.WriteTable( struct_conn );
 
 	// CRYST1
-	ISTable* cell = new ISTable( "cell" );
-	cell->AddColumn( "length_a" );
-	cell->AddColumn( "length_b" );
-	cell->AddColumn( "length_c" );
-	cell->AddColumn( "angle_alpha" );
-	cell->AddColumn( "angle_beta" );
-	cell->AddColumn( "angle_gamma" );
+	gemmi::cif::Loop & cell = gemmi_add_table(block, "cell", {
+		"length_a",
+		"length_b",
+		"length_c",
+		"angle_alpha",
+		"angle_beta",
+		"angle_gamma"
+	} );
 	std::vector< std::string > realvec;
 	std::stringstream ss;
 	ss << sfr->crystinfo().A();
@@ -348,33 +316,31 @@ dump_cif(
 	ss << sfr->crystinfo().gamma();
 	realvec.push_back( ss.str() );
 	ss.str( std::string() );
-	cell->AddRow( realvec );
-	block.WriteTable( cell );
+	cell.add_row( realvec );
 
-	ISTable* symmetry = new ISTable( "symmetry" );
-	symmetry->AddColumn( "space_group_name_H-M" );
-	symmetry->AddRow( std::vector< std::string >( 1, sfr->crystinfo().spacegroup() ) );
-	block.WriteTable( symmetry );
+	gemmi::cif::Loop & symmetry = gemmi_add_table(block, "symmetry", {"space_group_name_H-M"} );
+	symmetry.add_row( {sfr->crystinfo().spacegroup()} );
 
 	// We cannot support REMARKs yet because these are stored in DIVERSE places.
 	// There isn't a coherent "REMARKs" object. AMW TODO
 
-	ISTable* atom_site = new ISTable( "atom_site" );
-	atom_site->AddColumn( "group_PDB" );
-	atom_site->AddColumn( "id" );
-	atom_site->AddColumn( "auth_atom_id" );
-	atom_site->AddColumn( "label_alt_id" );
-	atom_site->AddColumn( "auth_comp_id" );
-	atom_site->AddColumn( "auth_asym_id" );
-	atom_site->AddColumn( "auth_seq_id" );
-	atom_site->AddColumn( "pdbx_PDB_ins_code" );
-	atom_site->AddColumn( "Cartn_x" );
-	atom_site->AddColumn( "Cartn_y" );
-	atom_site->AddColumn( "Cartn_z" );
-	atom_site->AddColumn( "occupancy" );
-	atom_site->AddColumn( "B_iso_or_equiv" );
-	atom_site->AddColumn( "type_symbol" );
-	atom_site->AddColumn( "pdbx_PDB_model_num" );
+	gemmi::cif::Loop & atom_site = gemmi_add_table(block, "atom_site", {
+			"group_PDB",
+			"id",
+			"auth_atom_id",
+			"label_alt_id",
+			"auth_comp_id",
+			"auth_asym_id",
+			"auth_seq_id",
+			"pdbx_PDB_ins_code",
+			"Cartn_x",
+			"Cartn_y",
+			"Cartn_z",
+			"occupancy",
+			"B_iso_or_equiv",
+			"type_symbol",
+			"pdbx_PDB_model_num"
+	} );
 
 	// ATOM/HETATM
 	for ( Size i = 0; i < sfr->chains().size(); ++i ) {
@@ -417,22 +383,25 @@ dump_cif(
 			vec.push_back( ss2.str() );
 
 			vec.push_back( utility::strip(ai.element) );
-			vec.push_back( sfr->modeltag() );
+			if ( sfr->modeltag().empty() ) {
+				vec.push_back( "?" );
+			} else {
+				vec.push_back( sfr->modeltag() );
+			}
 
-			atom_site->AddRow( vec );
+			atom_site.add_row( vec );
 		}
 	}
-	block.WriteTable( atom_site );
 
 	// Pose Energies Table
 	if ( sfr->score_table_labels().size() > 0 && options.output_pose_energies_table() ) {
-		ISTable* pose_energies = new ISTable( "pose_energies" );
-
-		//Add the Columns
-		pose_energies->AddColumn( "label" );
+		std::vector<std::string> columns;
+		columns.push_back( "label" );
 		for ( core::Size i =1; i <= sfr->score_table_labels().size(); ++i ) {
-			pose_energies->AddColumn( sfr->score_table_labels()[ i ] );
+			columns.push_back( sfr->score_table_labels()[ i ] );
 		}
+
+		gemmi::cif::Loop & pose_energies = gemmi_add_table(block, "pose_energies", columns );
 
 		//Add the Score Weights as a Row
 		std::vector< std::string > weights;
@@ -441,99 +410,89 @@ dump_cif(
 			weights.push_back( to_string( sfr->score_table_weights()[ i ] ) );
 		}
 		weights.emplace_back("NA");
-		pose_energies->AddRow(weights);
+		pose_energies.add_row(weights);
 		//Add the rest of the Rows
 		for ( core::Size i = 1; i <= sfr->score_table_lines().size(); ++i ) {
-			pose_energies->AddRow( sfr->score_table_lines()[ i ] );
+			pose_energies.add_row( sfr->score_table_lines()[ i ] );
 		}
-		block.WriteTable( pose_energies );
 	}
 
 	// Pose Arbitrary String and Float Data.
 	if ( (sfr->pose_cache_string_data().size() > 0 || sfr->pose_cache_real_data().size() > 0) && options.output_pose_cache() ) {
-		ISTable* pose_cache = new ISTable( "pose_cache_data" );
+		gemmi::cif::Loop & pose_cache = gemmi_add_table(block, "pose_cache", {"key","value"} );
 
 		if ( sfr->pose_cache_string_data().size() > 0 ) {
 			for ( auto & it : sfr->pose_cache_string_data() ) {
 				std::vector< std::string > row(2, "");
-				row[0] = it.first;
-				row[1] = it.second;
-				pose_cache->AddRow( row );
+				row[0] = quote(it.first);
+				row[1] = quote(it.second);
+				pose_cache.add_row( row );
 			}
 		}
 
 		if ( sfr->pose_cache_real_data().size() > 0 ) {
 			for ( auto & it : sfr->pose_cache_real_data() ) {
 				std::vector< std::string> row(2, "");
-				row[0] = it.first;
+				row[0] = quote(it.first);
 				row[1] = utility::to_string( it.second ); //PDB Writing of this data had no rounding of decimal places, so I'm not doing it here either (JAB).
-				pose_cache->AddRow( row );
+				pose_cache.add_row( row );
 			}
 		}
-		block.WriteTable( pose_cache );
-
 	}
 
 	//Even more pose info.
 	if ( sfr->pdb_comments().size() > 0 ) {
-		ISTable* pose_comments = new ISTable( "pose_comments" );
-		pose_comments->AddColumn( "type" );
-		pose_comments->AddColumn( "comment" );
-
+		gemmi::cif::Loop & pose_comments = gemmi_add_table(block, "pose_comments", {"type","comment"} );
 
 		using namespace std;
 		map< string, string > const comments = sfr->pdb_comments();
 		for ( auto const & comment : comments ) {
 			std::vector< std::string > row(2, "");
 			row[0] = comment.first;
-			row[1] = comment.second;
-			pose_comments->AddRow( row );
+			row[1] = quote(comment.second);
+			pose_comments.add_row( row );
 		}
-
-		block.WriteTable( pose_comments );
 	}
 
 	//Remarks are now split into specific types in the mmCIF format.  Here we just place remarks as Rosetta remarks.
 	if ( sfr->remarks()->size() > 0 ) {
-		ISTable* rosetta_remarks = new ISTable( "rosetta_remarks" );
-		rosetta_remarks->AddColumn( "num"); //Feel free to change the name of this.
-		rosetta_remarks->AddColumn( "remark");
+		gemmi::cif::Loop & rosetta_remarks = gemmi_add_table(block, "rosetta_remarks", {"num","remark"} );
 
 		for ( Size i=0; i<sfr->remarks()->size(); ++i ) {
 			RemarkInfo const & ri( sfr->remarks()->at(i) );
 			std::vector< std::string > row(2, "");
 			row[0] = utility::pad_left( ri.num, 3 ); //("%3d", ri.num);
-			row[1] = ri.value;
-			rosetta_remarks->AddRow( row );
+			row[1] = quote(ri.value);
+			rosetta_remarks.add_row( row );
 		}
-
-		block.WriteTable( rosetta_remarks );
 	}
 
 	//Finally, the single string output.  If you have a better way to do this, please refactor this.
 	if ( !sfr->additional_string_output().empty() || ! sfr->foldtree_string().empty() ) {
-		ISTable* rosetta_additional = new ISTable( "rosetta_additional" );
-		rosetta_additional->AddColumn( "type" );
-		rosetta_additional->AddColumn( "output");
+		gemmi::cif::Loop & rosetta_additional = gemmi_add_table(block, "rosetta_additional", {"type","output"} );
 
 		if ( ! sfr->foldtree_string().empty() ) {
 			std::vector< std::string > out_vec;
 
 			out_vec.emplace_back("fold_tree");
-			out_vec.push_back(sfr->foldtree_string());
-			rosetta_additional->AddRow(out_vec);
+			out_vec.push_back(quote(sfr->foldtree_string()));
+			rosetta_additional.add_row(out_vec);
 		}
 		if ( ! sfr->additional_string_output().empty() ) {
 			std::vector< std::string > out_vec;
 
 			out_vec.emplace_back("etc" );
-			out_vec.push_back( sfr->additional_string_output() );
-			rosetta_additional->AddRow( std::vector< std::string >( 1, sfr->additional_string_output() ) );
+			out_vec.push_back( quote(sfr->additional_string_output()) );
+			rosetta_additional.add_row( std::vector< std::string >( 1, sfr->additional_string_output() ) );
 		}
-		block.WriteTable( rosetta_additional );
 	}
 
-	cifFile.Write( out );
+	gemmi::cif::WriteOptions gemmi_options;
+	gemmi_options.misuse_hash = true; // Use hash separation, like the wwPDB does.
+	gemmi_options.prefer_pairs = true; // Write single row tables as pairs, rather than loops
+	gemmi_options.align_loops = 16; // Space pad things to align columns (up to 16 columns wide)
+
+	gemmi::cif::write_cif_to_stream(out,cifdoc,gemmi_options);
 }
 
 } //core

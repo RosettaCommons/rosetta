@@ -84,8 +84,8 @@
 #include <ObjexxFCL/FArray2D.hh>
 // External headers
 #include <ObjexxFCL/string.functions.hh>
-#include <cifparse/CifFile.h>
-#include <cifparse/CifParserBase.h>
+
+#include <gemmi/cif.hpp>
 
 #include <tuple>
 #include <boost/algorithm/string/predicate.hpp>
@@ -102,9 +102,6 @@
 #include <cereal/types/utility.hpp>
 #include <cereal/details/helpers.hpp>
 #endif
-
-using CifFileOP = utility::pointer::shared_ptr<CifFile>;
-using CifParserOP = utility::pointer::shared_ptr<CifParser>;
 
 static basic::Tracer TR( "core.import_pose.util" );
 
@@ -322,18 +319,17 @@ determine_file_type( std::string const &contents_of_file) {
 
 	if ( n_initial_under > 1 ) {
 		//See if this is a CIF file
-		std::string diagnostics;
-		CifFileOP cifFile( new CifFile );
-
-		CifParserOP cifParser( new CifParser( cifFile.get() ) );
-
-		cifParser->ParseString( contents_of_file, diagnostics );
-		if ( diagnostics.empty() ) {
-			return CIF_file;
-		} else if ( TR.Debug.visible() ) {
-			TR.Debug << "Attempted to read file as an mmCIF file. The mmCIF parser didn't like it, saying:" << std::endl;
-			TR.Debug <<  diagnostics << std::endl;
+		try {
+			gemmi::cif::Document cifdoc = gemmi::cif::read_memory( contents_of_file.c_str(), contents_of_file.size(), "CIFFILE" ); // Default check level fine
+			if ( ! cifdoc.blocks.empty() ) {
+				return CIF_file;
+			}
+		} catch (std::runtime_error const & e) { // gemmi errors
+			TR.Debug << "CIF parsing failed: Error message " << e.what() << std::endl;
+			// Apparently not a decent CIF file, so we proceed in checking other entries
 		}
+		// Outside catch block, as it also applies for non-error fall through
+		TR.Debug << "Attempted to read file as an mmCIF file. The mmCIF parser didn't like it." << std::endl;
 	}
 
 	// See if this is a pdb file - Do we have proper ATOM/HETATM records?
@@ -436,19 +432,18 @@ pose_from_file(
 		read_additional_pdb_data( contents_of_file, pose, options, read_fold_tree );
 
 	} else if ( file_type == CIF_file ) {
-		std::string diagnostics;
-		CifFileOP cifFile( new CifFile );
-		CifParserOP cifParser( new CifParser( cifFile.get() ) );
-		cifParser->ParseString( contents_of_file, diagnostics );
-		if ( !diagnostics.empty() ) {
-			TR.Warning << "mmCIF parser reports issues with file '" << filename << "' : " << std::endl;
-			TR.Warning << diagnostics << std::endl;
+		io::StructFileRepOP sfr;
+		try {
+			gemmi::cif::Document cifdoc = gemmi::cif::read_file( filename );
+			if ( cifdoc.blocks.empty() ) { // More extensive checking?
+				TR.Warning << "mmCIF parser wasn't able to properly read '" << filename << "' " << std::endl;
+				return;
+			}
+			sfr = io::mmcif::create_sfr_from_cif_file( cifdoc, options );
+		} catch (std::runtime_error const & e) { // gemmi errors
+			TR.Error << "CIF parsing failed for file `" << filename << "`: Error message " << e.what() << std::endl;
+			return;
 		}
-		io::StructFileRepOP sfr ( io::mmcif::create_sfr_from_cif_file_op( cifFile, options ) );
-		// We need to get rid of the cif parser IMMEDIATELY because of the arcanity in
-		// the library that there can only be one at once... even though you can only have one per
-		// file.
-		cifParser.reset();
 		build_pose( sfr, pose, residue_set, options );
 	} else if ( file_type == SRLZ_file ) {
 #ifdef SERIALIZATION
@@ -1384,7 +1379,7 @@ update_pose_fold_tree( pose::Pose & pose,
 	Size nchains = all_res_in_chain.size();
 
 	vector1< Size > jump_partners1, jump_partners2, cuts, blank_vector;
-	vector1< pair< Size, Size > > chain_connections;
+	vector1< std::pair< Size, Size > > chain_connections;
 	setup_user_defined_jumps( jump_res, jump_partners1, jump_partners2,
 		chain_connections, res_list, all_res_in_chain );
 	runtime_assert( jump_partners1.size() < nchains );
@@ -1433,7 +1428,7 @@ void
 setup_user_defined_jumps( vector1< Size > const & jump_res,
 	vector1< Size > & jump_partners1,
 	vector1< Size > & jump_partners2,
-	vector1< pair< Size, Size > > & chain_connections,
+	vector1< std::pair< Size, Size > > & chain_connections,
 	vector1< Size > const & res_list,
 	vector1< vector1< Size > > const & all_res_in_chain ) {
 
@@ -1449,7 +1444,7 @@ setup_user_defined_jumps( vector1< Size > const & jump_res,
 			Size const chain_i( get_chain( i, all_res_in_chain ) );
 			Size const chain_j( get_chain( j, all_res_in_chain ) );
 			runtime_assert( connection_domains[ chain_i ] != connection_domains[ chain_j ] );
-			chain_connections.push_back( make_pair( chain_i, chain_j ) );
+			chain_connections.push_back( std::make_pair( chain_i, chain_j ) );
 			connection_domains = get_connection_domains( chain_connections, all_res_in_chain.size() );
 		}
 	}
@@ -1470,7 +1465,7 @@ void
 setup_jumps( core::pose::Pose const & pose,
 	vector1< Size > & jump_partners1,
 	vector1< Size > & jump_partners2,
-	vector1< pair< Size, Size > > & chain_connections,
+	vector1< std::pair< Size, Size > > & chain_connections,
 	vector1< vector1< Size > > const & all_res_in_chain,
 	std::tuple< vector1< int >, vector1< char >, vector1< std::string > > const & resnum_and_chain_and_segid_in_pose ) {
 
@@ -1633,7 +1628,7 @@ void
 update_fixed_domain_from_extra_minimize_jump_pairs( utility::vector1< Size > & fixed_domain,
 	pose::Pose const & pose,
 	utility::vector1< Size > const & res_list,
-	utility::vector1< pair< Size, Size > > const & extra_minimize_jump_pairs ) {
+	utility::vector1< std::pair< Size, Size > > const & extra_minimize_jump_pairs ) {
 
 
 	for ( Size i = 1; i <= extra_minimize_jump_pairs.size(); i++ ) {
@@ -1677,9 +1672,9 @@ update_fixed_domain_from_extra_minimize_jump_res( vector1< Size > & fixed_domain
 	pose::Pose const & pose,
 	vector1< Size > const & res_list,
 	vector1< Size > const & extra_minimize_jump_res ) {
-	utility::vector1< pair< Size, Size > > extra_minimize_jump_pairs;
+	utility::vector1< std::pair< Size, Size > > extra_minimize_jump_pairs;
 	for ( Size n = 1; n <= extra_minimize_jump_res.size()/2; n++ ) {
-		extra_minimize_jump_pairs.push_back( make_pair( extra_minimize_jump_res[ 2*n - 1 ],
+		extra_minimize_jump_pairs.push_back( std::make_pair( extra_minimize_jump_res[ 2*n - 1 ],
 			extra_minimize_jump_res[ 2*n     ] ) );
 	}
 	update_fixed_domain_from_extra_minimize_jump_pairs( fixed_domain, pose, res_list, extra_minimize_jump_pairs );
@@ -1695,7 +1690,7 @@ add_cutpoint_closed( pose::Pose & pose,
 		if ( !res_list.has_value( cutpoint_closed[ n ] ) ) continue;
 		Size const i = res_list.index( cutpoint_closed[ n ] );
 		// could be useful in general -- share this with TransientCutpointHandler?
-		vector1< pair< core::id::TorsionID, Real > > const suite_torsion_info = get_suite_torsion_info( pose, i );
+		vector1< std::pair< core::id::TorsionID, Real > > const suite_torsion_info = get_suite_torsion_info( pose, i );
 		put_in_cutpoint( pose, i );
 		correctly_add_cutpoint_variants( pose, i );
 		apply_suite_torsion_info( pose, suite_torsion_info );
@@ -1927,7 +1922,7 @@ figure_out_dock_domain_map( utility::vector1< Size > & cutpoint_open_in_full_mod
 	}
 
 	// which segments are connected by input poses?
-	vector1< pair< Size, Size > > chain_connections;
+	vector1< std::pair< Size, Size > > chain_connections;
 	for ( vector1< Size > const & res_list : pose_res_lists ) {
 		std::set< Size > chains_in_pose;
 		for ( Size const seqpos : res_list ) {
@@ -1937,7 +1932,7 @@ figure_out_dock_domain_map( utility::vector1< Size > & cutpoint_open_in_full_mod
 		}
 		for ( auto it1 = chains_in_pose.begin(), end = chains_in_pose.end(); it1 != end; ++it1 ) {
 			for ( auto it2 = it1; it2 != end; ++it2 ) {
-				if ( it1 != it2 ) chain_connections.push_back( make_pair( *it1, *it2 ) );
+				if ( it1 != it2 ) chain_connections.push_back( std::make_pair( *it1, *it2 ) );
 			}
 		}
 	}

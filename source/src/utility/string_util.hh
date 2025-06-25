@@ -212,6 +212,14 @@ std::string join(vectorL<L, std::string> const & s, std::string const & connecto
 	return os.str();
 }
 
+template<class Iterable>
+std::string join(Iterable const & iter, std::string const & connector){
+	utility::vector1< std::string > vector;
+	for ( std::string s: iter ) {
+		vector.emplace_back( std::move(s) );
+	}
+	return join(iter, connector);
+}
 
 /// @brief replace space separations in a string with a connector such as '_'
 std::string
