@@ -100,10 +100,27 @@ class LoadPDBTest(unittest.TestCase):
             pyrosetta.dump_file(self.pose, pdb_file)
             pose_out = pyrosetta.pose_from_file(pdb_file)
             self.assertEqual(pose_out.size(), self.pose.size())
+            if ext in (".cif", ".mmcif"):
+                pyrosetta.dump_cif(self.pose, pdb_file)
+            elif ext == ".mmtf":
+                pyrosetta.dump_mmtf(self.pose, pdb_file)
+            else:
+                continue
+            pose_out = pyrosetta.pose_from_file(pdb_file)
+            self.assertEqual(pose_out.size(), self.pose.size())
 
     def test_pdbstring_io(self):
         self.assertIn("ATOM", pyrosetta.io.to_pdbstring(self.pose))
         pose_out = pyrosetta.io.pose_from_pdbstring(pyrosetta.io.to_pdbstring(self.pose))
+        self.assertEqual(pose_out.size(), self.pose.size())
+        pose = pyrosetta.Pose()
+        pdbstring = pyrosetta.io.to_pdbstring(self.pose)
+        pose_out = pyrosetta.io.pose_from_pdbstring(pose, pdbstring)
+        self.assertEqual(pose_out.size(), self.pose.size())
+        pose_out = pyrosetta.io.pose_from_pdbstring(pose=pose, pdbcontents=pdbstring)
+        self.assertEqual(pose_out.size(), self.pose.size())
+        pose = pyrosetta.Pose()
+        pose_out = pyrosetta.io.pose_from_pdbstring(pdbstring, pose)
         self.assertEqual(pose_out.size(), self.pose.size())
 
 if __name__ == "__main__":
