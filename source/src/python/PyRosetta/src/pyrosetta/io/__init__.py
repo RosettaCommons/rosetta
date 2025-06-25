@@ -50,49 +50,52 @@ def pose_from_file(*args, **kwargs):
         )
 
     if filename.endswith((".pdb.bz2", ".bz2", ".pdb.gz", ".gz", ".pdb.xz", ".xz")):
-        return pose_from_pdb(filename)
+        if filename.endswith((".pdb.bz2", ".bz2")):
+            with open(filename, "rb") as f:
+                pdbstring = bz2.decompress(f.read()).decode()
+        elif filename.endswith((".pdb.gz", ".gz")):
+            with gzip.open(filename, "rb") as gz:
+                pdbstring = gz.read()
+        elif filename.endswith((".pdb.xz", ".xz")):
+            if "lzma" not in sys.modules:
+                raise ImportError(
+                    (
+                        "Using 'xz' for decompression requires installing the 'xz' package into your python environment. "
+                        + "For installation instructions, visit:\n"
+                        + "https://anaconda.org/anaconda/xz\n"
+                    )
+                )
+            with open(filename, "rb") as f:
+                pdbstring = xz.decompress(f.read()).decode()
+        return pose_from_pdbstring(pdbstring)
     else:
         return rosetta.core.import_pose.pose_from_file(*args, **kwargs)
 
 
-def pose_from_pdb(filename):
-    """
-    Load a `Pose` object from a bz2-, gzip-, or xz-encoded PDB file.
-    Otherwise, implements `pyrosetta.io.pose_from_file(filename)`.
+@functools.wraps(pose_from_file)
+def pose_from_pdb(*args, **kwargs):
+    return pose_from_file(*args, **kwargs)
+
+
+def pose_from_pdbstring(*args, **kwargs):
+    """Instantiate a `Pose` object from a PDB string. If a `Pose` object is provided,
+    it is passed to `pyrosetta.rosetta.core.import_pose.pose_from_pdbstring`,
+    otherwise a new `Pose` object is instantiated.
 
     @klimaj
     """
-    if not os.path.isfile(filename):
-        raise FileNotFoundError(f"Input filename does not exist: {filename}")
-
-    if filename.endswith((".pdb.bz2", ".bz2")):
-        with open(filename, "rb") as f:
-            pdbstring = bz2.decompress(f.read()).decode()
-    elif filename.endswith((".pdb.gz", ".gz")):
-        with gzip.open(filename, "rb") as gz:
-            pdbstring = gz.read()
-    elif filename.endswith((".pdb.xz", ".xz")):
-        if "lzma" not in sys.modules:
-            raise ImportError(
-                (
-                    "Using 'xz' for decompression requires installing the 'xz' package into your python environment. "
-                    + "For installation instructions, visit:\n"
-                    + "https://anaconda.org/anaconda/xz\n"
-                )
-            )
-        with open(filename, "rb") as f:
-            pdbstring = xz.decompress(f.read()).decode()
-    else:
-        return pose_from_file(filename)
-
-    return pose_from_pdbstring(pdbstring)
-
-
-@functools.wraps(rosetta.core.import_pose.pose_from_pdbstring)
-def pose_from_pdbstring(*args, **kwargs):
-    result = Pose()
-    rosetta.core.import_pose.pose_from_pdbstring(result, *args, **kwargs)
-    return result
+    try:
+        pose = kwargs.pop("pose")
+    except KeyError:
+        args = list(args)
+        for index in range(len(args)):
+            if isinstance(args[index], Pose):
+                pose = args.pop(index)
+                break
+        else:
+            pose = Pose()
+    rosetta.core.import_pose.pose_from_pdbstring(pose, *args, **kwargs)
+    return pose
 
 
 def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):

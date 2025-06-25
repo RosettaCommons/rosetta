@@ -89,6 +89,7 @@ def pose_from_file(*args, **kwargs):
 
     return pack_or_pose
 
+
 pose_from_sequence = requires_init(pack_result(
     pyrosetta.io.pose_from_sequence))
 poses_from_files = requires_init(pack_result(
@@ -101,18 +102,17 @@ poses_from_multimodel_pdb = requires_init(pack_result(
     pyrosetta.io.poses_from_multimodel_pdb))
 
 
-@functools.wraps(import_pose.pose_from_pdbstring)
 @requires_init
 @pack_result
+@functools.wraps(pyrosetta.io.pose_from_pdbstring)
 def pose_from_pdbstring(*args, **kwargs):
-    result = pose.Pose()
-    import_pose.pose_from_pdbstring(result, *args, **kwargs)
-    return result
+    return pyrosetta.io.pose_from_pdbstring(*args, **kwargs)
 
 
 @functools.singledispatch
 @requires_init
 @pack_result
+@functools.wraps(pose_from_file)
 def pose_from_pdb(*args, **kwargs):
     return pose_from_file(*args, **kwargs)
 
