@@ -217,7 +217,7 @@ dump_cif(
 	// HETNAM
 	gemmi::cif::Loop & chem_comp = gemmi_add_table(block, "chem_comp", {"id","name"} );
 	for ( auto const & elem : sfr->heterogen_names() ) {
-		gemmi_add_row( chem_comp, {elem.first, elem.second} );
+		gemmi_add_row( chem_comp, {utility::strip(elem.first), elem.second} );
 	}
 
 	// LINK
@@ -358,7 +358,7 @@ dump_cif(
 			vec.push_back( ss2.str() ); // id
 			vec.push_back( utility::strip(ai.name) ); // label_atom_id
 			vec.emplace_back(1, ai.altLoc == ' ' ? '.' : ai.altLoc ); // label_alt_id
-			vec.push_back( ai.resName ); // label_comp_id
+			vec.push_back( utility::strip(ai.resName) ); // label_comp_id
 			vec.emplace_back(1, ai.chainID == ' ' ? '?' : ai.chainID ); // label_asym_id
 			ss2.str(std::string());
 			ss2 << ai.resSeq;
