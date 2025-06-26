@@ -329,11 +329,11 @@ dump_cif(
 	gemmi::cif::Loop & atom_site = gemmi_add_table(block, "atom_site", {
 			"group_PDB",
 			"id",
-			"auth_atom_id",
+			"label_atom_id",
 			"label_alt_id",
-			"auth_comp_id",
-			"auth_asym_id",
-			"auth_seq_id",
+			"label_comp_id",
+			"label_asym_id",
+			"label_seq_id",
 			"pdbx_PDB_ins_code",
 			"Cartn_x",
 			"Cartn_y",
@@ -341,7 +341,9 @@ dump_cif(
 			"occupancy",
 			"B_iso_or_equiv",
 			"type_symbol",
-			"pdbx_PDB_model_num"
+			"pdbx_PDB_model_num",
+			"auth_asym_id" // https://mmcif.wwpdb.org says it's manditory
+			// "label_entity_id" // https://mmcif.wwpdb.org says it's manditory, but we don't track that info
 	} );
 
 	// ATOM/HETATM
@@ -350,46 +352,48 @@ dump_cif(
 			AtomInformation const & ai = sfr->chains()[ i ][j];
 
 			std::vector< std::string > vec;
-			vec.emplace_back(ai.isHet ? "HETATM" : "ATOM" );
+			vec.emplace_back(ai.isHet ? "HETATM" : "ATOM" ); // group_PDB
 			std::stringstream ss2;
 			ss2 << ai.serial;
-			vec.push_back( ss2.str() );
-			vec.push_back( utility::strip(ai.name) );
-			vec.emplace_back(1, ai.altLoc == ' ' ? '?' : ai.altLoc );
-			vec.push_back( ai.resName );
-			vec.emplace_back(1, ai.chainID == ' ' ? '?' : ai.chainID );
+			vec.push_back( ss2.str() ); // id
+			vec.push_back( utility::strip(ai.name) ); // label_atom_id
+			vec.emplace_back(1, ai.altLoc == ' ' ? '?' : ai.altLoc ); // label_alt_id
+			vec.push_back( ai.resName ); // label_comp_id
+			vec.emplace_back(1, ai.chainID == ' ' ? '?' : ai.chainID ); // label_asym_id
 			ss2.str(std::string());
 			ss2 << ai.resSeq;
-			vec.push_back( ss2.str() );
-			vec.emplace_back(1, ai.iCode == ' ' ? '?' : ai.iCode );
+			vec.push_back( ss2.str() ); // label_seq_id
+			vec.emplace_back(1, ai.iCode == ' ' ? '?' : ai.iCode ); // pdbx_PDB_ins_code
 
 			// NOTE: we will never be writing out "     nan" here.
 			ss2.str(std::string());
 			ss2 << ai.x;
-			vec.push_back( ss2.str() );
+			vec.push_back( ss2.str() ); // Cartn_x
 
 			ss2.str(std::string());
 			ss2 << ai.y;
-			vec.push_back( ss2.str() );
+			vec.push_back( ss2.str() ); // Cartn_y
 
 			ss2.str(std::string());
 			ss2 << ai.z;
-			vec.push_back( ss2.str() );
+			vec.push_back( ss2.str() ); // Cartn_z
 
 			ss2.str(std::string());
 			ss2 << ai.occupancy;
-			vec.push_back( ss2.str() );
+			vec.push_back( ss2.str() ); // occupancy
 
 			ss2.str(std::string());
 			ss2 << ai.temperature;
-			vec.push_back( ss2.str() );
+			vec.push_back( ss2.str() ); // B_iso_or_equiv
 
-			vec.push_back( utility::strip(ai.element) );
+			vec.push_back( utility::strip(ai.element) ); // type_symbol
 			if ( sfr->modeltag().empty() ) {
-				vec.push_back( "?" );
+				vec.push_back( "?" ); //  pdbx_PDB_model_num
 			} else {
-				vec.push_back( sfr->modeltag() );
+				vec.push_back( sfr->modeltag() ); //pdbx_PDB_model_num
 			}
+
+			vec.emplace_back(1, ai.chainID == ' ' ? '?' : ai.chainID ); // auth_asym_id
 
 			gemmi_add_row( atom_site, vec );
 		}
