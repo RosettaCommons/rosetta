@@ -342,8 +342,8 @@ dump_cif(
 			"B_iso_or_equiv",
 			"type_symbol",
 			"pdbx_PDB_model_num",
-			"auth_asym_id" // https://mmcif.wwpdb.org says it's manditory
-			// "label_entity_id" // https://mmcif.wwpdb.org says it's manditory, but we don't track that info
+			"auth_asym_id", // https://mmcif.wwpdb.org says it's manditory
+			"label_entity_id" // https://mmcif.wwpdb.org says it's manditory
 	} );
 
 	// ATOM/HETATM
@@ -357,7 +357,7 @@ dump_cif(
 			ss2 << ai.serial;
 			vec.push_back( ss2.str() ); // id
 			vec.push_back( utility::strip(ai.name) ); // label_atom_id
-			vec.emplace_back(1, ai.altLoc == ' ' ? '?' : ai.altLoc ); // label_alt_id
+			vec.emplace_back(1, ai.altLoc == ' ' ? '.' : ai.altLoc ); // label_alt_id
 			vec.push_back( ai.resName ); // label_comp_id
 			vec.emplace_back(1, ai.chainID == ' ' ? '?' : ai.chainID ); // label_asym_id
 			ss2.str(std::string());
@@ -388,12 +388,14 @@ dump_cif(
 
 			vec.push_back( utility::strip(ai.element) ); // type_symbol
 			if ( sfr->modeltag().empty() ) {
-				vec.push_back( "?" ); //  pdbx_PDB_model_num
+				vec.push_back( "1" ); //  pdbx_PDB_model_num  -- Apparently BioPython doesn't like nulls here
 			} else {
 				vec.push_back( sfr->modeltag() ); //pdbx_PDB_model_num
 			}
 
 			vec.emplace_back(1, ai.chainID == ' ' ? '?' : ai.chainID ); // auth_asym_id
+
+			vec.push_back( "." ); //label_entity_id -- AJ indicates that '.' (but not '?') is fine here
 
 			gemmi_add_row( atom_site, vec );
 		}
