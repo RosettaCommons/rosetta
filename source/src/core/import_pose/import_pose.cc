@@ -434,7 +434,7 @@ pose_from_file(
 	} else if ( file_type == CIF_file ) {
 		io::StructFileRepOP sfr;
 		try {
-			gemmi::cif::Document cifdoc = gemmi::cif::read_file( filename );
+			gemmi::cif::Document cifdoc = gemmi::cif::read_memory( contents_of_file.c_str(), contents_of_file.size(), filename.c_str() );
 			if ( cifdoc.blocks.empty() ) { // More extensive checking?
 				TR.Warning << "mmCIF parser wasn't able to properly read '" << filename << "' " << std::endl;
 				return;
