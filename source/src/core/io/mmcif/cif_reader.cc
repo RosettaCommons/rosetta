@@ -211,9 +211,9 @@ StructFileRepOP create_sfr_from_cif_file( gemmi::cif::Document & cifdoc, StructF
 					continue;
 				}
 				if ( ptnr1_auth_seq_id >= 0 ) {
-					ssbond.resSeq1 = as_char(row[ptnr1_auth_seq_id], ' ');
+					ssbond.resSeq1 = as_int(row[ptnr1_auth_seq_id]);
 				} else if ( ptnr1_label_seq_id >= 0 ) {
-					ssbond.resSeq1 = as_char(row[ptnr1_label_seq_id], ' ');
+					ssbond.resSeq1 = as_int(row[ptnr1_label_seq_id]);
 				} else {
 					TR.Warning << "Can't find ptnr1_auth_seq_id or ptnr1_label_seq_id in disulfide annotation" << std::endl;
 					continue;
@@ -246,9 +246,9 @@ StructFileRepOP create_sfr_from_cif_file( gemmi::cif::Document & cifdoc, StructF
 					continue;
 				}
 				if ( ptnr2_auth_seq_id >= 0 ) {
-					ssbond.resSeq2 = as_number( row[ptnr2_auth_seq_id] );
+					ssbond.resSeq2 = as_int( row[ptnr2_auth_seq_id] );
 				} else if ( ptnr2_label_seq_id >= 0 ) {
-					ssbond.resSeq2 = as_number( row[ptnr2_label_seq_id] );
+					ssbond.resSeq2 = as_int( row[ptnr2_label_seq_id] );
 				} else {
 					TR.Warning << "Can't find ptnr2_auth_seq_id or ptnr2_label_seq_id in disulfide annotation" << std::endl;
 					continue;
@@ -332,9 +332,9 @@ StructFileRepOP create_sfr_from_cif_file( gemmi::cif::Document & cifdoc, StructF
 					continue;
 				}
 				if ( ptnr1_auth_seq_id >= 0 ) {
-					link.resSeq1 = as_char(row[ptnr1_auth_seq_id], ' ');
+					link.resSeq1 = as_int(row[ptnr1_auth_seq_id]);
 				} else if ( ptnr1_label_seq_id >= 0 ) {
-					link.resSeq1 = as_char(row[ptnr1_label_seq_id], ' ');
+					link.resSeq1 = as_int(row[ptnr1_label_seq_id]);
 				} else {
 					TR.Warning << "Can't find ptnr1_auth_seq_id or ptnr1_label_seq_id in LINK annotation" << std::endl;
 					continue;
@@ -367,9 +367,9 @@ StructFileRepOP create_sfr_from_cif_file( gemmi::cif::Document & cifdoc, StructF
 					continue;
 				}
 				if ( ptnr2_auth_seq_id >= 0 ) {
-					link.resSeq2 = as_char(row[ptnr2_auth_seq_id], ' ');
+					link.resSeq2 = as_int(row[ptnr2_auth_seq_id]);
 				} else if ( ptnr2_label_seq_id >= 0 ) {
-					link.resSeq2 = as_char(row[ptnr2_label_seq_id], ' ');
+					link.resSeq2 = as_int(row[ptnr2_label_seq_id]);
 				} else {
 					TR.Warning << "Can't find ptnr2_auth_seq_id or ptnr2_label_seq_id in LINK annotation" << std::endl;
 					continue;
