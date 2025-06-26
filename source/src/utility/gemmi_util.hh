@@ -43,7 +43,6 @@ as_char(std::string const & value, char null) {
 inline int find_gemmi_column(gemmi::cif::Table & table, std::string const & name) {
 	if ( table.width() == 0 ) { return -1; } // No columns
 	gemmi::cif::Table::Row const & tags = table.tags();
-	std::string const & prefix = table.get_prefix();
 	for (int ii = 0; ii < int(tags.size()); ++ii ) {
 		std::string const & tag = tags[ii];
 		if ( name == tag || name == tag.substr( table.prefix_length ) ) {
