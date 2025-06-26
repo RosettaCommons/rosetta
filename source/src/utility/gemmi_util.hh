@@ -77,7 +77,12 @@ void
 gemmi_add_row(gemmi::cif::Loop & loop, Iterable const & value ) {
 	std::vector< std::string > quoted;
 	for ( auto iter(value.begin()); iter != value.end(); ++iter ) {
-		quoted.push_back( gemmi::cif::quote( *iter ) );
+		if ( *iter == "?" ) {
+			// Assume we actually want it as a null, rather than a quoted question mark
+			quoted.push_back( *iter );
+		} else {
+			quoted.push_back( gemmi::cif::quote( *iter ) );
+		}
 	}
 	loop.add_row( quoted );
 }
