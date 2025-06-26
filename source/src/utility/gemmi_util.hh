@@ -21,8 +21,22 @@
 
 #include <string>
 #include <vector>
+#include <initializer_list>
 
 namespace utility {
+
+/// As the default as_char() is not robust to empty strings
+inline
+char
+as_char(std::string const & value, char null) {
+	if ( value.size() == 0 ) {
+		return null;
+	}
+	if ( value.size() == 2 && (value == "''"  || value == "\"\"" ) ) {
+		return null;
+	}
+	return gemmi::cif::as_char(value, null);
+}
 
 /// @brief find the index for the given column name in the table.
 /// If it can't be found, return a negative number
@@ -40,7 +54,7 @@ inline int find_gemmi_column(gemmi::cif::Table & table, std::string const & name
 }
 
 /// @brief Adds a new table (actually a 'Loop' object) to the given block, with the given column names
-/// Returns a reference to the newly added loop object (which can be augmented with the `add_row()` ) member function
+/// Returns a reference to the newly added loop object (which can be augmented with the `gemmi_add_row()` function)
 inline
 gemmi::cif::Loop &
 gemmi_add_table(gemmi::cif::Block & block, std::string table_name, std::vector<std::string> const & columns) {
@@ -57,6 +71,22 @@ gemmi_add_table(gemmi::cif::Block & block, std::string table_name, std::vector<s
 	return block.init_loop(table_name, columns);
 }
 
+/// @brief Adds a row to the table. Takes care of quoting the entries properly
+template< class Iterable >
+void
+gemmi_add_row(gemmi::cif::Loop & loop, Iterable const & value ) {
+	std::vector< std::string > quoted;
+	for ( auto iter(value.begin()); iter != value.end(); ++iter ) {
+		quoted.push_back( gemmi::cif::quote( *iter ) );
+	}
+	loop.add_row( quoted );
+}
+
+inline
+void
+gemmi_add_row(gemmi::cif::Loop & loop, std::initializer_list<std::string> const & init_list ) {
+	gemmi_add_row< std::initializer_list<std::string> >(loop, init_list);
+}
 
 
 } // namespace utility

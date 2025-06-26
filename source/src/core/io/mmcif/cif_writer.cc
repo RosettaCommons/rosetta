@@ -179,8 +179,10 @@ dump_cif(
 	StructFileRepOptions const & options
 ) {
 	////// NOTES:
-	// It's important to wrap any strings possibly containing spaces in gemmi:cif::quote() -- This should be safe for non-space strings
-	using gemmi::cif::quote;
+	// It's important to wrap all strings being passed with gemmi:cif::quote()
+	// This only will wrap things in quotes if it needs it.
+	// The utility function gemmi_add_row() will do this for you automatically.
+	using utility::gemmi_add_row;
 
 	gemmi::cif::Document cifdoc;
 	gemmi::cif::Block & block = cifdoc.add_new_block("Rosetta");
@@ -188,34 +190,34 @@ dump_cif(
 	// "header information", i.e., is from the Title Section of the PDB file.
 	if ( options.preserve_header() ) {
 		gemmi::cif::Loop & citation = gemmi_add_table(block, "citation", {"title"});
-		citation.add_row( { quote(sfr->header()->title()) } );
+		gemmi_add_row( citation, { sfr->header()->title() } );
 
 		gemmi::cif::Loop & entry = gemmi_add_table(block, "entry", {"id"});
-		entry.add_row( { quote(sfr->header()->idCode()) } );
+		gemmi_add_row( entry, { sfr->header()->idCode() } );
 
 		gemmi::cif::Loop & entity = gemmi_add_table(block, "entity", {"pdbx_description"});
 		for ( auto e: sfr->header()->compounds() ) {
-			entity.add_row( {quote(e.second)} );
+			gemmi_add_row( entity, {e.second} );
 		}
 
 		gemmi::cif::Loop & struct_keywords = gemmi_add_table(block, "struct_keywords", {"pdbx_keywords","text"});
-		struct_keywords.add_row( {sfr->header()->classification(), quote(utility::join(sfr->header()->keywords(), ", "))} );
+		gemmi_add_row( struct_keywords, {sfr->header()->classification(), utility::join(sfr->header()->keywords(), ", ")} );
 
 		gemmi::cif::Loop & database_PDB_rev = gemmi_add_table(block, "database_PDB_rev", {"date_original"});
-		database_PDB_rev.add_row( {quote(sfr->header()->deposition_date())} );
+		gemmi_add_row( database_PDB_rev, {sfr->header()->deposition_date()} );
 
 		utility::vector1< std::string > expt_tech;
 		for ( auto e: sfr->header()->experimental_techniques() ) {
 			expt_tech.push_back( rcsb::experimental_technique_to_string(e) );
 		}
 		gemmi::cif::Loop & exptl = gemmi_add_table(block, "exptl", {"method"} );
-		exptl.add_row( {quote(utility::join(expt_tech,", "))} );
+		gemmi_add_row( exptl, {utility::join(expt_tech,", ")} );
 	}
 
 	// HETNAM
 	gemmi::cif::Loop & chem_comp = gemmi_add_table(block, "chem_comp", {"id","name"} );
 	for ( auto const & elem : sfr->heterogen_names() ) {
-		chem_comp.add_row( {elem.first, elem.second} );
+		gemmi_add_row( chem_comp, {elem.first, elem.second} );
 	}
 
 	// LINK
@@ -257,7 +259,7 @@ dump_cif(
 			vec.push_back( ss.str() );
 			vec.emplace_back("disulf" );
 
-			struct_conn.add_row( vec );
+			gemmi_add_row( struct_conn, vec );
 		}
 	}
 
@@ -283,7 +285,7 @@ dump_cif(
 			vec.push_back( ss.str() );
 			vec.emplace_back("covale" );
 
-			struct_conn.add_row( vec );
+			gemmi_add_row( struct_conn, vec );
 		}
 	}
 
@@ -316,10 +318,10 @@ dump_cif(
 	ss << sfr->crystinfo().gamma();
 	realvec.push_back( ss.str() );
 	ss.str( std::string() );
-	cell.add_row( realvec );
+	gemmi_add_row( cell, realvec );
 
 	gemmi::cif::Loop & symmetry = gemmi_add_table(block, "symmetry", {"space_group_name_H-M"} );
-	symmetry.add_row( {sfr->crystinfo().spacegroup()} );
+	gemmi_add_row( symmetry, {sfr->crystinfo().spacegroup()} );
 
 	// We cannot support REMARKs yet because these are stored in DIVERSE places.
 	// There isn't a coherent "REMARKs" object. AMW TODO
@@ -389,7 +391,7 @@ dump_cif(
 				vec.push_back( sfr->modeltag() );
 			}
 
-			atom_site.add_row( vec );
+			gemmi_add_row( atom_site, vec );
 		}
 	}
 
@@ -410,10 +412,10 @@ dump_cif(
 			weights.push_back( to_string( sfr->score_table_weights()[ i ] ) );
 		}
 		weights.emplace_back("NA");
-		pose_energies.add_row(weights);
+		gemmi_add_row( pose_energies, weights );
 		//Add the rest of the Rows
 		for ( core::Size i = 1; i <= sfr->score_table_lines().size(); ++i ) {
-			pose_energies.add_row( sfr->score_table_lines()[ i ] );
+			gemmi_add_row( pose_energies, sfr->score_table_lines()[ i ] );
 		}
 	}
 
@@ -424,18 +426,18 @@ dump_cif(
 		if ( sfr->pose_cache_string_data().size() > 0 ) {
 			for ( auto & it : sfr->pose_cache_string_data() ) {
 				std::vector< std::string > row(2, "");
-				row[0] = quote(it.first);
-				row[1] = quote(it.second);
-				pose_cache.add_row( row );
+				row[0] = it.first;
+				row[1] = it.second;
+				gemmi_add_row( pose_cache, row );
 			}
 		}
 
 		if ( sfr->pose_cache_real_data().size() > 0 ) {
 			for ( auto & it : sfr->pose_cache_real_data() ) {
 				std::vector< std::string> row(2, "");
-				row[0] = quote(it.first);
+				row[0] = it.first;
 				row[1] = utility::to_string( it.second ); //PDB Writing of this data had no rounding of decimal places, so I'm not doing it here either (JAB).
-				pose_cache.add_row( row );
+				gemmi_add_row( pose_cache, row );
 			}
 		}
 	}
@@ -449,8 +451,8 @@ dump_cif(
 		for ( auto const & comment : comments ) {
 			std::vector< std::string > row(2, "");
 			row[0] = comment.first;
-			row[1] = quote(comment.second);
-			pose_comments.add_row( row );
+			row[1] = comment.second;
+			gemmi_add_row( pose_comments, row );
 		}
 	}
 
@@ -462,8 +464,8 @@ dump_cif(
 			RemarkInfo const & ri( sfr->remarks()->at(i) );
 			std::vector< std::string > row(2, "");
 			row[0] = utility::pad_left( ri.num, 3 ); //("%3d", ri.num);
-			row[1] = quote(ri.value);
-			rosetta_remarks.add_row( row );
+			row[1] = ri.value;
+			gemmi_add_row(rosetta_remarks, row );
 		}
 	}
 
@@ -475,15 +477,15 @@ dump_cif(
 			std::vector< std::string > out_vec;
 
 			out_vec.emplace_back("fold_tree");
-			out_vec.push_back(quote(sfr->foldtree_string()));
-			rosetta_additional.add_row(out_vec);
+			out_vec.push_back(sfr->foldtree_string());
+			gemmi_add_row( rosetta_additional, out_vec);
 		}
 		if ( ! sfr->additional_string_output().empty() ) {
 			std::vector< std::string > out_vec;
 
 			out_vec.emplace_back("etc" );
-			out_vec.push_back( quote(sfr->additional_string_output()) );
-			rosetta_additional.add_row( std::vector< std::string >( 1, sfr->additional_string_output() ) );
+			out_vec.push_back( sfr->additional_string_output() );
+			gemmi_add_row( rosetta_additional, out_vec );
 		}
 	}
 

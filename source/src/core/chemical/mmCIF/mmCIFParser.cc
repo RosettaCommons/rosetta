@@ -25,6 +25,7 @@
 
 //external CIF includes
 #include <gemmi/cif.hpp>
+#include <gemmi/numb.hpp> // for as_number
 
 namespace core {
 namespace chemical {
@@ -87,6 +88,12 @@ mmCIFParser::parse(std::string const &filename){
 
 sdf::MolFileIOMoleculeOP
 mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
+	// Note that pretty much every entry should be unwrapped with the appropriate accessor:
+	using gemmi::cif::as_string; // Takes care of unquoting, use even if it's a simple string (e.g. atom names can have odd characters)
+	using utility::as_char; // More robust version
+	using gemmi::cif::as_number; // Real
+	using gemmi::cif::as_int; // Size
+
 	sdf::MolFileIOMoleculeOP molecule( new sdf::MolFileIOMolecule() );
 
 	molecule->name( block.name );
@@ -140,8 +147,8 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 		gemmi::cif::Table::Row row = atom_comp[ii];
 
 		//set atom name
-		std::string atom_name = row[atom_name_id];
-		name_to_element_map[ atom_name ] = row[type_symbol];
+		std::string atom_name = as_string( row[atom_name_id] );
+		name_to_element_map[ atom_name ] = as_string( row[type_symbol] );
 
 		if ( atom_name == "N" ) N_found = true;
 		if ( atom_name == "P" ) P_found = true;
@@ -157,8 +164,8 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 		bool P_O5P_bond_found = false;
 		gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2"} );
 		for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
-			std::string source = bond_comp[ii][0]; //atom 1
-			std::string target = bond_comp[ii][1]; //atom 2
+			std::string source = as_string( bond_comp[ii][0] ); //atom 1
+			std::string target = as_string( bond_comp[ii][1] ); //atom 2
 
 			// Could imagine getting 'all Hs' by finding, instead, the
 			// names that match H[number] -- but why not wait, for now.
@@ -178,8 +185,8 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 	if ( is_peptide_linking ) {
 		gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2"} );
 		for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
-			std::string source = bond_comp[ii][0]; //atom 1
-			std::string target = bond_comp[ii][1]; //atom 2
+			std::string source = as_string( bond_comp[ii][0] ); //atom 1
+			std::string target = as_string( bond_comp[ii][1] ); //atom 2
 
 			// If we already have a "C", then don't rename something else to it (even if our 'C' isn't bonded to OXT)
 			if ( source == "C" || target == "C" ) {
@@ -202,7 +209,7 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 	// and OH terminus on C
 	gemmi::cif::Table chem_comp = block.find( "_chem_comp.", {"type"} );
 	if ( chem_comp.size() > 0 ) {
-		std::string type = chem_comp[0][0];
+		std::string type = as_string(chem_comp[0][0]);
 		if ( type == "L-PEPTIDE LINKING" && is_peptide_linking ) {
 			TR.Debug << "Found L-peptide RT" << std::endl;// named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "PROTEIN POLYMER L_AA" );
@@ -251,8 +258,8 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 	if ( is_peptide_linking ) {
 		gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2"} );
 		for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
-			std::string source = bond_comp[ii][0]; //atom 1
-			std::string target = bond_comp[ii][1]; //atom 2
+			std::string source = as_string( bond_comp[ii][0] ); //atom 1
+			std::string target = as_string( bond_comp[ii][1] ); //atom 2
 
 			if ( source == rename_to_C ) source = "C";
 			if ( target == rename_to_C ) target = "C";
@@ -279,8 +286,8 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 	} else if ( is_nucleic_linking ) {
 		gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2"} );
 		for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
-			std::string source = bond_comp[ii][0]; //atom 1
-			std::string target = bond_comp[ii][1]; //atom 2
+			std::string source = as_string( bond_comp[ii][0] ); //atom 1
+			std::string target = as_string( bond_comp[ii][1] ); //atom 2
 
 			if ( source == "P" ) {
 				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  P" << std::endl;
@@ -356,8 +363,8 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 	} else {
 		gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2"} );
 		for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
-			std::string source = bond_comp[ii][0]; //atom 1
-			std::string target = bond_comp[ii][1]; //atom 2
+			std::string source = as_string( bond_comp[ii][0] ); //atom 1
+			std::string target = as_string( bond_comp[ii][1] ); //atom 2
 
 			if ( source == "O2A" ) {
 				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to O2A " << std::endl;
@@ -392,20 +399,20 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 
 	//prefer the ideal coordinates, but if not found, use cartesian coordinates
 	int x_id = pdbx_model_Cartn_x_ideal, y_id = pdbx_model_Cartn_y_ideal, z_id = pdbx_model_Cartn_z_ideal;
-	if( x_id < 0 || y_id < 0 || z_id < 0 || atom_comp[0][x_id] == "?" ) {
+	if( x_id < 0 || y_id < 0 || z_id < 0 || gemmi::cif::is_null( atom_comp[0][x_id] ) ) {
 		x_id = model_Cartn_x;
 		y_id = model_Cartn_y;
 		z_id = model_Cartn_z;
 	}
-	if ( x_id < 0 || y_id < 0 || z_id < 0 || atom_comp[0][z_id] == "?" ) {
+	if ( x_id < 0 || y_id < 0 || z_id < 0 || gemmi::cif::is_null( atom_comp[0][z_id] ) ) {
 		utility_exit_with_message( "No usable coordinates for mmCIF file for " + block.name );
 	}
 
 	// Loop over atom block and check to see if any heavyatoms are bound to OP3/O3P
 	bool interesting_pendant = false;
 	for ( Size ii = 0; ii < atom_comp.size(); ++ii ) {
-		std::string atom_name = atom_comp[ ii ][ atom_name_id ];
-		std::string element = atom_comp[ii][ type_symbol ];
+		std::string atom_name = as_string( atom_comp[ ii ][ atom_name_id ] );
+		std::string element = as_string( atom_comp[ii][ type_symbol ] );
 		if ( O3P_connected.contains( atom_name ) ) {
 			if ( element != "H" && atom_name != "P" ) {
 				TR.Trace << "There is an OP3-bonded heavyatom: " << atom_name << std::endl;
@@ -425,11 +432,10 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 		// AMW: meaning... that we don't need the below, nor would we actually want it
 		// because needing to skip (due to non-patched polymers) screws it up.
 		// ditto our index, ii... so use another.
-		//utility::string2int( atom_comp( ii, "pdbx_ordinal" ) ) );
 		atom->index( index );
 
 		//set atom name
-		std::string atom_name = atom_comp[ ii][ atom_name_id ];
+		std::string atom_name = as_string( atom_comp[ ii][ atom_name_id ] );
 		TR.Trace << "Examining atom entry " << atom_name << std::endl;
 		if ( is_peptide_linking && atom_name == "OXT" ) continue;
 		if ( is_nucleic_linking && !interesting_pendant && atom_name == "OP3" ) continue;
@@ -442,9 +448,9 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 		//set map to index
 		atom_name_to_id[ atom_name ] = index;
 		//set element name
-		atom->element( atom_comp[ii][type_symbol] );
+		atom->element( as_string( atom_comp[ii][type_symbol] ) );
 
-		TR.Trace << "Type symbol for atom  " << atom_name << " is " <<  atom_comp[ii][type_symbol] << std::endl;
+		TR.Trace << "Type symbol for atom  " << atom_name << " is " <<  as_string(atom_comp[ii][type_symbol]) << std::endl;
 		if ( possible_atoms_to_skip.contains( atom_name ) && atom->element() == "H" ) {
 			actual_atoms_to_skip.push_back( atom_name );
 			continue;
@@ -454,14 +460,14 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 
 		//get the xyz cordinates
 		std::vector< std::string > atom_coords;
-		core::Real x = utility::string2float( atom_comp[ii][ x_id ] );
-		core::Real y = utility::string2float( atom_comp[ii][ y_id ] );
-		core::Real z = utility::string2float( atom_comp[ii][ z_id ] );
+		core::Real x = as_number( atom_comp[ii][ x_id ] );
+		core::Real y = as_number( atom_comp[ii][ y_id ] );
+		core::Real z = as_number( atom_comp[ii][ z_id ] );
 		//set xyz coordinates
 		atom->position( core::Vector( x, y, z ) );
 
-		if ( charge >= 0 && atom_comp[ii][charge] != "?" ) {
-			atom->formal_charge( utility::string2int( atom_comp[ii][charge] ) );
+		if ( charge >= 0 ) {
+			atom->formal_charge( as_int( atom_comp[ii][charge], 0 ) ); // Default zero if present and null
 		} else {
 			atom->formal_charge( 0 );
 		}
@@ -479,9 +485,9 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 
 	gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2","value_order"} );
 	for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
-		std::string source = bond_comp[ii][0]; //atom 1
-		std::string target = bond_comp[ii][1]; //atom 2
-		core::Size bond_type( bond_string_to_sdf_size_[ bond_comp[ii][2] ] );
+		std::string source = as_string( bond_comp[ii][0] ); //atom 1
+		std::string target = as_string( bond_comp[ii][1] ); //atom 2
+		core::Size bond_type( bond_string_to_sdf_size_[ as_string(bond_comp[ii][2]) ] );
 
 		sdf::MolFileIOBondOP bond( new sdf::MolFileIOBond() );
 

@@ -64,19 +64,19 @@ public:
 
 			gemmi::cif::Table entry = block.find("_entry.", {"id"});
 			TS_ASSERT( entry.size() > 0 );
-			std::string structure_id = entry[0][0];
+			std::string structure_id = gemmi::cif::as_string(entry[0][0]);
 			TS_ASSERT_EQUALS(structure_id, "1QYS");
 
 			gemmi::cif::Table poly = block.find("_entity_poly.", {"pdbx_seq_one_letter_code_can"});
 			TS_ASSERT( poly.size() > 0 );
-			std::string seq = poly[0][0];
+			std::string seq = gemmi::cif::as_string(poly[0][0]);
 			TR << "Sequence " << seq << std::endl;
 			TS_ASSERT_EQUALS(seq, "MGDIQVQVNIDDNGKNFDYTYTVTTESELQKVLNELMDYIKKQGAKRVRISITARTKKEAEKFAAILIKVFAELGYNDIN\nVTFDGDTVTVEGQLEGGSLEHHHHHH");
 
 			gemmi::cif::Table atoms = block.find("_atom_site.", {"label_atom_id"});
 			TR << "Number of atoms: " << atoms.size() << std::endl;
 			TS_ASSERT_EQUALS(atoms.size(), 692 );
-			std::string atom_2 = atoms[1][0];
+			std::string atom_2 = gemmi::cif::as_string(atoms[1][0]);
 			TR << "Atom #2 is: " << atom_2 << std::endl;
 			TS_ASSERT_EQUALS(atom_2, "CA" );
 		} catch (std::runtime_error const & e) {
