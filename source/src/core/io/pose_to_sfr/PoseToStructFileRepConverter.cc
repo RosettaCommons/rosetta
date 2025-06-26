@@ -369,6 +369,7 @@ void PoseToStructFileRepConverter::append_residue_info_to_sfr(
 
 		if ( ! sfr_->heterogen_names().count( hetID ) && !options_.write_glycan_pdb_codes() ) {
 			sfr_->heterogen_names()[ hetID ] = base_name;
+			sfr_->heterogen_types()[ hetID ] = get_chem_comp_type(rsd);
 		}
 		sfr_->residue_type_base_names()[ res_info.resid() ] = std::make_pair( hetID, base_name );
 	}
@@ -447,7 +448,7 @@ PoseToStructFileRepConverter::get_chem_comp_type( core::conformation::Residue co
 		}
 	}
 
-	if ( !type_ptr->has_property(core::chemical::CARBOHYDRATE) ) {
+	if ( type_ptr->has_property(core::chemical::CARBOHYDRATE) ) {
 		return "SACCHARIDE";
 	} else if ( !type_ptr->has_property(core::chemical::POLYMER) ) {
 		return "NON-POLYMER";

@@ -215,9 +215,10 @@ dump_cif(
 	}
 
 	// HETNAM
-	gemmi::cif::Loop & chem_comp = gemmi_add_table(block, "chem_comp", {"id","name"} );
+	gemmi::cif::Loop & chem_comp = gemmi_add_table(block, "chem_comp", {"id","name","type"} );
 	for ( auto const & elem : sfr->heterogen_names() ) {
-		gemmi_add_row( chem_comp, {utility::strip(elem.first), elem.second} );
+		std::string const & type = sfr->heterogen_types()[ elem.first ];
+		gemmi_add_row( chem_comp, {utility::strip(elem.first), elem.second, type} );
 	}
 
 	// LINK
