@@ -399,7 +399,7 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 
 	//prefer the ideal coordinates, but if not found, use cartesian coordinates
 	int x_id = pdbx_model_Cartn_x_ideal, y_id = pdbx_model_Cartn_y_ideal, z_id = pdbx_model_Cartn_z_ideal;
-	if( x_id < 0 || y_id < 0 || z_id < 0 || gemmi::cif::is_null( atom_comp[0][x_id] ) ) {
+	if ( x_id < 0 || y_id < 0 || z_id < 0 || gemmi::cif::is_null( atom_comp[0][x_id] ) ) {
 		x_id = model_Cartn_x;
 		y_id = model_Cartn_y;
 		z_id = model_Cartn_z;
@@ -459,7 +459,6 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 		TR.Trace << "Keeping atom entry " << atom_name << std::endl;
 
 		//get the xyz cordinates
-		std::vector< std::string > atom_coords;
 		core::Real x = as_number( atom_comp[ii][ x_id ] );
 		core::Real y = as_number( atom_comp[ii][ y_id ] );
 		core::Real z = as_number( atom_comp[ii][ z_id ] );

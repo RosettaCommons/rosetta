@@ -223,19 +223,19 @@ dump_cif(
 
 	// LINK
 	gemmi::cif::Loop & struct_conn = gemmi_add_table(block, "struct_conn", {
-			"ptnr1_label_atom_id",
-			"ptnr1_label_comp_id",
-			"ptnr1_label_asym_id",
-			"ptnr1_label_seq_id",
-			"pdbx_ptnr1_PDB_ins_code",
-			"ptnr2_label_atom_id",
-			"ptnr2_label_comp_id",
-			"ptnr2_label_asym_id",
-			"ptnr2_label_seq_id",
-			"pdbx_ptnr2_PDB_ins_code",
-			"pdbx_dist_value",
-			"conn_type_id"
-	} );
+		"ptnr1_label_atom_id",
+		"ptnr1_label_comp_id",
+		"ptnr1_label_asym_id",
+		"ptnr1_label_seq_id",
+		"pdbx_ptnr1_PDB_ins_code",
+		"ptnr2_label_atom_id",
+		"ptnr2_label_comp_id",
+		"ptnr2_label_asym_id",
+		"ptnr2_label_seq_id",
+		"pdbx_ptnr2_PDB_ins_code",
+		"pdbx_dist_value",
+		"conn_type_id"
+		} );
 
 	for ( auto const & elem : sfr->ssbond_map() ) {
 		for ( auto const & iter2 : elem.second ) {
@@ -298,7 +298,7 @@ dump_cif(
 		"angle_alpha",
 		"angle_beta",
 		"angle_gamma"
-	} );
+		} );
 	std::vector< std::string > realvec;
 	std::stringstream ss;
 	ss << sfr->crystinfo().A();
@@ -328,24 +328,24 @@ dump_cif(
 	// There isn't a coherent "REMARKs" object. AMW TODO
 
 	gemmi::cif::Loop & atom_site = gemmi_add_table(block, "atom_site", {
-			"group_PDB",
-			"id",
-			"label_atom_id",
-			"label_alt_id",
-			"label_comp_id",
-			"label_asym_id",
-			"label_seq_id",
-			"pdbx_PDB_ins_code",
-			"Cartn_x",
-			"Cartn_y",
-			"Cartn_z",
-			"occupancy",
-			"B_iso_or_equiv",
-			"type_symbol",
-			"pdbx_PDB_model_num",
-			"auth_asym_id", // https://mmcif.wwpdb.org says it's manditory
-			"label_entity_id" // https://mmcif.wwpdb.org says it's manditory
-	} );
+		"group_PDB",
+		"id",
+		"label_atom_id",
+		"label_alt_id",
+		"label_comp_id",
+		"label_asym_id",
+		"label_seq_id",
+		"pdbx_PDB_ins_code",
+		"Cartn_x",
+		"Cartn_y",
+		"Cartn_z",
+		"occupancy",
+		"B_iso_or_equiv",
+		"type_symbol",
+		"pdbx_PDB_model_num",
+		"auth_asym_id", // https://mmcif.wwpdb.org says it's manditory
+		"label_entity_id" // https://mmcif.wwpdb.org says it's manditory
+		} );
 
 	// ATOM/HETATM
 	for ( Size i = 0; i < sfr->chains().size(); ++i ) {

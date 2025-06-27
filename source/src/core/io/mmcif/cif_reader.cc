@@ -304,7 +304,7 @@ StructFileRepOP create_sfr_from_cif_file( gemmi::cif::Document & cifdoc, StructF
 						row[conn_type_id] == "mismat" ||
 						// Hmm... try skipping.
 						row[conn_type_id] == "modres" )
-				) {
+						) {
 					continue;
 				}
 
@@ -585,14 +585,14 @@ StructFileRepOP create_sfr_from_cif_file( gemmi::cif::Document & cifdoc, StructF
 		}
 	} else {
 		TR.Warning << "atom_site table apparently not present in mmCIF file - Structure will not have coordinates!" << std::endl;
-//		std::vector<std::string> table_names;
-//		block.GetTableNames(table_names);
-//		TR.Warning << " Tables present:";
-//		for ( std::string const & table: table_names ) {
-//			TR.Warning << " " << table;
-//		}
-//		TR.Warning << std::endl;
-//		TR.Warning << " Note that the final table in the cif file may not be recognized - adding a dummy entry (like `_citation.title  \"\"`) to the end of the file may help." << std::endl;
+		//  std::vector<std::string> table_names;
+		//  block.GetTableNames(table_names);
+		//  TR.Warning << " Tables present:";
+		//  for ( std::string const & table: table_names ) {
+		//   TR.Warning << " " << table;
+		//  }
+		//  TR.Warning << std::endl;
+		//  TR.Warning << " Note that the final table in the cif file may not be recognized - adding a dummy entry (like `_citation.title  \"\"`) to the end of the file may help." << std::endl;
 	}
 
 	for ( char i : chain_list ) { // std::vector
