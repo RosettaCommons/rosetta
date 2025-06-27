@@ -22,7 +22,7 @@
 // Project headers
 
 // Utility headers
-#include <gemmi/cif.hpp>
+#include <utility/gemmi_util.fwd.hh>
 
 // C++ headers
 #ifdef WIN32

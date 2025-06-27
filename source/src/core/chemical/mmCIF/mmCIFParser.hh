@@ -41,7 +41,7 @@
 #include <core/types.hh>
 #include <core/chemical/sdf/MolFileIOData.fwd.hh>
 
-#include <gemmi/cif.hpp>
+#include <utility/gemmi_util.fwd.hh>
 
 namespace core {
 namespace chemical {

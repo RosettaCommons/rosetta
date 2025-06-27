@@ -17,6 +17,7 @@
 #define INCLUDED_utility_gemmi_util_HH
 
 // Unit headers
+#include <utility/gemmi_util.fwd.hh>
 #include <gemmi/cif.hpp>
 
 #include <string>
