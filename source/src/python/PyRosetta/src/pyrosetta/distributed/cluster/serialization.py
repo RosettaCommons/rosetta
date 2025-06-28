@@ -103,7 +103,7 @@ def update_scores(packed_pose: PackedPose) -> PackedPose:
     """
     _pose = packed_pose.pose
     _pose_scoretypes = set(_pose.scores.keys())
-    _reserved_scoretypes = _pose.__scores_accessor._reserved.union(_pose_scoretypes)
+    _reserved_scoretypes = _pose.__cache_accessor._reserved.union(_pose_scoretypes)
     _filtered_scores = toolz.dicttoolz.keyfilter(
         lambda scoretype: scoretype not in _reserved_scoretypes,
         packed_pose.scores,
