@@ -55,8 +55,8 @@ class TestPyJobDistributor(unittest.TestCase):
 
         while not jd.job_complete:
             pp = self.pose.clone()
-            pp.scores["float_scoretype"] = 1e3 # Can be JSON-serialized
-            pp.scores["serializable_scoretype"] = dict(foo="bar") # Can be JSON-serialized
+            pp.cache["float_scoretype"] = 1e3 # Can be JSON-serialized
+            pp.cache["serializable_scoretype"] = dict(foo="bar") # Can be JSON-serialized
             jd.output_decoy(pp)
 
         scorefile = os.path.join(self.workdir.name, "{0}.fasc".format(pdb_name))
@@ -75,8 +75,8 @@ class TestPyJobDistributor(unittest.TestCase):
 
         while not jd.job_complete:
             pp = self.pose.clone()
-            pp.scores["unserializable_scoretype"] = 3j # Cannot be JSON-serialized
-            pp.scores["serializable_scoretype"] = dict(foo="bar") # Can be JSON-serialized
+            pp.cache["unserializable_scoretype"] = 3j # Cannot be JSON-serialized
+            pp.cache["serializable_scoretype"] = dict(foo="bar") # Can be JSON-serialized
             with self.assertWarns(UserWarning): # Warns about removing 'unserializable_scoretype' key
                 jd.output_decoy(pp)
 
