@@ -12,7 +12,6 @@ __author__ = "Jason C. Klima"
 
 
 import functools
-import numpy
 import pyrosetta
 import warnings
 
@@ -32,16 +31,14 @@ def setPoseExtraScore(pose=None, name=None, value=None):
         result = getPoseExtraFloatScores(pose).__getitem__(name)
         if isinstance(value, float):
             diff = abs(result - value)
-            try:
-                numpy.testing.assert_equal(
-                    result,
-                    value,
-                    err_msg=f"Pose extra score '{name}' float value precision is changing upon setting. DIFFERENCE: {diff}",
-                    verbose=True,
-                )
-            except AssertionError as ex:
+            if diff != 0.0:
                 warnings.warn(
-                    str(ex).replace("\n", " "),
+                    (
+                        f"Pose extra score '{name}' float value precision is changing upon setting. "
+                        f"Difference: {diff}; "
+                        f"Input: {value}; "
+                        f"Actual: {result} "
+                    ),
                     UserWarning,
                     stacklevel=2,
                 )
