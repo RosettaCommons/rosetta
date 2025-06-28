@@ -11,7 +11,7 @@ import os
 import pyrosetta
 import random
 import warnings
-from pyrosetta.bindings.pose import PoseScoreSerializer
+from pyrosetta.bindings.scores import PoseScoreSerializer
 from pyrosetta.rosetta.core.io.raw_data import ScoreMap
 from sys import exit
 
