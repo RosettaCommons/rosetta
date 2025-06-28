@@ -31,11 +31,12 @@ def setPoseExtraScore(pose=None, name=None, value=None):
     if isinstance(value, (float, int, bool)):
         result = getPoseExtraFloatScores(pose).__getitem__(name)
         if isinstance(value, float):
+            diff = abs(result - value)
             try:
                 numpy.testing.assert_equal(
                     result,
                     value,
-                    err_msg=f"Pose extra score '{name}' float value precision is changing upon setting.",
+                    err_msg=f"Pose extra score '{name}' float value precision is changing upon setting. DIFFERENCE: {diff}",
                     verbose=True,
                 )
             except AssertionError as ex:
