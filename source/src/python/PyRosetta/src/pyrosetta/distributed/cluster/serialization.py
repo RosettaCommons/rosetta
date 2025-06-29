@@ -14,6 +14,7 @@ import bz2
 import logging
 import pyrosetta.distributed.io as io
 import sys
+import warnings
 import zlib
 
 try:
@@ -102,13 +103,22 @@ def update_scores(packed_pose: PackedPose) -> PackedPose:
         otherwise the input `PackedPose` object.
     """
     _pose = packed_pose.pose
-    _pose_scoretypes = set(_pose.scores.keys())
-    _reserved_scoretypes = _pose.__scores_accessor._reserved.union(_pose_scoretypes)
+    _pose_scoretypes = set(_pose.cache.keys())
+    _reserved_scoretypes = _pose.__cache_accessor._reserved.union(_pose_scoretypes)
     _filtered_scores = toolz.dicttoolz.keyfilter(
         lambda scoretype: scoretype not in _reserved_scoretypes,
         packed_pose.scores,
     )
     if _filtered_scores:
+        warnings.warn(
+            "PyRosettaCluster detected scores in the `PackedPose.scores` dictionary that have "
+            + "not been added to the `Pose.cache` dictionary! PyRosettaCluster is now adding "
+            + f"the following scores to the `Pose.cache` dictionary: {tuple(_filtered_scores.keys())}. "
+            + "Please use the `packed_pose = packed_pose.update_scores(**scores_dict)` syntax instead of "
+            + "the `packed_pose.scores[key] = value` syntax to suppress this warning.",
+            SyntaxWarning,
+            stacklevel=2,
+        )
         packed_pose = packed_pose.update_scores(_filtered_scores)
 
     return packed_pose
