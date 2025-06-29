@@ -31,7 +31,6 @@ import uuid
 
 from datetime import datetime
 from pyrosetta.rosetta.core.pose import Pose
-from pyrosetta.distributed.cluster.exceptions import OutputError
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
     Any,
@@ -45,6 +44,9 @@ from typing import (
     TypeVar,
     Union,
 )
+
+from pyrosetta.distributed.cluster.exceptions import OutputError
+from pyrosetta.distributed.cluster.serialization import update_scores
 
 
 G = TypeVar("G")
@@ -132,8 +134,7 @@ class IO(Generic[G]):
         """
 
         _pdbstring = io.to_pdbstring(result)
-        _scores_dict = io.to_dict(result)
-        _scores_dict.pop("pickled_pose", None)
+        _scores_dict = update_scores(PackedPose(result)).scores
         _scores_dict = IO._filter_scores_dict(_scores_dict)
 
         return (_pdbstring, _scores_dict)
