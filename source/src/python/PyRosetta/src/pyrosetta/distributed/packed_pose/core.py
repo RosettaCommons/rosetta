@@ -39,7 +39,7 @@ class PackedPose:
         """Create a packed pose from pose, pack, or pickled bytes."""
         if isinstance(pose_or_pack, pose.Pose):
             self.pickled_pose = pickle.dumps(pose_or_pack)
-            self.scores = dict(pose_or_pack.scores)
+            self.scores = dict(pose_or_pack.cache)
 
         elif isinstance(pose_or_pack, PackedPose):
             self.pickled_pose = pose_or_pack.pickled_pose
@@ -65,7 +65,7 @@ class PackedPose:
 
         work_pose = self.pose
         for k, v in new_scores.items():
-            work_pose.scores[k] = v
+            work_pose.cache[k] = v
 
         return PackedPose(work_pose)
 
