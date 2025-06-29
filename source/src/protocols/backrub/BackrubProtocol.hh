@@ -81,6 +81,10 @@ public:
 	void
 	set_taskfactory( core::pack::task::TaskFactoryCOP tf);
 
+	/// @brief Control whether the mover dumps the _last and _low intermediate structures.
+	void
+	set_dump_poses(bool);
+
 	////////////////////////////////////////////////////////////////////////
 	/// ScoreFunction
 	///
@@ -197,6 +201,7 @@ private:
 	bool trajectory_;
 	bool trajectory_gz_;
 	bool recover_low_;
+	bool dump_poses_ = true; // Historical behavior
 	core::Size trajectory_stride_;
 
 	protocols::moves::MoverOP trajectory_apply_mover_;
