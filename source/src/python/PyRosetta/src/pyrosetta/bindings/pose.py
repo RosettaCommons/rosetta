@@ -390,7 +390,14 @@ class PoseScoreAccessor(MutableMapping):
 
     def __init__(self, pose):
         self.pose = pose
-
+        warnings.warn(
+            (
+                "The `Pose.scores` dictionary is deprecated and may be aliased to the `Pose.cache` "
+                "dictionary in a future release. Prefer to use the `Pose.cache` dictionary instead."
+            ),
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
     @property
     def extra(self):
