@@ -387,7 +387,8 @@ def reserve_scores(func: P) -> Union[P, NoReturn]:
     @reserve_scores
     def my_pyrosetta_protocol(packed_pose, **kwargs):
         from pyrosetta import MyMover
-        MyMover().apply(packed_pose.pose)
+        pose = packed_pose.pose
+        MyMover().apply(pose)
         return pose
 
     Args:
