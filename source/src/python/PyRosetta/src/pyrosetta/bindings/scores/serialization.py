@@ -76,12 +76,12 @@ class PoseScoreSerializer(PoseScoreSerializerBase):
         Manually deserialize an arbitrary score value:
             `value = PoseScoreSerializer.maybe_decode(value)`
     """
+    _reserved_types = (str, float)
     # Define different data types with human-readable custom prefixes in case anyone
     # accesses the serialized score values outside the scope of the `PoseScoreSerializer`
     _CustomTypeMetric = collections.namedtuple(
         "CustomTypeMetric", ["type", "prefix", "encode_func", "decode_func"],
     )
-    _reserved_types = (str, float)
     _custom_type_metrics = {
         "bool": _CustomTypeMetric(
             type=bool,
