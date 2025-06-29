@@ -35,7 +35,7 @@ from pyrosetta.rosetta.core.pose import add_upper_terminus_type_to_pose_residue
 from pyrosetta.rosetta.core.conformation import Residue
 from pyrosetta.rosetta.core.scoring import ScoreType
 from pyrosetta.bindings.utility import slice_1base_indicies, bind_method, bind_property
-from pyrosetta.bindings.scores import PoseCacheAccessor
+from pyrosetta.bindings.scores import PoseCacheAccessor, ClobberWarning
 from pyrosetta.distributed.utility.pickle import (
     __cereal_getstate__,
     __cereal_setstate__,
@@ -391,6 +391,7 @@ class PoseScoreAccessor(MutableMapping):
     def __init__(self, pose):
         self.pose = pose
 
+
     @property
     def extra(self):
         import types
@@ -401,7 +402,9 @@ class PoseScoreAccessor(MutableMapping):
         for k in _arbitrary_string_data.keys():
             if k in _arbitrary_score_data.keys():
                 warnings.warn(
-                    "Arbitrary score data key is clobbering arbitrary string data key: '{0}'".format(k)
+                    "Arbitrary score data key is clobbering arbitrary string data key: '{0}'".format(k),
+                    ClobberWarning,
+                    stacklevel=2,
                 )
 
         return types.MappingProxyType(
@@ -428,16 +431,22 @@ class PoseScoreAccessor(MutableMapping):
         for k in _arbitrary_string_data.keys():
             if k in _arbitrary_score_data.keys():
                 warnings.warn(
-                    "Arbitrary score data key is clobbering arbitrary string data key: '{0}'".format(k)
+                    "Arbitrary score data key is clobbering arbitrary string data key: '{0}'".format(k),
+                    ClobberWarning,
+                    stacklevel=2,
                 )
             if k in _active_total_energies.keys():
                 warnings.warn(
-                    "Active total energy score key is clobbering arbitrary string data key: '{0}'".format(k)
+                    "Active total energy score key is clobbering arbitrary string data key: '{0}'".format(k),
+                    ClobberWarning,
+                    stacklevel=2,
                 )
         for k in _arbitrary_score_data.keys():
             if k in _active_total_energies.keys():
                 warnings.warn(
-                    "Active total energy score key is clobbering arbitrary score data key: '{0}'".format(k)
+                    "Active total energy score key is clobbering arbitrary score data key: '{0}'".format(k),
+                    ClobberWarning,
+                    stacklevel=2,
                 )
 
         return types.MappingProxyType(
