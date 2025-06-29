@@ -30,7 +30,7 @@ def output_scorefile(pose, pdb_name, current_name, scorefilepath, scorefxn, nstr
 
     if not json_format:
         exit(
-            "\nThis scorefile output format is deprecated. Please use json output format instead or grab data from pose.scores")
+            "\nThis scorefile output format is deprecated. Please use json output format instead or grab data from pose.cache")
 
     total_score = scorefxn(pose)  # Scores pose and calculates total score.
     entries = {}
@@ -58,7 +58,9 @@ def output_scorefile(pose, pdb_name, current_name, scorefilepath, scorefxn, nstr
                 "Removing score key '{0}' with value of type '{1}' before ".format(key, type(scores[key]))
                 + "saving the score file! Only JSON-serializable score values can be written to the "
                 + "score file. Consider custom serializing the value to save this score or removing the "
-                + "key from the `pose.scores` dictionary to remove this warning message."
+                + "key from the `pose.cache` dictionary to remove this warning message.",
+                UserWarning,
+                stacklevel=2,
             )
             scores.pop(key, None)
 
