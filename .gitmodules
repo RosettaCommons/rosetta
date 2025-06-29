@@ -23,6 +23,9 @@
 	path = source/external/bcl
 	url = https://github.com/RosettaCommons/bcl_rosetta
 	branch = bcl_rosetta
+[submodule "source/external/gemmi_repo"]
+	path = source/external/gemmi_repo
+	url = git@github.com:project-gemmi/gemmi.git
 ############################
 # Boost Modules
 ############################

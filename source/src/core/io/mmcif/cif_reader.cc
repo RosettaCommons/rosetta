@@ -37,16 +37,17 @@
 // Utility headers
 #include <utility/string_constants.hh>
 #include <utility/vector1.hh>
+#include <utility/gemmi_util.hh>
 
 // Numeric headers
 
 // External headers
 #include <ObjexxFCL/string.functions.hh>
-#include <cifparse/CifFile.h>
+#include <gemmi/cif.hpp>
+#include <gemmi/numb.hpp>
 
 #include <core/io/AtomInformation.hh> // AUTO IWYU For AtomInformation
 
-using CifFileOP = utility::pointer::shared_ptr<CifFile>;
 
 // C++ headers
 #include <cstdlib>
@@ -60,8 +61,14 @@ namespace mmcif {
 
 static basic::Tracer TR( "core.io.mmcif.cif_reader" );
 
+using utility::find_gemmi_column;
 
-StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReaderOptions const & options ) {
+StructFileRepOP create_sfr_from_cif_file( gemmi::cif::Document & cifdoc, StructFileReaderOptions const & options ) {
+	// Note that pretty much every entry should be unwrapped with the appropriate accessor:
+	using gemmi::cif::as_string; // Takes care of unquoting, use even if it's a simple string (e.g. atom names can have odd characters)
+	using utility::as_char; // More robust verson
+	using gemmi::cif::as_number; // Real
+	using gemmi::cif::as_int; // Size
 
 	// NO TER OR END
 	// INSERTION CODE DEFAULTS TO '?' SO TURN IT INTO A SPACE!.
@@ -86,48 +93,54 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 
 	bool read_pdb_header = options.read_pdb_header();
 
-	TR.Debug << "Reading structure from CIF block " << cifFile->GetFirstBlockName() << std::endl;
-	Block& block = cifFile->GetBlock( cifFile->GetFirstBlockName() );
+	if ( cifdoc.blocks.empty() ) {
+		TR.Error << "Cannot interpret CIF file without any block information: `" << cifdoc.source << "`" << std::endl;
+		return sfr; // Empty contents
+	}
+
+	gemmi::cif::Block & block = cifdoc.blocks[0];
+	TR.Debug << "Reading structure from CIF block " << block.name << std::endl;
 
 	// "header information", i.e., is from the Title Section of the PDB file.
 	if ( read_pdb_header && ! options.read_only_ATOM_entries() ) {
-		if ( block.IsTablePresent( "citation" ) ) {
-			ISTable& citation  = block.GetTable( "citation" );
-
-			sfr->header()->store_title( citation( 0, "title" ) );
+		gemmi::cif::Table citation = block.find("_citation.", {"title"});
+		if ( citation.size() > 0 ) {
+			sfr->header()->store_title( as_string(citation[0][0]) );
 		}
 
-		if ( block.IsTablePresent( "entry" ) ) {
-			ISTable& entry = block.GetTable( "entry" );
-			sfr->header()->store_idCode( entry( 0, "id" ) );
+		gemmi::cif::Table entry = block.find("_entry.", {"id"});
+		if ( entry.size() > 0 ) {
+			sfr->header()->store_idCode( as_string(entry[0][0]) );
 		}
 
-		if ( block.IsTablePresent( "entity" ) ) {
-			ISTable& entity = block.GetTable("entity");
-			for ( Size i = 0; i <= entity.GetLastRowIndex(); ++i ) {
-				sfr->header()->store_compound( entity( i, "pdbx_description" ) );
-			}
+		gemmi::cif::Table entity = block.find("_entity.", {"pdbx_description"});
+		for ( Size ii = 0; ii < entity.size(); ++ii ) {
+			sfr->header()->store_compound( as_string(entity[ii][0]) );
 		}
 
-		if ( block.IsTablePresent( "keywords" ) ) {
-			ISTable& keywords = block.GetTable( "struct_keywords" );
-			sfr->header()->store_classification( keywords( 0, "pdbx_keywords" ) );
-			sfr->header()->store_keywords( keywords( 0, "text" ) );
+		gemmi::cif::Table struct_keywords_pdbx_keywords = block.find("_struct_keywords.", {"pdbx_keywords"});
+		if ( struct_keywords_pdbx_keywords.size() > 0 ) {
+			sfr->header()->store_classification( as_string(struct_keywords_pdbx_keywords[0][0]) );
 		}
 
-		if ( block.IsTablePresent( "database_PDB_rev" ) ) {
-			ISTable& database_PDB_rev = block.GetTable( "database_PDB_rev" );
-			sfr->header()->store_deposition_date( database_PDB_rev( 0, "date_original" ) );
+		gemmi::cif::Table struct_keywords_text = block.find("_struct_keywords.", {"text"});
+		if ( struct_keywords_pdbx_keywords.size() > 0 ) {
+			sfr->header()->store_keywords( as_string(struct_keywords_text[0][0]) );
 		}
 
-		if ( block.IsTablePresent( "exptl" ) ) {
-			ISTable& exptl = block.GetTable( "exptl" );
-			sfr->header()->store_experimental_techniques( exptl( 0, "method" ) );
+		gemmi::cif::Table database_PDB_rev = block.find("_database_PDB_rev.", {"date_original"});
+		if ( database_PDB_rev.size() > 0 ) {
+			sfr->header()->store_deposition_date( as_string(database_PDB_rev[0][0]) );
 		}
 
-		if ( block.IsTablePresent( "audit_author" ) ) {
-			ISTable& author = block.GetTable( "audit_author" );
-			sfr->header()->store_authors( author( 0, "name" ) );
+		gemmi::cif::Table exptl = block.find("_exptl.", {"method"});
+		if ( exptl.size() > 0 ) {
+			sfr->header()->store_experimental_techniques( as_string(exptl[0][0]) );
+		}
+
+		gemmi::cif::Table author = block.find("_audit_author.", {"name"});
+		if ( author.size() ) {
+			sfr->header()->store_authors( as_string(author[0][0]) );
 		}
 
 		sfr->header()->finalize_parse();
@@ -138,11 +151,11 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 	// There isn't a coherent "REMARKs" object. AMW TODO
 
 	// HETNAM
-	if ( block.IsTablePresent( "chem_comp" ) && ! options.read_only_ATOM_entries() ) {
-		ISTable& chem_comp = block.GetTable("chem_comp");
-		for ( Size i = 0; i <= chem_comp.GetLastRowIndex(); ++i ) {
-			std::string name = chem_comp( i, "name" );
-			string const & hetID( chem_comp( i, "id" ) );
+	if ( ! options.read_only_ATOM_entries() ) {
+		gemmi::cif::Table chem_comp = block.find( "_chem_comp.", {"name","id"} );
+		for ( Size ii = 0; ii < chem_comp.size(); ++ii ) {
+			std::string name = as_string(chem_comp[ii][0]);
+			std::string hetID = as_string(chem_comp[ii][1]);
 			utility::trim( name );
 
 			sfr->heterogen_names()[ hetID ] = name;
@@ -152,62 +165,111 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 	}
 
 	// LINK
-	if ( block.IsTablePresent( "struct_conn" ) && ! options.read_only_ATOM_entries() ) {
-		ISTable& struct_conn = block.GetTable("struct_conn");
-		for ( Size i = 0; i <= struct_conn.GetLastRowIndex(); ++i ) {
-			if ( struct_conn( i, "conn_type_id" ) == "disulf" ) {
+	if ( ! options.read_only_ATOM_entries() && block.has_mmcif_category("_struct_conn") ) {
+		gemmi::cif::Table struct_conn = block.find_mmcif_category("_struct_conn");
+		int conn_type_id = find_gemmi_column(struct_conn, "conn_type_id");
+		int ptnr1_label_atom_id = find_gemmi_column(struct_conn, "ptnr1_label_atom_id");
+		int ptnr1_auth_comp_id = find_gemmi_column(struct_conn, "ptnr1_auth_comp_id" );
+		int ptnr1_auth_asym_id = find_gemmi_column(struct_conn, "ptnr1_auth_asym_id" );
+		int ptnr1_auth_seq_id = find_gemmi_column(struct_conn, "ptnr1_auth_seq_id");
+		int ptnr1_label_comp_id = find_gemmi_column(struct_conn, "ptnr1_label_comp_id");
+		int ptnr1_label_asym_id = find_gemmi_column(struct_conn, "ptnr1_label_asym_id" );
+		int ptnr1_label_seq_id = find_gemmi_column(struct_conn, "ptnr1_label_seq_id");
+		int pdbx_ptnr1_PDB_ins_code = find_gemmi_column(struct_conn, "pdbx_ptnr1_PDB_ins_code");
+		int ptnr2_auth_comp_id = find_gemmi_column(struct_conn, "ptnr2_auth_comp_id" );
+		int ptnr2_auth_asym_id = find_gemmi_column(struct_conn, "ptnr2_auth_asym_id" );
+		int ptnr2_auth_seq_id = find_gemmi_column(struct_conn, "ptnr2_auth_seq_id");
+		int ptnr2_label_comp_id = find_gemmi_column(struct_conn, "ptnr2_label_comp_id");
+		int ptnr2_label_asym_id = find_gemmi_column(struct_conn, "ptnr2_label_asym_id" );
+		int ptnr2_label_seq_id = find_gemmi_column(struct_conn, "ptnr2_label_seq_id");
+		int pdbx_ptnr2_PDB_ins_code = find_gemmi_column(struct_conn, "pdbx_ptnr2_PDB_ins_code");
+		int pdbx_dist_value = find_gemmi_column(struct_conn, "pdbx_dist_value");
+
+		for ( Size ii = 0; ii < struct_conn.size(); ++ii ) {
+			gemmi::cif::Table::Row row = struct_conn[ii];
+			if ( conn_type_id >= 0 && row[conn_type_id] == "disulf" ) {
 				SSBondInformation ssbond;
 				utility::vector1< SSBondInformation > ssbonds;
 
 				// Others: conn_type_id  for "covale" etc--alert JWL!
 
-				// Extract values from record fields.
-				//ssbond.name1 = struct_conn( i, "ptnr1_label_atom_id" );
 				// Prefer 'author' annotations if available.
-				if ( struct_conn.IsColumnPresent( "ptnr1_auth_comp_id" ) ) {
-					ssbond.resName1 = struct_conn( i, "ptnr1_auth_comp_id" );
+				if ( ptnr1_auth_comp_id >= 0 ) {
+					ssbond.resName1 = as_string(row[ptnr1_auth_comp_id]);
+				} else if ( ptnr1_label_comp_id >= 0 ) {
+					ssbond.resName1 = as_string(row[ptnr1_label_comp_id]);
 				} else {
-					ssbond.resName1 = struct_conn( i, "ptnr1_label_comp_id" );
+					TR.Warning << "Can't find ptnr1_auth_comp_id or ptnr1_label_comp_id in disulfide annotation" << std::endl;
+					continue;
 				}
-				if ( struct_conn.IsColumnPresent( "ptnr1_auth_asym_id" ) ) {
-					ssbond.chainID1 = struct_conn( i, "ptnr1_auth_asym_id" )[0];
+				if ( ptnr1_auth_asym_id >= 0 ) {
+					ssbond.chainID1 = as_char(row[ptnr1_auth_asym_id], ' ');
+				} else if ( ptnr1_label_asym_id >= 0 ) {
+					ssbond.chainID1 = as_char(row[ptnr1_label_asym_id], ' ');
 				} else {
-					ssbond.chainID1 = struct_conn( i, "ptnr1_label_asym_id" )[0];
+					TR.Warning << "Can't find ptnr1_auth_asym_id or ptnr1_label_asym_id in disulfide annotation" << std::endl;
+					continue;
 				}
-				if ( struct_conn.IsColumnPresent( "ptnr1_auth_seq_id" ) ) {
-					ssbond.resSeq1 = atof( struct_conn( i, "ptnr1_auth_seq_id" ).c_str() );
+				if ( ptnr1_auth_seq_id >= 0 ) {
+					ssbond.resSeq1 = as_int(row[ptnr1_auth_seq_id]);
+				} else if ( ptnr1_label_seq_id >= 0 ) {
+					ssbond.resSeq1 = as_int(row[ptnr1_label_seq_id]);
 				} else {
-					ssbond.resSeq1 = atof( struct_conn( i, "ptnr1_label_seq_id" ).c_str() );
+					TR.Warning << "Can't find ptnr1_auth_seq_id or ptnr1_label_seq_id in disulfide annotation" << std::endl;
+					continue;
 				}
-				ssbond.iCode1 = struct_conn( i, "pdbx_ptnr1_PDB_ins_code" )[0] == '?' ? ' ' : struct_conn( i, "pdbx_ptnr1_PDB_ins_code" )[0];
+
+				if ( pdbx_ptnr1_PDB_ins_code >= 0 ) {
+					ssbond.iCode1 = as_char(row[pdbx_ptnr1_PDB_ins_code], ' ');
+				} else {
+					ssbond.iCode1 = ' ';
+				}
 
 				std::stringstream strstr1;
 				strstr1 << std::setw( 4 ) << std::right << ssbond.resSeq1 << ssbond.iCode1 << ssbond.chainID1;
 				ssbond.resID1 = strstr1.str();
 
-				//ssbond.name2 = struct_conn( i, "ptnr2_label_atom_id" );
-				if ( struct_conn.IsColumnPresent( "ptnr2_auth_comp_id" ) ) {
-					ssbond.resName2 = struct_conn( i, "ptnr2_auth_comp_id" );
+				if ( ptnr2_auth_comp_id >= 0 ) {
+					ssbond.resName2 = as_string(row[ptnr2_auth_comp_id]);
+				} else if ( ptnr2_label_comp_id >= 0 ) {
+					ssbond.resName2 = as_string(row[ptnr2_label_comp_id]);
 				} else {
-					ssbond.resName2 = struct_conn( i, "ptnr2_label_comp_id" );
+					TR.Warning << "Can't find ptnr2_auth_comp_id or ptnr2_label_comp_id in disulfide annotation" << std::endl;
+					continue;
 				}
-				if ( struct_conn.IsColumnPresent( "ptnr2_auth_asym_id" ) ) {
-					ssbond.chainID2 = struct_conn( i, "ptnr2_auth_asym_id" )[0];
+				if ( ptnr2_auth_asym_id >= 0 ) {
+					ssbond.chainID2 = as_char(row[ptnr2_auth_asym_id], ' ');
+				} else if ( ptnr2_label_asym_id >= 0 ) {
+					ssbond.chainID2 = as_char(row[ptnr2_label_asym_id], ' ');
 				} else {
-					ssbond.chainID2 = struct_conn( i, "ptnr2_label_asym_id" )[0];
+					TR.Warning << "Can't find ptnr2_auth_asym_id or ptnr2_label_asym_id in disulfide annotation" << std::endl;
+					continue;
 				}
-				if ( struct_conn.IsColumnPresent( "ptnr2_auth_seq_id" ) ) {
-					ssbond.resSeq2 = atof( struct_conn( i, "ptnr2_auth_seq_id" ).c_str() );
+				if ( ptnr2_auth_seq_id >= 0 ) {
+					ssbond.resSeq2 = as_int( row[ptnr2_auth_seq_id] );
+				} else if ( ptnr2_label_seq_id >= 0 ) {
+					ssbond.resSeq2 = as_int( row[ptnr2_label_seq_id] );
 				} else {
-					ssbond.resSeq2 = atof( struct_conn( i, "ptnr2_label_seq_id" ).c_str() );
+					TR.Warning << "Can't find ptnr2_auth_seq_id or ptnr2_label_seq_id in disulfide annotation" << std::endl;
+					continue;
 				}
-				ssbond.iCode2 = struct_conn( i, "pdbx_ptnr2_PDB_ins_code" )[0] == '?' ? ' ' : struct_conn( i, "pdbx_ptnr2_PDB_ins_code" )[0];
+
+				if ( pdbx_ptnr2_PDB_ins_code >= 0 ) {
+					ssbond.iCode2 = as_char(row[pdbx_ptnr2_PDB_ins_code], ' ');
+				} else {
+					ssbond.iCode2 = ' ';
+				}
 
 				std::stringstream strstr2;
 				strstr2 << std::setw( 4 ) << std::right << ssbond.resSeq2 << ssbond.iCode2 << ssbond.chainID2;
 				ssbond.resID2 = strstr2.str();
 
-				ssbond.length = atof( struct_conn( i, "pdbx_dist_value" ).c_str() ); // bond length
+				if ( pdbx_dist_value >= 0 ) {
+					ssbond.length = as_number( row[pdbx_dist_value] );
+				} else {
+					TR.Warning << "Can't find pdbx_dist_value in disulfide annotation" << std::endl;
+					continue;
+				}
 
 				// If key is found in the links map, add this new linkage information to the links already keyed to this residue.
 				if ( sfr->ssbond_map().count( ssbond.resID1 ) ) {
@@ -228,68 +290,106 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 					TR.Debug << "SSBOND record information stored successfully." << std::endl;
 				}
 
-			} else {
+			} else { //
 				LinkInformation link;
 				utility::vector1< LinkInformation > links;
+				if ( conn_type_id >= 0 && (
+						// hydrogen bonds should never be represented as LINKs
+						row[conn_type_id] == "hydrog" ||
+						row[conn_type_id] == "saltbr" ||
+						// We treat metal coordination separately (thanks, -auto_setup_metals!)
+						row[conn_type_id] == "metalc" ||
+						// Mismatched base pairs aren't treated in the input at all, but
+						// conceivably RNA code might be interested
+						row[conn_type_id] == "mismat" ||
+						// Hmm... try skipping.
+						row[conn_type_id] == "modres" )
+						) {
+					continue;
+				}
 
-				// hydrogen bonds should never be represented as LINKs
-				if ( struct_conn( i, "conn_type_id" ) == "hydrog" ) continue;
-				if ( struct_conn( i, "conn_type_id" ) == "saltbr" ) continue;
-				// We treat metal coordination separately (thanks, -auto_setup_metals!)
-				if ( struct_conn( i, "conn_type_id" ) == "metalc" ) continue;
-				// Mismatched base pairs aren't treated in the input at all, but
-				// conceivably RNA code might be interested
-				if ( struct_conn( i, "conn_type_id" ) == "mismat" ) continue;
-				// Hmm... try skipping.
-				if ( struct_conn( i, "conn_type_id" ) == "modres" ) continue;
-
-				// Extract values from record fields.
-				link.name1 = struct_conn( i, "ptnr1_label_atom_id" );
+				if ( ptnr1_label_atom_id >= 0 ) {
+					link.name1 = as_string(row[ptnr1_label_atom_id]);
+				} else {
+					// ???
+				}
 
 				// Prefer 'author' annotations if available.
-				if ( struct_conn.IsColumnPresent( "ptnr1_auth_comp_id" ) ) {
-					link.resName1 = struct_conn( i, "ptnr1_auth_comp_id" );
+				if ( ptnr1_auth_comp_id >= 0 ) {
+					link.resName1 = as_string(row[ptnr1_auth_comp_id]);
+				} else if ( ptnr1_label_comp_id >= 0 ) {
+					link.resName1 = as_string(row[ptnr1_label_comp_id]);
 				} else {
-					link.resName1 = struct_conn( i, "ptnr1_label_comp_id" );
+					TR.Warning << "Can't find ptnr1_auth_comp_id or ptnr1_label_comp_id in LINK annotation" << std::endl;
+					continue;
+				}
+				if ( ptnr1_auth_asym_id >= 0 ) {
+					link.chainID1 = as_char(row[ptnr1_auth_asym_id], ' ');
+				} else if ( ptnr1_label_asym_id >= 0 ) {
+					link.chainID1 = as_char(row[ptnr1_label_asym_id], ' ');
+				} else {
+					TR.Warning << "Can't find ptnr1_auth_asym_id or ptnr1_label_asym_id in LINK annotation" << std::endl;
+					continue;
+				}
+				if ( ptnr1_auth_seq_id >= 0 ) {
+					link.resSeq1 = as_int(row[ptnr1_auth_seq_id]);
+				} else if ( ptnr1_label_seq_id >= 0 ) {
+					link.resSeq1 = as_int(row[ptnr1_label_seq_id]);
+				} else {
+					TR.Warning << "Can't find ptnr1_auth_seq_id or ptnr1_label_seq_id in LINK annotation" << std::endl;
+					continue;
 				}
 
-				if ( struct_conn.IsColumnPresent( "ptnr1_auth_asym_id" ) ) {
-					link.chainID1 = struct_conn( i, "ptnr1_auth_asym_id" )[0];
+				if ( pdbx_ptnr1_PDB_ins_code >= 0 ) {
+					link.iCode1 = as_char(row[pdbx_ptnr1_PDB_ins_code], ' ');
 				} else {
-					link.chainID1 = struct_conn( i, "ptnr1_label_asym_id" )[0];
+					link.iCode1 = ' ';
 				}
-
-				if ( struct_conn.IsColumnPresent( "ptnr1_auth_seq_id" ) ) {
-					link.resSeq1 = atof( struct_conn( i, "ptnr1_auth_seq_id" ).c_str() );
-				} else {
-					link.resSeq1 = atof( struct_conn( i, "ptnr1_label_seq_id" ).c_str() );
-				}
-
-				link.iCode1 = struct_conn( i, "pdbx_ptnr1_PDB_ins_code" )[0] == '?' ? ' ' : struct_conn( i, "pdbx_ptnr1_PDB_ins_code" )[0];
-
-				//  LINK     type    1   6   name1           13  16   altLoc1       17  17   resName1      18  20   chainID1     22  22   resSeq1      23  26   iCode1      27  27   name2        43  46   altLoc2      47  47   resName2    48  50   chainID2    52  52   resSeq2     53  56   iCode2      57  57   sym1       60  65   sym2        67  72   length      74  78
 
 				std::stringstream strstr1;
 				strstr1 << std::setw( 4 ) << std::right << link.resSeq1 << link.iCode1 << link.chainID1;
 				link.resID1 = strstr1.str();
-				//struct_conn( i, "ptnr1_label_seq_id" )
-				//+ ( struct_conn( i, "pdbx_ptnr1_PDB_ins_code" ) == "?" ) ? " " : struct_conn( i, "pdbx_ptnr1_PDB_ins_code" )
-				//+ struct_conn( i, "ptnr1_label_asym_id" );
 
-				link.name2 = struct_conn( i, "ptnr2_label_atom_id" );
-				link.resName2 = struct_conn( i, "ptnr2_auth_comp_id" );
-				link.chainID2 = struct_conn( i, "ptnr2_auth_asym_id" )[0];
-				link.resSeq2 = atof( struct_conn( i, "ptnr2_auth_seq_id" ).c_str() );
-				link.iCode2 = struct_conn( i, "pdbx_ptnr2_PDB_ins_code" )[0] == '?' ? ' ' : struct_conn( i, "pdbx_ptnr2_PDB_ins_code" )[0];
+				if ( ptnr2_auth_comp_id >= 0 ) {
+					link.resName2 = as_string(row[ptnr2_auth_comp_id]);
+				} else if ( ptnr2_label_comp_id >= 0 ) {
+					link.resName2 = as_string(row[ptnr2_label_comp_id]);
+				} else {
+					TR.Warning << "Can't find ptnr2_auth_comp_id or ptnr2_label_comp_id in LINK annotation" << std::endl;
+					continue;
+				}
+				if ( ptnr2_auth_asym_id >= 0 ) {
+					link.chainID2 = as_char(row[ptnr2_auth_asym_id], ' ');
+				} else if ( ptnr2_label_asym_id >= 0 ) {
+					link.chainID2 = as_char(row[ptnr2_label_asym_id], ' ');
+				} else {
+					TR.Warning << "Can't find ptnr2_auth_asym_id or ptnr2_label_asym_id in LINK annotation" << std::endl;
+					continue;
+				}
+				if ( ptnr2_auth_seq_id >= 0 ) {
+					link.resSeq2 = as_int(row[ptnr2_auth_seq_id]);
+				} else if ( ptnr2_label_seq_id >= 0 ) {
+					link.resSeq2 = as_int(row[ptnr2_label_seq_id]);
+				} else {
+					TR.Warning << "Can't find ptnr2_auth_seq_id or ptnr2_label_seq_id in LINK annotation" << std::endl;
+					continue;
+				}
+
+				if ( pdbx_ptnr2_PDB_ins_code >= 0 ) {
+					link.iCode2 = as_char(row[pdbx_ptnr2_PDB_ins_code], ' ');
+				} else {
+					link.iCode2 = ' ';
+				}
 
 				std::stringstream strstr2;
-				strstr2 << std::setw(4) << std::right << link.resSeq2 << link.iCode2 << link.chainID2;
+				strstr2 << std::setw( 4 ) << std::right << link.resSeq2 << link.iCode2 << link.chainID2;
 				link.resID2 = strstr2.str();
-				//struct_conn( i, "ptnr2_label_seq_id" )
-				//+ ( struct_conn( i, "pdbx_ptnr2_PDB_ins_code" ) == "?" ) ? " " : struct_conn( i, "pdbx_ptnr2_PDB_ins_code" )
-				//+ struct_conn( i, "ptnr2_label_asym_id" );
 
-				link.length = struct_conn( i, "pdbx_dist_value" )[0] == '?' ? 0 : atof( struct_conn( i, "pdbx_dist_value" ).c_str() );  // bond length
+				if ( pdbx_dist_value >= 0 ) {
+					link.length = as_number( row[pdbx_dist_value] );
+				} else {
+					link.length = 0;
+				}
 
 				// If key is found in the links map, add this new linkage information to the links already keyed to this residue.
 				if ( sfr->link_map().count( link.resID1 ) ) {
@@ -315,31 +415,56 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 	}
 
 	// CRYST1
-	if ( block.IsTablePresent( "cell" ) && block.IsTablePresent( "symmetry" ) && ! options.read_only_ATOM_entries() ) {
-		ISTable& cell = block.GetTable("cell");
-		CrystInfo ci;
-		ci.A( atof( cell(0, "length_a" ).c_str() ) );
-		ci.B( atof( cell(0, "length_b" ).c_str() ) );
-		ci.C( atof( cell(0, "length_c" ).c_str() ) );
-		ci.alpha( atof( cell(0, "angle_alpha" ).c_str() ) );
-		ci.beta( atof( cell(0, "angle_beta" ).c_str() ) );
-		ci.gamma( atof( cell(0, "angle_gamma" ).c_str() ) );
-		ISTable& symmetry = block.GetTable("symmetry");
-		ci.spacegroup( symmetry( 0, "space_group_name_H-M" ) );
-		sfr->crystinfo() = ci;
+	if ( ! options.read_only_ATOM_entries() ) {
+		gemmi::cif::Table cell = block.find("_cell.", {"length_a","length_b","length_c","angle_alpha","angle_beta","angle_gamma"});
+		gemmi::cif::Table symmetry = block.find("_symmetry.", {"space_group_name_H-M"});
+		if ( cell.size() > 0 && symmetry.size() > 0 ) {
+			CrystInfo ci;
+			ci.A( as_number( cell[0][0] ) );
+			ci.B( as_number( cell[0][1] ) );
+			ci.C( as_number( cell[0][2] ) );
+			ci.alpha( as_number( cell[0][3] ) );
+			ci.beta(  as_number( cell[0][4] ) );
+			ci.gamma( as_number( cell[0][5] ) );
+			ci.spacegroup( as_string(symmetry[0][0]) );
+			sfr->crystinfo() = ci;
+		}
 	}
 
 	// ATOM/HETATM
 
 	std::string last_model = "";
-	if ( block.IsTablePresent( "atom_site" ) ) {
-		ISTable& atom_site = block.GetTable("atom_site");
-		for ( Size i = 0; i <= atom_site.GetLastRowIndex(); ++i ) {
-			AtomInformation ai;
+	if ( block.has_mmcif_category("_atom_site") ) {
+		gemmi::cif::Table atom_site = block.find_mmcif_category("_atom_site");
 
+		int pdbx_PDB_model_num  = find_gemmi_column(atom_site, "pdbx_PDB_model_num");
+		int group_PDB = find_gemmi_column(atom_site, "group_PDB" );
+		int id = find_gemmi_column(atom_site, "id" );
+		int auth_atom_id = find_gemmi_column(atom_site, "auth_atom_id" );
+		int label_atom_id = find_gemmi_column(atom_site, "label_atom_id" );
+		int label_alt_id = find_gemmi_column(atom_site, "label_alt_id" );
+		int auth_comp_id = find_gemmi_column(atom_site, "auth_comp_id");
+		int label_comp_id = find_gemmi_column(atom_site, "label_comp_id");
+		int auth_asym_id  = find_gemmi_column(atom_site, "auth_asym_id");
+		int label_asym_id = find_gemmi_column(atom_site, "label_asym_id");
+		int auth_seq_id = find_gemmi_column(atom_site, "auth_seq_id" );
+		int label_seq_id = find_gemmi_column(atom_site, "label_seq_id" );
+		int pdbx_PDB_ins_code = find_gemmi_column(atom_site, "pdbx_PDB_ins_code" );
+		int Cartn_x = find_gemmi_column(atom_site, "Cartn_x" );
+		int Cartn_y = find_gemmi_column(atom_site, "Cartn_y" );
+		int Cartn_z = find_gemmi_column(atom_site, "Cartn_z" );
+		int occupancy = find_gemmi_column(atom_site, "occupancy" );
+		int B_iso_or_equiv = find_gemmi_column(atom_site, "B_iso_or_equiv" );
+		int type_symbol = find_gemmi_column(atom_site, "type_symbol" );
+
+		for ( Size ii = 0; ii < atom_site.size(); ++ii ) {
+			gemmi::cif::Table::Row row = atom_site[ii];
+
+			AtomInformation ai;
 			std::string temp_model = last_model;
-			if ( atom_site.IsColumnPresent("pdbx_PDB_model_num") ) {
-				temp_model = atom_site( i, "pdbx_PDB_model_num" );
+
+			if ( pdbx_PDB_model_num >= 0 ) {
+				temp_model = as_string( row[pdbx_PDB_model_num] );
 				temp_model = ObjexxFCL::strip_whitespace( temp_model );
 			}
 
@@ -373,32 +498,32 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 				}
 			}
 
-			bool is_het = (atom_site.IsColumnPresent("group_PDB") && atom_site( i, "group_PDB" ) == "HETATM" );
+			bool is_het = (group_PDB >= 0 && as_string(row[group_PDB]) == "HETATM" );
 			if ( is_het && options.read_only_ATOM_entries() ) continue;
 
 			ai.isHet = is_het;
-			ai.serial = atoi( atom_site( i, "id" ).c_str() ); // Mandatory
-			if ( atom_site.IsColumnPresent("auth_atom_id") ) {
-				ai.name = atom_site( i, "auth_atom_id" );
-			} else if ( atom_site.IsColumnPresent("label_atom_id") ) {
-				ai.name = atom_site( i, "label_atom_id");
+			ai.serial = as_int( row[id], 0 ); // Mandatory
+			if ( auth_atom_id >= 0 ) {
+				ai.name = as_string( row[auth_atom_id] );
+			} else if ( label_atom_id >= 0 ) {
+				ai.name = as_string( row[label_atom_id] );
 			}
 			ai.altLoc = 0;
-			if ( atom_site( i, "label_alt_id" ).size() > 0 ) { // Mandatory
-				ai.altLoc = atom_site( i, "label_alt_id" )[ 0 ];
+			if ( label_alt_id >=0 ) {
+				ai.altLoc = as_char(row[label_alt_id], 0);
 			}
 
-			if ( atom_site.IsColumnPresent("auth_comp_id") ) {
-				ai.resName = atom_site( i, "auth_comp_id" );
+			if ( auth_comp_id >= 0 ) {
+				ai.resName = as_string(row[auth_comp_id]);
 			} else {
-				ai.resName = atom_site( i, "label_comp_id"); // Mandatory
+				ai.resName = as_string(row[label_comp_id]); // Mandatory
 			}
 
 			ai.chainID = ' ';
-			if ( atom_site.IsColumnPresent("auth_asym_id") && atom_site( i, "auth_asym_id" ).size() > 0 ) {
-				ai.chainID = atom_site( i, "auth_asym_id" )[0];
-			} else if ( atom_site( i, "label_asym_id" ).size() > 0 ) {
-				ai.chainID = atom_site( i, "label_asym_id" )[0]; // Mandatory
+			if ( auth_asym_id >= 0 ) {
+				ai.chainID = as_char(row[auth_asym_id], ' ');
+			} else if ( label_asym_id >= 0 ) {
+				ai.chainID = as_char(row[label_asym_id], ' '); // Mandatory
 			}
 			if ( options.new_chain_order() ) {
 				char chainid = ai.chainID;
@@ -409,51 +534,48 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 				ai.chainID = modelchain_to_chain[std::pair<Size, Size>(modelidx, chain_to_idx[chainid])];
 			}
 
-			if ( atom_site.IsColumnPresent("auth_seq_id") ) {
-				ai.resSeq = atoi( atom_site( i, "auth_seq_id" ).c_str() );
+			if ( auth_seq_id >= 0 ) {
+				ai.resSeq = as_int( row[auth_seq_id], 0 );
 			} else {
-				ai.resSeq = atoi( atom_site( i, "label_seq_id" ).c_str() ); // Mandatory
+				ai.resSeq = as_int( row[label_seq_id], 0 ); // Mandatory
 			}
 			ai.iCode = ' ';
-			if ( atom_site.IsColumnPresent("pdbx_PDB_ins_code") && atom_site( i, "pdbx_PDB_ins_code" ).size() > 0 && atom_site( i, "pdbx_PDB_ins_code" )[0] != '?' ) {
-				ai.iCode = atom_site( i, "pdbx_PDB_ins_code" )[0];
+			if ( pdbx_PDB_ins_code >= 0 ) {
+				ai.iCode = as_char( row[pdbx_PDB_ins_code], ' ');
 			}
 
-			// how can you check properly if something will successfully convert to a number !?!?!?
 			bool force_no_occupancy = false;
-			if ( atom_site( i, "Cartn_x" ) == "     nan" ) {
+			ai.x = as_number(row[Cartn_x]);
+			if ( std::isnan(ai.x) ) {
 				ai.x =0.0;
 				force_no_occupancy=true;
-			} else {
-				ai.x = atof( atom_site( i, "Cartn_x" ).c_str() );
 			}
-			if ( atom_site( i, "Cartn_y" ) == "     nan" ) {
+			ai.y = as_number(row[Cartn_y]);
+			if ( std::isnan(ai.y) ) {
 				ai.y =0.0;
 				force_no_occupancy=true;
-			} else {
-				ai.y = atof( atom_site( i, "Cartn_y" ).c_str() );
 			}
-			if ( atom_site( i, "Cartn_z" ) == "     nan" ) {
+			ai.z = as_number(row[Cartn_z]);
+			if ( std::isnan(ai.z) ) {
 				ai.z =0.0;
 				force_no_occupancy=true;
-			} else {
-				ai.z = atof( atom_site( i, "Cartn_z" ).c_str() );
 			}
 
 			// check that the occupancy column actually exists. If it doesn't, assume full occupancy.
 			// otherwise read it.
-			if ( ! atom_site.IsColumnPresent("occupancy") || atom_site( i, "occupancy" ) == "      " ) {
+			if ( occupancy < 0 ) {
 				ai.occupancy = 1.0;
 			} else {
-				ai.occupancy = atof( atom_site( i, "occupancy" ).c_str() );
+				ai.occupancy = as_number( row[occupancy] );
+				// On error
 			}
-			if ( force_no_occupancy ) ai.occupancy = -1.0;
+			if ( force_no_occupancy || std::isnan(ai.occupancy) ) ai.occupancy = -1.0;
 
-			if ( atom_site.IsColumnPresent("B_iso_or_equiv") ) {
-				ai.temperature = atof( atom_site( i, "B_iso_or_equiv" ).c_str() );
+			if ( B_iso_or_equiv >= 0 ) {
+				ai.temperature = as_number( row[B_iso_or_equiv] );
 			}
 			ai.segmentID = "    ";
-			ai.element = atom_site( i, "type_symbol" ); // Mandatory
+			ai.element = as_string( row[type_symbol] ); // Mandatory
 			ai.terCount = 0;
 
 			atom_chain_map[ai.chainID].push_back(ai);
@@ -463,14 +585,14 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 		}
 	} else {
 		TR.Warning << "atom_site table apparently not present in mmCIF file - Structure will not have coordinates!" << std::endl;
-		std::vector<std::string> table_names;
-		block.GetTableNames(table_names);
-		TR.Warning << " Tables present:";
-		for ( std::string const & table: table_names ) {
-			TR.Warning << " " << table;
-		}
-		TR.Warning << std::endl;
-		TR.Warning << " Note that the final table in the cif file may not be recognized - adding a dummy entry (like `_citation.title  \"\"`) to the end of the file may help." << std::endl;
+		//  std::vector<std::string> table_names;
+		//  block.GetTableNames(table_names);
+		//  TR.Warning << " Tables present:";
+		//  for ( std::string const & table: table_names ) {
+		//   TR.Warning << " " << table;
+		//  }
+		//  TR.Warning << std::endl;
+		//  TR.Warning << " Note that the final table in the cif file may not be recognized - adding a dummy entry (like `_citation.title  \"\"`) to the end of the file may help." << std::endl;
 	}
 
 	for ( char i : chain_list ) { // std::vector
