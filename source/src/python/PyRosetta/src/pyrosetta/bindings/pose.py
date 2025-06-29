@@ -36,6 +36,7 @@ from pyrosetta.rosetta.core.conformation import Residue
 from pyrosetta.rosetta.core.scoring import ScoreType
 from pyrosetta.bindings.utility import slice_1base_indicies, bind_method, bind_property
 from pyrosetta.bindings.scores import PoseCacheAccessor, ClobberWarning
+
 from pyrosetta.distributed.utility.pickle import (
     __cereal_getstate__,
     __cereal_setstate__,
@@ -506,6 +507,14 @@ class PoseScoreAccessor(MutableMapping):
         clearPoseExtraScore(self.pose, key)
 
         # SimpleMetric data cannot be mutated by anything other than a SimpleMetric.
+        for _attr, _sm_data in self.pose.cache.all_scores["metrics"]:
+            if key in _sm_data.keys():
+                warnings.warn(
+                    "The '{0}' key was deleted from arbitrary extra scores data, but a duplicate ".format(key)
+                    + "key still exists in SimpleMetric {0} data!".format(_attr.replace("_", " ")),
+                    UserWarning,
+                    stacklevel=2,
+                )
 
     def clear(self):
         """ Clear pose energies, extra scores, and SimpleMetric data"""
