@@ -26,6 +26,17 @@ if not hasattr(__builtins__, "all"):
             if not el: return False
         return True
 
+def atom_num( desig, m ):
+    try:
+        return int(desig) - 1
+    except ValueError:
+        # Atom name?
+        for ii, a in enumerate(m.atoms):
+            if desig == a.name:
+                return ii
+
+    raise ValueError("Cannot find atom designation {}, should be integer or one of {}.".format( desig, [a.name for a in m.atoms] ) )
+
 def assign_rigid_ids(atoms):
     '''Groups atoms that are connected in rigid units, i.e. no rotatable bonds.'''
     # Iterate through atoms, assigning them to rigids via depth first search
@@ -55,8 +66,8 @@ def fragment_ligand(molfile):
     for line in molfile.footer:
         if not line.startswith("M SPLT"): continue
         fields = line.split()
-        atom1 = molfile.atoms[int(fields[2]) - 1]
-        atom2 = molfile.atoms[int(fields[3]) - 1]
+        atom1 = molfile.atoms[ atom_num(fields[2], molfile) ]
+        atom2 = molfile.atoms[ atom_num(fields[3], molfile) ]
         bond_to_remove = None
         for b in remaining_bonds:
             if((b.a1 == atom1 and b.a2 == atom2)
@@ -146,9 +157,9 @@ def build_fragment_trees(molfile):
     # Assign root atoms based on instructions in the molfile
     for line in molfile.footer:
         # Standard MDL style is with a space, but KWK has used "MROOT" in the past. Babel uses 2 spaces.
-        if   line.startswith("M  ROOT"): molfile.atoms[ int(line.split()[2]) - 1 ].is_root = True
-        elif line.startswith("M ROOT"):  molfile.atoms[ int(line.split()[2]) - 1 ].is_root = True
-        elif line.startswith("MROOT"):   molfile.atoms[ int(line.split()[1]) - 1 ].is_root = True
+        if   line.startswith("M  ROOT"): molfile.atoms[ atom_num(line.split()[2], molfile) ].is_root = True
+        elif line.startswith("M ROOT"):  molfile.atoms[ atom_num(line.split()[2], molfile) ].is_root = True
+        elif line.startswith("MROOT"):   molfile.atoms[ atom_num(line.split()[1], molfile) ].is_root = True
     for frag_id in set([a.fragment_id for a in molfile.atoms]):
         # If we want to have a default way of choosing the root atom, this is the place:
         root_atoms = [a for a in molfile.atoms if a.fragment_id == frag_id and a.is_root]
@@ -173,10 +184,16 @@ def build_fragment_trees(molfile):
                     return 99
             # Want to visit non-H children first
             tmp_children = [b.a2 for b in parent.bonds]
-            #Sort first by identity of this atom, then identity of bonded atoms, then number of non-H bonds
-            tmp_children.sort(key= lambda a: get_atom_num(a.elem) +
-                              0.01*max([get_atom_num(b.a2.elem) for b in a.bonds]) +
-                              0.001*len([b for b in a.bonds if not b.a2.is_H]), reverse=True)
+            def sort_key(a):
+                # Priority to higher valued items (reverse sort)
+                return (not a.poly_ignore, # Priority to non-ignore
+                        not ( a.poly_upper or a.poly_lower ), # Priority to non-connect
+                        a.poly_backbone, # Priority to backbone
+                        get_atom_num(a.elem), # Priority to higher atom number
+                        max([get_atom_num(b.a2.elem) for b in a.bonds]), # Priority to bonded to heavier MW
+                        len([b for b in a.bonds if not b.a2.is_H]), ) # Number of non-hydrogen bonds
+            tmp_children.sort(key=sort_key, reverse=True)
+
             for child in tmp_children:
                 if child.fragment_id != parent.fragment_id: continue
                 if child.parent is not None or child.is_root: continue
@@ -201,6 +218,34 @@ def build_fragment_trees(molfile):
         #    parent.children.sort(lambda a,b: cmp(a.is_H, b.is_H))
     # Every atom should have a parent OR be a root
     assert(len([a for a in molfile.atoms if not a.is_root and a.parent is None]) == 0)
+
+def handle_polymer_special_cases(child, molfile):
+    # There should be a better way of doing this
+    nbb = cabb = cbb = obb = upper = lower = None
+    for a in molfile.atoms:
+        if a.poly_n_bb == True: nbb = a
+        if a.poly_ca_bb == True: cabb = a
+        if a.poly_c_bb == True: cbb = a
+        if a.poly_o_bb == True: obb = a
+        if a.poly_upper == True: upper = a
+        if a.poly_lower == True: lower = a
+
+    # For alpha amino acids
+    if child.poly_n_bb:
+        child.input_stub1, child.input_stub2, child.input_stub3 = nbb, cabb, cbb
+    elif child.poly_ca_bb:
+        child.input_stub1, child.input_stub2, child.input_stub3 = nbb, cabb, cbb
+    elif child.poly_c_bb:
+        child.input_stub1, child.input_stub2, child.input_stub3 = cabb, nbb, cbb
+    elif child.poly_o_bb:
+        child.input_stub1, child.input_stub2, child.input_stub3 = cbb, cabb, upper
+    elif child.poly_upper and None not in (cbb, cabb, nbb):
+        child.input_stub1, child.input_stub2, child.input_stub3 = cbb, cabb, nbb
+    elif child.poly_lower and None not in (nbb, cabb, cbb):
+        child.input_stub1, child.input_stub2, child.input_stub3 = nbb, cabb, cbb
+    else:
+        return
+
 def assign_internal_coords(molfile):
     '''Sets up stubs/input_stubs and d,theta,phi for all atoms.'''
     for frag_id in set([a.fragment_id for a in molfile.atoms]):
@@ -230,7 +275,9 @@ def assign_internal_coords(molfile):
             prev_sibling = me.stub3
             parent = me # rename to make logic clearer
             # Have to store input_stub atoms b/c they're written to params file
-            for child in parent.children:
+
+            # Descend into backbone atoms first, then sidechain
+            for child in sorted( parent.children, key=lambda a: a.poly_backbone, reverse=True ):
                 child.input_stub1 = parent.stub1
                 child.input_stub2 = parent.stub2
                 child.input_stub3 = prev_sibling # for first child, this is parent.stub3
@@ -238,6 +285,9 @@ def assign_internal_coords(molfile):
                 if parent.is_root and prev_sibling == parent.stub2:
                     #print( "activate second child case! stub3 =", parent.stub3.name )
                     child.input_stub3 = parent.stub3
+
+                handle_polymer_special_cases(child, molfile)
+
                 #print( "input_stubs", [x.name for x in (child, child.parent, child.input_stub1, child.input_stub2, child.input_stub3)] )
                 # Now actually calculate spherical internal coordinates
                 child.d, child.theta, child.phi = calc_internal_coords(child, child.input_stub1, child.input_stub2, child.input_stub3)
@@ -246,11 +296,14 @@ def assign_internal_coords(molfile):
                 # Child is now previous sibling for next child in this loop
                 prev_sibling = child
         # end assign_stubs()
+
         assign_stubs(root_atom)
+
         # Root has to have dummy input stub atoms to fill space in params file
         root_atom.input_stub1 = root_atom.stub1
         root_atom.input_stub2 = root_atom.stub2
         root_atom.input_stub3 = root_atom.stub3
+        handle_polymer_special_cases(root_atom, molfile) # In case root is a special case (which it probably is)
         # Root has dummy values for d, theta, phi
         root_atom.d     = 0.0
         root_atom.theta = 0.0
