@@ -75,11 +75,11 @@ class LoggingTest(unittest.TestCase):
                 msg="rosetta logs not going to logger",
             )
             # Testing that warnings are emitted when attempting to serialize incompatible score values while saving scorefile
-            pose = packed_pose.pose
-            pose.cache["test_warning_with_complex"] = 10j
-            pose.cache["test_warning_with_pose"] = packed_pose.pose.clone()
-            pose.cache["test_warning_with_packed_pose"] = io.to_packed(packed_pose.pose.clone())
-            packed_pose = io.to_packed(pose)
+            packed_pose = packed_pose.update_scores(
+                test_warning_with_complex=10j,
+                test_warning_with_pose=packed_pose.pose.clone(),
+                test_warning_with_packed_pose=io.to_packed(packed_pose.pose.clone()),
+            )
 
             return packed_pose
 
