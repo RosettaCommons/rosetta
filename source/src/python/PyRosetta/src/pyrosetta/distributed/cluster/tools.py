@@ -402,7 +402,7 @@ def reserve_scores(func: P) -> Union[P, NoReturn]:
     @wraps(func)
     def wrapper(packed_pose, **kwargs):
         if packed_pose is not None:
-            _scores_dict = packed_pose.scores
+            _scores_dict = update_scores(packed_pose).scores
         else:
             _scores_dict = {}
         _output = func(packed_pose, **kwargs)
