@@ -73,7 +73,7 @@ public:
 	/// encourage poses to adopt same sequence. Returns a COP of the constraints that were
 	/// applied so they can be removed later
 	utility::vector1< core::scoring::constraints::ConstraintCOP >
-	apply_linked_constraints( Pose & pose, utility::vector1< std::string > other_pose_sequences,
+	apply_linked_constraints( Pose & pose, utility::vector1< utility::vector1< std::string > > other_pose_sequences,
 		utility::vector1< core::Size > my_designable_residues );
 
 	/// @brief Initialize mover by checking that input poses were passed correctly,
