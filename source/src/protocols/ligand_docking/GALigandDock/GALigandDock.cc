@@ -89,6 +89,7 @@
 
 #include <ctime>
 #include <fstream>
+#include <cmath>
 
 #include <core/kinematics/Jump.hh> // AUTO IWYU For Jump
 #include <core/optimization/MinimizerOptions.hh> // AUTO IWYU For MinimizerOptions
@@ -593,6 +594,11 @@ GALigandDock::apply( pose::Pose & pose )
 				core::pose::getPoseExtraScore( pose, "dG", dG );
 
 				core::Size nheavyatoms = pose.residue( lig_resno ).nheavyatoms() - pose.residue( lig_resno ).n_virtual_atoms();
+
+				//Sources for all values used to calculate expected values and Z-scores
+				//can be found in the EMERALD-ID manuscript (Muenks et al. 2025).
+				//Constants in expected value calculations stem from a linear regression model
+				//determined from ligand-bound cryoEM structures
 				core::Real expected_dG = -12.4443 + (-0.4918 * nheavyatoms);
 
 				core::Real pose_cc = gridscore->calculate_pose_density_correlation( pose );
@@ -602,12 +608,13 @@ GALigandDock::apply( pose::Pose & pose )
 					TR << "No local resolution provided. Using the global resolution" << std::endl;
 				}
 
-				core::Real expected_dens = 0.4535172 - 0.0190373 * local_res_ + 0.5542869 * pose_cc  -0.0006722 * nheavyatoms;
+				core::Real expected_dens = 0.3428443 - 0.0372441 * local_res_ + 1.1934549 * pose_cc  -0.0014546 * nheavyatoms;
 
-				core::Real dG_z = ((dG - expected_dG)/15.8 * -1 * 1.5);
-				core::Real dens_z = ((penalized_density - expected_dens)/(0.07192 * 0.6));
+				core::Real dG_z = ((dG - expected_dG)/15.8 * -1 * 0.8); //std dev: 15.8, tuning constant: 0.8
+				//atanh used to convert [-1,1] values to [-inf,inf]
+				core::Real dens_z = ((std::atanh(penalized_density) - expected_dens)/(0.1531 * 1.1)); //std dev: 0.1531, tuning constant: 1.1
 
-				core::Real zscore = ((dG_z + dens_z)/2)/(std::pow(0.5, 0.5));
+				core::Real zscore = ((dG_z + dens_z)/2)/(std::pow( (0.5 + 0.5*0.261), 0.5) );
 
 				core::pose::setPoseExtraScore( pose, "dG_Z", dG_z );
 				core::pose::setPoseExtraScore( pose, "dens_Z", dens_z );
@@ -690,7 +697,7 @@ GALigandDock::apply( pose::Pose & pose )
 				core::pose::getPoseExtraScore( pose, "ligandname", ligandname );
 				core::pose::getPoseExtraScore( pose, "lig_dens", lig_dens );
 
-				core::pose::setPoseExtraScore( pose, "probability", id_probabilities[i] );
+				//core::pose::setPoseExtraScore( pose, "probability", id_probabilities[i] );
 
 				remaining_outputs_.push( pose, score, rms, complexscore, ligscore, recscore, 0, ligandname );
 				++i;
