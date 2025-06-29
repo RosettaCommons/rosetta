@@ -118,7 +118,7 @@ class IO(Generic[G]):
                     f"Removing score key '{key}' with value of type '{type(scores_dict[key])}' before "
                     + "saving PyRosettaCluster result! Only JSON-serializable score values can be written to "
                     + "output files. Consider custom serializing the value to save this score or removing the "
-                    + "key from the `pose.scores` dictionary to remove this warning message."
+                    + "key from the `pose.cache` dictionary to remove this warning message."
                 )
                 scores_dict.pop(key, None)
 
