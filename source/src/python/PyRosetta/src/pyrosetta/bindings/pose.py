@@ -507,7 +507,7 @@ class PoseScoreAccessor(MutableMapping):
         clearPoseExtraScore(self.pose, key)
 
         # SimpleMetric data cannot be mutated by anything other than a SimpleMetric.
-        for _attr, _sm_data in self.pose.cache.all_scores["metrics"]:
+        for _attr, _sm_data in self.pose.cache.all_scores["metrics"].items():
             if key in _sm_data.keys():
                 warnings.warn(
                     "The '{0}' key was deleted from arbitrary extra scores data, but a duplicate ".format(key)
