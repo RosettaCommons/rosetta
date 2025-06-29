@@ -32,6 +32,10 @@ from pyrosetta.bindings.scores.base import PoseCacheAccessorBase
 
 
 class ExtraScoresAccessorBase(PoseCacheAccessorBase, MutableMapping):
+    """
+    Base methods for accessor wrapper for pose arbitrary extra string scores
+    and pose arbitrary extra float scores.
+    """
     __slots__ = ("pose",)
 
     def __init__(self, pose):
@@ -77,6 +81,7 @@ class ExtraScoresAccessorBase(PoseCacheAccessorBase, MutableMapping):
 
 
 class ExtraFloatScoresDataAccessor(ExtraScoresAccessorBase):
+    """Accessor wrapper for pose arbitrary extra float scores."""
     __slots__ = ("pose",)
 
     def __init__(self, pose):
@@ -101,6 +106,7 @@ class ExtraFloatScoresDataAccessor(ExtraScoresAccessorBase):
 
 
 class ExtraStringScoresDataAccessor(ExtraScoresAccessorBase):
+    """Accessor wrapper for pose arbitrary extra string scores."""
     __slots__ = ("pose",)
 
     def __init__(self, pose):
@@ -125,6 +131,7 @@ class ExtraStringScoresDataAccessor(ExtraScoresAccessorBase):
 
 
 class ExtraScoresAccessor(ExtraScoresAccessorBase):
+    """Accessor wrapper for pose arbitrary extra string scores and pose arbitrary extra float scores."""
     __slots__ = ("pose",)
 
     def __init__(self, pose):

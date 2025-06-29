@@ -22,10 +22,13 @@ from pyrosetta.bindings.scores.serialization import PoseScoreSerializer
 
 
 class ClobberWarning(UserWarning):
-    pass
+    """A subclass of `UserWarning` issued when scores are being clobbered."""
+    def __init__(self, msg):
+        super().__init__(msg)
 
 
 class PoseCacheAccessorBase(PoseScoreSerializer):
+    """Base methods for the `Pose.cache` scores accessor."""
     __slots__ = ("pose",)
 
     def __init__(self, pose):
@@ -35,10 +38,12 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
 
     @property
     def _reserved_custom_metric_keys(self):
+        """Reserved scoretype keys for SimpleMetrics that cannot be set or deleted."""
         return {"custom_real_valued_metric", "custom_string_valued_metric"}
 
     @property
     def _reserved(self):
+        """Reserved scoretype keys that cannot be set or deleted."""
         _reserved = {k for k in ScoreType.__dict__.keys() if not k.startswith("_")}
         _reserved = _reserved.union(self._reserved_custom_metric_keys)
         return _reserved
@@ -162,6 +167,7 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
                 )
 
     def _clobber_warning(self, msg):
+        """Issue a `ClobberWarning` warning with a message."""
         warnings.warn(
             msg,
             ClobberWarning,
@@ -169,10 +175,12 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
         )
 
     def _validate_set(self, key):
+        """Validate that a key can be set."""
         if key in self._reserved:
             raise KeyError("Cannot set a key with a reserved name: {0}".format(key))
 
     def _validate_del(self, key):
+        """Validate that a key can be deleted."""
         if key in self._reserved:
             raise KeyError("Cannot delete a key with a reserved name: {0}".format(key))
 

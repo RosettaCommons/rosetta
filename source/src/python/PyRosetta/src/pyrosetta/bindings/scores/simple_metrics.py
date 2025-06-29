@@ -24,6 +24,7 @@ from pyrosetta.bindings.scores.base import PoseCacheAccessorBase
 
 
 class SimpleMetricDataAccessorBase(PoseCacheAccessorBase, MutableMapping):
+    """Base methods for accessor wrapper for pose SimpleMetric data."""
     __slots__ = ("pose",)
 
     def __init__(self, pose):
@@ -96,6 +97,7 @@ class SimpleMetricDataAccessorBase(PoseCacheAccessorBase, MutableMapping):
 
 
 class SimpleMetricStringDataAccessor(SimpleMetricDataAccessorBase):
+    """Accessor wrapper for pose SimpleMetric string data."""
     __slots__ = ("pose",)
 
     def __init__(self, pose):
@@ -131,6 +133,7 @@ class SimpleMetricStringDataAccessor(SimpleMetricDataAccessorBase):
 
 
 class SimpleMetricRealDataAccessor(SimpleMetricDataAccessorBase):
+    """Accessor wrapper for pose SimpleMetric real data."""
     __slots__ = ("pose",)
 
     def __init__(self, pose):
@@ -166,6 +169,7 @@ class SimpleMetricRealDataAccessor(SimpleMetricDataAccessorBase):
 
 
 class SimpleMetricCompositeStringDataAccessor(SimpleMetricDataAccessorBase):
+    """Accessor wrapper for pose SimpleMetric composite string data."""
     __slots__ = ("pose",)
 
     def __init__(self, pose):
@@ -184,6 +188,7 @@ class SimpleMetricCompositeStringDataAccessor(SimpleMetricDataAccessorBase):
 
 
 class SimpleMetricCompositeRealDataAccessor(SimpleMetricDataAccessorBase):
+    """Accessor wrapper for pose SimpleMetric composite real data."""
     __slots__ = ("pose",)
 
     def __init__(self, pose):
@@ -200,7 +205,9 @@ class SimpleMetricCompositeRealDataAccessor(SimpleMetricDataAccessorBase):
     def __setitem__(self, key, value):
         raise NotImplementedError("Cannot set SimpleMetric composite real data.")
 
+
 class SimpleMetricPerResidueStringDataAccessor(SimpleMetricDataAccessorBase):
+    """Accessor wrapper for pose SimpleMetric per-residue string data."""
     __slots__ = ("pose",)
 
     def __init__(self, pose):
@@ -219,6 +226,7 @@ class SimpleMetricPerResidueStringDataAccessor(SimpleMetricDataAccessorBase):
 
 
 class SimpleMetricPerResidueRealDataAccessor(SimpleMetricDataAccessorBase):
+    """Accessor wrapper for pose SimpleMetric per-residue real data."""
     __slots__ = ("pose",)
 
     def __init__(self, pose):
@@ -237,6 +245,7 @@ class SimpleMetricPerResidueRealDataAccessor(SimpleMetricDataAccessorBase):
 
 
 class SimpleMetricPerResidueProbabilitiesDataAccessor(SimpleMetricDataAccessorBase):
+    """Accessor wrapper for pose SimpleMetric per-residue probabilities data."""
     __slots__ = ("pose",)
 
     def __init__(self, pose):
@@ -255,6 +264,7 @@ class SimpleMetricPerResidueProbabilitiesDataAccessor(SimpleMetricDataAccessorBa
 
 
 class SimpleMetricDataAccessor(SimpleMetricDataAccessorBase):
+    """Accessor wrapper for pose SimpleMetric data."""
     __slots__ = ("pose",)
 
     def __init__(self, pose):

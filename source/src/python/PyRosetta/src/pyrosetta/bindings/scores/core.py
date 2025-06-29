@@ -91,7 +91,7 @@ class PoseCacheAccessor(PoseCacheAccessorBase, MutableMapping):
         return tuple(ref_keys)
 
     def assert_unique_keys(self):
-        """Assert that `pose.cache.all_keys` returns all unique keys."""
+        """Assert that `Pose.cache.all_keys` returns all unique keys."""
         ref_keys = self.all_keys
         if len(ref_keys) == len(set(ref_keys)):
             print("Pose cached data keys are unique: {0}".format(ref_keys))
@@ -144,9 +144,16 @@ class PoseCacheAccessor(PoseCacheAccessorBase, MutableMapping):
         )
 
     def __getitem__(self, key):
+        "Get a value from a key from the `Pose.cache` dictionary."
         return self.maybe_decode(self.all[key])
 
     def __setitem__(self, key, value):
+        """
+        Save a key and value to SimpleMetric data by default.
+
+        To save a key and value to arbitrary extra scores, use:
+            `Pose.cache.extra[key] = value`
+        """
         self.metrics.__setitem__(key, value)
 
     def __delitem__(self, key):

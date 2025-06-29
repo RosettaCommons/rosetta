@@ -21,6 +21,7 @@ from pyrosetta.bindings.scores.base import PoseCacheAccessorBase
 
 
 class EnergiesAccessor(PoseCacheAccessorBase, MutableMapping):
+    """Accessor wrapper for pose energies."""
     __slots__ = ("pose",)
 
     def __init__(self, pose):
