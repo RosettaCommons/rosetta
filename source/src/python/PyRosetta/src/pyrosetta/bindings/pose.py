@@ -35,6 +35,7 @@ from pyrosetta.rosetta.core.pose import add_upper_terminus_type_to_pose_residue
 from pyrosetta.rosetta.core.conformation import Residue
 from pyrosetta.rosetta.core.scoring import ScoreType
 from pyrosetta.bindings.utility import slice_1base_indicies, bind_method, bind_property
+from pyrosetta.bindings.scores import PoseCacheAccessor
 from pyrosetta.distributed.utility.pickle import (
     __cereal_getstate__,
     __cereal_setstate__,
@@ -517,6 +518,21 @@ def __scores_accessor(self, accessor):
 
 
 Pose.scores = __scores_accessor
+
+
+@bind_property(Pose)  # noqa: F811
+def __cache_accessor(self):
+    return PoseCacheAccessor(self)
+
+
+@Pose.__cache_accessor.setter
+def __cache_accessor(self, accessor):
+    if not isinstance(accessor, PoseCacheAccessor) or accessor.pose is not self:
+        raise AttributeError("Can't set cache accessor.")
+    pass
+
+
+Pose.cache = __cache_accessor
 
 
 # Deprecated Bindings - 19/11/17
