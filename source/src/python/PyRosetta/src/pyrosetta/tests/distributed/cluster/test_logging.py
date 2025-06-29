@@ -163,7 +163,7 @@ class LoggingTest(unittest.TestCase):
                         expected_msg = (
                             f"Removing score key '{key}' with value of type '<class '{class_name}'>' before "
                             "saving PyRosettaCluster result! Only JSON-serializable score values can be written to output files. "
-                            "Consider custom serializing the value to save this score or removing the key from the `pose.scores` "
+                            "Consider custom serializing the value to save this score or removing the key from the `pose.cache` "
                             "dictionary to remove this warning message."
                         )
                         self.assertIn(expected_msg, warning_msgs)
