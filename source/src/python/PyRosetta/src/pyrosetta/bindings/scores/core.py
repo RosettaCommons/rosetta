@@ -59,20 +59,24 @@ class PoseCacheAccessor(PoseCacheAccessorBase, MutableMapping):
         """Return a nested dictionary of all score data."""
         return types.MappingProxyType(
             {
-                "extra": {
-                    "string": dict(self.extra.string),
-                    "real": dict(self.extra.real),
-                },
-                "metrics": {
-                    "string": dict(self.metrics.string),
-                    "real": dict(self.metrics.real),
-                    "composite_string": dict(self.metrics.composite_string),
-                    "composite_real": dict(self.metrics.composite_real),
-                    "per_residue_string": dict(self.metrics.per_residue_string),
-                    "per_residue_real": dict(self.metrics.per_residue_real),
-                    "per_residue_probabilities": dict(self.metrics.per_residue_probabilities),
-                },
-                "energies": dict(self.energies),
+                "extra": types.MappingProxyType(
+                    {
+                        "string": types.MappingProxyType(dict(self.extra.string)),
+                        "real": types.MappingProxyType(dict(self.extra.real)),
+                    }
+                ),
+                "metrics": types.MappingProxyType(
+                        {
+                        "string": types.MappingProxyType(dict(self.metrics.string)),
+                        "real": types.MappingProxyType(dict(self.metrics.real)),
+                        "composite_string": types.MappingProxyType(dict(self.metrics.composite_string)),
+                        "composite_real": types.MappingProxyType(dict(self.metrics.composite_real)),
+                        "per_residue_string": types.MappingProxyType(dict(self.metrics.per_residue_string)),
+                        "per_residue_real": types.MappingProxyType(dict(self.metrics.per_residue_real)),
+                        "per_residue_probabilities": types.MappingProxyType(dict(self.metrics.per_residue_probabilities)),
+                    }
+                ),
+                "energies": types.MappingProxyType(dict(self.energies)),
             }
         )
 
