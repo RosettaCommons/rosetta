@@ -179,46 +179,20 @@ lower( std::string const & s );
 utility::vector1< std::string >
 quoted_split(std::string const & s );
 
-/// @brief combine strings with anything
-std::string join(utility::vector1<std::string> const & s, std::string const & connector);
-
-/// @brief combine vector with anything
-template<class T>
-std::string join(utility::vector1<T> const & vector, std::string const & connector)
-{
-	std::ostringstream os;
-	if ( vector.empty() ) return "";
-	typename utility::vector1<T>::const_iterator begin= vector.begin();
-	os << *begin++;
-	for ( ; begin != vector.end(); ++begin ) {
-		os<< connector<< *begin;
-	}
-	return os.str();
-}
-
-/// @brief combine strings with anything
-std::string join(std::vector<std::string> const & s, std::string const & connector);
-
-/// @brief Join vector of strings in to single string
-template< platform::SSize L>
-std::string join(vectorL<L, std::string> const & s, std::string const & connector){
-	std::ostringstream os;
-	if ( s.empty() ) return "";
-	typename utility::vectorL<L, std::string>::const_iterator begin= s.begin();
-	os << *begin++;
-	for ( ; begin != s.end(); ++begin ) {
-		os<< connector<< *begin;
-	}
-	return os.str();
-}
-
+/// @brief Combine an iterable of values
+/// (either strings or something that can be converted to strings with <<)
+/// connecting multiple values with connector
 template<class Iterable>
 std::string join(Iterable const & iter, std::string const & connector){
-	utility::vector1< std::string > vector;
-	for ( std::string s: iter ) {
-		vector.emplace_back( std::move(s) );
+	std::ostringstream os;
+	// TL: if iter is empty, we can't dereference s.begin()
+	if ( iter.empty() ) return "";
+	auto begin = iter.begin();
+	os << *begin++;
+	for ( ; begin != iter.end(); ++begin ) {
+		os<< connector<< *begin;
 	}
-	return join(iter, connector);
+	return os.str();
 }
 
 /// @brief replace space separations in a string with a connector such as '_'
