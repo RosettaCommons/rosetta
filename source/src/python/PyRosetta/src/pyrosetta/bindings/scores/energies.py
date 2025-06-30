@@ -29,6 +29,7 @@ class EnergiesAccessor(PoseCacheAccessorBase, MutableMapping):
 
     @property
     def all(self):
+        """Get all active total energies."""
         return types.MappingProxyType(
             dict(self.pose.energies().active_total_energies().items())
         )

@@ -140,6 +140,8 @@ class ExtraScoresAccessor(ExtraScoresAccessorBase):
     @property
     def all(self):
         """
+        Get all arbitrary extra float and extra string scores (with clobber warnings).
+
         This method aims to mimic data override precedences used in the legacy `pose.scores` dictionary:
             1. `pose.energies().active_total_energies()`
             2. `ScoreMap.get_arbitrary_score_data_from_pose(pose)`

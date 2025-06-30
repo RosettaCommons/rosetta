@@ -19,9 +19,6 @@ except ImportError:
 
 from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.rosetta.core.pose import (
-    getPoseExtraFloatScores,
-    getPoseExtraStringScores,
-    setPoseExtraScore,
     hasPoseExtraScore,
     hasPoseExtraScore_str,
     clearPoseExtraScore,
@@ -36,7 +33,98 @@ from pyrosetta.bindings.scores.energies import EnergiesAccessor
 
 
 class PoseCacheAccessor(PoseCacheAccessorBase, MutableMapping):
-    """Accessor wrapper for pose energies, extra scores, and SimpleMetrics."""
+    """
+    Accessor wrapper for pose energies, SimpleMetrics data, and arbitrary extra score data.
+
+    The `Pose.cache` dictionary has a nested namespace structure wherein each layer has the ability to access,
+    set, and delete pose score data, with the outermost layers providing warnings if data from the innermost layers
+    get clobbered once combined. The `Pose.cache` dictionary also uses serialization to dynamically store/retrieve
+    arbitrary python objects to/from base64-encoded pickled byte streams, and stores/retrieves `float` and `str`
+    objects without serialization.
+
+    Examples:
+
+    Get score dictionaries:
+        - Return nested, read-only dictionaries of all cached score data:
+            `pose.cache.all_scores()`
+        - Return a flattened, read-only dictionary of all cached score data (with clobber warnings):
+            `pose.cache`
+        - Return a flattened, read-only dictionary of all SimpleMetric data (with clobber warnings):
+            `pose.cache.metrics`
+        - Return a flattened, read-only dictionary of all arbitrary extra float and extra string score data (with clobber warnings):
+            `pose.cache.extra`
+        - Return a read-only dictionary of active total energies:
+            `pose.cache.energies`
+
+    Get a score value:
+        - Return the value of a key from any `pose.cache.extra`, `pose.cache.metrics`, or `pose.cache.energies` dictionary
+            (from lowest to highest precedence, respectively, with clobber warnings):
+                `pose.cache["key"]`
+
+        From arbitrary extra score data:
+            - Return the value of a key from arbitrary extra float or extra string score data (with clobber warnings):
+                `pose.cache.extra["key"]`
+            - Return the value of a key from arbitrary extra float score data:
+                `pose.cache.extra.real["key"]`
+            - Return the value of a key from arbitrary extra string score data:
+                `pose.cache.extra.string["key"]`
+
+        From SimpleMetric data:
+            - Return the value of a key from any SimpleMetric data (with clobber warnings):
+                `pose.cache.metrics["key"]`
+            - Return the value of a key from SimpleMetric real metric data:
+                `pose.cache.metrics.real["key"]`
+            - Return the value of a key from SimpleMetric string metric data:
+                `pose.cache.metrics.string["key"]`
+            - Return the value of a key from SimpleMetric composite real metric data:
+                `pose.cache.metrics.composite_real["key"]`
+            - Return the value of a key from SimpleMetric composite string metric data:
+                `pose.cache.metrics.composite_string["key"]`
+            - Return the value of a key from SimpleMetric per-residue real metric data:
+                `pose.cache.metrics.per_residue_real["key"]`
+            - Return the value of a key from SimpleMetric per-residue string metric data:
+                `pose.cache.metrics.per_residue_string["key"]`
+            - Return the value of a key from SimpleMetric per-residue probabilities metric data:
+                `pose.cache.metrics.per_residue_probabilities["key"]`
+
+        From active total energies:
+            - Return the value of a key from any active energy scoretype in the pose:
+                `pose.cache.energies["key"]`
+
+    Set a score value:
+        To SimpleMetric data:
+            - Set a key/value pair as a `CustomRealValueMetric` or `CustomStringValueMetric` with automatic type checking:
+                `pose.cache["key"] = value`
+                `pose.cache.metrics["key"] = value`
+            - Set a key/value pair as a `CustomRealValueMetric`:
+                `pose.cache.metrics.real["key"] = value`
+            - Set a key/value pair as a `CustomStringValueMetric`:
+                `pose.cache.metrics.string["key"] = value`
+
+        To arbitrary extra score data:
+            - Set a key/value pair as an arbitrary extra float or string score with automatic type checking:
+                `pose.cache.extra["key"]`
+            - Set a key/value pair as an arbitrary extra real score:
+                `pose.cache.extra.real["key"]`
+            - Set a key/value pair as an arbitrary extra string score:
+                `pose.cache.extra.string["key"]`
+
+    Delete data:
+        - Clear all cached score data:
+            `pose.cache.clear()`
+        - Clear all SimpleMetric data:
+            `pose.cache.metrics.clear()`
+        - Clear all arbitrary extra float and string score data:
+            `pose.cache.extra.clear()`
+        - Clear a single key/value pair:
+            `pose.cache.pop("key")`
+            `pose.cache.metrics.pop("key")`
+            `pose.cache.metrics.real.pop("key")`
+            `pose.cache.metrics.string.pop("key")`
+            `pose.cache.extra.pop("key")`
+
+    @klimaj
+    """
     __slots__ = ("pose",)
 
     def __init__(self, pose):
@@ -109,6 +197,8 @@ class PoseCacheAccessor(PoseCacheAccessorBase, MutableMapping):
     @property
     def all(self):
         """
+        Get all cached score data.
+
         This method aims to mimic data override precedences used in the legacy `pose.scores` dictionary:
             1. `pose.energies().active_total_energies()`
             2. `ScoreMap.get_arbitrary_score_data_from_pose(pose)`

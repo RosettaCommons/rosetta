@@ -558,6 +558,7 @@ def __cache_accessor(self, accessor):
 
 
 Pose.cache = __cache_accessor
+Pose.cache.__doc__ = PoseCacheAccessor.__doc__
 
 
 # Deprecated Bindings - 19/11/17

@@ -274,6 +274,8 @@ class SimpleMetricDataAccessor(SimpleMetricDataAccessorBase):
     @property
     def all(self):
         """
+        Get all SimpleMetric data (with clobber warnings).
+
         This method aims to mimic data override precedences used in the legacy `pose.scores` dictionary:
             1. `pose.energies().active_total_energies()`
             2. `ScoreMap.get_arbitrary_score_data_from_pose(pose)`
