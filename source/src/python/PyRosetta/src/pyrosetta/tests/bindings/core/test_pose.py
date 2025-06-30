@@ -697,7 +697,6 @@ class TestPoseCacheAccessor(unittest.TestCase):
         # Test warnings if saving objects in incorrect namespaces
         with self.assertWarns(UserWarning):
             self.pose.cache.metrics.real["str"] = "String"
-        print(self.pose.cache.metrics)
         self.assertIn("str", self.pose.cache.metrics.string.keys())
         with self.assertWarns(UserWarning):
             self.pose.cache.metrics.string["float"] = 1e5
