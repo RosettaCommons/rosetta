@@ -119,6 +119,11 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
                         m.set_value(self.maybe_encode(_v))
                         m.apply(out_label=_k, pose=self.pose, override_existing_data=True)
 
+    def _has_reserved_custom_metric_keys(self):
+        _has_custom_string_valued_metric = "custom_string_valued_metric" in self.pose.cache.metrics.string.keys()
+        _has_custom_real_valued_metric = "custom_real_valued_metric" in self.pose.cache.metrics.real.keys()
+        return _has_custom_string_valued_metric, _has_custom_real_valued_metric
+
     def _maybe_delete_reserved_keys_from_sm_data(self):
         """
         `CustomRealValueMetric` and `CustomStringValueMetric` can save the extra default keys
@@ -127,8 +132,6 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
         aims to delete these extra default keys if they were created and we can delete them, 
         otherwise fallback to warning the user that they were created.
         """
-        _has_custom_string_valued_metric = "custom_string_valued_metric" in self.pose.cache.metrics.string.keys()
-        _has_custom_real_valued_metric = "custom_real_valued_metric" in self.pose.cache.metrics.real.keys()
         _static_keys = (
             self.pose.cache.metrics.composite_string.keys(),
             self.pose.cache.metrics.composite_real.keys(),
@@ -137,34 +140,32 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
             self.pose.cache.metrics.per_residue_probabilities.keys(),
         )
         if not any(map(len, _static_keys)):
-            if _has_custom_string_valued_metric and _has_custom_real_valued_metric:
-                self._maybe_delete_keys_from_sm_data(
-                    keys=("custom_string_valued_metric", "custom_real_valued_metric",),
-                    attributes=("string", "real"),
-                )
-            elif _has_custom_string_valued_metric:
+            _has_custom_string_valued_metric, _has_custom_real_valued_metric = self._has_reserved_custom_metric_keys()
+            if _has_custom_string_valued_metric:
                 self._maybe_delete_keys_from_sm_data(
                     keys=("custom_string_valued_metric",),
                     attributes=("string",),
                 )
-            elif _has_custom_real_valued_metric:
+            if _has_custom_real_valued_metric:
                 self._maybe_delete_keys_from_sm_data(
                     keys=("custom_real_valued_metric",),
                     attributes=("real",)
                 )
-        else:
-            if _has_custom_string_valued_metric:
-                warnings.warn(
-                    "`CustomStringValueMetric` implemented the key 'custom_string_valued_metric' in `pose.cache`.",
-                    RuntimeWarning,
-                    stacklevel=2,
-                )
-            if _has_custom_real_valued_metric:
-                warnings.warn(
-                    "`CustomRealValueMetric` implemented the key 'custom_real_valued_metric' in `pose.cache`.",
-                    RuntimeWarning,
-                    stacklevel=2,
-                )
+
+    def _reserved_custom_metric_keys_warning(self):
+        _has_custom_string_valued_metric, _has_custom_real_valued_metric = self._has_reserved_custom_metric_keys()
+        if _has_custom_string_valued_metric:
+            warnings.warn(
+                "`CustomStringValueMetric` implemented the key 'custom_string_valued_metric' in `pose.cache`.",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+        if _has_custom_real_valued_metric:
+            warnings.warn(
+                "`CustomRealValueMetric` implemented the key 'custom_real_valued_metric' in `pose.cache`.",
+                RuntimeWarning,
+                stacklevel=2,
+            )
 
     def _clobber_warning(self, msg):
         """Issue a `ClobberWarning` warning with a message."""

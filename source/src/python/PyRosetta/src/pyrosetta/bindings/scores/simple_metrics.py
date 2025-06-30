@@ -42,6 +42,7 @@ class SimpleMetricDataAccessorBase(PoseCacheAccessorBase, MutableMapping):
         m.set_value(self.maybe_encode(value))
         m.apply(out_label=key, pose=self.pose, override_existing_data=True)
         self._maybe_delete_reserved_keys_from_sm_data()
+        self._reserved_custom_metric_keys_warning()
 
     def __delitem__(self, key):
         self._validate_del(key)
