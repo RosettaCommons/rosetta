@@ -129,8 +129,7 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
         `CustomRealValueMetric` and `CustomStringValueMetric` can save the extra default keys
         "custom_real_valued_metric" or "custom_string_valued_metric" because `pose.cache.metrics`
         does not set a 'custom_type' parameter when setting SimpleMetric data. This method
-        aims to delete these extra default keys if they were created and we can delete them, 
-        otherwise fallback to warning the user that they were created.
+        aims to delete these extra default keys if they were created and we can delete them.
         """
         _static_keys = (
             self.pose.cache.metrics.composite_string.keys(),
@@ -153,6 +152,7 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
                 )
 
     def _reserved_custom_metric_keys_warning(self):
+        """Warn that reserved custom metric keys were added to the data cache."""
         _has_custom_string_valued_metric, _has_custom_real_valued_metric = self._has_reserved_custom_metric_keys()
         if _has_custom_string_valued_metric:
             warnings.warn(

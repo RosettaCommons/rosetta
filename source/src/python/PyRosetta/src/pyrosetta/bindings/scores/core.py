@@ -46,7 +46,7 @@ class PoseCacheAccessor(PoseCacheAccessorBase, MutableMapping):
 
     Get score dictionaries:
         - Return nested, read-only dictionaries of all cached score data:
-            `pose.cache.all_scores()`
+            `pose.cache.all_scores`
         - Return a flattened, read-only dictionary of all cached score data (with clobber warnings):
             `pose.cache`
         - Return a flattened, read-only dictionary of all SimpleMetric data (with clobber warnings):
