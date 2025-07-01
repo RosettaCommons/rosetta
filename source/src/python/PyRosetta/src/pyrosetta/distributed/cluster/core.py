@@ -839,7 +839,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         remote compute cluster and optionally post-processing or visualizing output `PackedPose` objects in memory.
         Importantly, subsequent code run on the yielded results is not captured by PyRosettaCluster, and so use
         of this method does not ensure reproducibility of the simulation. Use the `PyRosettaCluster.distribute`
-        method for reproducibile simulations.
+        method for reproducible simulations.
 
         Each yielded result is a `tuple` object with a `PackedPose` object as the first element and a `dict`
         object as the second element. The `PackedPose` object represents a returned or yielded `PackedPose`
