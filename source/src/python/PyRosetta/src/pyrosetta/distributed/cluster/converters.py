@@ -492,3 +492,72 @@ def _parse_tasks(objs):
         return _tasks
 
     return converter(objs)
+
+
+def _parse_output_decoy_types(objs: Any) -> Union[List[str], NoReturn]:
+    """Parse the input `output_decoy_types` attribute of PyRosettaCluster."""
+    _output_decoy_types = (".pdb", ".cif", ".mmtf", ".pose")
+
+    @singledispatch
+    def converter(objs: Any) -> NoReturn:
+        raise ValueError(
+            "Parameter passed to 'output_decoy_types' argument must be "
+            + "an iterable of `str` objects, or `None`."
+        )
+
+    @converter.register(type(None))
+    def _from_none(obj: None) -> List[str]:
+        return [_output_decoy_types[0]]
+
+    @converter.register(collections.abc.Iterable)
+    def _from_iterable(objs: collections.abc.Iterable) -> List[str]:
+        _types = set()
+        for obj in objs:
+            if isinstance(obj, str):
+                if obj in _output_decoy_types:
+                    _types.add(obj)
+                else:
+                    raise ValueError(f"Available output decoy types are: {_output_decoy_types}")
+            elif obj is not None:
+                converter(obj)
+        if _output_decoy_types[0] not in _types:
+            raise ValueError(
+                f"The '{_output_decoy_types[0]}' option must be enabled in the "
+                + "'output_decoy_types' keyword argument parameter."
+            )
+        return list(_types)
+
+    return converter(objs)
+
+
+def _parse_output_scorefile_types(objs: Any) -> Union[List[str], NoReturn]:
+    """Parse the input `output_scorefile_types` attribute of PyRosettaCluster."""
+    _output_scorefile_types = (".json",)
+
+    @singledispatch
+    def converter(objs: Any) -> NoReturn:
+        raise ValueError(
+            "Parameter passed to 'output_scorefile_types' argument must be "
+            + "an iterable of `str` objects, or `None`."
+        )
+
+    @converter.register(type(None))
+    def _from_none(obj: None) -> List[str]:
+        return [_output_scorefile_types[0]]
+
+    @converter.register(collections.abc.Iterable)
+    def _from_iterable(objs: collections.abc.Iterable) -> List[str]:
+        _types = set()
+        for obj in objs:
+            if isinstance(obj, str):
+                _types.add(obj)
+            elif obj is not None:
+                converter(obj)
+        if _output_scorefile_types[0] not in _types:
+            raise ValueError(
+                f"The '{_output_scorefile_types[0]}' option must be enabled in the "
+                + "'output_scorefile_types' keyword argument parameter."
+            )
+        return list(_types)
+
+    return converter(objs)

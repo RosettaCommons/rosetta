@@ -96,7 +96,8 @@ Args:
         user-provided PyRosetta protocol run later.
         Default: 1
     compressed: A `bool` object specifying whether or not to compress the output
-        '.pdb' files with bzip2, resulting in '.pdb.bz2' files.
+        '.pdb' files with `bzip2`, resulting in '.pdb.bz2' output decoy files. Also
+        see the 'output_decoy_types' keyword argument.
         Default: True
     compression: A `str` object of 'xz', 'zlib' or 'bz2', or a `bool` or `NoneType`
         object representing the internal compression library for pickled `PackedPose` 
@@ -148,6 +149,19 @@ Args:
         (to be created if it doesn't exist) where the output results will be saved
         to disk.
         Default: "./outputs"
+    output_decoy_types: An iterable of `str` objects representing the output decoy
+        filetypes to save during the simulation. Available options are: ".pdb" for PDB
+        files (required), ".cif" for mmCIF files, ".mmtf" for MMTF files, and ".pose" for
+        base64-encoded pickle files. If `compressed=True`, then each output decoy file
+        is compressed by `bzip2` and `.bz2` is appended to the filename.
+        Default: ["pdb",]
+    output_scorefile_types: An iterable of `str` objects representing the output scorefile
+        filetypes to save during the simulation. The default option ".json" is required
+        for a JSON-encoded scorefile, and optionally pickled `pandas.DataFrame` objects
+        of scorefile data can also be saved by providing any filename extensions accepted
+        by `DataFrame.to_pickle(compression="infer")` (including ".gz", ".bz2", and ".xz")
+        that can later be loaded using `pandas.read_pickle(compression="infer")`.
+        Default: ["json",]
     scorefile_name: A `str` object specifying the name of the output JSON-formatted
         scorefile. The scorefile location is always `output_path`/`scorefile_name`.
         Default: "scores.json"
@@ -250,6 +264,8 @@ from pyrosetta.distributed.cluster.converters import (
     _parse_decoy_ids,
     _parse_environment,
     _parse_input_packed_pose,
+    _parse_output_decoy_types,
+    _parse_output_scorefile_types,
     _parse_pyrosetta_build,
     _parse_scratch_dir,
     _parse_seeds,
@@ -272,6 +288,7 @@ from pyrosetta.distributed.cluster.validators import (
 )
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
+    AbstractSet,
     Any,
     List,
     NoReturn,
@@ -425,6 +442,30 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         converter=attr.converters.default_if_none(
             default=os.path.abspath(os.path.join(os.getcwd(), "outputs"))
         ),
+    )
+    output_decoy_types = attr.ib(
+        type=List[str],
+        default=None,
+        validator=[
+            attr.validators.deep_iterable(
+                member_validator=attr.validators.instance_of(str),
+                iterable_validator=attr.validators.instance_of(list),
+            ),
+            _validate_min_len,
+        ],
+        converter=_parse_output_decoy_types,
+    )
+    output_scorefile_types = attr.ib(
+        type=List[str],
+        default=None,
+        validator=[
+            attr.validators.deep_iterable(
+                member_validator=attr.validators.instance_of(str),
+                iterable_validator=attr.validators.instance_of(list),
+            ),
+            _validate_min_len,
+        ],
+        converter=_parse_output_scorefile_types,
     )
     scorefile_name = attr.ib(
         type=str,
