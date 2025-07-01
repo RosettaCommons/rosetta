@@ -416,8 +416,9 @@ class TestReproducibilityMulti(unittest.TestCase):
                 PackRotamersMover,
             )
 
-            self.assertDictContainsSubset(
-                {"test_setPoseExtraScore": 123}, packed_pose.scores
+            self.assertEqual(
+                dict(packed_pose.scores),
+                {**dict(packed_pose.scores), **{"test_setPoseExtraScore": 123}},
             )
             packed_pose.scores.clear()
             self.assertDictEqual({}, packed_pose.scores)
@@ -439,8 +440,9 @@ class TestReproducibilityMulti(unittest.TestCase):
                 PackRotamersMover,
             )
 
-            self.assertDictContainsSubset(
-                {"test_setPoseExtraScore": 123}, packed_pose.scores
+            self.assertEqual(
+                dict(packed_pose.scores),
+                {**dict(packed_pose.scores), **{"test_setPoseExtraScore": 123}},
             )
             pose = io.to_pose(packed_pose)
             pack_rotamers = PackRotamersMover(

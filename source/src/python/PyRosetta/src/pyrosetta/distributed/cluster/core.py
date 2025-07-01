@@ -382,6 +382,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         validator=[_validate_dir, attr.validators.instance_of(str)],
         converter=_parse_scratch_dir,
     )
+    adapt_threshold = attr.ib(
+        type=int,
+        default=1000,
+        init=False,
+        validator=[_validate_int, attr.validators.instance_of(int)],
+    )
     min_workers = attr.ib(
         type=int,
         default=1,
@@ -391,7 +397,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
     max_workers = attr.ib(
         type=int,
         default=attr.Factory(
-            lambda self: 1000 if (self.tasks_size < 1000) else self.tasks_size,
+            lambda self: self.adapt_threshold if (self.tasks_size < self.adapt_threshold) else self.tasks_size,
             takes_self=True,
         ),
         validator=[_validate_int, attr.validators.instance_of(int)],
