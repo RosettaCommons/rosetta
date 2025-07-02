@@ -60,6 +60,11 @@ void move_ligand_neighbor_to_desired_position(
 	core::pose::Pose & pose
 );
 
+/// @brief Annotate a string/real pair.
+/// Will place it either in the JD2 Job (if JD2 active -- this is the historical behavior) or into the Pose
+void
+add_string_real_pair( core::pose::Pose & pose, std::string const & string, core::Real real );
+
 } //namespace ligand_docking
 } //namespace protocols
 

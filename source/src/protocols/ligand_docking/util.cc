@@ -17,7 +17,10 @@
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
+#include <protocols/jd2/util.hh>
+
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/types.hh>
@@ -166,6 +169,18 @@ void move_ligand_neighbor_to_desired_position(
 
 }
 
+void
+add_string_real_pair( core::pose::Pose & pose, std::string const & string, core::Real real ) {
+	if ( protocols::jd2::jd2_used() ) {
+		// Default existing behavior -- add the information to the Job
+		protocols::jd2::add_string_real_pair_to_current_job(string, real);
+	} else {
+		// Some existing protocols are extracting it from the dummy job -- still support those for backward compatibility
+		protocols::jd2::add_string_real_pair_to_current_job(string, real);
+		core::pose::setPoseExtraScore(pose, string, real);
+	}
+
+}
 
 } //namespace ligand_docking
 } //namespace protocols
