@@ -33,7 +33,7 @@ import tempfile
 import uuid
 
 from datetime import datetime
-from pyrosetta.rosetta.core.pose import Pose
+from pyrosetta.rosetta.core.pose import Pose, add_comment
 from pyrosetta.distributed.cluster.exceptions import OutputError
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
@@ -58,6 +58,24 @@ class IO(Generic[G]):
 
     DATETIME_FORMAT: str = "%Y-%m-%d %H:%M:%S.%f"
     REMARK_FORMAT: str = "REMARK PyRosettaCluster: "
+
+    @staticmethod
+    def _maybe_dump_cif(packed_pose, output_filename):
+        try:
+            io.dump_cif(packed_pose, output_filename)
+            return True
+        except BaseException as ex:
+            logging.error(f"RuntimeError: {ex}. Skipping saving output '.cif' file!")
+            return False
+
+    @staticmethod
+    def _maybe_dump_mmtf(packed_pose, output_filename):
+        try:
+            io.dump_mmtf(packed_pose, output_filename)
+            return True
+        except BaseException as ex:
+            logging.error(f"RuntimeError: {ex}. Skipping saving output '.mmtf' file!")
+            return False
 
     def _get_instance_and_metadata(
         self, kwargs: Dict[Any, Any]
@@ -251,9 +269,9 @@ class IO(Generic[G]):
                 "metadata": collections.OrderedDict(sorted(metadata.items())),
                 "scores": collections.OrderedDict(sorted(scores.items())),
             }
+            pdbfile_data = json.dumps(simulation_data)
             # Output PDB file
             if ".pdb" in self.output_decoy_types:
-                pdbfile_data = json.dumps(simulation_data)
                 # Write full .pdb record
                 pdbstring_data = pdbstring + os.linesep + self.REMARK_FORMAT + pdbfile_data
                 if self.compressed:
@@ -263,45 +281,60 @@ class IO(Generic[G]):
                     with open(output_file, "w") as f:
                         f.write(pdbstring_data)
 
-            # Output mmCIF file
-            if ".cif" in self.output_decoy_types:
-                output_cif_file = os.path.join(output_dir, decoy_name + ".cif")
-                if self.compressed:
-                    with tempfile.TemporaryDirectory(dir=self.scratch_dir) as _tmp_dir:
-                        _tmp_cif_file = os.path.join(_tmp_dir, os.path.basename(output_cif_file))
-                        io.dump_cif(packed_pose, _tmp_cif_file)
-                        with open(_tmp_cif_file, "r") as f:
-                            _cif_string = f.read()
-                    output_cif_file += ".bz2"
-                    with open(output_cif_file, "wb") as f:
-                        f.write(bz2.compress(str.encode(_cif_string)))
-                else:
-                    io.dump_cif(output_cif_file)
+            # # Output mmCIF file
+            # if ".cif" in self.output_decoy_types:
+            #     _pose = packed_pose.pose.clone()
+            #     # Add comment with data dumped into one key name and an empty comment for robustness
+            #     add_comment(
+            #         _pose,
+            #         self.REMARK_FORMAT + pdbfile_data,
+            #         "empty",
+            #     )
+            #     _packed_pose = io.to_packed(_pose)
+            #     output_cif_file = os.path.join(output_dir, decoy_name + ".cif")
+            #     if self.compressed:
+            #         with tempfile.TemporaryDirectory(dir=self.scratch_dir) as _tmp_dir:
+            #             _tmp_cif_file = os.path.join(_tmp_dir, os.path.basename(output_cif_file))
+            #             if IO._maybe_dump_cif(packed_pose, _tmp_cif_file):
+            #                 with open(_tmp_cif_file, "r") as f:
+            #                     _cif_string = f.read()
+            #                 output_cif_file += ".bz2"
+            #                 with open(output_cif_file, "wb") as f:
+            #                     f.write(bz2.compress(str.encode(_cif_string)))
+            #     else:
+            #         IO._maybe_dump_cif(packed_pose, output_cif_file)
 
-            # Output MMTF file
-            if ".mmtf" in self.output_decoy_types:
-                output_mmtf_file = os.path.join(output_dir, decoy_name + ".mmtf")
-                if self.compressed:
-                    with tempfile.TemporaryDirectory(dir=self.scratch_dir) as _tmp_dir:
-                        _tmp_mmtf_file = os.path.join(_tmp_dir, os.path.basename(output_mmtf_file))
-                        io.dump_mmtf(packed_pose, _tmp_mmtf_file)
-                        with open(_tmp_mmtf_file, "r") as f:
-                            _mmtf_string = f.read()
-                    output_mmtf_file += ".bz2"
-                    with open(output_mmtf_file, "wb") as f:
-                        f.write(bz2.compress(str.encode(_mmtf_string)))
-                else:
-                    io.dump_cif(output_mmtf_file)
+            # # Output MMTF file
+            # if ".mmtf" in self.output_decoy_types:
+            #     output_mmtf_file = os.path.join(output_dir, decoy_name + ".mmtf")
+            #     if self.compressed:
+            #         with tempfile.TemporaryDirectory(dir=self.scratch_dir) as _tmp_dir:
+            #             _tmp_mmtf_file = os.path.join(_tmp_dir, os.path.basename(output_mmtf_file))
+            #             if IO._maybe_dump_mmtf(packed_pose, _tmp_mmtf_file):
+            #                 with open(_tmp_mmtf_file, "rb") as f:
+            #                     _mmtf_bytestring = f.read()
+            #                 output_mmtf_file += ".bz2"
+            #                 with open(output_mmtf_file, "wb") as f:
+            #                     f.write(bz2.compress(_mmtf_bytestring))
+            #     else:
+            #         IO._maybe_dump_mmtf(packed_pose, output_mmtf_file)
 
             # Output pose file
             if ".pose" in self.output_decoy_types:
+                _pose = packed_pose.pose.clone()
+                add_comment(
+                    _pose,
+                    self.REMARK_FORMAT.rstrip(), # Remove extra space because `add_comment` adds a space
+                    pdbfile_data,
+                )
+                _packed_pose = io.to_packed(_pose)
                 output_pose_file = os.path.join(output_dir, decoy_name + ".pose")
                 if self.compressed:
                     output_pose_file += ".bz2"
                     with open(output_pose_file, "wb") as f:
-                        f.write(bz2.compress(str.encode(io.to_base64(packed_pose))))
+                        f.write(bz2.compress(str.encode(io.to_base64(_packed_pose))))
                 else:
-                    io.dump_base64(output_pose_file)
+                    io.dump_base64(_packed_pose, output_pose_file)
 
             # Output JSON-encoded scorefile
             if ".json" in self.output_scorefile_types:
@@ -324,19 +357,18 @@ class IO(Generic[G]):
                 if extension != ".json":
                     _scorefile_path = os.path.splitext(self.scorefile_path)[0] + extension
                     if self.simulation_records_in_scorefile:
-                        _scorefile_data = simulation_data
+                        _scorefile_data = {
+                            metadata["output_file"]: collections.OrderedDict(simulation_data),
+                        }
                     else:
                         _scorefile_data = {
-                            metadata["output_file"]: collections.OrderedDict(
-                                sorted(scores.items())
-                            ),
+                            metadata["output_file"]: simulation_data["scores"]
                         }
                     df = pandas.DataFrame().from_dict(_scorefile_data, orient="index")
                     # Append data to scorefile
                     if os.path.isfile(_scorefile_path):
-                        df = pandas.concat(
-                            [pandas.read_pickle(_scorefile_path, compression="infer"), df]
-                        )
+                        df_chunk = pandas.read_pickle(_scorefile_path, compression="infer")
+                        df = pandas.concat([df_chunk, df])
                     df.to_pickle(_scorefile_path, compression="infer")
 
     def _write_environment_file(self, filename: str) -> None:

@@ -142,21 +142,48 @@ def get_scores_dict(obj):
             "The `input_file` argument parameter must exist! Received {0}".format(obj)
         )
     else:
-        if obj.endswith(".pdb.bz2"):
-            with open(obj, "rb") as fbz2:
-                pdbstring = bz2.decompress(fbz2.read()).decode()
-        elif obj.endswith(".pdb"):
-            with open(obj, "r") as f:
-                pdbstring = f.read()
+        if obj.endswith((".pdb.bz2", ".pdb", ".pose.bz2", ".pose")):
+            if obj.endswith(".pdb.bz2"):
+                with open(obj, "rb") as fbz2:
+                    pdbstring = bz2.decompress(fbz2.read()).decode()
+            elif obj.endswith(".pdb"):
+                with open(obj, "r") as f:
+                    pdbstring = f.read()
+            elif obj.endswith(".pose.bz2"):
+                with open(obj, "rb") as fbz2:
+                    pdbstring = io.to_pdbstring(io.to_pose(io.bz2.decompress(fbz2.read()).decode()))
+            elif obj.endswith(".pose"):
+                with open(obj, "r") as f:
+                    pdbstring = io.to_pdbstring(io.to_pose(f.read()))
+            scores_dict = None
+            for line in reversed(pdbstring.split(os.linesep)):
+                if line.startswith(IO.REMARK_FORMAT):
+                    scores_dict = json.loads(line.split(IO.REMARK_FORMAT)[-1])
+                    break
+        elif obj.endswith((".cif.bz2", ".cif")):
+            if obj.endswith(".cif.bz2"):
+                with open(obj, "rb") as fbz2:
+                    cifstring = bz2.decompress(fbz2.read()).decode()
+            elif obj.endswith(".cif"):
+                with open(obj, "r") as f:
+                    cifstring = f.read()
+            scores_dict = None
+            for line in reversed(cifstring.split(os.linesep)):
+                if IO.REMARK_FORMAT in line:
+                    line = line.split(IO.REMARK_FORMAT)[-1].strip()
+                    # Remove trailing characters after right curly brace symbol
+                    while line[-1] != "}":
+                        line = line[:-1]
+                        if not line:
+                            break
+                    scores_dict = json.loads(line)
+                    break
         else:
             raise IOError(
-                "The `input_file` argument parameter must end in '.pdb' or '.pdb.bz2'."
+                "The `input_file` argument parameter must end in "
+                + "'.pdb', '.pdb.bz2', '.pose', '.pose.bz2', '.cif', or '.cif.bz2'."
             )
-        scores_dict = None
-        for line in reversed(pdbstring.split(os.linesep)):
-            if line.startswith(IO.REMARK_FORMAT):
-                scores_dict = json.loads(line.split(IO.REMARK_FORMAT)[-1])
-                break
+
         if scores_dict is None:
             raise IOError("Could not parse the `input_file` argument parameter!")
         if not all(d in scores_dict for d in ["instance", "metadata", "scores"]):
