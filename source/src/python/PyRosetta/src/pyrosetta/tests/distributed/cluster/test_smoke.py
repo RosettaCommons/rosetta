@@ -31,7 +31,7 @@ try:
 except ImportError:
     print(
         "Importing 'pyrosetta.tests.distributed.cluster.test_smoke' requires the "
-        + "third-party packages 'dask', pandas', and 'cloudpickle' as dependencies!\n"
+        + "third-party packages 'dask', 'pandas', and 'cloudpickle' as dependencies!\n"
         + "Please install these packages into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/dask/\n"
