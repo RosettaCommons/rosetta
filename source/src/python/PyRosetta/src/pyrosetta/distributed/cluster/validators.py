@@ -183,10 +183,12 @@ def _validate_residue_type_sets(
 
     if _target_residue_type_set != _client_residue_type_set:
         _msg = (
-            "Error! The compute instance (distributed worker) ResidueType set does not equal "
+            "The compute instance (distributed worker) ResidueType set does not equal "
             + "the client instance (local host) ResidueType set! Please ensure that the "
             + "compute instance (distributed worker) and client instance (local host) have "
-            + "initialized PyRosetta with identical '-extra_res_fa' and '-extra_res_cen' options."
+            + "initialized PyRosetta with identical '-extra_res_fa' and '-extra_res_cen' options.\n"
+            + f"Compute instance unique ResidueTypes: {_target_residue_type_set.difference(_client_residue_type_set)}\n"
+            + f"Client instance unique ResidueTypes: {_client_residue_type_set.difference(_target_residue_type_set)}\n"
         )
         logging.error(_msg)
         raise AssertionError(_msg)
