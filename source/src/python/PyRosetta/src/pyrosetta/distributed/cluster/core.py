@@ -119,8 +119,11 @@ Args:
     pyrosetta_build: A `str` or `NoneType` object specifying the PyRosetta build as
         output by `pyrosetta._version_string()`. If `None` is provided, then PyRosettaCluster
         automatically detects the PyRosetta build and sets this attribute as the `str`.
-        If a `str` is provided, then validate that the input PyRosetta build is equal
-        to the active PyRosetta build, and log a warning message if not.
+        If a non-empty `str` is provided, then validate that the input PyRosetta build is
+        equal to the active PyRosetta build, and raise an error if not. This ensures that
+        reproduction simulations use an identical PyRosetta build from the original
+        simulation. To bypass PyRosetta build validation with a warning message, an
+        empty string ('') may be provided (but does not ensure reproducibility).
         Default: None
     sha1: A `str` or `NoneType` object specifying the git SHA1 hash string of the
         particular git commit being simulated. If a non-empty `str` object is provided,
@@ -142,8 +145,11 @@ Args:
     environment: A `NoneType` or `str` object specifying the active conda environment
         YML file string. If a `NoneType` object is provided, then generate a YML file
         string for the active conda environment and save it to the full simulation
-        record. If a `str` object is provided, then validate it against the active
-        conda environment YML file string and save it to the full simulation record.
+        record. If a non-empty `str` object is provided, then validate it against the
+        active conda environment YML file string and save it to the full simulation record.
+        This ensures that reproduction simulations use an identical conda environment from
+        the original simulation. To bypass conda environment validation with a warning
+        message, an empty string ('') may be provided (but does not ensure reproducibility).
         Default: None
     output_path: A `str` object specifying the full path of the output directory
         (to be created if it doesn't exist) where the output results will be saved
