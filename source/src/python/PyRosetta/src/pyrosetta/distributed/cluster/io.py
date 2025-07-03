@@ -29,12 +29,10 @@ import logging
 import os
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
-import tempfile
 import uuid
 
 from datetime import datetime
 from pyrosetta.rosetta.core.pose import Pose, add_comment
-from pyrosetta.distributed.cluster.exceptions import OutputError
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
     Any,
@@ -48,6 +46,9 @@ from typing import (
     TypeVar,
     Union,
 )
+
+from pyrosetta.distributed.cluster.exceptions import OutputError
+from pyrosetta.distributed.cluster.serialization import update_scores
 
 
 G = TypeVar("G")
@@ -130,17 +131,32 @@ class IO(Generic[G]):
         return output_dir
 
     @staticmethod
-    def _format_result(result: Union[Pose, PackedPose]) -> Tuple[str, Dict[Any, Any], PackedPose]:
+    def _filter_scores_dict(scores_dict: Dict[Any, Any]) -> Dict[Any, Any]:
+        for key in list(scores_dict.keys()):
+            try:
+                json.dumps(scores_dict[key])
+            except:
+                logging.warning(
+                    f"Removing score key '{key}' with value of type '{type(scores_dict[key])}' before "
+                    + "saving PyRosettaCluster result! Only JSON-serializable score values can be written to "
+                    + "output files. Consider custom serializing the value to save this score or removing the "
+                    + "key from the `pose.cache` dictionary to remove this warning message."
+                )
+                scores_dict.pop(key, None)
+
+        return scores_dict
+
+    def _format_result(self, result: Union[Pose, PackedPose]) -> Tuple[str, Dict[Any, Any], PackedPose]:
         """
         Given a `Pose` or `PackedPose` object, return a tuple containing
         the pdb string and a scores dictionary.
         """
 
         _pdbstring = io.to_pdbstring(result)
-        _scores_dict = io.to_dict(result)
-        _scores_dict.pop("pickled_pose", None)
+        _scores_dict = update_scores(PackedPose(result)).scores
+        _filtered_scores_dict = IO._filter_scores_dict(self.serializer.deepcopy_kwargs(_scores_dict))
 
-        return (_pdbstring, _scores_dict, result)
+        return (result, _pdbstring, _scores_dict, _filtered_scores_dict)
 
     def _parse_results(
         self,
@@ -160,7 +176,7 @@ class IO(Generic[G]):
 
         if isinstance(results, (Pose, PackedPose)):
             if not io.to_pose(results).empty():
-                out = [IO._format_result(results)]
+                out = [self._format_result(results)]
             else:
                 out = []
         elif isinstance(results, collections.abc.Iterable):
@@ -170,7 +186,7 @@ class IO(Generic[G]):
                     result = self.serializer.decompress_packed_pose(result)
                 if isinstance(result, (Pose, PackedPose)):
                     if not io.to_pose(result).empty():
-                        out.append(IO._format_result(result))
+                        out.append(self._format_result(result))
                 else:
                     raise OutputError(result)
         elif not results:
@@ -226,7 +242,7 @@ class IO(Generic[G]):
             return
 
         # Parse and save results
-        for pdbstring, scores, packed_pose in self._parse_results(results):
+        for packed_pose, pdbstring, scores, scores_json in self._parse_results(results):
             kwargs = self._process_kwargs(kwargs)
             output_dir = self._get_output_dir(decoy_dir=self.decoy_path)
             decoy_name = "_".join([self.simulation_name, uuid.uuid4().hex])
@@ -264,12 +280,15 @@ class IO(Generic[G]):
                     toolz.dicttoolz.merge(extra_kwargs, kwargs),
                 )
             )
-            simulation_data = {
+            instance_metadata = {
                 "instance": collections.OrderedDict(sorted(instance.items())),
                 "metadata": collections.OrderedDict(sorted(metadata.items())),
-                "scores": collections.OrderedDict(sorted(scores.items())),
             }
-            pdbfile_data = json.dumps(simulation_data)
+            simulation_data = self.serializer.deepcopy_kwargs(instance_metadata)
+            simulation_data["scores"] = collections.OrderedDict(sorted(scores.items()))
+            simulation_data_json = self.serializer.deepcopy_kwargs(instance_metadata)
+            simulation_data_json["scores"] = collections.OrderedDict(sorted(scores_json.items()))
+            pdbfile_data = json.dumps(simulation_data_json)
             # Output PDB file
             if ".pdb" in self.output_decoy_types:
                 # Write full .pdb record
@@ -283,13 +302,11 @@ class IO(Generic[G]):
 
             # Output pose file
             if ".pose" in self.output_decoy_types:
-                _instance_metadata = self.serializer.deepcopy_kwargs(simulation_data)
-                _instance_metadata.pop("scores", None) # Scores are cached in saved `PackedPose` object
                 _pose = packed_pose.pose.clone()
                 add_comment(
                     _pose,
                     self.REMARK_FORMAT.rstrip(), # Remove extra space since `add_comment` adds a space
-                    json.dumps(_instance_metadata),
+                    json.dumps(instance_metadata), # Scores are already cached in saved `PackedPose` object
                 )
                 _packed_pose = io.to_packed(_pose)
                 output_pose_file = os.path.join(output_dir, decoy_name + ".pose")
@@ -308,7 +325,7 @@ class IO(Generic[G]):
                     scorefile_data = json.dumps(
                         {
                             metadata["output_file"]: collections.OrderedDict(
-                                sorted(scores.items())
+                                sorted(scores_json.items())
                             ),
                         }
                     )

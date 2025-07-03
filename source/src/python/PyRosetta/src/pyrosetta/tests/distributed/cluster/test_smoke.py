@@ -232,6 +232,8 @@ class SmokeTest(unittest.TestCase):
 class IOTest(unittest.TestCase):
     _my_string_value = "foo"
     _my_real_value = 12.34
+    # _my_pose_value = "DATA"
+    # _my_complex_value = 4j
 
     @classmethod
     def setUpClass(cls):
@@ -289,6 +291,8 @@ class IOTest(unittest.TestCase):
         packed_pose = packed_pose.update_scores(
             my_string_score=IOTest._my_string_value,
             my_real_score=IOTest._my_real_value,
+            # my_pose_score=pyrosetta.pose_from_sequence(IOTest._my_pose_value),
+            # my_complex_score=IOTest._my_complex_value,
         )
 
         return packed_pose
@@ -309,13 +313,13 @@ class IOTest(unittest.TestCase):
         """Smoke test for basic PyRosettaCluster I/O."""
         output_decoy_types = [".pdb", ".pose"]
         output_scorefile_types = [".json", ".gz", ".bz2", ".xz", ".tar.gz", ".tar.bz2", ".tar.xz", ".zip"]
-        for compressed in (False, True):
-            for simulation_records_in_scorefile in (False, True):
-                print("Running", compressed, simulation_records_in_scorefile)
+        for compressed in (True, False):
+            for simulation_records_in_scorefile in (True, False):
                 for scorefile_name in (None, "test_my_scorefile.json"):
+                    print("Running", compressed, simulation_records_in_scorefile, scorefile_name)
                     output_path = os.path.join(
                         self.workdir.name,
-                        "outputs_compressed_{0}_simulation_records_in_scorefile_{1}".format(compressed, simulation_records_in_scorefile)
+                        "outputs_{0}_{1}_{2}".format(compressed, simulation_records_in_scorefile, scorefile_name)
                     )
                     instance_kwargs = {
                         **self.instance_kwargs,
@@ -330,16 +334,20 @@ class IOTest(unittest.TestCase):
                     # Test decoy outputs
                     _n_tasks = len(IOTest.create_tasks())
                     for output_decoy_type in output_decoy_types:
-                        if output_decoy_type != ".cif": # mmCIF files may result in a `RuntimeError` (related `pyrosetta.dump_cif` function)
-                            output_files = glob.glob(os.path.join(output_path, self.decoy_dir_name, "*", f"*{output_decoy_type}"))
-                            self.assertEqual(_n_tasks, len(output_files), msg=f"Incorrect number of output files for type: {output_decoy_type}")
+                        output_files = glob.glob(
+                            os.path.join(
+                                output_path,
+                                self.decoy_dir_name,
+                                "*",
+                                f"*{output_decoy_type}.bz2" if compressed else f"*{output_decoy_type}",
+                            )
+                        )
+                        self.assertEqual(_n_tasks, len(output_files), msg=f"Incorrect number of output files for type: {output_decoy_type}")
                     # Test scorefile outputs
                     for output_scorefile_type in output_scorefile_types:
                         _scorefile_name = "scores.json" if scorefile_name is None else scorefile_name
                         scorefile = os.path.join(output_path, _scorefile_name.replace(".json", output_scorefile_type))
                         self.assertTrue(os.path.isfile(scorefile), msg=f"Scorefile was not saved: {scorefile}")
-                        #self.assertEqual(len(scorefiles), 1, msg=f"More than one scorefile of type: '{output_scorefile_type}'")
-                        #scorefile = next(iter(scorefiles))
                         if output_scorefile_type == ".json":
                             with open(scorefile, "r") as f:
                                 entries = list(map(json.loads, f))
@@ -352,6 +360,8 @@ class IOTest(unittest.TestCase):
                                     self.assertEqual(entry["scores"]["my_string_score"], IOTest._my_string_value)
                                     self.assertIn("my_real_score", entry["scores"])
                                     self.assertAlmostEqual(entry["scores"]["my_real_score"], IOTest._my_real_value, places=6)
+                                    # self.assertNotIn("my_pose_score", entry["scores"])
+                                    # self.assertNotIn("my_complex_score", entry["scores"])
                                 else:
                                     self.assertEqual(len(entry), 1)
                                     output_file, scores = next(iter(entry.items()))
@@ -360,6 +370,8 @@ class IOTest(unittest.TestCase):
                                     self.assertEqual(scores["my_string_score"], IOTest._my_string_value)
                                     self.assertIn("my_real_score", scores)
                                     self.assertAlmostEqual(scores["my_real_score"], IOTest._my_real_value, places=6)
+                                    # self.assertNotIn("my_pose_score", entry["scores"])
+                                    # self.assertNotIn("my_complex_score", entry["scores"])
                         else:
                             df = pandas.read_pickle(scorefile, compression="infer")
                             if simulation_records_in_scorefile:
@@ -372,12 +384,20 @@ class IOTest(unittest.TestCase):
                                     self.assertEqual(scores.loc[index]["my_string_score"], IOTest._my_string_value)
                                     self.assertIn("my_real_score", scores.loc[index].keys())
                                     self.assertAlmostEqual(scores.loc[index]["my_real_score"], IOTest._my_real_value, places=6)
+                                    # self.assertIn("my_pose_score", entry["scores"])
+                                    # self.assertEqual(entry["scores"]["my_pose_score"].sequence(), IOTest._my_pose_value)
+                                    # self.assertIn("my_complex_score", entry["scores"])
+                                    # self.assertEqual(entry["scores"]["my_complex_score"], IOTest._my_complex_value)
                             else:
                                 for index in df.index:
                                     self.assertIn("my_string_score", df.columns)
                                     self.assertEqual(df.at[index, "my_string_score"], IOTest._my_string_value)
                                     self.assertIn("my_real_score", df.columns)
                                     self.assertAlmostEqual(df.at[index, "my_real_score"], IOTest._my_real_value, places=6)
+                                    # self.assertIn("my_pose_score", entry["scores"])
+                                    # self.assertEqual(entry["scores"]["my_pose_score"].sequence(), IOTest._my_pose_value)
+                                    # self.assertIn("my_complex_score", entry["scores"])
+                                    # self.assertEqual(entry["scores"]["my_complex_score"], IOTest._my_complex_value)
 
 class SmokeTestMulti(unittest.TestCase):
     _ref_kwargs = {
