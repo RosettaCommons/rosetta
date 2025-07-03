@@ -1634,10 +1634,13 @@ class RuntimeTest(TestBase, unittest.TestCase):
         return RuntimeTest.timing_protocol_1(packed_pose, **kwargs)
 
     @classmethod
-    def setup_logger(cls):
+    def setup_logger(cls, stream=True):
         _logger = logging.getLogger(__name__)
-        _stream_handler = logging.StreamHandler(sys.stdout)
-        _logger.addHandler(_stream_handler)
+        if stream:
+            _stream_handler = logging.StreamHandler(sys.stdout)
+            _logger.addHandler(_stream_handler)
+        else:
+            _stream_handler = None
 
         _root_logger = logging.getLogger("root")
         _filter = RuntimeTestLoggingFilter()
@@ -1653,8 +1656,8 @@ class RuntimeTest(TestBase, unittest.TestCase):
 
     @classmethod
     def tear_down_logger(cls, _logger, _stream_handler):
-        _logger.removeHandler(_stream_handler)
-        pass
+        if _stream_handler is not None:
+            _logger.removeHandler(_stream_handler)
 
     @staticmethod
     def get_mean_dt(ts):
@@ -1667,8 +1670,8 @@ class RuntimeTest(TestBase, unittest.TestCase):
     #@unittest.skip("Auxiliary test for runtime testing.")
     def test_timing_single_instance(self):
         """Runtime test with a single PyRosettaCluster instance."""
-        _logger, _stream_handler = self.setup_logger()
-        _logger.info(f"Starting runtime test.")
+        _logger, _stream_handler = self.setup_logger(stream=True)
+        _logger.info(f"Starting single PyRosettaCluster instance runtime test.")
         prc = PyRosettaCluster(
             **{
                 **self.instance_kwargs,
@@ -1696,14 +1699,14 @@ class RuntimeTest(TestBase, unittest.TestCase):
             client_repr = output_kwargs.get("PyRosettaCluster_client_repr")
             _logger.info(f"Finished iteration {(i,)} with task {task} on client {client_repr} in {dt:0.3f} seconds")
         mean_dt = self.get_mean_dt(ts)
-        _logger.info(f"Average iteration time: {mean_dt}")
+        _logger.info(f"Average iteration time with a single PyRosettaCluster instance: {mean_dt:0.7f}")
         self.tear_down_logger(_logger, _stream_handler)
 
     #@unittest.skip("Auxiliary test for runtime testing.")
     def test_timing_multi_instance(self):
         """Runtime test for two PyRosettaCluster instances asynchronously generating results."""
-        _logger, _stream_handler = self.setup_logger()
-        _logger.info(f"Starting runtime test.")
+        _logger, _stream_handler = self.setup_logger(stream=False)
+        _logger.info(f"Starting multiple PyRosettaCluster instance runtime test.")
         setup_kwargs = {
             "dry_run": True,
             "save_all": False,
@@ -1746,7 +1749,7 @@ class RuntimeTest(TestBase, unittest.TestCase):
                 client_repr = output_kwargs.get("PyRosettaCluster_client_repr")
                 _logger.info(f"Finished iteration {(i, j)} with task {task} on client {client_repr} in {dt:0.3f} seconds")
         mean_dt = self.get_mean_dt(ts)
-        _logger.info(f"Average iteration time: {mean_dt}")
+        _logger.info(f"Average iteration time with multiple PyRosettaCluster instances: {mean_dt:0.7f}")
         self.tear_down_logger(_logger, _stream_handler)
 
 
