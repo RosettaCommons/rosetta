@@ -444,7 +444,7 @@ def _parse_target_results(objs: List[Tuple[bytes, bytes]]) -> List[Tuple[bytes, 
     return objs
 
 
-def _parse_tasks(objs):
+def _parse_tasks(objs: Any) -> Union[List[Dict[Any, Any]], NoReturn]:
     """Parse the input `tasks` attribute of PyRosettaCluster."""
 
     @singledispatch
@@ -496,7 +496,7 @@ def _parse_tasks(objs):
 
 def _parse_output_decoy_types(objs: Any) -> Union[List[str], NoReturn]:
     """Parse the input `output_decoy_types` attribute of PyRosettaCluster."""
-    _output_decoy_types = (".pdb", ".cif", ".mmtf", ".pose")
+    _output_decoy_types = (".pdb", ".pose")
 
     @singledispatch
     def converter(objs: Any) -> NoReturn:
@@ -550,6 +550,11 @@ def _parse_output_scorefile_types(objs: Any) -> Union[List[str], NoReturn]:
         _types = set()
         for obj in objs:
             if isinstance(obj, str):
+                if not obj.startswith("."):
+                    raise ValueError(
+                        f"The element '{obj}' in the 'output_scorefile_types' keyword argument "
+                        "parameter must start with '.' to be a valid filename extension."
+                    )
                 _types.add(obj)
             elif obj is not None:
                 converter(obj)

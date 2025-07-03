@@ -307,8 +307,8 @@ class IOTest(unittest.TestCase):
 
     def test_io(self):
         """Smoke test for basic PyRosettaCluster I/O."""
-        output_decoy_types = [".pdb", ".cif", ".mmtf", ".pose"]
-        output_scorefile_types = [".json", ".gz", ".bz2", ".xz", ".tar.gz", ".tar.bz2", ".tar.xz"]
+        output_decoy_types = [".pdb", ".pose"]
+        output_scorefile_types = [".json", ".gz", ".bz2", ".xz", ".tar.gz", ".tar.bz2", ".tar.xz", ".zip"]
         for compressed in (False, True):
             for simulation_records_in_scorefile in (False, True):
                 print("Running", compressed, simulation_records_in_scorefile)

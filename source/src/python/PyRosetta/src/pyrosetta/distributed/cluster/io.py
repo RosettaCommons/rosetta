@@ -281,51 +281,15 @@ class IO(Generic[G]):
                     with open(output_file, "w") as f:
                         f.write(pdbstring_data)
 
-            # # Output mmCIF file
-            # if ".cif" in self.output_decoy_types:
-            #     _pose = packed_pose.pose.clone()
-            #     # Add comment with data dumped into one key name and an empty comment for robustness
-            #     add_comment(
-            #         _pose,
-            #         self.REMARK_FORMAT + pdbfile_data,
-            #         "empty",
-            #     )
-            #     _packed_pose = io.to_packed(_pose)
-            #     output_cif_file = os.path.join(output_dir, decoy_name + ".cif")
-            #     if self.compressed:
-            #         with tempfile.TemporaryDirectory(dir=self.scratch_dir) as _tmp_dir:
-            #             _tmp_cif_file = os.path.join(_tmp_dir, os.path.basename(output_cif_file))
-            #             if IO._maybe_dump_cif(packed_pose, _tmp_cif_file):
-            #                 with open(_tmp_cif_file, "r") as f:
-            #                     _cif_string = f.read()
-            #                 output_cif_file += ".bz2"
-            #                 with open(output_cif_file, "wb") as f:
-            #                     f.write(bz2.compress(str.encode(_cif_string)))
-            #     else:
-            #         IO._maybe_dump_cif(packed_pose, output_cif_file)
-
-            # # Output MMTF file
-            # if ".mmtf" in self.output_decoy_types:
-            #     output_mmtf_file = os.path.join(output_dir, decoy_name + ".mmtf")
-            #     if self.compressed:
-            #         with tempfile.TemporaryDirectory(dir=self.scratch_dir) as _tmp_dir:
-            #             _tmp_mmtf_file = os.path.join(_tmp_dir, os.path.basename(output_mmtf_file))
-            #             if IO._maybe_dump_mmtf(packed_pose, _tmp_mmtf_file):
-            #                 with open(_tmp_mmtf_file, "rb") as f:
-            #                     _mmtf_bytestring = f.read()
-            #                 output_mmtf_file += ".bz2"
-            #                 with open(output_mmtf_file, "wb") as f:
-            #                     f.write(bz2.compress(_mmtf_bytestring))
-            #     else:
-            #         IO._maybe_dump_mmtf(packed_pose, output_mmtf_file)
-
             # Output pose file
             if ".pose" in self.output_decoy_types:
+                _instance_metadata = self.serializer.deepcopy_kwargs(simulation_data)
+                _instance_metadata.pop("scores", None) # Scores are cached in saved `PackedPose` object
                 _pose = packed_pose.pose.clone()
                 add_comment(
                     _pose,
-                    self.REMARK_FORMAT.rstrip(), # Remove extra space because `add_comment` adds a space
-                    pdbfile_data,
+                    self.REMARK_FORMAT.rstrip(), # Remove extra space since `add_comment` adds a space
+                    json.dumps(_instance_metadata),
                 )
                 _packed_pose = io.to_packed(_pose)
                 output_pose_file = os.path.join(output_dir, decoy_name + ".pose")

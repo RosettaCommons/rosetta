@@ -83,7 +83,11 @@ def _validate_resources(resources: Any, _protocols: List[Callable[..., Any]]) ->
                 + f"Received `PyRosettaCluster().distribute(protocols=...)`: {_protocols}\n"
                 + f"Received `PyRosettaCluster().distribute(resources=...)`: {resources}\n"
             )
-        
+
+
+def _validate_scorefile_name(self, attribute: str, value: Any) -> Optional[NoReturn]:
+    if not value.endswith(".json"):
+        raise ValueError(f"The '{attribute}' keyword argument parameter must end in '.json'.")
 
     
 def _validate_dirs(self, attribute: str, value: Any) -> Optional[NoReturn]:
