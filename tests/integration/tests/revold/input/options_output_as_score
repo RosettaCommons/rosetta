@@ -6,7 +6,7 @@
 -in:auto_setup_metals
 -in
 	-file
-		-s input/5ZBQ_0001_A.pdb
+		-s input/5ZBQ_0001_A.pdb.gz
 		
 -parser:protocol input/docking_fast.xml
 		
