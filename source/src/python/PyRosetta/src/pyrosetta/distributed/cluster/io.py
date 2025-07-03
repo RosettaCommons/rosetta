@@ -60,24 +60,6 @@ class IO(Generic[G]):
     DATETIME_FORMAT: str = "%Y-%m-%d %H:%M:%S.%f"
     REMARK_FORMAT: str = "REMARK PyRosettaCluster: "
 
-    @staticmethod
-    def _maybe_dump_cif(packed_pose, output_filename):
-        try:
-            io.dump_cif(packed_pose, output_filename)
-            return True
-        except BaseException as ex:
-            logging.error(f"RuntimeError: {ex}. Skipping saving output '.cif' file!")
-            return False
-
-    @staticmethod
-    def _maybe_dump_mmtf(packed_pose, output_filename):
-        try:
-            io.dump_mmtf(packed_pose, output_filename)
-            return True
-        except BaseException as ex:
-            logging.error(f"RuntimeError: {ex}. Skipping saving output '.mmtf' file!")
-            return False
-
     def _get_instance_and_metadata(
         self, kwargs: Dict[Any, Any]
     ) -> Tuple[Dict[Any, Any], Dict[Any, Any]]:
@@ -306,7 +288,7 @@ class IO(Generic[G]):
                 add_comment(
                     _pose,
                     self.REMARK_FORMAT.rstrip(), # Remove extra space since `add_comment` adds a space
-                    json.dumps(instance_metadata), # Scores are already cached in saved `PackedPose` object
+                    pdbfile_data,
                 )
                 _packed_pose = io.to_packed(_pose)
                 output_pose_file = os.path.join(output_dir, decoy_name + ".pose")
