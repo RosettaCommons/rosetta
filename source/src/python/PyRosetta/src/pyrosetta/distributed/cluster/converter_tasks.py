@@ -443,10 +443,12 @@ def _default_none(obj: None) -> Dict[Any, Any]:
 
 @singledispatch
 def is_empty(obj: Any) -> NoReturn:
+    """Test whether a `PackedPose` object is empty."""
     raise NotImplementedError(type(obj))
 
 @is_empty.register(type(None))
 def _from_none(obj: None) -> bool:
+    # Protocol results return a `None` object when an error occurs with `ignore_errors=True`
     return False
 
 @is_empty.register(PackedPose)
