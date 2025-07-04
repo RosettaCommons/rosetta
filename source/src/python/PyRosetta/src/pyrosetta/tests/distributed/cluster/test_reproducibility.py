@@ -19,7 +19,12 @@ import pyrosetta.distributed.io as io
 import tempfile
 import unittest
 
-from pyrosetta.distributed.cluster import PyRosettaCluster, reserve_scores, reproduce
+from pyrosetta.distributed.cluster import (
+    PyRosettaCluster,
+    requires_packed_pose,
+    reserve_scores,
+    reproduce,
+)
 
 
 class TestReproducibility(unittest.TestCase):
@@ -426,6 +431,7 @@ class TestReproducibilityMulti(unittest.TestCase):
             return pose, None, pyrosetta.Pose(), io.to_packed(pyrosetta.Pose())
 
         @reserve_scores
+        @requires_packed_pose
         def my_second_protocol(packed_pose, **kwargs):
             import pyrosetta
             import pyrosetta.distributed.io as io
@@ -433,9 +439,11 @@ class TestReproducibilityMulti(unittest.TestCase):
                 PackRotamersMover,
             )
 
-            if packed_pose.pose.empty():
-                assert filter_results == False
-                return None
+            if packed_pose.pose.empty() or packed_pose is None:
+                raise ValueError(
+                    "The user-provided PyRosetta protocol is decorated with `@requires_packed_pose`."
+                )
+            assert packed_pose.pose.size() >= 1
 
             self.assertEqual(
                 dict(packed_pose.scores),
@@ -582,6 +590,7 @@ class TestReproducibilityMulti(unittest.TestCase):
                 io.to_packed(pyrosetta.Pose()),
             )
 
+        @requires_packed_pose
         def my_second_protocol(packed_pose, **kwargs):
             """In my_second_protocol, the desired decoy_id to keep is 1."""
             import pyrosetta
@@ -589,9 +598,11 @@ class TestReproducibilityMulti(unittest.TestCase):
             from pyrosetta.rosetta.protocols.simple_moves import VirtualRootMover
             from pyrosetta.rosetta.protocols.rosetta_scripts import XmlObjects
 
-            if packed_pose.pose.empty():
-                assert filter_results == False
-                return None
+            if packed_pose.empty() or packed_pose is None:
+                raise ValueError(
+                    "The user-provided PyRosetta protocol is decorated with `@requires_packed_pose`."
+                )
+            assert packed_pose.pose.size() >= 1
 
             pose = io.to_pose(packed_pose)
             scorefxn = pyrosetta.create_score_function("ref2015_cst.wts")
@@ -665,7 +676,8 @@ class TestReproducibilityMulti(unittest.TestCase):
                 PackRotamersMover,
             )
 
-            if packed_pose.pose.empty():
+            if packed_pose.empty():
+                assert packed_pose.pose.empty()
                 assert filter_results == False
                 return None
 
@@ -864,6 +876,7 @@ class TestReproducibilityMulti(unittest.TestCase):
                 io.to_packed(pyrosetta.Pose()),
             )
 
+        @requires_packed_pose
         def my_third_protocol(packed_pose, **kwargs):
             """In my_third_protocol, the desired decoy_id to keep is 2."""
             import pyrosetta
@@ -872,9 +885,11 @@ class TestReproducibilityMulti(unittest.TestCase):
                 PackRotamersMover,
             )
 
-            if packed_pose.pose.empty():
-                assert filter_results == False
-                return None
+            if packed_pose.pose.empty() or packed_pose is None:
+                raise ValueError(
+                    "The user-provided PyRosetta protocol is decorated with `@requires_packed_pose`."
+                )
+            assert packed_pose.pose.size() >= 1
 
             pose = io.to_pose(packed_pose)
             pack_rotamers = PackRotamersMover(
