@@ -1612,7 +1612,7 @@ class RuntimeTestLoggingFilter(logging.Filter):
         return all(map(lambda s: s not in msg, self.matches))
 
 
-#@unittest.skip("Auxiliary tests for runtime testing.")
+@unittest.skip("Auxiliary tests for runtime testing.")
 class RuntimeTest(TestBase, unittest.TestCase):
     @staticmethod
     def create_simple_tasks(n_tasks=10):
@@ -1667,7 +1667,7 @@ class RuntimeTest(TestBase, unittest.TestCase):
     def get_dt(t, ts):
         return t if len(ts) == 0 else (t - ts[-1])
 
-    #@unittest.skip("Auxiliary test for runtime testing.")
+    @unittest.skip("Auxiliary test for runtime testing.")
     def test_timing_single_instance(self):
         """Runtime test with a single PyRosettaCluster instance."""
         _logger, _stream_handler = self.setup_logger(stream=True)
@@ -1702,7 +1702,7 @@ class RuntimeTest(TestBase, unittest.TestCase):
         _logger.info(f"Average iteration time with a single PyRosettaCluster instance: {mean_dt:0.7f} seconds")
         self.tear_down_logger(_logger, _stream_handler)
 
-    #@unittest.skip("Auxiliary test for runtime testing.")
+    @unittest.skip("Auxiliary test for runtime testing.")
     def test_timing_multi_instance(self):
         """Runtime test for two PyRosettaCluster instances asynchronously generating results."""
         _logger, _stream_handler = self.setup_logger(stream=True)
