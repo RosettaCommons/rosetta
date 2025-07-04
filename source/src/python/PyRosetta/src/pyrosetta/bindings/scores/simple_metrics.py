@@ -36,11 +36,10 @@ class SimpleMetricDataAccessorBase(PoseCacheAccessorBase, MutableMapping):
     def __setitem__(self, key, value):
         self._validate_set(key)
         if isinstance(value, float):
-            m = self.custom_real_value_metric
+            metric = self.custom_real_value_metric
         else:
-            m = self.custom_string_value_metric
-        m.set_value(self.maybe_encode(value))
-        m.apply(out_label=key, pose=self.pose, override_existing_data=True)
+            metric = self.custom_string_value_metric
+        self.apply(metric, key, value)
         self._maybe_delete_reserved_keys_from_sm_data()
         self._reserved_custom_metric_keys_warning()
 

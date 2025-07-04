@@ -36,6 +36,11 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
         self.custom_real_value_metric = CustomRealValueMetric()
         self.custom_string_value_metric = CustomStringValueMetric()
 
+    def apply(self, metric, key, value):
+        """Apply a SimpleMetric with a key/value pair to the pose."""
+        metric.set_value(self.maybe_encode(value))
+        metric.apply(out_label=key, pose=self.pose, override_existing_data=True)
+
     @property
     def _reserved_custom_metric_keys(self):
         """Reserved scoretype keys for SimpleMetrics that cannot be set or deleted."""
@@ -108,16 +113,15 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
             clear_sm_data(self.pose)
             # Reapply all SimpleMetric data except the deleted item
             for _attr, _d in _sm_data_dict.items():
-                for _k, _v in _d.items():
-                    if not (_k in keys and _attr in attributes):
+                for _key, _value in _d.items():
+                    if not (_key in keys and _attr in attributes):
                         if _attr == "string":
-                            m = self.custom_string_value_metric
+                            _metric = self.custom_string_value_metric
                         elif _attr == "real":
-                            m = self.custom_real_value_metric
+                            _metric = self.custom_real_value_metric
                         else:
                             raise NotImplementedError(_attr)
-                        m.set_value(self.maybe_encode(_v))
-                        m.apply(out_label=_k, pose=self.pose, override_existing_data=True)
+                        self.apply(_metric, _key, _value)
 
     def _has_reserved_custom_metric_keys(self):
         _has_custom_string_valued_metric = "custom_string_valued_metric" in self.pose.cache.metrics.string.keys()
