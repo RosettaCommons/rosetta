@@ -3,9 +3,12 @@ from .core import (
     dict_to_pose,
     dict_to_packed,
     pack_result,
+    pose_result,
     to_packed,
     to_pose,
     to_dict,
+    to_base64,
+    to_pickle,
     PackedPose,
 )
 
