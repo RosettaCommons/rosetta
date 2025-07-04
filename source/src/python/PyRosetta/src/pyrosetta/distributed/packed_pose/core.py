@@ -69,6 +69,9 @@ class PackedPose:
 
         return PackedPose(work_pose)
 
+    def empty(self):
+        return self.pose.empty()
+
 
 def pack_result(func):
     @functools.wraps(func)
