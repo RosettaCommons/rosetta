@@ -400,6 +400,7 @@ class IOTest(unittest.TestCase):
                                     # self.assertIn("my_complex_score", entry["scores"])
                                     # self.assertEqual(entry["scores"]["my_complex_score"], IOTest._my_complex_value)
 
+
 class SmokeTestMulti(unittest.TestCase):
     _ref_kwargs = {
         "test_str": "testing",
