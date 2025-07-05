@@ -230,6 +230,7 @@ class SmokeTest(unittest.TestCase):
 
 
 class IOTest(unittest.TestCase):
+    # TODO uncomment below after PR #430 is merged
     _my_string_value = "foo"
     _my_real_value = 12.34
     # _my_pose_value = "DATA"
