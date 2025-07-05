@@ -42,7 +42,7 @@ class PoseScoreSerializerBase(object):
 
     @staticmethod
     def from_base64(value):
-        return base64.b64decode(value)
+        return base64.b64decode(value, validate=True)
 
     @staticmethod
     def to_base64_pickle(value):
