@@ -985,7 +985,6 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
     def tearDownClass(cls):
         cls.workdir.cleanup()
 
-    @staticmethod
     def timeit(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
