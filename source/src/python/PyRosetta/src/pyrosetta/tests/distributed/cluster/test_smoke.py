@@ -317,7 +317,6 @@ class IOTest(unittest.TestCase):
         for compressed in (True, False):
             for simulation_records_in_scorefile in (True, False):
                 for scorefile_name in (None, "test_my_scorefile.json"):
-                    print("Running", compressed, simulation_records_in_scorefile, scorefile_name)
                     output_path = os.path.join(
                         self.workdir.name,
                         "outputs_{0}_{1}_{2}".format(compressed, simulation_records_in_scorefile, scorefile_name)
