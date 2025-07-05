@@ -203,7 +203,8 @@ def _parse_pyrosetta_build(obj: Any) -> str:
                     + "Therefore, the original decoy may not necessarily be reproduced! "
                     + "Using different PyRosetta builds can lead to different outputs. "
                     + "Please consider running this simulation using the PyRosetta build that "
-                    + "was used with the original simulation run."
+                    + "was used with the original simulation run. Please set the 'pyrosetta_build' parameter "
+                    + "argument to an empty string ('') to bypass PyRosetta build validation."
                 )
             else:
                 logging.debug(
