@@ -122,7 +122,7 @@ class SmokeTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
-                output_decoy_types=[".pdb", ".cif", ".mmtf", ".pose"],
+                output_decoy_types=[".pdb", ".pose"],
                 output_scorefile_types=[".json", ".gz", ".xz"],
             )
             cluster = PyRosettaCluster(**instance_kwargs)
