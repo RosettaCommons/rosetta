@@ -1191,7 +1191,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             processes=None,
             memory=None,
             min_workers=2,
-            max_workers=99,
+            max_workers=8,
             nstruct=1,
             dashboard_address=None,
             compressed=False,
