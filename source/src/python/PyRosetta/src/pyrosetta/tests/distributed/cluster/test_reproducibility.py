@@ -985,6 +985,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
     def tearDownClass(cls):
         cls.workdir.cleanup()
 
+    @staticmethod
     def timeit(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -1031,7 +1032,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         }
 
     @staticmethod
-    @timeit
+    @timeit.__func__
     def my_first_protocol(packed_pose, **kwargs):
         """In my_first_protocol, the desired decoy_id to keep is 0."""
         import numpy
@@ -1056,7 +1057,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         return pose.clone(), dummy_pose.clone()
 
     @staticmethod
-    @timeit
+    @timeit.__func__
     def my_second_protocol(packed_pose, **kwargs):
         """In my_second_protocol, the desired decoy_id to keep is 1."""
         import numpy
@@ -1129,7 +1130,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         return dummy_pose.clone(), pose, kwargs
 
     @staticmethod
-    @timeit
+    @timeit.__func__
     def my_third_protocol(packed_pose, **kwargs):
         """In my_third_protocol, the desired decoy_id to keep is 2."""
         import numpy
