@@ -527,7 +527,7 @@ def _parse_output_decoy_types(objs: Any) -> Union[List[str], NoReturn]:
         return [_output_decoy_types[0]]
 
     @converter.register(collections.abc.Iterable)
-    def _from_iterable(objs: collections.abc.Iterable) -> List[str]:
+    def _from_iterable(objs: collections.abc.Iterable) -> Union[List[str], NoReturn]:
         _types = set()
         for obj in objs:
             if isinstance(obj, str):
@@ -535,13 +535,16 @@ def _parse_output_decoy_types(objs: Any) -> Union[List[str], NoReturn]:
                     _types.add(obj)
                 else:
                     raise ValueError(f"Available output decoy types are: {_output_decoy_types}")
-            elif obj is not None:
-                converter(obj)
-        if _output_decoy_types[0] not in _types:
+            else:
+                converter.dispatch(object)(obj)
+        if len(_types) == 0:
+            return converter(None)
+        elif _output_decoy_types[0] not in _types:
             raise ValueError(
                 f"The '{_output_decoy_types[0]}' option must be enabled in the "
                 + "'output_decoy_types' keyword argument parameter."
             )
+
         return list(_types)
 
     return converter(objs)
@@ -563,7 +566,7 @@ def _parse_output_scorefile_types(objs: Any) -> Union[List[str], NoReturn]:
         return [_output_scorefile_types[0]]
 
     @converter.register(collections.abc.Iterable)
-    def _from_iterable(objs: collections.abc.Iterable) -> List[str]:
+    def _from_iterable(objs: collections.abc.Iterable) -> Union[List[str], NoReturn]:
         _types = set()
         for obj in objs:
             if isinstance(obj, str):
@@ -573,13 +576,16 @@ def _parse_output_scorefile_types(objs: Any) -> Union[List[str], NoReturn]:
                         "parameter must start with '.' to be a valid filename extension."
                     )
                 _types.add(obj)
-            elif obj is not None:
-                converter(obj)
-        if _output_scorefile_types[0] not in _types:
+            else:
+                converter.dispatch(object)(obj)
+        if len(_types) == 0:
+            return converter(None)
+        elif _output_scorefile_types[0] not in _types:
             raise ValueError(
                 f"The '{_output_scorefile_types[0]}' option must be enabled in the "
                 + "'output_scorefile_types' keyword argument parameter."
             )
+
         return list(_types)
 
     return converter(objs)
