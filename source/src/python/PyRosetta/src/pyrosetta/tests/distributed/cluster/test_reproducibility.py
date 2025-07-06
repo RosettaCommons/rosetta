@@ -985,20 +985,20 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
     def tearDownClass(cls):
         cls.workdir.cleanup()
 
-    @staticmethod
-    def timeit(func):
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            import inspect
-            t0 = time.time()
-            if inspect.isgeneratorfunction(func):
-                results = list(func(*args, **kwargs))
-            else:
-                results = func(*args, **kwargs)
-            dt = time.time() - t0
-            print(f"{__class__.__name__} finished protocol '{func.__name__}' in {dt:0.3f} seconds.")
-            return results
-        return wrapper
+    # @staticmethod
+    # def timeit(func):
+    #     @functools.wraps(func)
+    #     def wrapper(*args, **kwargs):
+    #         import inspect
+    #         t0 = time.time()
+    #         if inspect.isgeneratorfunction(func):
+    #             results = list(func(*args, **kwargs))
+    #         else:
+    #             results = func(*args, **kwargs)
+    #         dt = time.time() - t0
+    #         print(f"{__class__.__name__} finished protocol '{func.__name__}' in {dt:0.3f} seconds.")
+    #         return results
+    #     return wrapper
 
     @staticmethod
     def get_numpy_random_seed(**kwargs):
@@ -1031,8 +1031,8 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             "set_logging_handler": "logging",
         }
 
+    #@timeit.__func__
     @staticmethod
-    @timeit.__func__
     def my_first_protocol(packed_pose, **kwargs):
         """In my_first_protocol, the desired decoy_id to keep is 0."""
         import numpy
@@ -1056,8 +1056,8 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
 
         return pose.clone(), dummy_pose.clone()
 
+    #@timeit.__func__
     @staticmethod
-    @timeit.__func__
     def my_second_protocol(packed_pose, **kwargs):
         """In my_second_protocol, the desired decoy_id to keep is 1."""
         import numpy
@@ -1129,8 +1129,8 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
 
         return dummy_pose.clone(), pose, kwargs
 
+    #@timeit.__func__
     @staticmethod
-    @timeit.__func__
     def my_third_protocol(packed_pose, **kwargs):
         """In my_third_protocol, the desired decoy_id to keep is 2."""
         import numpy
