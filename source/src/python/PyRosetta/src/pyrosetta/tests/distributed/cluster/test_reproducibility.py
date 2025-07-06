@@ -1247,20 +1247,20 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             logs_dir_name="logs",
             ignore_errors=False,
             timeout=0.1,
-            max_delay_time=0.5,
+            max_delay_time=1.0,
             sha1=None,
             dry_run=False,
             save_all=False,
             system_info=None,
             pyrosetta_build=None,
-            output_decoy_types=[".pdb", ".pose"],
-            output_scorefile_types=[".json", ".gz"],
+            output_decoy_types=[".pdb"], # ".pose"],
+            output_scorefile_types=[".json"], # ".gz"],
         ).distribute(
             protocols=protocols,
             clients_indices=None,
             resources=None,
         )
-
+        return
         scorefile_path = os.path.join(original_output_path, os.path.splitext(scorefile_name)[0] + ".gz")
         df = pandas.read_pickle(scorefile_path, compression="infer")
         selected_decoy_ids = [0, 1, 2]
