@@ -979,7 +979,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             set_logging_handler="logging",
         )
         cls.workdir = tempfile.TemporaryDirectory()
-        cls.input_pdb_file = os.path.join(os.path.dirname(__file__), "data", "1cbn.pdb")
+        cls.input_pdb_file = os.path.join(os.path.dirname(__file__), "data", "1crn.pdb")
 
     @classmethod
     def tearDownClass(cls):
