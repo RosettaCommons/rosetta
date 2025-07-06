@@ -1235,7 +1235,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             nstruct=1,
             dashboard_address=None,
             compressed=False,
-            compression=True,
+            compression=False,
             logging_level="INFO",
             scorefile_name=scorefile_name,
             project_name="PyRosettaCluster_Tests",
