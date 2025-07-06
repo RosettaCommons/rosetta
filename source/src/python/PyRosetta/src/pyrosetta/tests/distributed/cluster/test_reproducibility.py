@@ -1178,10 +1178,45 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         tasks = list(self.create_tasks())
         decoy_dir_name = "test_decoys"
         scorefile_name = "test_scores.json"
+        # protocols = [
+        #     TestReproducibilityPoseDataFrame.my_first_protocol,
+        #     TestReproducibilityPoseDataFrame.my_second_protocol,
+        #     TestReproducibilityPoseDataFrame.my_third_protocol,
+        # ]
+
+        def my_first_protocol(packed_pose, **kwargs):
+            import pyrosetta
+            import pyrosetta.distributed.io as io
+            return packed_pose
+
+        def my_second_protocol(packed_pose, **kwargs):
+            import pyrosetta
+            import pyrosetta.distributed.io as io
+            return packed_pose, packed_pose.pose.clone()
+
+        def my_third_protocol(packed_pose, **kwargs):
+            import pyrosetta
+            import pyrosetta.distributed.io as io
+
+            pose = io.to_pose(packed_pose)
+
+            scorefxn = pyrosetta.create_score_function("ref2015.wts")
+            scorefxn(pose)
+
+            dummy_pose = io.to_pose(io.pose_from_sequence("W" * 15))
+            for p in [dummy_pose.clone(), dummy_pose.clone(), pose, dummy_pose.clone()]:
+                pyrosetta.rosetta.core.pose.setPoseExtraScore(
+                    p, "SEQUENCE", p.sequence()
+                )
+                pyrosetta.rosetta.core.pose.setPoseExtraScore(
+                    p, "VALUE", 123.0,
+                )
+                yield p
+
         protocols = [
-            TestReproducibilityPoseDataFrame.my_first_protocol,
-            TestReproducibilityPoseDataFrame.my_second_protocol,
-            TestReproducibilityPoseDataFrame.my_third_protocol,
+            my_first_protocol,
+            my_second_protocol,
+            my_third_protocol,
         ]
 
         PyRosettaCluster(
