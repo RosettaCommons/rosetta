@@ -1181,41 +1181,6 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             TestReproducibilityPoseDataFrame.my_third_protocol,
         ]
 
-        # def my_first_protocol(packed_pose, **kwargs):
-        #     import pyrosetta
-        #     import pyrosetta.distributed.io as io
-        #     return packed_pose
-
-        # def my_second_protocol(packed_pose, **kwargs):
-        #     import pyrosetta
-        #     import pyrosetta.distributed.io as io
-        #     return packed_pose, packed_pose.pose.clone()
-
-        # def my_third_protocol(packed_pose, **kwargs):
-        #     import pyrosetta
-        #     import pyrosetta.distributed.io as io
-
-        #     pose = io.to_pose(packed_pose)
-
-        #     scorefxn = pyrosetta.create_score_function("ref2015.wts")
-        #     scorefxn(pose)
-
-        #     dummy_pose = io.to_pose(io.pose_from_sequence("W" * 15))
-        #     for p in [dummy_pose.clone(), dummy_pose.clone(), pose, dummy_pose.clone()]:
-        #         pyrosetta.rosetta.core.pose.setPoseExtraScore(
-        #             p, "SEQUENCE", p.sequence()
-        #         )
-        #         pyrosetta.rosetta.core.pose.setPoseExtraScore(
-        #             p, "VALUE", 123.0,
-        #         )
-        #         yield p
-
-        # protocols = [
-        #     my_first_protocol,
-        #     my_second_protocol,
-        #     my_third_protocol,
-        # ]
-
         PyRosettaCluster(
             tasks=tasks,
             input_packed_pose=input_pose,
@@ -1232,7 +1197,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             nstruct=1,
             dashboard_address=None,
             compressed=False,
-            compression=False,
+            compression=True,
             logging_level="DEBUG",
             scorefile_name=scorefile_name,
             project_name="PyRosettaCluster_Tests",
@@ -1250,14 +1215,14 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             save_all=False,
             system_info=None,
             pyrosetta_build=None,
-            output_decoy_types=[".pdb"], # ".pose"],
-            output_scorefile_types=[".json"], # ".gz"],
+            output_decoy_types=[".pdb", ".pose"],
+            output_scorefile_types=[".json", ".gz"],
         ).distribute(
             protocols=protocols,
             clients_indices=None,
             resources=None,
         )
-        return
+
         scorefile_path = os.path.join(original_output_path, os.path.splitext(scorefile_name)[0] + ".gz")
         df = pandas.read_pickle(scorefile_path, compression="infer")
         selected_decoy_ids = [0, 1, 2]
