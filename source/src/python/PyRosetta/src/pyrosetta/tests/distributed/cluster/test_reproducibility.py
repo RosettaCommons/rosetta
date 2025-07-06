@@ -980,7 +980,6 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         )
         cls.workdir = tempfile.TemporaryDirectory()
         cls.input_pdb_file = os.path.join(os.path.dirname(__file__), "data", "1cbn.pdb")
-        cls.assertTrue(os.path.isfile(cls.input_pdb_file))
 
     @classmethod
     def tearDownClass(cls):
@@ -1174,6 +1173,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         from '.pose' file and `pandas.DataFrame` scorefile.
         """
         original_output_path = os.path.join(self.workdir.name, "original")
+        self.assertTrue(os.path.isfile(self.input_pdb_file))
         input_pose = io.to_pose(io.pose_from_file(self.input_pdb_file))
         tasks = list(self.create_tasks())
         decoy_dir_name = "test_decoys"
