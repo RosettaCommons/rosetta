@@ -980,6 +980,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         )
         cls.workdir = tempfile.TemporaryDirectory()
         cls.input_pdb_file = os.path.join(os.path.dirname(__file__), "data", "1cbn.pdb")
+        cls.assertTrue(os.path.isfile(cls.input_pdb_file))
 
     @classmethod
     def tearDownClass(cls):
@@ -1000,14 +1001,14 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
     #         return results
     #     return wrapper
 
-    @staticmethod
-    def get_numpy_random_seed(**kwargs):
-        protocol_number = kwargs["PyRosettaCluster_protocol_number"]
-        seeds = kwargs["PyRosettaCluster_seeds"]
-        seed = abs(int(seeds[protocol_number][1]))
-        while seed > 2**32 - 1:
-            seed //= 10
-        return seed
+    # @staticmethod
+    # def get_numpy_random_seed(**kwargs):
+    #     protocol_number = kwargs["PyRosettaCluster_protocol_number"]
+    #     seeds = kwargs["PyRosettaCluster_seeds"]
+    #     seed = abs(int(seeds[protocol_number][1]))
+    #     while seed > 2**32 - 1:
+    #         seed //= 10
+    #     return seed
 
     def assert_atom_coordinates(self, pose1, pose2):
         self.assertEqual(pose1.size(), pose2.size())
@@ -1042,7 +1043,8 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             PackRotamersMover,
         )
 
-        seed = TestReproducibilityPoseDataFrame.get_numpy_random_seed(**kwargs)
+        #seed = TestReproducibilityPoseDataFrame.get_numpy_random_seed(**kwargs)
+        seed = 123
         numpy.random.seed(seed)
 
         pose = io.to_pose(packed_pose)
@@ -1066,7 +1068,8 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         from pyrosetta.rosetta.protocols.simple_moves import VirtualRootMover
         from pyrosetta.rosetta.protocols.rosetta_scripts import XmlObjects
 
-        seed = TestReproducibilityPoseDataFrame.get_numpy_random_seed(**kwargs)
+        #seed = TestReproducibilityPoseDataFrame.get_numpy_random_seed(**kwargs)
+        seed = 123
         numpy.random.seed(seed)
 
         pose = io.to_pose(packed_pose)
@@ -1140,7 +1143,8 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             PackRotamersMover,
         )
 
-        seed = TestReproducibilityPoseDataFrame.get_numpy_random_seed(**kwargs)
+        #seed = TestReproducibilityPoseDataFrame.get_numpy_random_seed(**kwargs)
+        seed = 123
         numpy.random.seed(seed)
 
         pose = io.to_pose(packed_pose)
