@@ -985,29 +985,29 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
     def tearDownClass(cls):
         cls.workdir.cleanup()
 
-    # @staticmethod
-    # def timeit(func):
-    #     @functools.wraps(func)
-    #     def wrapper(*args, **kwargs):
-    #         import inspect
-    #         t0 = time.time()
-    #         if inspect.isgeneratorfunction(func):
-    #             results = list(func(*args, **kwargs))
-    #         else:
-    #             results = func(*args, **kwargs)
-    #         dt = time.time() - t0
-    #         print(f"{__class__.__name__} finished protocol '{func.__name__}' in {dt:0.3f} seconds.")
-    #         return results
-    #     return wrapper
+    @staticmethod
+    def timeit(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            import inspect
+            t0 = time.time()
+            if inspect.isgeneratorfunction(func):
+                results = list(func(*args, **kwargs))
+            else:
+                results = func(*args, **kwargs)
+            dt = time.time() - t0
+            print(f"{__class__.__name__} finished protocol '{func.__name__}' in {dt:0.3f} seconds.")
+            return results
+        return wrapper
 
-    # @staticmethod
-    # def get_numpy_random_seed(**kwargs):
-    #     protocol_number = kwargs["PyRosettaCluster_protocol_number"]
-    #     seeds = kwargs["PyRosettaCluster_seeds"]
-    #     seed = abs(int(seeds[protocol_number][1]))
-    #     while seed > 2**32 - 1:
-    #         seed //= 10
-    #     return seed
+    @staticmethod
+    def get_numpy_random_seed(**kwargs):
+        protocol_number = kwargs["PyRosettaCluster_protocol_number"]
+        seeds = kwargs["PyRosettaCluster_seeds"]
+        seed = abs(int(seeds[protocol_number][1]))
+        while seed > 2**32 - 1:
+            seed //= 10
+        return seed
 
     def assert_atom_coordinates(self, pose1, pose2):
         self.assertEqual(pose1.size(), pose2.size())
@@ -1026,13 +1026,13 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
 
     def create_tasks(self):
         yield {
-            "options": "-ex1 0 -ex1aro 0 -ex1aro_exposed 0 -ex2 0 -ex2aro 0 -ex2aro_exposed 0 -ex3 0 -ex4 0",
-            "extra_options": "-lazy_ig 1 -out:level 300 -multithreading:total_threads 1 -ignore_unrecognized_res 1 -load_PDB_components 0",
+            "options": "-ex1 0 -ex1aro 0 -ex1aro_exposed 0 -ex2 0 -ex2aro 0 -ex2aro_exposed 0 -ex3 0 -ex4 0 -lazy_ig 1",
+            "extra_options": "-out:level 300 -multithreading:total_threads 1 -ignore_unrecognized_res 1 -load_PDB_components 0",
             "set_logging_handler": "logging",
         }
 
-    #@timeit.__func__
     @staticmethod
+    @timeit.__func__
     def my_first_protocol(packed_pose, **kwargs):
         """In my_first_protocol, the desired decoy_id to keep is 0."""
         import numpy
@@ -1042,8 +1042,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             PackRotamersMover,
         )
 
-        #seed = TestReproducibilityPoseDataFrame.get_numpy_random_seed(**kwargs)
-        seed = 123
+        seed = TestReproducibilityPoseDataFrame.get_numpy_random_seed(**kwargs)
         numpy.random.seed(seed)
 
         pose = io.to_pose(packed_pose)
@@ -1057,8 +1056,8 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
 
         return pose.clone(), dummy_pose.clone()
 
-    #@timeit.__func__
     @staticmethod
+    @timeit.__func__
     def my_second_protocol(packed_pose, **kwargs):
         """In my_second_protocol, the desired decoy_id to keep is 1."""
         import numpy
@@ -1067,8 +1066,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         from pyrosetta.rosetta.protocols.simple_moves import VirtualRootMover
         from pyrosetta.rosetta.protocols.rosetta_scripts import XmlObjects
 
-        #seed = TestReproducibilityPoseDataFrame.get_numpy_random_seed(**kwargs)
-        seed = 123
+        seed = TestReproducibilityPoseDataFrame.get_numpy_random_seed(**kwargs)
         numpy.random.seed(seed)
 
         pose = io.to_pose(packed_pose)
@@ -1131,8 +1129,8 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
 
         return dummy_pose.clone(), pose, kwargs
 
-    #@timeit.__func__
     @staticmethod
+    @timeit.__func__
     def my_third_protocol(packed_pose, **kwargs):
         """In my_third_protocol, the desired decoy_id to keep is 2."""
         import numpy
@@ -1142,8 +1140,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             PackRotamersMover,
         )
 
-        #seed = TestReproducibilityPoseDataFrame.get_numpy_random_seed(**kwargs)
-        seed = 123
+        seed = TestReproducibilityPoseDataFrame.get_numpy_random_seed(**kwargs)
         numpy.random.seed(seed)
 
         pose = io.to_pose(packed_pose)
@@ -1172,52 +1169,52 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         Test for PyRosettaCluster decoy reproducibility from instance kwargs
         from '.pose' file and `pandas.DataFrame` scorefile.
         """
-        original_output_path = os.path.join(self.workdir.name, "original")
+        original_output_path = os.path.join(self.workdir.name, "original_outputs")
         self.assertTrue(os.path.isfile(self.input_pdb_file))
         input_pose = io.to_pose(io.pose_from_file(self.input_pdb_file))
         tasks = list(self.create_tasks())
         decoy_dir_name = "test_decoys"
         scorefile_name = "test_scores.json"
-        # protocols = [
-        #     TestReproducibilityPoseDataFrame.my_first_protocol,
-        #     TestReproducibilityPoseDataFrame.my_second_protocol,
-        #     TestReproducibilityPoseDataFrame.my_third_protocol,
-        # ]
-
-        def my_first_protocol(packed_pose, **kwargs):
-            import pyrosetta
-            import pyrosetta.distributed.io as io
-            return packed_pose
-
-        def my_second_protocol(packed_pose, **kwargs):
-            import pyrosetta
-            import pyrosetta.distributed.io as io
-            return packed_pose, packed_pose.pose.clone()
-
-        def my_third_protocol(packed_pose, **kwargs):
-            import pyrosetta
-            import pyrosetta.distributed.io as io
-
-            pose = io.to_pose(packed_pose)
-
-            scorefxn = pyrosetta.create_score_function("ref2015.wts")
-            scorefxn(pose)
-
-            dummy_pose = io.to_pose(io.pose_from_sequence("W" * 15))
-            for p in [dummy_pose.clone(), dummy_pose.clone(), pose, dummy_pose.clone()]:
-                pyrosetta.rosetta.core.pose.setPoseExtraScore(
-                    p, "SEQUENCE", p.sequence()
-                )
-                pyrosetta.rosetta.core.pose.setPoseExtraScore(
-                    p, "VALUE", 123.0,
-                )
-                yield p
-
         protocols = [
-            my_first_protocol,
-            my_second_protocol,
-            my_third_protocol,
+            TestReproducibilityPoseDataFrame.my_first_protocol,
+            TestReproducibilityPoseDataFrame.my_second_protocol,
+            TestReproducibilityPoseDataFrame.my_third_protocol,
         ]
+
+        # def my_first_protocol(packed_pose, **kwargs):
+        #     import pyrosetta
+        #     import pyrosetta.distributed.io as io
+        #     return packed_pose
+
+        # def my_second_protocol(packed_pose, **kwargs):
+        #     import pyrosetta
+        #     import pyrosetta.distributed.io as io
+        #     return packed_pose, packed_pose.pose.clone()
+
+        # def my_third_protocol(packed_pose, **kwargs):
+        #     import pyrosetta
+        #     import pyrosetta.distributed.io as io
+
+        #     pose = io.to_pose(packed_pose)
+
+        #     scorefxn = pyrosetta.create_score_function("ref2015.wts")
+        #     scorefxn(pose)
+
+        #     dummy_pose = io.to_pose(io.pose_from_sequence("W" * 15))
+        #     for p in [dummy_pose.clone(), dummy_pose.clone(), pose, dummy_pose.clone()]:
+        #         pyrosetta.rosetta.core.pose.setPoseExtraScore(
+        #             p, "SEQUENCE", p.sequence()
+        #         )
+        #         pyrosetta.rosetta.core.pose.setPoseExtraScore(
+        #             p, "VALUE", 123.0,
+        #         )
+        #         yield p
+
+        # protocols = [
+        #     my_first_protocol,
+        #     my_second_protocol,
+        #     my_third_protocol,
+        # ]
 
         PyRosettaCluster(
             tasks=tasks,
@@ -1236,7 +1233,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             dashboard_address=None,
             compressed=False,
             compression=False,
-            logging_level="INFO",
+            logging_level="DEBUG",
             scorefile_name=scorefile_name,
             project_name="PyRosettaCluster_Tests",
             simulation_name=None,
