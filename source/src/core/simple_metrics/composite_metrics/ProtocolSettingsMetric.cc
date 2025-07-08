@@ -139,8 +139,6 @@ ProtocolSettingsMetric::parse_my_tag(
 	bool get_script_vars = tag->getOption< bool >("get_script_vars", true);
 	bool skip_corrections = tag->getOption< bool >("skip_corrections", true);
 
-	std::cout << "Skip user options " << get_user_options << std::endl;
-
 	if ( tag->hasOption("limit_to_options") ) {
 		std::string option_list_restriction = tag->getOption<std::string>("limit_to_options");
 		utility::vector1< std::string > limit_to = utility::string_split(option_list_restriction, ',');
