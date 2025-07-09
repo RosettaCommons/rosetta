@@ -196,6 +196,7 @@ def geomOptimize(mol, maxIter, mmff=False):
 
 #Generate conformations of NCAA for rotamer library
 def rdkitConf(ncaamol, noext, topN, instructions, mmff, nProc):
+    Chem.AssignStereochemistryFrom3D(ncaamol)
     print("Generating RDKit Conformations...")
     confs = AllChem.EmbedMultipleConfs(ncaamol, useRandomCoords=True, numConfs=int(10*topN), numThreads=0, useExpTorsionAnglePrefs=False)
     print("Aligning conformations...")
