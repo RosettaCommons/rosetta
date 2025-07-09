@@ -61,7 +61,7 @@ void move_ligand_neighbor_to_desired_position(
 );
 
 /// @brief Annotate a string/real pair.
-/// Will place it either in the JD2 Job (if JD2 active -- this is the historical behavior) or into the Pose
+/// Will place it in the JD2 job, and if JD2 is not active, will also place it in the pose extra scores.
 void
 add_string_real_pair( core::pose::Pose & pose, std::string const & string, core::Real real );
 
