@@ -7,22 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/core/chemical/mmCIF/mmCIFParser.fwd.hh
-/// @author Steven Combs (steven.combs1@gmail.com)
-
-#ifndef INCLUDED_core_chemical_mmCIF_mmCIFParser_fwd_hh
-#define INCLUDED_core_chemical_mmCIF_mmCIFParser_fwd_hh
-
-#include <utility/pointer/owning_ptr.hh>
+/// @file   utility/gemmi_util.fwd.hh
+/// @brief  Forward declarations for working with Gemmi
+///
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 
-namespace core {
-namespace chemical {
-namespace mmCIF {
+#ifndef INCLUDED_utility_gemmi_util_FWD_HH
+#define INCLUDED_utility_gemmi_util_FWD_HH
+
+namespace gemmi {
+namespace cif {
+
+struct Document;
+struct Table;
+struct Loop;
+struct Block;
 
 }
 }
-}
 
-#endif
-
+#endif // INCLUDED_utility_gemmi_util_fwd_HH

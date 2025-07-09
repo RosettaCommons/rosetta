@@ -44,8 +44,7 @@
 #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 
-#include <cifparse/CifFile.h>
-#include <cifparse/CifParserBase.h>
+#include <gemmi/cif.hpp>
 #include <utility/io/ozstream.hh>
 
 #include <core/io/pdb/pdb_reader.hh> // AUTO IWYU For create_records_from_pdb_file_contents, store_...
@@ -308,7 +307,7 @@ public:
 				// These example lines are taken directly from the given examples at
 				// http://www.wwpdb.org/documentation/file-format-content/format33/sect4.html
 				// with the addition of a single "Rosetta-format" line.
-				string const sample_pdb_lines(
+				std::string const sample_pdb_lines(
 					"HETNAM     NAG N-ACETYL-D-GLUCOSAMINE                                          \n"
 					"HETNAM     SAD BETA-METHYLENE SELENAZOLE-4-CARBOXAMIDE ADENINE                 \n"
 					"HETNAM  2  SAD DINUCLEOTIDE                                                    \n"
@@ -645,14 +644,15 @@ public:
 			core::io::StructFileRepOP mmtfsfr(core::io::mmtf::create_sfr_from_mmtf_filename( mmtf_file, opts ));
 			TR << "Loaded mmtf file" << std::endl;
 
-			std::string contents_of_file;
-			utility::io::izstream file( cif_file );
-			utility::slurp( file, contents_of_file );
-			std::string diagnostics;
-			CifFileOP cifFile( new CifFile );
-			CifParserOP cifParser( new CifParser( cifFile.get() ) );
-			cifParser->ParseString( contents_of_file, diagnostics );
-			core::io::StructFileRepOP cifsfr( core::io::mmcif::create_sfr_from_cif_file_op( cifFile, opts ) );
+			core::io::StructFileRepOP cifsfr;
+			try {
+				gemmi::cif::Document cifdoc = gemmi::cif::read_file( cif_file );
+				cifsfr = core::io::mmcif::create_sfr_from_cif_file( cifdoc, opts );
+			} catch (std::runtime_error const & e) {
+				TR.Error << "Issue loading cif file " << cif_file << ": " << e.what() << std::endl;
+				TS_ASSERT(false);
+			}
+
 			TR << "Loaded cif file" << std::endl;
 
 			TS_ASSERT_EQUALS( cifsfr->chains().size(), mmtfsfr->chains().size() );

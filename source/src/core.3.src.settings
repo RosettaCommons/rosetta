@@ -963,5 +963,4 @@ subprojects = [
 	"core.2",
 	"utility",
 	"ObjexxFCL",
-	"cifparse",
 ]

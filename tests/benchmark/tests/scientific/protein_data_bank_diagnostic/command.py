@@ -358,6 +358,7 @@ class PDB_Diagnostic_Codes(enum.Enum):
 
     #ace                   = enum.auto()
 
+    zero_nres                           = enum.auto()
     sugar_variant                       = enum.auto()
     zero_atom_restype                   = enum.auto()
     unknown_atom_name                   = enum.auto()
@@ -373,7 +374,6 @@ class PDB_Diagnostic_Codes(enum.Enum):
     rotno                 = enum.auto()
 
     zero_length_xyzVector = enum.auto()
-    zero_nres             = enum.auto()
 
     exceed_timeout        = enum.auto()
 
@@ -453,6 +453,7 @@ def classify_pdb_diagnostic_log(log):
 
         #( P(previous='ace'), PDB_Diagnostic_Codes.ace ),
 
+        ( P(line='Empty Pose Detected!'),                       PDB_Diagnostic_Codes.zero_nres ),
         ( P(line='unable to find desired variant residue:'),    PDB_Diagnostic_Codes.sugar_variant ),
         ( P(line=('atom name', 'not available in residue'), ),  PDB_Diagnostic_Codes.unknown_atom_name ),
         ( P(line=('Atom name not found in MutableResidueType.'), ),  PDB_Diagnostic_Codes.unknown_atom_name ),
