@@ -128,10 +128,19 @@ public:
 		msd_mover->setup_mover( *pose1 );
 
 		// Find the sequence of the other poses
-		utility::vector1< std::string > other_pose_sequences;
-		other_pose_sequences.push_back( "A" );
-		other_pose_sequences.push_back( "C" );
-		other_pose_sequences.push_back( "D" );
+		utility::vector1< utility::vector1< std::string > > other_pose_sequences;
+		//other_pose_sequences.push_back( "A" );
+		//other_pose_sequences.push_back( "C" );
+		//other_pose_sequences.push_back( "D" );
+		utility::vector1< std::string > ala_seq;
+		ala_seq.push_back("ALA");
+		other_pose_sequences.push_back(ala_seq);
+		utility::vector1< std::string > cys_seq;
+		cys_seq.push_back("CYS");
+		other_pose_sequences.push_back(cys_seq);
+		utility::vector1< std::string > asp_seq;
+		asp_seq.push_back("ASP");
+		other_pose_sequences.push_back(asp_seq);
 
 		utility::vector1< utility::vector1< core::Size > > designable_residues = msd_mover->designable_residues();
 
