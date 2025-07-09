@@ -6,12 +6,12 @@
 -in:auto_setup_metals
 -in
 	-file
-		-s input/5ZBQ_0001_A.pdb
+		-s input/5ZBQ_0001_A.pdb.gz
 		
 -parser:protocol input/docking_fast.xml
 		
 -ligand_evolution
-	-options input/options_short.xml
+	-options input/options_oas.xml
 	-xyz -46.972 -19.708 70.869
 	-main_scfx hard_rep
 	-reagent_file input/reagents_short.txt
@@ -19,7 +19,7 @@
 	-n_scoring_runs 1
 	-ligand_chain X
 	-pose_output_directory poses/
-	-n_generations 2
+	-n_generations 1
 	-score_mem_path ligands_short.tsv
 	#-external_scoring 10
 	#-smiles_file smiles.txt

@@ -21,15 +21,20 @@
     
     <!--- ligand areas, interface builders and movemap builders are used to define the interface region between the protein and the ligand -->
     <LIGAND_AREAS>
-        <LigandArea name="docking_sidechain" chain="X" cutoff="4.0" add_nbr_radius="true" all_atom_mode="true" minimize_ligand="10"/>
+        <LigandArea name="docking_sidechain" chain="X" cutoff="6.0" add_nbr_radius="true" all_atom_mode="true" minimize_ligand="10"/>
+        <LigandArea name="final_sidechain" chain="X" cutoff="6.0" add_nbr_radius="true" all_atom_mode="true"/>
+        <LigandArea name="final_backbone" chain="X" cutoff="7.0" add_nbr_radius="false" all_atom_mode="true" Calpha_restraints="0.3"/>
     </LIGAND_AREAS>
     
     <INTERFACE_BUILDERS>
         <InterfaceBuilder name="side_chain_for_docking" ligand_areas="docking_sidechain"/>
+        <InterfaceBuilder name="side_chain_for_final" ligand_areas="final_sidechain"/>
+        <InterfaceBuilder name="backbone" ligand_areas="final_backbone" extension_window="3"/>
     </INTERFACE_BUILDERS>
     
     <MOVEMAP_BUILDERS>
         <MoveMapBuilder name="docking" sc_interface="side_chain_for_docking" minimize_water="true"/>
+        <MoveMapBuilder name="final" sc_interface="side_chain_for_final" bb_interface="backbone" minimize_water="true"/>
     </MOVEMAP_BUILDERS>
     
     <!--- if you use the Transform mover, you must specify 1 or more scoring grids.  In this case, ClassicGrid is identical to the grid used by the Translate and Rotate movers-->
@@ -39,16 +44,11 @@
     
     <MOVERS>
         <!--- in the Transform mover, initial_perturb="5.0" means that hte ligand will initially be translated by up to 5.0 Angstroms to avoid bias in benchmarking -->
-        <Transform name="transform" chain="X" box_size="20.0" move_distance="0.1" angle="5" cycles="200" repeats="1" temperature="5" initial_perturb="5.0"/>
-        <!--- as configured here, HighResDocker will perform a single round of repacking -->
-        <HighResDocker name="high_res_docker" cycles="1" repack_every_Nth="0" scorefxn="ligand_soft_rep" movemap_builder="docking"/>
-        <InterfaceScoreCalculator name="add_scores" chains="X" scorefxn="hard_rep" compute_grid_scores="0"/>
+        <Transform name="transform" chain="X" box_size="20.0" move_distance="0.1" angle="5" cycles="500" repeats="1" temperature="5" initial_perturb="5.0"/>
     </MOVERS>
     
     <PROTOCOLS>
         <Add mover_name="transform"/>
-        <Add mover_name="high_res_docker"/>
-        <Add mover_name="add_scores"/>
     </PROTOCOLS>
     
 </ROSETTASCRIPTS>

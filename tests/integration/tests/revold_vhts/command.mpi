@@ -51,14 +51,29 @@ date > start-time.ignore
 # Don't forget to use -testing:INTEGRATION_TEST  so results are reproducible.
 # Here's a typical test for a Mini binary, assuming there's a "flags" file
 # in this directory too:
+     
 
 mkdir poses
-mpirun -np 6 %(bin)s/revold.%(binext)s %(additional_flags)s @input/options_std -database %(database)s -testing:INTEGRATION_TEST  > /dev/null 2>&1
+mpirun -np 6 %(bin)s/revold.%(binext)s %(additional_flags)s @input/options_vhts -database %(database)s -testing:INTEGRATION_TEST  > /dev/null 2>&1
      
-cat mpi_log* > log_std
+cat mpi_log* > log_vhts
 
-mv population.tsv population_std.tsv
-mv ligands.tsv ligands_std.tsv
-mv poses poses_std
+cat external_scores* > vhts_results.tsv
+
+mv poses poses_vhts
+
+rm mpi_log*
+rm external_scores*
+
+
+## test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+# ^^^^ you want to add this line after each call to app-protocol in case they terminate abnormally
+
+#
+# Or if you don't care whether the logging output changes:
+#
+## %(bin)s/MY_MINI_PROGRAM.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST \
+##     > /dev/null 2>&1
+#
 
 date > finish-time.ignore
