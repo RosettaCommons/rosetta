@@ -76,7 +76,7 @@ private:
 	MoveMapBuilderOP movemap_builder_;
 	/// @brief If true, remove any backbone constraints added during minimization
 	bool remove_bb_constraints_ = false;
-	/// @brief Use Cartesian minimization?"
+	/// @brief Use Cartesian minimization
 	bool cartesian_ = false;
 
 	/// @brief Get the minimization submover
