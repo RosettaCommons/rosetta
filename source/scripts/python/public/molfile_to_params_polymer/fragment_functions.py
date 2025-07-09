@@ -243,6 +243,8 @@ def handle_polymer_special_cases(child, molfile):
         child.input_stub1, child.input_stub2, child.input_stub3 = cbb, cabb, nbb
     elif child.poly_lower and None not in (nbb, cabb, cbb):
         child.input_stub1, child.input_stub2, child.input_stub3 = nbb, cabb, cbb
+    elif child.bonds[0].a2.poly_n_bb: # hbb
+        child.input_stub1, child.input_stub2, child.input_stub3 = nbb, cabb, lower
     else:
         return
 

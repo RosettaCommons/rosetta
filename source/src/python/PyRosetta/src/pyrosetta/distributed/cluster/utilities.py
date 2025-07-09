@@ -12,8 +12,6 @@ try:
     import psutil
     from dask.distributed import Adaptive, Client, LocalCluster
     from dask_jobqueue import SGECluster, SLURMCluster
-    from distributed.protocol import dask_serialize, dask_deserialize
-    from distributed.protocol.serialize import register_serialization_family
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.utilities' requires the "
@@ -39,6 +37,8 @@ from typing import (
     TypeVar,
     Union,
 )
+
+from pyrosetta.distributed.cluster.config import __dask_version__, __dask_jobqueue_version__
 
 
 AdaptiveType = TypeVar("AdaptiveType", bound=Adaptive)
@@ -77,12 +77,15 @@ class SchedulerManager(Generic[G]):
                 warnings.simplefilter("ignore", category=ResourceWarning)
                 warnings.simplefilter("default", category=UserWarning)
                 warnings.simplefilter("ignore", category=DeprecationWarning)
-                cluster = LocalCluster(
+                _cluster_kwargs = dict(
                     n_workers=_n_workers,
                     threads_per_worker=1,
                     dashboard_address=self.dashboard_address,
                     local_directory=self.scratch_dir,
                 )
+                if __dask_version__ <= (2, 1, 0):
+                    _cluster_kwargs["local_dir"] = _cluster_kwargs.pop("local_directory", self.scratch_dir)
+                cluster = LocalCluster(**_cluster_kwargs)
         else:
             if self.scheduler == "sge":
                 cluster_func = SGECluster
@@ -90,16 +93,22 @@ class SchedulerManager(Generic[G]):
             elif self.scheduler == "slurm":
                 cluster_func = SLURMCluster
                 log_files = os.path.join(self.logs_path, "dask-worker.o%j")
-            cluster = cluster_func(
+            _job_extra_directives = [f"-o {log_files}",]
+            _cluster_kwargs = dict(
                 cores=self.cores,
                 processes=self.processes,
                 memory=self.memory,
                 local_directory=self.scratch_dir,
-                job_extra=[f"-o {log_files}",],
+                job_extra_directives=_job_extra_directives,
                 walltime="99999:0:0",
                 death_timeout=9999,
                 dashboard_address=self.dashboard_address,
             )
+            if __dask_version__ <= (2, 1, 0):
+                _cluster_kwargs["local_dir"] = _cluster_kwargs.pop("local_directory", self.scratch_dir)
+            if __dask_jobqueue_version__ < (0, 8, 0):
+                _cluster_kwargs["job_extra"] = _cluster_kwargs.pop("job_extra_directives", _job_extra_directives)
+            cluster = cluster_func(**_cluster_kwargs)
         logging.info(f"Dashboard link: {cluster.dashboard_link}")
 
         return cluster
@@ -137,7 +146,7 @@ class SchedulerManager(Generic[G]):
         if (
             not self.clients_dict
             and self.scheduler
-            and (self.max_workers >= 1000)
+            and (self.max_workers >= self.adapt_threshold)
             and adaptive
         ):
             adaptive.maximum = self.tasks_size

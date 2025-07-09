@@ -86,7 +86,7 @@ def run_documentation_update(rosetta_dir, working_dir, platform, config, hpc_dri
             os.remove(f)
 
         # Parse the XSD into the appropriate format.
-        res, gen_output = execute('Generating Markdown from XSD ...', f'cd {doc_dir} && python2 {rosetta_dir}/tools/doc_tools/xsd_to_doc_fragments.py rosettascripts.xsd  ./scripting_documentation/RosettaScripts/xsd/', return_='tuple')
+        res, gen_output = execute('Generating Markdown from XSD ...', f'cd {doc_dir} && python {rosetta_dir}/tools/doc_tools/xsd_to_doc_fragments.py rosettascripts.xsd  ./scripting_documentation/RosettaScripts/xsd/', return_='tuple')
         if res:
             results[_StateKey_] = _S_script_failed_
             results[_LogKey_]   = 'Issue converting XSD to Markdown: \n' + gen_output

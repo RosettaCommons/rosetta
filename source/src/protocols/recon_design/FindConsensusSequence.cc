@@ -196,7 +196,7 @@ void FindConsensusSequence::apply( core::pose::Pose & pose ) {
 	parse_resfiles();
 
 	// Get the designable sequences of all poses
-	utility::vector1< std::string > all_pose_sequences;
+	utility::vector1< utility::vector1< std::string > > all_pose_sequences;
 	for ( core::Size ii = 1; ii <= designable_residues_.size(); ++ii ) {
 		all_pose_sequences.push_back(
 			get_designable_sequence ( *poses_[ii], designable_residues_[ii] )
@@ -230,24 +230,41 @@ void FindConsensusSequence::apply_mpi( core::pose::Pose & pose ) {
 	utility::vector1< core::Size > my_designable_residues = get_designable_residues( pose, this_nodes_resfile );
 
 	/// Make a string out of the AAs at my designable positions in the current state
-	std::string my_sequence = get_designable_sequence ( pose, my_designable_residues );
+	utility::vector1< std::string > my_sequence = get_designable_sequence ( pose, my_designable_residues );
 
-	utility::vector1<std::string> all_pose_sequences (n_procs_);
+	std::string pass_seq;
+	for ( std::string const & resi_base_name: my_sequence ) {
+		pass_seq += resi_base_name + " ";
+	}
+
+	utility::vector1< utility::vector1<std::string> > all_pose_sequences (n_procs_);
 	for ( core::Size ii = 1; ii <= n_procs_; ++ii ) {
 		if ( rank_ == ii ) {
 			for ( core::Size jj = 1; jj <= n_procs_; ++jj ) {
-				if ( rank_!=jj ) utility::send_string_to_node( jj-1, my_sequence ); // node ranks are 0-indexed
+				if ( rank_!=jj ) utility::send_string_to_node( jj-1, pass_seq ); // node ranks are 0-indexed
 				else all_pose_sequences[jj] = my_sequence;
 			}
 		} else {
-			all_pose_sequences[ii] = utility::receive_string_from_node( ii-1 ); // node ranks are 0-indexed
+			//all_pose_sequences[ii] = utility::receive_string_from_node( ii-1 ); // node ranks are 0-indexed
+			std::string passed_seq;
+			passed_seq = utility::receive_string_from_node( ii-1 ); // node ranks are 0-indexed
+			//Need to split passed_seq by spaces
+			std::istringstream iss(passed_seq);
+			std::string resi_name;
+			while ( iss >> resi_name ) {
+				all_pose_sequences[ii].push_back(resi_name);
+			}
 		}
 	}
 
 	if ( debug_ ) {
 		TR << "printing all AAs at designable positions to check indices: "<< std::endl;
 		for ( core::Size i = 1; i <= all_pose_sequences.size(); ++i ) {
-			TR << i << ":" << all_pose_sequences[ i ] << ", ";
+			TR << i << ":";
+			for ( const std::string& resi : all_pose_sequences[i] ) {
+				TR << resi << "-";
+			}
+			TR << ", ";
 		}
 		TR << std::endl;
 	}

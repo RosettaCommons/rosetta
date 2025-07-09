@@ -13,7 +13,7 @@ import base64
 import pyrosetta.rosetta.core.pose as pose
 import pyrosetta.distributed
 
-__all__ = ["pack_result", "to_packed", "to_pose", "to_dict", "PackedPose"]
+__all__ = ["pack_result", "pose_result", "to_packed", "to_pose", "to_dict", "to_base64", "to_pickle", "PackedPose"]
 
 
 class PackedPose:
@@ -69,11 +69,24 @@ class PackedPose:
 
         return PackedPose(work_pose)
 
+    def clone(self):
+        result = PackedPose(self.pose)
+        result.scores = pickle.loads(pickle.dumps(self.scores))
+        return result
+
 
 def pack_result(func):
     @functools.wraps(func)
     def wrap(*args, **kwargs):
         return to_packed(func(*args, **kwargs))
+
+    return wrap
+
+
+def pose_result(func):
+    @functools.wraps(func)
+    def wrap(*args, **kwargs):
+        return to_pose(func(*args, **kwargs))
 
     return wrap
 
@@ -142,6 +155,28 @@ def none_to_dict(none):
     return None
 
 
+@singledispatch
+def to_base64(inp):
+    """Takes a `Pose` or `PackedPose` object and returns a base64-encoded string.
+    """
+    return to_dict(inp)["pickled_pose"]
+
+@to_base64.register(type(None))
+def none_to_base64(none):
+    return None
+
+
+@singledispatch
+def to_pickle(inp):
+    """Takes a `Pose` or `PackedPose` object and returns a pickle-encoded bytestring.
+    """
+    return to_packed(inp).pickled_pose
+
+@to_pickle.register(type(None))
+def none_to_pickle(none):
+    return None
+
+
 def register_builtin_container_traversal(generic_func, dict_func):
     @generic_func.register(dict)
     def dict_traversal(maybe_packed_dict):
@@ -153,7 +188,7 @@ def register_builtin_container_traversal(generic_func, dict_func):
     @generic_func.register(list)
     @generic_func.register(tuple)
     @generic_func.register(set)
-    def container_traveral(container):
+    def container_traversal(container):
         return container.__class__(map(generic_func, container))
 
     if sys.version_info.major >= 3:
