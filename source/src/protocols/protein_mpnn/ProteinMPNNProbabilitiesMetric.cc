@@ -10,6 +10,7 @@
 /// @file protocols/protein_mpnn/ProteinMPNNProbabilitiesMetric.cc
 /// @brief A metric for predicting amino acid probabilities using ProteinMPNN (Dauparas et al.).
 /// @author Moritz Ertelt (moritz.ertelt@googlemail.com)
+/// @modified Jason C. Klima -- Added deterministic_flag option
 
 // Unit headers
 #include <protocols/protein_mpnn/ProteinMPNNProbabilitiesMetric.hh>
@@ -147,6 +148,8 @@ ProteinMPNNProbabilitiesMetric::parse_my_tag(
 		}
 	}
 
+	deterministic_flag_ = tag->getOption< bool >( "deterministic_flag", deterministic_flag_ );
+
 }
 
 void
@@ -180,6 +183,9 @@ ProteinMPNNProbabilitiesMetric::provide_xml_schema( utility::tag::XMLSchemaDefin
 	XMLSchemaSimpleSubelementList attrs_subelements;
 	attrs_subelements.add_simple_subelement( "TiedPositions", tied_pos_attrs,
 		"Used to define tied sets of residues." );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "deterministic_flag", xsct_rosetta_bool, "Whether to enable deterministic mode. Defaults to false.", "false" );
+
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes_and_repeatable_subelements(xsd, name_static(),
 		"A metric for estimating the probability of an amino acid at a given position, as predicted by ProteinMPNN.", attlist, attrs_subelements );
 
@@ -210,6 +216,9 @@ ProteinMPNNProbabilitiesMetric::calculate( core::pose::Pose const &pose ) const 
 
     // set temperature to 1 so the probabilities don't get influenced
     pose_options.temperature = 1.0;
+
+	// set the deterministic_flag option
+	pose_options.deterministic_flag = deterministic_flag_;
 
     // if specified by user, mask selected portions of the input sequence
     if ( sequence_mask_selector_rs_ != nullptr ) {
@@ -371,11 +380,21 @@ ProteinMPNNProbabilitiesMetric::set_tied_pos_rs( utility::vector1< utility::vect
 	tied_pos_rs_ = tied_pos_rs;
 }
 
+void
+ProteinMPNNProbabilitiesMetric::set_deterministic_flag( bool deterministic_flag ) {
+	deterministic_flag_ = deterministic_flag;
+}
+
 /// @brief Get the residue selector.
 /// @details If this returns nullptr, it means that no residue selector is being used.
 core::select::residue_selector::ResidueSelectorCOP
 ProteinMPNNProbabilitiesMetric::residue_selector() const {
 	return residue_selector_;
+}
+
+bool
+ProteinMPNNProbabilitiesMetric::deterministic_flag() const {
+	return deterministic_flag_;
 }
 
 void
@@ -424,6 +443,7 @@ protocols::protein_mpnn::ProteinMPNNProbabilitiesMetric::save( Archive & arc ) c
 	arc( CEREAL_NVP ( sequence_mask_selector_rs_ ) );
 	arc( CEREAL_NVP ( coord_selector_rs_ ) );
 	arc( CEREAL_NVP ( tied_pos_rs_ ) );
+	arc( CEREAL_NVP ( deterministic_flag_ ) );
 }
 
 template< class Archive >
@@ -448,6 +468,8 @@ protocols::protein_mpnn::ProteinMPNNProbabilitiesMetric::load( Archive & arc ) {
 	utility::vector1< utility::vector1< core::select::residue_selector::ResidueSelectorOP > > tied_pos_rs_local_;
 	arc( tied_pos_rs_local_ );
 	tied_pos_rs_ = tied_pos_rs_local_;
+
+	arc( deterministic_flag_ );
 
 }
 
