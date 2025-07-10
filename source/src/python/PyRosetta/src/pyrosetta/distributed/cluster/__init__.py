@@ -19,6 +19,7 @@ from pyrosetta.distributed.cluster.toolkit import (
     get_protocols_list_of_str,
     get_scores_dict,
     get_yml,
+    iterate,
     produce,
     recreate_environment,
     reproduce,
@@ -38,6 +39,7 @@ __all__: List[str] = [
     "get_protocols_list_of_str",
     "get_scores_dict",
     "get_yml",
+    "iterate",
     "produce",
     "recreate_environment",
     "reproduce",
@@ -45,7 +47,7 @@ __all__: List[str] = [
     "run",
     "update_scores",
 ]
-__version__: str = "1.2.2"
+__version__: str = "1.3.0"
 
 _print_conda_warnings()
 
