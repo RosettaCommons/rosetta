@@ -921,7 +921,7 @@ class TestReproducibilityMulti(unittest.TestCase):
                 ),
                 decoy_name=reproduce_record["metadata"]["decoy_name"],
                 input_packed_pose=input_pose,
-                protocols=protocols,
+                protocols=None, # Test detecting protocols in current scope
                 client=None,
                 instance_kwargs={
                     "sha1": None,

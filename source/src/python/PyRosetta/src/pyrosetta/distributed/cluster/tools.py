@@ -22,6 +22,7 @@ except ImportError:
     )
     raise
 
+import inspect
 import json
 import logging
 import os
@@ -165,13 +166,24 @@ def get_protocols(
                 )
     else:
         # Get the protocols in the scope from the list of protocol names as strings
-        scope = globals()
+        # Use locals and globals back two frames to the scope of the caller of `reproduce`
+        scope = inspect.currentframe().f_back.f_back
         protocols = []
         for protocol_name in get_protocols_list_of_str(
             input_file=input_file, scorefile=scorefile, decoy_name=decoy_name
         ):
-            if protocol_name in scope:
-                protocols.append(scope[protocol_name])
+            if protocol_name in scope.f_locals:
+                logging.info(
+                    f"Automatically detected user-provided PyRosetta protocol '{protocol_name}' "
+                    + "in the local variables of the current frame."
+                )
+                protocols.append(scope.f_locals[protocol_name])
+            elif protocol_name in scope.f_globals:
+                logging.info(
+                    f"Automatically detected user-provided PyRosetta protocol '{protocol_name}' "
+                    + "in the global variables of the current frame."
+                )
+                protocols.append(scope.f_globals[protocol_name])
             else:
                 raise RuntimeError(
                     f"The original user-defined PyRosetta protocol '{protocol_name}' "
@@ -179,7 +191,7 @@ def get_protocols(
                     + "user-defined PyRosetta protocols are defined in the same scope as they were in "
                     + "the original production run. Alternatively, you may pass the original "
                     + "user-defined PyRosetta protocols (defined under the new scope) maintaining "
-                    + "the original protocol order as a parameter to the 'protocols' argument."
+                    + "the original protocol order as a parameter to the 'protocols' keyword argument."
                 )
 
     return _parse_protocols(protocols)
