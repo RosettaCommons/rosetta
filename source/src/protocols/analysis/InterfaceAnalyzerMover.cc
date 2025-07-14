@@ -316,10 +316,8 @@ InterfaceAnalyzerMover::init_on_new_input(const core::pose::Pose & pose){
 
 		////parse the fixed chains strings to figure out pose chain nums
 		for ( std::string const & fixed_chain: fixed_chain_strings_ ) {
-			debug_assert( fixed_chain.size() == 1 );
-			char this_chain ( fixed_chain[ 0 ] );
 			for ( core::Size i = 1; i<=pose.size(); ++i ) {
-				if ( pose.pdb_info()->chain( i ) == this_chain ) {
+				if ( pose.pdb_info()->chain( i ) == fixed_chain ) {
 					fixed_chains_.insert( pose.chain( i ) );
 					break; //once we know something about the chain we can skip - we just need the chain id
 				}
@@ -502,7 +500,7 @@ InterfaceAnalyzerMover::setup_for_dock_chains( core::pose::Pose & pose, std::str
 			// will have different chain ids in Rosetta (ex. 1,2)
 			// Using all chain ids associated with a single chain will
 			// avoid problems with branching molecules
-			for ( core::Size chain_id : core::pose::get_chain_ids_from_chain( chainsSP[ 1 ].at( i - 1 ), pose ) ) {
+			for ( core::Size chain_id : core::pose::get_chain_ids_from_chain( std::string{chainsSP[ 1 ].at( i - 1 )}, pose ) ) {
 				fixed_chains_.insert( chain_id );
 			}
 		}
@@ -512,8 +510,8 @@ InterfaceAnalyzerMover::setup_for_dock_chains( core::pose::Pose & pose, std::str
 		//Here, we find the chains that we want to ignore in the Mover.
 		std::set< int > temp_fixed_chains;
 		for ( core::Size i = 1; i <= pose.conformation().num_chains(); ++i ) {
-			char chain = core::pose::get_chain_from_chain_id( i, pose );
-			if ( dock_chains.find(chain) !=  std::string::npos ) {
+			std::string chain = core::pose::get_chain_from_chain_id( i, pose );
+			if ( chain.size() == 1 && dock_chains.find(chain) !=  std::string::npos ) {
 				temp_fixed_chains.insert( i );
 			} else {
 				fixed_chains_.insert( i );
@@ -543,7 +541,7 @@ InterfaceAnalyzerMover::setup_for_dock_chains( core::pose::Pose & pose, std::str
 			// have the same chain (ex. A), but will have different chain ids in Rosetta (ex. 1,2)
 			// Using all chain ids associated with a single chain will
 			// avoid problems with branching molecules
-			for ( core::Size chain_id : core::pose::get_chain_ids_from_chain( chainsSP[ 1 ].at( i - 1 ), pose ) ) {
+			for ( core::Size chain_id : core::pose::get_chain_ids_from_chain( std::string{chainsSP[ 1 ].at( i - 1 )}, pose ) ) {
 				fixed_chains_.insert( chain_id );
 			}
 			return;
@@ -1737,27 +1735,27 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_interface_residues( core::
 	//itterate through the interface set and build the selection syntaxt
 	bool first_sel_complete( false );
 	core::Size resnum;
-	char /*chain_char, */chain_char_last( 'z' );
+	std::string chain_last( "" );
 	for ( core::Size it : interface_set ) {
 		//sets the current values
 		resnum = pose.pdb_info()->number( it );
-		char chain_char = pose.pdb_info()->chain( it );
+		std::string chain = pose.pdb_info()->chain( it );
 		//special print if the first time through
 		if ( !first_sel_complete ) {
-			interface_sele << "cmd.select(\"/" << pymol_obj_for_interface_sel << "//" << chain_char << "/"
+			interface_sele << "cmd.select(\"/" << pymol_obj_for_interface_sel << "//" << chain << "/"
 				<< resnum << "\")" << std::endl;
-			pymol_interface << "/" << posename_base_ << "//" << chain_char << "/" << resnum << "+" ;
+			pymol_interface << "/" << posename_base_ << "//" << chain << "/" << resnum << "+" ;
 			first_sel_complete = true;
-		} else if ( chain_char != chain_char_last ) {
-			interface_sele << "cmd.select(\"sele + /" << pymol_obj_for_interface_sel << "//" << chain_char << "/"
+		} else if ( chain != chain_last ) {
+			interface_sele << "cmd.select(\"sele + /" << pymol_obj_for_interface_sel << "//" << chain << "/"
 				<< resnum << "\")" << std::endl;
-			pymol_interface <<" + "<< "/" << posename_base_ << "//" << chain_char << "/" << resnum << "+";
+			pymol_interface <<" + "<< "/" << posename_base_ << "//" << chain << "/" << resnum << "+";
 		} else {
-			interface_sele << "cmd.select(\"sele + /" << pymol_obj_for_interface_sel << "//" << chain_char << "/"
+			interface_sele << "cmd.select(\"sele + /" << pymol_obj_for_interface_sel << "//" << chain << "/"
 				<< resnum << "\")" << std::endl;
 			pymol_interface << resnum << "+";
 		}
-		chain_char_last = chain_char;
+		chain_last = chain;
 	} //end itterate over interface
 	//finish up
 	pymol_interface << std::endl;
@@ -1790,12 +1788,12 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_hbond_unsat( core::pose::P
 		<< "select " << posename_base_ << "_unsat, ";
 	//setup for looping over all unstat hbonds
 	core::Size resnum;
-	char /*chain_char, */chain_char_last ('z');
+	std::string chain_last ("");
 	std::string atomname ;
 	for ( core::Size i( 1 ); i <= delta_unsat_hbond_atid_vector.size(); i++ ) {
 		core::id::AtomID const id ( delta_unsat_hbond_atid_vector[ i ] );
 		resnum = pose.pdb_info()->number( id.rsd() );
-		char chain_char = pose.pdb_info()->chain( id.rsd() );
+		std::string chain = pose.pdb_info()->chain( id.rsd() );
 		atomname = pose.residue(id.rsd()).atom_name(id.atomno());
 		//get rid of whitespace in the atomname
 		std::string temp;
@@ -1804,20 +1802,20 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_hbond_unsat( core::pose::P
 		}
 		atomname = temp;
 		//do the tracer/job output
-		results << resnum << " \t " << chain_char << " \t "<< atomname << std::endl;
+		results << resnum << " \t " << chain << " \t "<< atomname << std::endl;
 		//now setup pymol output
 		if ( !first_sel_complete ) {
-			missingHbond << "cmd.select(\"/" << posename_base_ << "//" << chain_char << "/" << resnum << "/" << atomname << "\")"<< std::endl;
-			unsathbond << "/" << posename_base_ << "//" << chain_char << "/" << resnum << "+" ;
+			missingHbond << "cmd.select(\"/" << posename_base_ << "//" << chain << "/" << resnum << "/" << atomname << "\")"<< std::endl;
+			unsathbond << "/" << posename_base_ << "//" << chain << "/" << resnum << "+" ;
 			first_sel_complete = true;
-		} else if ( chain_char != chain_char_last ) {
-			missingHbond << "cmd.select(\"sele + /" << posename_base_ << "//" << chain_char << "/" << resnum << "/" << atomname << "\")"<< std::endl;
-			unsathbond <<" + "<< "/" << posename_base_ << "//" << chain_char << "/" << resnum << "+";
+		} else if ( chain != chain_last ) {
+			missingHbond << "cmd.select(\"sele + /" << posename_base_ << "//" << chain << "/" << resnum << "/" << atomname << "\")"<< std::endl;
+			unsathbond <<" + "<< "/" << posename_base_ << "//" << chain << "/" << resnum << "+";
 		} else {
-			missingHbond << "cmd.select(\"sele + /" << posename_base_ << "//" << chain_char << "/" << resnum << "/" << atomname << "\")"<< std::endl;
+			missingHbond << "cmd.select(\"sele + /" << posename_base_ << "//" << chain << "/" << resnum << "/" << atomname << "\")"<< std::endl;
 			unsathbond << resnum << "+";
 		}
-		chain_char_last = chain_char;
+		chain_last = chain;
 	} //end itterate over all unsat AtomIDs
 	unsathbond << std::endl;
 	//finalize output
@@ -1856,7 +1854,7 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_packing( core::pose::Pose 
 		if ( !include_residue_[ i ] ) { continue; }
 
 		core::Size resnum = pose.pdb_info()->number( i );
-		char chain_char = pose.pdb_info()->chain( i );
+		std::string chain = pose.pdb_info()->chain( i );
 		core::Size color;
 		if      ( interface_pack_scores[ i ] >= 0.75 ) { color = 2; }  //blue
 		else if ( interface_pack_scores[ i ] >= 0.50 ) { color = 16; } //purple
@@ -1864,7 +1862,7 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_packing( core::pose::Pose 
 		else if ( interface_pack_scores[ i ] >  0.00 ) { color = 4; }  //red
 		else { color = 24; } //gray, something went wrong
 
-		pymol_packing << "cmd.select(\"/" << pymol_object_fullpose_pack << "//" << chain_char << "/" << resnum << "\")" << std::endl;
+		pymol_packing << "cmd.select(\"/" << pymol_object_fullpose_pack << "//" << chain << "/" << resnum << "\")" << std::endl;
 		pymol_packing << "cmd.color(" << color << ", \"sele\")" << std::endl;
 	}
 	data_.pymol_sel_packing = pymol_packing.str() ;

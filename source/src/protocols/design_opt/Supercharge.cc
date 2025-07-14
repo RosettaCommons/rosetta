@@ -64,11 +64,11 @@ Supercharge::apply( Pose & pose ) {
 	out_path_ = basic::options::option[ OptionKeys::out::path::path ]();
 
 	//check for chain ID
-	char chain = pose.pdb_info()->chain(1);
-	if ( chain == ' ' ) {
+	std::string chain = pose.pdb_info()->chain(1);
+	if ( chain == " " ) {
 		TR << "chain is whitespace, setting chain ID to 'A' " << std::endl;
 		for ( Size i=1; i<=pose.size(); ++i ) {
-			pose.pdb_info()->chain(i, 'A');
+			pose.pdb_info()->chain(i, "A");
 		}
 	}
 

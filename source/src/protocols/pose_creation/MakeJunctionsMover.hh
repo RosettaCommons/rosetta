@@ -67,7 +67,7 @@ public:
 
 	Design line_to_design(std::string line);
 	std::queue<Design> read_in_designs();
-	void parse_attach_description(std::string attach_description,std::string & pdb_location,char & chain, core::Size & n_term_trim, core::Size & c_term_trim, core::Size & n_repeats, core::Size &n_term_attach_length, core::Size &c_term_attach_length, std::string & n_term_seq, std::string & c_term_seq);
+	void parse_attach_description(std::string attach_description,std::string & pdb_location,std::string & chain, core::Size & n_term_trim, core::Size & c_term_trim, core::Size & n_repeats, core::Size &n_term_attach_length, core::Size &c_term_attach_length, std::string & n_term_seq, std::string & c_term_seq);
 	void generate_start_pose(core::pose::Pose & pose, core::pose::Pose & background_pose, std::string attach_description);
 	bool attach_next_part(core::pose::Pose & pose, std::string attach_termini, std::string attach_description);
 	void trim_pose(core::pose::Pose & pose, core::Size n_term_trim,core::Size c_term_trim);
@@ -91,7 +91,7 @@ private:
 	core::Size pdb_cache_max_size_;
 	core::Real junction_rmsd_thresh_;
 	std::multiset<std::string> junction_failure_set_;
-	char chain_;
+	std::string chain_;
 };
 
 } //pose_creation
