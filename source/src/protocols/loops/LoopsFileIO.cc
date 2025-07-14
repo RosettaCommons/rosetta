@@ -640,7 +640,7 @@ JSONFormattedLoopsFileReader::parse_json_residue_info(
 	core::Size & approximate_linenumber
 ) {
 	core::Size resNo = 0;
-	char chain_id = ' ';
+	std::string chain_id;
 	char insert_code = ' ';
 	bool usesPDBNumbering = false;
 
@@ -668,11 +668,7 @@ JSONFormattedLoopsFileReader::parse_json_residue_info(
 			if ( json_representation_of_residue_data[ chain_identifier ].type() != utility::json_spirit::str_type ) {
 				utility_exit_with_message( "The \"chainID\" field must be a one character string.  Please check your input file, '" +filename + "'." );
 			}
-			std::string tmp_chainID = json_representation_of_residue_data[ chain_identifier ].get_str();
-			if ( tmp_chainID.length() != 1 ) {
-				utility_exit_with_message( "chainIDs must be exactly one character long.  Please check your input file, '" + filename + "'." );
-			}
-			chain_id = char( tmp_chainID[0] );
+			chain_id = json_representation_of_residue_data[ chain_identifier ].get_str();
 			usesPDBNumbering = true;
 		}
 

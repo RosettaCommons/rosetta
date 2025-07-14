@@ -243,7 +243,7 @@ public: // Methods
 	Real get_rot_step() const { return rot_step_; }
 	Real get_resolution_damping() const { return rsol_damping_; }
 	bool optimized_transform() const { return optimize_transform_; }
-	char get_chain() const { return chain_; }
+	std::string const & get_chain() const { return chain_; }
 
 	void set_scorefunction(ScoreFunctionOP sfxn) { sfxn_ = sfxn; }
 	void set_gridsearch_range(BoundingBox const & box) { gs_box_ = box; }
@@ -263,7 +263,7 @@ public: // Methods
 	}
 	void do_optimized_transform() { optimize_transform_ = true; }
 	void undo_optimized_transform() { optimize_transform_ = false; }
-	void set_chain(char const c) { chain_ = c; }
+	void set_chain(std::string const & c) { chain_ = c; }
 
 private: // Methods
 
@@ -340,7 +340,7 @@ private: // Data
 	bool optimize_transform_;
 
 	/// @brief ligand chain
-	char chain_;
+	std::string chain_;
 
 };
 

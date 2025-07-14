@@ -51,15 +51,6 @@ public:
 		bool exclude = true,
 		core::Real fuzz_factor = 0.0);
 
-	/// @brief Get a set of grids for the given pose, centered on the given center, including/excluding the given chains.
-	GridSetCOP get_grids(
-		GridSet const & prototype,
-		core::pose::Pose const & pose,
-		core::Vector const & center,
-		char chain,
-		bool exclude = true,
-		core::Real fuzz_factor = 0.0);
-
 	/// @brief Get a set of grids for the given pose, centered on the given center, including/excluding the given chains,
 	/// using the given prototype as the prototype.
 	/// fuzz_factor is the distance by which to consider the center "close enough" not to regenerate

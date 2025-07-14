@@ -165,7 +165,7 @@ PCSMultiGrid::get_type() const {
 
 /// @brief set the chain the grid applies to
 void
-PCSMultiGrid::set_chain(char chain) {
+PCSMultiGrid::set_chain(std::string const & chain) {
 	for ( core::Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
 		pcs_grid_vector_[i]->set_chain(chain);
 	}

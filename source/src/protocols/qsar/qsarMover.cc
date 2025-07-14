@@ -86,7 +86,7 @@ void qsarMover::apply(core::pose::Pose & pose)
 	}
 
 	debug_assert( chain_.size() == 1 );
-	utility::vector1< core::Size > chain_residues( core::pose::get_resnums_for_chain( pose, chain_[0] ) );
+	utility::vector1< core::Size > chain_residues( core::pose::get_resnums_for_chain( pose, chain_ ) );
 	if ( chain_residues.size() != 1 ) {
 		utility_exit_with_message("The qsarMover can only operate on single residue chains.");
 	}

@@ -54,13 +54,14 @@ select_interface_residues(core::pose::Pose const & pose, std::string interface, 
 	//TR << "side1:" << sides[1] << ":" << std::endl;
 	//TR << "side3:" << sides[2] << ":" << std::endl;
 
+	// Because of the input format, we only support single chain letters.
 	for ( core::Size i = 0; i <= sides[1].length() -1; ++i ) {
 		//TR <<"C:"<<utility::to_string(sides[1][i]) << std::endl;
-		side1_chains.insert(pose::get_chain_id_from_chain(sides[1][i], pose));
+		side1_chains.insert(pose::get_chain_id_from_chain(std::string{sides[1][i]}, pose));
 	}
 	for ( core::Size i = 0; i <= sides[2].length() -1; ++i ) {
 		//TR <<"C:"<<utility::to_string(sides[2][i]) << std::endl;
-		side2_chains.insert(pose::get_chain_id_from_chain(sides[2][i], pose));
+		side2_chains.insert(pose::get_chain_id_from_chain(std::string{sides[2][i]}, pose));
 	}
 
 	debug_assert (!side1_chains.empty()/*size() >= 1*/);

@@ -496,7 +496,7 @@ void reorder_membrane_foldtree( core::pose::Pose & pose ) {
 /// -------  -------  -------  -------  -------  M=root
 ///  chain1   chain2   chain3   chain4 ...
 ///
-///  iJ = interface jump, will be returned from the function
+//e  iJ = interface jump, will be returned from the function
 ///
 core::Size create_membrane_docking_foldtree_from_partners( core::pose::Pose & pose, std::string const & partners ) {
 
@@ -510,6 +510,7 @@ core::Size create_membrane_docking_foldtree_from_partners( core::pose::Pose & po
 	}
 
 	// split partner string (AB, CDE)
+	// By nature of the input format, we only support single chain letters
 	utility::vector1< std::string > partner( utility::string_split( partners, '_' ) );
 
 	// initialize partners with chains (will be 1,2 / 3,4,5)
@@ -527,7 +528,7 @@ core::Size create_membrane_docking_foldtree_from_partners( core::pose::Pose & po
 	for ( core::Size i = 1; i <= partner[ 1 ].size(); ++i ) {
 
 		// get chain, add to chains vector and get anchor point
-		core::Size chain = get_chain_id_from_chain( partner[ 1 ][ i-1 ], pose );
+		core::Size chain = get_chain_id_from_chain( std::string{partner[ 1 ][ i-1 ]}, pose );
 		chains1.push_back( chain );
 		anchors1.push_back( rsd_closest_to_chain_tm_com( pose, chain ) );
 		cutpoints1.push_back( chain_end_res( pose, chain ) );
@@ -538,7 +539,7 @@ core::Size create_membrane_docking_foldtree_from_partners( core::pose::Pose & po
 	for ( core::Size i = 1; i <= partner[ 2 ].size(); ++i ) {
 
 		// get chain, add to chains vector and get anchor point
-		core::Size chain = get_chain_id_from_chain( partner[ 2 ][ i-1 ], pose );
+		core::Size chain = get_chain_id_from_chain( std::string{partner[ 2 ][ i-1 ]}, pose );
 		chains2.push_back( chain );
 		anchors2.push_back( rsd_closest_to_chain_tm_com( pose, chain ) );
 		cutpoints2.push_back( chain_end_res( pose, chain ) );
@@ -756,6 +757,7 @@ utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmc
 	utility::vector1< core::Size > jumps;
 
 	// split partners by underscore
+	// By nature of the format this only supports single letter chain designations
 	utility::vector1< std::string > partners( utility::string_split( partner, '_' ) );
 
 	// go through partners (AB / CD)
@@ -766,7 +768,7 @@ utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmc
 		core::Size first_chain_anchor( 0 );
 
 		// convert chain from partners (f.ex. B) into chainID (f.ex. 2)
-		chainid = get_chain_id_from_chain( partners[ p ][ 0 ], pose );
+		chainid = get_chain_id_from_chain( std::string{partners[ p ][ 0 ]}, pose );
 
 		// go through chainids (except MEM) to find chain of interest  and first anchor point
 		for ( core::Size i = 1; i <= chainids.size()-1; ++i ) {
@@ -797,7 +799,7 @@ utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmc
 				for ( core::Size i = 1; i <= chainids.size()-1; ++i ) {
 
 					// convert chain from partners (f.ex. B) into chainID (f.ex. 2)
-					chainid = get_chain_id_from_chain( partners[ p ][ c ], pose );
+					chainid = get_chain_id_from_chain( std::string{partners[ p ][ c ]}, pose );
 
 					// get anchor point of current partner
 					if ( chainid == static_cast< core::Size >( chainids[ i ] ) ) {
