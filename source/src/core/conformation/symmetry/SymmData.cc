@@ -15,6 +15,7 @@
 #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/VirtualCoordinate.hh>
 #include <core/conformation/symmetry/SymDof.hh>
+#include <core/conformation/util.hh>
 
 // Project headers
 #include <basic/Tracer.hh>

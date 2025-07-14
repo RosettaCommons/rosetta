@@ -75,7 +75,9 @@ namespace conformation {
 
 
 static std::string const chr_chains_reg("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz" );
-static std::string const chr_chains_ext("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcba" );
+static std::string const chr_chains_ext("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]|-_\\~=%zyxwvutsrqponmlkjihgfedcba" );
+//fd removing '{' and '}' since they mess with pymol selection
+//static std::string const pymol_chains("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz!@#$&.<>?]|-_\\~=%" );
 
 std::string
 canonical_chain_letter_for_chain_number(core::Size chain_num, bool extended) {
