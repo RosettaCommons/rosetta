@@ -661,11 +661,11 @@ is_false_string( std::string const & value_str )
 // ObjexxFCL::get_ints(), I think.
 //
 std::string
-make_tag_with_dashes( utility::vector1< int > res_vector,
+make_tag_with_dashes( utility::vector1< int > const & res_vector,
 	char const delimiter /* = ' ' */){
-	utility::vector1< char > chains;
+	utility::vector1< std::string > chains;
 	utility::vector1< std::string > segids;
-	for ( platform::Size n = 0; n < res_vector.size(); n++ ) chains.push_back( ' ' );
+	for ( platform::Size n = 0; n < res_vector.size(); n++ ) chains.push_back( " " );
 	for ( platform::Size n = 0; n < res_vector.size(); n++ ) segids.push_back( "    " );
 	return make_tag_with_dashes( res_vector, chains, segids, delimiter );
 }
@@ -675,9 +675,9 @@ make_tag_with_dashes( utility::vector1< int > res_vector,
 // The function to go the other way (from string to two vectors) is available below in get_resnum_and_chain()
 // TODO: add icode compatibility.
 std::string
-make_tag_with_dashes( utility::vector1< int > res_vector,
-	utility::vector1< char > chain_vector,
-	utility::vector1< std::string > segid_vector,
+make_tag_with_dashes( utility::vector1< int > const & res_vector,
+	utility::vector1< std::string > const & chain_vector,
+	utility::vector1< std::string > const & segid_vector,
 	char const delimiter /* = ' ' */){
 
 	using namespace ObjexxFCL;
@@ -688,10 +688,10 @@ make_tag_with_dashes( utility::vector1< int > res_vector,
 
 	int start_segment = res_vector[1];
 	int last_res = res_vector[1];
-	char last_chain = chain_vector[1];
+	std::string last_chain = chain_vector[1];
 	std::string last_segid = segid_vector.empty() ? "    " : segid_vector[1];
 	utility::vector1< std::pair<int,int> > res_vector_segments;
-	utility::vector1< char > chains_for_segments;
+	utility::vector1< std::string > chains_for_segments;
 	utility::vector1< std::string > segids_for_segments;
 	for ( platform::Size n = 2; n<= res_vector.size(); n++ ) {
 		if ( res_vector[n] != last_res+1  || chain_vector[n] != last_chain ) {
@@ -711,9 +711,9 @@ make_tag_with_dashes( utility::vector1< int > res_vector,
 	for ( platform::Size n = 1; n <= res_vector_segments.size(); n++ ) {
 		if ( n > 1 ) tag += delimiter;
 		std::pair< int, int > const & segment = res_vector_segments[n];
-		if ( chains_for_segments[n] != '\0' &&
-				chains_for_segments[n] != ' '  &&
-				chains_for_segments[n] != '_' ) tag += std::string(1,chains_for_segments[n]) + ":";
+		if ( chains_for_segments[n] != "\0" &&
+				chains_for_segments[n] != " "  &&
+				chains_for_segments[n] != "_" ) tag += chains_for_segments[n] + ":";
 		if ( segids_for_segments[n] != "    " ) tag += strip(segids_for_segments[n]) + ":";
 		if ( segment.first == segment.second ) {
 			tag += string_of( segment.first );
@@ -725,11 +725,24 @@ make_tag_with_dashes( utility::vector1< int > res_vector,
 	return tag;
 }
 
+//std::string
+//make_tag_with_dashes( utility::vector1< int > const & res_vector,
+//	utility::vector1< char > const & chain_vector,
+//	utility::vector1< std::string > const & segid_vector,
+//	char const delimiter
+//) {
+//	utility::vector1< std::string > chain_str;
+//	for ( char chain: chain_vector ) {
+//		chain_str.push_back( std::string{chain} );
+//	}
+//	return make_tag_with_dashes(res_vector, chain_vector, segid_vector, delimiter);
+//}
+
 /////////////////////////////////////////////////////////////////////////////////////////
 // @brief Demands four-character seg ids. Output looks like "SEG1:3-4 SEG2:1-12    :1-3"
 std::string
-make_segtag_with_dashes( utility::vector1< int > res_vector,
-	utility::vector1< std::string > segid_vector,
+make_segtag_with_dashes( utility::vector1< int > const & res_vector,
+	utility::vector1< std::string > const & segid_vector,
 	char const delimiter /* = ' ' */){
 
 	using namespace ObjexxFCL;
@@ -773,7 +786,7 @@ make_segtag_with_dashes( utility::vector1< int > res_vector,
 
 /////////////////////////////////////////////////////////////////////////////////
 std::string
-make_tag( utility::vector1< int > res_vector ){
+make_tag( utility::vector1< int > const & res_vector ){
 
 	using namespace ObjexxFCL;
 	std::string tag = "";
@@ -791,12 +804,12 @@ make_tag( utility::vector1< int > res_vector ){
 //
 //  #detailed  several kinds of tags are OK, including "A:1-5 B:20-22" and "A1-5 B20,21,22".
 //
-std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > >
+std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > >
 get_resnum_and_chain_and_segid( std::string const & s, bool & string_is_ok ){
 
 	string_is_ok = true;
 	utility::vector1< int  > resnum;
-	utility::vector1< char > chain;
+	utility::vector1< std::string > chain;
 	utility::vector1< std::string > segid;
 
 	std::string s_nocommas = replace_in( s, ",", " " ); // order of operations issue?
@@ -809,7 +822,7 @@ get_resnum_and_chain_and_segid( std::string const & s, bool & string_is_ok ){
 }
 
 /// @brief for those who have a legacy interface that can't touch segids.
-std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > >
+std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > >
 get_resnum_and_chain( std::string const & s ){
 	bool string_is_ok;
 	//auto tuple = get_resnum_and_chain_and_segid( s, string_is_ok );
@@ -862,11 +875,11 @@ get_resnum_and_segid( std::string const & s, bool & string_is_ok ){
 bool
 get_resnum_and_chain_from_one_tag( std::string const & tag,
 	utility::vector1< int > & resnum,
-	utility::vector1< char > & chains,
+	utility::vector1< std::string > & chains,
 	utility::vector1< std::string > & segids ){
 	bool string_is_ok( false );
 	std::vector< int > resnum_from_tag;
-	char chain( ' ' );
+	std::string chain( " " );
 	std::string segid = "    ";
 	std::string const numerical("-0123456789");
 
@@ -881,9 +894,10 @@ get_resnum_and_chain_from_one_tag( std::string const & tag,
 	if ( colon_count == 2 ) {
 		// OK: first part is chain; second part is segid; final part is resnum.
 		// First part will be one character; second part may be 1-4.
-		chain = tag[0];
-		size_t second = tag.substr(2).find(':');
-		segid = tag.substr( 2,second );
+		size_t first = tag.find(':');
+		size_t second = tag.substr(first+1).find(':');
+		chain = tag.substr(0,first);
+		segid = tag.substr(first+1,second-first-1 );
 		if ( segid.size() == 1 ) {
 			segid = segid + "   ";
 		} else if ( segid.size() == 2 ) {
@@ -897,19 +911,20 @@ get_resnum_and_chain_from_one_tag( std::string const & tag,
 	} else {
 		size_t found_colon = tag.find( ":" );
 		if ( found_colon == std::string::npos ) {
-			if ( numerical.find( tag[0] ) == std::string::npos ) { // looks like a chain character at beginning
-				chain = tag[0];
-				resnum_from_tag = ObjexxFCL::ints_of( tag.substr(1), string_is_ok );
-			} else {
+			size_t first_number = tag.find_first_of(numerical);
+			if (first_number == 0) {
 				resnum_from_tag = ObjexxFCL::ints_of( tag, string_is_ok );
+			} else {
+				chain = tag.substr(0,first_number);
+				resnum_from_tag = ObjexxFCL::ints_of( tag.substr(first_number), string_is_ok );
 			}
 		} else {
 			if ( found_colon == 0 ) {
-				chain = ' ';
+				chain = " ";
 				resnum_from_tag = ObjexxFCL::ints_of( tag.substr(1), string_is_ok );
 			} else if ( found_colon == 1 ) {
-				chain = tag[0];
-				resnum_from_tag = ObjexxFCL::ints_of( tag.substr(2), string_is_ok );
+				chain = tag.substr(0,found_colon);
+				resnum_from_tag = ObjexxFCL::ints_of( tag.substr(found_colon+1), string_is_ok );
 			} else {
 				return false;
 			}
