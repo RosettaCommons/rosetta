@@ -41,6 +41,7 @@ from pyrosetta.distributed.cluster.exceptions import (
 )
 from pyrosetta.distributed.cluster.io import IO
 from pyrosetta.distributed.packed_pose.core import PackedPose
+from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.rosetta.core.pose import Pose
 from typing import (
     Any,
@@ -167,12 +168,19 @@ def get_scores_dict(obj):
         elif obj.endswith(".pdb"):
             with open(obj, "r") as f:
                 pdbstring = f.read()
-        elif obj.endswith(".pose.bz2"):
-            with open(obj, "rb") as fbz2:
-                pdbstring = io.to_pdbstring(io.to_pose(io.bz2.decompress(fbz2.read()).decode()))
-        elif obj.endswith(".pose"):
-            with open(obj, "r") as f:
-                pdbstring = io.to_pdbstring(io.to_pose(f.read()))
+        elif obj.endswith((".pose", ".pose.bz2")):
+            if not was_init_called():
+                raise RuntimeError(
+                    "To get the PyRosettaCluster scores dictionary from a '.pose' or '.pose.bz2' file, "
+                    "PyRosetta must be initialized (with the same residue type set that was used to save "
+                    "the original '.pose' or '.pose.bz2' file)."
+                )
+            if obj.endswith(".pose.bz2"):
+                with open(obj, "rb") as fbz2:
+                    pdbstring = io.to_pdbstring(io.to_pose(bz2.decompress(fbz2.read()).decode()))
+            elif obj.endswith(".pose"):
+                with open(obj, "r") as f:
+                    pdbstring = io.to_pdbstring(io.to_pose(f.read()))
         scores_dict = None
         for line in reversed(pdbstring.split(os.linesep)):
             if line.startswith(IO.REMARK_FORMAT):
