@@ -82,17 +82,17 @@ RDCSingle::RDCSingle(
 		Size rsdB = spinsAB[i].second.get_rsd();
 		std::string atomA = spinsAB[i].first.get_atom();
 		std::string atomB = spinsAB[i].second.get_atom();
-		char const & chain_spinA = spinsAB[i].first.get_chain();
-		char const & chain_spinB = spinsAB[i].second.get_chain();
+		std::string const & chain_spinA = spinsAB[i].first.get_chain();
+		std::string const & chain_spinB = spinsAB[i].second.get_chain();
 
 		if ( pdbinfo ) {
-			TR.Trace << "Converting AtomSelection \"(" + to_string(rsdA) + " " + atomA + " " + to_string(chain_spinA) + ") ("
-				+ to_string(rsdB) + " " + atomB + " " + to_string(chain_spinB) + ")\" in RDC datafile from pdb to pose numbering." << std::endl;
+			TR.Trace << "Converting AtomSelection \"(" + to_string(rsdA) + " " + atomA + " " + chain_spinA + ") ("
+				+ to_string(rsdB) + " " + atomB + " " + chain_spinB + ")\" in RDC datafile from pdb to pose numbering." << std::endl;
 			rsdA = pdbinfo->pdb2pose(chain_spinA, rsdA);
 			rsdB = pdbinfo->pdb2pose(chain_spinB, rsdB);
 			if ( rsdA == 0 || rsdB == 0 ) { // Residue not found
-				utility_exit_with_message( "ERROR: Cannot convert AtomSelection \"(" + to_string(spinsAB[i].first.get_rsd()) + " " + atomA + " " + to_string(chain_spinA) + ") ("
-					+ to_string(spinsAB[i].second.get_rsd()) + " " + atomB + " " + to_string(chain_spinB) + ")\" from RDC datafile into pose numbering. Residue number was not found." );
+				utility_exit_with_message( "ERROR: Cannot convert AtomSelection \"(" + to_string(spinsAB[i].first.get_rsd()) + " " + atomA + " " + chain_spinA + ") ("
+					+ to_string(spinsAB[i].second.get_rsd()) + " " + atomB + " " + chain_spinB + ")\" from RDC datafile into pose numbering. Residue number was not found." );
 			}
 		} else { // Assume pose numbering instead
 			TR.Warning << "Cannot convert residue numbers from pdb to pose numbering. No PDBInfo object. Make sure to provide residues in pose numbering in RDC datafile instead." << std::endl;

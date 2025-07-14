@@ -63,7 +63,7 @@ namespace mmtf {
 template < typename T >
 inline void
 add_xbond_information(
-	std::map< std::string, utility::vector1< T > >& xbond_map,
+	std::map< ResID, utility::vector1< T > >& xbond_map,
 	core::io::AtomInformation const & atm_1,
 	core::io::AtomInformation const & atm_2)
 {
@@ -76,23 +76,14 @@ add_xbond_information(
 	xbond.chainID1 = atm_1.chainID;
 	xbond.resSeq1 = atm_1.resSeq;
 	xbond.iCode1 = atm_1.iCode;
-	{
-		std::stringstream strstr;
-		strstr << std::setw( 4 ) << std::right << xbond.resSeq1 << xbond.iCode1 << xbond.chainID1;
-		xbond.resID1 = strstr.str();
-	}
+	xbond.resID1 = ResID( xbond.resSeq1, xbond.iCode1, xbond.chainID1);
 
 	xbond.name2 = utility::pad_atom_name(atm_2.name);
 	xbond.resName2 = atm_2.resName;
 	xbond.chainID2 = atm_2.chainID;
 	xbond.resSeq2 = atm_2.resSeq;
 	xbond.iCode2 = atm_2.iCode;
-	xbond.resID2 = std::to_string(xbond.resSeq2) + xbond.iCode2 + xbond.chainID2;
-	{
-		std::stringstream strstr;
-		strstr << std::setw( 4 ) << std::right << xbond.resSeq2 << xbond.iCode2 << xbond.chainID2;
-		xbond.resID2 = strstr.str();
-	}
+	xbond.resID2 = ResID( xbond.resSeq2, xbond.iCode2, xbond.chainID2 );
 	xbond.length = atm_1_xyz.distance(atm_2_xyz);
 
 	if ( xbond_map.count( xbond.resID1 ) ) {
@@ -154,7 +145,7 @@ make_atom_information(
 	core::Size const atomSerial,
 	core::Size const groupIndex,
 	core::Size const chainIndex,
-	utility::vector1<char> & known_chainIDs,
+	utility::vector1<std::string> & known_chainIDs,
 	core::io::StructFileReaderOptions const & options )
 {
 	core::io::AtomInformation ai;
@@ -357,12 +348,12 @@ add_ters_via_bonds(std::vector< core::io::AtomInformation > & all_AIs,
 	// so you have to loop through all.  Note! reset the counter at 0 for new
 	// models!
 	int terCount(0), current_residue(0);
-	char current_chain('^');
+	std::string current_chain("^");
 	core::Size current_model(0);
 	for ( core::Size i=0; i<all_AIs.size(); ++i ) {
 		if ( i > 0 && ai_to_model[i] != current_model ) {
 			current_residue = 0;
-			current_chain = '^';
+			current_chain = "^";
 			current_model = ai_to_model[i];
 			terCount = 0;
 		}
@@ -372,7 +363,7 @@ add_ters_via_bonds(std::vector< core::io::AtomInformation > & all_AIs,
 		}
 		if ( current_residue != 0 && (current_residue != all_AIs[i].resSeq || current_chain != all_AIs[i].chainID) ) {
 			current_residue = 0;
-			current_chain = '^';
+			current_chain = "^";
 			++terCount;
 		}
 		all_AIs[i].terCount = terCount;
@@ -460,8 +451,13 @@ read_extra_data(
 	///// 1. Rosetta IO
 	map_decode_from_model(modelProperties_MD, "rosetta::heterogen_names", false,
 		model_index, sfr->heterogen_names());
+
+	std::map< std::string, std::pair< std::string, std::string > > base_names;
 	map_decode_from_model(modelProperties_MD, "rosetta::residue_type_base_names", false,
-		model_index, sfr->residue_type_base_names());
+		model_index, base_names);
+	for (auto const & pairing: base_names ) {
+		sfr->residue_type_base_names()[ resid_from_tag(pairing.first) ] = pairing.second;
+	}
 
 	///// 2. SimpleMetrics
 	ExtraDataEnumManager manager = ExtraDataEnumManager();
@@ -574,9 +570,9 @@ create_sfrs_from_mmtf_filename(
 
 	for ( core::Size const & model_index : model_indexes ) {
 		core::io::StructFileRepOP sfr( utility::pointer::make_shared<core::io::StructFileRep>() );
-		std::map<char, core::io::ChainAtoms> atom_chain_map;
-		std::map<char, std::vector<core::Size>> atom_idx_chain_map;
-		std::vector< char > chain_list; // preserve order
+		std::map<std::string, core::io::ChainAtoms> atom_chain_map;
+		std::map<std::string, std::vector<core::Size>> atom_idx_chain_map;
+		std::vector< std::string > chain_list; // preserve order
 		for ( core::Size i=0; i<all_AIs.size(); ++i ) {
 			core::io::AtomInformation const & ai(all_AIs[i]);
 			if ( model_index != ai_to_model[i] ) continue;
@@ -589,7 +585,7 @@ create_sfrs_from_mmtf_filename(
 		add_link_and_ss_information(sd, *sfr, all_AIs, ai_to_model, model_index);
 
 		std::vector<std::vector<core::Size>> atom_idx_chains;
-		for ( char const & i : chain_list ) { // std::vector
+		for ( std::string const & i : chain_list ) { // std::vector
 			sfr->chains().push_back( atom_chain_map.find( i )->second );
 			atom_idx_chains.push_back( atom_idx_chain_map.find( i )->second );
 		}

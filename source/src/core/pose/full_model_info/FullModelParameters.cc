@@ -82,7 +82,7 @@ FullModelParameters::FullModelParameters( std::string const & full_sequence ):
 	initialize_parameters( *this );
 	for ( Size n = 1; n <= core::pose::rna::remove_bracketed( full_sequence ).size(); n++ ) {
 		conventional_numbering_.push_back( n );
-		conventional_chains_.push_back( ' ' );
+		conventional_chains_.push_back( " " );
 		conventional_segids_.push_back( "    " );
 	}
 }
@@ -103,7 +103,7 @@ FullModelParameters::FullModelParameters( std::string const & full_sequence,
 			fixed_domain_map.push_back( 0 );
 		}
 		conventional_numbering_.push_back( static_cast<int>( n ) );
-		conventional_chains_.push_back( ' ' );
+		conventional_chains_.push_back( " " );
 		conventional_segids_.push_back( "    " );
 	}
 	set_parameter( FIXED_DOMAIN, fixed_domain_map );
@@ -239,7 +239,7 @@ void
 FullModelParameters::get_sequence_with_gaps_filled_with_n( pose::Pose const & pose,
 	std::string & sequence,
 	utility::vector1< int >  & conventional_numbering,
-	utility::vector1< char > & conventional_chains,
+	utility::vector1< std::string > & conventional_chains,
 	utility::vector1< std::string > & conventional_segids,
 	utility::vector1< Size > & res_list
 ) const {
@@ -262,7 +262,7 @@ FullModelParameters::get_sequence_with_gaps_filled_with_n( pose::Pose const & po
 				conventional_chains.push_back( pose.pdb_info()->chain( n ) );
 				conventional_segids.push_back( pose.pdb_info()->segmentID( n ) );
 			} else {
-				conventional_chains.push_back( ' ' );
+				conventional_chains.push_back( " " );
 				conventional_segids.push_back( "    " );
 			}
 			count++;
@@ -273,7 +273,7 @@ FullModelParameters::get_sequence_with_gaps_filled_with_n( pose::Pose const & po
 			conventional_chains.push_back( pose.pdb_info()->chain( n ) );
 			conventional_segids.push_back( pose.pdb_info()->segmentID( n ) );
 		} else {
-			conventional_chains.push_back( ' ' );
+			conventional_chains.push_back( " " );
 			conventional_segids.push_back( "    " );
 		}
 		res_list.push_back( ++count );
@@ -370,10 +370,10 @@ FullModelParameters::has_conventional_residue( int const res_num ) const {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
-FullModelParameters::conventional_to_full( std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & resnum_and_chain_and_segid ) const {
+FullModelParameters::conventional_to_full( std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & resnum_and_chain_and_segid ) const {
 	utility::vector1< Size > res_list_in_full_numbering;
 	utility::vector1< int  > const & resnum = std::get< 0 >( resnum_and_chain_and_segid );
-	utility::vector1< char > const & chain  = std::get< 1 >( resnum_and_chain_and_segid );
+	utility::vector1< std::string > const & chain  = std::get< 1 >( resnum_and_chain_and_segid );
 	utility::vector1< std::string > const & segid  = std::get< 2 >( resnum_and_chain_and_segid );
 	// AMW TODO: There is an issue in how segid is sometimes empty here. It should probably
 	// be filled by all clients of this function, so this function can check for that...
@@ -403,7 +403,7 @@ FullModelParameters::conventional_to_full( std::tuple< utility::vector1< int >, 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Size
-FullModelParameters::conventional_to_full( int const res_num, char const chain, std::string const & segid ) const {
+FullModelParameters::conventional_to_full( int const res_num, std::string const & chain, std::string const & segid ) const {
 	using namespace ObjexxFCL;
 	bool found_match( false );
 	Size res_num_in_full_numbering( 0 );
@@ -414,7 +414,7 @@ FullModelParameters::conventional_to_full( int const res_num, char const chain, 
 	for ( Size n = 1; n <= conventional_numbering_.size() ; n++ ) {
 		//std::cout << " eval " << n << " " << conventional_numbering_[ n ] << " " << conventional_chains_[ n ] << " \"" << conventional_segids_[ n ] << "\"" << std::endl;
 		if ( res_num != conventional_numbering_[ n ] ) continue;
-		if ( chain != ' ' && conventional_chains_.size() > 0 && conventional_chains_[ n ] != ' ' && chain != conventional_chains_[ n ] ) continue;
+		if ( chain != " " && conventional_chains_.size() > 0 && conventional_chains_[ n ] != " " && chain != conventional_chains_[ n ] ) continue;
 		if ( segid != "    " && conventional_segids_.size() > 0 && conventional_segids_[ n ] != "    " && segid != conventional_segids_[ n ] ) continue;
 		if ( found_match ) utility_exit_with_message( "ambiguous res_num & chain & segid "+ string_of(res_num)+" "+string_of(chain)+" "+segid );
 		res_num_in_full_numbering = n;
@@ -431,10 +431,10 @@ FullModelParameters::conventional_to_full( int const res_num, char const chain, 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-FullModelParameters::has_conventional_residue( int const res_num, char const chain, std::string const & segid ) const {
+FullModelParameters::has_conventional_residue( int const res_num, std::string const & chain, std::string const & segid ) const {
 	for ( Size n = 1; n <= conventional_numbering_.size() ; n++ ) {
 		if ( res_num != conventional_numbering_[ n ] ) continue;
-		if ( chain != ' ' && conventional_chains_.size() > 0 && conventional_chains_[ n ] != ' ' && chain != conventional_chains_[ n ] ) continue;
+		if ( chain != " " && conventional_chains_.size() > 0 && conventional_chains_[ n ] != " " && chain != conventional_chains_[ n ] ) continue;
 		if ( segid != "    " && conventional_segids_.size() > 0 && conventional_segids_[ n ] != "    " && segid != conventional_segids_[ n ] ) continue;
 		return true;
 	}
@@ -452,10 +452,10 @@ FullModelParameters::full_to_conventional( utility::vector1< Size > const & res_
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > >
+std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > >
 FullModelParameters::full_to_conventional_resnum_and_chain_and_segid( utility::vector1< Size > const & res_list ) const {
 	utility::vector1< int > conventional_numbering_in_res_list;
-	utility::vector1< char > conventional_chains_in_res_list;
+	utility::vector1< std::string > conventional_chains_in_res_list;
 	utility::vector1< std::string > conventional_segids_in_res_list;
 	for ( Size n = 1; n <= res_list.size(); n++ ) {
 		Size const & res_num = res_list[ n ];
@@ -466,7 +466,7 @@ FullModelParameters::full_to_conventional_resnum_and_chain_and_segid( utility::v
 		if ( conventional_chains_.size() > 0 ) {
 			conventional_chains_in_res_list.push_back( conventional_chains_[ res_num ] );
 		} else {
-			conventional_chains_in_res_list.push_back( ' ' );
+			conventional_chains_in_res_list.push_back( " " );
 		}
 		if ( conventional_segids_.size() > 0 ) {
 			conventional_segids_in_res_list.push_back( conventional_segids_[ res_num ] );
@@ -485,7 +485,7 @@ FullModelParameters::full_to_conventional( Size const res_num ) const {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-std::tuple< int, char, std::string >
+std::tuple< int, std::string, std::string >
 FullModelParameters::full_to_conventional_resnum_and_chain_and_segid( Size const res_num ) const {
 	runtime_assert( res_num >= 1 && res_num <= conventional_numbering_.size() );
 	runtime_assert( res_num <= conventional_chains_.size() || conventional_chains_.size() == 0 );
@@ -498,9 +498,9 @@ FullModelParameters::full_to_conventional_resnum_and_chain_and_segid( Size const
 		}
 	}
 	if ( conventional_segids_.size() > 0 ) {
-		return std::make_tuple( conventional_numbering_[ res_num ], ' ', conventional_segids_[ res_num ] );
+		return std::make_tuple( conventional_numbering_[ res_num ], " ", conventional_segids_[ res_num ] );
 	} else {
-		return std::make_tuple( conventional_numbering_[ res_num ], ' ', "    " );
+		return std::make_tuple( conventional_numbering_[ res_num ], " ", "    " );
 	}
 }
 
@@ -602,7 +602,7 @@ operator >>( std::istream & is, FullModelParameters & t )
 		}
 		is >> tag;
 	}
-	std::tuple< utility::vector1<int>, utility::vector1<char>, utility::vector1< std::string > > resnum_chain;
+	std::tuple< utility::vector1<int>, utility::vector1<std::string>, utility::vector1< std::string > > resnum_chain;
 	runtime_assert ( !is.fail() && ( tag == "CONVENTIONAL_RES_CHAIN_SEGID" || tag == "CONVENTIONAL_RES_CHAIN" ) );
 	for ( bool ok = true; ok ; ) {
 		is >> tag;
@@ -763,7 +763,7 @@ FullModelParameters::read_global_seq_info( std::string const & global_seq_file )
 	global_sequence_ = fasta_sequences[ 1 ]->sequence();
 
 	// Fill in global mapping
-	utility::vector1< char > global_to_pdb_chains;
+	utility::vector1< std::string > global_to_pdb_chains;
 	utility::vector1< std::string > global_to_pdb_segids;
 	utility::vector1< int  > global_to_pdb_numbering; // Length is same as global sequence, values are PDB numbering
 	core::sequence::get_conventional_chains_and_numbering( fasta_sequences, global_to_pdb_chains, global_to_pdb_numbering, global_to_pdb_segids );
@@ -799,7 +799,7 @@ FullModelParameters::read_disulfides( std::string const & disulfide_file ) {
 		if ( line[0] == '#' || line[0] == '\n' || line.size() == 0 ) continue;
 
 		bool string_is_ok( false );
-		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > resnum_and_chain = utility::get_resnum_and_chain_and_segid( line, string_is_ok );
+		std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > resnum_and_chain = utility::get_resnum_and_chain_and_segid( line, string_is_ok );
 		runtime_assert( string_is_ok );
 		runtime_assert( std::get< 0 >( resnum_and_chain ).size() == 2 );
 		runtime_assert( std::get< 1 >( resnum_and_chain ).size() == 2 );
@@ -846,7 +846,7 @@ FullModelParameters::slice( utility::vector1< Size > const & slice_res ) const
 
 	std::string full_sequence_new;
 	utility::vector1< int >  conventional_numbering_new; // permits user to use numbering other than 1, 2, 3...
-	utility::vector1< char > conventional_chains_new;    // permits user to use chains other than A, B, C, ..
+	utility::vector1< std::string > conventional_chains_new;    // permits user to use chains other than A, B, C, ..
 	utility::vector1< std::string > conventional_segids_new;
 	std::map< Size, std::string > non_standard_residue_map_new; // for DNA, non-natural protein/RNA, ligands, ions, etc.
 

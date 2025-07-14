@@ -106,7 +106,7 @@ public:
 /// @details Upon creation of new residue records, e.g. when calling the
 ///  constructors without 'init' or appending/prepending residues, the
 ///  chain letter for the new records will be set to a character, currently
-///  '^', denoting "empty record".  This character may be looked up by
+///  "^", denoting "empty record".  This value may be looked up by
 ///  calling the static method PDBInfo::empty_record().
 /// @remarks Class implementation is biased towards simplicity and fast lookup.
 ///  Residue/atom information are kept in vectors.  An internally maintained
@@ -183,8 +183,8 @@ public: // structs
 			segmentID( "    " )
 		{}
 
-		/// @brief chain letter
-		char chainID;
+		/// @brief chain -- Normally a letter, but can be longer
+		std::string chainID;
 		/// @brief residue sequence number
 		int resSeq;
 		/// @brief insertion code
@@ -420,8 +420,8 @@ public: // state
 	/// currently '^'
 	inline
 	static
-	char empty_record() {
-		return '^';
+	std::string empty_record() {
+		return "^";
 	}
 
 
@@ -623,7 +623,7 @@ public: // single residue accessors
 	///     PDBInfo.pdb2pose
 	///     PDBInfo.pose2pdb
 	inline
-	char const &
+	std::string const &
 	chain( Size const res ) const
 	{
 		//PyAssert( (res>0) && (res<=residue_rec_.size()), "PDBInfo::chain( Size const res): res is not in this PDBInfo!" );
@@ -700,7 +700,7 @@ public: // single residue accessors
 	inline
 	Size
 	pdb2pose(
-		char const chain,
+		std::string const & chain,
 		int const res,
 		char const icode = ' ',
 		std::string const & segmentID = "    "
@@ -748,9 +748,8 @@ public: // single residue accessors
 public: // single residue mutators
 
 
-	/// @brief Sets the chain letter of pose residue  <res>  to  <chain_id>
-	/// @remarks chain_id should not be the empty record character, currently '^'
-	/// @brief Returns the pdb insertion code of residue  <res>
+	/// @brief Sets the chain id of pose residue  <res>  to  <chain_id>
+	/// @remarks chain_id should not be the empty record character, currently "^"
 	///
 	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 	///
@@ -764,7 +763,7 @@ public: // single residue mutators
 	void
 	chain(
 		Size const res,
-		char const chain_id
+		std::string const & chain_id
 	);
 
 
@@ -837,7 +836,7 @@ public: // single residue mutators
 	void
 	set_resinfo(
 		Size const res,
-		char const chain_id,
+		std::string const & chain_id,
 		int const pdb_res,
 		char const ins_code = ' ',
 		std::string const & segmentID = "    ",
@@ -1119,58 +1118,52 @@ public: // residue accessors en masse
 public: // residue mutators en masse
 
 
-	/// @brief Sets all residue chain ids to the character  <id>
-	///
-	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
-	///
-	void set_chains( char const id );
+/// @brief Sets the residue chain letters from some string container, iterator version
+/// @warning This function does not check if number of elements within span
+/// of iterators exceeds number of residues currently defined in object.
+/// User must ensure this independently.
+///
+/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+///
+template< typename StringIterator >
+inline
+void
+set_chains(
+	StringIterator const & begin,
+	StringIterator const & end
+)
+{
+	auto rr = residue_rec_.begin();
 
-
-	/// @brief Sets the residue chain letters from some char container, iterator version
-	/// @warning This function does not check if number of elements within span
-	/// of iterators exceeds number of residues currently defined in object.
-	/// User must ensure this independently.
-	///
-	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
-	///
-	template< typename CharIterator >
-	inline
-	void
-	set_chains(
-		CharIterator const & begin,
-		CharIterator const & end
-	)
-	{
-		auto rr = residue_rec_.begin();
-
-		for ( CharIterator i = begin; i < end; ++i, ++rr ) {
-			rr->chainID = *i;
-			debug_assert( rr < residue_rec_.end() );
-		}
-
-		rebuild_pdb2pose();
+	for ( StringIterator i = begin; i < end; ++i, ++rr ) {
+		rr->chainID = *i;
+		debug_assert( rr < residue_rec_.end() );
 	}
 
+	rebuild_pdb2pose();
+}
 
-	/// @brief Sets the residue chain letters from some char container, e.g. utility::vector1
-	/// @details Container must have const .size(), .begin() and .end() iterator
-	/// access methods.
-	/// @warning This function checks for size first and will cause failure if
-	/// size of container does not match number of residues currently defined
-	/// in object.
-	///
-	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
-	///
-	template< typename CharContainer >
-	inline
-	void
-	set_chains( CharContainer const & c )
-	{
-		debug_assert( residue_rec_.size() == c.size() );
-		check_residue_records_size( c.size() ); // run-time check
 
-		set_chains( c.begin(), c.end() );
-	}
+
+/// @brief Sets the residue chain letters from some string container, e.g. utility::vector1
+/// @details Container must have const .size(), .begin() and .end() iterator
+/// access methods.
+/// @warning This function checks for size first and will cause failure if
+/// size of container does not match number of residues currently defined
+/// in object.
+///
+/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+///
+template< typename StringContainer >
+inline
+void
+set_chains( StringContainer const & c )
+{
+	debug_assert( residue_rec_.size() == c.size() );
+	check_residue_records_size( c.size() ); // run-time check
+
+	set_chains( c.begin(), c.end() );
+}
 
 
 	/// @brief Sets the pdb sequence residue numbering from some int container, iterator version

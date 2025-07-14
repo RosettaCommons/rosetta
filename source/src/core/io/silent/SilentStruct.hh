@@ -320,7 +320,7 @@ public:
 	void get_parent_remark_from_line( std::string const & line );
 
 	void set_residue_numbers( utility::vector1< int > const & residue_numbers ){ residue_numbers_ = residue_numbers;}
-	void set_chains( utility::vector1< char > const & chains ){ chains_ = chains;}
+	void set_chains( utility::vector1< std::string > const & chains ){ chains_ = chains;}
 	void set_full_model_parameters( core::pose::full_model_info::FullModelParametersCOP setting ){ full_model_parameters_ = setting; }
 	core::pose::full_model_info::FullModelParametersCOP full_model_parameters() const{ return full_model_parameters_; }
 
@@ -402,7 +402,7 @@ private:
 	utility::vector1< std::string > pdbinfo_labels_;
 
 	utility::vector1< int > residue_numbers_; // can be derived from PDB info.
-	utility::vector1< char > chains_; // can be derived from PDB info.
+	utility::vector1< std::string > chains_; // can be derived from PDB info.
 	utility::vector1< SilentStructOP > other_struct_list_;
 	core::pose::full_model_info::FullModelParametersCOP full_model_parameters_;
 	utility::vector1< std::string > segment_IDs_;

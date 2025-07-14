@@ -85,7 +85,7 @@ initialize_tag_is_done( std::string const & silent_file ){
 void
 figure_out_residue_numbers_from_line( std::istream & line_stream,
 	utility::vector1< int > & residue_numbers,
-	utility::vector1< char > & chains,
+	utility::vector1< std::string > & chains,
 	utility::vector1< std::string > & segids )
 {
 	std::string resnum_string;
@@ -94,13 +94,13 @@ figure_out_residue_numbers_from_line( std::istream & line_stream,
 	line_stream >> resnum_string;
 	while ( !line_stream.fail() ) {
 		bool string_ok( false );
-		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > resnum_and_chain = utility::get_resnum_and_chain_and_segid( resnum_string, string_ok );
+		std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > resnum_and_chain = utility::get_resnum_and_chain_and_segid( resnum_string, string_ok );
 		utility::vector1< int >  const & resnums      = std::get< 0 >( resnum_and_chain );
-		utility::vector1< char > const & chainchars  = std::get< 1 >( resnum_and_chain );
+		utility::vector1< std::string > const & chainchars  = std::get< 1 >( resnum_and_chain );
 		utility::vector1< std::string > const & segidstrs  = std::get< 2 >( resnum_and_chain );
 		if ( string_ok ) {
 			for ( int resnum : resnums ) residue_numbers.push_back( resnum );
-			for ( char chainchar : chainchars ) chains.push_back( chainchar );
+			for ( std::string const & chainchar : chainchars ) chains.push_back( chainchar );
 			for ( auto const & segidstr : segidstrs ) segids.push_back( segidstr );
 		} else break;
 		line_stream >> resnum_string;

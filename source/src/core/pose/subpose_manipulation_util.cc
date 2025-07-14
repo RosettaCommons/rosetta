@@ -176,7 +176,7 @@ pdbslice( core::pose::Pose & new_pose,
 	PDBInfoCOP pdb_info = pose.pdb_info();
 	if ( pdb_info ) {
 		utility::vector1< Size > new_numbering;
-		utility::vector1< char > new_chains;
+		utility::vector1< std::string > new_chains;
 		utility::vector1< std::string > new_segids;
 		for ( Size n = 1; n <= slice_res.size(); n++ ) {
 			new_numbering.push_back( pdb_info->number( slice_res[ n ] ) );

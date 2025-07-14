@@ -20,6 +20,7 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/MirrorSymmetricConformation.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
+#include <core/conformation/util.hh>
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
@@ -35,7 +36,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
-#include <basic/pymol_chains.hh>
 #include <core/id/AtomID.hh>
 #include <numeric/random/random.hh>
 
@@ -452,37 +452,33 @@ make_symmetric_pdb_info(
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 	// setup chainID mapping
-	Size nuniqueIDs = basic::get_pymol_num_unique_ids();
-	utility::vector1< bool > asymm_chains(nuniqueIDs, false);
-	utility::vector1< bool > used_chainIDs(nuniqueIDs, false);
-	std::map< std::pair< Size,Size >, Size > symmChainIDMap;
+	std::set< std::string > asymm_chains;
+	std::set< std::string > used_chainIDs;
+
+	std::map< std::pair< std::string,Size >, std::string > symmChainIDMap;
 
 	// 1: find chainIDs in base unit, keep these the same
 	for ( Size res=1; res <= pdb_info_src->nres(); ++res ) {
-		char chn_id = pdb_info_src->chain( res );
-		Size chn_idx = basic::get_pymol_chain_index_1(chn_id);
-		if ( chn_idx!=0 ) {
-			asymm_chains[chn_idx] = used_chainIDs[chn_idx] = true;
-		}
+		std::string chn_id = pdb_info_src->chain( res );
+		asymm_chains.insert( chn_id );
+		used_chainIDs.insert( chn_id );
 	}
 
 	// 2: map (base chain id,clone#) => new chain id
 	Size nclones = symm_info->num_bb_clones();
 	for ( uint clone_i = 1; clone_i <= nclones; ++clone_i ) {
 		for ( Size res=1; res <= pdb_info_src->nres(); ++res ) {
-			char chn_id = pdb_info_src->chain( res );
-			Size chn_idx = basic::get_pymol_chain_index_1(chn_id);
+			std::string chn_id = pdb_info_src->chain( res );
 
-			if ( symmChainIDMap.find( std::make_pair(chn_idx,clone_i) ) == symmChainIDMap.end() ) {
-				uint newchainidx;
-				for ( newchainidx = 1; newchainidx <= nuniqueIDs && used_chainIDs[newchainidx]; ++newchainidx ) ;
+			if ( symmChainIDMap.find( std::make_pair(chn_id,clone_i) ) == symmChainIDMap.end() ) {
+				uint newchainidx = 0;
+				std::string new_chain = "A";
+				do {
+					++newchainidx;
+					new_chain = core::conformation::canonical_chain_letter_for_chain_number(newchainidx, /*extended*/ true );
+				} while ( used_chainIDs.count(new_chain) >= 1 );
 
-				if ( newchainidx > nuniqueIDs ) { // all ids used
-					symmChainIDMap[ std::make_pair(chn_idx,clone_i) ] = 0; // use ' '
-				} else {
-					used_chainIDs[newchainidx] = true;
-					symmChainIDMap[ std::make_pair(chn_idx,clone_i) ] = newchainidx;
-				}
+				symmChainIDMap[ std::make_pair(chn_id,clone_i) ] = new_chain;
 			}
 		}
 	}
@@ -503,8 +499,7 @@ make_symmetric_pdb_info(
 		pdb_info_target->icode( src_res, tgt_icode );
 
 		// chnids in scoring subunit
-		char tgt_chn_id = pdb_info_src->chain( res );
-		Size tgt_chn_idx = basic::get_pymol_chain_index_1(tgt_chn_id);
+		std::string tgt_chn_id = pdb_info_src->chain( res );
 		pdb_info_target->chain( src_res, tgt_chn_id );
 
 		// symmetrize B's
@@ -520,12 +515,12 @@ make_symmetric_pdb_info(
 			pdb_info_target->number( clone_res, tgt_res_id );
 			pdb_info_target->icode( clone_res, tgt_icode );
 
-			int newchn_idx = symmChainIDMap[ std::make_pair(tgt_chn_idx,clone_counter) ];
+			std::string newchn_idx = symmChainIDMap[ std::make_pair(tgt_chn_id,clone_counter) ];
 
-			if ( newchn_idx == 0 ) {
-				pdb_info_target->chain( clone_res, ' ' ); // out of chain IDs
+			if ( newchn_idx.empty() ) {
+				pdb_info_target->chain( clone_res, " " ); // Didn't assign for some reason.
 			} else {
-				pdb_info_target->chain( clone_res, basic::get_pymol_chain(newchn_idx) );
+				pdb_info_target->chain( clone_res, newchn_idx );
 			}
 
 			for ( Size atm=1; atm <= pdb_info_src->natoms(res) /*pose.residue(res).natoms()*/; ++atm ) {
@@ -584,7 +579,7 @@ extract_asymmetric_unit_pdb_info(
 		char icode = pdb_info_src->icode( res );
 		pdb_info_target->icode( res, icode );
 
-		char chn_id = pdb_info_src->chain( res );
+		std::string chn_id = pdb_info_src->chain( res );
 		pdb_info_target->chain( res, chn_id );
 
 		//std::cout << "Remap: " << res << " to " << res_id << chn_id << std::endl;
@@ -609,7 +604,7 @@ extract_asymmetric_unit_pdb_info(
 	// vrt
 	if ( pdb_info_target->nres() > nres ) {
 		pdb_info_target->number( nres+1, 1 );
-		pdb_info_target->chain( nres+1, 'z' );  //fpd  is this a problem???? should this be an "illegal" chainID instead?
+		pdb_info_target->chain( nres+1, "z" );  //fpd  is this a problem???? should this be an "illegal" chainID instead?
 	}
 
 	// rebuild pdb2pose
@@ -1154,7 +1149,7 @@ get_buildingblock_and_neighbor_subs (Pose const &pose_in, utility::vector1<Size>
 }
 
 core::pose::Pose
-get_subpose(Pose const &pose, utility::vector1<std::string> subs) {
+get_subpose(Pose const &pose, utility::vector1<std::pair<Size,std::string>> const & subs) {
 	using namespace basic;
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
@@ -1162,7 +1157,7 @@ get_subpose(Pose const &pose, utility::vector1<std::string> subs) {
 	Pose sub_pose;
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 
-	std::string prev_sub;
+	std::pair<Size,std::string> prev_sub;
 	bool start = true;
 	for ( Size i=1; i<=symm_info->num_total_residues_without_pseudo(); i++ ) {
 		if ( find(subs.begin(),subs.end(), get_resnum_to_subunit_component(pose,i)) == subs.end() ) continue;
@@ -1178,7 +1173,7 @@ get_subpose(Pose const &pose, utility::vector1<std::string> subs) {
 }
 
 utility::vector1<Size>
-get_resis(Pose const &pose, utility::vector1<std::string> subs) {
+get_resis(Pose const &pose, utility::vector1<std::pair<Size,std::string>> const & subs ) {
 	using namespace basic;
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
@@ -1194,7 +1189,7 @@ get_resis(Pose const &pose, utility::vector1<std::string> subs) {
 }
 
 // Contacting intracomponent neighboring subunits
-utility::vector1<std::string>
+utility::vector1< std::pair<Size,std::string> >
 get_full_intracomponent_and_neighbor_subs(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	using namespace basic;
 	using namespace core::conformation::symmetry;
@@ -1213,7 +1208,7 @@ get_full_intracomponent_and_neighbor_subs(Pose const &pose, std::string const & 
 	for ( Size i=1; i<=symm_info->num_independent_residues(); ++i ) {
 		if ( is_upstream(i) ) continue;
 	}
-	utility::vector1<std::string> subs = get_full_intracomponent_subs(pose,sym_dof_name);
+	utility::vector1<std::pair<Size,std::string>> subs = get_full_intracomponent_subs(pose,sym_dof_name);
 	for ( Size i=1; i<=symm_info->num_total_residues_without_pseudo(); ++i ) {
 		if ( is_upstream(i) ) continue;
 		for ( Size j=1; j<=symm_info->num_total_residues_without_pseudo(); j++ ) {
@@ -1250,18 +1245,18 @@ get_full_intracomponent_resis(Pose const &pose, std::string const & sym_dof_name
 }
 
 // Contacting neighbor subunits of the full component building block controlled by the symdof
-utility::vector1<std::string>
+utility::vector1<std::pair<Size,std::string>>
 get_full_intracomponent_neighbor_subs(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	using namespace basic;
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
 
-	utility::vector1<std::string> subs = get_full_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist);
+	utility::vector1<std::pair<Size,std::string>> subs = get_full_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist);
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 
 	// Loop through subunit chains and only keep those that are not the primary subunits of the component(s) controlled by the specified sym_dof.
-	utility::vector1<std::string> full_intracomponent_subs = get_full_intracomponent_subs(pose,sym_dof_name);
-	utility::vector1<std::string> sub_subs;
+	utility::vector1<std::pair<Size,std::string>> full_intracomponent_subs = get_full_intracomponent_subs(pose,sym_dof_name);
+	utility::vector1<std::pair<Size,std::string>> sub_subs;
 	for ( Size i=1; i<=subs.size(); i++ ) {
 		if ( find(full_intracomponent_subs.begin(),full_intracomponent_subs.end(),subs[i])!=full_intracomponent_subs.end() ) continue;
 		sub_subs.push_back(subs[i]);
@@ -1308,7 +1303,7 @@ intracomponent_contact(Pose const &pose, std::string const & sym_dof_name, Real 
 		monomer_upper_bound = i;
 	}
 	bool contact = false;
-	utility::vector1<std::string> full_intracomponent_subs(get_full_intracomponent_subs(pose, sym_dof_name));
+	utility::vector1< std::pair<Size,std::string>> full_intracomponent_subs(get_full_intracomponent_subs(pose, sym_dof_name));
 	for ( Size i=monomer_lower_bound; i<=monomer_upper_bound; ++i ) {
 		for ( Size j=1; j<=symm_info->num_total_residues_without_pseudo(); j++ ) {
 			if ( find(full_intracomponent_subs.begin(),full_intracomponent_subs.end(), get_resnum_to_subunit_component(pose,j) )!=full_intracomponent_subs.end() ) continue;
@@ -1329,7 +1324,7 @@ intracomponent_contact(Pose const &pose, std::string const & sym_dof_name, Real 
 }
 
 // Contacting intracomponent and neighboring subunits
-utility::vector1<std::string>
+utility::vector1< std::pair<Size,std::string> >
 get_intracomponent_and_neighbor_subs(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	using namespace basic;
 	using namespace core::conformation::symmetry;
@@ -1341,7 +1336,7 @@ get_intracomponent_and_neighbor_subs(Pose const &pose, std::string const & sym_d
 
 	Size monomer_lower_bound = 0;
 	Size monomer_upper_bound = 0;
-	utility::vector1<std::string> subs;
+	utility::vector1< std::pair<Size,std::string> > subs;
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 	int jump = sym_dof_jump_num( pose, sym_dof_name );
 	Real const contact_dist_sq = contact_dist * contact_dist;
@@ -1380,18 +1375,18 @@ get_intracomponent_and_neighbor_resis(Pose const &pose, std::string const & sym_
 }
 
 // Contacting intracomponent subunits only
-utility::vector1<std::string>
+utility::vector1<std::pair<Size,std::string>>
 get_intracomponent_subs(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	using namespace basic;
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
 
-	utility::vector1<std::string> subs = get_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist);
+	utility::vector1<std::pair<Size,std::string>> subs = get_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist);
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 
 	// Loop through subunit chains and only keep those that are primary subunits of the component(s) controlled by the specified sym_dof.
-	utility::vector1<std::string> full_intracomponent_subs = get_full_intracomponent_subs(pose,sym_dof_name);
-	utility::vector1<std::string> sub_subs;
+	utility::vector1<std::pair<Size,std::string>> full_intracomponent_subs = get_full_intracomponent_subs(pose,sym_dof_name);
+	utility::vector1<std::pair<Size,std::string>> sub_subs;
 	for ( Size i=1; i<=subs.size(); i++ ) {
 		if ( find(full_intracomponent_subs.begin(),full_intracomponent_subs.end(),subs[i])==full_intracomponent_subs.end() ) continue;
 		sub_subs.push_back(subs[i]);
@@ -1411,18 +1406,18 @@ get_intracomponent_resis(Pose const &pose, std::string const & sym_dof_name, Rea
 }
 
 // Contacting neighbor subunits only
-utility::vector1<std::string>
+utility::vector1<std::pair<Size,std::string>>
 get_neighbor_subs(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	using namespace basic;
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
 
-	utility::vector1<std::string> subs = get_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist);
+	utility::vector1<std::pair<Size,std::string>> subs = get_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist);
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 
 	// Loop through subunit chains and only keep those that are not the primary subunits of the component(s) controlled by the specified sym_dof.
-	utility::vector1<std::string> full_intracomponent_subs = get_full_intracomponent_subs(pose,sym_dof_name);
-	utility::vector1<std::string> sub_subs;
+	utility::vector1<std::pair<Size,std::string>> full_intracomponent_subs = get_full_intracomponent_subs(pose,sym_dof_name);
+	utility::vector1<std::pair<Size,std::string>> sub_subs;
 	for ( Size i=1; i<=subs.size(); i++ ) {
 		if ( find(full_intracomponent_subs.begin(),full_intracomponent_subs.end(),subs[i])!=full_intracomponent_subs.end() ) continue;
 		sub_subs.push_back(subs[i]);
@@ -1441,20 +1436,20 @@ get_neighbor_resis(Pose const &pose, std::string const & sym_dof_name, Real cont
 }
 
 // Contacting intracomponents and intraneighbors
-utility::vector1<std::string>
+utility::vector1< std::pair<Size,std::string> >
 get_intracomponent_and_intraneighbor_subs(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	using namespace basic;
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
 
-	utility::vector1<std::string> subs = get_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist);
+	utility::vector1< std::pair<Size,std::string> > subs = get_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist);
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 
 	// Loop through subunit chains and only keep those that are the primary subunits of the component(s) controlled by the specified sym_dof or neighbors that of the same component.
-	utility::vector1<std::string> sub_subs;
-	utility::vector1<char> components = get_jump_name_to_components(pose,sym_dof_name);
+	utility::vector1< std::pair<Size,std::string> > sub_subs;
+	utility::vector1<std::string> components = get_jump_name_to_components(pose,sym_dof_name);
 	for ( Size i=1; i<=subs.size(); i++ ) {
-		if ( find(components.begin(),components.end(),(char)subs[i].at(subs[i].length()-1))==components.end() ) continue;
+		if ( find(components.begin(),components.end(),subs[i].second) ==components.end() ) continue;
 		sub_subs.push_back(subs[i]);
 	}
 	return sub_subs;
@@ -1471,21 +1466,21 @@ get_intracomponent_and_intraneighbor_resis(Pose const &pose, std::string const &
 }
 
 // Contacting intracomponents and interneighbors
-utility::vector1<std::string>
+utility::vector1<std::pair<Size,std::string>>
 get_intracomponent_and_interneighbor_subs(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	using namespace basic;
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
 
-	utility::vector1<std::string> subs = get_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist);
+	utility::vector1<std::pair<Size,std::string>> subs = get_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist);
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 
 	// Loop through subunit chains and only keep those that are the primary subunits of the component(s) controlled by the specified sym_dof or neighbors that of the not of the same component.
-	utility::vector1<std::string> full_intracomponent_subs = get_full_intracomponent_subs(pose,sym_dof_name);
-	utility::vector1<std::string> sub_subs;
-	utility::vector1<char> components = get_jump_name_to_components(pose,sym_dof_name);
+	utility::vector1<std::pair<Size,std::string>> full_intracomponent_subs = get_full_intracomponent_subs(pose,sym_dof_name);
+	utility::vector1<std::pair<Size,std::string>> sub_subs;
+	utility::vector1<std::string> components = get_jump_name_to_components(pose,sym_dof_name);
 	for ( Size i=1; i<=subs.size(); i++ ) {
-		if ( find(full_intracomponent_subs.begin(),full_intracomponent_subs.end(),subs[i])==full_intracomponent_subs.end() && find(components.begin(),components.end(),(char)subs[i].at(subs[i].length()-1))!=components.end() ) continue;
+		if ( find(full_intracomponent_subs.begin(),full_intracomponent_subs.end(),subs[i])==full_intracomponent_subs.end() && find(components.begin(),components.end(),subs[i].second)!=components.end() ) continue;
 		sub_subs.push_back(subs[i]);
 	}
 	return sub_subs;
@@ -1693,7 +1688,7 @@ get_symdof_subunits(core::pose::Pose const & pose, std::string const & jname){
 	return subs;
 }
 
-utility::vector1<char> symmetric_components(core::pose::Pose const & pose){
+utility::vector1<std::string> symmetric_components(core::pose::Pose const & pose){
 	return symmetry_info(pose)->get_components();
 }
 
@@ -1704,36 +1699,37 @@ bool is_multicomponent(core::pose::Pose const & pose){
 	return symmetry_info(pose)->get_num_components()>=2;
 }
 
-Size get_component_lower_bound(core::pose::Pose const & pose, char c){
+Size get_component_lower_bound(core::pose::Pose const & pose, std::string const & c){
 	return symmetry_info(pose)->get_component_lower_bound(c);
 }
-Size get_component_upper_bound(core::pose::Pose const & pose, char c){
+Size get_component_upper_bound(core::pose::Pose const & pose, std::string const & c){
 	return symmetry_info(pose)->get_component_upper_bound(c);
 }
-char get_component_of_residue(core::pose::Pose const & pose, Size ir){
+std::string get_component_of_residue(core::pose::Pose const & pose, Size ir){
 	return symmetry_info(pose)->get_component_of_residue(ir);
 }
-char get_subunit_name_to_component(core::pose::Pose const & pose, std::string const & vname){
+std::string get_subunit_name_to_component(core::pose::Pose const & pose, std::string const & vname){
 	return symmetry_info(pose)->get_subunit_name_to_component(vname);
 }
-utility::vector1<char> const & get_jump_name_to_components(core::pose::Pose const & pose, std::string const & jname){
+utility::vector1<std::string> const & get_jump_name_to_components(core::pose::Pose const & pose, std::string const & jname){
 	return symmetry_info(pose)->get_jump_name_to_components(jname);
 }
 utility::vector1<Size> const & get_jump_name_to_subunits(core::pose::Pose const & pose, std::string const & jname){
 	return symmetry_info(pose)->get_jump_name_to_subunits(jname);
 }
 
-std::string get_resnum_to_subunit_component(core::pose::Pose const & pose, Size const & resnum) {
-	return ObjexxFCL::string_of(symmetry_info(pose)->subunit_index(resnum)) + symmetry_info(pose)->get_component_of_residue(resnum);
+std::pair< Size, std::string> get_resnum_to_subunit_component(core::pose::Pose const & pose, Size const & resnum) {
+	return std::make_pair( symmetry_info(pose)->subunit_index(resnum), symmetry_info(pose)->get_component_of_residue(resnum) );
 }
 
-utility::vector1<std::string> get_full_intracomponent_subs(core::pose::Pose const & pose, std::string const & jname){
-	utility::vector1<char> components = get_jump_name_to_components(pose,jname);
+utility::vector1< std::pair<Size,std::string> >
+get_full_intracomponent_subs(core::pose::Pose const & pose, std::string const & jname){
+	utility::vector1<std::string> components = get_jump_name_to_components(pose,jname);
 	utility::vector1<Size> intrasubs = get_jump_name_to_subunits(pose,jname);
-	utility::vector1<std::string> full_intracomponent_subs;
+	utility::vector1< std::pair<Size,std::string> > full_intracomponent_subs;
 	for ( Size c=1; c<=components.size(); c++ ) {
 		for ( Size s=1; s<=intrasubs.size(); s++ ) {
-			full_intracomponent_subs.push_back(ObjexxFCL::string_of(intrasubs[s]) + components[c]);
+			full_intracomponent_subs.push_back( std::make_pair( intrasubs[s], components[c] ) );
 		}
 	}
 	return full_intracomponent_subs;
