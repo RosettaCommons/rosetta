@@ -26,11 +26,11 @@
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/AtomICoor.hh>
-#include <core/chemical/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -383,12 +383,10 @@ PeptideStubMover::assign_chain_ids(
 	runtime_assert( pose.pdb_info() != nullptr );
 	core::pose::PDBInfo & pdbinfo = * pose.pdb_info();
 
-	std::string const chainids = core::chemical::one_indexed_chr_chains();
-
 	for ( core::Size const ir : resids( pose ) ) {
 		core::Size const nlabels_before = pdbinfo.get_reslabels( ir ).size();
 
-		char const chainid = chainids[ std::min< core::Size >( pose.chain(ir), 62 ) ];
+		std::string chainid = core::conformation::canonical_chain_letter_for_chain_number( pose.chain(ir) );
 
 		pdbinfo.set_resinfo(
 			ir,

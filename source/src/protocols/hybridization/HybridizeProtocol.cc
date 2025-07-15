@@ -739,7 +739,7 @@ void HybridizeProtocol::add_template(
 	std::string const & cst_fn,
 	std::string const & symm_file,
 	core::Real const weight,
-	utility::vector1<char> const & randchains,
+	utility::vector1<std::string> const & randchains,
 	bool const align_pdb_info)
 {
 	core::chemical::ResidueTypeSetCOP const residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
@@ -772,7 +772,7 @@ void HybridizeProtocol::add_null_template(
 	template_weights_.push_back(weight);
 	template_chunks_.push_back(protocols::loops::Loops());
 	template_contigs_.push_back(protocols::loops::Loops());
-	randomize_chains_.push_back(utility::vector1<char>(0));
+	randomize_chains_.push_back(utility::vector1<std::string>());
 }
 
 void HybridizeProtocol::add_template(
@@ -780,7 +780,7 @@ void HybridizeProtocol::add_template(
 	std::string const & cst_fn,
 	std::string const & symm_file,
 	core::Real const weight,
-	utility::vector1<char> const & rand_chains,
+	utility::vector1<std::string> const & rand_chains,
 	std::string const & filename,
 	bool const align_pdb_info)
 {
@@ -1215,7 +1215,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			}
 
 			for ( core::Size i=1; i<=templates_[initial_template_index]->size(); ++i ) {
-				char chain = templates_[initial_template_index]->pdb_info()->chain(i);
+				std::string chain = templates_[initial_template_index]->pdb_info()->chain(i);
 				if ( std::find(
 						randomize_chains_[initial_template_index].begin(),
 						randomize_chains_[initial_template_index].end(),
@@ -1256,7 +1256,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 				for ( core::Size i=1; i<=templates_[initial_template_index]->size(); ++i ) {
 					core::conformation::Residue const & rsd_i = template_orig.residue(i);
-					char chain = templates_[initial_template_index]->pdb_info()->chain(i);
+					std::string chain = templates_[initial_template_index]->pdb_info()->chain(i);
 					if ( std::find(
 							randomize_chains_[initial_template_index].begin(),
 							randomize_chains_[initial_template_index].end(),
@@ -2083,15 +2083,10 @@ HybridizeProtocol::parse_my_tag(
 			std::string const symm_file = (*tag_it)->getOption<std::string>( "symmdef", "" );
 
 			// randomize some chains
-			utility::vector1< char > rand_chains;
+			utility::vector1< std::string  > rand_chains;
 			if ( (*tag_it)->hasOption( "randomize" ) ) {
 				std::string rand_chain_str = (*tag_it)->getOption<std::string>( "randomize", "" );
-				utility::vector1< std::string > rand_chain_strs = utility::string_split( rand_chain_str, ',');
-				for ( core::Size j = 1; j<=rand_chain_strs.size(); ++j ) {
-					if ( rand_chain_strs[j].length() != 0 ) {
-						rand_chains.push_back( rand_chain_strs[j][0] );
-					}
-				}
+				rand_chains = utility::string_split( rand_chain_str, ',');
 			}
 			bool const align_pdb_info = (*tag_it)->getOption<bool>( "auto_align", true );
 			add_template(template_fn, cst_fn, symm_file, weight, rand_chains, align_pdb_info);

@@ -315,12 +315,12 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 		"invalid anchor indexing in FlexPepDock parameter file (or in default FlexPepDock parameters)");
 
 	// multichain receptor
-	if ( ! flags_.pep_fold_only && flags_.receptor_chain().size() > 1 ) {
+	if ( ! flags_.pep_fold_only && flags_.receptor_chains().size() > 1 ) {
 		core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
 		core::Size resi = 1;
-		core::Size chain = 0;
-		while ( resi < pose.size() && chain < flags_.receptor_chain().size()-1 ) {
-			if ( pdbinfo->chain(resi+1) != flags_.receptor_chain().at(chain) ) {
+		core::Size chain = 1;
+		while ( resi < pose.size() && chain < flags_.receptor_chains().size() ) {
+			if ( pdbinfo->chain(resi+1) != flags_.receptor_chains()[chain] ) {
 				int new_jump = ++max_jump;
 				jumps(JUMP_FROM, new_jump) = resi;
 				jumps(JUMP_TO, new_jump) = resi+1;
@@ -340,7 +340,7 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 			cuts ( num_jumps+1 ) = flags_.peptide_last_res();
 			core::Size resi = flags_.receptor_nres() + flags_.peptide_nres() + 1;
 			while ( resi <= pose.size() ) {
-				char currChain = pdbinfo->chain(resi);
+				std::string currChain = pdbinfo->chain(resi);
 				core::Size ligand_jump = ++max_jump;
 				jumps(JUMP_FROM, ligand_jump) = flags_.receptor_anchor_pos; // TODO: this line is probably incompatible with pep_fold_only
 				jumps(JUMP_TO, ligand_jump) = resi;
@@ -1816,13 +1816,16 @@ void FlexPepDockingProtocol::parse_my_tag(
 	flags_.pSer2Glu_centroid = tag->getOption<bool>( "pSer2Glu_centroid", flags_.pSer2Glu_centroid) ;
 
 	if ( tag->hasOption("receptor_chain") ) {
-		flags_.set_receptor_chain
-			( tag->getOption<std::string>( "receptor_chain" ) );
+		utility::vector1< std::string > receptor_chains;
+		for ( char c: tag->getOption<std::string>( "receptor_chain" ) ) {
+			receptor_chains.push_back( std::string{c} );
+		}
+		flags_.set_receptor_chains(receptor_chains);
 		flags_.set_user_defined_receptor(true);
 	}
 	if ( tag->hasOption( "peptide_chain" ) ) {
 		flags_.set_peptide_chain
-			( tag->getOption<std::string>( "peptide_chain" ).at(0) );
+			( tag->getOption<std::string>( "peptide_chain" ) );
 		flags_.set_user_defined_peptide(true);
 	}
 
