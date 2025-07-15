@@ -323,7 +323,7 @@ EllipsoidalRandomizationMover::get_partner_residue_start_stop( core::pose::Pose 
 			}
 		}
 		for ( core::Size i=2; i<= pose_in.size(); ++i ) {
-			if ( pdb_info->chain( i ) == first_chain_second_partner ) {
+			if ( pdb_info->chain( i ) == std::string{first_chain_second_partner} ) {
 				first_residue_second_partner = i;
 				last_residue_first_partner = i-1;
 				break;

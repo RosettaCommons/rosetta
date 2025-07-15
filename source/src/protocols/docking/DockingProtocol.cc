@@ -541,7 +541,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		std::string partner2_chains = partner_split[ 2 ]; // chains comprising partner 2
 
 		// map to store chain : pose number relationship
-		std::map< char, utility::vector1< core::Size >> chain_residue_map;
+		std::map< std::string, utility::vector1< core::Size >> chain_residue_map;
 
 		// loop over residues and store in vectors, by chain
 		for ( core::Size i = 1; i <= pose.size(); ++i ) {
@@ -562,13 +562,13 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 
 		for ( char& c : partner1_chains ) {
 			all_partner1_residues.insert( all_partner1_residues.end(),
-				chain_residue_map[c].begin(),
-				chain_residue_map[c].end() );
+				chain_residue_map[std::string{c}].begin(),
+				chain_residue_map[std::string{c}].end() );
 		}
 		for ( char& c : partner2_chains ) {
 			all_partner2_residues.insert( all_partner2_residues.end(),
-				chain_residue_map[c].begin(),
-				chain_residue_map[c].end() );
+				chain_residue_map[std::string{c}].begin(),
+				chain_residue_map[std::string{c}].end() );
 		}
 
 		p1_start = *std::min_element(all_partner1_residues.begin(), all_partner1_residues.end());

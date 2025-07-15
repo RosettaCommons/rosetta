@@ -467,11 +467,12 @@ VIP_Mover::set_excluded_positions() {
 		// Process one at a time
 
 		core::Size exc_pos;
-		char exc_chain;
+		char exc_chain_char;
 
 		exc_file >> exc_pos;
 		while ( !exc_file.eof() ) {
-			exc_file >> exc_chain;
+			exc_file >> exc_chain_char; // Is it important that this is a single char, or could it be a string?
+			std::string exc_chain = std::string{exc_chain_char};
 			TR << "Adding position " << exc_pos << " chain " << exc_chain << " to exclude list." << std::endl;
 			excluded_positions.push_back( initial_pose.pdb_info()->pdb2pose( exc_chain, exc_pos ) );
 			exc_file >> exc_pos;

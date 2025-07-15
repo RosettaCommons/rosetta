@@ -240,7 +240,7 @@ void
 DrugPolishMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data )
 {
 	maxtrials( tag->getOption< core::Size >( "maxcycles", 10 ) );
-	chain( tag->getOption< char >( "chain", 'X' ) );
+	chain( tag->getOption< std::string >( "chain", "X" ) );
 
 	if ( ! tag->hasOption( "scorer" ) ) {
 		utility_exit_with_message("You must provide a scorer option to the DrugPolishMover for scoring.");

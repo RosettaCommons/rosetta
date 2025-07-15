@@ -320,8 +320,7 @@ InterfaceFeatures::get_all_pose_chains(core::pose::Pose const & pose){
 
 	std::string chains = "";
 	for ( core::Size i = 1; i <= pose.conformation().num_chains(); ++i ) {
-		char chain_c = core::pose::get_chain_from_chain_id(i, pose);
-		std::string chain = utility::to_string(chain_c);
+		std::string chain = core::pose::get_chain_from_chain_id(i, pose);
 		chains = chains+chain;
 	}
 	TR <<"Pose chains: "<<chains << std::endl;

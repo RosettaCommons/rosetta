@@ -234,10 +234,10 @@ void DockingEnsemblePrepackProtocol::finalize_setup( pose::Pose & pose ) {
 
 }
 
-utility::vector1< char > DockingEnsemblePrepackProtocol::get_pose_chains( core::pose::Pose & pose ) {
+utility::vector1< std::string > DockingEnsemblePrepackProtocol::get_pose_chains( core::pose::Pose & pose ) {
 	// returns chains in order of appearance in pose.pdb_info().chain()
-	utility::vector1< char > chain_list;
-	char current_chain;
+	utility::vector1< std::string > chain_list;
+	std::string current_chain;
 	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( i==1 ) {
 			current_chain = pose.pdb_info()->chain(i);
@@ -256,15 +256,16 @@ void DockingEnsemblePrepackProtocol::check_ensemble_member_compatibility() {
 
 	// use the -partners flag to get vectors of chains
 	// compare to chains of each ensemble
-	utility::vector1< char > partner1_chains;
-	utility::vector1< char > partner2_chains;
-	utility::vector1< char > * current_partner = &partner1_chains;
+	utility::vector1< std::string > partner1_chains;
+	utility::vector1< std::string > partner2_chains;
+	utility::vector1< std::string > * current_partner = &partner1_chains;
 
 	// get the string from the -partners flag
 	std::string partners( get_partners() );
 
 	// loop over the string, character by character and split it on the underscore
 	// assume here that ensemble1 is reported first (in my experience this is always the case)
+	// (Note that due to input format limitations, only single letter chains are supported)
 	for ( char & partner : partners ) {
 
 		if ( partner == '_' ) {
@@ -272,7 +273,7 @@ void DockingEnsemblePrepackProtocol::check_ensemble_member_compatibility() {
 			continue;
 		}
 
-		current_partner->push_back(partner);
+		current_partner->push_back(std::string{partner});
 
 	}
 	// ensemble1_/ensemble2_ must be present i.e. not NULL
@@ -288,7 +289,7 @@ void DockingEnsemblePrepackProtocol::check_ensemble_member_compatibility() {
 		// chain based checks only: ensemble 1
 		for ( core::Size i=1; i<=ensemble1_->size(); ++i ) { // outer loop
 			core::pose::Pose c1 = ensemble1_->get_conformer(i);
-			utility::vector1< char > chains = get_pose_chains( c1 );
+			utility::vector1< std::string > chains = get_pose_chains( c1 );
 
 			// if there is a different number of chains in any ensemble member vs. the partners flag, error!
 			if ( chains.size() != partner1_chains.size() ) {
@@ -312,7 +313,7 @@ void DockingEnsemblePrepackProtocol::check_ensemble_member_compatibility() {
 		// chain based checks only: ensemble 2
 		for ( core::Size i=1; i<=ensemble2_->size(); ++i ) { // outer loop
 			core::pose::Pose c1 = ensemble2_->get_conformer(i);
-			utility::vector1< char > chains = get_pose_chains( c1 );
+			utility::vector1< std::string > chains = get_pose_chains( c1 );
 
 			// if there is a different number of chains in any ensemble member vs. the partners flag, error!
 			if ( chains.size() != partner2_chains.size() ) {

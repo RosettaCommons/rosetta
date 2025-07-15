@@ -425,6 +425,7 @@ void PointMutScanDriver::read_mutants_list_file( std::string & list_file ) {
 		// there might be more than one mutation per line!
 		while ( iss.peek() && !iss.eof() ) {
 
+			// RM: Not sure if chain being a single character is critical for the input file format
 			iss >> chain >> wt_residue >> position_code >> mut_residue;
 
 			// check to see if an insertion code is present in the position_code string
@@ -450,7 +451,7 @@ void PointMutScanDriver::read_mutants_list_file( std::string & list_file ) {
 
 			// figure out what the pose residue number for this residue is
 			pose::Pose & pose = input_poses_[ 1 ];
-			core::Size pose_resnum = (pose.pdb_info())->pdb2pose( chain, pdb_resnum, icode );
+			core::Size pose_resnum = (pose.pdb_info())->pdb2pose( std::string{chain}, pdb_resnum, icode );
 
 			if ( pose.residue( pose_resnum ).name1() != wt_residue ) {
 				TR << "wt_residue: " << wt_residue << ", pdb resnum: " << pdb_resnum << ", pose resnum: " << pose_resnum
@@ -460,7 +461,7 @@ void PointMutScanDriver::read_mutants_list_file( std::string & list_file ) {
 
 			//TR << "Found mutation of " << wt_residue << " to " << mut_residue  << " at position " << pose_resnum << " (pdb chain: '" << chain << "', resnum: '" << pdb_resnum << "', icode: '" << icode << "')" << std::endl;
 
-			MutationData md( wt_residue, mut_residue, pose_resnum, pdb_resnum, icode, chain );
+			MutationData md( wt_residue, mut_residue, pose_resnum, pdb_resnum, icode, std::string{chain} );
 			m.add_mutation( md ); // the variable mutations is a vector of vectors!
 
 		} // done parsing line

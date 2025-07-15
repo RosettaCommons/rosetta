@@ -98,7 +98,7 @@ private:
 
 	StringRealMap
 	get_ligand_docking_scores(
-		char chain,
+		std::string const & chain,
 		core::pose::Pose const & after
 	) const;
 

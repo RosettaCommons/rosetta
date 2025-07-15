@@ -28,7 +28,7 @@ namespace dna {
 /// they are parsed here into this little class for convenience
 class DnaDesignDef : public utility::VirtualBase {
 public:
-	char chain;
+	std::string chain;
 	int pdbpos; // store pdb position (can be negative), convert to rosetta index later
 	std::string name3; // store as string, convert to AA or Residue type later
 
