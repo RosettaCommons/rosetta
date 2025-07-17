@@ -1157,7 +1157,7 @@ AntibodyDesignMover::run_optimization_cycle(core::pose::Pose& pose, protocols::m
 	cdrs_to_min[ cdr ] = true;
 	for ( core::Size i = 1; i <= neighbor_min.size(); ++i ) {
 
-		if ( ab_info_->is_camelid() && ab_info_->get_CDR_chain( neighbor_min[ i ] ) == 'L' ) {
+		if ( ab_info_->is_camelid() && ab_info_->get_CDR_chain( neighbor_min[ i ] ) == "L" ) {
 			cdrs_to_min[ neighbor_min[ i ] ] = false;
 		} else {
 			TR <<"Add min neighbors : "<< ab_info_->get_CDR_name( neighbor_min[ i ] )<<std::endl;

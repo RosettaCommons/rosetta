@@ -744,8 +744,8 @@ GeneralAntibodyModeler::repack_antigen_interface(Pose & pose) const {
 
 	core::Real start_e = (*scorefxn_)(pose);
 	core::pack::task::TaskFactoryOP tf = interface_tf_->clone();
-	core::Size L_chain  = core::pose::get_chain_id_from_chain('L', pose);
-	core::Size H_chain = core::pose::get_chain_id_from_chain('H', pose);
+	core::Size L_chain  = core::pose::get_chain_id_from_chain("L", pose);
+	core::Size H_chain = core::pose::get_chain_id_from_chain("H", pose);
 	tf->push_back(utility::pointer::make_shared< PreventChainFromRepackingOperation >(L_chain));
 	tf->push_back(utility::pointer::make_shared< PreventChainFromRepackingOperation >(H_chain));
 
@@ -760,7 +760,7 @@ GeneralAntibodyModeler::repack_antigen_interface(Pose & pose) const {
 
 void
 GeneralAntibodyModeler::repack_antibody_interface(Pose & pose) const {
-	vector1< char > antigen_chains = ab_info_->get_antigen_chains();
+	vector1< std::string > antigen_chains = ab_info_->get_antigen_chains();
 	if ( antigen_chains.size() == 0 ) {
 		TR <<" Antigen not present to detect antibody interface" << std::endl;
 		return;

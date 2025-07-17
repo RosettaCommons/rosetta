@@ -36,7 +36,7 @@ static basic::Tracer TR( "protocols.ligand_evolution.Scorer" ); // NOLINT(cert-e
 namespace protocols {
 namespace ligand_evolution {
 
-Scorer::Scorer( FragmentLibrary& library, core::Size n_runs, char ligand_chain )
+Scorer::Scorer( FragmentLibrary& library, core::Size n_runs, std::string const & ligand_chain )
 :
 	ligand_chain_( ligand_chain ),
 	n_runs_( n_runs ),
@@ -244,7 +244,7 @@ void Scorer::calculate_scores( core::Size save_n_scores ) {
 		if ( term == "ligand_interface_delta" ) {
 			std::map< std::string, core::Real > interface_delta = protocols::ligand_docking::get_interface_deltas( ligand_chain_, *working_pose_, score_function_ );
 			std::string identifier = "interface_delta_";
-			identifier.push_back( ligand_chain_ );
+			identifier.append( ligand_chain_ );
 			core::Real score = interface_delta.at( identifier );
 			TR.Debug << term << ":" << score << "\t";
 			scores[ term ] = score;

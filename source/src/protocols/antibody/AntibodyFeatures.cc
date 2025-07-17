@@ -133,7 +133,7 @@ AntibodyFeatures::report_features(
 		}
 
 		if ( ab_info_->antigen_present() && ! skip_antigen_reports_ ) {
-			utility::vector1<char> antigen_chains = ab_info_->get_antigen_chains();
+			utility::vector1<std::string> antigen_chains = ab_info_->get_antigen_chains();
 			std::string antigen(antigen_chains.begin(), antigen_chains.end());
 
 			db_interfaces["H_"+antigen] = "H_A";

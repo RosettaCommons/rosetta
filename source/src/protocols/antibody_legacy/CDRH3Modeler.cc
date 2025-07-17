@@ -905,7 +905,7 @@ void CDRH3Modeler::scored_frag_close (
 bool CDRH3Modeler::CDR_H3_filter( const pose::Pose & pose_in,
 	core::Size const loop_begin,
 	core::Size const size,
-	char const light_chain )
+	std::string const & light_chain )
 {
 	TR <<  "H3M Checking Kink/Extended CDR H3 Base Angle" << std::endl;
 

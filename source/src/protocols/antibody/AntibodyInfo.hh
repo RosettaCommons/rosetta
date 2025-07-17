@@ -114,7 +114,7 @@ public:
 	CDRNameEnum
 	get_CDR_name_enum(std::string const & cdr_name) const;
 
-	char
+	std::string
 	get_CDR_chain(CDRNameEnum const cdr_name) const {
 		return chains_for_cdrs_[cdr_name];
 	}
@@ -230,27 +230,27 @@ public:
 	/////////////////////////////Antigen and Antibody Chains ////////////////////////////////////////
 
 	/// @brief gets all non-LH chains.  Empty vector if no antigen present.
-	utility::vector1< char >
+	utility::vector1< std::string >
 	get_antigen_chains() const {
 		return chains_for_antigen_;
 	}
 	utility::vector1<core::Size>
 	get_antigen_chain_ids(const core::pose::Pose & pose ) const;
 
-	/// @brief Return the antigen chains as a string
-	std::string
-	get_antigen_chain_string() const;
+//	/// @brief Return the antigen chains as a string
+//	std::string
+//	get_antigen_chain_string() const;
 
 
-	utility::vector1< char >
+	utility::vector1< std::string >
 	get_antibody_chains() const;
 
 	utility::vector1<core::Size>
 	get_antibody_chain_ids(const core::pose::Pose & pose ) const;
 
-	/// @brief Returns H or LH depeding on camelid.
-	std::string
-	get_antibody_chain_string() const;
+//	/// @brief Returns H or LH depeding on camelid.
+//	std::string
+//	get_antibody_chain_string() const;
 
 
 	/// @brief return pose residue number of the first residue of the H3 kink
@@ -315,7 +315,7 @@ public:
 	core::Size
 	get_landmark_resnum(core::pose::Pose const & pose,
 		AntibodyNumberingSchemeEnum const scheme,
-		char const chain,
+		std::string const & chain,
 		core::Size const pdb_resnum,
 		char const insertion_code=' ',
 		bool fail_on_missing_resnum = true) const;
@@ -637,8 +637,8 @@ private:
 	/// Antibody properties
 	H3BaseTypeEnum predicted_H3_base_type_;
 	CDRNameEnum total_cdr_loops_;
-	utility::vector1<char> chains_for_cdrs_;
-	utility::vector1<char> chains_for_antigen_;
+	utility::vector1<std::string> chains_for_cdrs_;
+	utility::vector1<std::string> chains_for_antigen_;
 
 	core::Size L_chain_;
 	core::Size H_chain_;

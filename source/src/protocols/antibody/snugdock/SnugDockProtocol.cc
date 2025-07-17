@@ -455,27 +455,27 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 
 	// create a map to track COM virtual residues
 	// DOES NOT STORE antibody or antigen COM, only for chains
-	std::map < char, core::Size > com_resnum_from_chain;
+	std::map < std::string, core::Size > com_resnum_from_chain;
 
 	// check for number of Ab chains, append one COM VRT for each chain
 	// it will be important to restore these chains to the final pose
 
-	// actually this function returns ['L', 'H'] or ['H'], so we're better off with our own
-	utility::vector1<char> antibody_chain_chars = antibody_info->get_antibody_chains();
+	// actually this function returns ["L", "H"] or ["H"], so we're better off with our own
+	utility::vector1<std::string> antibody_chain_chars = antibody_info->get_antibody_chains();
 
 	// add H chain (always present) and maybe L chain
 	pose_vrt->append_residue_by_jump(*vrt_res, ab_com_resnum + n_vrts - 2);
 	n_vrts++;
-	com_resnum_from_chain['H'] = n_vrts;
-	if ( antibody_chain_chars.index('L') != 0 ) {
+	com_resnum_from_chain["H"] = n_vrts;
+	if ( antibody_chain_chars.index("L") != 0 ) {
 		ab_has_light_chain_ = true;
 		pose_vrt->append_residue_by_jump(*vrt_res, ab_com_resnum + n_vrts - 2);
 		n_vrts++;
-		com_resnum_from_chain['L'] = n_vrts;
+		com_resnum_from_chain["L"] = n_vrts;
 	}
 
 	// do the same for the Ag
-	utility::vector1<char> antigen_chain_chars = antibody_info->get_antigen_chains();
+	utility::vector1<std::string> antigen_chain_chars = antibody_info->get_antigen_chains();
 
 	for ( auto chain : antigen_chain_chars ) {
 		// append to ag_vrt + n_vrts - 3/4 (one for each COM VRT, depending on # Ab chains)
@@ -494,13 +494,13 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 	ft->add_edge(ab_com_resnum, ag_com_resnum, current_jump_num);
 	++current_jump_num; // increment jump number (jump 1, initially)
 	// 2->3 will be Ab-VH
-	TR.Debug << "Adding edge from Ab_COM (" << ab_com_resnum << ") to H (" << com_resnum_from_chain['H'] << "), #" << current_jump_num << std::endl;
-	ft->add_edge(ab_com_resnum, com_resnum_from_chain['H'], current_jump_num);
+	TR.Debug << "Adding edge from Ab_COM (" << ab_com_resnum << ") to H (" << com_resnum_from_chain["H"] << "), #" << current_jump_num << std::endl;
+	ft->add_edge(ab_com_resnum, com_resnum_from_chain["H"], current_jump_num);
 	++current_jump_num;
 	// Vh-Vl is 3->4, if present
 	if ( ab_has_light_chain_ ) {
-		TR.Debug << "Adding edge from H(" << com_resnum_from_chain['H'] << ") to L(" << com_resnum_from_chain['L'] << "), #" << current_jump_num << std::endl;
-		ft->add_edge(com_resnum_from_chain['H'], com_resnum_from_chain['L'], current_jump_num);
+		TR.Debug << "Adding edge from H(" << com_resnum_from_chain["H"] << ") to L(" << com_resnum_from_chain["L"] << "), #" << current_jump_num << std::endl;
+		ft->add_edge(com_resnum_from_chain["H"], com_resnum_from_chain["L"], current_jump_num);
 		vh_vl_jump_ = current_jump_num;
 		++current_jump_num;
 	}
@@ -524,26 +524,26 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 
 	// split the original pose by chain and append each chain to the correct VRT
 	// also, while splitting compute individual chain residues closest to COM
-	std::map < char, ResidueOP > com_VRT_from_chain;
+	std::map < std::string, ResidueOP > com_VRT_from_chain;
 
 	// heavy chain should be append first to match CDR loop placement later on
 	// split particular chain
-	PoseOP single_chain = pose.split_by_chain( get_chain_id_from_chain( 'H', pose ) );
+	PoseOP single_chain = pose.split_by_chain( get_chain_id_from_chain( "H", pose ) );
 	// compute residue nearest to COM that VRT will imitate
-	com_VRT_from_chain['H'] = place_VRT_at_residue_COM( *single_chain, 1, single_chain->size() );
+	com_VRT_from_chain["H"] = place_VRT_at_residue_COM( *single_chain, 1, single_chain->size() );
 
 	// append chain to new pose
-	pose_vrt->append_pose_by_jump(*single_chain, com_resnum_from_chain['H']);
+	pose_vrt->append_pose_by_jump(*single_chain, com_resnum_from_chain["H"]);
 
 	// light chain is next, if present
 	if ( ab_has_light_chain_ ) {
 		// split particular chain
-		PoseOP single_chain = pose.split_by_chain( get_chain_id_from_chain( 'L', pose ) );
+		PoseOP single_chain = pose.split_by_chain( get_chain_id_from_chain( "L", pose ) );
 		// store in order ORIG coords (equivalent to CA), X = N, Y = C (of -1 res)
-		com_VRT_from_chain['L'] = place_VRT_at_residue_COM( *single_chain, 1, single_chain->size() );
+		com_VRT_from_chain["L"] = place_VRT_at_residue_COM( *single_chain, 1, single_chain->size() );
 
 		// append chain to new pose
-		pose_vrt->append_pose_by_jump(*single_chain, com_resnum_from_chain['L']);
+		pose_vrt->append_pose_by_jump(*single_chain, com_resnum_from_chain["L"]);
 	}
 
 	// since new pose only contains antibody residues, we can get antibody COM here!

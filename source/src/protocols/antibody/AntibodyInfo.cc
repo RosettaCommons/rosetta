@@ -299,7 +299,7 @@ core::Size
 AntibodyInfo::get_landmark_resnum(
 	core::pose::Pose const & pose,
 	const AntibodyNumberingSchemeEnum scheme,
-	const char chain, const core::Size pdb_resnum,
+	std::string const & chain, const core::Size pdb_resnum,
 	const char insertion_code,
 	bool fail_on_missing_resnum) const {
 
@@ -392,9 +392,9 @@ void AntibodyInfo::identify_antibody(pose::Pose const & pose){
 	bool H_found = false; vector1<char> H_sequence;
 	bool L_found = false; vector1<char> L_sequence;
 
-	if ( core::pose::has_chain('L', pose) ) {
+	if ( core::pose::has_chain("L", pose) ) {
 		L_found=true;
-		L_chain_ = core::pose::get_chain_id_from_chain('L', pose);
+		L_chain_ = core::pose::get_chain_id_from_chain("L", pose);
 
 		for ( core::Size x = 1; x<=pose.size(); ++x ) {
 			if ( pose.residue(x).chain()==L_chain_ ) {
@@ -404,9 +404,9 @@ void AntibodyInfo::identify_antibody(pose::Pose const & pose){
 		}
 	}
 
-	if ( core::pose::has_chain('H', pose) ) {
+	if ( core::pose::has_chain("H", pose) ) {
 		H_found=true;
-		H_chain_ = core::pose::get_chain_id_from_chain('H', pose);
+		H_chain_ = core::pose::get_chain_id_from_chain("H", pose);
 
 		for ( core::Size x = 1; x<=pose.size(); ++x ) {
 			if ( pose.residue(x).chain()==H_chain_ ) {
@@ -471,8 +471,8 @@ void AntibodyInfo::identify_antibody(pose::Pose const & pose){
 	//Get antigen chains if present.
 	if ( has_antigen_ ) {
 		for ( core::Size i=1; i <= pose.conformation().num_chains(); ++i ) {
-			char chain = core::pose::get_chain_from_chain_id(i, pose);
-			if ( chain != 'L' && chain != 'H' ) {
+			std::string chain = core::pose::get_chain_from_chain_id(i, pose);
+			if ( chain != "L" && chain != "H" ) {
 				chains_for_antigen_.push_back(chain);
 			}
 		}
@@ -509,15 +509,15 @@ void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 
 	chains_for_cdrs_.clear();
 	for ( core::Size i=1; i<=3; ++i ) {
-		chains_for_cdrs_.push_back('H');    // HEAVY chain first
+		chains_for_cdrs_.push_back("H");    // HEAVY chain first
 	}
 	for ( core::Size i=1; i<=3; ++i ) {
-		chains_for_cdrs_.push_back('L');    // light
+		chains_for_cdrs_.push_back("L");    // light
 	}
 
 	//L4/H4
-	chains_for_cdrs_.push_back('H'); //H4
-	chains_for_cdrs_.push_back('L'); //L4
+	chains_for_cdrs_.push_back("H"); //H4
+	chains_for_cdrs_.push_back("L"); //L4
 
 	int loop_start_in_pose, loop_stop_in_pose, cut_position ;
 	loopsop_having_allcdrs_ = utility::pointer::make_shared< loops::Loops >();
@@ -620,101 +620,101 @@ void AntibodyInfo::setup_FrameWorkInfo( pose::Pose const & pose ) {
 		H_end_pos_num=pose.conformation().chain_end(H_chain_);
 
 
-		if (  L_begin_pos_num   >=    get_landmark_resnum(pose, Chothia_Scheme, 'L', 23, ' ', false)   )  {
+		if (  L_begin_pos_num   >=    get_landmark_resnum(pose, Chothia_Scheme, "L", 23, ' ', false)   )  {
 			throw CREATE_EXCEPTION(excn::Exception,  "L chain 1st residue starting after L 23, framework definition failed!!! " );
 		}
-		if (  L_end_pos_num     <=    get_landmark_resnum(pose, Chothia_Scheme, 'L', 97, ' ', false)   ) {
+		if (  L_end_pos_num     <=    get_landmark_resnum(pose, Chothia_Scheme, "L", 97, ' ', false)   ) {
 			throw CREATE_EXCEPTION(excn::Exception,  "L chain last residue ending before L 97, framework definition failed!!! " );
 		}
 	}
 
 
-	if (    H_begin_pos_num    >=     get_landmark_resnum(pose, Chothia_Scheme, 'H', 26, ' ', false )      ) {
+	if (    H_begin_pos_num    >=     get_landmark_resnum(pose, Chothia_Scheme, "H", 26, ' ', false )      ) {
 		throw CREATE_EXCEPTION(excn::Exception,  "H chain 1st residue starting after H 26, framework definition failed!!! " );
 	}
 
-	if (    H_end_pos_num      <=     get_landmark_resnum(pose, Chothia_Scheme, 'H', 103, ' ', false)      ) {
+	if (    H_end_pos_num      <=     get_landmark_resnum(pose, Chothia_Scheme, "H", 103, ' ', false)      ) {
 		throw CREATE_EXCEPTION(excn::Exception,  "H chain last residue ending before H 103, framework definition failed!!! " );
 	}
 
 
 	if ( ! is_camelid_ ) {
-		frmwk.chain_name='L';
-		if (   L_begin_pos_num <= get_landmark_resnum(pose, Chothia_Scheme, 'L',5, ' ', false)      ) { // <= 5
-			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',5, ' ', false);
-			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',6, ' ', false);
+		frmwk.chain_name="L";
+		if (   L_begin_pos_num <= get_landmark_resnum(pose, Chothia_Scheme, "L",5, ' ', false)      ) { // <= 5
+			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, "L",5, ' ', false);
+			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, "L",6, ' ', false);
 			Lfr.push_back(frmwk);
-		} else if (     L_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'L',6, ' ', false)        ) { // 5 <= x <= 6
+		} else if (     L_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, "L",6, ' ', false)        ) { // 5 <= x <= 6
 			frmwk.start=L_begin_pos_num;
-			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',6, ' ', false);
+			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, "L",6, ' ', false);
 			Lfr.push_back(frmwk);
 		}
-		if (   L_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'L',10, ' ', false)      ) { // <= 10
-			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',10, ' ', false);
-			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',23, ' ', false);
+		if (   L_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, "L",10, ' ', false)      ) { // <= 10
+			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, "L",10, ' ', false);
+			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, "L",23, ' ', false);
 			Lfr.push_back(frmwk);
-		} else if (   L_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'L',23, ' ', false)           ) { //  10 <= x <=23
+		} else if (   L_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, "L",23, ' ', false)           ) { //  10 <= x <=23
 			frmwk.start=L_begin_pos_num;
-			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',23, ' ', false);
+			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, "L",23, ' ', false);
 			Lfr.push_back(frmwk);
 		}
-		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',35, ' ', false);
-		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',38, ' ', false);
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, "L",35, ' ', false);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, "L",38, ' ', false);
 		Lfr.push_back(frmwk);
-		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',45, ' ', false);
-		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',49, ' ', false);
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, "L",45, ' ', false);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, "L",49, ' ', false);
 		Lfr.push_back(frmwk);
-		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',57, ' ', false);
-		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',66, ' ', false);
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, "L",57, ' ', false);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, "L",66, ' ', false);
 		Lfr.push_back(frmwk);
-		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',71, ' ', false);
-		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',88, ' ', false);
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, "L",71, ' ', false);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, "L",88, ' ', false);
 		Lfr.push_back(frmwk);
-		if (   L_end_pos_num   >=    get_landmark_resnum(pose, Chothia_Scheme, 'L',105, ' ', false)      ) {
-			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',98, ' ', false);
-			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',105, ' ', false);
+		if (   L_end_pos_num   >=    get_landmark_resnum(pose, Chothia_Scheme, "L",105, ' ', false)      ) {
+			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, "L",98, ' ', false);
+			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, "L",105, ' ', false);
 			Lfr.push_back(frmwk);
 		} else {
-			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',98, ' ', false);
+			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, "L",98, ' ', false);
 			frmwk.stop=L_end_pos_num;
 			Lfr.push_back(frmwk);
 		}
 	}
 
-	frmwk.chain_name='H';
-	if (   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'H',5, ' ', false)      ) { // <= 5
-		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',5, ' ', false);
-		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',6, ' ', false);
+	frmwk.chain_name="H";
+	if (   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, "H",5, ' ', false)      ) { // <= 5
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, "H",5, ' ', false);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, "H",6, ' ', false);
 		Hfr.push_back(frmwk);
-	} else if (   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'H',6, ' ', false)      ) { // 5 <= x <= 6
+	} else if (   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, "H",6, ' ', false)      ) { // 5 <= x <= 6
 		frmwk.start=H_begin_pos_num;
-		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',6, ' ', false);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, "H",6, ' ', false);
 		Hfr.push_back(frmwk);
 	}
-	if (   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'H',10, ' ', false)      ) { // <= 10
-		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',10, ' ', false);
-		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',25, ' ', false);
+	if (   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, "H",10, ' ', false)      ) { // <= 10
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, "H",10, ' ', false);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, "H",25, ' ', false);
 		Hfr.push_back(frmwk);
-	} else if (   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'H',25, ' ', false)      ) { //  10 <= x <=25
+	} else if (   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, "H",25, ' ', false)      ) { //  10 <= x <=25
 		frmwk.start=H_begin_pos_num;
-		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',25, ' ', false);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, "H",25, ' ', false);
 		Hfr.push_back(frmwk);
 	}
-	frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',36, ' ', false);
-	frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',39, ' ', false);
+	frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, "H",36, ' ', false);
+	frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, "H",39, ' ', false);
 	Hfr.push_back(frmwk);
-	frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',46, ' ', false);
-	frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',49, ' ', false);
+	frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, "H",46, ' ', false);
+	frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, "H",49, ' ', false);
 	Hfr.push_back(frmwk);
-	frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',66, ' ', false);
-	frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',94, ' ', false);
+	frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, "H",66, ' ', false);
+	frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, "H",94, ' ', false);
 	Hfr.push_back(frmwk);
-	if (   H_end_pos_num >=  get_landmark_resnum(pose, Chothia_Scheme, 'H',110, ' ', false)         ) {
-		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',103, ' ', false);
-		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',110, ' ', false);
+	if (   H_end_pos_num >=  get_landmark_resnum(pose, Chothia_Scheme, "H",110, ' ', false)         ) {
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, "H",103, ' ', false);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, "H",110, ' ', false);
 		Hfr.push_back(frmwk);
 	} else {
-		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',103, ' ', false);
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, "H",103, ' ', false);
 		frmwk.stop=H_end_pos_num;
 		Hfr.push_back(frmwk);
 	}
@@ -738,12 +738,12 @@ void AntibodyInfo::setup_VL_VH_packing_angle( pose::Pose const & pose ) {
 		return;
 	}
 
-	vector1<char> Chain_IDs_for_packing_angle;
+	vector1<std::string> Chain_IDs_for_packing_angle;
 	Chain_IDs_for_packing_angle.resize(PackingAngleEnum_total);
-	Chain_IDs_for_packing_angle[VL_sheet_1] = 'L';
-	Chain_IDs_for_packing_angle[VL_sheet_2] = 'L';
-	Chain_IDs_for_packing_angle[VH_sheet_1] = 'H';
-	Chain_IDs_for_packing_angle[VH_sheet_2] = 'H';
+	Chain_IDs_for_packing_angle[VL_sheet_1] = "L";
+	Chain_IDs_for_packing_angle[VL_sheet_2] = "L";
+	Chain_IDs_for_packing_angle[VH_sheet_1] = "H";
+	Chain_IDs_for_packing_angle[VH_sheet_2] = "H";
 
 	core::Size packing_angle_start_in_pose, packing_angle_stop_in_pose;
 
@@ -932,7 +932,7 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( pose::Pose const & p
 		}
 
 		if ( !is_basic ) {
-			core::Size L49_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 49);
+			core::Size L49_pose_number = get_landmark_resnum(pose, Chothia_Scheme, "L", 49);
 			char aa_code_L49 = pose.residue( L49_pose_number ).name1();
 			if ( aa_code_L49 == 'R' || aa_code_L49 == 'K' ) {
 				is_basic = true;
@@ -954,7 +954,7 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( pose::Pose const & p
 		is_H3 = true;
 		if ( !is_H3 ) {
 			bool is_basic( false ); // Special basic residue exception flag
-			core::Size L46_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 46);
+			core::Size L46_pose_number = get_landmark_resnum(pose, Chothia_Scheme, "L", 46);
 			char aa_code_L46 = pose.residue( L46_pose_number ).name1();
 			if ( aa_code_L46 == 'R' || aa_code_L46 == 'K' ) {
 				is_basic = true;
@@ -1021,7 +1021,7 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
 	// This is only for rule 1b
 	bool is_basic( false ); // Special basic residue exception flag
 	if ( !is_basic ) {
-		core::Size L49_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 49);
+		core::Size L49_pose_number = get_landmark_resnum(pose, Chothia_Scheme, "L", 49);
 		char aa_code_L49 = pose.residue( L49_pose_number ).name1();
 		if ( aa_code_L49 == 'R' || aa_code_L49 == 'K' ) {
 			is_basic = true;
@@ -1039,11 +1039,11 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
 			( ( cdr_h3_sequence[ 1 ] != 'K') && ( cdr_h3_sequence[ 1 ] != 'R') ) ) {
 		// Rule 1c for kinked form with salt bridge with/without Notable signal (L46)
 		// Special basic residue exception flag
-		core::Size L46_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 46);
+		core::Size L46_pose_number = get_landmark_resnum(pose, Chothia_Scheme, "L", 46);
 		char aa_code_L46 = pose.residue( L46_pose_number ).name1();
 
 		// Special Tyr residue exception flag
-		core::Size L36_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 36);
+		core::Size L36_pose_number = get_landmark_resnum(pose, Chothia_Scheme, "L", 36);
 		char aa_code_L36 = pose.residue( L36_pose_number ).name1();
 
 		if ( ( aa_code_L46 == 'R' || aa_code_L46 == 'K') && aa_code_L36 != 'Y' ) {
@@ -1105,10 +1105,10 @@ Size
 AntibodyInfo::get_CDR_start(CDRNameEnum const cdr_name, pose::Pose const & pose) const {
 
 	if ( cdr_name == l4 ) {
-		return this->get_landmark_resnum(pose, AHO_Scheme, 'L', 82);
+		return this->get_landmark_resnum(pose, AHO_Scheme, "L", 82);
 	}
 	if ( cdr_name == h4 ) {
-		return this->get_landmark_resnum(pose, AHO_Scheme, 'H', 82);
+		return this->get_landmark_resnum(pose, AHO_Scheme, "H", 82);
 	}
 
 	PDBLandmark landmark = *(numbering_info_.cdr_numbering[cdr_name][cdr_start]);
@@ -1128,10 +1128,10 @@ Size
 AntibodyInfo::get_CDR_start(CDRNameEnum const cdr_name, pose::Pose const &  pose, CDRDefinitionEnum const & transform) const {
 
 	if ( cdr_name == l4 ) {
-		return this->get_landmark_resnum(pose, AHO_Scheme, 'L', 82);
+		return this->get_landmark_resnum(pose, AHO_Scheme, "L", 82);
 	}
 	if ( cdr_name == h4 ) {
-		return this->get_landmark_resnum(pose, AHO_Scheme, 'H', 82);
+		return this->get_landmark_resnum(pose, AHO_Scheme, "H", 82);
 	}
 
 	core::Size resnum;
@@ -1159,10 +1159,10 @@ Size
 AntibodyInfo::get_CDR_end(CDRNameEnum const cdr_name, pose::Pose const & pose) const {
 
 	if ( cdr_name == l4 ) {
-		return this->get_landmark_resnum(pose, AHO_Scheme, 'L', 89);
+		return this->get_landmark_resnum(pose, AHO_Scheme, "L", 89);
 	}
 	if ( cdr_name == h4 ) {
-		return this->get_landmark_resnum(pose, AHO_Scheme, 'H', 89);
+		return this->get_landmark_resnum(pose, AHO_Scheme, "H", 89);
 	}
 
 	PDBLandmark landmark = *(numbering_info_.cdr_numbering[cdr_name][cdr_end]);
@@ -1182,10 +1182,10 @@ Size
 AntibodyInfo::get_CDR_end(CDRNameEnum const cdr_name, pose::Pose const & pose, CDRDefinitionEnum const & transform) const {
 
 	if ( cdr_name == l4 ) {
-		return this->get_landmark_resnum(pose, AHO_Scheme, 'L', 89);
+		return this->get_landmark_resnum(pose, AHO_Scheme, "L", 89);
 	}
 	if ( cdr_name == h4 ) {
-		return this->get_landmark_resnum(pose, AHO_Scheme, 'H', 89);
+		return this->get_landmark_resnum(pose, AHO_Scheme, "H", 89);
 	}
 
 	core::Size resnum;
@@ -1210,9 +1210,9 @@ AntibodyInfo::get_CDR_end(CDRNameEnum const cdr_name, pose::Pose const & pose, C
 
 CDRNameEnum
 AntibodyInfo::get_CDRNameEnum_of_residue( core::pose::Pose const & pose, core::Size resnum, bool de_as_framework /* true */) const {
-	char chain = core::pose::get_chain_from_chain_id(pose.chain(resnum), pose);
+	std::string chain = core::pose::get_chain_from_chain_id(pose.chain(resnum), pose);
 
-	if ( chain == 'L' || chain == 'H' ) {
+	if ( chain == "L" || chain == "H" ) {
 
 		//Check if the resnum is part of a CDR:
 		for ( auto const & cdr : get_all_cdrs_present(! de_as_framework) ) {
@@ -1232,9 +1232,9 @@ AntibodyInfo::get_CDRNameEnum_of_residue( core::pose::Pose const & pose, core::S
 
 AntibodyRegionEnum
 AntibodyInfo::get_region_of_residue(const core::pose::Pose& pose, core::Size resnum, bool de_as_framework /* true */) const {
-	char chain = core::pose::get_chain_from_chain_id(pose.chain(resnum), pose);
+	std::string chain = core::pose::get_chain_from_chain_id(pose.chain(resnum), pose);
 
-	if ( chain == 'L' || chain == 'H' ) {
+	if ( chain == "L" || chain == "H" ) {
 
 		//Check if the resnum is part of a CDR:
 		for ( auto const & cdr : get_all_cdrs_present(! de_as_framework) ) {
@@ -1376,7 +1376,7 @@ AntibodyInfo::kink_cation_atoms(const core::pose::Pose & pose) const {
 /// get pose number for light chain residue that is part of the qq constraint
 core::Size
 AntibodyInfo::qq_light_residue(const core::pose::Pose & pose) const{
-	core::Size qq_light_resi = get_landmark_resnum(pose, Chothia_Scheme, 'L', 38);
+	core::Size qq_light_resi = get_landmark_resnum(pose, Chothia_Scheme, "L", 38);
 	core::conformation::Residue qq_light_residue = pose.residue(qq_light_resi);
 	TR << "qq constraint light chain: " << qq_light_resi << std::endl;
 	return qq_light_resi;
@@ -1385,7 +1385,7 @@ AntibodyInfo::qq_light_residue(const core::pose::Pose & pose) const{
 /// get pose number for heavy chain residue that is part of the qq constraint
 core::Size
 AntibodyInfo::qq_heavy_residue(const core::pose::Pose & pose) const{
-	core::Size qq_heavy_resi = get_landmark_resnum(pose, Chothia_Scheme, 'H', 39);
+	core::Size qq_heavy_resi = get_landmark_resnum(pose, Chothia_Scheme, "H", 39);
 	core::conformation::Residue qq_heavy_residue = pose.residue(qq_heavy_resi);
 	TR << "qq constraint heavy chain: " << qq_heavy_resi << std::endl;
 	return qq_heavy_resi;
@@ -1648,18 +1648,18 @@ AntibodyInfo::get_FoldTree_LH_A( pose::Pose const & pose ) const {
 
 	core::Size nres = pose.size();
 	pose::PDBInfoCOP pdb_info = pose.pdb_info();
-	char second_chain = 'H';
+	std::string second_chain = "H";
 	core::Size cutpoint = 0;
 
 	kinematics::FoldTree LH_A_foldtree;
 
 	//TODO JAB - requiring PDB ordered LHA is not desired
 	for ( core::Size i = 1; i <= nres; ++i ) {
-		if ( pdb_info->chain(1) != 'L' ) {
+		if ( pdb_info->chain(1) != "L" ) {
 			throw CREATE_EXCEPTION(excn::Exception, "Chains are not named correctly or are not in the expected order");
 			//break;
 		}
-		if ( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i) != pdb_info->chain(i+1)) ) {
+		if ( (pdb_info->chain(i) == "L") && (pdb_info->chain(i) != pdb_info->chain(i+1)) ) {
 			if ( pdb_info->chain(i+1) != second_chain ) {
 				throw CREATE_EXCEPTION(excn::Exception, "Chains are not named correctly or are not in the expected order");
 				//  break;
@@ -1725,24 +1725,24 @@ AntibodyInfo::get_FoldTree_L_HA( pose::Pose const & pose ) const {
 
 	core::Size nres = pose.size();
 	pose::PDBInfoCOP pdb_info = pose.pdb_info();
-	char second_chain = 'H';
+	std::string second_chain = "H";
 	core::Size cutpoint = 0;
 
 	kinematics::FoldTree L_HA_foldtree;
 
 	//TODO JAB - requiring PDB ordered LHA is not desired
 	for ( core::Size i = 1; i <= nres; ++i ) {
-		if ( pdb_info->chain(1) != 'L' ) {
+		if ( pdb_info->chain(1) != "L" ) {
 			throw CREATE_EXCEPTION(excn::Exception, "Chains are not named correctly or are not in the expected order");
 			//break;
 		}
-		if ( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i) != pdb_info->chain(i+1)) ) {
+		if ( (pdb_info->chain(i) == "L") && (pdb_info->chain(i) != pdb_info->chain(i+1)) ) {
 			if ( pdb_info->chain(i+1) != second_chain ) {
 				throw CREATE_EXCEPTION(excn::Exception, "Chains are not named correctly or are not in the expected order");
 				// break;
 			}
 		}
-		if ( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i+1) == second_chain) ) {
+		if ( (pdb_info->chain(i) == "L") && (pdb_info->chain(i+1) == second_chain) ) {
 			cutpoint = i;
 			break;
 		}
@@ -1793,7 +1793,7 @@ AntibodyInfo::get_FoldTree_LA_H( pose::Pose const & pose ) const {
 
 	core::Size nres = pose.size();
 	pose::PDBInfoCOP pdb_info = pose.pdb_info();
-	char second_chain = 'H';
+	std::string second_chain = "H";
 	core::Size cutpoint = 0;
 	bool lchain_jump = false;
 
@@ -1801,17 +1801,17 @@ AntibodyInfo::get_FoldTree_LA_H( pose::Pose const & pose ) const {
 
 	//TODO JAB - requiring PDB ordered LHA is not desired
 	for ( core::Size i = 1; i <= nres; ++i ) {
-		if ( pdb_info->chain(1) != 'L' ) {
+		if ( pdb_info->chain(1) != "L" ) {
 			throw CREATE_EXCEPTION(excn::Exception, "Chains are not named correctly or are not in the expected order");
 			//break;
 		}
-		if ( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i) != pdb_info->chain(i+1)) ) {
+		if ( (pdb_info->chain(i) == "L") && (pdb_info->chain(i) != pdb_info->chain(i+1)) ) {
 			if ( pdb_info->chain(i+1) != second_chain ) {
 				throw CREATE_EXCEPTION(excn::Exception, "Chains are not named correctly or are not in the expected order");
 				// break;
 			}
 		}
-		if ( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i+1) == second_chain) ) {
+		if ( (pdb_info->chain(i) == "L") && (pdb_info->chain(i+1) == second_chain) ) {
 			cutpoint = i;
 			break;
 		}
@@ -2439,29 +2439,29 @@ AntibodyInfo::get_antigen_chain_ids(const core::pose::Pose & pose) const {
 	return antigens;
 }
 
-std::string
-AntibodyInfo::get_antibody_chain_string() const {
-	if ( is_camelid_ ) {
-		return "H";
-	} else {
-		return "LH";
-	}
-}
+//std::string
+//AntibodyInfo::get_antibody_chain_string() const {
+//	if ( is_camelid_ ) {
+//		return "H";
+//	} else {
+//		return "LH";
+//	}
+//}
 
-std::string
-AntibodyInfo::get_antigen_chain_string() const {
-	std::string antigen(chains_for_antigen_.begin(), chains_for_antigen_.end());
-	return antigen;
-}
+//std::string
+//AntibodyInfo::get_antigen_chain_string() const {
+//	std::string antigen(chains_for_antigen_.begin(), chains_for_antigen_.end());
+//	return antigen;
+//}
 
-vector1<char>
+vector1<std::string>
 AntibodyInfo::get_antibody_chains() const {
-	vector1<char> chains;
+	vector1<std::string> chains;
 	if ( is_camelid_ ) {
-		chains.push_back('H');
+		chains.push_back("H");
 	} else {
-		chains.push_back('L');
-		chains.push_back('H');
+		chains.push_back("L");
+		chains.push_back("H");
 	}
 	return chains;
 }
@@ -2470,10 +2470,10 @@ vector1<core::Size>
 AntibodyInfo::get_antibody_chain_ids(const core::pose::Pose& pose) const {
 	vector1<core::Size> chains;
 	if ( is_camelid_ ) {
-		chains.push_back(core::pose::get_chain_id_from_chain('H', pose));
+		chains.push_back(core::pose::get_chain_id_from_chain("H", pose));
 	} else {
-		chains.push_back(core::pose::get_chain_id_from_chain('L', pose));
-		chains.push_back(core::pose::get_chain_id_from_chain('H', pose));
+		chains.push_back(core::pose::get_chain_id_from_chain("L", pose));
+		chains.push_back(core::pose::get_chain_id_from_chain("H", pose));
 	}
 	return chains;
 }

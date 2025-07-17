@@ -61,8 +61,8 @@ public:
 
 	void end_structure() override;
 
-	void begin_receptor_partner_pair(char const receptor_chain_letter,
-		char const partner_chain_letter, core::Real const total_isc,
+	void begin_receptor_partner_pair(std::string const & receptor_chain_letter,
+		std::string const & partner_chain_letter, core::Real const total_isc,
 		std::string const & options_string) override;
 
 	void peptide_length(core::Size const pep_length) override;
@@ -97,8 +97,8 @@ private:
 
 	core::Size current_pep_length_;
 	core::Real current_total_isc_;
-	char current_receptor_chain_letter_;
-	char current_partner_chain_letter_;
+	std::string current_receptor_chain_letter_;
+	std::string current_partner_chain_letter_;
 	std::string current_sequence_;
 
 	std::ostringstream header_;

@@ -67,13 +67,13 @@ struct HBondResStruct : public utility::VirtualBase {
 	core::Size resnum;
 	platform::uint rot_index;
 	char aa;
-	char chainid;
+	std::string chainid;
 	bool is_protein;
 	bool is_solvent;
 	bool is_ligand;
 
 	HBondResStruct(){}
-	HBondResStruct( core::Size const res, platform::uint const rot, char const a, char const c, bool const prot, bool const solv, bool const lig ) :
+	HBondResStruct( core::Size const res, platform::uint const rot, char const a, std::string const & c, bool const prot, bool const solv, bool const lig ) :
 		resnum(res),
 		rot_index(rot), //needed for quick look-ups in ig_ and rotamer_sets_
 		aa(a),
@@ -740,15 +740,7 @@ protected:
 
 protected://Monte Carlo Protocol Protected Methods
 
-	inline
-	core::Size chain_for_resid( core::Size resid ) const {
-		return orig_pose_->chain( resid );
-	}
-
-	inline
-	core::Size chain_for_moltenres( core::Size mres ) const {
-		return chain_for_resid( rotamer_sets_->moltenres_2_resid( mres ) );
-	}
+	std::string chain_for_moltenres( core::Size mres ) const;
 
 	inline void set_monte_carlo_data_to_default();
 
@@ -840,7 +832,7 @@ private:
 	std::vector< std::vector< core::Size > > merged_vecs_;
 	std::vector< std::set< core::Size > > output_vector_;
 	//core::Real pore_radius_;                                //for SASA calculations
-	std::map<char,std::pair<core::Size,core::Size> > chain_bounds_;
+	std::map<core::Size,std::pair<core::Size,core::Size> > chain_bounds_; // chain number to residue numbers
 	//core::Real atom_burial_cutoff_;
 	core::Real hydrogen_bond_threshold_;                    //2-body cutoff; if < means we found h-bond
 	core::Real onebody_hb_threshold_;                       //1-body cutoff for symmetric one-residue networks

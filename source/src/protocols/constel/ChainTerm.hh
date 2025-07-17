@@ -17,14 +17,14 @@
 #include <core/pose/Pose.fwd.hh>
 #include <basic/Tracer.fwd.hh>
 #include <core/types.hh>
-
+#include <string>
 
 namespace protocols {
 namespace constel {
 
 class ChainTerm {
 
-	char cid_; // chain id
+	std::string cid_; // chain id
 
 	core::Size n_ps_; // index of N-terminal residue in pose
 	core::Size c_ps_; // index of C-terminal residue in pose
@@ -35,14 +35,14 @@ class ChainTerm {
 public:
 
 	/// @brief constructor
-	ChainTerm(char cid, core::Size nps, core::Size cps, int npdb, int cpdb) :
+	ChainTerm(std::string const & cid, core::Size nps, core::Size cps, int npdb, int cpdb) :
 		cid_(cid), n_ps_(nps), c_ps_(cps), n_pdb_(npdb), c_pdb_(cpdb) {}
 
 	/// @brief prints this chain's info to tracer t
 	void print(basic::Tracer& t) const;
 
 	/// @brief cid_ accessor
-	char get_cid() const {return cid_;}
+	std::string get_cid() const {return cid_;}
 
 	/// @brief n_ps_ accessor
 	core::Size get_nps() const {return n_ps_;}

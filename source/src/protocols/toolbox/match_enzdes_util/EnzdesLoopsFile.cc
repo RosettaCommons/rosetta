@@ -332,7 +332,7 @@ CstResInteractions::write_data() const {
 EnzdesLoopInfo::EnzdesLoopInfo() :
 	loop_start_(0), loop_end_(0),
 	loop_start_pdb_(0), loop_end_pdb_(0),
-	loop_start_pdb_chain_(' '), loop_end_pdb_chain_(' '),
+	loop_start_pdb_chain_(" "), loop_end_pdb_chain_(" "),
 	pose_numb_(false), pdb_numb_(false),
 	min_length_(0), max_length_(0),
 	preserve_buried_contacts_(false), contact_buried_problematic_res_(false)

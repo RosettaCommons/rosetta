@@ -63,7 +63,7 @@ read_biounit(
 	int  max_res,
 	bool debug
 ){
-	std::map<int,char> tmpmap;
+	std::map<int,std::string> tmpmap;
 	vector1<int> tmpvec;
 	int tmpint(0);
 	return read_biounit(fname,pose,bfactors,occupancy,tmpvec,tmpmap,tmpint,max_res, debug);
@@ -77,7 +77,7 @@ read_biounit(
 	vector1<Real> & bfactors,
 	vector1<Real> & occupancy,
 	vector1<int>  & pdbres,
-	std::map<int,char> & pdbchain,
+	std::map<int,std::string> & pdbchain,
 	int        & nresmodel1,
 	int  max_res,
 	bool debug

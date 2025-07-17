@@ -2489,7 +2489,7 @@ HBNet::set_symmetry( Pose & pose )
 	for ( core::Size ic = 1; ic <= pose.conformation().num_chains(); ++ic ) {
 		core::Size ic_begin = pose.conformation().chain_begin(ic);
 		core::Size ic_end = pose.conformation().chain_end(ic);
-		char chain = pose.chain(ic_begin);
+		core::Size chain = pose.chain(ic_begin);
 		chain_bounds_[chain].first = ic_begin;
 		chain_bounds_[chain].second = ic_end;
 	}
@@ -2500,11 +2500,11 @@ HBNet::get_ind_res( Pose const & pose, core::Size const res_i)
 {
 	core::Size resi_ind(res_i);
 	if ( symmetric_ && res_i > symm_info_->num_independent_residues() ) {
-		char resi_chain = pose.chain(res_i);
+		core::Size resi_chain = pose.chain(res_i);
 		if ( multi_component_ ) {
 			//symm_info_->component_lower_bound()
-			std::map<char,std::pair<core::Size,Size> > const & component_bounds = symm_info_->get_component_bounds();
-			char resi_comp = symm_info_->get_component_of_residue(res_i);
+			std::map<std::string,std::pair<core::Size,Size> > const & component_bounds = symm_info_->get_component_bounds();
+			std::string resi_comp = symm_info_->get_component_of_residue(res_i);
 			resi_ind = res_i - chain_bounds_[ resi_chain ].first + component_bounds.at( resi_comp ).first;
 		} else {
 			resi_ind = res_i - chain_bounds_[resi_chain].first + 1;
@@ -3921,6 +3921,11 @@ bool HBNet::monte_carlo_seed_is_dead_end( HBondEdge const * monte_carlo_seed ){
 	}
 
 	return true;
+}
+
+std::string HBNet::chain_for_moltenres( core::Size mres ) const {
+		core::Size resid = rotamer_sets_->moltenres_2_resid( mres );
+		return orig_pose_->pdb_info()->chain(resid);
 }
 
 void HBNet::append_to_network_vector( utility::vector1< DecoratedNetworkState > const & designed_networks ){

@@ -368,11 +368,11 @@ seq_design_strategy_to_string(SeqDesignStrategyEnum strategy){
 
 std::string
 get_dock_chains_from_ab_dock_chains(AntibodyInfoCOP ab_info, std::string const & ab_dock_chains){
-	vector1<char> chains;
+	vector1<std::string> chains;
 	for ( core::Size i = 0; i <= ab_dock_chains.length()-1; ++i ) {
 		char ab_chain = ab_dock_chains[i];
 		if ( ab_chain == 'A' ) {
-			vector1<char>antigen = ab_info->get_antigen_chains();
+			vector1<std::string> antigen = ab_info->get_antigen_chains();
 			if ( antigen.size() == 0 ) {
 				TR <<" Antigen not present to dock. skipping addition of Antigen. - setting L_H dock instead" << std::endl;
 				return "L_H";
@@ -400,7 +400,7 @@ get_pdb_numbering_from_single_string( std::string const & pdb_residue){
 	if ( res_str.size()== 1 ) {
 		debug_assert(res_str[1].length() >= 2);
 		number.icode = ' ';
-		number.chain = res_str[1][res_str[1].length() - 1];
+		number.chain = std::string{res_str[1][res_str[1].length() - 1]};
 		std::stringstream(res_str[1].substr(0, res_str[1].length() - 1)) >> number.resnum;
 	} else if ( res_str.size() == 2 ) {
 		debug_assert(res_str[1].length() >= 2);
@@ -412,10 +412,10 @@ get_pdb_numbering_from_single_string( std::string const & pdb_residue){
 		} else {
 			number.icode = res_str[2][0];
 		}
-		number.chain = res_str[1][res_str[1].length() - 1];
+		number.chain = std::string{res_str[1][res_str[1].length() - 1]};
 		std::stringstream(res_str[1].substr(0, res_str[1].length() - 1)) >> number.resnum;
 	} else if ( res_str.size() == 3 ) {
-		number.chain = res_str[1][0];
+		number.chain = std::string{res_str[1][0]};
 		number.resnum = utility::from_string(res_str[2], core::Size(0));
 		if ( res_str[3][0] == '~' ) {
 			number.icode = ' ';
@@ -643,17 +643,17 @@ disable_conserved_framework_positions(
 	utility::vector1< core::Size > conserved_positions;
 
 	if ( core::pose::has_chain( "L", pose ) ) {
-		conserved_positions.push_back( ab_info->get_landmark_resnum( pose, AHO_Scheme, 'L', 23, ' ', false ) );
-		conserved_positions.push_back( ab_info->get_landmark_resnum( pose, AHO_Scheme, 'L', 43, ' ', false ) );
-		conserved_positions.push_back( ab_info->get_landmark_resnum( pose, AHO_Scheme, 'L', 106, ' ', false ) );
-		conserved_positions.push_back( ab_info->get_landmark_resnum( pose, AHO_Scheme, 'L', 139, ' ', false ) );
+		conserved_positions.push_back( ab_info->get_landmark_resnum( pose, AHO_Scheme, "L", 23, ' ', false ) );
+		conserved_positions.push_back( ab_info->get_landmark_resnum( pose, AHO_Scheme, "L", 43, ' ', false ) );
+		conserved_positions.push_back( ab_info->get_landmark_resnum( pose, AHO_Scheme, "L", 106, ' ', false ) );
+		conserved_positions.push_back( ab_info->get_landmark_resnum( pose, AHO_Scheme, "L", 139, ' ', false ) );
 	}
 
 	if ( core::pose::has_chain( "H", pose ) ) {
-		conserved_positions.push_back( ab_info->get_landmark_resnum( pose, AHO_Scheme, 'H', 23, ' ', false ) );
-		conserved_positions.push_back( ab_info->get_landmark_resnum( pose, AHO_Scheme, 'H', 43, ' ', false ) );
-		conserved_positions.push_back( ab_info->get_landmark_resnum( pose, AHO_Scheme, 'H', 106, ' ', false ) );
-		conserved_positions.push_back( ab_info->get_landmark_resnum( pose, AHO_Scheme, 'H', 139, ' ', false ) );
+		conserved_positions.push_back( ab_info->get_landmark_resnum( pose, AHO_Scheme, "H", 23, ' ', false ) );
+		conserved_positions.push_back( ab_info->get_landmark_resnum( pose, AHO_Scheme, "H", 43, ' ', false ) );
+		conserved_positions.push_back( ab_info->get_landmark_resnum( pose, AHO_Scheme, "H", 106, ' ', false ) );
+		conserved_positions.push_back( ab_info->get_landmark_resnum( pose, AHO_Scheme, "H", 139, ' ', false ) );
 	}
 
 	for ( core::Size i = 1; i <= conserved_positions.size(); ++i ) {
@@ -675,8 +675,8 @@ disable_h3_stem_positions(
 	RestrictResidueToRepackingOP restrict( new RestrictResidueToRepacking() );
 	utility::vector1< core::Size > stem_positions;
 
-	core::Size start_cdr = ab_info->get_landmark_resnum( pose, AHO_Scheme, 'H', 107, ' ', false);
-	core::Size stop_cdr = ab_info->get_landmark_resnum( pose, AHO_Scheme, 'H', 138, ' ', false);
+	core::Size start_cdr = ab_info->get_landmark_resnum( pose, AHO_Scheme, "H", 107, ' ', false);
+	core::Size stop_cdr = ab_info->get_landmark_resnum( pose, AHO_Scheme, "H", 138, ' ', false);
 
 	for ( core::Size i = start_cdr; i <= start_cdr+nter_stem-1; ++i ) {
 		stem_positions.push_back(i);

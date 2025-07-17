@@ -29,7 +29,7 @@ using core::Size;
 ///
 bool at_interface(Pose const& ps, utility::vector1<core::Size> const& cnl) {
 
-	char const CID1 = ps.pdb_info()->chain(cnl[1]);
+	std::string CID1 = ps.pdb_info()->chain(cnl[1]);
 	core::Size N = cnl.size();
 
 	for ( core::Size i=2; i<=N; ++i ) {

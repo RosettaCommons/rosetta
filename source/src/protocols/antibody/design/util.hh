@@ -191,7 +191,7 @@ get_dock_chains_from_ab_dock_chains(AntibodyInfoCOP ab_info, std::string const &
 /// @brief Super-basic numbering struct.
 struct PDBNumbering {
 	core::Size resnum;
-	char chain;
+	std::string chain;
 	char icode;
 };
 

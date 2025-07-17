@@ -153,7 +153,7 @@ AntibodyNumberingParser::read_scheme_numbering_line(vector1< std::string > const
 			insertion_code = raw_landmark[3].at(0);
 		}
 
-		char chain = raw_landmark[1].at(0);
+		std::string chain = raw_landmark[1];
 		core::Size resnum; std::stringstream(raw_landmark[2]) >> resnum;
 		PDBLandmarkOP landmark( new PDBLandmark(chain, resnum, insertion_code, schemes_defined_[i]) );
 
@@ -288,7 +288,7 @@ AntibodyNumberingParser::read_cdr_definition_numbering_line(vector1<std::string>
 		vector1< std::string > landmarkSP = utility::string_split(lineSP[lineSP_index], ':');
 
 
-		char chain = landmarkSP[1].at(0);
+		std::string chain = landmarkSP[1];
 		core::Size resnum; std::stringstream(landmarkSP[2]) >> resnum;
 		char insertion_code;
 		if ( landmarkSP[3] == "~" ) {
@@ -327,7 +327,7 @@ AntibodyNumberingParser::read_cdr_definition_numbering_line(vector1<std::string>
 
 
 /////PDBLandmark/////////
-PDBLandmark::PDBLandmark(char chain, core::Size resnum, char insertion_code, AntibodyNumberingSchemeEnum scheme) {
+PDBLandmark::PDBLandmark(std::string const & chain, core::Size resnum, char insertion_code, AntibodyNumberingSchemeEnum scheme) {
 	numbering_scheme_  =  scheme;
 	resnum_ = resnum;
 	chain_ = chain;
@@ -336,7 +336,7 @@ PDBLandmark::PDBLandmark(char chain, core::Size resnum, char insertion_code, Ant
 
 }
 
-PDBLandmark::PDBLandmark(char chain, core::Size resnum, char insertion_code) {
+PDBLandmark::PDBLandmark(std::string const & chain, core::Size resnum, char insertion_code) {
 	resnum_ = resnum;
 	chain_ = chain;
 	insertion_code_ = insertion_code;

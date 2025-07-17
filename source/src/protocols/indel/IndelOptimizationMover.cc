@@ -85,7 +85,7 @@ IndelOptimizationMover::apply(
 
 	bool there_is_a_jump = ( pose.conformation().num_chains() > 1 );
 
-	std::string partners( &pose.pdb_info()->chain( loop_start ) );
+	std::string partners( pose.pdb_info()->chain( loop_start ) );
 	if ( there_is_a_jump ) {
 		using namespace basic::options;
 		if ( option[ OptionKeys::docking::partners ].user() ) {

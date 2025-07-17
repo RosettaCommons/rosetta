@@ -55,8 +55,8 @@ public:
 
 	void chain_pair_pose_prepared(core::pose::Pose const & pose) override;
 
-	void begin_receptor_partner_pair(char const receptor_chain_letter,
-		char const partner_chain_letter, core::Real const,
+	void begin_receptor_partner_pair(std::string const & receptor_chain_letter,
+		std::string const & partner_chain_letter, core::Real const,
 		std::string const &) override;
 
 	void peptide_length(core::Size const pep_length) override;

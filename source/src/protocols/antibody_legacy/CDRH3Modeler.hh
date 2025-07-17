@@ -139,7 +139,7 @@ public:
 		const core::pose::Pose & pose_in,
 		core::Size const loop_begin,
 		core::Size const size,
-		char const light_chain = 'L' );
+		std::string const & light_chain = "L" );
 
 	void loop_fa_relax(
 		core::pose::Pose & pose_in,

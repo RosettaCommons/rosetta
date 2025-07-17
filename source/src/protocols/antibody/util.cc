@@ -124,7 +124,7 @@ get_cdr_loops(
 
 		if ( ! cdrs[ i ] ) continue;
 		auto cdr = static_cast<CDRNameEnum>( i );
-		if ( ab_info->is_camelid() && ab_info->get_CDR_chain( cdr ) == 'L' ) continue;
+		if ( ab_info->is_camelid() && ab_info->get_CDR_chain( cdr ) == "L" ) continue;
 
 		cdr_loops->add_loop(ab_info->get_CDR_loop(cdr, pose, stem_size));
 	}
@@ -544,7 +544,7 @@ bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::
 	TR.Debug <<  "Checking Kink/Extended CDR H3 Base Angle" << std::endl;
 
 
-	char const light_chain = 'L';
+	std::string const light_chain = "L";
 
 	if ( is_camelid ) {
 		return( true );
@@ -943,7 +943,7 @@ get_matching_landmark(
 		}
 	}
 
-	PDBLandmarkOP empty_landmark( new PDBLandmark('X', 0, ' ') );
+	PDBLandmarkOP empty_landmark( new PDBLandmark("X", 0, ' ') );
 	return empty_landmark;
 
 }

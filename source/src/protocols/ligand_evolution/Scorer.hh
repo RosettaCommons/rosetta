@@ -37,7 +37,7 @@ namespace ligand_evolution {
 class Scorer {
 public:
 
-	Scorer( FragmentLibrary& library, core::Size n_runs, char ligand_chain );
+	Scorer( FragmentLibrary& library, core::Size n_runs, std::string const & ligand_chain );
 
 	void initialize_from_options( EvolutionOptionsCOP options, protocols::rosetta_scripts::XmlObjectsCOP rosetta_script, core::Size rank );
 
@@ -137,7 +137,7 @@ private:
 
 private:
 
-	char ligand_chain_ = 'X';
+	std::string ligand_chain_ = "X";
 
 	std::string pose_path_;
 

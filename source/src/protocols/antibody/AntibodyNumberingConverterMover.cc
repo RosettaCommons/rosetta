@@ -178,9 +178,9 @@ AntibodyNumberingConverterMover::apply( core::pose::Pose & pose)
 		char new_icode = ' ';
 
 		core::Size chain_num = pose.chain(i);
-		char chain = get_chain_from_chain_id( chain_num, pose );
+		std::string chain = get_chain_from_chain_id( chain_num, pose );
 
-		if ( ! ( chain == 'L' || chain == 'H' ) ) {
+		if ( ! ( chain == "L" || chain == "H" ) ) {
 			continue;
 		}
 
