@@ -9,14 +9,16 @@
 __author__ = "Jason C. Klima"
 
 try:
+    import pandas
     import toolz
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.io' requires the "
-        + "third-party package 'toolz' as a dependency!\n"
-        + "Please install this package into your python environment. "
+        + "third-party packages 'pandas' and 'toolz' as a dependencies!\n"
+        + "Please install these packages into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/toolz/\n"
+        + "https://pypi.org/project/pandas/\n"
     )
     raise
 
@@ -30,7 +32,7 @@ import pyrosetta.distributed.io as io
 import uuid
 
 from datetime import datetime
-from pyrosetta.rosetta.core.pose import Pose
+from pyrosetta.rosetta.core.pose import Pose, add_comment
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
     Any,
@@ -126,8 +128,7 @@ class IO(Generic[G]):
 
         return scores_dict
 
-    @staticmethod
-    def _format_result(result: Union[Pose, PackedPose]) -> Tuple[str, Dict[Any, Any]]:
+    def _format_result(self, result: Union[Pose, PackedPose]) -> Tuple[str, Dict[Any, Any], PackedPose]:
         """
         Given a `Pose` or `PackedPose` object, return a tuple containing
         the pdb string and a scores dictionary.
@@ -135,9 +136,9 @@ class IO(Generic[G]):
 
         _pdbstring = io.to_pdbstring(result)
         _scores_dict = update_scores(PackedPose(result)).scores
-        _scores_dict = IO._filter_scores_dict(_scores_dict)
+        _filtered_scores_dict = IO._filter_scores_dict(self.serializer.deepcopy_kwargs(_scores_dict))
 
-        return (_pdbstring, _scores_dict)
+        return (result, _pdbstring, _scores_dict, _filtered_scores_dict)
 
     def _parse_results(
         self,
@@ -157,7 +158,7 @@ class IO(Generic[G]):
 
         if isinstance(results, (Pose, PackedPose)):
             if not io.to_pose(results).empty():
-                out = [IO._format_result(results)]
+                out = [self._format_result(results)]
             else:
                 out = []
         elif isinstance(results, collections.abc.Iterable):
@@ -167,7 +168,7 @@ class IO(Generic[G]):
                     result = self.serializer.decompress_packed_pose(result)
                 if isinstance(result, (Pose, PackedPose)):
                     if not io.to_pose(result).empty():
-                        out.append(IO._format_result(result))
+                        out.append(self._format_result(result))
                 else:
                     raise OutputError(result)
         elif not results:
@@ -223,7 +224,7 @@ class IO(Generic[G]):
             return
 
         # Parse and save results
-        for pdbstring, scores in self._parse_results(results):
+        for packed_pose, pdbstring, scores, scores_json in self._parse_results(results):
             kwargs = self._process_kwargs(kwargs)
             output_dir = self._get_output_dir(decoy_dir=self.decoy_path)
             decoy_name = "_".join([self.simulation_name, uuid.uuid4().hex])
@@ -261,34 +262,77 @@ class IO(Generic[G]):
                     toolz.dicttoolz.merge(extra_kwargs, kwargs),
                 )
             )
-            pdbfile_data = json.dumps(
-                {
-                    "instance": collections.OrderedDict(sorted(instance.items())),
-                    "metadata": collections.OrderedDict(sorted(metadata.items())),
-                    "scores": collections.OrderedDict(sorted(scores.items())),
-                }
-            )
-            # Write full .pdb record
-            pdbstring_data = pdbstring + os.linesep + self.REMARK_FORMAT + pdbfile_data
-            if self.compressed:
-                with open(output_file, "wb") as f:
-                    f.write(bz2.compress(str.encode(pdbstring_data)))
-            else:
-                with open(output_file, "w") as f:
-                    f.write(pdbstring_data)
-            if self.simulation_records_in_scorefile:
-                scorefile_data = pdbfile_data
-            else:
-                scorefile_data = json.dumps(
-                    {
-                        metadata["output_file"]: collections.OrderedDict(
-                            sorted(scores.items())
-                        ),
-                    }
+            instance_metadata = {
+                "instance": collections.OrderedDict(sorted(instance.items())),
+                "metadata": collections.OrderedDict(sorted(metadata.items())),
+            }
+            simulation_data = self.serializer.deepcopy_kwargs(instance_metadata)
+            simulation_data["scores"] = collections.OrderedDict(sorted(scores.items()))
+            simulation_data_json = self.serializer.deepcopy_kwargs(instance_metadata)
+            simulation_data_json["scores"] = collections.OrderedDict(sorted(scores_json.items()))
+            pdbfile_data = json.dumps(simulation_data_json)
+            # Output PDB file
+            if ".pdb" in self.output_decoy_types:
+                # Write full .pdb record
+                pdbstring_data = pdbstring + os.linesep + self.REMARK_FORMAT + pdbfile_data
+                if self.compressed:
+                    with open(output_file, "wb") as f:
+                        f.write(bz2.compress(str.encode(pdbstring_data)))
+                else:
+                    with open(output_file, "w") as f:
+                        f.write(pdbstring_data)
+
+            # Output pose file
+            if ".pose" in self.output_decoy_types:
+                _pose = packed_pose.pose.clone()
+                add_comment(
+                    _pose,
+                    self.REMARK_FORMAT.rstrip(), # Remove extra space since `add_comment` adds a space
+                    pdbfile_data,
                 )
-            # Append data to scorefile
-            with open(self.scorefile_path, "a") as f:
-                f.write(scorefile_data + os.linesep)
+                _packed_pose = io.to_packed(_pose)
+                output_pose_file = os.path.join(output_dir, decoy_name + ".pose")
+                if self.compressed:
+                    output_pose_file += ".bz2"
+                    with open(output_pose_file, "wb") as f:
+                        f.write(bz2.compress(str.encode(io.to_base64(_packed_pose))))
+                else:
+                    io.dump_base64(_packed_pose, output_pose_file)
+
+            # Output JSON-encoded scorefile
+            if ".json" in self.output_scorefile_types:
+                if self.simulation_records_in_scorefile:
+                    scorefile_data = pdbfile_data
+                else:
+                    scorefile_data = json.dumps(
+                        {
+                            metadata["output_file"]: collections.OrderedDict(
+                                sorted(scores_json.items())
+                            ),
+                        }
+                    )
+                # Append data to scorefile
+                with open(self.scorefile_path, "a") as f:
+                    f.write(scorefile_data + os.linesep)
+
+            # Output pickled `pandas.DataFrame` scorefile
+            for extension in self.output_scorefile_types:
+                if extension != ".json":
+                    _scorefile_path = os.path.splitext(self.scorefile_path)[0] + extension
+                    if self.simulation_records_in_scorefile:
+                        _scorefile_data = {
+                            metadata["output_file"]: collections.OrderedDict(simulation_data),
+                        }
+                    else:
+                        _scorefile_data = {
+                            metadata["output_file"]: simulation_data["scores"]
+                        }
+                    df = pandas.DataFrame().from_dict(_scorefile_data, orient="index")
+                    # Append data to scorefile
+                    if os.path.isfile(_scorefile_path):
+                        df_chunk = pandas.read_pickle(_scorefile_path, compression="infer")
+                        df = pandas.concat([df_chunk, df])
+                    df.to_pickle(_scorefile_path, compression="infer")
 
     def _write_environment_file(self, filename: str) -> None:
         """Write the YML string to the input filename."""
