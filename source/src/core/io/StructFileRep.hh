@@ -245,6 +245,12 @@ public:  // Accessors /////////////////////////////////////////////////////////
 	std::map< std::string, std::string > const & heterogen_names() const { return heterogen_names_; }
 	std::map< std::string, std::string >       & heterogen_names()       { return heterogen_names_; }
 
+	/// @brief   Access map for storing mmCIF _chem_comp.type
+	/// @details key is hetID\n
+	/// value is the chemical name field
+	std::map< std::string, std::string > const & heterogen_types() const { return heterogen_types_; }
+	std::map< std::string, std::string >       & heterogen_types()       { return heterogen_types_; }
+
 	/// @brief   Access map for storing HETSYN records.
 	/// @details key is hetID\n
 	/// value is the chemical synonym list field
@@ -390,6 +396,7 @@ private:
 	std::map< char, utility::vector1< std::string > > chain_sequences_;  // for storing SEQRES records
 	std::map< std::string, ModifiedResidueInformation > modres_map_;  // key is 6-character resID
 	std::map< std::string, std::string > heterogen_names_;  // key is hetID
+	std::map< std::string, std::string > heterogen_types_;  // key is hetID
 	std::map< std::string, utility::vector1< std::string > > heterogen_synonyms_;  // key is hetID
 	std::map< std::string, std::string > heterogen_formulae_;  // key is hetID
 	std::map< std::string, std::pair< std::string, std::string > > residue_type_base_names_;  // key is 6-char. resID
