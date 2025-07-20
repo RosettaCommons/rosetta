@@ -22,18 +22,13 @@
 // Project headers
 
 // Utility headers
-
-class CifFile;
-typedef utility::pointer::shared_ptr< CifFile > CifFileOP;
+#include <utility/gemmi_util.fwd.hh>
 
 // C++ headers
 #ifdef WIN32
 #include <string>
 #endif
 
-#ifdef PYROSETTA
-#include <cifparse/CifFile.h>
-#endif
 
 
 namespace core {
@@ -42,7 +37,9 @@ namespace mmcif {
 
 typedef std::string String;
 
-StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cif, StructFileReaderOptions const & options );
+
+/// @details May raise a std::runtime_error from Gemmi parsing
+StructFileRepOP create_sfr_from_cif_file( gemmi::cif::Document & cifdoc, StructFileReaderOptions const & options );
 
 
 } // namespace mmcif

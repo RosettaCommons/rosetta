@@ -96,6 +96,11 @@ PDBDiagnosticMover::apply( core::pose::Pose & pose ){
 	core::Size const nres(pose.size());
 	TR << this_pdb_name << " nres " << nres << std::endl;
 
+	//step 1 check: Did the pose load properly, or are we getting an empty pose?
+	if ( nres == 0 ) {
+		utility_exit_with_message("Empty Pose Detected!");
+	}
+
 	//step 2: accumulate residue type stats
 	residue_type_statistics(pose, job_me, nres);
 

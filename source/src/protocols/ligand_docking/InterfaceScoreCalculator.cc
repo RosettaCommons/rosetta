@@ -25,6 +25,7 @@
 
 #include <core/pose/chains_util.hh>
 #include <protocols/ligand_docking/ligand_scores.hh>
+#include <protocols/ligand_docking/util.hh>
 #include <protocols/qsar/scoring_grid/schema_util.hh>
 
 //Auto Headers
@@ -173,7 +174,7 @@ void InterfaceScoreCalculator::apply(core::pose::Pose & pose) {
 	// For now, keep current behavior of appending things into the Job.
 	// Ideally, these would be attached to the Pose extra scores, rather than the Job.
 	for ( auto const & entry: allscores ) {
-		protocols::jd2::add_string_real_pair_to_current_job( entry.first, entry.second );
+		add_string_real_pair( pose, entry.first, entry.second );
 	}
 
 }

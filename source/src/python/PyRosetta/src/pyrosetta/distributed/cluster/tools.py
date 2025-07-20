@@ -372,12 +372,12 @@ def reserve_scores(func: P) -> Union[P, NoReturn]:
     Use this as a Python decorator of any user-provided PyRosetta protocol.
     If any scoreterms and values are present in the input `packed_pose`, then if
     they are deleted during execution of the decorated user-provided PyRosetta
-    protocol, then append those scoreterms and values back into the pose.scores
+    protocol, then append those scoreterms and values back into the `pose.cache`
     dictionary after execution. If any scoreterms and values are present in the
     input `packed_pose` and also present in the returned or yielded output `Pose`
     or `PackedPose` objects, then do not append the original scoreterms and values
-    back into the pose.scores dictionary after execution (that is, keep the outputted
-    scoreterms and values in the pose.scores dictionary). Any new scoreterms and
+    back into the `pose.cache` dictionary after execution (that is, keep the outputted
+    scoreterms and values in the `pose.cache` dictionary). Any new scoreterms and
     values acquired in the decorated user-provided PyRosetta protocol will never
     be overwritten. This allows users to maintain scoreterms and values acquired
     in earlier user-defined PyRosetta protocols if needing to execute Rosetta
@@ -388,7 +388,8 @@ def reserve_scores(func: P) -> Union[P, NoReturn]:
     @reserve_scores
     def my_pyrosetta_protocol(packed_pose, **kwargs):
         from pyrosetta import MyMover
-        MyMover().apply(packed_pose.pose)
+        pose = packed_pose.pose
+        MyMover().apply(pose)
         return pose
 
     Args:
@@ -401,12 +402,12 @@ def reserve_scores(func: P) -> Union[P, NoReturn]:
     import pyrosetta.distributed  # noqa
 
     @wraps(func)
-    def wrapper(pose, **kwargs):
-        if pose:
-            _scores_dict = dict(pose.scores)
+    def wrapper(packed_pose, **kwargs):
+        if packed_pose is not None:
+            _scores_dict = update_scores(packed_pose).scores
         else:
             _scores_dict = {}
-        _output = func(pose, **kwargs)
+        _output = func(packed_pose, **kwargs)
 
         return reserve_scores_in_results(_output, _scores_dict, func.__name__)
 

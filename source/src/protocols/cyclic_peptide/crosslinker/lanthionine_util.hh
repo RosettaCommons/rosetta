@@ -25,10 +25,14 @@ namespace protocols {
 namespace cyclic_peptide {
 namespace crosslinker {
 
-// from M062x_def2TZVP simulation
+// from Methionine
 constexpr core::Real LANTHIONINE_UTIL_LANTHIONINE_BOND_LENGTH = 1.807;
 constexpr core::Real LANTHIONINE_UTIL_LANTHIONINE_BOND_C_ANGLE = 2.011; // 115.230 degrees
 constexpr core::Real LANTHIONINE_UTIL_LANTHIONINE_BOND_S_ANGLE = 1.801; // 103.176 degrees
+// from MP2/cc-pvtz geometry optimization
+constexpr core::Real LANTHIONINE_UTIL_METHYLLANTHIONINE_BOND_CG_ANGLE = 1.864; // 106.790 degrees SCC to CG
+constexpr core::Real LANTHIONINE_UTIL_METHYLLANTHIONINE_BOND_CA_ANGLE = 1.963; // 112.460 degrees SCC to CA
+constexpr core::Real LANTHIONINE_UTIL_METHYLLANTHIONINE_BOND_CB_ANGLE = 1.927; // 110.440 degrees CA-CB-CG
 
 /// @brief Given a pose and two residues, set up the lanthionine variant types.
 /// @details Sidechainres gets SIDECHAIN_CONJUGATION; dalares gets ACETYLATED_NTERMINUS_CONNECTION_VARIANT.

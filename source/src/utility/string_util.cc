@@ -184,30 +184,6 @@ quoted_split(std::string const & s ) {
 	return r;
 }
 
-std::string join(utility::vector1<std::string> const & s, std::string const & connector){
-	std::ostringstream os;
-	// TL: if s is empty, we can't dereference s.begin()
-	if ( s.empty() ) return "";
-	auto begin= s.begin();
-	os << *begin++;
-	for ( ; begin != s.end(); ++begin ) {
-		os<< connector<< *begin;
-	}
-	return os.str();
-}
-
-std::string join(std::vector<std::string> const & s, std::string const & connector){
-	std::ostringstream os;
-	// TL: if s is empty, we can't dereference s.begin()
-	if ( s.empty() ) return "";
-	auto begin= s.begin();
-	os << *begin++;
-	for ( ; begin != s.end(); ++begin ) {
-		os<< connector<< *begin;
-	}
-	return os.str();
-}
-
 std::string replace_spaces(std::string const & string_w_spaces, std::string const & replacement){
 	//std::string trimmed= trim(string_w_spaces);
 	utility::vector1<std::string> pieces= split(string_w_spaces);
