@@ -31,7 +31,6 @@ import uuid
 
 from datetime import datetime
 from pyrosetta.rosetta.core.pose import Pose
-from pyrosetta.distributed.cluster.exceptions import OutputError
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
     Any,
@@ -45,6 +44,9 @@ from typing import (
     TypeVar,
     Union,
 )
+
+from pyrosetta.distributed.cluster.exceptions import OutputError
+from pyrosetta.distributed.cluster.serialization import update_scores
 
 
 G = TypeVar("G")
@@ -109,6 +111,22 @@ class IO(Generic[G]):
         return output_dir
 
     @staticmethod
+    def _filter_scores_dict(scores_dict: Dict[Any, Any]) -> Dict[Any, Any]:
+        for key in list(scores_dict.keys()):
+            try:
+                json.dumps(scores_dict[key])
+            except:
+                logging.warning(
+                    f"Removing score key '{key}' with value of type '{type(scores_dict[key])}' before "
+                    + "saving PyRosettaCluster result! Only JSON-serializable score values can be written to "
+                    + "output files. Consider custom serializing the value to save this score or removing the "
+                    + "key from the `pose.cache` dictionary to remove this warning message."
+                )
+                scores_dict.pop(key, None)
+
+        return scores_dict
+
+    @staticmethod
     def _format_result(result: Union[Pose, PackedPose]) -> Tuple[str, Dict[Any, Any]]:
         """
         Given a `Pose` or `PackedPose` object, return a tuple containing
@@ -116,8 +134,8 @@ class IO(Generic[G]):
         """
 
         _pdbstring = io.to_pdbstring(result)
-        _scores_dict = io.to_dict(result)
-        _scores_dict.pop("pickled_pose", None)
+        _scores_dict = update_scores(PackedPose(result)).scores
+        _scores_dict = IO._filter_scores_dict(_scores_dict)
 
         return (_pdbstring, _scores_dict)
 

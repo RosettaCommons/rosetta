@@ -23,6 +23,7 @@ from pyrosetta.rosetta.core.pose import (
     getPoseExtraStringScores,
     setPoseExtraScore,
     hasPoseExtraScore,
+    hasPoseExtraScore_str,
     clearPoseExtraScore,
     clearPoseExtraScores,
 )
@@ -34,6 +35,8 @@ from pyrosetta.rosetta.core.pose import add_upper_terminus_type_to_pose_residue
 from pyrosetta.rosetta.core.conformation import Residue
 from pyrosetta.rosetta.core.scoring import ScoreType
 from pyrosetta.bindings.utility import slice_1base_indicies, bind_method, bind_property
+from pyrosetta.bindings.scores import PoseCacheAccessor, ClobberWarning
+
 from pyrosetta.distributed.utility.pickle import (
     __cereal_getstate__,
     __cereal_setstate__,
@@ -52,7 +55,6 @@ from pyrosetta.rosetta.core.select.residue_selector import (
     PrimarySequenceNeighborhoodSelector,
 )
 from pyrosetta.rosetta.core.select.residue_selector import NotResidueSelector
-
 
 def __pose_getstate__(pose):
     if pose.constraint_set().n_sequence_constraints() > 0:
@@ -389,15 +391,34 @@ class PoseScoreAccessor(MutableMapping):
 
     def __init__(self, pose):
         self.pose = pose
+        warnings.warn(
+            (
+                "The `Pose.scores` dictionary is deprecated and may be aliased to the `Pose.cache` "
+                "dictionary in a future release. Prefer to use the `Pose.cache` dictionary instead."
+            ),
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
     @property
     def extra(self):
         import types
 
+        _arbitrary_string_data = dict(ScoreMap.get_arbitrary_string_data_from_pose(self.pose).items())
+        _arbitrary_score_data = dict(ScoreMap.get_arbitrary_score_data_from_pose(self.pose).items())
+
+        for k in _arbitrary_string_data.keys():
+            if k in _arbitrary_score_data.keys():
+                warnings.warn(
+                    "Arbitrary score data key is clobbering arbitrary string data key: '{0}'".format(k),
+                    ClobberWarning,
+                    stacklevel=2,
+                )
+
         return types.MappingProxyType(
             dict(
-                list(ScoreMap.get_arbitrary_string_data_from_pose(self.pose).items())
-                + list(ScoreMap.get_arbitrary_score_data_from_pose(self.pose).items())
+                list(_arbitrary_string_data.items())
+                + list(_arbitrary_score_data.items())
             )
         )
 
@@ -411,11 +432,36 @@ class PoseScoreAccessor(MutableMapping):
     def all(self):
         import types
 
+        _arbitrary_string_data = dict(ScoreMap.get_arbitrary_string_data_from_pose(self.pose).items())
+        _arbitrary_score_data = dict(ScoreMap.get_arbitrary_score_data_from_pose(self.pose).items())
+        _active_total_energies = dict(self.pose.energies().active_total_energies().items())
+
+        for k in _arbitrary_string_data.keys():
+            if k in _arbitrary_score_data.keys():
+                warnings.warn(
+                    "Arbitrary score data key is clobbering arbitrary string data key: '{0}'".format(k),
+                    ClobberWarning,
+                    stacklevel=2,
+                )
+            if k in _active_total_energies.keys():
+                warnings.warn(
+                    "Active total energy score key is clobbering arbitrary string data key: '{0}'".format(k),
+                    ClobberWarning,
+                    stacklevel=2,
+                )
+        for k in _arbitrary_score_data.keys():
+            if k in _active_total_energies.keys():
+                warnings.warn(
+                    "Active total energy score key is clobbering arbitrary score data key: '{0}'".format(k),
+                    ClobberWarning,
+                    stacklevel=2,
+                )
+
         return types.MappingProxyType(
             dict(
-                list(ScoreMap.get_arbitrary_string_data_from_pose(self.pose).items())
-                + list(ScoreMap.get_arbitrary_score_data_from_pose(self.pose).items())
-                + list(self.pose.energies().active_total_energies().items())
+                list(_arbitrary_string_data.items())
+                + list(_arbitrary_score_data.items())
+                + list(_active_total_energies.items())
             )
         )
 
@@ -455,12 +501,20 @@ class PoseScoreAccessor(MutableMapping):
                 "Consider 'pose.scores.clear()' or 'pose.energies().clear()'" % key
             )
 
-        if not hasPoseExtraScore(self.pose, key):
+        if not hasPoseExtraScore(self.pose, key) and not hasPoseExtraScore_str(self.pose, key):
             raise KeyError(key)
 
         clearPoseExtraScore(self.pose, key)
 
         # SimpleMetric data cannot be mutated by anything other than a SimpleMetric.
+        for _attr, _sm_data in self.pose.cache.all_scores["metrics"].items():
+            if key in _sm_data.keys():
+                warnings.warn(
+                    "The '{0}' key was deleted from arbitrary extra scores data, but a duplicate ".format(key)
+                    + "key still exists in SimpleMetric {0} data!".format(_attr.replace("_", " ")),
+                    UserWarning,
+                    stacklevel=2,
+                )
 
     def clear(self):
         """ Clear pose energies, extra scores, and SimpleMetric data"""
@@ -489,6 +543,23 @@ def __scores_accessor(self, accessor):
 
 
 Pose.scores = __scores_accessor
+
+
+@bind_property(Pose)  # noqa: F811
+def __cache_accessor(self):
+    return PoseCacheAccessor(self)
+
+
+@Pose.__cache_accessor.setter
+def __cache_accessor(self, accessor):
+    if not isinstance(accessor, PoseCacheAccessor) or accessor.pose is not self:
+        raise AttributeError("Can't set cache accessor.")
+    pass
+
+
+Pose.cache = __cache_accessor
+Pose.cache.__doc__ = PoseCacheAccessor.__doc__
+
 
 # Deprecated Bindings - 19/11/17
 @bind_method(Pose)

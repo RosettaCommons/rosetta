@@ -17,19 +17,15 @@
 #include <string>
 #include <core/chemical/sdf/MolFileIOData.hh>
 
+//Utility functions
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
-
-//Utility functions
-
+#include <utility/stream_util.hh>
+#include <utility/gemmi_util.hh>
 
 //external CIF includes
-#include <cifparse/CifFile.h>
-#include <cifparse/CifParserBase.h>
-
-#include <utility/stream_util.hh> // AUTO IWYU For operator<<
-
-
+#include <gemmi/cif.hpp>
+#include <gemmi/numb.hpp> // for as_number
 
 namespace core {
 namespace chemical {
@@ -38,6 +34,7 @@ namespace mmCIF {
 //Load up the tracer for this class
 static basic::Tracer TR( "core.io.mmCIF.mmCIFParser" );
 
+using utility::find_gemmi_column;
 
 mmCIFParser::mmCIFParser() {
 	bond_string_to_sdf_size_[ "SING"] = 1;
@@ -50,74 +47,94 @@ mmCIFParser::parse(
 	std::string const & lines,
 	std::string const & pdb_id
 ) {
-	std::string diagnostics; //output from the parser about errors, etc.
-	sdf::MolFileIOMoleculeOP molecule( new sdf::MolFileIOMolecule());
-	CifFileOP cifFile( new CifFile);
+	sdf::MolFileIOMoleculeOP molecule;
 
-	CifParserOP cifParser( new CifParser(cifFile.get()) );
-	cifParser->ParseString( lines, diagnostics);
-	if ( !diagnostics.empty() ) {
-		TR.Error << diagnostics << std::endl;
-	} else {
-		std::vector< std::string > blocks;
-		cifFile->GetBlockNames( blocks );
-		//You have to add the "#" string to the pdb_id. This is because of how
-		//the cifFile parser interpets the lines. For whatever reason, it adds
-		//a # to the data_??? block, where ??? is the 3 letter code for the
-		//file
-		if ( !cifFile->IsBlockPresent( pdb_id + "#" ) ) {
-			TR.Error << pdb_id << " not found in components.cif" << std::endl;
-		} else {
-			Block& block = cifFile->GetBlock( pdb_id + "#" );
-			molecule = get_molfile_molecule( block );
-			molecule->name( pdb_id );
-			return molecule;
+	try {
+		gemmi::cif::Document cifdoc = gemmi::cif::read_memory(lines.c_str(), lines.size(), "CIFFILE" );
+
+		for ( gemmi::cif::Block & block: cifdoc.blocks ) {
+			//You have to add the "#" string to the pdb_id. This is because of how
+			//the cifFile parser interpets the lines. For whatever reason, it adds
+			//a # to the data_??? block, where ??? is the 3 letter code for the
+			//file
+			if ( block.name == pdb_id + "#" ) {
+				molecule = get_molfile_molecule( block );
+				molecule->name( pdb_id );
+				return molecule;
+			}
 		}
+	} catch (std::runtime_error const & e) { // gemmi errors
+		TR.Error << "Error reading Residue Type definition CIF file: " << e.what() << std::endl;
+		return molecule;
 	}
-
 	return molecule;
 }
 
 utility::vector1< sdf::MolFileIOMoleculeOP>
 mmCIFParser::parse(std::string const &filename){
 	utility::vector1< sdf::MolFileIOMoleculeOP> molecules;
-	sdf::MolFileIOMoleculeOP molecule( new sdf::MolFileIOMolecule());
-	std::string diagnostics; //output from the parser about errors, etc.
-	CifFileOP cifFile( new CifFile );
 
-	CifParserOP cifParser( new CifParser(cifFile.get()) );
-	cifParser->Parse( filename, diagnostics);
-	//this assumes that the very first block being passed is the one being used.
-	std::vector< std::string > block_names;
-	cifFile->GetBlockNames( block_names );
-	for ( std::string const & block_name : block_names ) {
-		Block & block = cifFile->GetBlock( block_name );
-		molecule = get_molfile_molecule( block );
-		molecule->name( block_name );
-		molecules.push_back( molecule );
+	try {
+		gemmi::cif::Document cifdoc = gemmi::cif::read_file(filename);
+		for ( gemmi::cif::Block & block: cifdoc.blocks ) {
+			molecules.push_back( get_molfile_molecule( block ) );
+		}
+	} catch (std::runtime_error const & e) { // gemmi errors
+		TR.Error << "Error reading Residue Type definition CIF file `" << filename << "`: " << e.what() << std::endl;
 	}
 
 	return molecules;
 }
 
 sdf::MolFileIOMoleculeOP
-mmCIFParser::get_molfile_molecule( Block & block ) {
+mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
+	// Note that pretty much every entry should be unwrapped with the appropriate accessor:
+	using gemmi::cif::as_string; // Takes care of unquoting, use even if it's a simple string (e.g. atom names can have odd characters)
+	using utility::as_char; // More robust version
+	using gemmi::cif::as_number; // Real
+	using gemmi::cif::as_int; // Size
+
 	sdf::MolFileIOMoleculeOP molecule( new sdf::MolFileIOMolecule() );
+
+	molecule->name( block.name );
 	//only proceed if the tables for bonds and atoms are present
-	if ( !block.IsTablePresent("chem_comp_atom") ) {
-		TR.Error << "Cannot parse CIF file. No atom block (chem_comp_atom) found for " << block.GetName() << std::endl;
+	if ( !block.has_mmcif_category("_chem_comp_atom") ) {
+		TR.Error << "Cannot parse CIF file. No atom block (chem_comp_atom) found for " << block.name << std::endl;
 		return molecule;
 	}
-
 
 	// There's another possible issue. to pre-pick about. We absolutely NEED N,
 	// because we need to be very specific about adding and deleting atoms.
 	// also... residue types without N are very likely to be a poor representative
 	// of "L-PEPTIDE LINKING"
-	ISTable & atom_comp = block.GetTable("chem_comp_atom");
+	gemmi::cif::Table atom_comp = block.find_mmcif_category("_chem_comp_atom");
+	if ( atom_comp.size() == 0 ) {
+		TR.Error << "Cannot parse CIF file. Empty atom block (chem_comp_atom) found for " << block.name << std::endl;
+		return molecule;
+	}
 
-	//store the atom_id_type we will be using. atom id should be the atom name
-	std::string atom_name_type( atom_comp.IsColumnPresent( "atom_id" ) ? "atom_id" : "pdbx_component_atom_id" );
+	int type_symbol = find_gemmi_column(atom_comp,"type_symbol");
+	if ( type_symbol < 0 ) {
+		TR.Error << "Cannot parse CIF file. Missing element information in atom block (chem_comp_atom) for " << block.name << std::endl;
+		return molecule;
+	}
+
+	int pdbx_model_Cartn_x_ideal = find_gemmi_column(atom_comp,"pdbx_model_Cartn_x_ideal");
+	int pdbx_model_Cartn_y_ideal = find_gemmi_column(atom_comp,"pdbx_model_Cartn_y_ideal");
+	int pdbx_model_Cartn_z_ideal = find_gemmi_column(atom_comp,"pdbx_model_Cartn_z_ideal");
+	int model_Cartn_x = find_gemmi_column(atom_comp,"model_Cartn_x");
+	int model_Cartn_y = find_gemmi_column(atom_comp,"model_Cartn_y");
+	int model_Cartn_z = find_gemmi_column(atom_comp,"model_Cartn_z");
+	int charge = find_gemmi_column(atom_comp,"charge");
+
+	int atom_name_id = find_gemmi_column(atom_comp,"atom_id");
+	if ( atom_name_id < 0 ) {
+		atom_name_id = find_gemmi_column(atom_comp,"pdbx_component_atom_id");
+	}
+	if ( atom_name_id < 0 ) {
+		TR.Error << "Can't find atom id column (atom_id/pdbx_component_atom_id) in chem_comp_atom table for " << block.name << std::endl;
+		return molecule;
+	}
 
 	// A map of atom names to their chemical symbols
 	std::map< std::string, std::string > name_to_element_map;
@@ -126,10 +143,12 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 	bool P_found = false;
 	bool is_peptide_linking = true;
 	bool is_nucleic_linking = true;
-	for ( Size ii = 0; ii < atom_comp.GetNumRows(); ++ii ) {
+	for ( Size ii = 0; ii < atom_comp.size(); ++ii ) {
+		gemmi::cif::Table::Row row = atom_comp[ii];
+
 		//set atom name
-		std::string atom_name( atom_comp( ii, atom_name_type ) );
-		name_to_element_map[ atom_name ] = atom_comp( ii, "type_symbol" );
+		std::string atom_name = as_string( row[atom_name_id] );
+		name_to_element_map[ atom_name ] = as_string( row[type_symbol] );
 
 		if ( atom_name == "N" ) N_found = true;
 		if ( atom_name == "P" ) P_found = true;
@@ -143,21 +162,15 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 	// as ligands instead.
 	if ( is_nucleic_linking ) {
 		bool P_O5P_bond_found = false;
-		if ( block.IsTablePresent( "chem_comp_bond" ) ) {
-			ISTable& bond_comp = block.GetTable("chem_comp_bond");
+		gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2"} );
+		for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
+			std::string source = as_string( bond_comp[ii][0] ); //atom 1
+			std::string target = as_string( bond_comp[ii][1] ); //atom 2
 
-			//start bond block
-			for ( Size ii = 0; ii < bond_comp.GetNumRows(); ++ii ) {
-				sdf::MolFileIOBondOP bond( new sdf::MolFileIOBond() );
-
-				std::string source( bond_comp( ii, "atom_id_1" ) ); //atom 1
-				std::string target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
-
-				// Could imagine getting 'all Hs' by finding, instead, the
-				// names that match H[number] -- but why not wait, for now.
-				if ( ( source == "P" && target == "O5'" ) || ( source == "O5'" && target == "P" ) ) {
-					P_O5P_bond_found = true;
-				}
+			// Could imagine getting 'all Hs' by finding, instead, the
+			// names that match H[number] -- but why not wait, for now.
+			if ( ( source == "P" && target == "O5'" ) || ( source == "O5'" && target == "P" ) ) {
+				P_O5P_bond_found = true;
 			}
 		}
 		if ( !P_O5P_bond_found ) {
@@ -170,28 +183,22 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 	// atom bonded to OXT that is not named C. Catch this.
 	std::string rename_to_C = "C";
 	if ( is_peptide_linking ) {
-		if ( block.IsTablePresent( "chem_comp_bond" ) ) {
-			ISTable& bond_comp = block.GetTable("chem_comp_bond");
+		gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2"} );
+		for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
+			std::string source = as_string( bond_comp[ii][0] ); //atom 1
+			std::string target = as_string( bond_comp[ii][1] ); //atom 2
 
-			//start bond block
-			for ( Size ii = 0; ii < bond_comp.GetNumRows(); ++ii ) {
-				sdf::MolFileIOBondOP bond( new sdf::MolFileIOBond() );
+			// If we already have a "C", then don't rename something else to it (even if our 'C' isn't bonded to OXT)
+			if ( source == "C" || target == "C" ) {
+				rename_to_C = "C";
+				break;
+			}
 
-				std::string source( bond_comp( ii, "atom_id_1" ) ); //atom 1
-				std::string target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
-
-				// If we already have a "C", then don't rename something else to it (even if our 'C' isn't bonded to OXT)
-				if ( source == "C" || target == "C" ) {
-					rename_to_C = "C";
-					break;
-				}
-
-				// We only want to rename carbons. Ignore any hydrogens attached, or any non-carbon atoms
-				if ( source == "OXT" && name_to_element_map[ target ] == "C" ) {
-					rename_to_C = target;
-				} else if ( target == "OXT" && name_to_element_map[ source ] == "C" ) {
-					rename_to_C = source;
-				}
+			// We only want to rename carbons. Ignore any hydrogens attached, or any non-carbon atoms
+			if ( source == "OXT" && name_to_element_map[ target ] == "C" ) {
+				rename_to_C = target;
+			} else if ( target == "OXT" && name_to_element_map[ source ] == "C" ) {
+				rename_to_C = source;
 			}
 		}
 	}
@@ -200,9 +207,9 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 	// Get the chem_comp table first, because this will help us
 	// look out for extraneous atoms common in CIF entries -- extra nitrogen H
 	// and OH terminus on C
-	if ( block.IsTablePresent( "chem_comp" ) ) {
-		ISTable & chem_comp = block.GetTable( "chem_comp" );
-		std::string type( chem_comp( 0, "type" ) );
+	gemmi::cif::Table chem_comp = block.find( "_chem_comp.", {"type"} );
+	if ( chem_comp.size() > 0 ) {
+		std::string type = as_string(chem_comp[0][0]);
 		if ( type == "L-PEPTIDE LINKING" && is_peptide_linking ) {
 			TR.Debug << "Found L-peptide RT" << std::endl;// named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "PROTEIN POLYMER L_AA" );
@@ -249,193 +256,163 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 	// atoms -- so we can ignore them too as appropriate
 	utility::vector1< std::string > possible_atoms_to_skip;
 	if ( is_peptide_linking ) {
-		if ( block.IsTablePresent( "chem_comp_bond" ) ) {
-			ISTable& bond_comp = block.GetTable("chem_comp_bond");
+		gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2"} );
+		for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
+			std::string source = as_string( bond_comp[ii][0] ); //atom 1
+			std::string target = as_string( bond_comp[ii][1] ); //atom 2
 
-			//start bond block
-			for ( Size ii = 0; ii < bond_comp.GetNumRows(); ++ii ) {
-				sdf::MolFileIOBondOP bond( new sdf::MolFileIOBond() );
+			if ( source == rename_to_C ) source = "C";
+			if ( target == rename_to_C ) target = "C";
 
-				std::string source( bond_comp( ii, "atom_id_1" ) ); //atom 1
-				std::string target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
-
-				if ( source == rename_to_C ) source = "C";
-				if ( target == rename_to_C ) target = "C";
-
-				// Could imagine getting 'all Hs' by finding, instead, the
-				// names that match H[number] -- but why not wait, for now.
-				if ( source == "OXT" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to OXT " << std::endl;
-					possible_atoms_to_skip.push_back( target );
-				}
-				if ( target == "OXT" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to OXT " << std::endl;
-					possible_atoms_to_skip.push_back( source );
-				}
-				if ( source == "N" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to N " << std::endl;
-					possible_atoms_to_skip.push_back( target );
-				}
-				if ( target == "N" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to N " << std::endl;
-					possible_atoms_to_skip.push_back( source );
-				}
+			// Could imagine getting 'all Hs' by finding, instead, the
+			// names that match H[number] -- but why not wait, for now.
+			if ( source == "OXT" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to OXT " << std::endl;
+				possible_atoms_to_skip.push_back( target );
+			}
+			if ( target == "OXT" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to OXT " << std::endl;
+				possible_atoms_to_skip.push_back( source );
+			}
+			if ( source == "N" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to N " << std::endl;
+				possible_atoms_to_skip.push_back( target );
+			}
+			if ( target == "N" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to N " << std::endl;
+				possible_atoms_to_skip.push_back( source );
 			}
 		}
 	} else if ( is_nucleic_linking ) {
+		gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2"} );
+		for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
+			std::string source = as_string( bond_comp[ii][0] ); //atom 1
+			std::string target = as_string( bond_comp[ii][1] ); //atom 2
 
-		if ( block.IsTablePresent( "chem_comp_bond" ) ) {
-			ISTable& bond_comp = block.GetTable("chem_comp_bond");
+			if ( source == "P" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  P" << std::endl;
+				possible_atoms_to_skip.push_back( target );
+			}
+			if ( target == "P" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  P" << std::endl;
+				possible_atoms_to_skip.push_back( source );
+			}
 
-			//start bond block
-			for ( Size ii = 0; ii < bond_comp.GetNumRows(); ++ii ) {
-				sdf::MolFileIOBondOP bond( new sdf::MolFileIOBond() );
+			if ( source == "O3'" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  O3'" << std::endl;
+				possible_atoms_to_skip.push_back( target );
+			}
+			if ( target == "O3'" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  O3'" << std::endl;
+				possible_atoms_to_skip.push_back( source );
+			}
 
-				std::string const & source( bond_comp( ii, "atom_id_1" ) ); //atom 1
-				std::string const & target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
-
-				if ( source == "P" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  P" << std::endl;
-					possible_atoms_to_skip.push_back( target );
-				}
-				if ( target == "P" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  P" << std::endl;
-					possible_atoms_to_skip.push_back( source );
-				}
-
-				if ( source == "O3'" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  O3'" << std::endl;
-					possible_atoms_to_skip.push_back( target );
-				}
-				if ( target == "O3'" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  O3'" << std::endl;
-					possible_atoms_to_skip.push_back( source );
-				}
-
-				if ( source == "OP3" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  OP3" << std::endl;
-					possible_atoms_to_skip.push_back( target );
-					O3P_connected.push_back( target );
-				}
-				if ( target == "OP3" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  OP3" << std::endl;
-					possible_atoms_to_skip.push_back( source );
-					O3P_connected.push_back( source );
-				}
-				if ( source == "O3P" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  O3P" << std::endl;
-					possible_atoms_to_skip.push_back( target );
-					O3P_connected.push_back( target );
-				}
-				if ( target == "O3P" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  O3P" << std::endl;
-					possible_atoms_to_skip.push_back( source );
-					O3P_connected.push_back( source );
-				}
-				if ( source == "OP2" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  OP2" << std::endl;
-					possible_atoms_to_skip.push_back( target );
-				}
-				if ( target == "OP2" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  OP2" << std::endl;
-					possible_atoms_to_skip.push_back( source );
-				}
-				if ( target == "O2P" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  O2P" << std::endl;
-					possible_atoms_to_skip.push_back( source );
-				}
-				if ( source == "O2P" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  O2P" << std::endl;
-					possible_atoms_to_skip.push_back( target );
-				}
-				if ( source == "OP1" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  OP1" << std::endl;
-					possible_atoms_to_skip.push_back( target );
-				}
-				if ( target == "OP1" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  OP1" << std::endl;
-					possible_atoms_to_skip.push_back( source );
-				}
-				if ( source == "O1P" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  O1P" << std::endl;
-					possible_atoms_to_skip.push_back( target );
-				}
-				if ( target == "O1P" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  O1P" << std::endl;
-					possible_atoms_to_skip.push_back( source );
-				}
+			if ( source == "OP3" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  OP3" << std::endl;
+				possible_atoms_to_skip.push_back( target );
+				O3P_connected.push_back( target );
+			}
+			if ( target == "OP3" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  OP3" << std::endl;
+				possible_atoms_to_skip.push_back( source );
+				O3P_connected.push_back( source );
+			}
+			if ( source == "O3P" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  O3P" << std::endl;
+				possible_atoms_to_skip.push_back( target );
+				O3P_connected.push_back( target );
+			}
+			if ( target == "O3P" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  O3P" << std::endl;
+				possible_atoms_to_skip.push_back( source );
+				O3P_connected.push_back( source );
+			}
+			if ( source == "OP2" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  OP2" << std::endl;
+				possible_atoms_to_skip.push_back( target );
+			}
+			if ( target == "OP2" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  OP2" << std::endl;
+				possible_atoms_to_skip.push_back( source );
+			}
+			if ( target == "O2P" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  O2P" << std::endl;
+				possible_atoms_to_skip.push_back( source );
+			}
+			if ( source == "O2P" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  O2P" << std::endl;
+				possible_atoms_to_skip.push_back( target );
+			}
+			if ( source == "OP1" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  OP1" << std::endl;
+				possible_atoms_to_skip.push_back( target );
+			}
+			if ( target == "OP1" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  OP1" << std::endl;
+				possible_atoms_to_skip.push_back( source );
+			}
+			if ( source == "O1P" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  O1P" << std::endl;
+				possible_atoms_to_skip.push_back( target );
+			}
+			if ( target == "O1P" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  O1P" << std::endl;
+				possible_atoms_to_skip.push_back( source );
 			}
 		}
 	} else {
+		gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2"} );
+		for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
+			std::string source = as_string( bond_comp[ii][0] ); //atom 1
+			std::string target = as_string( bond_comp[ii][1] ); //atom 2
 
-		if ( block.IsTablePresent( "chem_comp_bond" ) ) {
-			ISTable& bond_comp = block.GetTable("chem_comp_bond");
-
-			//start bond block
-			for ( Size ii = 0; ii < bond_comp.GetNumRows(); ++ii ) {
-				sdf::MolFileIOBondOP bond( new sdf::MolFileIOBond() );
-
-				std::string const & source( bond_comp( ii, "atom_id_1" ) ); //atom 1
-				std::string const & target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
-
-				if ( source == "O2A" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to O2A " << std::endl;
-					possible_atoms_to_skip.push_back( target );
-				}
-				if ( target == "O2A" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to O2A " << std::endl;
-					possible_atoms_to_skip.push_back( source );
-				}
-				if ( source == "O2B" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to O2B " << std::endl;
-					possible_atoms_to_skip.push_back( target );
-				}
-				if ( target == "O2B" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to O2B " << std::endl;
-					possible_atoms_to_skip.push_back( source );
-				}
-				if ( source == "O3B" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to O3B " << std::endl;
-					possible_atoms_to_skip.push_back( target );
-				}
-				if ( target == "O3B" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to O3B " << std::endl;
-					possible_atoms_to_skip.push_back( source );
-				}
+			if ( source == "O2A" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to O2A " << std::endl;
+				possible_atoms_to_skip.push_back( target );
+			}
+			if ( target == "O2A" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to O2A " << std::endl;
+				possible_atoms_to_skip.push_back( source );
+			}
+			if ( source == "O2B" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to O2B " << std::endl;
+				possible_atoms_to_skip.push_back( target );
+			}
+			if ( target == "O2B" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to O2B " << std::endl;
+				possible_atoms_to_skip.push_back( source );
+			}
+			if ( source == "O3B" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to O3B " << std::endl;
+				possible_atoms_to_skip.push_back( target );
+			}
+			if ( target == "O3B" ) {
+				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to O3B " << std::endl;
+				possible_atoms_to_skip.push_back( source );
 			}
 		}
 	}
-
-	//get the atom and bond composition table
-	//ISTable & atom_comp = block.GetTable("chem_comp_atom");
 
 	//this is to map the atom names to a core::Size value (id). This is added when adding
 	//bonds to the MolIO object.
 	std::map< std::string, core::Size > atom_name_to_id;
 
 	//prefer the ideal coordinates, but if not found, use cartesian coordinates
-	std::string xyz_start_type, xyz_end_type;
-	if ( atom_comp.IsColumnPresent( "pdbx_model_Cartn_x_ideal") ) {
-		xyz_start_type = "pdbx_model_Cartn_x_ideal";
-		xyz_end_type = "pdbx_model_Cartn_z_ideal";
-		if ( atom_comp( 0, xyz_start_type ) == "?" ) {
-			// for some entries they're present but undefined - try the model coordinates instead
-			xyz_start_type = "model_Cartn_x";
-			xyz_end_type = "model_Cartn_z";
-		}
-	} else {
-		xyz_start_type = "model_Cartn_x";
-		xyz_end_type = "model_Cartn_z";
+	int x_id = pdbx_model_Cartn_x_ideal, y_id = pdbx_model_Cartn_y_ideal, z_id = pdbx_model_Cartn_z_ideal;
+	if ( x_id < 0 || y_id < 0 || z_id < 0 || gemmi::cif::is_null( atom_comp[0][x_id] ) ) {
+		x_id = model_Cartn_x;
+		y_id = model_Cartn_y;
+		z_id = model_Cartn_z;
 	}
-	if ( atom_comp( 0, xyz_end_type ) == "?" ) {
-		utility_exit_with_message( "No usable coordinates for mmCIF file for " + block.GetName() );
+	if ( x_id < 0 || y_id < 0 || z_id < 0 || gemmi::cif::is_null( atom_comp[0][z_id] ) ) {
+		utility_exit_with_message( "No usable coordinates for mmCIF file for " + block.name );
 	}
 
 	// Loop over atom block and check to see if any heavyatoms are bound to OP3/O3P
 	bool interesting_pendant = false;
-	for ( Size ii = 1; ii < atom_comp.GetNumRows(); ++ii ) {
-		std::string const & atom_name = atom_comp( ii, atom_name_type );
-		std::string const & element = atom_comp( ii, "type_symbol" );
+	for ( Size ii = 0; ii < atom_comp.size(); ++ii ) {
+		std::string atom_name = as_string( atom_comp[ ii ][ atom_name_id ] );
+		std::string element = as_string( atom_comp[ii][ type_symbol ] );
 		if ( O3P_connected.contains( atom_name ) ) {
 			if ( element != "H" && atom_name != "P" ) {
 				TR.Trace << "There is an OP3-bonded heavyatom: " << atom_name << std::endl;
@@ -449,17 +426,16 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 	//start atom block
 	Size index = 1;
 	TR.Trace << "possible_atoms_to_skip: " << possible_atoms_to_skip << std::endl;
-	for ( Size ii = 0; ii < atom_comp.GetNumRows(); ++ii ) {
+	for ( Size ii = 0; ii < atom_comp.size(); ++ii ) {
 		sdf::MolFileIOAtomOP atom( new sdf::MolFileIOAtom());
-		//atom id is whatever the number we are on +1, because we dont do 0 based index
+		//atom id is whatever the number we are on +1
 		// AMW: meaning... that we don't need the below, nor would we actually want it
 		// because needing to skip (due to non-patched polymers) screws it up.
 		// ditto our index, ii... so use another.
-		//utility::string2int( atom_comp( ii, "pdbx_ordinal" ) ) );
 		atom->index( index );
 
 		//set atom name
-		std::string atom_name = atom_comp( ii, atom_name_type );
+		std::string atom_name = as_string( atom_comp[ ii][ atom_name_id ] );
 		TR.Trace << "Examining atom entry " << atom_name << std::endl;
 		if ( is_peptide_linking && atom_name == "OXT" ) continue;
 		if ( is_nucleic_linking && !interesting_pendant && atom_name == "OP3" ) continue;
@@ -472,9 +448,9 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 		//set map to index
 		atom_name_to_id[ atom_name ] = index;
 		//set element name
-		atom->element( atom_comp( ii, "type_symbol" ) );
+		atom->element( as_string( atom_comp[ii][type_symbol] ) );
 
-		TR.Trace << "Type symbol for atom  " << atom_name << " is " <<  atom_comp( ii, "type_symbol" )  << std::endl;
+		TR.Trace << "Type symbol for atom  " << atom_name << " is " <<  as_string(atom_comp[ii][type_symbol]) << std::endl;
 		if ( possible_atoms_to_skip.contains( atom_name ) && atom->element() == "H" ) {
 			actual_atoms_to_skip.push_back( atom_name );
 			continue;
@@ -482,21 +458,17 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 
 		TR.Trace << "Keeping atom entry " << atom_name << std::endl;
 
-
 		//get the xyz cordinates
-		std::vector< std::string > atom_coords;
-		atom_comp.GetRow( atom_coords, ii, xyz_start_type, xyz_end_type );
-		core::Real x = utility::string2float( atom_coords[ 0 ] );
-		core::Real y = utility::string2float( atom_coords[ 1 ] );
-		core::Real z = utility::string2float( atom_coords[ 2 ] );
+		core::Real x = as_number( atom_comp[ii][ x_id ] );
+		core::Real y = as_number( atom_comp[ii][ y_id ] );
+		core::Real z = as_number( atom_comp[ii][ z_id ] );
 		//set xyz coordinates
 		atom->position( core::Vector( x, y, z ) );
 
-		std::string charge( atom_comp(ii, "charge"));
-		if ( charge == "?" ) {
-			atom->formal_charge( 0 );
+		if ( charge >= 0 ) {
+			atom->formal_charge( as_int( atom_comp[ii][charge], 0 ) ); // Default zero if present and null
 		} else {
-			atom->formal_charge( utility::string2int( charge ) );
+			atom->formal_charge( 0 );
 		}
 
 		molecule->add_atom( atom );
@@ -510,43 +482,37 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 	// So we need to place an additional requirement for H skipping.
 	// This is actually a very hard problem.
 
+	gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2","value_order"} );
+	for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
+		std::string source = as_string( bond_comp[ii][0] ); //atom 1
+		std::string target = as_string( bond_comp[ii][1] ); //atom 2
+		core::Size bond_type( bond_string_to_sdf_size_[ as_string(bond_comp[ii][2]) ] );
 
-	if ( block.IsTablePresent( "chem_comp_bond" ) ) {
-		ISTable& bond_comp = block.GetTable("chem_comp_bond");
+		sdf::MolFileIOBondOP bond( new sdf::MolFileIOBond() );
 
-		//start bond block
-		for ( Size ii = 0; ii < bond_comp.GetNumRows(); ++ii ) {
-			sdf::MolFileIOBondOP bond( new sdf::MolFileIOBond() );
+		if ( source == rename_to_C ) source = "C";
+		if ( target == rename_to_C ) target = "C";
 
-			//std::string const & source( bond_comp( ii, "atom_id_1" ) ); //atom 1
-			//std::string const & target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
-			std::string source( bond_comp( ii, "atom_id_1" ) ); //atom 1
-			std::string target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
+		TR.Trace << "Examining bond entry " << source << " " << target << std::endl;
 
-			if ( source == rename_to_C ) source = "C";
-			if ( target == rename_to_C ) target = "C";
+		if ( is_peptide_linking && source == "OXT" ) continue;
+		if ( is_peptide_linking && target == "OXT" ) continue;
+		if ( is_nucleic_linking && !interesting_pendant && ( source == "OP3" || source == "O3P" ) ) continue;
+		if ( is_nucleic_linking && !interesting_pendant && ( target == "OP3" || target == "O3P" ) ) continue;
+		if ( actual_atoms_to_skip.contains( source ) ) continue;
+		if ( actual_atoms_to_skip.contains( target ) ) continue;
 
-			TR.Trace << "Examining bond entry " << source << " " << target << std::endl;
+		TR.Trace << "Keeping bond entry " << source << " " << target << std::endl;
 
-			if ( is_peptide_linking && source == "OXT" ) continue;
-			if ( is_peptide_linking && target == "OXT" ) continue;
-			if ( is_nucleic_linking && !interesting_pendant && ( source == "OP3" || source == "O3P" ) ) continue;
-			if ( is_nucleic_linking && !interesting_pendant && ( target == "OP3" || target == "O3P" ) ) continue;
-			if ( actual_atoms_to_skip.contains( source ) ) continue;
-			if ( actual_atoms_to_skip.contains( target ) ) continue;
+		bond->atom1( atom_name_to_id[ source ] );
+		bond->atom2( atom_name_to_id[ target ] );
 
-			TR.Trace << "Keeping bond entry " << source << " " << target << std::endl;
+		bond->sdf_type( bond_type); //bond order
 
-			bond->atom1( atom_name_to_id[ source ] );
-			bond->atom2( atom_name_to_id[ target ] );
-
-			core::Size bond_type( bond_string_to_sdf_size_[ bond_comp( ii, "value_order" ) ] ) ;
-			bond->sdf_type( bond_type); //bond order
-
-			molecule->add_bond( bond);
-		}
-	} else if ( atom_comp.GetNumRows() > 1 ) {
-		TR.Error << "Cannot parse CIF file. No bond block (chem_comp_bond) found for multi-atom entry " << block.GetName() << std::endl;
+		molecule->add_bond( bond);
+	}
+	if ( bond_comp.size() == 0 && atom_comp.size() > 1 ) {
+		TR.Error << "Cannot parse CIF file. No bond block (chem_comp_bond) found for multi-atom entry " << block.name << std::endl;
 	} // else one atom entry without bond block
 
 	// Note, for polymer generalization we may want to find the block here that

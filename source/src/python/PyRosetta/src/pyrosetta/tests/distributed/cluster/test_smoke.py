@@ -840,10 +840,7 @@ class SerializationTest(unittest.TestCase):
                     self.assertEqual(id(input_packed_pose), id(output_packed_pose), msg=_error_msg)
                 else:
                     self.assertNotEqual(id(input_packed_pose), id(output_packed_pose), msg=_error_msg)
-                if _test_case == 0 and _compression in (False, None):
-                    self.assertEqual(scores, output_packed_pose.scores, msg=_error_msg)
-                else:
-                    self.assertNotEqual(scores, output_packed_pose.scores, msg=_error_msg)
+                self.assertEqual(scores, output_packed_pose.scores, msg=_error_msg)
                 self.assertSetEqual(
                     set(input_packed_pose.scores.keys()),
                     set(output_packed_pose.scores.keys()),
@@ -860,7 +857,7 @@ class SerializationTest(unittest.TestCase):
                 if _compression not in (False, None):
                     if _test_case == 0:
                         self.assertEqual(scores, input_packed_pose.scores, msg=_error_msg)
-                        self.assertNotEqual(
+                        self.assertEqual(
                             input_packed_pose.scores, output_packed_pose.scores, msg=_error_msg
                         )
                         self.assertNotEqual(
@@ -869,7 +866,7 @@ class SerializationTest(unittest.TestCase):
                             msg=_error_msg,
                         )
                     elif _test_case in (1, 2):
-                        self.assertNotEqual(scores, input_packed_pose.scores, msg=_error_msg)
+                        self.assertEqual(scores, input_packed_pose.scores, msg=_error_msg)
                         self.assertEqual(input_packed_pose.scores, output_packed_pose.scores, msg=_error_msg)
                         self.assertEqual(
                             input_packed_pose.pickled_pose,
@@ -1238,6 +1235,182 @@ class ResourcesTest(unittest.TestCase):
             for worker in cluster_2.workers.values():
                 worker.close_gracefully()
             client_2.close()
+
+
+class ScoresTest(unittest.TestCase):
+    _value = 1e1
+
+    @classmethod
+    def setUpClass(cls):
+        pyrosetta.distributed.init(
+            options="-run:constant_seed 1 -multithreading:total_threads 1",
+            extra_options="-out:level 200",
+            set_logging_handler="logging",
+        )
+        cls.input_packed_pose = io.pose_from_sequence("TEST")
+        cls.workdir = tempfile.TemporaryDirectory()
+        cls.decoy_dir_name = "decoys"
+        cls.instance_kwargs = dict(
+            tasks=ScoresTest.create_task,
+            seeds=None,
+            decoy_ids=None,
+            client=None,
+            scheduler=None,
+            scratch_dir=cls.workdir.name,
+            cores=None,
+            processes=None,
+            memory=None,
+            min_workers=1,
+            max_workers=1,
+            nstruct=1,
+            dashboard_address=None,
+            compressed=True,
+            logging_level="INFO",
+            scorefile_name=None,
+            project_name="PyRosettaCluster_Tests",
+            simulation_name=None,
+            environment=None,
+            simulation_records_in_scorefile=False,
+            decoy_dir_name=cls.decoy_dir_name,
+            logs_dir_name="logs",
+            ignore_errors=False,
+            timeout=0.1,
+            max_delay_time=0.5,
+            sha1=None,
+            dry_run=False,
+            save_all=False,
+            system_info=None,
+            pyrosetta_build=None,
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.workdir.cleanup()
+
+    @staticmethod
+    def create_task():
+        yield {
+            "extra_options": "-ex1 -multithreading:total_threads 1",
+            "set_logging_handler": "logging",
+        }
+
+    @staticmethod
+    def identity_protocol(packed_pose, **kwargs):
+        import pyrosetta
+        import pyrosetta.distributed.io as io
+
+        return packed_pose
+
+    @staticmethod
+    @reserve_scores
+    def reserved_scores_protocol(packed_pose, **kwargs):
+        import pyrosetta
+        import pyrosetta.distributed.io as io
+
+        pose = packed_pose.pose
+        pose.cache.clear()
+        packed_pose = io.to_packed(pose)
+        packed_pose.scores.clear()
+
+        return packed_pose
+
+    @staticmethod
+    def add_detached_scores_protocol(packed_pose, **kwargs):
+        import pyrosetta
+        import pyrosetta.distributed.io as io
+
+        packed_pose = packed_pose.update_scores(attached_score=ScoresTest._value)
+        packed_pose.scores["detached_score"] = ScoresTest._value
+
+        return packed_pose
+
+    def get_scores_dict(self, output_path):
+        decoy_files = glob.glob(os.path.join(output_path, self.decoy_dir_name, "*", "*.bz2"))
+        self.assertEqual(len(decoy_files), 1)
+        scores_dict = get_scores_dict(next(iter(decoy_files)))
+
+        return scores_dict
+
+    def setup_input_packed_pose(self):
+        pose = io.to_pose(self.input_packed_pose).clone()
+        pose.cache.clear()
+        input_packed_pose = io.to_packed(pose)
+        input_packed_pose.scores.clear()
+
+        return input_packed_pose
+
+    def test_detached_scores(self):
+        """Test saving detached scores in PyRosettaCluster with/without compression."""
+        for compression in (True, False):
+            input_packed_pose = self.setup_input_packed_pose()
+            input_packed_pose = self.input_packed_pose.update_scores(attached_score=ScoresTest._value)
+            input_packed_pose.scores["detached_score"] = ScoresTest._value
+            output_path = os.path.join(self.workdir.name, f"test_detached_scores_{compression}")
+            run(
+                **{
+                    **self.instance_kwargs,
+                    "input_packed_pose": input_packed_pose,
+                    "protocols": ScoresTest.identity_protocol,
+                    "compression": compression,
+                    "output_path": output_path,
+                }
+            )
+            scores_dict = self.get_scores_dict(output_path)
+            for key in ("attached_score", "detached_score"):
+                self.assertIn(
+                    key,
+                    scores_dict["scores"],
+                    msg=f"Saving score '{key}' failed with compression={compression}",
+                )
+                self.assertEqual(scores_dict["scores"][key], ScoresTest._value)
+
+    def test_detached_scores_with_reserve_scores(self):
+        """Test saving detached scores in PyRosettaCluster with/without compression with `reserve_scores` decorator."""
+        for compression in (True, False):
+            input_packed_pose = self.setup_input_packed_pose()
+            input_packed_pose = self.input_packed_pose.update_scores(attached_score=ScoresTest._value)
+            input_packed_pose.scores["detached_score"] = ScoresTest._value
+            output_path = os.path.join(self.workdir.name, f"test_detached_scores_with_reserve_scores_{compression}")
+            run(
+                **{
+                    **self.instance_kwargs,
+                    "input_packed_pose": input_packed_pose,
+                    "protocols": ScoresTest.reserved_scores_protocol,
+                    "compression": compression,
+                    "output_path": output_path,
+                }
+            )
+            scores_dict = self.get_scores_dict(output_path)
+            for key in ("attached_score", "detached_score"):
+                self.assertIn(
+                    key,
+                    scores_dict["scores"],
+                    msg=f"Saving score '{key}' failed with compression={compression}",
+                )
+                self.assertEqual(scores_dict["scores"][key], ScoresTest._value)
+
+    def test_detached_scores_in_protocol(self):
+        """Test saving detached scores in PyRosettaCluster protocol with/without compression."""
+        for compression in (True, False):
+            input_packed_pose = self.setup_input_packed_pose()
+            output_path = os.path.join(self.workdir.name, f"test_detached_scores_in_protocol_{compression}")
+            run(
+                **{
+                    **self.instance_kwargs,
+                    "input_packed_pose": input_packed_pose,
+                    "protocols": ScoresTest.add_detached_scores_protocol,
+                    "compression": compression,
+                    "output_path": output_path,
+                }
+            )
+            scores_dict = self.get_scores_dict(output_path)
+            for key in ("attached_score", "detached_score"):
+                self.assertIn(
+                    key,
+                    scores_dict["scores"],
+                    msg=f"Saving score '{key}' failed with compression={compression}",
+                )
+                self.assertEqual(scores_dict["scores"][key], ScoresTest._value)
 
 
 class TestBase:
