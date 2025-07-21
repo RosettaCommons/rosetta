@@ -169,6 +169,28 @@ def _parse_protocols(objs: Any) -> List[Union[Callable[..., Any], Iterable[Any]]
     return converter(objs)
 
 
+def _parse_yield_results(yield_results: Any) -> bool:
+    @singledispatch
+    def converter(objs: Any) -> NoReturn:
+        raise ValueError("'yield_results' parameter must be of type `bool`.")
+    
+    @converter.register(bool)
+    def _to_bool(objs: bool) -> bool:
+        return objs
+    
+    @converter.register(int)
+    @converter.register(float)
+    @converter.register(str)
+    def _int_to_bool(objs: Union[int, float, str]) -> bool:
+        return bool(objs)
+    
+    @converter.register(type(None))
+    def _none_to_bool(objs: None) -> bool:
+        return False
+    
+    return converter(yield_results)
+
+
 def _parse_pyrosetta_build(obj: Any) -> str:
     """Parse the PyRosetta build string."""
 
