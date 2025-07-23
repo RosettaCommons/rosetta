@@ -1281,6 +1281,7 @@ class ScoresTest(unittest.TestCase):
             save_all=False,
             system_info=None,
             pyrosetta_build=None,
+            filter_results=False,
         )
 
     @classmethod
@@ -1503,6 +1504,7 @@ class TestBase:
             pyrosetta_build=None,
             dry_run=False,
             save_all=False,
+            filter_results=False,
         )
 
     def tearDown(self):
