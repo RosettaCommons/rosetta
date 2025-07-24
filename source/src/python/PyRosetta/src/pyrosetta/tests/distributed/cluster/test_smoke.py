@@ -124,6 +124,7 @@ class SmokeTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=False,
             )
             cluster = PyRosettaCluster(**instance_kwargs)
             cluster.distribute(
@@ -185,6 +186,7 @@ class SmokeTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=False,
             )
             cluster = PyRosettaCluster(**instance_kwargs)
             cluster.distribute(protocol_with_error)
@@ -223,6 +225,7 @@ class SmokeTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=False,
             )
             cluster = PyRosettaCluster(**instance_kwargs)
             with self.assertRaises(WorkerError):
@@ -515,6 +518,7 @@ class SmokeTestMulti(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=False,
             ).distribute(
                 protocols=(
                     my_first_protocol,
@@ -609,6 +613,7 @@ class SmokeTestMulti(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=False,
             ).distribute(protocols=(my_first_protocol, my_second_protocol, my_third_protocol))
 
             cluster = PyRosettaCluster(
@@ -647,6 +652,7 @@ class SmokeTestMulti(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=False,
             )
 
             cluster.distribute(protocols=[my_first_protocol, my_second_protocol, my_third_protocol])
@@ -711,6 +717,7 @@ class SaveAllTest(unittest.TestCase):
                 save_all=True,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=False,
             )
             protocol_args = [my_pyrosetta_protocol] * _total_protocols
             cluster.distribute(*protocol_args)
@@ -788,6 +795,7 @@ class SaveAllTest(unittest.TestCase):
                 save_all=True,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=False,
             ).distribute(protocols=[my_pyrosetta_protocol] * _total_protocols)
 
             self.assertFalse(os.path.exists(os.path.join(output_path, scorefile_name)))
@@ -994,6 +1002,7 @@ class MultipleClientsTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=False,
             )
             produce(**instance_kwargs)
 
@@ -1091,6 +1100,7 @@ class ResourcesTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=False,
             )
             produce(**instance_kwargs)
 
@@ -1220,6 +1230,7 @@ class ResourcesTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=False,
             )
             produce(**instance_kwargs)
 
@@ -1597,6 +1608,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "protocols": protocols,
                 "clients_indices": clients_indices,
                 "resources": resources,
+                "simulation_name": "test_generate_builtin_clients",
             }
             for output_packed_pose, output_kwargs in iterate(**instance_kwargs_update):
                 self.assertIsInstance(output_packed_pose, PackedPose)
@@ -1656,6 +1668,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "input_packed_pose": output_packed_pose,
                 "tasks": self.create_tasks(parameter=GeneratorTest._parameters[1]),
                 "client": self.default_client, # Test passing in same client
+                "simulation_name": "test_generate_user_client",
             }
             for result in iterate(**instance_kwargs_update):
                 results.append(result)
@@ -1705,6 +1718,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "clients": self.clients, # Test passing in same clients
                 "clients_indices": clients_indices,
                 "resources": resources,
+                "simulation_name": "test_generate_multi_user_clients",
             }
             for result in iterate(**instance_kwargs_update):
                 results.append(result)
@@ -1753,6 +1767,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "clients": None,
                 "clients_indices": None,
                 "resources": resources,
+                "simulation_name": "test_generate_partition_clients",
             }
             for result in iterate(**instance_kwargs_update):
                 results.append(result)
@@ -1901,6 +1916,7 @@ class RuntimeTest(TestBase, unittest.TestCase):
             **self.instance_kwargs,
             **setup_kwargs,
             "client": self.clients[1],
+            "simulation_name": "test_timing_multi_instance",
         }
         for k in ("protocols", "clients_indices", "resources"):
             instance_kwargs_2.pop(k, None)
