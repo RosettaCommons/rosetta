@@ -74,6 +74,9 @@ class PackedPose:
         result.scores = pickle.loads(pickle.dumps(self.scores))
         return result
 
+    def empty(self):
+        return self.pose.empty()
+
 
 def pack_result(func):
     @functools.wraps(func)

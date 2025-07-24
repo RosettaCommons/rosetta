@@ -35,6 +35,7 @@ from pyrosetta.distributed.cluster.converter_tasks import (
     get_yml,
     is_bytes,
     is_dict,
+    is_empty,
     is_packed,
     parse_input_packed_pose as _parse_input_packed_pose,
     to_int,
