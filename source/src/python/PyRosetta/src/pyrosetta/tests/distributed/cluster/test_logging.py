@@ -122,6 +122,7 @@ class LoggingTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=False,
             )
             cluster.distribute(my_pyrosetta_protocol)
 
