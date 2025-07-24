@@ -330,7 +330,7 @@ ResidueTypeCOPs
 ResidueTypeFinder::apply_preferences_and_discouragements( ResidueTypeCOPs const & rsd_types ) const {
 	if ( rsd_types.empty() ) return rsd_types;
 
-	if ( preferred_properties_.empty() && discouraged_properties_.empty() && ! no_CCD_on_name3_match_ ) {
+	if ( preferred_properties_.empty() && discouraged_properties_.empty() && preferred_connects_.empty() && ! no_CCD_on_name3_match_ ) {
 		return rsd_types; // nothing to do
 	}
 
@@ -407,6 +407,36 @@ ResidueTypeFinder::apply_preferences_and_discouragements( ResidueTypeCOPs const 
 		}
 
 		current_type_list = new_type_list;
+	}
+
+	if ( ! preferred_connects_.empty() ) {
+		for ( std::string const & connect_point: preferred_connects_ ) {
+			new_type_list.clear();
+			for ( ResidueTypeCOP type: current_type_list ) {
+				if ( connect_point == "UPPER" && type->upper_connect_id() != 0 ) {
+					new_type_list.push_back( type );
+				} else if ( connect_point == "LOWER" && type->lower_connect_id() != 0 ) {
+					new_type_list.push_back( type );
+				} else if ( type->has(connect_point) && type->atom_forms_residue_connection( type->atom_index(connect_point) ) ) {
+					new_type_list.push_back( type );
+				}
+			}
+			if ( ! new_type_list.empty() ) {
+				if ( TR.Debug.visible() ) {
+					TR.Debug << "Encouraging connection to " << connect_point <<
+						", going from " << current_type_list.size() << " types to " <<
+						new_type_list.size() << " types." << std::endl;
+					TR.Debug<< "Going from ";
+					for ( auto rt: current_type_list ) { TR.Debug << " " << rt->name(); }
+					TR.Debug << std::endl;
+					TR.Debug << "To ";
+					for ( auto rt: new_type_list ) { TR.Debug << " " << rt->name(); }
+					TR.Debug << std::endl;
+				}
+
+				current_type_list = new_type_list;
+			}
+		} // for connect in connects
 	}
 
 	current_type_list = prioritize_rosetta_types_over_pdb_components( current_type_list );
