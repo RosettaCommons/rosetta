@@ -1982,9 +1982,9 @@ PoseFromSFRBuilder::get_rsd_type(
 	if ( is_lower_terminus ) {
 		if ( known_connect_atoms_on_this_residue.contains( "P" ) || known_connect_atoms_on_this_residue.contains( "N" ) ) {
 			variants.push_back( CUTPOINT_UPPER );
+		} else {
+			discouraged_connects.push_back( "LOWER" );
 		}
-		// "lower terminus" also includes ligands, which may not have any terminus properties.
-		discouraged_connects.push_back( "LOWER" );
 	} else {
 		// Non-terminus probably means we need a polymeric connection ... probably
 		preferred_connects.push_back( "LOWER" );
@@ -1992,8 +1992,9 @@ PoseFromSFRBuilder::get_rsd_type(
 	if ( is_upper_terminus ) {
 		if ( known_connect_atoms_on_this_residue.contains( "O3'" ) || known_connect_atoms_on_this_residue.contains( "C" ) ) {
 			variants.push_back( CUTPOINT_LOWER );
+		} else {
+			discouraged_connects.push_back( "UPPER" );
 		}
-		discouraged_connects.push_back( "UPPER" );
 	} else {
 		preferred_connects.push_back( "UPPER" );
 	}
