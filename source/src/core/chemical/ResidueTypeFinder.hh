@@ -227,6 +227,14 @@ public:
 		return *this;
 	}
 
+	/// @brief The atom name (or UPPER/LOWER) of the connection points that should be avoided
+	/// Will not eliminate residues if all possibilities have that connection point
+	ResidueTypeFinder &
+	discouraged_connects( utility::vector1< std::string > const & setting ) {
+		discouraged_connects_ = setting;
+		return *this;
+	}
+
 	ResidueTypeFinder &
 	patch_names( utility::vector1< std::string > const & setting ) {
 		patch_names_ = setting;
@@ -398,6 +406,7 @@ private:
 	utility::vector1< ResidueProperty > preferred_properties_; // Does not affect filtering, but may cause additional patches to be applied
 	utility::vector1< ResidueProperty > discouraged_properties_; // Only affects filtering if alternatives are present.
 	utility::vector1< std::string > preferred_connects_; // Only affects filtering if alternatives are present
+	utility::vector1< std::string > discouraged_connects_; // Only affects filtering if alternatives are present
 	utility::vector1< std::string > patch_names_;
 
 	utility::vector1< std::string > connect_atoms_;

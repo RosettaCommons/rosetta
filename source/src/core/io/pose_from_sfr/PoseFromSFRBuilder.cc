@@ -1966,7 +1966,7 @@ PoseFromSFRBuilder::get_rsd_type(
 	using utility::vector1;
 
 	vector1< ResidueProperty > preferred_properties, discouraged_properties;
-	vector1< std::string > preferred_connects;
+	vector1< std::string > preferred_connects, discouraged_connects;
 	vector1< VariantType > variants, disallow_variants;
 
 	std::string residue_base_name( "" );  // used when we have more information then just a 3-letter code
@@ -1984,6 +1984,7 @@ PoseFromSFRBuilder::get_rsd_type(
 			variants.push_back( CUTPOINT_UPPER );
 		}
 		// "lower terminus" also includes ligands, which may not have any terminus properties.
+		discouraged_connects.push_back( "LOWER" );
 	} else {
 		// Non-terminus probably means we need a polymeric connection ... probably
 		preferred_connects.push_back( "LOWER" );
@@ -1992,6 +1993,7 @@ PoseFromSFRBuilder::get_rsd_type(
 		if ( known_connect_atoms_on_this_residue.contains( "O3'" ) || known_connect_atoms_on_this_residue.contains( "C" ) ) {
 			variants.push_back( CUTPOINT_LOWER );
 		}
+		discouraged_connects.push_back( "UPPER" );
 	} else {
 		preferred_connects.push_back( "UPPER" );
 	}
@@ -2024,6 +2026,7 @@ PoseFromSFRBuilder::get_rsd_type(
 		.preferred_properties( preferred_properties )
 		.discouraged_properties( discouraged_properties )
 		.preferred_connects( preferred_connects )
+		.discouraged_connects( discouraged_connects )
 		.patch_names( patch_names )
 		.ignore_atom_named_H( is_lower_terminus )
 		.check_nucleic_acid_virtual_phosphates( true )

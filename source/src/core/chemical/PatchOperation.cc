@@ -194,7 +194,21 @@ SetPolymerConnectAtom::apply( MutableResidueType & rsd ) const
 bool
 SetPolymerConnectAtom::changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const
 {
-	return rsd_type.has( atom ) && rsd_type.has( atom_name_ ) && rsd_type.atom_index( atom ) == rsd_type.atom_index( atom_name_ );
+	if ( atom_name_ == "NONE" ) {
+		if ( upper_lower_ == -1 ) {
+			return rsd_type.lower_connect_id() != 0 && ( atom == "LOWER" || (
+					rsd_type.has( atom_name_ ) && rsd_type.atom_index( atom ) == rsd_type.lower_connect_atom() ) );
+		} else {
+			return rsd_type.upper_connect_id() != 0 && ( atom == "UPPER" || (
+					rsd_type.has( atom_name_ ) && rsd_type.atom_index( atom ) == rsd_type.upper_connect_atom() ) );
+		}
+	} else if ( atom == "LOWER" ) {
+		return upper_lower_ == -1;
+	} else if ( atom == "UPPER" ) {
+		return upper_lower_ != -1;
+	} else {
+		return rsd_type.has( atom ) && rsd_type.has( atom_name_ ) && rsd_type.atom_index( atom ) == rsd_type.atom_index( atom_name_ );
+	}
 }
 
 
