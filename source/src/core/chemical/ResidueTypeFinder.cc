@@ -330,9 +330,11 @@ ResidueTypeCOPs
 ResidueTypeFinder::apply_preferences_and_discouragements( ResidueTypeCOPs const & rsd_types ) const {
 	if ( rsd_types.empty() ) return rsd_types;
 
-	if ( preferred_properties_.empty() && discouraged_properties_.empty() && ! no_CCD_on_name3_match_ ) {
+	if ( preferred_properties_.empty() && discouraged_properties_.empty() && preferred_connects_.empty() && discouraged_connects_.empty() && ! no_CCD_on_name3_match_ ) {
 		return rsd_types; // nothing to do
 	}
+
+	if ( rsd_types.size() == 1 ) return rsd_types; // If there's only one possibility, we're going to be using it.
 
 	ResidueTypeCOPs current_type_list( rsd_types );
 	ResidueTypeCOPs new_type_list;
@@ -374,6 +376,46 @@ ResidueTypeFinder::apply_preferences_and_discouragements( ResidueTypeCOPs const 
 		current_type_list = new_type_list;
 	}
 
+	if ( ! discouraged_connects_.empty() ) {
+		utility::vector1< core::Size > connect_counts;
+		for ( ResidueTypeCOP const & type: current_type_list ) {
+			core::Size count = 0;
+			for ( std::string const & connect_point: discouraged_connects_ ) {
+				if ( connect_point == "UPPER" && type->upper_connect_id() != 0 ) {
+					++count;
+				} else if ( connect_point == "LOWER" && type->lower_connect_id() != 0 ) {
+					++count;
+				} else if ( type->has(connect_point) && type->atom_forms_residue_connection( type->atom_index(connect_point) ) ) {
+					++count;
+				}
+			}
+			connect_counts.push_back(count);
+		}
+		debug_assert( ! connect_counts.empty() );
+		core::Size min_count = *std::min_element( connect_counts.begin(), connect_counts.end() );
+		new_type_list.clear();
+		for ( core::Size ii(1); ii <= current_type_list.size(); ++ii ) {
+			if ( connect_counts[ ii ] == min_count ) {
+				new_type_list.push_back( current_type_list[ ii ] );
+			}
+		}
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "Discouraging " << discouraged_connects_.size() << " connection points, " <<
+				"going from " << current_type_list.size() << " types to " <<
+				new_type_list.size() << " types." << std::endl;
+			TR.Debug<< "Discouraged connections: " << discouraged_connects_ << std::endl;
+			TR.Debug<< "Going from ";
+			for ( auto rt: current_type_list ) { TR.Debug << " " << rt->name(); }
+			TR.Debug << std::endl;
+			TR.Debug << "To ";
+			for ( auto rt: new_type_list ) { TR.Debug << " " << rt->name(); }
+			TR.Debug << std::endl;
+		}
+
+		current_type_list = new_type_list;
+	}
+
+
 	if ( ! preferred_properties_.empty() ) {
 		utility::vector1< core::Size > property_counts;
 		for ( ResidueTypeCOP const & rsd_type: current_type_list ) {
@@ -398,6 +440,45 @@ ResidueTypeFinder::apply_preferences_and_discouragements( ResidueTypeCOPs const 
 				"going from " << current_type_list.size() << " types to " <<
 				new_type_list.size() << " types." << std::endl;
 			TR.Debug << "Encouraged: " << preferred_properties_ << std::endl;
+			TR.Debug<< "Going from ";
+			for ( auto rt: current_type_list ) { TR.Debug << " " << rt->name(); }
+			TR.Debug << std::endl;
+			TR.Debug << "To ";
+			for ( auto rt: new_type_list ) { TR.Debug << " " << rt->name(); }
+			TR.Debug << std::endl;
+		}
+
+		current_type_list = new_type_list;
+	}
+
+	if ( ! preferred_connects_.empty() ) {
+		utility::vector1< core::Size > connect_counts;
+		for ( ResidueTypeCOP const & type: current_type_list ) {
+			core::Size count = 0;
+			for ( std::string const & connect_point: preferred_connects_ ) {
+				if ( connect_point == "UPPER" && type->upper_connect_id() != 0 ) {
+					++count;
+				} else if ( connect_point == "LOWER" && type->lower_connect_id() != 0 ) {
+					++count;
+				} else if ( type->has(connect_point) && type->atom_forms_residue_connection( type->atom_index(connect_point) ) ) {
+					++count;
+				}
+			}
+			connect_counts.push_back(count);
+		}
+		debug_assert( ! connect_counts.empty() );
+		core::Size max_count = *std::max_element( connect_counts.begin(), connect_counts.end() );
+		new_type_list.clear();
+		for ( core::Size ii(1); ii <= current_type_list.size(); ++ii ) {
+			if ( connect_counts[ ii ] == max_count ) {
+				new_type_list.push_back( current_type_list[ ii ] );
+			}
+		}
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "Encouraging " << preferred_connects_.size() << " connection points, " <<
+				"going from " << current_type_list.size() << " types to " <<
+				new_type_list.size() << " types." << std::endl;
+			TR.Debug<< "Encouraged connections: " << preferred_connects_ << std::endl;
 			TR.Debug<< "Going from ";
 			for ( auto rt: current_type_list ) { TR.Debug << " " << rt->name(); }
 			TR.Debug << std::endl;
@@ -775,22 +856,49 @@ ResidueTypeFinder::fixes_interchangeability_group( PatchCOP patch, ResidueTypeCO
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-ResidueTypeFinder::fixes_connects( PatchCOP patch, ResidueTypeCOP rsd_type ) const {
-	if ( connect_atoms_.empty() ) return false; // Can't fix what isn't broken.
-	for ( std::string const & atom: connect_atoms_ ) {
-		if ( rsd_type->has(atom) ) {
-			// patch->changes_connections_on() should be whitespace padding insensitive.
-			if ( rsd_type->residue_connections_for_atom( rsd_type->atom_index(atom) ).empty() &&
-					patch->changes_connections_on( *rsd_type, atom ) ) {
-				return true;
-			}
-		} else {
-			// Don't have the atom -- get patches which may add the atom.
-			if ( patch->adds_atoms( *rsd_type ).has_value( atom ) ) {
-				return true;
-			}
+adds_connects_helper( PatchCOP patch, ResidueTypeCOP rsd_type, std::string const & atom ) {
+	if ( rsd_type->has(atom) ) {
+		// patch->changes_connections_on() should be whitespace padding insensitive.
+		if ( rsd_type->residue_connections_for_atom( rsd_type->atom_index(atom) ).empty() &&
+				patch->changes_connections_on( *rsd_type, atom ) ) {
+			return true;
+		}
+	} else {
+		// Don't have the atom -- get patches which may add the atom.
+		if ( patch->adds_atoms( *rsd_type ).has_value( atom ) ) {
+			return true;
 		}
 	}
+	return false;
+}
+
+bool
+ResidueTypeFinder::fixes_connects( PatchCOP patch, ResidueTypeCOP rsd_type ) const {
+
+	for ( std::string const & atom: connect_atoms_ ) {
+		if ( adds_connects_helper( patch, rsd_type, atom ) ) { return true; }
+	}
+
+	for ( std::string const & atom: preferred_connects_ ) {
+		if ( atom == "LOWER" && rsd_type->lower_connect_id() == 0 ) {
+			if ( patch->changes_connections_on( *rsd_type, atom ) ) { return true; }
+		} else if ( atom == "UPPER" && rsd_type->upper_connect_id() == 0 ) {
+			if ( patch->changes_connections_on( *rsd_type, atom ) ) { return true; }
+		} else {
+			if ( adds_connects_helper( patch, rsd_type, atom ) ) { return true; }
+		}
+	}
+
+	for ( std::string const & atom: discouraged_connects_ ) {
+		if ( atom == "LOWER" && rsd_type->lower_connect_id() != 0 ) {
+			if ( patch->changes_connections_on( *rsd_type, atom ) ) { return true; }
+		} else if ( atom == "UPPER" && rsd_type->upper_connect_id() != 0 ) {
+			if ( patch->changes_connections_on( *rsd_type, atom ) ) { return true; }
+		} else if ( rsd_type->has( atom ) && rsd_type->atom_forms_residue_connection( rsd_type->atom_index(atom) ) ) {
+			if ( patch->changes_connections_on( *rsd_type, atom ) ) { return true; }
+		}
+	}
+
 	return false;
 }
 
