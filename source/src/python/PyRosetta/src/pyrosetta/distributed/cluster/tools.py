@@ -31,7 +31,7 @@ import tempfile
 
 from datetime import datetime
 from functools import wraps
-from pyrosetta.distributed.cluster.converters import _parse_protocols
+from pyrosetta.distributed.cluster.converters import _parse_protocols, _parse_yield_results
 from pyrosetta.distributed.cluster.converter_tasks import (
     get_protocols_list_of_str,
     get_yml,
@@ -53,9 +53,11 @@ from typing import (
     Any,
     Callable,
     Dict,
+    Generator,
     List,
     NoReturn,
     Optional,
+    Tuple,
     TypeVar,
     Union,
     cast,
@@ -371,12 +373,12 @@ def reserve_scores(func: P) -> Union[P, NoReturn]:
     Use this as a Python decorator of any user-provided PyRosetta protocol.
     If any scoreterms and values are present in the input `packed_pose`, then if
     they are deleted during execution of the decorated user-provided PyRosetta
-    protocol, then append those scoreterms and values back into the pose.scores
+    protocol, then append those scoreterms and values back into the `pose.cache`
     dictionary after execution. If any scoreterms and values are present in the
     input `packed_pose` and also present in the returned or yielded output `Pose`
     or `PackedPose` objects, then do not append the original scoreterms and values
-    back into the pose.scores dictionary after execution (that is, keep the outputted
-    scoreterms and values in the pose.scores dictionary). Any new scoreterms and
+    back into the `pose.cache` dictionary after execution (that is, keep the outputted
+    scoreterms and values in the `pose.cache` dictionary). Any new scoreterms and
     values acquired in the decorated user-provided PyRosetta protocol will never
     be overwritten. This allows users to maintain scoreterms and values acquired
     in earlier user-defined PyRosetta protocols if needing to execute Rosetta
@@ -387,7 +389,8 @@ def reserve_scores(func: P) -> Union[P, NoReturn]:
     @reserve_scores
     def my_pyrosetta_protocol(packed_pose, **kwargs):
         from pyrosetta import MyMover
-        MyMover().apply(packed_pose.pose)
+        pose = packed_pose.pose
+        MyMover().apply(pose)
         return pose
 
     Args:
@@ -400,12 +403,12 @@ def reserve_scores(func: P) -> Union[P, NoReturn]:
     import pyrosetta.distributed  # noqa
 
     @wraps(func)
-    def wrapper(pose, **kwargs):
-        if pose:
-            _scores_dict = dict(pose.scores)
+    def wrapper(packed_pose, **kwargs):
+        if packed_pose is not None:
+            _scores_dict = update_scores(packed_pose).scores
         else:
             _scores_dict = {}
-        _output = func(pose, **kwargs)
+        _output = func(packed_pose, **kwargs)
 
         return reserve_scores_in_results(_output, _scores_dict, func.__name__)
 
@@ -523,22 +526,18 @@ def reproduce(
 
 def produce(**kwargs: Any) -> Optional[NoReturn]:
     """
-    PyRosettaCluster.distribute shim requiring the 'protocols' keyword argument and optionally
-    any PyRosettaCluster keyword arguments or the 'clients_indices' keyword argument when using
-    the 'clients' keyword argument.
+    `PyRosettaCluster().distribute()` shim requiring the 'protocols' keyword argument, and optionally
+    any PyRosettaCluster keyword arguments or the 'clients_indices' keyword argument (when using
+    the `PyRosettaCluster(clients=...)` keyword argument), or the 'resources' keyword argument.
 
     Args:
-        **kwargs: See PyRosettaCluster docstring. The keyword arguments must also include
+        **kwargs: See `PyRosettaCluster` docstring. The keyword arguments must also include
             'protocols', an iterable object of function or generator objects specifying
             an ordered sequence of user-defined PyRosetta protocols to execute for
-            the simulation (see PyRosettaCluster.distribute docstring). The keyword arguments
-            may also optionally include 'clients_indices' (see PyRosettaCluster.distribute
-            docstring).
-
-    Returns:
-        None
+            the simulation (see `PyRosettaCluster().distribute` docstring). The keyword arguments
+            may also optionally include 'clients_indices' or 'resources' (see
+            `PyRosettaCluster().distribute` docstring).
     """
-
     protocols = kwargs.pop("protocols", None)
     clients_indices = kwargs.pop("clients_indices", None)
     resources = kwargs.pop("resources", None)
@@ -548,5 +547,28 @@ def produce(**kwargs: Any) -> Optional[NoReturn]:
         resources=resources,
     )
 
-
 run: Callable[..., Optional[NoReturn]] = produce
+
+@wraps(produce, assigned=("__doc__",), updated=())
+def iterate(**kwargs: Any) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[Any, Any]], None, None]]:
+    protocols = kwargs.pop("protocols", None)
+    clients_indices = kwargs.pop("clients_indices", None)
+    resources = kwargs.pop("resources", None)
+    for result in PyRosettaCluster(**kwargs).generate(
+        protocols=protocols,
+        clients_indices=clients_indices,
+        resources=resources,
+    ):
+        yield result
+
+produce.__doc__ += """
+    Returns:
+        None
+    """
+iterate.__doc__ = iterate.__doc__.replace(
+    "PyRosettaCluster().distribute", "PyRosettaCluster().generate"
+) + """
+    Yields:
+        (PackedPose, dict) tuples from the most recently run user-provided PyRosetta protocol if
+        `PyRosettaCluster(save_all=True)` otherwise from the final user-defined PyRosetta protocol.
+    """

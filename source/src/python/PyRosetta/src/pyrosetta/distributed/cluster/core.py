@@ -256,6 +256,7 @@ from pyrosetta.distributed.cluster.converters import (
     _parse_sha1,
     _parse_system_info,
     _parse_tasks,
+    _parse_yield_results,
 )
 from pyrosetta.distributed.cluster.initialization import _get_pyrosetta_init_args, _maybe_init_client
 from pyrosetta.distributed.cluster.io import IO
@@ -273,13 +274,15 @@ from pyrosetta.distributed.cluster.validators import (
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
     Any,
+    Dict,
+    Generator,
     List,
     NoReturn,
     Optional,
+    Tuple,
     TypeVar,
     Union,
 )
-
 
 G = TypeVar("G")
 
@@ -558,6 +561,13 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         validator=attr.validators.instance_of(bool),
         converter=attr.converters.default_if_none(False),
     )
+    yield_results = attr.ib(
+        type=bool,
+        init=False,
+        default=False,
+        validator=attr.validators.instance_of(bool),
+        converter=_parse_yield_results,
+    )
     protocols_key = attr.ib(
         type=str,
         default="PyRosettaCluster_protocols_container",
@@ -617,7 +627,13 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         self.serializer = Serialization(compression=self.compression)
         self.clients_dict = self._setup_clients_dict()
 
-    def distribute(self, *args: Any, protocols: Any = None, clients_indices: Any = None, resources: Any = None) -> Optional[NoReturn]:
+    def _run(
+        self,
+        *args: Any,
+        protocols: Any = None,
+        clients_indices: Any = None,
+        resources: Any = None,
+    ) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[Any, Any]], None, None]]:
         """
         Run user-provided PyRosetta protocols on a local or remote compute cluster using
         the user-customized PyRosettaCluster instance. Either arguments or the 'protocols'
@@ -691,13 +707,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                 applied, the protocols will not run. See https://distributed.dask.org/en/stable/resources.html for more
                 information.
                 Default: None
-
-        Returns:
-            None
         """
-
+        yield_results = _parse_yield_results(self.yield_results)
         compressed_input_packed_pose = self.serializer.compress_packed_pose(self.input_packed_pose)
-        protocols, protocol, seed, clients_index, resource = self._setup_protocols_protocol_seed(args, protocols, clients_indices, resources)
+        protocols, protocol, seed, clients_index, resource = self._setup_protocols_protocol_seed(
+            args, protocols, clients_indices, resources
+        )
         clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
         client_residue_type_set = _get_residue_type_set()
         extra_args = (
@@ -742,9 +757,13 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             for compressed_packed_pose, compressed_kwargs in results:
                 kwargs = self.serializer.decompress_kwargs(compressed_kwargs)
                 if not kwargs[self.protocols_key]:
+                    if yield_results:
+                        yield self.serializer.decompress_packed_pose(compressed_packed_pose), self.serializer.deepcopy_kwargs(kwargs)
                     self._save_results(compressed_packed_pose, kwargs)
                 else:
                     if self.save_all:
+                        if yield_results:
+                            yield self.serializer.decompress_packed_pose(compressed_packed_pose), self.serializer.deepcopy_kwargs(kwargs)
                         self._save_results(
                             compressed_packed_pose,
                             self.serializer.deepcopy_kwargs(kwargs),
@@ -768,5 +787,110 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         self._maybe_teardown(clients, cluster)
         self._close_logger()
 
+    def generate(
+        self,
+        *args: Any,
+        protocols: Any = None,
+        clients_indices: Any = None,
+        resources: Any = None,
+    ) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[Any, Any]], None, None]]:
+        if self.sha1 != "":
+            logging.warning(
+                "Use of the `PyRosettaCluster.generate` method for reproducible simulations is not supported! "
+                + "PyRosettaCluster reproduces decoys from the output files written to disk. Subsequent code run "
+                + "on these results is not being saved by PyRosettaCluster. Use the `PyRosettaCluster.distribute` "
+                + "method for reproducible simulations. To silence this warning and continue without using version "
+                + "control, set the `sha1` instance attribute of PyRosettaCluster to `None`."
+            )
+        self.yield_results = True
+        for result in self._run(
+            *args,
+            protocols=protocols,
+            clients_indices=clients_indices,
+            resources=resources,
+        ):
+            yield result
+
+    def distribute(
+        self,
+        *args: Any,
+        protocols: Any = None,
+        clients_indices: Any = None,
+        resources: Any = None,
+    ) -> Optional[NoReturn]:
+        self.yield_results = False
+        for _ in self._run(
+            *args,
+            protocols=protocols,
+            clients_indices=clients_indices,
+            resources=resources,
+        ):
+            pass
+
+    distribute.__doc__ = _run.__doc__ + """
+        Returns:
+            None
+        """
+
+    generate.__doc__ = _run.__doc__ + """
+        Extra information:
+
+        The `PyRosettaCluster.generate` method may be used for developing PyRosetta protocols on a local or
+        remote compute cluster and optionally post-processing or visualizing output `PackedPose` objects in memory.
+        Importantly, subsequent code run on the yielded results is not captured by PyRosettaCluster, and so use
+        of this method does not ensure reproducibility of the simulation. Use the `PyRosettaCluster.distribute`
+        method for reproducible simulations.
+
+        Each yielded result is a `tuple` object with a `PackedPose` object as the first element and a `dict`
+        object as the second element. The `PackedPose` object represents a returned or yielded `PackedPose`
+        (or `Pose` or `NoneType`) object from the most recently run user-provided PyRosetta protocol. The `dict`
+        object represents the optionally returned or yielded user-defined PyRosetta protocol `kwargs` dictionary
+        object from the same most recently run user-provided PyRosetta protocol (see 'protocols' argument). If
+        `PyRosettaCluster(save_all=True)`, results are yielded after each user-provided PyRosetta protocol,
+        otherwise results are yielded after the final user-defined PyRosetta protocol. Results are yielded in the
+        order in which they arrive back to the client(s) from the distributed cluster (which may differ from the
+        order that tasks are submitted, due to tasks running asynchronously). If `PyRosettaCluster(dry_run=True)`,
+        results are still yielded but '.pdb' or '.pdb.bz2' files are not saved to disk.
+        See https://docs.dask.org/en/latest/futures.html#distributed.as_completed for more information.
+
+        Extra examples:
+
+            # Iterate over results in real-time as they are yielded from the cluster:
+            for packed_pose, kwargs in PyRosettaCluster().generate(protocols):
+                ...
+
+            # Iterate over submissions to the same client:
+            client = Client()
+            for packed_pose, kwargs in PyRosettaCluster(client=client).generate(protocols):
+                # Post-process results on host node asynchronously from results generation
+                prc = PyRosettaCluster(input_packed_pose=packed_pose, client=client)
+                for packed_pose, kwargs in prc.generate(other_protocols):
+                    ...
+
+            # Iterate over multiple clients:
+            client_1 = Client()
+            client_2 = Client()
+            for packed_pose, kwargs in PyRosettaCluster(client=client_1).generate(protocols):
+                # Post-process results on host node asynchronously from results generation
+                prc = PyRosettaCluster(input_packed_pose=packed_pose, client=client_2)
+                for packed_pose, kwargs in prc.generate(other_protocols):
+                    ...
+
+            # Using multiple `dask.distributed.as_completed` iterators on the host node creates additional overhead.
+            # If post-processing on the host node is not required between user-provided PyRosetta protocols,
+            # the preferred method is to distribute protocols within a single `PyRosettaCluster().generate()`
+            # method call using the `clients_indices` keyword argument:
+            prc_generate = PyRosettaCluster(clients=[client_1, client_2]).generate(
+                protocols=[protocol_1, protocol_2],
+                clients_indices=[0, 1],
+                resources=[{"GPU": 1}, {"CPU": 1}],
+            )
+            for packed_pose, kwargs in prc_generate:
+                # Post-process results on host node asynchronously from results generation
+
+        Yields:
+            (PackedPose, dict) tuples from the most recently run user-provided PyRosetta protocol if
+            `PyRosettaCluster(save_all=True)` otherwise from the final user-defined PyRosetta protocol.
+        """
 
 PyRosettaCluster.__doc__ = __doc__

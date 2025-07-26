@@ -464,7 +464,6 @@ def generate_rosetta_external_cmake_files(rosetta_source_path, prefix):
         if defines[l]: t += 'target_compile_options({} PRIVATE {})\n'.format(l, ' '.join( ['-D'+d for d in defines[l].split()] ) )   #  target_compile_definitions
         #t += 'target_compile_options({} PUBLIC -fPIC {})\n'.format(l, ' '.join([ '-D'+d for d in defines[l].split() ] ) )   #  target_compile_definitions
 
-        #t += 'set_target_properties(cifparse PROPERTIES COMPILE_FLAGS "-Wno-implicit-function-declaration")\n'
         t += 'target_compile_options({l} PRIVATE "-Wno-implicit-function-declaration")\n'.format(l=l)
 
         modified |= update_source_file(prefix + l + '.cmake', t)
