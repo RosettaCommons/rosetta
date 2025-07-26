@@ -184,7 +184,7 @@ ProteinMPNNProbabilitiesMetric::provide_xml_schema( utility::tag::XMLSchemaDefin
 	attrs_subelements.add_simple_subelement( "TiedPositions", tied_pos_attrs,
 		"Used to define tied sets of residues." );
 
-	attlist + XMLSchemaAttribute::attribute_w_default( "deterministic_flag", xsct_rosetta_bool, "Whether to enable deterministic mode. Defaults to false.", "false" );
+    attlist + XMLSchemaAttribute::attribute_w_default( "deterministic_flag", xsct_rosetta_bool, "Whether to enable deterministic mode. Defaults to false.", "false" );
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes_and_repeatable_subelements(xsd, name_static(),
 		"A metric for estimating the probability of an amino acid at a given position, as predicted by ProteinMPNN.", attlist, attrs_subelements );
@@ -217,8 +217,8 @@ ProteinMPNNProbabilitiesMetric::calculate( core::pose::Pose const &pose ) const 
     // set temperature to 1 so the probabilities don't get influenced
     pose_options.temperature = 1.0;
 
-	// set the deterministic_flag option
-	pose_options.deterministic_flag = deterministic_flag_;
+    // set the deterministic_flag option
+    pose_options.deterministic_flag = deterministic_flag_;
 
     // if specified by user, mask selected portions of the input sequence
     if ( sequence_mask_selector_rs_ != nullptr ) {
@@ -382,7 +382,7 @@ ProteinMPNNProbabilitiesMetric::set_tied_pos_rs( utility::vector1< utility::vect
 
 void
 ProteinMPNNProbabilitiesMetric::set_deterministic_flag( bool deterministic_flag ) {
-	deterministic_flag_ = deterministic_flag;
+    deterministic_flag_ = deterministic_flag;
 }
 
 /// @brief Get the residue selector.
@@ -394,7 +394,7 @@ ProteinMPNNProbabilitiesMetric::residue_selector() const {
 
 bool
 ProteinMPNNProbabilitiesMetric::deterministic_flag() const {
-	return deterministic_flag_;
+    return deterministic_flag_;
 }
 
 void
