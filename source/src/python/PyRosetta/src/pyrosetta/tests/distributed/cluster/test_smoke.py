@@ -13,6 +13,7 @@ __author__ = "Jason C. Klima"
 
 import glob
 import json
+import logging
 import numpy
 import os
 import pyrosetta.distributed
@@ -21,6 +22,7 @@ import random
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 import warnings
 
@@ -38,6 +40,7 @@ except ImportError:
     )
     raise
 
+from functools import wraps
 from pyrosetta import Pose
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.utility import get_package_version
@@ -45,6 +48,7 @@ from pyrosetta.utility import get_package_version
 from pyrosetta.distributed.cluster import (
     PyRosettaCluster,
     Serialization,
+    iterate,
     get_scores_dict,
     produce,
     reserve_scores,
@@ -836,10 +840,7 @@ class SerializationTest(unittest.TestCase):
                     self.assertEqual(id(input_packed_pose), id(output_packed_pose), msg=_error_msg)
                 else:
                     self.assertNotEqual(id(input_packed_pose), id(output_packed_pose), msg=_error_msg)
-                if _test_case == 0 and _compression in (False, None):
-                    self.assertEqual(scores, output_packed_pose.scores, msg=_error_msg)
-                else:
-                    self.assertNotEqual(scores, output_packed_pose.scores, msg=_error_msg)
+                self.assertEqual(scores, output_packed_pose.scores, msg=_error_msg)
                 self.assertSetEqual(
                     set(input_packed_pose.scores.keys()),
                     set(output_packed_pose.scores.keys()),
@@ -856,7 +857,7 @@ class SerializationTest(unittest.TestCase):
                 if _compression not in (False, None):
                     if _test_case == 0:
                         self.assertEqual(scores, input_packed_pose.scores, msg=_error_msg)
-                        self.assertNotEqual(
+                        self.assertEqual(
                             input_packed_pose.scores, output_packed_pose.scores, msg=_error_msg
                         )
                         self.assertNotEqual(
@@ -865,7 +866,7 @@ class SerializationTest(unittest.TestCase):
                             msg=_error_msg,
                         )
                     elif _test_case in (1, 2):
-                        self.assertNotEqual(scores, input_packed_pose.scores, msg=_error_msg)
+                        self.assertEqual(scores, input_packed_pose.scores, msg=_error_msg)
                         self.assertEqual(input_packed_pose.scores, output_packed_pose.scores, msg=_error_msg)
                         self.assertEqual(
                             input_packed_pose.pickled_pose,
@@ -1234,6 +1235,696 @@ class ResourcesTest(unittest.TestCase):
             for worker in cluster_2.workers.values():
                 worker.close_gracefully()
             client_2.close()
+
+
+class ScoresTest(unittest.TestCase):
+    _value = 1e1
+
+    @classmethod
+    def setUpClass(cls):
+        pyrosetta.distributed.init(
+            options="-run:constant_seed 1 -multithreading:total_threads 1",
+            extra_options="-out:level 200",
+            set_logging_handler="logging",
+        )
+        cls.input_packed_pose = io.pose_from_sequence("TEST")
+        cls.workdir = tempfile.TemporaryDirectory()
+        cls.decoy_dir_name = "decoys"
+        cls.instance_kwargs = dict(
+            tasks=ScoresTest.create_task,
+            seeds=None,
+            decoy_ids=None,
+            client=None,
+            scheduler=None,
+            scratch_dir=cls.workdir.name,
+            cores=None,
+            processes=None,
+            memory=None,
+            min_workers=1,
+            max_workers=1,
+            nstruct=1,
+            dashboard_address=None,
+            compressed=True,
+            logging_level="INFO",
+            scorefile_name=None,
+            project_name="PyRosettaCluster_Tests",
+            simulation_name=None,
+            environment=None,
+            simulation_records_in_scorefile=False,
+            decoy_dir_name=cls.decoy_dir_name,
+            logs_dir_name="logs",
+            ignore_errors=False,
+            timeout=0.1,
+            max_delay_time=0.5,
+            sha1=None,
+            dry_run=False,
+            save_all=False,
+            system_info=None,
+            pyrosetta_build=None,
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.workdir.cleanup()
+
+    @staticmethod
+    def create_task():
+        yield {
+            "extra_options": "-ex1 -multithreading:total_threads 1",
+            "set_logging_handler": "logging",
+        }
+
+    @staticmethod
+    def identity_protocol(packed_pose, **kwargs):
+        import pyrosetta
+        import pyrosetta.distributed.io as io
+
+        return packed_pose
+
+    @staticmethod
+    @reserve_scores
+    def reserved_scores_protocol(packed_pose, **kwargs):
+        import pyrosetta
+        import pyrosetta.distributed.io as io
+
+        pose = packed_pose.pose
+        pose.cache.clear()
+        packed_pose = io.to_packed(pose)
+        packed_pose.scores.clear()
+
+        return packed_pose
+
+    @staticmethod
+    def add_detached_scores_protocol(packed_pose, **kwargs):
+        import pyrosetta
+        import pyrosetta.distributed.io as io
+
+        packed_pose = packed_pose.update_scores(attached_score=ScoresTest._value)
+        packed_pose.scores["detached_score"] = ScoresTest._value
+
+        return packed_pose
+
+    def get_scores_dict(self, output_path):
+        decoy_files = glob.glob(os.path.join(output_path, self.decoy_dir_name, "*", "*.bz2"))
+        self.assertEqual(len(decoy_files), 1)
+        scores_dict = get_scores_dict(next(iter(decoy_files)))
+
+        return scores_dict
+
+    def setup_input_packed_pose(self):
+        pose = io.to_pose(self.input_packed_pose).clone()
+        pose.cache.clear()
+        input_packed_pose = io.to_packed(pose)
+        input_packed_pose.scores.clear()
+
+        return input_packed_pose
+
+    def test_detached_scores(self):
+        """Test saving detached scores in PyRosettaCluster with/without compression."""
+        for compression in (True, False):
+            input_packed_pose = self.setup_input_packed_pose()
+            input_packed_pose = self.input_packed_pose.update_scores(attached_score=ScoresTest._value)
+            input_packed_pose.scores["detached_score"] = ScoresTest._value
+            output_path = os.path.join(self.workdir.name, f"test_detached_scores_{compression}")
+            run(
+                **{
+                    **self.instance_kwargs,
+                    "input_packed_pose": input_packed_pose,
+                    "protocols": ScoresTest.identity_protocol,
+                    "compression": compression,
+                    "output_path": output_path,
+                }
+            )
+            scores_dict = self.get_scores_dict(output_path)
+            for key in ("attached_score", "detached_score"):
+                self.assertIn(
+                    key,
+                    scores_dict["scores"],
+                    msg=f"Saving score '{key}' failed with compression={compression}",
+                )
+                self.assertEqual(scores_dict["scores"][key], ScoresTest._value)
+
+    def test_detached_scores_with_reserve_scores(self):
+        """Test saving detached scores in PyRosettaCluster with/without compression with `reserve_scores` decorator."""
+        for compression in (True, False):
+            input_packed_pose = self.setup_input_packed_pose()
+            input_packed_pose = self.input_packed_pose.update_scores(attached_score=ScoresTest._value)
+            input_packed_pose.scores["detached_score"] = ScoresTest._value
+            output_path = os.path.join(self.workdir.name, f"test_detached_scores_with_reserve_scores_{compression}")
+            run(
+                **{
+                    **self.instance_kwargs,
+                    "input_packed_pose": input_packed_pose,
+                    "protocols": ScoresTest.reserved_scores_protocol,
+                    "compression": compression,
+                    "output_path": output_path,
+                }
+            )
+            scores_dict = self.get_scores_dict(output_path)
+            for key in ("attached_score", "detached_score"):
+                self.assertIn(
+                    key,
+                    scores_dict["scores"],
+                    msg=f"Saving score '{key}' failed with compression={compression}",
+                )
+                self.assertEqual(scores_dict["scores"][key], ScoresTest._value)
+
+    def test_detached_scores_in_protocol(self):
+        """Test saving detached scores in PyRosettaCluster protocol with/without compression."""
+        for compression in (True, False):
+            input_packed_pose = self.setup_input_packed_pose()
+            output_path = os.path.join(self.workdir.name, f"test_detached_scores_in_protocol_{compression}")
+            run(
+                **{
+                    **self.instance_kwargs,
+                    "input_packed_pose": input_packed_pose,
+                    "protocols": ScoresTest.add_detached_scores_protocol,
+                    "compression": compression,
+                    "output_path": output_path,
+                }
+            )
+            scores_dict = self.get_scores_dict(output_path)
+            for key in ("attached_score", "detached_score"):
+                self.assertIn(
+                    key,
+                    scores_dict["scores"],
+                    msg=f"Saving score '{key}' failed with compression={compression}",
+                )
+                self.assertEqual(scores_dict["scores"][key], ScoresTest._value)
+
+
+class TestBase:
+    @classmethod
+    def setUpClass(cls):
+        pyrosetta.distributed.init(
+            options="-run:constant_seed 1 -multithreading:total_threads 1",
+            extra_options="-out:level 200",
+            set_logging_handler="logging",
+        )
+        cls.input_packed_pose = io.pose_from_sequence("TESTING")
+        cls.local_directory = tempfile.TemporaryDirectory()
+        cls.local_directory_1 = tempfile.TemporaryDirectory()
+        cls.local_directory_2 = tempfile.TemporaryDirectory()
+        with warnings.catch_warnings():
+            # Catch 'ResourceWarning: unclosed <socket.socket ...' from distributed/node.py:235
+            # Catch 'UserWarning: Port 8787 is already in use' from distributed/node.py:240
+            # Catch 'DeprecationWarning: `np.bool8` is a deprecated alias for `np.bool_`.  (Deprecated NumPy 1.24)' from bokeh/core/property/primitive.py:37
+            # Catch 'DeprecationWarning: pkg_resources is deprecated as an API.' from jupyter_server_proxy/config.py:10
+            warnings.simplefilter("ignore", category=ResourceWarning)
+            warnings.simplefilter("ignore", category=UserWarning)
+            warnings.simplefilter("ignore", category=DeprecationWarning)
+            default_cluster = LocalCluster(
+                n_workers=1,
+                threads_per_worker=1,
+                dashboard_address=None,
+                local_directory=cls.local_directory.name,
+                resources={"CPU": 1},
+            )
+            cluster_1 = LocalCluster(
+                n_workers=2,
+                threads_per_worker=2,
+                dashboard_address=None,
+                local_directory=cls.local_directory_1.name,
+                resources={"FOO": 1, "BAZ": 2},
+            )
+            cluster_2 = LocalCluster(
+                n_workers=2,
+                threads_per_worker=2,
+                dashboard_address=None,
+                local_directory=cls.local_directory_2.name,
+                resources={"BAR": 1e9, "BAZ": 2},
+            )
+        cls.default_client = Client(default_cluster)
+        cls.clients = [Client(cluster_1), Client(cluster_2)]
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.local_directory.cleanup()
+        cls.local_directory_1.cleanup()
+        cls.local_directory_2.cleanup()
+        for c in [cls.default_client, *cls.clients]:
+            for worker in c.cluster.workers.values():
+                worker.close_gracefully()
+            c.shutdown()
+            c.cluster.close()
+
+    def setUp(self):
+        self.workdir = tempfile.TemporaryDirectory()
+        self.instance_kwargs = dict(
+            seeds=None,
+            decoy_ids=None,
+            client=None,
+            clients=None,
+            scheduler=None,
+            scratch_dir=self.workdir.name,
+            cores=None,
+            processes=None,
+            memory=None,
+            min_workers=1,
+            max_workers=1,
+            nstruct=1,
+            dashboard_address=None,
+            compression=True,
+            compressed=True,
+            logging_level="INFO",
+            scorefile_name=None,
+            project_name="PyRosettaCluster_Tests",
+            simulation_name=None,
+            environment=None,
+            output_path=os.path.join(self.workdir.name, "outputs"),
+            simulation_records_in_scorefile=False,
+            decoy_dir_name="test_decoy_dir",
+            logs_dir_name="logs",
+            ignore_errors=False,
+            timeout=0.1,
+            max_delay_time=0.0,
+            sha1=None,
+            system_info=None,
+            pyrosetta_build=None,
+            dry_run=False,
+            save_all=False,
+        )
+
+    def tearDown(self):
+        self.workdir.cleanup()
+
+
+class GeneratorTest(TestBase, unittest.TestCase):
+    """Smoke test for the use case of the `PyRosettaCluster().generate()` method."""
+    _n_tasks = 2
+    _n_output_packed_poses = 2
+    _parameters = (0.0, 100.0) # `float` objects for `packed_pose.update_scores` values
+    _pyrosetta_kwargs = {
+        "options": "-mute all",
+        "extra_options": "-ex1 -multithreading:total_threads 1",
+        "set_logging_handler": "logging",
+        }
+
+    @staticmethod
+    def parameter_to_str(parameter):
+        return f"stored_{int(parameter)}"
+
+    @staticmethod
+    def create_tasks(parameter):
+        for _ in range(GeneratorTest._n_tasks):
+            yield {
+                "extra_options": "-ex1 -multithreading:total_threads 1",
+                "set_logging_handler": "logging",
+                "n_output_packed_poses": GeneratorTest._n_output_packed_poses,
+                "parameter": parameter,
+            }
+
+    @staticmethod
+    def my_pyrosetta_protocol_1(packed_pose, **kwargs):
+        value = 1.0
+        kwargs["kwargs_key_1"] = value
+        packed_pose = packed_pose.update_scores(scores_key_1=value)
+        yield packed_pose
+        yield kwargs
+
+    @staticmethod
+    def my_pyrosetta_protocol_2(packed_pose, **kwargs):
+        assert "kwargs_key_1" in kwargs
+        assert "scores_key_1" in list(packed_pose.pose.scores)
+        value = 2.0
+        kwargs["kwargs_key_2"] = value
+        parameter = kwargs.get("parameter", "string")
+        packed_pose = packed_pose.update_scores(
+            {
+                "scores_key_2": value,
+                "parameter": parameter,
+                GeneratorTest.parameter_to_str(parameter): "test",
+            }
+        )
+        packed_poses = [packed_pose.pose.clone() for _ in range(kwargs["n_output_packed_poses"])]
+        return (*packed_poses, kwargs)
+
+    @classmethod
+    def get_protocols(cls):
+        return [cls.my_pyrosetta_protocol_1, cls.my_pyrosetta_protocol_2]
+
+    def test_generate_builtin_clients(self):
+        """Test for `PyRosettaCluster().generate()` using built-in client instantiations."""
+        instance_kwargs_update = {
+            **self.instance_kwargs,
+            "tasks": self.create_tasks(parameter=GeneratorTest._parameters[0]),
+            "input_packed_pose": self.input_packed_pose,
+        }
+        protocols = self.get_protocols()
+        clients_indices = instance_kwargs_update.pop("clients_indices", None)
+        resources = instance_kwargs_update.pop("resources", None)
+        instance = PyRosettaCluster(**instance_kwargs_update)
+
+        output_packed_pose_results = []
+        output_kwargs_results = []
+        for output_packed_pose, output_kwargs in instance.generate(
+            protocols=protocols,
+            clients_indices=clients_indices,
+            resources=resources,
+        ):
+            self.assertIsInstance(output_packed_pose, PackedPose)
+            self.assertIsInstance(output_kwargs, dict)
+            self.assertIn("kwargs_key_1", output_kwargs)
+            self.assertIn("kwargs_key_2", output_kwargs)
+            self.assertIn("scores_key_1", list(output_packed_pose.pose.scores))
+            self.assertIn("scores_key_2", list(output_packed_pose.pose.scores))
+            instance_kwargs_update = {
+                **self.instance_kwargs,
+                "tasks": self.create_tasks(parameter=GeneratorTest._parameters[1]),
+                "input_packed_pose": output_packed_pose,
+                "protocols": protocols,
+                "clients_indices": clients_indices,
+                "resources": resources,
+            }
+            for output_packed_pose, output_kwargs in iterate(**instance_kwargs_update):
+                self.assertIsInstance(output_packed_pose, PackedPose)
+                self.assertIsInstance(output_kwargs, dict)
+                self.assertIn("kwargs_key_1", output_kwargs)
+                self.assertIn("kwargs_key_2", output_kwargs)
+                self.assertIn("scores_key_1", list(output_packed_pose.pose.scores))
+                self.assertIn("scores_key_2", list(output_packed_pose.pose.scores))
+                output_packed_pose_results.append(output_packed_pose)
+                output_kwargs_results.append(output_kwargs)
+        _n_results_per_parameter = (GeneratorTest._n_tasks * GeneratorTest._n_output_packed_poses)
+        _n_output_results = _n_results_per_parameter ** 2
+        self.assertEqual(len(output_packed_pose_results), _n_output_results)
+        self.assertEqual(len(output_kwargs_results), _n_output_results)
+        for packed_pose in output_packed_pose_results:
+            self.assertEqual(
+                packed_pose.pose.scores.get("parameter", None),
+                GeneratorTest._parameters[1],
+                msg="Output packed pose does not have the correct value for the 'parameter' scores key."
+            )
+        for kwargs in output_kwargs_results:
+            self.assertEqual(
+                kwargs["PyRosettaCluster_task"].get("parameter", None),
+                GeneratorTest._parameters[1],
+                msg="Output kwargs do not have the correct value for the 'parameter' task key."
+            )
+        for _parameter in GeneratorTest._parameters:
+            scores_key = self.parameter_to_str(_parameter)
+            self.assertEqual(
+                len(list(filter(lambda packed_pose: scores_key in packed_pose.pose.scores, output_packed_pose_results))),
+                _n_output_results,
+                msg=f"Packed poses do not have the correct values for the '{scores_key}' scores key."
+            )
+
+    def test_generate_user_client(self):
+        """
+        Test for `PyRosettaCluster().generate()` with `save_all=True`,
+        `dry_run=True`, and using a user-provided client.
+        """
+        instance_kwargs = {
+            **self.instance_kwargs,
+            "tasks": self.create_tasks(parameter=GeneratorTest._parameters[0]),
+            "input_packed_pose": self.input_packed_pose,
+            "protocols": self.get_protocols(),
+            "client": self.default_client,
+            "clients": None,
+            "clients_indices": None,
+            "resources": None,
+            "save_all": True,
+            "dry_run": True,
+            "output_path": os.path.join(self.workdir.name, "outputs_dry_run"),
+        }
+        results = []
+        for output_packed_pose, _ in iterate(**instance_kwargs):
+            instance_kwargs_update = {
+                **instance_kwargs,
+                "input_packed_pose": output_packed_pose,
+                "tasks": self.create_tasks(parameter=GeneratorTest._parameters[1]),
+                "client": self.default_client, # Test passing in same client
+            }
+            for result in iterate(**instance_kwargs_update):
+                results.append(result)
+        _n_output_packed_poses_save_all = (GeneratorTest._n_output_packed_poses + 1) # Plus one from my_pyrosetta_protocol_1
+        _n_results_per_parameter = (GeneratorTest._n_tasks * _n_output_packed_poses_save_all)
+        _n_output_results = _n_results_per_parameter ** 2
+        self.assertEqual(
+            len(results), _n_output_results, msg="Number of results with save_all failed."
+        )
+        self.assertListEqual(
+            os.listdir(os.path.join(instance_kwargs["output_path"], instance_kwargs["decoy_dir_name"])),
+            [],
+            msg="Dry run failed while yielding results.",
+        )
+        self.assertFalse(
+            os.path.isfile(os.path.join(instance_kwargs["output_path"], "scores.json")),
+            msg="Dry run failed while yielding results.",
+        )
+
+    def test_generate_multi_user_clients(self):
+        """
+        Test for `PyRosettaCluster().generate()` with `save_all=True`,
+        `dry_run=True`, and using multiple user-provided clients.
+        """
+        clients_indices = [0, 1]
+        resources = [{"FOO": 1}, {"BAR": 9e8}]
+        instance_kwargs = {
+            **self.instance_kwargs,
+            "tasks": self.create_tasks(parameter=GeneratorTest._parameters[0]),
+            "input_packed_pose": self.input_packed_pose,
+            "protocols": self.get_protocols(),
+            "client": None,
+            "clients": self.clients,
+            "clients_indices": clients_indices,
+            "resources": resources,
+            "save_all": True,
+            "dry_run": True,
+            "output_path": os.path.join(self.workdir.name, "outputs"),
+        }
+        results = []
+        for output_packed_pose, _ in iterate(**instance_kwargs):
+            instance_kwargs_update = {
+                **instance_kwargs,
+                "input_packed_pose": output_packed_pose,
+                "tasks": self.create_tasks(parameter=GeneratorTest._parameters[1]),
+                "client": None,
+                "clients": self.clients, # Test passing in same clients
+                "clients_indices": clients_indices,
+                "resources": resources,
+            }
+            for result in iterate(**instance_kwargs_update):
+                results.append(result)
+        _n_output_packed_poses_save_all = (GeneratorTest._n_output_packed_poses + 1) # Plus one from my_pyrosetta_protocol_1
+        _n_results_per_parameter = (GeneratorTest._n_tasks * _n_output_packed_poses_save_all)
+        _n_output_results = _n_results_per_parameter ** 2
+        self.assertEqual(
+            len(results), _n_output_results, msg="Number of results with save_all failed."
+        )
+        self.assertListEqual(
+            os.listdir(os.path.join(instance_kwargs["output_path"], instance_kwargs["decoy_dir_name"])),
+            [],
+            msg="Dry run failed while yielding results.",
+        )
+        self.assertFalse(
+            os.path.isfile(os.path.join(instance_kwargs["output_path"], "scores.json")),
+            msg="Dry run failed while yielding results.",
+        )
+
+    def test_generate_partition_clients(self):
+        """
+        Test for `PyRosettaCluster().generate()` with `save_all=True`,
+        `dry_run=True`, and partitioning user-provided clients over iterations.
+        """
+        resources = [{"BAZ": 1}, {"BAZ": 2}]
+        instance_kwargs = {
+            **self.instance_kwargs,
+            "tasks": self.create_tasks(parameter=GeneratorTest._parameters[0]),
+            "input_packed_pose": self.input_packed_pose,
+            "protocols": self.get_protocols(),
+            "client": self.clients[0], # Test passing in first client
+            "clients": None,
+            "clients_indices": None,
+            "resources": resources,
+            "save_all": True,
+            "dry_run": True,
+            "output_path": os.path.join(self.workdir.name, "outputs_dry_run_clients"),
+        }
+        results = []
+        for output_packed_pose, _ in iterate(**instance_kwargs):
+            instance_kwargs_update = {
+                **instance_kwargs,
+                "input_packed_pose": output_packed_pose,
+                "tasks": self.create_tasks(parameter=GeneratorTest._parameters[1]),
+                "client": self.clients[1], # Test passing in second client
+                "clients": None,
+                "clients_indices": None,
+                "resources": resources,
+            }
+            for result in iterate(**instance_kwargs_update):
+                results.append(result)
+        _n_output_packed_poses_save_all = (GeneratorTest._n_output_packed_poses + 1) # Plus one from my_pyrosetta_protocol_1
+        _n_results_per_parameter = (GeneratorTest._n_tasks * _n_output_packed_poses_save_all)
+        _n_output_results = _n_results_per_parameter ** 2
+        self.assertEqual(
+            len(results), _n_output_results, msg="Number of results with save_all failed."
+        )
+        self.assertListEqual(
+            os.listdir(os.path.join(instance_kwargs["output_path"], instance_kwargs["decoy_dir_name"])),
+            [],
+            msg="Dry run failed while yielding results.",
+        )
+        self.assertFalse(
+            os.path.isfile(os.path.join(instance_kwargs["output_path"], "scores.json")),
+            msg="Dry run failed while yielding results.",
+        )
+
+
+class RuntimeTestLoggingFilter(logging.Filter):
+    matches = (
+        "with_lock",
+        "dry_run",
+        "save_all",
+        "Percent Complete",
+        "simulation complete",
+        "Attempted to determine the residue type set of an empty pose",
+    )
+    def filter(self, record):
+        msg = record.getMessage()
+        return all(map(lambda s: s not in msg, self.matches))
+
+
+@unittest.skip("Auxiliary tests for runtime testing.")
+class RuntimeTest(TestBase, unittest.TestCase):
+    @staticmethod
+    def create_simple_tasks(n_tasks=10):
+        for i in range(n_tasks):
+            yield {
+                **GeneratorTest._pyrosetta_kwargs,
+                "task": i,
+            }
+
+    @staticmethod
+    def timing_protocol_1(packed_pose, **kwargs):
+        import logging
+        _logger = logging.getLogger(kwargs['PyRosettaCluster_protocol_name'])
+        _logger.info(f"Running procotol {kwargs['PyRosettaCluster_protocol_name']} with task {kwargs['task']}")
+        yield packed_pose
+
+    @staticmethod
+    def timing_protocol_2(packed_pose, **kwargs):
+        return RuntimeTest.timing_protocol_1(packed_pose, **kwargs)
+
+    @classmethod
+    def setup_logger(cls, stream=True):
+        _logger = logging.getLogger(__name__)
+        if stream:
+            _stream_handler = logging.StreamHandler(sys.stdout)
+            _logger.addHandler(_stream_handler)
+        else:
+            _stream_handler = None
+
+        _root_logger = logging.getLogger("root")
+        _filter = RuntimeTestLoggingFilter()
+        _root_logger.addFilter(_filter)
+
+        _rosetta_logger = logging.getLogger("rosetta")
+        _rosetta_logger.addFilter(_filter)
+
+        _distributed_logger = logging.getLogger("pyrosetta.distributed")
+        _distributed_logger.addFilter(_filter)
+
+        return _logger, _stream_handler
+
+    @classmethod
+    def tear_down_logger(cls, _logger, _stream_handler):
+        if _stream_handler is not None:
+            _logger.removeHandler(_stream_handler)
+
+    @staticmethod
+    def get_mean_dt(ts):
+        return numpy.mean([ts[i + 1] - ts[i] for i in range(len(ts) - 1)])
+
+    @staticmethod
+    def get_dt(t, ts):
+        return t if len(ts) == 0 else (t - ts[-1])
+
+    @unittest.skip("Auxiliary test for runtime testing.")
+    def test_timing_single_instance(self):
+        """Runtime test with a single PyRosettaCluster instance."""
+        _logger, _stream_handler = self.setup_logger(stream=True)
+        _logger.info(f"Starting single PyRosettaCluster instance runtime test.")
+        prc = PyRosettaCluster(
+            **{
+                **self.instance_kwargs,
+                "input_packed_pose": self.input_packed_pose,
+                "tasks": self.create_simple_tasks(),
+                "clients": self.clients,
+                "dry_run": True,
+                "save_all": True,
+                "max_delay_time": 0.0,
+            }
+        )
+        prc_iterable = prc.generate(
+            self.timing_protocol_1,
+            self.timing_protocol_2,
+            clients_indices=[0, 1],
+            resources=[{"FOO": 1}, {"BAZ": 2}],
+        )
+        ts = []
+        t0 = time.time()
+        for i, (_, output_kwargs) in enumerate(prc_iterable):
+            t = time.time() - t0
+            dt = self.get_dt(t, ts)
+            ts.append(t)
+            task = output_kwargs.get("task")
+            client_repr = output_kwargs.get("PyRosettaCluster_client_repr")
+            _logger.info(f"Finished iteration {(i,)} with task {task} on client {client_repr} in {dt:0.3f} seconds")
+        mean_dt = self.get_mean_dt(ts)
+        _logger.info(f"Average iteration time with a single PyRosettaCluster instance: {mean_dt:0.7f} seconds")
+        self.tear_down_logger(_logger, _stream_handler)
+
+    @unittest.skip("Auxiliary test for runtime testing.")
+    def test_timing_multi_instance(self):
+        """Runtime test for two PyRosettaCluster instances asynchronously generating results."""
+        _logger, _stream_handler = self.setup_logger(stream=True)
+        _logger.info(f"Starting multiple PyRosettaCluster instance runtime test.")
+        setup_kwargs = {
+            "dry_run": True,
+            "save_all": False,
+            "max_delay_time": 0.0,
+        }
+        instance_kwargs_1 = {
+            **self.instance_kwargs,
+            **setup_kwargs,
+            "input_packed_pose": self.input_packed_pose,
+            "tasks": self.create_simple_tasks(),
+            "client": self.clients[0],
+            "protocols": self.timing_protocol_1,
+            "resources": [{"BAZ": 1}],
+        }
+        prc_iterate = iterate(**instance_kwargs_1)
+        instance_kwargs_2 = {
+            **self.instance_kwargs,
+            **setup_kwargs,
+            "client": self.clients[1],
+        }
+        for k in ("protocols", "clients_indices", "resources"):
+            instance_kwargs_2.pop(k, None)
+        prc = PyRosettaCluster(**instance_kwargs_2)
+        ts = []
+        t0 = time.time()
+        for i, (output_packed_pose, output_kwargs) in enumerate(prc_iterate):
+            t = time.time() - t0
+            dt = self.get_dt(t, ts)
+            ts.append(t)
+            task = output_kwargs.get("task")
+            client_repr = output_kwargs.get("PyRosettaCluster_client_repr")
+            _logger.info(f"Finished iteration {(i,)} with task {task} on client {client_repr} in {dt:0.3f} seconds")
+            prc.tasks = [{**GeneratorTest._pyrosetta_kwargs, "task": task}]
+            prc.input_packed_pose = output_packed_pose
+            for j, (_, output_kwargs) in enumerate(prc.generate(self.timing_protocol_2, resources=[{"BAR": 1e8}])):
+                t = time.time() - t0
+                dt = self.get_dt(t, ts)
+                ts.append(t)
+                task = output_kwargs.get("task")
+                client_repr = output_kwargs.get("PyRosettaCluster_client_repr")
+                _logger.info(f"Finished iteration {(i, j)} with task {task} on client {client_repr} in {dt:0.3f} seconds")
+        mean_dt = self.get_mean_dt(ts)
+        _logger.info(f"Average iteration time with multiple PyRosettaCluster instances: {mean_dt:0.7f} seconds")
+        self.tear_down_logger(_logger, _stream_handler)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

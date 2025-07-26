@@ -91,7 +91,7 @@ void ChemistryFactory::define_chemistry_xml_schema( utility::tag::XMLSchemaDefin
 			xsd );
 	} catch ( utility::excn::Exception const & e ) {
 		throw CREATE_EXCEPTION(utility::excn::Exception, "Could not generate an XML Schema for Chemistry from ChemistryFactory; offending class"
-			" must call ????? when defining"
+			" must call protocols::chemistries::complex_type_name_for_chemistry when defining"
 			" its XML Schema\n" + e.msg() );
 	}
 
@@ -99,7 +99,7 @@ void ChemistryFactory::define_chemistry_xml_schema( utility::tag::XMLSchemaDefin
 
 std::string ChemistryFactory::chemistry_xml_schema_group_name()
 {
-	return "MY_chemistry_group";
+	return "chemistry";
 }
 
 ChemistryFactory::ChemistryFactory() :

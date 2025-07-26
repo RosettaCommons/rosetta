@@ -3459,7 +3459,7 @@ SimpleCycpepPredictApplication::add_closebond_logic_lanthipeptide(
 	debug_assert( cyclization_type() == SCPA_lanthipeptide );
 	core::Size ala_res = 0;
 	core::Size cys_res = 0;
-	if ( pose->residue_type(cyclization_point_start).base_name() == "CYS" ) {
+	if ( pose->residue_type(cyclization_point_start).base_name() == "CYS" ||  pose->residue_type(cyclization_point_start).base_name() == "DCYS" ) {
 		ala_res = cyclization_point_end;
 		cys_res = cyclization_point_start;
 	} else {
