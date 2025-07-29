@@ -502,7 +502,9 @@ def get_required_pyrosetta_python_packages_for_testing(platform, conda=False, st
     '''
     python_version = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
-    packages = copy.deepcopy(DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED)
+    if python_version == (3, 12): packages = dict(numpy=DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED['numpy'])
+    else: packages = copy.deepcopy(DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED)
+
     packages = update_packages_for_python_version(packages, python_version)
     packages = update_packages_for_conda(packages, conda)
 
