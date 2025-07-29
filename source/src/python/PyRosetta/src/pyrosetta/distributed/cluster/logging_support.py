@@ -116,7 +116,12 @@ def setup_target_logging(func: L) -> L:
             )
             os.makedirs(logs_path, exist_ok=True)
 
-        fh = logging.FileHandler(logging_file)
+        pid = os.getpid()
+        logging_file_split = list(os.path.splitext(logging_file))
+        logging_file_split.insert(-1, f"-{pid}")
+        logging_file = "".join(logging_file_split)
+        print("Setting up logging file on dask worker:", logging_file)
+        fh = logging.FileHandler(logging_file, delay=True)
         fh.setFormatter(
             logging.Formatter(
                 ":".join(
