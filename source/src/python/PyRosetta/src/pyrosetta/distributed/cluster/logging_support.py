@@ -10,7 +10,9 @@ __author__ = "Jason C. Klima"
 
 import logging
 import os
+import warnings
 
+from contextlib import suppress
 from functools import wraps
 from typing import (
     Any,
@@ -38,7 +40,18 @@ class LoggingSupport(Generic[G]):
 
         logger = logging.getLogger()
         logger.setLevel(self.logging_level)
-        logger.handlers = []
+        for handler in logger.handlers[:]:
+            logger.removeHandler(handler)
+            with suppress(Exception):
+                handler.close()
+
+        if not os.path.isdir(self.logs_path):
+            warnings.warn(
+                f"Creating logs directory in 'LoggingSupport._setup_logger': {self.logs_path}",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+            os.makedirs(self.logs_path, exist_ok=True)
         fh = logging.FileHandler(os.path.join(self.logs_path, "PyRosettaCluster.log",))
         fh.setFormatter(
             logging.Formatter(
@@ -60,8 +73,9 @@ class LoggingSupport(Generic[G]):
 
         logger = logging.getLogger()
         for handler in logger.handlers[:]:
-            handler.close()
             logger.removeHandler(handler)
+            with suppress(Exception):
+                handler.close()
 
 
 def setup_target_logging(func: L) -> L:
@@ -88,7 +102,20 @@ def setup_target_logging(func: L) -> L:
 
         logger = logging.getLogger()
         logger.setLevel(logging_level)
-        logger.handlers = []
+        for handler in logger.handlers[:]:
+            logger.removeHandler(handler)
+            with suppress(Exception):
+                handler.close()
+
+        logs_path = os.path.dirname(logging_file)
+        if not os.path.isdir(logs_path):
+            warnings.warn(
+                f"Creating logs directory in 'LoggingSupport.setup_target_logging': {logs_path}",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+            os.makedirs(logs_path, exist_ok=True)
+
         fh = logging.FileHandler(logging_file)
         fh.setFormatter(
             logging.Formatter(
@@ -123,8 +150,9 @@ def setup_target_logging(func: L) -> L:
         )
 
         for handler in logger.handlers[:]:
-            handler.close()
             logger.removeHandler(handler)
+            with suppress(Exception):
+                handler.close()
 
         return result
 
