@@ -1595,6 +1595,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "protocols": protocols,
                 "clients_indices": clients_indices,
                 "resources": resources,
+                "simulation_name": "test_generate_builtin_clients",
             }
             for output_packed_pose, output_kwargs in iterate(**instance_kwargs_update):
                 self.assertIsInstance(output_packed_pose, PackedPose)
@@ -1654,6 +1655,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "input_packed_pose": output_packed_pose,
                 "tasks": self.create_tasks(parameter=GeneratorTest._parameters[1]),
                 "client": self.default_client, # Test passing in same client
+                "simulation_name": "test_generate_user_client",
             }
             for result in iterate(**instance_kwargs_update):
                 results.append(result)
@@ -1703,6 +1705,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "clients": self.clients, # Test passing in same clients
                 "clients_indices": clients_indices,
                 "resources": resources,
+                "simulation_name": "test_generate_multi_user_clients",
             }
             for result in iterate(**instance_kwargs_update):
                 results.append(result)
@@ -1751,6 +1754,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "clients": None,
                 "clients_indices": None,
                 "resources": resources,
+                "simulation_name": "test_generate_partition_clients",
             }
             for result in iterate(**instance_kwargs_update):
                 results.append(result)
