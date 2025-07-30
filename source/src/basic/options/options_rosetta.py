@@ -8285,7 +8285,14 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 						Option('box_length','Integer', desc="Neighborhood lookup box size, 3 for 27 boxes, 4 for 64 boxes etc",default='3'),
 						Option('score_between_opposite_terminal_segments','Boolean', desc="if true, score_between_opposite_terminal_segments like 1-5 or 5-1",default='true'),
 				),
-
+  Option_Group( 'sid_erms_simulate',
+						Option('complex_type', 'File', desc="File for describing connectivity of complex"),
+            Option('ERMS', 'File', desc="File containing the ERMS data for the complex"),
+            Option('RMSE', 'Boolean', desc="Calculate RMSE?"),
+            Option('B_vals', 'File', desc="File containing B values for complex"),
+            Option('steepness', 'Real', desc="Steepness value for complex"),
+            Option('breakage_cutoff', 'File', desc="breakage cutoff for complex"),
+				),
 
 	Option_Group( 'SSrbrelax',
 #		Option( 'input_pdb','File', desc='input pdb file', default='input_pdb' ),
