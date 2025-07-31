@@ -210,8 +210,6 @@ class LoggingSupport(Generic[G]):
         handler.flush()
         with suppress(Exception):
             handler.close()
-        logging.shutdown()
-
 
 def setup_target_logging(func: L) -> L:
     """Support logging within the spawned thread."""
@@ -261,7 +259,10 @@ def setup_target_logging(func: L) -> L:
             **pyrosetta_init_kwargs,
         )
 
-        logging.shutdown()
+        handler.flush()
+        logger.removeHandler(handler)
+        with suppress(Exception):
+            handler.close()
 
         return result
 
