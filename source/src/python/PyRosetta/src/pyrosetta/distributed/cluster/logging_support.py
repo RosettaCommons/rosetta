@@ -60,7 +60,7 @@ class LogRecordStreamHandler(socketserver.StreamRequestHandler):
                 chunk = chunk + self.connection.recv(slen - len(chunk))
             obj = pickle.loads(chunk)
             record = logging.makeLogRecord(obj)
-            self.server.log_handler.handle(record)
+            self.server.handler.handle(record)
 
 
 class SocketListener(socketserver.ThreadingTCPServer):
@@ -74,7 +74,7 @@ class SocketListener(socketserver.ThreadingTCPServer):
         socketserver.ThreadingTCPServer.__init__(self, (host, port), LogRecordStreamHandler)
         self.abort = 0
         self.timeout = 1
-        self.log_handler = handler
+        self.handler = handler
         self._thread = None
 
     def start(self):
@@ -97,15 +97,16 @@ class SocketListener(socketserver.ThreadingTCPServer):
 
 
 class SocketLoggerPlugin(WorkerPlugin):
-    def __init__(self, host, port):
+    def __init__(self, host, port, logging_level):
         self.host = host
         self.port = port
+        self.logging_level = logging_level
 
     def setup(self, worker):
         worker.log_socket_address = (self.host, self.port)
         logger = logging.getLogger()
         logger.handlers.clear()
-        logger.setLevel(logging.NOTSET)
+        logger.setLevel(self.logging_level)
         handler = logging.handlers.SocketHandler(self.host, self.port)
         handler.setFormatter(
             logging.Formatter(
@@ -174,52 +175,41 @@ class LoggingSupport(Generic[G]):
                 handler.close()
         logging.shutdown()
 
-    def _setup_socket_listeners(self, clients):
-        for clients_index, client in clients.items():
-            logging_file_split = list(os.path.splitext(self.logging_file))
-            logging_file_split.insert(-1, f"_client-{clients_index}")
-            logging_file = "".join(logging_file_split)
-            host, port = client.run_on_scheduler(setup_socket_listener, logging_file, self.logging_level)
-            plugin = SocketLoggerPlugin(host, port)
+    def _setup_socket_listener(self, clients):
+        logs_path = os.path.dirname(self.logging_file)
+        if not os.path.isdir(logs_path):
+            warnings.warn(
+                f"Creating logs directory in 'LoggingSupport._setup_socket_listener': {logs_path}",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+            os.makedirs(logs_path, exist_ok=True)
+
+        handler = logging.FileHandler(self.logging_file, mode="a")
+        handler.setLevel(self.logging_level)
+        self.socket_listener = SocketListener("0.0.0.0", 0, handler)
+        self.socket_listener.daemon = True
+        self.socket_listener.start()
+        host, port = self.socket_listener.socket.getsockname()
+        self._register_socket_logger_plugins(clients, host, port)
+
+    def _register_socket_logger_plugins(self, clients, host, port):
+        for client in clients.values():
+            plugin = SocketLoggerPlugin(host, port, self.logging_level)
             plugin.idempotent = False # Always re-register plugin
             name = "socket-logger-plugin"
             if hasattr(client, "register_plugin"):
                 client.register_plugin(plugin=plugin, name=name)
-            else: # Deprecated in dask version 2023.9.2
+            else: # Deprecated since dask version 2023.9.2
                 client.register_worker_plugin(plugin=plugin, name=name, nanny=False)
 
-    def _close_socket_listeners(self, clients):
-        for client in clients.values():
-            client.run_on_scheduler(teardown_socket_listener)
-
-
-def setup_socket_listener(logging_file, logging_level, dask_scheduler=None):
-    logs_path = os.path.dirname(logging_file)
-    if not os.path.isdir(logs_path):
-        warnings.warn(
-            f"Creating logs directory in 'LoggingSupport.setup_socket_listener': {logs_path}",
-            RuntimeWarning,
-            stacklevel=2,
-        )
-        os.makedirs(logs_path, exist_ok=True)
-
-    handler = logging.FileHandler(logging_file, mode="a")
-    handler.setLevel(logging_level)
-    listener = SocketListener("0.0.0.0", 0, handler)
-    listener.daemon = True
-    listener.start()
-    host, port = listener.socket.getsockname()
-    dask_scheduler.log_listener = listener
-
-    return host, port
-
-
-def teardown_socket_listener(dask_scheduler=None):
-    dask_scheduler.log_listener.stop()
-    handler = dask_scheduler.log_listener.log_handler
-    handler.flush()
-    handler.close()
-    logging.shutdown()
+    def _close_socket_listener(self):
+        self.socket_listener.stop()
+        handler = self.socket_listener.handler
+        handler.flush()
+        with suppress(Exception):
+            handler.close()
+        logging.shutdown()
 
 
 def setup_target_logging(func: L) -> L:
