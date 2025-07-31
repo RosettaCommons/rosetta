@@ -208,14 +208,6 @@ def teardown_socket_listener(dask_scheduler=None):
     logging.shutdown()
 
 
-def setup_worker_callbacks(dask_worker):
-    queue = dask_worker.scheduler.log_queue
-    logger = logging.getLogger()
-    logger.handlers.clear()
-    logger.setLevel(logging.NOTSET)
-    logger.addHandler(logging.handlers.QueueHandler(queue))
-
-
 def setup_target_logging(func: L) -> L:
     """Support logging within the spawned thread."""
     @wraps(func)
