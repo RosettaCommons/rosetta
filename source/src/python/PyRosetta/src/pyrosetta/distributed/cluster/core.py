@@ -714,6 +714,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             args, protocols, clients_indices, resources
         )
         clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
+        self._setup_socket_listeners(clients)
         client_residue_type_set = _get_residue_type_set()
         extra_args = (
             self.decoy_ids,
@@ -784,6 +785,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                     self.tasks_size += 1
                     self._maybe_adapt(adaptive)
 
+        self._close_socket_listeners(clients)
         self._maybe_teardown(clients, cluster)
         self._close_logger()
 

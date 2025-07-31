@@ -10,12 +10,12 @@ __author__ = "Jason C. Klima"
 
 try:
     import billiard
-    from dask.distributed import get_client
+    from dask.distributed import get_client, get_worker
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.multiprocessing' requires the "
-        + "third-party packages 'billiard' and 'dask.distributed' as a dependencies!\n"
-        + "Please install the package into your python environment. "
+        + "third-party packages 'billiard' and 'dask.distributed' as dependencies!\n"
+        + "Please install the packages into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/billiard/\n"
         + "https://pypi.org/project/distributed/\n"
@@ -133,6 +133,7 @@ def target(
     q: Q,
     logging_file: str,
     logging_level: str,
+    log_socket_address: Tuple[str, int],
     DATETIME_FORMAT: str,
     ignore_errors: bool,
     protocols_key: str,
@@ -175,6 +176,7 @@ def user_spawn_thread(
     """Generic worker task using the billiard multiprocessing module."""
     t0 = time.time()
     client_repr = repr(get_client())
+    log_socket_address = get_worker().log_socket_address
 
     q = billiard.Queue()
     p = billiard.context.Process(
@@ -186,6 +188,7 @@ def user_spawn_thread(
             q,
             logging_file,
             logging_level,
+            log_socket_address,
             DATETIME_FORMAT,
             ignore_errors,
             protocols_key,
