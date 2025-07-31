@@ -54,7 +54,7 @@ else:
 
 def e(cmd):
     print("Executing:\n{0}".format(cmd))
-    status, output = subprocess.getstatusoutput(cmd, shell=True, text=True)
+    status, output = subprocess.getstatusoutput(cmd)
     print("Output:\n{0}".format(output))
     if status != 0:
         print(
@@ -104,4 +104,4 @@ distributed_test_suites = [
 tests = distributed_cluster_test_cases + distributed_test_suites
 
 for test in tests:
-    e("{python} -m unittest {test}".format(python=sys.executable, test=test))
+    e("{python} -m unittest {test} && sleep 5".format(python=sys.executable, test=test))
