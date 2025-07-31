@@ -103,7 +103,8 @@ class SocketLoggerPlugin(WorkerPlugin):
         self.logging_level = logging_level
 
     def setup(self, worker):
-        worker.log_socket_address = (self.host, self.port)
+        worker.socket_listener_address = (self.host, self.port)
+        worker.logging_level = self.logging_level
         logger = logging.getLogger()
         logger.handlers.clear()
         logger.setLevel(self.logging_level)
@@ -220,9 +221,8 @@ def setup_target_logging(func: L) -> L:
         compressed_packed_pose,
         compressed_kwargs,
         q,
-        logging_file,
         logging_level,
-        log_socket_address,
+        socket_listener_address,
         DATETIME_FORMAT,
         ignore_errors,
         protocols_key,
@@ -240,7 +240,7 @@ def setup_target_logging(func: L) -> L:
             with suppress(Exception):
                 handler.close()
 
-        host, port = log_socket_address
+        host, port = socket_listener_address
         handler = logging.handlers.SocketHandler(host, port)
         logger.addHandler(handler)
 
@@ -249,9 +249,8 @@ def setup_target_logging(func: L) -> L:
             compressed_packed_pose,
             compressed_kwargs,
             q,
-            logging_file,
             logging_level,
-            log_socket_address,
+            socket_listener_address,
             DATETIME_FORMAT,
             ignore_errors,
             protocols_key,

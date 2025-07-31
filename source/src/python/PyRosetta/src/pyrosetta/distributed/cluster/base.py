@@ -194,7 +194,7 @@ def capture_task_metadata(func: M) -> M:
     def wrapper(
         protocol,
         compressed_packed_pose,
-        DATETIME_FORMAT,
+        datetime_format,
         ignore_errors,
         protocols_key,
         decoy_ids,
@@ -213,7 +213,7 @@ def capture_task_metadata(func: M) -> M:
         )  # Pythonic indices
         if not "PyRosettaCluster_datetime_start" in kwargs:
             kwargs["PyRosettaCluster_datetime_start"] = datetime.now().strftime(
-                DATETIME_FORMAT
+                datetime_format
             )
         if not "PyRosettaCluster_seeds" in kwargs:
             kwargs["PyRosettaCluster_seeds"] = []
@@ -224,7 +224,7 @@ def capture_task_metadata(func: M) -> M:
         return func(
             protocol,
             compressed_packed_pose,
-            DATETIME_FORMAT,
+            datetime_format,
             ignore_errors,
             protocols_key,
             decoy_ids,

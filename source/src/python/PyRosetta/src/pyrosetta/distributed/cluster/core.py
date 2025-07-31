@@ -721,8 +721,6 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             self.protocols_key,
             self.timeout,
             self.ignore_errors,
-            self.logging_file,
-            self.logging_level,
             self.DATETIME_FORMAT,
             self.compression,
             self.max_delay_time,
