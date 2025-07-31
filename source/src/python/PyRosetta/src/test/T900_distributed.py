@@ -54,7 +54,7 @@ else:
 
 def e(cmd):
     print("Executing:\n{0}".format(cmd))
-    status, output = subprocess.getstatusoutput(cmd)
+    status, output = subprocess.getstatusoutput(cmd, shell=True, text=True)
     print("Output:\n{0}".format(output))
     if status != 0:
         print(
