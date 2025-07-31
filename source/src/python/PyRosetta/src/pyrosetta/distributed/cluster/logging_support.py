@@ -106,7 +106,21 @@ class SocketLoggerPlugin(WorkerPlugin):
         logger = logging.getLogger()
         logger.handlers.clear()
         logger.setLevel(logging.NOTSET)
-        logger.addHandler(logging.handlers.SocketHandler(self.host, self.port))
+        handler = logging.handlers.SocketHandler(self.host, self.port)
+        handler.setFormatter(
+            logging.Formatter(
+                ":".join(
+                    [
+                        "%(levelname)s",
+                        # str(protocol.__name__),
+                        "%(name)s",
+                        "%(asctime)s",
+                        " %(message)s",
+                    ]
+                )
+            )
+        )
+        logger.addHandler(handler)
 
     def teardown(self, worker):
         logging.shutdown()
@@ -135,8 +149,8 @@ class LoggingSupport(Generic[G]):
             )
             os.makedirs(self.logs_path, exist_ok=True)
 
-        fh = logging.FileHandler(os.path.join(self.logs_path, "PyRosettaCluster.log",))
-        fh.setFormatter(
+        handler = logging.FileHandler(os.path.join(self.logs_path, "PyRosettaCluster.log",))
+        handler.setFormatter(
             logging.Formatter(
                 ":".join(
                     [
@@ -149,7 +163,7 @@ class LoggingSupport(Generic[G]):
                 )
             )
         )
-        logger.addHandler(fh)
+        logger.addHandler(handler)
 
     def _close_logger(self) -> None:
         """Close the logger for the client instance."""
