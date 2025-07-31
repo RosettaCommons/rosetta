@@ -1462,11 +1462,11 @@ class TestBase:
         cls.local_directory.cleanup()
         cls.local_directory_1.cleanup()
         cls.local_directory_2.cleanup()
-        for c in [cls.default_client, *cls.clients]:
-            for worker in c.cluster.workers.values():
+        for client in [cls.default_client, *cls.clients]:
+            for worker in client.cluster.workers.values():
                 worker.close_gracefully()
-            c.shutdown()
-            c.cluster.close()
+            client.shutdown()
+            client.cluster.close()
 
     def setUp(self):
         self.workdir = tempfile.TemporaryDirectory()
@@ -1476,7 +1476,7 @@ class TestBase:
             client=None,
             clients=None,
             scheduler=None,
-            scratch_dir=self.workdir.name,
+            scratch_dir=os.path.join(self.workdir.name, "scratch"),
             cores=None,
             processes=None,
             memory=None,
@@ -1491,7 +1491,7 @@ class TestBase:
             project_name="PyRosettaCluster_Tests",
             simulation_name=uuid.uuid4().hex,
             environment=None,
-            output_path=os.path.join(self.workdir.name, "outputs"),
+            output_path=os.path.join(self.workdir.name, "outputs_default"),
             simulation_records_in_scorefile=False,
             decoy_dir_name="test_decoy_dir",
             logs_dir_name="logs",
@@ -1585,7 +1585,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
             **self.instance_kwargs,
             "tasks": self.create_tasks(parameter=GeneratorTest._parameters[0]),
             "input_packed_pose": self.input_packed_pose,
-            "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_builtin_clients_1"),
+            "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_builtin_clients_1_{uuid.uuid4().hex}"),
         }
         protocols = self.get_protocols()
         clients_indices = instance_kwargs_update.pop("clients_indices", None)
@@ -1613,7 +1613,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "clients_indices": clients_indices,
                 "resources": resources,
                 "simulation_name": "test_generate_builtin_clients",
-                "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_builtin_clients_2"),
+                "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_builtin_clients_2_{uuid.uuid4().hex}"),
             }
             for output_packed_pose, output_kwargs in iterate(**instance_kwargs_update):
                 self.assertIsInstance(output_packed_pose, PackedPose)
@@ -1664,7 +1664,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
             "resources": None,
             "save_all": True,
             "dry_run": True,
-            "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_user_client_1"),
+            "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_user_client_1_{uuid.uuid4().hex}"),
         }
         results = []
         for output_packed_pose, _ in iterate(**instance_kwargs):
@@ -1674,7 +1674,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "tasks": self.create_tasks(parameter=GeneratorTest._parameters[1]),
                 "client": self.default_client, # Test passing in same client
                 "simulation_name": "test_generate_user_client",
-                "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_user_client_2"),
+                "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_user_client_2_{uuid.uuid4().hex}"),
             }
             for result in iterate(**instance_kwargs_update):
                 results.append(result)
@@ -1712,7 +1712,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
             "resources": resources,
             "save_all": True,
             "dry_run": True,
-            "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_multi_user_clients_1"),
+            "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_multi_user_clients_1_{uuid.uuid4().hex}"),
         }
         results = []
         for output_packed_pose, _ in iterate(**instance_kwargs):
@@ -1725,7 +1725,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "clients_indices": clients_indices,
                 "resources": resources,
                 "simulation_name": "test_generate_multi_user_clients",
-                "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_multi_user_clients_2"),
+                "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_multi_user_clients_2_{uuid.uuid4().hex}"),
             }
             for result in iterate(**instance_kwargs_update):
                 results.append(result)
@@ -1762,7 +1762,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
             "resources": resources,
             "save_all": True,
             "dry_run": True,
-            "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_partition_clients_1"),
+            "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_partition_clients_1_{uuid.uuid4().hex}"),
         }
         results = []
         for output_packed_pose, _ in iterate(**instance_kwargs):
@@ -1775,7 +1775,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "clients_indices": None,
                 "resources": resources,
                 "simulation_name": "test_generate_partition_clients",
-                "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_partition_clients_2"),
+                "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_partition_clients_2_{uuid.uuid4().hex}"),
             }
             for result in iterate(**instance_kwargs_update):
                 results.append(result)
