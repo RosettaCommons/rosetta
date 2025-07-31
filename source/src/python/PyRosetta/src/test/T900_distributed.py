@@ -64,12 +64,36 @@ def e(cmd):
         )
         sys.exit(1)
 
-
-test_suites = [
+distributed_cluster_test_cases = [
+    "pyrosetta.tests.distributed.cluster.test_smoke.SmokeTest.test_smoke",
+    "pyrosetta.tests.distributed.cluster.test_smoke.SmokeTest.test_ignore_errors",
+    "pyrosetta.tests.distributed.cluster.test_smoke.SmokeTestMulti.test_smoke_multi",
+    "pyrosetta.tests.distributed.cluster.test_smoke.SmokeTestMulti.test_smoke_multi_from_instance",
+    "pyrosetta.tests.distributed.cluster.test_smoke.SaveAllTest.test_save_all",
+    "pyrosetta.tests.distributed.cluster.test_smoke.SerializationTest.test_serialization",
+    "pyrosetta.tests.distributed.cluster.test_smoke.SaveAllTest.test_save_all_dry_run",
+    "pyrosetta.tests.distributed.cluster.test_smoke.ScoresTest.test_detached_scores",
+    "pyrosetta.tests.distributed.cluster.test_smoke.ScoresTest.test_detached_scores_in_protocol",
+    "pyrosetta.tests.distributed.cluster.test_smoke.ScoresTest.test_detached_scores_with_reserve_scores",
+    "pyrosetta.tests.distributed.cluster.test_smoke.MultipleClientsTest.test_clients",
+    "pyrosetta.tests.distributed.cluster.test_smoke.ResourcesTest.test_resources",
+    "pyrosetta.tests.distributed.cluster.test_smoke.ResourcesTest.test_resources_clients",
+    "pyrosetta.tests.distributed.cluster.test_smoke.GeneratorTest.test_generate_builtin_clients",
+    "pyrosetta.tests.distributed.cluster.test_smoke.GeneratorTest.test_generate_multi_user_clients",
+    "pyrosetta.tests.distributed.cluster.test_smoke.GeneratorTest.test_generate_partition_clients",
+    "pyrosetta.tests.distributed.cluster.test_smoke.GeneratorTest.test_generate_user_client",
+    "pyrosetta.tests.distributed.cluster.test_smoke.RuntimeTest.test_timing_multi_instance",
+    "pyrosetta.tests.distributed.cluster.test_smoke.RuntimeTest.test_timing_single_instance",
+    "pyrosetta.tests.distributed.cluster.test_logging.LoggingTest.test_logging",
+    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_minimizer_nstruct",
+    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_packer_nstruct",
+    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_packer_separate",
+    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityMulti.test_reproducibility_from_reproduce",
+    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityMulti.test_reproducibility_packer_nstruct_multi",
+    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityMulti.test_reproducibility_packer_nstruct_multi_decoy_ids",
+]
+distributed_test_suites = [
     "pyrosetta.tests.bindings.core.test_pose",
-    #"pyrosetta.tests.distributed.cluster.test_logging",
-    "pyrosetta.tests.distributed.cluster.test_reproducibility",
-    "pyrosetta.tests.distributed.cluster.test_smoke",
     "pyrosetta.tests.distributed.test_concurrency",
     "pyrosetta.tests.distributed.test_dask",
     "pyrosetta.tests.distributed.test_gil",
@@ -77,9 +101,7 @@ test_suites = [
     "pyrosetta.tests.distributed.test_viewer",
     "pyrosetta.tests.numeric.test_alignment",
 ]
+tests = distributed_cluster_test_cases + distributed_test_suites
 
-
-for test_suite in test_suites:
-    e("{python} -m unittest {test_suite}".format(python=sys.executable, test_suite=test_suite))
-    #import unittest
-    #unittest.main(test_suite)
+for test in tests:
+    e("{python} -m unittest {test}".format(python=sys.executable, test=test))
