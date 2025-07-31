@@ -191,6 +191,7 @@ class SmokeTest(unittest.TestCase):
             cluster.distribute(protocol_with_error)
 
         with tempfile.TemporaryDirectory() as workdir:
+            ignore_errors = False
             instance_kwargs = dict(
                 tasks=create_tasks,
                 input_packed_pose=None,
@@ -216,7 +217,7 @@ class SmokeTest(unittest.TestCase):
                 simulation_records_in_scorefile=False,
                 decoy_dir_name="decoys",
                 logs_dir_name="logs",
-                ignore_errors=True,
+                ignore_errors=ignore_errors,
                 timeout=0.1,
                 max_delay_time=1.0,
                 sha1=None,
