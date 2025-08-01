@@ -387,7 +387,11 @@ parse_mover_subtag( utility::tag::TagCOP const tag_ptr,
 	std::string mover_name; // user must specify a mover name. there is no valid default.
 
 	runtime_assert( !( tag_ptr->hasOption("mover_name") && tag_ptr->hasOption("mover") ) );
-	if ( tag_ptr->hasOption( "mover_name" ) ) {
+	if ( tag_ptr->getName() == "FOR_EACH_POSE" ) {
+		mover_to_add = utility::pointer::make_shared<MultiplePoseMover>();
+		mover_to_add->parse_my_tag( tag_ptr, data );
+		mover_name = "FOR_EACH_POSE";
+	} else if ( tag_ptr->hasOption( "mover_name" ) ) {
 		mover_name = tag_ptr->getOption<string>( "mover_name" );
 		mover_to_add = protocols::rosetta_scripts::parse_mover_or_null( mover_name, data );
 		if ( ! mover_to_add ) {
@@ -399,9 +403,6 @@ parse_mover_subtag( utility::tag::TagCOP const tag_ptr,
 		if ( ! mover_to_add ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover " + mover_name + " not found in map");
 		}
-	} else if ( tag_ptr->getName() == "FOR_EACH_POSE" ) {
-		mover_to_add = utility::pointer::make_shared<MultiplePoseMover>();
-		mover_to_add->parse_my_tag( tag_ptr, data );
 	} else if ( tag_ptr->getName() != "Add" ) {
 		MoverOP new_mover( MoverFactory::get_instance()->newMover( tag_ptr, data ) );
 		debug_assert( new_mover );
@@ -457,51 +458,76 @@ ParsedProtocol::parse_my_tag(
 		std::string const& mover_name( mover_add_pair.second );
 		MoverOP mover_to_add( mover_add_pair.first );
 
-		/////// Filter
-		runtime_assert( !( tag_ptr->hasOption("filter_name") && tag_ptr->hasOption( "filter" ) ) );
-		std::string filter_name;
-		if ( tag_ptr->hasOption( "filter_name" ) ) {
-			filter_name = tag_ptr->getOption<string>( "filter_name", "true_filter" );
-		} else if ( tag_ptr->hasOption( "filter" ) ) {
-			filter_name = tag_ptr->getOption<string>( "filter", "true_filter" );
-		}
-
 		protocols::filters::FilterOP filter_to_add;
-		if ( ! filter_name.empty() ) {
-			filter_to_add = protocols::rosetta_scripts::parse_filter_or_null( filter_name, data );
-			if ( ! filter_to_add ) {
-				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Filter " + filter_name + " not found in map");
-			}
-		}
-
-		////// Metrics
+		std::string filter_name;
 		utility::vector1< core::simple_metrics::SimpleMetricCOP > metrics_to_add;
 		utility::vector1< std::string > metric_labels;
-		if ( tag_ptr->hasOption( "metrics" ) ) {
-			metrics_to_add = core::simple_metrics::get_metrics_from_datamap_and_subtags(tag_ptr, data);
-			utility::vector1< std::string > metric_names = utility::string_split( tag_ptr->getOption<string>( "metrics" ), ',' );
-			runtime_assert( metric_names.size() == metrics_to_add.size() );
-			if ( tag_ptr->hasOption( "labels" ) ) {
-				metric_labels = utility::string_split( tag_ptr->getOption<string>( "labels" ), ',' );
-				if ( metric_labels.size() > metric_names.size() ) {
-					TR.Error << "For metrics=\""<< tag_ptr->getOption<string>( "metrics" ) << "\" there are "
-						<< metric_labels.size() << " labels and only " << metric_names.size() << " metrics." << std::endl;
-					throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Too many labels for the number of metrics.");
+		// Filter running settings
+		//Maintaining legacy behavior! Default is AT_END, second default is AFTER_APPLY, need to opt out of both to get NONE.
+		//Not saying this is perfect, but it matches legacy
+		FilterReportTime filter_report_setting = FilterReportTime::AT_END;
+		bool never_rerun( basic::options::option[ basic::options::OptionKeys::parser::never_rerun_filters ]() );
+
+		if ( tag_ptr->getName() == "Add" ) { // There's other tag types which don't necessarily play well with this approach
+			/////// Filter
+			runtime_assert( !( tag_ptr->hasOption("filter_name") && tag_ptr->hasOption( "filter" ) ) );
+			if ( tag_ptr->hasOption( "filter_name" ) ) {
+				filter_name = tag_ptr->getOption<string>( "filter_name", "true_filter" );
+			} else if ( tag_ptr->hasOption( "filter" ) ) {
+				filter_name = tag_ptr->getOption<string>( "filter", "true_filter" );
+			}
+
+			if ( ! filter_name.empty() ) {
+				filter_to_add = protocols::rosetta_scripts::parse_filter_or_null( filter_name, data );
+				if ( ! filter_to_add ) {
+					throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Filter " + filter_name + " not found in map");
 				}
-				TR.Debug << "Resizing metric label length from " << metric_labels.size() << " to " << metric_names.size() << std::endl;
-				metric_labels.resize( metric_names.size() ); // Fill extra with empty
-				for ( core::Size ii(1); ii <= metric_labels.size(); ++ii ) {
-					if ( metric_labels[ii].empty() ) {
-						TR.Debug << "Metric label " << ii << " is empty, replacing with " << metric_names[ii] << std::endl;
-						metric_labels[ii] = metric_names[ii]; // Then use the names.
+			}
+
+			////// Metrics
+			if ( tag_ptr->hasOption( "metrics" ) ) {
+				metrics_to_add = core::simple_metrics::get_metrics_from_datamap_and_subtags(tag_ptr, data);
+				utility::vector1< std::string > metric_names = utility::string_split( tag_ptr->getOption<string>( "metrics" ), ',' );
+				runtime_assert( metric_names.size() == metrics_to_add.size() );
+				if ( tag_ptr->hasOption( "labels" ) ) {
+					metric_labels = utility::string_split( tag_ptr->getOption<string>( "labels" ), ',' );
+					if ( metric_labels.size() > metric_names.size() ) {
+						TR.Error << "For metrics=\""<< tag_ptr->getOption<string>( "metrics" ) << "\" there are "
+							<< metric_labels.size() << " labels and only " << metric_names.size() << " metrics." << std::endl;
+						throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Too many labels for the number of metrics.");
 					}
+					TR.Debug << "Resizing metric label length from " << metric_labels.size() << " to " << metric_names.size() << std::endl;
+					metric_labels.resize( metric_names.size() ); // Fill extra with empty
+					for ( core::Size ii(1); ii <= metric_labels.size(); ++ii ) {
+						if ( metric_labels[ii].empty() ) {
+							TR.Debug << "Metric label " << ii << " is empty, replacing with " << metric_names[ii] << std::endl;
+							metric_labels[ii] = metric_names[ii]; // Then use the names.
+						}
+					}
+				} else {
+					TR.Debug << "No metric labels specified, using metric names" << std::endl;
+					metric_labels = metric_names;
 				}
-			} else {
-				TR.Debug << "No metric labels specified, using metric names" << std::endl;
-				metric_labels = metric_names;
+			}
+
+			if ( tag_ptr->hasOption( "report_at_end" ) ) {
+				if ( ! tag_ptr->getOption< bool >( "report_at_end" ) ) {
+					filter_report_setting = FilterReportTime::AFTER_APPLY;
+				} else {
+					filter_report_setting = FilterReportTime::AT_END;
+				}
+			}
+			if ( tag_ptr->hasOption( "never_rerun_filter" ) ) {
+				if ( tag_ptr->getOption< bool >( "never_rerun_filter" ) ) {
+					runtime_assert_string_msg( ! (tag_ptr->hasOption( "report_at_end" ) && tag_ptr->getOption< bool >( "report_at_end" ) ),
+						"The filter options 'never_rerun_filter' and 'report_at_end' are mutually exclusive!");
+					filter_report_setting = FilterReportTime::NONE;
+					never_rerun = true;
+				} else {
+					never_rerun = false;
+				}
 			}
 		}
-
 
 		////// Report
 
@@ -526,27 +552,6 @@ ParsedProtocol::parse_my_tag(
 		}
 		count++;
 
-		//Maintaining legacy behavior! Default is AT_END, second default is AFTER_APPLY, need to opt out of both to get NONE.
-		//Not saying this is perfect, but it matches legacy
-		FilterReportTime filter_report_setting = FilterReportTime::AT_END;
-		bool never_rerun( basic::options::option[ basic::options::OptionKeys::parser::never_rerun_filters ]() );
-		if ( tag_ptr->hasOption( "report_at_end" ) ) {
-			if ( ! tag_ptr->getOption< bool >( "report_at_end" ) ) {
-				filter_report_setting = FilterReportTime::AFTER_APPLY;
-			} else {
-				filter_report_setting = FilterReportTime::AT_END;
-			}
-		}
-		if ( tag_ptr->hasOption( "never_rerun_filter" ) ) {
-			if ( tag_ptr->getOption< bool >( "never_rerun_filter" ) ) {
-				runtime_assert_string_msg( ! (tag_ptr->hasOption( "report_at_end" ) && tag_ptr->getOption< bool >( "report_at_end" ) ),
-					"The filter options 'never_rerun_filter' and 'report_at_end' are mutually exclusive!");
-				filter_report_setting = FilterReportTime::NONE;
-				never_rerun = true;
-			} else {
-				never_rerun = false;
-			}
-		}
 
 		if ( mover_to_add != nullptr ) {
 			mover_to_add = mover_to_add->clone();

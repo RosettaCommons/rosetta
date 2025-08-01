@@ -329,6 +329,12 @@ void MultiplePoseMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data
 ) {
+	std::string my_name;
+	if ( tag->hasOption("name") ) {
+		my_name = tag->getOption<std::string>("name");
+	} else {
+		my_name = "Anonymous "  + tag->getName();
+	}
 
 	if ( tag->hasOption("max_input_poses") ) {
 		max_input_poses_ = tag->getOption<int>("max_input_poses", 0);
@@ -367,7 +373,7 @@ void MultiplePoseMover::parse_my_tag(
 				TR.Warning << "Both a PROTOCOLS and a ROSETTASCRIPTS specification was set with a MultiplePoseMover -- the script will take precedence, and the PROTOCOLS will be ignored." << std::endl;
 			}
 			mover_ = utility::pointer::make_shared< protocols::rosetta_scripts::ParsedProtocol >();
-			mover_->parse_my_tag( tag, data );
+			mover_->parse_my_tag( tag->getTag("PROTOCOLS"), data );
 		}
 
 		// SELECT tag (optional)
@@ -390,14 +396,12 @@ void MultiplePoseMover::parse_my_tag(
 
 		// Warn if no ROSETTASCRIPTS protocol and no SELECTOR (i.e. null mover)
 		if ( selectors_.size() < 1 && !rosetta_scripts_tag_ && !mover_ ) {
-			std::string my_name( tag->getOption<std::string>("name") );
 			TR.Warning << "Neither a ROSETTASCRIPTS protocol nor a SELECT statement nor a mover or PROTOCOLS specified in MultiplePoseMover with name \"" << my_name << "\". This mover has no effect. Are you sure this is what you intended?" << std::endl;
 		}
 
 		// TODO: Should we complain here is there are tags specified that we don't understand?
 
 	} catch( utility::excn::Exception const & e ) {
-		std::string my_name( tag->getOption<std::string>("name") );
 		throw CREATE_EXCEPTION(utility::excn::Exception, "Exception in MultiplePoseMover with name \"" + my_name + "\": " + e.msg());
 	}
 
