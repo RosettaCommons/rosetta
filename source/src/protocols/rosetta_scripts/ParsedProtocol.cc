@@ -399,6 +399,9 @@ parse_mover_subtag( utility::tag::TagCOP const tag_ptr,
 		if ( ! mover_to_add ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover " + mover_name + " not found in map");
 		}
+	} else if ( tag_ptr->getName() == "FOR_EACH_POSE" ) {
+		mover_to_add = utility::pointer::make_shared<MultiplePoseMover>();
+		mover_to_add->parse_my_tag( tag_ptr, data );
 	} else if ( tag_ptr->getName() != "Add" ) {
 		MoverOP new_mover( MoverFactory::get_instance()->newMover( tag_ptr, data ) );
 		debug_assert( new_mover );
@@ -498,6 +501,7 @@ ParsedProtocol::parse_my_tag(
 				metric_labels = metric_names;
 			}
 		}
+
 
 		////// Report
 
@@ -906,6 +910,8 @@ void ParsedProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		"XSD XRW: TO DO",
 		"false");
 
+	XMLSchemaSimpleSubelementList rosetta_scripts_protocols_subelement;
+
 	XMLSchemaSimpleSubelementList ssl;
 	AttributeList add_subattlist;
 
@@ -928,9 +934,11 @@ void ParsedProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		"Never run this filter after the original apply-time run. Use this option to avoid expensive re-runs when reporting",
 		"false");
 
-
 	ssl.add_simple_subelement( "Add", add_subattlist, "The steps to be applied."/*, 0 minoccurs*/ )
 		.complex_type_naming_func( & complex_type_name_for_parsed_protocol_subelement );
+
+	ssl.add_already_defined_subelement_w_alt_element_name(
+		"FOR_EACH_POSE", MultiplePoseMover::mover_name(), & moves::complex_type_name_for_mover );
 
 	ssl.add_group_subelement( & protocols::filters::FilterFactory::filter_xml_schema_group_name );
 	ssl.add_group_subelement( & protocols::moves::MoverFactory::mover_xml_schema_group_name );
