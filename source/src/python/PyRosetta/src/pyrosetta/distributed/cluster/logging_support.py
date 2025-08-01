@@ -109,19 +109,6 @@ class SocketLoggerPlugin(WorkerPlugin):
         logger.handlers.clear()
         logger.setLevel(self.logging_level)
         handler = logging.handlers.SocketHandler(self.host, self.port)
-        handler.setFormatter(
-            logging.Formatter(
-                ":".join(
-                    [
-                        "%(levelname)s",
-                        # str(protocol.__name__),
-                        "%(name)s",
-                        "%(asctime)s",
-                        " %(message)s",
-                    ]
-                )
-            )
-        )
         logger.addHandler(handler)
 
     def teardown(self, worker):
@@ -156,20 +143,19 @@ class LoggingSupport(Generic[G]):
             )
             os.makedirs(self.logs_path, exist_ok=True)
 
-        handler = logging.FileHandler(os.path.join(self.logs_path, "PyRosettaCluster.log",))
-        handler.setFormatter(
-            logging.Formatter(
-                ":".join(
-                    [
-                        "PyRosettaCluster",
-                        "%(asctime)s",
-                        "%(levelname)s",
-                        "%(name)s",
-                        " %(message)s",
-                    ]
-                )
+        handler = logging.FileHandler(os.path.join(self.logs_path, "PyRosettaCluster.log"))
+        formatter = logging.Formatter(
+            ":".join(
+                [
+                    "PyRosettaCluster",
+                    "%(asctime)s",
+                    "%(levelname)s",
+                    "%(name)s",
+                    " %(message)s",
+                ]
             )
         )
+        handler.setFormatter(formatter)
         logger.addHandler(handler)
 
     def _close_logger(self) -> None:
@@ -193,6 +179,18 @@ class LoggingSupport(Generic[G]):
 
         handler = logging.FileHandler(self.logging_file, mode="a")
         handler.setLevel(self.logging_level)
+        formatter = logging.Formatter(
+            ":".join(
+                [
+                    "%(levelname)s",
+                    # "%(protocol)s", # Extra key
+                    "%(name)s",
+                    "%(asctime)s",
+                    " %(message)s",
+                ]
+            )
+        )
+        handler.setFormatter(formatter)
         self.socket_listener = SocketListener("0.0.0.0", 0, handler)
         self.socket_listener.daemon = True
         self.socket_listener.start()
