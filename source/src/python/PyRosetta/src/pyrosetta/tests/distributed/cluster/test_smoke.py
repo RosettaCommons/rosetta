@@ -878,6 +878,7 @@ class SerializationTest(unittest.TestCase):
 
 
 class MultipleClientsTest(unittest.TestCase):
+    @unittest.skip("Exit code 137 on benchmark server.")
     def test_clients(self):
         """Smoke test for the use case of multiple clients with PyRosettaCluster."""
         pyrosetta.distributed.init(
@@ -1747,6 +1748,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
             msg="Dry run failed while yielding results.",
         )
 
+    @unittest.skip("Exit code 137 on benchmark server.")
     def test_generate_partition_clients(self):
         """
         Test for `PyRosettaCluster().generate()` with `save_all=True`,
