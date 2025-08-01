@@ -68,6 +68,9 @@ public:
 	/// @brief sets rosettascripts tag
 	void set_rosetta_scripts_tag( utility::tag::TagCOP tag );
 
+	/// @brief sets the mover to use on each structure (versus the RosettaScripts script)
+	void set_main_mover( protocols::moves::MoverOP const m );
+
 	std::string
 	get_name() const override;
 
@@ -93,6 +96,7 @@ private:
 	bool cached_;
 	core::Size max_input_poses_, max_output_poses_;
 	utility::tag::TagCOP rosetta_scripts_tag_;
+	protocols::moves::MoverOP mover_; // Use a mover instead of a RosettaScripts tag
 	utility::tag::TagCOP selector_tag_;
 	protocols::moves::MoverOP previous_mover_;
 	utility::vector1 < PoseSelectorOP > selectors_;
