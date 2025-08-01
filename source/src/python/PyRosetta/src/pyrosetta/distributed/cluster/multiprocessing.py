@@ -39,7 +39,7 @@ from pyrosetta.distributed.cluster.exceptions import (
     trace_protocol_exceptions,
     trace_subprocess_exceptions,
 )
-from pyrosetta.distributed.cluster.logging_support import setup_target_logging
+from pyrosetta.distributed.cluster.logging_support import bind_protocol, setup_target_logging
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.validators import _validate_residue_type_sets
 
@@ -124,6 +124,7 @@ def get_target_results_kwargs(
         ]
 
 
+@bind_protocol
 @setup_target_logging
 @requires_init
 def target(
@@ -156,6 +157,7 @@ def target(
     q.put(results)
 
 
+@bind_protocol
 def user_spawn_thread(
     protocol: Callable[..., Any],
     compressed_packed_pose: bytes,

@@ -34,6 +34,7 @@ except ImportError:
         raise
 
 from contextlib import suppress
+from contextvars import ContextVar
 from functools import wraps
 from typing import (
     Any,
@@ -109,6 +110,8 @@ class SocketLoggerPlugin(WorkerPlugin):
         logger.handlers.clear()
         logger.setLevel(self.logging_level)
         handler = logging.handlers.SocketHandler(self.host, self.port)
+        handler.addFilter(ProtocolContextFilter())
+        handler.closeOnError = True
         logger.addHandler(handler)
 
     def teardown(self, worker):
@@ -183,7 +186,7 @@ class LoggingSupport(Generic[G]):
             ":".join(
                 [
                     "%(levelname)s",
-                    # "%(protocol)s", # Extra key
+                    "%(protocol)s", # Extra key
                     "%(name)s",
                     "%(asctime)s",
                     " %(message)s",
@@ -191,6 +194,7 @@ class LoggingSupport(Generic[G]):
             )
         )
         handler.setFormatter(formatter)
+        handler.addFilter(ProtocolDefaultFilter())
         self.socket_listener = SocketListener("0.0.0.0", 0, handler)
         self.socket_listener.daemon = True
         self.socket_listener.start()
@@ -213,6 +217,37 @@ class LoggingSupport(Generic[G]):
         handler.flush()
         with suppress(Exception):
             handler.close()
+
+
+class ProtocolDefaultFilter(logging.Filter):
+    def filter(self, record: logging.LogRecord) -> bool:
+        if not hasattr(record, "protocol"):
+            record.protocol = "user_spawn_thread"
+        return True
+
+
+class ProtocolContextFilter(logging.Filter):
+    def filter(self, record: logging.LogRecord) -> bool:
+        record.protocol = current_protocol.get()
+        return True
+
+
+current_protocol = ContextVar("current_protocol", default="user_spawn_thread")
+
+
+def bind_protocol(func: L) -> L:
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        # User-provided PyRosetta protocol is the first argument of 'user_spawn_thread' and 'target'
+        protocol = args[0]
+        value = current_protocol.set(protocol.__name__)
+        try:
+            return func(*args, **kwargs)
+        finally:
+            current_protocol.reset(value)
+
+    return cast(L, wrapper)
+
 
 def setup_target_logging(func: L) -> L:
     """Support logging within the spawned thread."""
@@ -243,6 +278,8 @@ def setup_target_logging(func: L) -> L:
 
         host, port = socket_listener_address
         handler = logging.handlers.SocketHandler(host, port)
+        handler.addFilter(ProtocolContextFilter())
+        handler.closeOnError = True
         logger.addHandler(handler)
 
         result = func(
