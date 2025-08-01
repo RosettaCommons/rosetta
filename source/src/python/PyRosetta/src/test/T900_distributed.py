@@ -52,9 +52,10 @@ else:
         print("Printing pip environment failed with return code: {0}.".format(ex.returncode))
 
 
-def e(cmd):
+def e(cmd, sleep=5):
+    """Run command getting return code and output with subsequent sleep step to provide extra time to flush loggers."""
     print("Executing:\n{0}".format(cmd))
-    status, output = subprocess.getstatusoutput(cmd)
+    status, output = subprocess.getstatusoutput("{0} && sleep {1}".format(cmd, sleep))
     print("Output:\n{0}".format(output))
     if status != 0:
         print(
@@ -104,4 +105,4 @@ distributed_test_suites = [
 tests = distributed_cluster_test_cases + distributed_test_suites
 
 for test in tests:
-    e("{python} -m unittest {test} && sleep 5".format(python=sys.executable, test=test))
+    e("{python} -m unittest {test}".format(python=sys.executable, test=test), sleep=5)
