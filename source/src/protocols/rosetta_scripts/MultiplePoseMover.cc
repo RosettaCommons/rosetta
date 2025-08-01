@@ -37,6 +37,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -340,7 +341,7 @@ void MultiplePoseMover::parse_my_tag(
 	}
 
 	if ( tag->hasOption("mover") ) {
-		mover_ = rosetta_scripts::parse_mover( tag->getOption< std::string >( "mover", "null" ), data_map );
+		mover_ = rosetta_scripts::parse_mover( tag->getOption< std::string >( "mover", "null" ), data );
 	}
 
 	try {
@@ -358,14 +359,14 @@ void MultiplePoseMover::parse_my_tag(
 			TR.Warning << "Both a mover and a ROSETTASCRIPTS specification was set with a MultiplePoseMover -- the script will take precedence, and the mover will be ignored." << std::endl;
 		}
 
-		if ( tag->hasTag("PROTOCOL") ) {
+		if ( tag->hasTag("PROTOCOLS") ) {
 			if ( mover_ ) {
-				TR.Warning << "Both a mover and a PROTOCOL block was set with a MultiplePoseMover -- the protocols block will take precedence, and the mover will be ignored." << std::endl;
+				TR.Warning << "Both a mover and a PROTOCOLS block was set with a MultiplePoseMover -- the protocols block will take precedence, and the mover will be ignored." << std::endl;
 			}
 			if ( rosetta_scripts_tag_ ) {
-				TR.Warning << "Both a PROTOCOL and a ROSETTASCRIPTS specification was set with a MultiplePoseMover -- the script will take precedence, and the PROTOCOL will be ignored." << std::endl;
+				TR.Warning << "Both a PROTOCOLS and a ROSETTASCRIPTS specification was set with a MultiplePoseMover -- the script will take precedence, and the PROTOCOLS will be ignored." << std::endl;
 			}
-			mover_ = utility::pointer::make_shared< protocols::rosetta_scripts::ParsedProtocol >() );
+			mover_ = utility::pointer::make_shared< protocols::rosetta_scripts::ParsedProtocol >();
 			mover_->parse_my_tag( tag, data );
 		}
 
@@ -390,7 +391,7 @@ void MultiplePoseMover::parse_my_tag(
 		// Warn if no ROSETTASCRIPTS protocol and no SELECTOR (i.e. null mover)
 		if ( selectors_.size() < 1 && !rosetta_scripts_tag_ && !mover_ ) {
 			std::string my_name( tag->getOption<std::string>("name") );
-			TR.Warning << "Neither a ROSETTASCRIPTS protocol nor a SELECT statement nor a mover or PROTOCOL specified in MultiplePoseMover with name \"" << my_name << "\". This mover has no effect. Are you sure this is what you intended?" << std::endl;
+			TR.Warning << "Neither a ROSETTASCRIPTS protocol nor a SELECT statement nor a mover or PROTOCOLS specified in MultiplePoseMover with name \"" << my_name << "\". This mover has no effect. Are you sure this is what you intended?" << std::endl;
 		}
 
 		// TODO: Should we complain here is there are tags specified that we don't understand?
@@ -456,7 +457,7 @@ void MultiplePoseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		+ Attr( "max_input_poses", xsct_non_negative_integer, "XSD TO DO" )
 		+ Attr( "max_output_poses", xsct_non_negative_integer, "XSD TO DO" )
 		+ Attr( "cached", xsct_rosetta_bool, "XSD TO DO" )
-		+ Attr( "mover", xs_string, "The mover to apply to each of the poses (instead of the script)" )
+		+ Attr( "mover", xs_string, "The mover to apply to each of the poses (instead of the script)" );
 
 	PoseSelectorFactory::get_instance()->define_pose_selector_group( xsd );
 
@@ -476,7 +477,7 @@ void MultiplePoseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	select_element.add_already_defined_subelement(
 		"SELECT", & mpm_mangler );
 	protocol_element.add_already_defined_subelement_w_alt_element_name(
-		"PROTOCOL", ParsedProtocol::mover_name(), & moves::complex_type_name_for_mover );
+		"PROTOCOLS", ParsedProtocol::mover_name(), & moves::complex_type_name_for_mover );
 
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.element_name( mover_name() )
