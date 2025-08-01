@@ -191,7 +191,6 @@ void MultipleOutputWrapper::parse_my_tag(
 				rosetta_scripts_tag_ = curr_tag;
 			} else {
 				// Treat subtag as a regular mover tag
-				std::string name = curr_tag->getOption<std::string>("name");
 				protocols::moves::MoverOP new_mover(
 					protocols::moves::MoverFactory::get_instance()->
 					newMover(curr_tag, data)
