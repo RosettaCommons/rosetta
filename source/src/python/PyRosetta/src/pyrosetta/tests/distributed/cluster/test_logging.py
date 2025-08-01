@@ -115,7 +115,7 @@ class LoggingTest(unittest.TestCase):
                 simulation_records_in_scorefile=False,
                 decoy_dir_name="decoys",
                 logs_dir_name=logs_dir_name,
-                ignore_errors=True,
+                ignore_errors=False,
                 timeout=0.1,
                 sha1=None,
                 dry_run=False,
