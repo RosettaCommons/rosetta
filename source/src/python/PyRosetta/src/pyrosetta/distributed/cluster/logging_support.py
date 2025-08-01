@@ -125,7 +125,12 @@ class SocketLoggerPlugin(WorkerPlugin):
         logger.addHandler(handler)
 
     def teardown(self, worker):
-        logging.shutdown()
+        logger = logging.getLogger()
+        for handler in logger.handlers[:]:
+            handler.flush()
+            logger.removeHandler(handler)
+            with suppress(Exception):
+                handler.close()
 
 
 class LoggingSupport(Generic[G]):
