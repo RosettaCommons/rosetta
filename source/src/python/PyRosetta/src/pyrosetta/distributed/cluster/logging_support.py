@@ -51,6 +51,7 @@ L = TypeVar("L", bound=Callable[..., Any])
 G = TypeVar("G")
 
 SOCKET_LOGGER_PLUGIN_NAME: str = "socket-logger-plugin"
+DEFAULT_PROTOCOL_NAME: str = "user_spawn_thread"
 
 
 class LogRecordStreamHandler(socketserver.StreamRequestHandler):
@@ -231,7 +232,7 @@ class LoggingSupport(Generic[G]):
 class ProtocolDefaultFilter(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:
         if not hasattr(record, "protocol"):
-            record.protocol = "user_spawn_thread"
+            record.protocol = DEFAULT_PROTOCOL_NAME
         return True
 
 
@@ -241,7 +242,7 @@ class ProtocolContextFilter(logging.Filter):
         return True
 
 
-current_protocol = ContextVar("current_protocol", default="user_spawn_thread")
+current_protocol = ContextVar("current_protocol", default=DEFAULT_PROTOCOL_NAME)
 
 
 def bind_protocol(func: L) -> L:
