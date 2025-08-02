@@ -55,9 +55,9 @@ SOCKET_LOGGER_PLUGIN_NAME: str = "socket-logger-plugin"
 DEFAULT_PROTOCOL_NAME: str = "user_spawn_thread"
 
 
-class LogRecordStreamHandler(socketserver.StreamRequestHandler):
+class LogRecordRequestHandler(socketserver.StreamRequestHandler):
     """
-    Handler for a streaming logging requests modified from logging cookbook recipe:
+    Handler for a streaming logging request modified from logging cookbook recipe:
     https://docs.python.org/3/howto/logging-cookbook.html#sending-and-receiving-logging-events-across-a-network
     """
     def handle(self) -> None:
@@ -69,9 +69,12 @@ class LogRecordStreamHandler(socketserver.StreamRequestHandler):
             chunk = self.connection.recv(slen)
             while len(chunk) < slen:
                 chunk = chunk + self.connection.recv(slen - len(chunk))
-            obj = pickle.loads(chunk)
+            obj = self.decompress(chunk)
             record = logging.makeLogRecord(obj)
             self.server.handler.handle(record)
+
+    def decompress(self, chunk: bytes) -> Any:
+        return pickle.loads(chunk)
 
 
 class SocketListener(socketserver.ThreadingTCPServer):
@@ -81,7 +84,7 @@ class SocketListener(socketserver.ThreadingTCPServer):
     """
     allow_reuse_address = True
     def __init__(self, host: str, port: int, handler: logging.Handler, timeout: Union[float, int]) -> None:
-        super().__init__((host, port), LogRecordStreamHandler)
+        super().__init__((host, port), LogRecordRequestHandler)
         self.handler = handler
         self.timeout = timeout
         self.abort = 0
