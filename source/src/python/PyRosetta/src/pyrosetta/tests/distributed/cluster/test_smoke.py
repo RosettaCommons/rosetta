@@ -24,6 +24,7 @@ import sys
 import tempfile
 import time
 import unittest
+import uuid
 import warnings
 
 try:
@@ -40,7 +41,7 @@ except ImportError:
     )
     raise
 
-from functools import wraps
+from contextlib import suppress
 from pyrosetta import Pose
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.utility import get_package_version
@@ -110,7 +111,7 @@ class SmokeTest(unittest.TestCase):
                 logging_level="INFO",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Tests",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=os.path.join(workdir, "outputs"),
                 simulation_records_in_scorefile=False,
@@ -129,7 +130,6 @@ class SmokeTest(unittest.TestCase):
             cluster.distribute(
                 my_pyrosetta_protocol,
             )
-
             instance_kwargs.update({"protocols": my_pyrosetta_protocol})
             produce(**instance_kwargs)
             run(**instance_kwargs)
@@ -152,6 +152,7 @@ class SmokeTest(unittest.TestCase):
             raise NotImplementedError("Testing an error in a user-provided PyRosetta protocol.")
 
         with tempfile.TemporaryDirectory() as workdir:
+            ignore_errors = True
             instance_kwargs = dict(
                 tasks=create_tasks,
                 input_packed_pose=None,
@@ -171,13 +172,13 @@ class SmokeTest(unittest.TestCase):
                 logging_level="INFO",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Tests",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=os.path.join(workdir, "outputs"),
                 simulation_records_in_scorefile=False,
                 decoy_dir_name="decoys",
                 logs_dir_name="logs",
-                ignore_errors=True,
+                ignore_errors=ignore_errors,
                 timeout=0.1,
                 max_delay_time=3.0,
                 sha1=None,
@@ -190,6 +191,7 @@ class SmokeTest(unittest.TestCase):
             cluster.distribute(protocol_with_error)
 
         with tempfile.TemporaryDirectory() as workdir:
+            ignore_errors = False
             instance_kwargs = dict(
                 tasks=create_tasks,
                 input_packed_pose=None,
@@ -209,13 +211,13 @@ class SmokeTest(unittest.TestCase):
                 logging_level="INFO",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Tests",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=os.path.join(workdir, "outputs"),
                 simulation_records_in_scorefile=False,
                 decoy_dir_name="decoys",
                 logs_dir_name="logs",
-                ignore_errors=False,
+                ignore_errors=ignore_errors,
                 timeout=0.1,
                 max_delay_time=1.0,
                 sha1=None,
@@ -501,7 +503,7 @@ class SmokeTestMulti(unittest.TestCase):
                 logging_level="DEBUG",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Tests",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=os.path.join(workdir, "outputs"),
                 simulation_records_in_scorefile=False,
@@ -596,7 +598,7 @@ class SmokeTestMulti(unittest.TestCase):
                 logging_level="WARNING",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Testing",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=os.path.abspath(os.path.join(workdir, "outputs")),
                 simulation_records_in_scorefile=False,
@@ -634,7 +636,7 @@ class SmokeTestMulti(unittest.TestCase):
                 logging_level="INFO",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Tests",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=os.path.abspath(os.path.join(workdir, "outputs")),
                 simulation_records_in_scorefile=False,
@@ -698,7 +700,7 @@ class SaveAllTest(unittest.TestCase):
                 logging_level="CRITICAL",
                 scorefile_name=scorefile_name,
                 project_name="PyRosettaCluster_SaveAllTest",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=output_path,
                 simulation_records_in_scorefile=True,
@@ -774,7 +776,7 @@ class SaveAllTest(unittest.TestCase):
                 logging_level="CRITICAL",
                 scorefile_name=scorefile_name,
                 project_name="PyRosettaCluster_SaveAllTest",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=output_path,
                 decoy_dir_name=decoy_dir_name,
@@ -876,6 +878,7 @@ class SerializationTest(unittest.TestCase):
 
 
 class MultipleClientsTest(unittest.TestCase):
+    @unittest.skipIf(sys.version_info.major == 3 and sys.version_info.minor in (9, 12), "Exit code 137 on benchmark server.")
     def test_clients(self):
         """Smoke test for the use case of multiple clients with PyRosettaCluster."""
         pyrosetta.distributed.init(
@@ -980,7 +983,7 @@ class MultipleClientsTest(unittest.TestCase):
                 logging_level="DEBUG",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Tests",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=os.path.join(workdir, "outputs"),
                 simulation_records_in_scorefile=False,
@@ -1077,7 +1080,7 @@ class ResourcesTest(unittest.TestCase):
                 logging_level="DEBUG",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Tests",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=output_path,
                 simulation_records_in_scorefile=False,
@@ -1104,6 +1107,7 @@ class ResourcesTest(unittest.TestCase):
                 scores_dict = get_scores_dict(decoy_file)
                 self.assertEqual(scores_dict["scores"]["sequence"], sequence)
 
+    @unittest.skipIf(sys.version_info.major == 3 and sys.version_info.minor in (9, 12), "Exit code 137 on benchmark server.")
     def test_resources_clients(self):
         """Smoke test for the use case of abstract resource constraints for dask workers with multiple clients in PyRosettaCluster."""
         pyrosetta.distributed.init(
@@ -1206,7 +1210,7 @@ class ResourcesTest(unittest.TestCase):
                 logging_level="DEBUG",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Tests",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=output_path,
                 simulation_records_in_scorefile=False,
@@ -1268,7 +1272,7 @@ class ScoresTest(unittest.TestCase):
             logging_level="INFO",
             scorefile_name=None,
             project_name="PyRosettaCluster_Tests",
-            simulation_name=None,
+            simulation_name=uuid.uuid4().hex,
             environment=None,
             simulation_records_in_scorefile=False,
             decoy_dir_name=cls.decoy_dir_name,
@@ -1462,11 +1466,11 @@ class TestBase:
         cls.local_directory.cleanup()
         cls.local_directory_1.cleanup()
         cls.local_directory_2.cleanup()
-        for c in [cls.default_client, *cls.clients]:
-            for worker in c.cluster.workers.values():
+        for client in [cls.default_client, *cls.clients]:
+            for worker in client.cluster.workers.values():
                 worker.close_gracefully()
-            c.shutdown()
-            c.cluster.close()
+            client.shutdown()
+            client.cluster.close()
 
     def setUp(self):
         self.workdir = tempfile.TemporaryDirectory()
@@ -1476,7 +1480,7 @@ class TestBase:
             client=None,
             clients=None,
             scheduler=None,
-            scratch_dir=self.workdir.name,
+            scratch_dir=os.path.join(self.workdir.name, "scratch"),
             cores=None,
             processes=None,
             memory=None,
@@ -1489,9 +1493,9 @@ class TestBase:
             logging_level="INFO",
             scorefile_name=None,
             project_name="PyRosettaCluster_Tests",
-            simulation_name=None,
+            simulation_name=uuid.uuid4().hex,
             environment=None,
-            output_path=os.path.join(self.workdir.name, "outputs"),
+            output_path=os.path.join(self.workdir.name, "outputs_default"),
             simulation_records_in_scorefile=False,
             decoy_dir_name="test_decoy_dir",
             logs_dir_name="logs",
@@ -1504,9 +1508,25 @@ class TestBase:
             dry_run=False,
             save_all=False,
         )
+        clients = [self.default_client, *self.clients]
+        for client in clients:
+            client.restart()
 
     def tearDown(self):
+        clients = [self.default_client, *self.clients]
+        for client in clients:
+            client.run_on_scheduler(TestBase.shutdown_loggers)
         self.workdir.cleanup()
+
+    @staticmethod
+    def shutdown_loggers(dask_scheduler=None):
+        with suppress(Exception):
+            if hasattr(dask_scheduler, "log_listener"):
+                dask_scheduler.log_listener.stop()
+                if hasattr(dask_scheduler.log_listener, "log_handler"):
+                    dask_scheduler.log_listener.log_handler.close()
+                    setattr(dask_scheduler.log_listener, "log_handler", None)
+                setattr(dask_scheduler, "log_listener", None)
 
 
 class GeneratorTest(TestBase, unittest.TestCase):
@@ -1569,6 +1589,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
             **self.instance_kwargs,
             "tasks": self.create_tasks(parameter=GeneratorTest._parameters[0]),
             "input_packed_pose": self.input_packed_pose,
+            "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_builtin_clients_1_{uuid.uuid4().hex}"),
         }
         protocols = self.get_protocols()
         clients_indices = instance_kwargs_update.pop("clients_indices", None)
@@ -1595,6 +1616,8 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "protocols": protocols,
                 "clients_indices": clients_indices,
                 "resources": resources,
+                "simulation_name": "test_generate_builtin_clients",
+                "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_builtin_clients_2_{uuid.uuid4().hex}"),
             }
             for output_packed_pose, output_kwargs in iterate(**instance_kwargs_update):
                 self.assertIsInstance(output_packed_pose, PackedPose)
@@ -1645,7 +1668,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
             "resources": None,
             "save_all": True,
             "dry_run": True,
-            "output_path": os.path.join(self.workdir.name, "outputs_dry_run"),
+            "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_user_client_1_{uuid.uuid4().hex}"),
         }
         results = []
         for output_packed_pose, _ in iterate(**instance_kwargs):
@@ -1654,6 +1677,8 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "input_packed_pose": output_packed_pose,
                 "tasks": self.create_tasks(parameter=GeneratorTest._parameters[1]),
                 "client": self.default_client, # Test passing in same client
+                "simulation_name": "test_generate_user_client",
+                "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_user_client_2_{uuid.uuid4().hex}"),
             }
             for result in iterate(**instance_kwargs_update):
                 results.append(result)
@@ -1691,7 +1716,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
             "resources": resources,
             "save_all": True,
             "dry_run": True,
-            "output_path": os.path.join(self.workdir.name, "outputs"),
+            "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_multi_user_clients_1_{uuid.uuid4().hex}"),
         }
         results = []
         for output_packed_pose, _ in iterate(**instance_kwargs):
@@ -1703,6 +1728,8 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "clients": self.clients, # Test passing in same clients
                 "clients_indices": clients_indices,
                 "resources": resources,
+                "simulation_name": "test_generate_multi_user_clients",
+                "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_multi_user_clients_2_{uuid.uuid4().hex}"),
             }
             for result in iterate(**instance_kwargs_update):
                 results.append(result)
@@ -1722,6 +1749,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
             msg="Dry run failed while yielding results.",
         )
 
+    @unittest.skipIf(sys.version_info.major == 3 and sys.version_info.minor in (9, 12), "Exit code 137 on benchmark server.")
     def test_generate_partition_clients(self):
         """
         Test for `PyRosettaCluster().generate()` with `save_all=True`,
@@ -1739,7 +1767,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
             "resources": resources,
             "save_all": True,
             "dry_run": True,
-            "output_path": os.path.join(self.workdir.name, "outputs_dry_run_clients"),
+            "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_partition_clients_1_{uuid.uuid4().hex}"),
         }
         results = []
         for output_packed_pose, _ in iterate(**instance_kwargs):
@@ -1751,6 +1779,8 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "clients": None,
                 "clients_indices": None,
                 "resources": resources,
+                "simulation_name": "test_generate_partition_clients",
+                "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_partition_clients_2_{uuid.uuid4().hex}"),
             }
             for result in iterate(**instance_kwargs_update):
                 results.append(result)

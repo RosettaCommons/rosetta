@@ -176,6 +176,15 @@ Args:
         "WARNING", "ERROR", or "CRITICAL". The output log file is always written
         to `output_path`/`logs_dir_name`/`simulation_name`.log on disk.
         Default: "INFO"
+    logging_address: A `str` object specifying the socket endpoint for sending and receiving
+        log messages across a network, so log messages from user-provided PyRosetta
+        protocols may be written to a single log file on the host node. The `str` object
+        must take the format 'host:port' where 'host' is either an IP address, 'localhost',
+        or Domain Name System (DNS)-accessible domain name, and the 'port' is a digit greater
+        than or equal to 0. If the 'port' is '0', then the next free port is selected.
+        Default: 'localhost:0' if `scheduler=None` or either the `client` or `clients`
+            keyword argument parameters specify instances of `dask.distributed.LocalCluster`,
+            otherwise '0.0.0.0:0'
     ignore_errors: A `bool` object specifying for PyRosettaCluster to ignore errors
         raised in the user-provided PyRosetta protocols. This comes in handy when
         well-defined errors are sparse and sporadic (such as rare Segmentation Faults),
@@ -250,6 +259,7 @@ from pyrosetta.distributed.cluster.converters import (
     _parse_decoy_ids,
     _parse_environment,
     _parse_input_packed_pose,
+    _parse_logging_address,
     _parse_pyrosetta_build,
     _parse_scratch_dir,
     _parse_seeds,
@@ -269,6 +279,7 @@ from pyrosetta.distributed.cluster.validators import (
     _validate_dirs,
     _validate_float,
     _validate_int,
+    _validate_logging_address,
     _validate_min_len,
 )
 from pyrosetta.distributed.packed_pose.core import PackedPose
@@ -514,6 +525,11 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         init=False,
         validator=attr.validators.instance_of(str),
     )
+    logging_address = attr.ib(
+        type=str,
+        default=attr.Factory(_parse_logging_address, takes_self=True),
+        validator=[_validate_logging_address, attr.validators.instance_of(str)],
+    )
     compressed = attr.ib(
         type=bool,
         default=True,
@@ -714,14 +730,13 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             args, protocols, clients_indices, resources
         )
         clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
+        self._setup_socket_listener(clients)
         client_residue_type_set = _get_residue_type_set()
         extra_args = (
             self.decoy_ids,
             self.protocols_key,
             self.timeout,
             self.ignore_errors,
-            self.logging_file,
-            self.logging_level,
             self.DATETIME_FORMAT,
             self.compression,
             self.max_delay_time,
@@ -784,6 +799,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                     self.tasks_size += 1
                     self._maybe_adapt(adaptive)
 
+        self._close_socket_listener()
         self._maybe_teardown(clients, cluster)
         self._close_logger()
 

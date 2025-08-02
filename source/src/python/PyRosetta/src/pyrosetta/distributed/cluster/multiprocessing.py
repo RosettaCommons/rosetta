@@ -10,12 +10,12 @@ __author__ = "Jason C. Klima"
 
 try:
     import billiard
-    from dask.distributed import get_client
+    from dask.distributed import get_client, get_worker
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.multiprocessing' requires the "
-        + "third-party packages 'billiard' and 'dask.distributed' as a dependencies!\n"
-        + "Please install the package into your python environment. "
+        + "third-party packages 'billiard' and 'dask.distributed' as dependencies!\n"
+        + "Please install the packages into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/billiard/\n"
         + "https://pypi.org/project/distributed/\n"
@@ -39,7 +39,11 @@ from pyrosetta.distributed.cluster.exceptions import (
     trace_protocol_exceptions,
     trace_subprocess_exceptions,
 )
-from pyrosetta.distributed.cluster.logging_support import setup_target_logging
+from pyrosetta.distributed.cluster.logging_support import (
+    bind_protocol,
+    setup_target_logging,
+    SOCKET_LOGGER_PLUGIN_NAME,
+)
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.validators import _validate_residue_type_sets
 
@@ -88,7 +92,7 @@ def user_protocol(
 def run_protocol(
     protocol: Callable[..., Any],
     packed_pose: PackedPose,
-    DATETIME_FORMAT: str,
+    datetime_format: str,
     ignore_errors: bool,
     protocols_key: str,
     decoy_ids: List[int],
@@ -124,6 +128,7 @@ def get_target_results_kwargs(
         ]
 
 
+@bind_protocol
 @setup_target_logging
 @requires_init
 def target(
@@ -131,9 +136,9 @@ def target(
     compressed_packed_pose: bytes,
     compressed_kwargs: bytes,
     q: Q,
-    logging_file: str,
     logging_level: str,
-    DATETIME_FORMAT: str,
+    socket_listener_address: Tuple[str, int],
+    datetime_format: str,
     ignore_errors: bool,
     protocols_key: str,
     decoy_ids: List[int],
@@ -148,7 +153,7 @@ def target(
     kwargs = serializer.decompress_kwargs(compressed_kwargs)
     kwargs["PyRosettaCluster_client_repr"] = client_repr
     results = run_protocol(
-        protocol, packed_pose, DATETIME_FORMAT, ignore_errors, protocols_key, decoy_ids, serializer, **kwargs
+        protocol, packed_pose, datetime_format, ignore_errors, protocols_key, decoy_ids, serializer, **kwargs
     )
     _validate_residue_type_sets(
         _get_residue_type_set(), client_residue_type_set,
@@ -156,6 +161,7 @@ def target(
     q.put(results)
 
 
+@bind_protocol
 def user_spawn_thread(
     protocol: Callable[..., Any],
     compressed_packed_pose: bytes,
@@ -165,9 +171,7 @@ def user_spawn_thread(
     protocols_key: str,
     timeout: Union[float, int],
     ignore_errors: bool,
-    logging_file: str,
-    logging_level: str,
-    DATETIME_FORMAT: str,
+    datetime_format: str,
     compression: Optional[Union[str, bool]],
     max_delay_time: Union[float, int],
     client_residue_type_set: AbstractSet[str],
@@ -175,6 +179,9 @@ def user_spawn_thread(
     """Generic worker task using the billiard multiprocessing module."""
     t0 = time.time()
     client_repr = repr(get_client())
+    socket_logger_plugin = get_worker().plugins[SOCKET_LOGGER_PLUGIN_NAME]
+    logging_level = socket_logger_plugin.logging_level
+    socket_listener_address = (socket_logger_plugin.host, socket_logger_plugin.port)
 
     q = billiard.Queue()
     p = billiard.context.Process(
@@ -184,9 +191,9 @@ def user_spawn_thread(
             compressed_packed_pose,
             compressed_kwargs,
             q,
-            logging_file,
             logging_level,
-            DATETIME_FORMAT,
+            socket_listener_address,
+            datetime_format,
             ignore_errors,
             protocols_key,
             decoy_ids,
