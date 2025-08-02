@@ -1216,7 +1216,7 @@ class ResourcesTest(unittest.TestCase):
                 simulation_records_in_scorefile=False,
                 decoy_dir_name=decoy_dir_name,
                 logs_dir_name="logs",
-                ignore_errors=True, # Testing on benchmark server
+                ignore_errors=False,
                 timeout=0.1,
                 max_delay_time=1.0,
                 sha1=None,
