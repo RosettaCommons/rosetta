@@ -195,10 +195,12 @@ class LoggingSupport(Generic[G]):
         )
         handler.setFormatter(formatter)
         handler.addFilter(ProtocolDefaultFilter())
-        self.socket_listener = SocketListener("0.0.0.0", 0, handler)
+        _host, _port = map(lambda s: s.strip(), self.logging_address.split(":"))
+        self.socket_listener = SocketListener(_host, int(_port), handler)
         self.socket_listener.daemon = True
         self.socket_listener.start()
         host, port = self.socket_listener.socket.getsockname()
+        logging.info(f"Logging socket listener: http://{host}:{port}")
         self._register_socket_logger_plugins(clients, host, port)
 
     def _register_socket_logger_plugins(self, clients, host, port):

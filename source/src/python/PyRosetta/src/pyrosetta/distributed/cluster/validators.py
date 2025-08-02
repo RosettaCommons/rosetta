@@ -85,7 +85,18 @@ def _validate_resources(resources: Any, _protocols: List[Callable[..., Any]]) ->
             )
         
 
-    
+def _validate_logging_address(self, attribute: str, value: Any) -> Optional[NoReturn]:
+    if not isinstance(value, str):
+        raise ValueError(f"`{attribute}` must be of type `str`. Received: '{type(value)}'")
+    if value.count(":") != 1:
+        raise ValueError(f"`{attribute}` must contain one semicolon. Received: '{value}'")
+    _host, _port = map(lambda s: s.strip(), value.split(":"))
+    if not _host:
+        raise ValueError(f"`{attribute}` must contain a value before the semicolon representing the host. Received: '{value}'")
+    if not _port.isdigit():
+        raise ValueError(f"`{attribute}` must contain a digit after the semicolon representing the port. Received: '{value}'")
+
+
 def _validate_dirs(self, attribute: str, value: Any) -> Optional[NoReturn]:
     """Validate the output, logging, and decoy directories."""
 
