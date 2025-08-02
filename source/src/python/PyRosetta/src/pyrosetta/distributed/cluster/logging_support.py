@@ -43,6 +43,7 @@ from typing import (
     Dict,
     Generic,
     TypeVar,
+    Union,
     cast,
 )
 
@@ -79,11 +80,11 @@ class SocketListener(socketserver.ThreadingTCPServer):
     https://docs.python.org/3/howto/logging-cookbook.html#sending-and-receiving-logging-events-across-a-network
     """
     allow_reuse_address = True
-    def __init__(self, host: str, port: int, handler: logging.Handler) -> None:
+    def __init__(self, host: str, port: int, handler: logging.Handler, timeout: Union[float, int]) -> None:
         super().__init__((host, port), LogRecordStreamHandler)
         self.handler = handler
+        self.timeout = timeout
         self.abort = 0
-        self.timeout = 1.0
         self._thread = None
 
     def start(self) -> None:
@@ -205,7 +206,7 @@ class LoggingSupport(Generic[G]):
         handler.setFormatter(formatter)
         handler.addFilter(ProtocolDefaultFilter())
         _host, _port = map(lambda s: s.strip(), self.logging_address.split(":"))
-        self.socket_listener = SocketListener(_host, int(_port), handler)
+        self.socket_listener = SocketListener(_host, int(_port), handler, self.timeout)
         self.socket_listener.daemon = True
         self.socket_listener.start()
         host, port = self.socket_listener.socket.getsockname()
