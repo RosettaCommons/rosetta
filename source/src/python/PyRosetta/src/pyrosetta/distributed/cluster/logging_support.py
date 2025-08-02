@@ -19,9 +19,10 @@ import threading
 import warnings
 
 try:
-    from distributed import WorkerPlugin
+    from distributed import Client, Worker, WorkerPlugin
 except ImportError:
     try:
+        from distributed import Client, Worker
         from distributed.diagnostics.plugin import WorkerPlugin
     except ImportError:
         print(
@@ -39,6 +40,7 @@ from functools import wraps
 from typing import (
     Any,
     Callable,
+    Dict,
     Generic,
     TypeVar,
     cast,
@@ -50,7 +52,11 @@ G = TypeVar("G")
 
 
 class LogRecordStreamHandler(socketserver.StreamRequestHandler):
-    def handle(self):
+    """
+    Handler for a streaming logging requests modified from logging cookbook recipe:
+    https://docs.python.org/3/howto/logging-cookbook.html#sending-and-receiving-logging-events-across-a-network
+    """
+    def handle(self) -> None:
         while True:
             chunk = self.connection.recv(4)
             if len(chunk) < 4:
@@ -65,45 +71,46 @@ class LogRecordStreamHandler(socketserver.StreamRequestHandler):
 
 
 class SocketListener(socketserver.ThreadingTCPServer):
+    """
+    TCP socket-based logging receiver modified from logging cookbook recipe:
+    https://docs.python.org/3/howto/logging-cookbook.html#sending-and-receiving-logging-events-across-a-network
+    """
     allow_reuse_address = True
-    def __init__(
-        self,
-        host="localhost",
-        port=logging.handlers.DEFAULT_TCP_LOGGING_PORT,
-        handler=LogRecordStreamHandler,
-    ):
-        socketserver.ThreadingTCPServer.__init__(self, (host, port), LogRecordStreamHandler)
-        self.abort = 0
-        self.timeout = 1
+    def __init__(self, host: str, port: int, handler: logging.Handler) -> None:
+        super().__init__((host, port), LogRecordStreamHandler)
         self.handler = handler
+        self.abort = 0
+        self.timeout = 1.0
         self._thread = None
 
-    def start(self):
+    def start(self) -> None:
         self._thread = threading.Thread(target=self.serve_forever, daemon=True)
         self._thread.start()
 
-    def stop(self):
+    def stop(self) -> None:
         self.shutdown()
         self.server_close()
         if self._thread:
             self._thread.join()
 
-    def serve_until_stopped(self):
+    def serve_until_stopped(self) -> None:
         abort = 0
         while not abort:
-            rd, wr, ex = select.select([self.socket.fileno()], [], [], self.timeout)
-            if rd:
+            _read_ready, _, _ = select.select([self.socket.fileno()], [], [], self.timeout)
+            if _read_ready:
                 self.handle_request()
             abort = self.abort
 
 
 class SocketLoggerPlugin(WorkerPlugin):
-    def __init__(self, host, port, logging_level):
+    """Dask worker plugin for logging socket handler."""
+    def __init__(self, host: str, port: int, logging_level: str) -> None:
         self.host = host
         self.port = port
         self.logging_level = logging_level
 
-    def setup(self, worker):
+    def setup(self, worker: Worker) -> None:
+        """Setup dask worker plugin for logging socket handler."""
         worker.socket_listener_address = (self.host, self.port)
         worker.logging_level = self.logging_level
         logger = logging.getLogger()
@@ -114,7 +121,8 @@ class SocketLoggerPlugin(WorkerPlugin):
         handler.closeOnError = True
         logger.addHandler(handler)
 
-    def teardown(self, worker):
+    def teardown(self, worker: Worker) -> None:
+        """Teardown dask worker plugin for logging socket handler."""
         logger = logging.getLogger()
         for handler in logger.handlers[:]:
             handler.flush()
@@ -170,7 +178,7 @@ class LoggingSupport(Generic[G]):
                 handler.close()
         logging.shutdown()
 
-    def _setup_socket_listener(self, clients):
+    def _setup_socket_listener(self, clients: Dict[int, Client]) -> None:
         logs_path = os.path.dirname(self.logging_file)
         if not os.path.isdir(logs_path):
             warnings.warn(
@@ -203,7 +211,7 @@ class LoggingSupport(Generic[G]):
         logging.info(f"Logging socket listener: http://{host}:{port}")
         self._register_socket_logger_plugins(clients, host, port)
 
-    def _register_socket_logger_plugins(self, clients, host, port):
+    def _register_socket_logger_plugins(self, clients: Dict[int, Client], host: str, port: int) -> None:
         for client in clients.values():
             plugin = SocketLoggerPlugin(host, port, self.logging_level)
             plugin.idempotent = False # Always re-register plugin
@@ -213,7 +221,7 @@ class LoggingSupport(Generic[G]):
             else: # Deprecated since dask version 2023.9.2
                 client.register_worker_plugin(plugin=plugin, name=name, nanny=False)
 
-    def _close_socket_listener(self):
+    def _close_socket_listener(self) -> None:
         self.socket_listener.stop()
         handler = self.socket_listener.handler
         handler.flush()
