@@ -39,7 +39,11 @@ from pyrosetta.distributed.cluster.exceptions import (
     trace_protocol_exceptions,
     trace_subprocess_exceptions,
 )
-from pyrosetta.distributed.cluster.logging_support import bind_protocol, setup_target_logging
+from pyrosetta.distributed.cluster.logging_support import (
+    bind_protocol,
+    setup_target_logging,
+    SOCKET_LOGGER_PLUGIN_NAME,
+)
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.validators import _validate_residue_type_sets
 
@@ -175,9 +179,9 @@ def user_spawn_thread(
     """Generic worker task using the billiard multiprocessing module."""
     t0 = time.time()
     client_repr = repr(get_client())
-    worker = get_worker()
-    logging_level = worker.logging_level
-    socket_listener_address = worker.socket_listener_address
+    socket_logger_plugin = get_worker().plugins[SOCKET_LOGGER_PLUGIN_NAME]
+    logging_level = socket_logger_plugin.logging_level
+    socket_listener_address = (socket_logger_plugin.host, socket_logger_plugin.port)
 
     q = billiard.Queue()
     p = billiard.context.Process(

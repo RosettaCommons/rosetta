@@ -50,6 +50,8 @@ from typing import (
 L = TypeVar("L", bound=Callable[..., Any])
 G = TypeVar("G")
 
+SOCKET_LOGGER_PLUGIN_NAME: str = "socket-logger-plugin"
+
 
 class LogRecordStreamHandler(socketserver.StreamRequestHandler):
     """
@@ -111,8 +113,6 @@ class SocketLoggerPlugin(WorkerPlugin):
 
     def setup(self, worker: Worker) -> None:
         """Setup dask worker plugin for logging socket handler."""
-        worker.socket_listener_address = (self.host, self.port)
-        worker.logging_level = self.logging_level
         logger = logging.getLogger()
         logger.handlers.clear()
         logger.setLevel(self.logging_level)
@@ -215,11 +215,10 @@ class LoggingSupport(Generic[G]):
         for client in clients.values():
             plugin = SocketLoggerPlugin(host, port, self.logging_level)
             plugin.idempotent = False # Always re-register plugin
-            name = "socket-logger-plugin"
             if hasattr(client, "register_plugin"):
-                client.register_plugin(plugin=plugin, name=name)
+                client.register_plugin(plugin=plugin, name=SOCKET_LOGGER_PLUGIN_NAME)
             else: # Deprecated since dask version 2023.9.2
-                client.register_worker_plugin(plugin=plugin, name=name, nanny=False)
+                client.register_worker_plugin(plugin=plugin, name=SOCKET_LOGGER_PLUGIN_NAME, nanny=False)
 
     def _close_socket_listener(self) -> None:
         self.socket_listener.stop()
