@@ -90,7 +90,7 @@ def _validate_logging_address(self, attribute: str, value: Any) -> Optional[NoRe
         raise ValueError(f"`{attribute}` must be of type `str`. Received: '{type(value)}'")
     if value.count(":") != 1:
         raise ValueError(f"`{attribute}` must contain one colon. Received: '{value}'")
-    _host, _port = map(lambda s: s.strip(), value.split(":"))
+    _host, _port = iter(s.strip() for s in value.split(":"))
     if not _host:
         raise ValueError(f"`{attribute}` must contain a value before the colon representing the host. Received: '{value}'")
     if not _port.isdigit():

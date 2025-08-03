@@ -20,15 +20,13 @@ import warnings
 
 try:
     import billiard
-    from distributed import Client
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.logging_support' requires the "
-        + "third-party packages 'billiard' and 'dask.distributed' as dependencies!\n"
-        + "Please install the packages into your python environment. "
+        + "third-party package 'billiard' as a dependency!\n"
+        + "Please install the package into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/billiard/\n"
-        + "https://pypi.org/project/distributed/\n"
     )
     raise
 
@@ -159,7 +157,7 @@ class LoggingSupport(Generic[G]):
                 handler.close()
         logging.shutdown()
 
-    def _setup_socket_listener(self, clients: Dict[int, Client]) -> None:
+    def _setup_socket_listener(self) -> Tuple[str, int]:
         """Setup socket logging socket listener."""
         logs_path = os.path.dirname(self.logging_file)
         if not os.path.isdir(logs_path):
@@ -185,7 +183,7 @@ class LoggingSupport(Generic[G]):
         )
         handler.setFormatter(formatter)
         handler.addFilter(ProtocolDefaultFilter())
-        _host, _port = map(lambda s: s.strip(), self.logging_address.split(":"))
+        _host, _port = iter(s.strip() for s in self.logging_address.split(":"))
         self.socket_listener = SocketListener(_host, int(_port), handler, self.timeout)
         self.socket_listener.daemon = True
         self.socket_listener.start()
@@ -218,7 +216,7 @@ class ProtocolContextFilter(logging.Filter):
         return True
 
 
-current_protocol_name = ContextVar("current_protocol_name", default=DEFAULT_PROTOCOL_NAME)
+current_protocol_name: ContextVar = ContextVar("current_protocol_name", default=DEFAULT_PROTOCOL_NAME)
 
 
 def bind_protocol(func: L) -> L:
@@ -257,7 +255,7 @@ def setup_logger(
     return logger, handler
 
 
-def teardown_logger(
+def close_logger(
     logger: logging.RootLogger, handler: logging.handlers.SocketHandler
 ) -> None:
     """Teardown socket logging handler."""
@@ -307,7 +305,7 @@ def setup_target_logging(func: L) -> L:
             **pyrosetta_init_kwargs,
         )
 
-        teardown_logger(logger, handler)
+        close_logger(logger, handler)
 
         return result
 
@@ -339,7 +337,7 @@ def setup_worker_logging(func: L) -> L:
             extra_args,
         )
 
-        teardown_logger(logger, handler)
+        close_logger(logger, handler)
 
         return result
 

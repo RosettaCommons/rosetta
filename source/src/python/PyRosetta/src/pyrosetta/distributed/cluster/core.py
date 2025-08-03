@@ -730,7 +730,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             args, protocols, clients_indices, resources
         )
         clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
-        socket_listener_address = self._setup_socket_listener(clients)
+        socket_listener_address = self._setup_socket_listener()
         client_residue_type_set = _get_residue_type_set()
         extra_args = dict(
             decoy_ids=self.decoy_ids,
@@ -918,7 +918,11 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             client = Client()
             for packed_pose, kwargs in PyRosettaCluster(client=client).generate(protocols):
                 # Post-process results on host node asynchronously from results generation
-                prc = PyRosettaCluster(input_packed_pose=packed_pose, client=client)
+                prc = PyRosettaCluster(
+                    input_packed_pose=packed_pose,
+                    client=client,
+                    simulation_name=uuid.uuid4().hex, # Make sure to write to a different log file
+                )
                 for packed_pose, kwargs in prc.generate(other_protocols):
                     ...
 
@@ -927,7 +931,11 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             client_2 = Client()
             for packed_pose, kwargs in PyRosettaCluster(client=client_1).generate(protocols):
                 # Post-process results on host node asynchronously from results generation
-                prc = PyRosettaCluster(input_packed_pose=packed_pose, client=client_2)
+                prc = PyRosettaCluster(
+                    input_packed_pose=packed_pose,
+                    client=client_2,
+                    simulation_name=uuid.uuid4().hex, # Make sure to write to a different log file
+                )
                 for packed_pose, kwargs in prc.generate(other_protocols):
                     ...
 
