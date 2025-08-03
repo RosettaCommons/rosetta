@@ -1513,25 +1513,9 @@ class TestBase:
             dry_run=False,
             save_all=False,
         )
-        clients = [self.default_client, *self.clients]
-        for client in clients:
-            client.restart()
 
     def tearDown(self):
-        clients = [self.default_client, *self.clients]
-        for client in clients:
-            client.run_on_scheduler(TestBase.shutdown_loggers)
         self.workdir.cleanup()
-
-    @staticmethod
-    def shutdown_loggers(dask_scheduler=None):
-        with suppress(Exception):
-            if hasattr(dask_scheduler, "log_listener"):
-                dask_scheduler.log_listener.stop()
-                if hasattr(dask_scheduler.log_listener, "log_handler"):
-                    dask_scheduler.log_listener.log_handler.close()
-                    setattr(dask_scheduler.log_listener, "log_handler", None)
-                setattr(dask_scheduler, "log_listener", None)
 
 
 class GeneratorTest(TestBase, unittest.TestCase):
