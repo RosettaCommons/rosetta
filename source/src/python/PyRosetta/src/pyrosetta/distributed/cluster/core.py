@@ -742,6 +742,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             self.max_delay_time,
             client_residue_type_set,
         )
+        self._register_task_args_worker_plugins(clients, *extra_args)
         seq = as_completed(
             [
                 clients[clients_index].submit(
@@ -750,7 +751,6 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                     compressed_input_packed_pose,
                     compressed_kwargs,
                     pyrosetta_init_kwargs,
-                    *extra_args,
                     pure=False,
                     resources=resource,
                 )
@@ -792,7 +792,6 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                             compressed_packed_pose,
                             compressed_kwargs,
                             pyrosetta_init_kwargs,
-                            *extra_args,
                         ), hash=False,
                     )
                     seq.add(clients[clients_index].submit(user_spawn_thread, *scatter, pure=False, resources=resource))

@@ -29,6 +29,7 @@ from pyrosetta.distributed import requires_init
 from pyrosetta.distributed.cluster.base import (
     _get_residue_type_set,
     capture_task_metadata,
+    TASK_ARGS_PLUGIN_NAME,
 )
 from pyrosetta.distributed.cluster.converters import (
     _parse_empty_queue,
@@ -167,19 +168,23 @@ def user_spawn_thread(
     compressed_packed_pose: bytes,
     compressed_kwargs: bytes,
     pyrosetta_init_kwargs: Dict[str, Any],
-    decoy_ids: List[int],
-    protocols_key: str,
-    timeout: Union[float, int],
-    ignore_errors: bool,
-    datetime_format: str,
-    compression: Optional[Union[str, bool]],
-    max_delay_time: Union[float, int],
-    client_residue_type_set: AbstractSet[str],
 ) -> List[Tuple[Optional[Union[PackedPose, bytes]], Union[Dict[Any, Any], bytes]]]:
     """Generic worker task using the billiard multiprocessing module."""
     t0 = time.time()
     client_repr = repr(get_client())
-    socket_logger_plugin = get_worker().plugins[SOCKET_LOGGER_PLUGIN_NAME]
+    worker = get_worker()
+
+    task_args_plugin = worker.plugins[TASK_ARGS_PLUGIN_NAME]
+    decoy_ids = task_args_plugin.decoy_ids
+    protocols_key = task_args_plugin.protocols_key
+    timeout = task_args_plugin.timeout
+    ignore_errors = task_args_plugin.ignore_errors
+    datetime_format = task_args_plugin.datetime_format
+    compression = task_args_plugin.compression
+    max_delay_time = task_args_plugin.max_delay_time
+    client_residue_type_set = task_args_plugin.client_residue_type_set
+
+    socket_logger_plugin = worker.plugins[SOCKET_LOGGER_PLUGIN_NAME]
     logging_level = socket_logger_plugin.logging_level
     socket_listener_address = (socket_logger_plugin.host, socket_logger_plugin.port)
 
