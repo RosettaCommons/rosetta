@@ -20,22 +20,6 @@ except ImportError:
     )
     raise
 
-try:
-    from distributed import Client, Worker, WorkerPlugin
-except ImportError:
-    try:
-        from distributed import Client, Worker
-        from distributed.diagnostics.plugin import WorkerPlugin
-    except ImportError:
-        print(
-            "Importing 'pyrosetta.distributed.cluster.base' requires the "
-            + "third-party package 'distributed' as a dependency!\n"
-            + "Please install the package into your python environment. "
-            + "For installation instructions, visit:\n"
-            + "https://pypi.org/project/distributed/\n"
-        )
-        raise
-
 import pyrosetta
 import pyrosetta.distributed
 
@@ -52,7 +36,6 @@ from pyrosetta.distributed.cluster.validators import (
 )
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
-    AbstractSet,
     Any,
     Callable,
     Dict,
@@ -62,44 +45,12 @@ from typing import (
     Sized,
     Tuple,
     TypeVar,
-    Union,
     cast,
 )
 
 
 G = TypeVar("G")
 M = TypeVar("M", bound=Callable[..., Any])
-
-TASK_ARGS_PLUGIN_NAME = "task-extra-args-worker-plugin"
-
-
-class TaskArgsWorkerPlugin(WorkerPlugin):
-    """Dask worker plugin for PyRosettaCluster task extra arguments."""
-    def __init__(
-        self,
-        decoy_ids: List[int],
-        protocols_key: str,
-        timeout: Union[float, int],
-        ignore_errors: bool,
-        datetime_format: str,
-        compression: Optional[Union[str, bool]],
-        max_delay_time: Union[float, int],
-        client_residue_type_set: AbstractSet[str],
-    ) -> None:
-        self.decoy_ids = decoy_ids
-        self.protocols_key = protocols_key
-        self.timeout = timeout
-        self.ignore_errors = ignore_errors
-        self.datetime_format = datetime_format
-        self.compression = compression
-        self.max_delay_time = max_delay_time
-        self.client_residue_type_set = client_residue_type_set
-
-    def setup(self, worker: Worker) -> None:
-        pass
-
-    def teardown(self, worker: Worker) -> None:
-        pass
 
 
 class TaskBase(Generic[G]):
@@ -234,15 +185,6 @@ class TaskBase(Generic[G]):
         )
 
         return _protocols, _protocol, _seed, _clients_index, _resource
-
-    def _register_task_args_worker_plugins(self, clients: Dict[int, Client], *extra_args: Any) -> None:
-        for client in clients.values():
-            plugin = TaskArgsWorkerPlugin(*extra_args)
-            plugin.idempotent = False # Always re-register plugin
-            if hasattr(client, "register_plugin"):
-                client.register_plugin(plugin=plugin, name=TASK_ARGS_PLUGIN_NAME)
-            else: # Deprecated since dask version 2023.9.2
-                client.register_worker_plugin(plugin=plugin, name=TASK_ARGS_PLUGIN_NAME, nanny=False)
 
 
 def capture_task_metadata(func: M) -> M:
