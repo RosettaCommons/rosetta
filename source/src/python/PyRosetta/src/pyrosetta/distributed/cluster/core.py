@@ -921,7 +921,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                 prc = PyRosettaCluster(
                     input_packed_pose=packed_pose,
                     client=client,
-                    simulation_name=uuid.uuid4().hex, # Make sure to write to a different log file
+                    logs_dir_name=f"logs_{uuid.uuid4().hex}", # Make sure to write new log files
                 )
                 for packed_pose, kwargs in prc.generate(other_protocols):
                     ...
@@ -934,7 +934,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                 prc = PyRosettaCluster(
                     input_packed_pose=packed_pose,
                     client=client_2,
-                    simulation_name=uuid.uuid4().hex, # Make sure to write to a different log file
+                    logs_dir_name=f"logs_{uuid.uuid4().hex}", # Make sure to write new log files
                 )
                 for packed_pose, kwargs in prc.generate(other_protocols):
                     ...
