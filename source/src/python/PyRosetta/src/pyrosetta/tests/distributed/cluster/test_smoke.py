@@ -151,6 +151,9 @@ class SmokeTest(unittest.TestCase):
         def protocol_with_error(packed_pose, **kwargs):
             raise NotImplementedError("Testing an error in a user-provided PyRosetta protocol.")
 
+        _sep = "*" * 50
+        print(f"{_sep} Begin testing PyRosettaCluster(ignore_errors=...) {_sep}")
+
         with tempfile.TemporaryDirectory() as workdir:
             ignore_errors = True
             instance_kwargs = dict(
@@ -229,6 +232,8 @@ class SmokeTest(unittest.TestCase):
             cluster = PyRosettaCluster(**instance_kwargs)
             with self.assertRaises(WorkerError):
                 cluster.distribute(protocol_with_error)
+
+        print(f"{_sep} End testing PyRosettaCluster(ignore_errors=...) {_sep}")
 
 
 class SmokeTestMulti(unittest.TestCase):
