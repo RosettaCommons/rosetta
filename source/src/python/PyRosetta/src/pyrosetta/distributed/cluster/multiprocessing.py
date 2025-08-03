@@ -10,7 +10,7 @@ __author__ = "Jason C. Klima"
 
 try:
     import billiard
-    from dask.distributed import get_client, get_worker
+    from dask.distributed import get_client
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.multiprocessing' requires the "
@@ -22,6 +22,7 @@ except ImportError:
     )
     raise
 
+import logging
 import tempfile
 import time
 
@@ -40,9 +41,8 @@ from pyrosetta.distributed.cluster.exceptions import (
     trace_subprocess_exceptions,
 )
 from pyrosetta.distributed.cluster.logging_support import (
-    bind_protocol,
     setup_target_logging,
-    SOCKET_LOGGER_PLUGIN_NAME,
+    setup_worker_logging,
 )
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.validators import _validate_residue_type_sets
@@ -70,6 +70,7 @@ def _maybe_delay(dt: float, max_delay_time: Union[float, int]) -> None:
     """Maybe delay the user-provided PyRosetta protocol result(s)."""
     delay_time = max_delay_time - dt
     if delay_time > 0.0:
+        logging.info(f"Delaying worker results for {delay_time:0.6f} seconds.")
         time.sleep(delay_time)
 
 
@@ -128,7 +129,6 @@ def get_target_results_kwargs(
         ]
 
 
-@bind_protocol
 @setup_target_logging
 @requires_init
 def target(
@@ -161,27 +161,28 @@ def target(
     q.put(results)
 
 
-@bind_protocol
+@setup_worker_logging
 def user_spawn_thread(
     protocol: Callable[..., Any],
     compressed_packed_pose: bytes,
     compressed_kwargs: bytes,
     pyrosetta_init_kwargs: Dict[str, Any],
-    decoy_ids: List[int],
-    protocols_key: str,
-    timeout: Union[float, int],
-    ignore_errors: bool,
-    datetime_format: str,
-    compression: Optional[Union[str, bool]],
-    max_delay_time: Union[float, int],
-    client_residue_type_set: AbstractSet[str],
+    extra_args: Dict[str, Any],
 ) -> List[Tuple[Optional[Union[PackedPose, bytes]], Union[Dict[Any, Any], bytes]]]:
     """Generic worker task using the billiard multiprocessing module."""
     t0 = time.time()
     client_repr = repr(get_client())
-    socket_logger_plugin = get_worker().plugins[SOCKET_LOGGER_PLUGIN_NAME]
-    logging_level = socket_logger_plugin.logging_level
-    socket_listener_address = (socket_logger_plugin.host, socket_logger_plugin.port)
+
+    decoy_ids = extra_args["decoy_ids"]
+    protocols_key = extra_args["protocols_key"]
+    timeout = extra_args["timeout"]
+    ignore_errors = extra_args["ignore_errors"]
+    datetime_format = extra_args["datetime_format"]
+    compression = extra_args["compression"]
+    max_delay_time = extra_args["max_delay_time"]
+    logging_level = extra_args["logging_level"]
+    socket_listener_address = extra_args["socket_listener_address"]
+    client_residue_type_set = extra_args["client_residue_type_set"]
 
     q = billiard.Queue()
     p = billiard.context.Process(

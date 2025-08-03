@@ -19,40 +19,43 @@ import threading
 import warnings
 
 try:
-    from distributed import Client, Worker, WorkerPlugin
+    import billiard
+    from distributed import Client
 except ImportError:
-    try:
-        from distributed import Client, Worker
-        from distributed.diagnostics.plugin import WorkerPlugin
-    except ImportError:
-        print(
-            "Importing 'pyrosetta.distributed.cluster.logging_support' requires the "
-            + "third-party package 'distributed' as a dependency!\n"
-            + "Please install the package into your python environment. "
-            + "For installation instructions, visit:\n"
-            + "https://pypi.org/project/distributed/\n"
-        )
-        raise
+    print(
+        "Importing 'pyrosetta.distributed.cluster.logging_support' requires the "
+        + "third-party packages 'billiard' and 'dask.distributed' as dependencies!\n"
+        + "Please install the packages into your python environment. "
+        + "For installation instructions, visit:\n"
+        + "https://pypi.org/project/billiard/\n"
+        + "https://pypi.org/project/distributed/\n"
+    )
+    raise
 
 from contextlib import suppress
 from contextvars import ContextVar
 from functools import wraps
 from typing import (
+    AbstractSet,
     Any,
     Callable,
     Dict,
     Generic,
+    List,
+    Optional,
+    Tuple,
     TypeVar,
     Union,
     cast,
 )
 
 
-L = TypeVar("L", bound=Callable[..., Any])
 G = TypeVar("G")
+L = TypeVar("L", bound=Callable[..., Any])
+Q = TypeVar("Q", bound=billiard.Queue)
 
-SOCKET_LOGGER_PLUGIN_NAME: str = "socket-logger-plugin"
-DEFAULT_PROTOCOL_NAME: str = "user_spawn_thread"
+
+DEFAULT_PROTOCOL_NAME: str = "PyRosettaCluster"
 
 
 class LogRecordRequestHandler(socketserver.StreamRequestHandler):
@@ -62,19 +65,19 @@ class LogRecordRequestHandler(socketserver.StreamRequestHandler):
     """
     def handle(self) -> None:
         while True:
-            chunk = self.connection.recv(4)
-            if len(chunk) < 4:
+            msg = self.connection.recv(4)
+            if len(msg) < 4:
                 break
-            slen = struct.unpack(">L", chunk)[0]
-            chunk = self.connection.recv(slen)
-            while len(chunk) < slen:
-                chunk = chunk + self.connection.recv(slen - len(chunk))
-            obj = self.decompress(chunk)
+            msg_len = struct.unpack(">L", msg)[0]
+            msg = self.connection.recv(msg_len)
+            while len(msg) < msg_len:
+                msg += self.connection.recv(msg_len - len(msg))
+            obj = self.decompress(msg)
             record = logging.makeLogRecord(obj)
             self.server.handler.handle(record)
 
-    def decompress(self, chunk: bytes) -> Any:
-        return pickle.loads(chunk)
+    def decompress(self, msg: bytes) -> Any:
+        return pickle.loads(msg)
 
 
 class SocketListener(socketserver.ThreadingTCPServer):
@@ -107,33 +110,6 @@ class SocketListener(socketserver.ThreadingTCPServer):
             if _read_ready:
                 self.handle_request()
             abort = self.abort
-
-
-class SocketLoggerPlugin(WorkerPlugin):
-    """Dask worker plugin for logging socket handler."""
-    def __init__(self, host: str, port: int, logging_level: str) -> None:
-        self.host = host
-        self.port = port
-        self.logging_level = logging_level
-
-    def setup(self, worker: Worker) -> None:
-        """Setup dask worker plugin for logging socket handler."""
-        logger = logging.getLogger()
-        logger.handlers.clear()
-        logger.setLevel(self.logging_level)
-        handler = logging.handlers.SocketHandler(self.host, self.port)
-        handler.addFilter(ProtocolContextFilter())
-        handler.closeOnError = True
-        logger.addHandler(handler)
-
-    def teardown(self, worker: Worker) -> None:
-        """Teardown dask worker plugin for logging socket handler."""
-        logger = logging.getLogger()
-        for handler in logger.handlers[:]:
-            handler.flush()
-            logger.removeHandler(handler)
-            with suppress(Exception):
-                handler.close()
 
 
 class LoggingSupport(Generic[G]):
@@ -184,6 +160,7 @@ class LoggingSupport(Generic[G]):
         logging.shutdown()
 
     def _setup_socket_listener(self, clients: Dict[int, Client]) -> None:
+        """Setup socket logging socket listener."""
         logs_path = os.path.dirname(self.logging_file)
         if not os.path.isdir(logs_path):
             warnings.warn(
@@ -199,7 +176,7 @@ class LoggingSupport(Generic[G]):
             ":".join(
                 [
                     "%(levelname)s",
-                    "%(protocol)s", # Extra key
+                    "%(protocol_name)s", # Extra key
                     "%(name)s",
                     "%(asctime)s",
                     " %(message)s",
@@ -214,18 +191,11 @@ class LoggingSupport(Generic[G]):
         self.socket_listener.start()
         host, port = self.socket_listener.socket.getsockname()
         logging.info(f"Logging socket listener: http://{host}:{port}")
-        self._register_socket_logger_plugins(clients, host, port)
 
-    def _register_socket_logger_plugins(self, clients: Dict[int, Client], host: str, port: int) -> None:
-        for client in clients.values():
-            plugin = SocketLoggerPlugin(host, port, self.logging_level)
-            plugin.idempotent = False # Always re-register plugin
-            if hasattr(client, "register_plugin"):
-                client.register_plugin(plugin=plugin, name=SOCKET_LOGGER_PLUGIN_NAME)
-            else: # Deprecated since dask version 2023.9.2
-                client.register_worker_plugin(plugin=plugin, name=SOCKET_LOGGER_PLUGIN_NAME, nanny=False)
+        return host, port
 
     def _close_socket_listener(self) -> None:
+        """Teardown socket logging socket listener."""
         self.socket_listener.stop()
         handler = self.socket_listener.handler
         handler.flush()
@@ -234,67 +204,91 @@ class LoggingSupport(Generic[G]):
 
 
 class ProtocolDefaultFilter(logging.Filter):
+    """Set default protocol name for logging socket listener formatter."""
     def filter(self, record: logging.LogRecord) -> bool:
-        if not hasattr(record, "protocol"):
-            record.protocol = DEFAULT_PROTOCOL_NAME
+        if not hasattr(record, "protocol_name"):
+            record.protocol_name = DEFAULT_PROTOCOL_NAME
         return True
 
 
 class ProtocolContextFilter(logging.Filter):
+    """Set bound protocol name for logging socket listener formatter."""
     def filter(self, record: logging.LogRecord) -> bool:
-        record.protocol = current_protocol.get()
+        record.protocol_name = current_protocol_name.get()
         return True
 
 
-current_protocol = ContextVar("current_protocol", default=DEFAULT_PROTOCOL_NAME)
+current_protocol_name = ContextVar("current_protocol_name", default=DEFAULT_PROTOCOL_NAME)
 
 
 def bind_protocol(func: L) -> L:
+    """Set and reset current protocol name for socket logging filters."""
     @wraps(func)
     def wrapper(*args, **kwargs):
+        """Wrapper function to bind_protocol."""
         # User-provided PyRosetta protocol is the first argument of 'user_spawn_thread' and 'target'
         protocol = args[0]
-        value = current_protocol.set(protocol.__name__)
+        value = current_protocol_name.set(protocol.__name__)
         try:
             return func(*args, **kwargs)
         finally:
-            current_protocol.reset(value)
+            current_protocol_name.reset(value)
 
     return cast(L, wrapper)
 
 
+def setup_logger(
+    logging_level: str, socket_listener_address: Tuple[str, int]
+) -> Tuple[logging.RootLogger, logging.handlers.SocketHandler]:
+    """Setup socket logging handler."""
+    logger = logging.getLogger()
+    logger.setLevel(logging_level)
+    for handler in logger.handlers[:]:
+        logger.removeHandler(handler)
+        with suppress(Exception):
+            handler.close()
+
+    host, port = socket_listener_address
+    handler = logging.handlers.SocketHandler(host, port)
+    handler.addFilter(ProtocolContextFilter())
+    handler.closeOnError = True
+    logger.addHandler(handler)
+
+    return logger, handler
+
+
+def teardown_logger(
+    logger: logging.RootLogger, handler: logging.handlers.SocketHandler
+) -> None:
+    """Teardown socket logging handler."""
+    handler.flush()
+    logger.removeHandler(handler)
+    with suppress(Exception):
+        handler.close()
+
+
 def setup_target_logging(func: L) -> L:
-    """Support logging within the spawned thread."""
+    """Support logging within the billiard spawned thread."""
+    @bind_protocol
     @wraps(func)
     def wrapper(
-        protocol,
-        compressed_packed_pose,
-        compressed_kwargs,
-        q,
-        logging_level,
-        socket_listener_address,
-        datetime_format,
-        ignore_errors,
-        protocols_key,
-        decoy_ids,
-        compression,
-        client_residue_type_set,
-        client_repr,
-        **pyrosetta_init_kwargs,
+        protocol: Callable[..., Any],
+        compressed_packed_pose: bytes,
+        compressed_kwargs: bytes,
+        q: Q,
+        logging_level: str,
+        socket_listener_address: Tuple[str, int],
+        datetime_format: str,
+        ignore_errors: bool,
+        protocols_key: str,
+        decoy_ids: List[int],
+        compression: Optional[Union[str, bool]],
+        client_residue_type_set: AbstractSet[str],
+        client_repr: str,
+        **pyrosetta_init_kwargs: Dict[str, Any],
     ):
         """Wrapper function to setup_target_logging."""
-        logger = logging.getLogger()
-        logger.setLevel(logging_level)
-        for handler in logger.handlers[:]:
-            logger.removeHandler(handler)
-            with suppress(Exception):
-                handler.close()
-
-        host, port = socket_listener_address
-        handler = logging.handlers.SocketHandler(host, port)
-        handler.addFilter(ProtocolContextFilter())
-        handler.closeOnError = True
-        logger.addHandler(handler)
+        logger, handler = setup_logger(logging_level, socket_listener_address)
 
         result = func(
             protocol,
@@ -313,10 +307,39 @@ def setup_target_logging(func: L) -> L:
             **pyrosetta_init_kwargs,
         )
 
-        handler.flush()
-        logger.removeHandler(handler)
-        with suppress(Exception):
-            handler.close()
+        teardown_logger(logger, handler)
+
+        return result
+
+    return cast(L, wrapper)
+
+
+def setup_worker_logging(func: L) -> L:
+    """Support logging within the dask worker thread."""
+    @bind_protocol
+    @wraps(func)
+    def wrapper(
+        protocol: Callable[..., Any],
+        compressed_packed_pose: bytes,
+        compressed_kwargs: bytes,
+        pyrosetta_init_kwargs: Dict[str, Any],
+        extra_args: Dict[str, Any],
+    ):
+        """Wrapper function to setup_worker_logging."""
+        logging_level = extra_args["logging_level"]
+        socket_listener_address = extra_args["socket_listener_address"]
+
+        logger, handler = setup_logger(logging_level, socket_listener_address)
+
+        result = func(
+            protocol,
+            compressed_packed_pose,
+            compressed_kwargs,
+            pyrosetta_init_kwargs,
+            extra_args,
+        )
+
+        teardown_logger(logger, handler)
 
         return result
 
