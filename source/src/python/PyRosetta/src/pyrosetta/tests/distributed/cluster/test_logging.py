@@ -26,7 +26,7 @@ from pyrosetta.distributed.cluster import PyRosettaCluster
 class LoggingTest(unittest.TestCase):
     _ansi_regex = re.compile(r"(?:\x1B[@-_]|[\x80-\x9F])[0-?]*[ -/]*[@-~]")
 
-    def test_logging(self):
+    def test_logging(self, verbose=True):
         """A test for capturing logging information in the distributed protocol."""
 
         pyrosetta.distributed.init(
@@ -146,6 +146,7 @@ class LoggingTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                max_delay_time=3.0,
             )
             cluster.distribute(my_pyrosetta_protocol_1, my_pyrosetta_protocol_2)
 
@@ -189,6 +190,11 @@ class LoggingTest(unittest.TestCase):
                         "dictionary to remove this warning message."
                     )
                     self.assertIn(expected_msg, warning_msgs)
+
+            if verbose:
+                for log_file in (prc_log, protocol_log):
+                    with open(log_file, "r") as f:
+                        print(f"Output: '{log_file}':", f.read(), sep="\n")
 
 
 if __name__ == "__main__":
