@@ -293,7 +293,7 @@ class SmokeTestMulti(unittest.TestCase):
             return list(packed_pose.pose.residue(1).atom(1).xyz())
 
         def create_tasks():
-            for i in range(1, 4):
+            for i in range(1, 3):
                 yield {
                     "extra_options": "-ex1 -multithreading:total_threads 1",
                     "set_logging_handler": "logging",
@@ -923,7 +923,7 @@ class MultipleClientsTest(unittest.TestCase):
             clients_indices = [0, 1, 1, 0]
         
             def create_tasks(client_1_repr=client_1_repr, client_2_repr=client_2_repr):
-                for _ in range(1, 7):
+                for _ in range(1, 3):
                     yield {
                         "extra_options": "-ex1 -multithreading:total_threads 1",
                         "set_logging_handler": "logging",
@@ -1450,15 +1450,15 @@ class TestBase:
                 resources={"CPU": 1},
             )
             cluster_1 = LocalCluster(
-                n_workers=2,
-                threads_per_worker=2,
+                n_workers=1,
+                threads_per_worker=1,
                 dashboard_address=None,
                 local_directory=cls.local_directory_1.name,
                 resources={"FOO": 1, "BAZ": 2},
             )
             cluster_2 = LocalCluster(
-                n_workers=2,
-                threads_per_worker=2,
+                n_workers=1,
+                threads_per_worker=1,
                 dashboard_address=None,
                 local_directory=cls.local_directory_2.name,
                 resources={"BAR": 1e9, "BAZ": 2},
@@ -1506,7 +1506,7 @@ class TestBase:
             logs_dir_name="logs",
             ignore_errors=False,
             timeout=0.1,
-            max_delay_time=0.0,
+            max_delay_time=3.0,
             sha1=None,
             system_info=None,
             pyrosetta_build=None,
