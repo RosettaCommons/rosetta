@@ -235,7 +235,7 @@ try:
     import attr
     import distributed
     import toolz
-    from dask.distributed import as_completed
+    from dask.distributed import Client, Future, as_completed
     from distributed.scheduler import KilledWorker
 except ImportError:
     print(
@@ -286,6 +286,7 @@ from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
     Any,
     Dict,
+    Callable,
     Generator,
     List,
     NoReturn,
@@ -643,6 +644,31 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         self.serializer = Serialization(compression=self.compression)
         self.clients_dict = self._setup_clients_dict()
 
+    def create_future(
+        self,
+        client: Client,
+        protocol: Callable[..., Any],
+        compressed_packed_pose: bytes,
+        compressed_kwargs: bytes,
+        pyrosetta_init_kwargs: Dict[str, Any],
+        extra_args: Dict[str, Any],
+        resource: Optional[Dict[Any, Any]],
+    ) -> Future:
+        """Scatter data and return submitted 'user_spawn_thread' future."""
+        scatter = client.scatter(
+            (
+                protocol,
+                compressed_packed_pose,
+                compressed_kwargs,
+                pyrosetta_init_kwargs,
+                repr(client),
+                extra_args,
+            ),
+            broadcast=False,
+            hash=False,
+        )
+        return client.submit(user_spawn_thread, *scatter, pure=False, resources=resource)
+
     def _run(
         self,
         *args: Any,
@@ -744,44 +770,23 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             socket_listener_address=socket_listener_address,
             client_residue_type_set=client_residue_type_set,
         )
-        scatter_extra_args_clients = {
-            _clients_index: _client.scatter(extra_args, broadcast=False, hash=False)
-            for _clients_index, _client in clients.items()
-        }
-
-        futures = []
-        for compressed_kwargs, pyrosetta_init_kwargs in (
-            self._setup_initial_kwargs(protocols, seed, task_kwargs) for task_kwargs in self.tasks
-        ):
-            for _ in range(self.nstruct):
-                (
-                    scatter_protocol,
-                    scatter_compressed_packed_pose,
-                    scatter_compressed_kwargs,
-                    scatter_pyrosetta_init_kwargs,
-                ) = clients[clients_index].scatter(
-                    (
-                        protocol,
-                        compressed_input_packed_pose,
-                        compressed_kwargs,
-                        pyrosetta_init_kwargs,
-                    ),
-                    broadcast=False,
-                    hash=False,
+        seq = as_completed(
+            [
+                self.create_future(
+                    clients[clients_index],
+                    protocol,
+                    compressed_input_packed_pose,
+                    compressed_kwargs,
+                    pyrosetta_init_kwargs,
+                    extra_args,
+                    resource,
                 )
-                future = clients[clients_index].submit(
-                    user_spawn_thread,
-                    scatter_protocol,
-                    scatter_compressed_packed_pose,
-                    scatter_compressed_kwargs,
-                    scatter_pyrosetta_init_kwargs,
-                    scatter_extra_args_clients[clients_index],
-                    pure=False,
-                    resources=resource,
+                for compressed_kwargs, pyrosetta_init_kwargs in (
+                    self._setup_initial_kwargs(protocols, seed, task_kwargs) for task_kwargs in self.tasks
                 )
-                futures.append(future)
-
-        seq = as_completed(futures)
+                for _ in range(self.nstruct)
+            ]
+        )
         for i, future in enumerate(seq, start=1):
             try:
                 results = future.result()
@@ -808,31 +813,15 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                     compressed_kwargs, pyrosetta_init_kwargs, protocol, clients_index, resource = self._setup_kwargs(
                         kwargs, clients_indices, resources
                     )
-                    (
-                        scatter_protocol,
-                        scatter_compressed_packed_pose,
-                        scatter_compressed_kwargs,
-                        scatter_pyrosetta_init_kwargs,
-                    ) = clients[clients_index].scatter(
-                        (
+                    seq.add(
+                        self.create_future(
+                            clients[clients_index],
                             protocol,
                             compressed_packed_pose,
                             compressed_kwargs,
                             pyrosetta_init_kwargs,
-                        ),
-                        broadcast=False,
-                        hash=False,
-                    )
-                    seq.add(
-                        clients[clients_index].submit(
-                            user_spawn_thread,
-                            scatter_protocol,
-                            scatter_compressed_packed_pose,
-                            scatter_compressed_kwargs,
-                            scatter_pyrosetta_init_kwargs,
-                            scatter_extra_args_clients[clients_index],
-                            pure=False,
-                            resources=resource,
+                            extra_args,
+                            resource,
                         )
                     )
                     self.tasks_size += 1

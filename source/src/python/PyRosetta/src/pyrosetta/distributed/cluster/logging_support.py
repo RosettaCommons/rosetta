@@ -321,6 +321,7 @@ def setup_worker_logging(func: L) -> L:
         compressed_packed_pose: bytes,
         compressed_kwargs: bytes,
         pyrosetta_init_kwargs: Dict[str, Any],
+        client_repr: str,
         extra_args: Dict[str, Any],
     ):
         """Wrapper function to setup_worker_logging."""
@@ -334,6 +335,7 @@ def setup_worker_logging(func: L) -> L:
             compressed_packed_pose,
             compressed_kwargs,
             pyrosetta_init_kwargs,
+            client_repr,
             extra_args,
         )
 
