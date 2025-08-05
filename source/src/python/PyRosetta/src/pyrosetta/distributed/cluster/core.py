@@ -286,7 +286,6 @@ from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
     Any,
     Dict,
-    Callable,
     Generator,
     List,
     NoReturn,
@@ -647,7 +646,8 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
     def create_future(
         self,
         client: Client,
-        protocol: Callable[..., Any],
+        protocol_name: str,
+        compressed_protocol: bytes,
         compressed_packed_pose: bytes,
         compressed_kwargs: bytes,
         pyrosetta_init_kwargs: Dict[str, Any],
@@ -657,7 +657,8 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         """Scatter data and return submitted 'user_spawn_thread' future."""
         scatter = client.scatter(
             (
-                protocol,
+                protocol_name,
+                compressed_protocol,
                 compressed_packed_pose,
                 compressed_kwargs,
                 pyrosetta_init_kwargs,
@@ -755,6 +756,8 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         protocols, protocol, seed, clients_index, resource = self._setup_protocols_protocol_seed(
             args, protocols, clients_indices, resources
         )
+        protocol_name = protocol.__name__
+        compressed_protocol = self.serializer.compress_object(protocol)
         clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
         socket_listener_address = self._setup_socket_listener()
         client_residue_type_set = _get_residue_type_set()
@@ -774,7 +777,8 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             [
                 self.create_future(
                     clients[clients_index],
-                    protocol,
+                    protocol_name,
+                    compressed_protocol,
                     compressed_input_packed_pose,
                     compressed_kwargs,
                     pyrosetta_init_kwargs,
@@ -813,10 +817,13 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                     compressed_kwargs, pyrosetta_init_kwargs, protocol, clients_index, resource = self._setup_kwargs(
                         kwargs, clients_indices, resources
                     )
+                    protocol_name = protocol.__name__
+                    compressed_protocol = self.serializer.compress_object(protocol)
                     seq.add(
                         self.create_future(
                             clients[clients_index],
-                            protocol,
+                            protocol_name,
+                            compressed_protocol,
                             compressed_packed_pose,
                             compressed_kwargs,
                             pyrosetta_init_kwargs,

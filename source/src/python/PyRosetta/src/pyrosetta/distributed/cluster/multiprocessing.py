@@ -127,7 +127,8 @@ def get_target_results_kwargs(
 @setup_target_logging
 @requires_init
 def target(
-    protocol: Callable[..., Any],
+    protocol_name: str,
+    compressed_protocol: bytes,
     compressed_packed_pose: bytes,
     compressed_kwargs: bytes,
     q: Q,
@@ -144,6 +145,7 @@ def target(
 ) -> None:
     """A wrapper function for a user-provided PyRosetta protocol."""
     serializer = Serialization(compression=compression)
+    protocol = serializer.decompress_object(compressed_protocol)
     packed_pose = serializer.decompress_packed_pose(compressed_packed_pose)
     kwargs = serializer.decompress_kwargs(compressed_kwargs)
     kwargs["PyRosettaCluster_client_repr"] = client_repr
@@ -158,7 +160,8 @@ def target(
 
 @setup_worker_logging
 def user_spawn_thread(
-    protocol: Callable[..., Any],
+    protocol_name: str,
+    compressed_protocol: bytes,
     compressed_packed_pose: bytes,
     compressed_kwargs: bytes,
     pyrosetta_init_kwargs: Dict[str, Any],
@@ -179,11 +182,15 @@ def user_spawn_thread(
     socket_listener_address = extra_args["socket_listener_address"]
     client_residue_type_set = extra_args["client_residue_type_set"]
 
-    q = billiard.Queue()
-    p = billiard.context.Process(
+    # Set the start method to 'spawn' to prevent subprocesses from
+    # inheriting PyRosetta's already initialized static singletons
+    context = billiard.get_context("spawn")
+    q = context.Queue()
+    p = context.Process(
         target=target,
         args=(
-            protocol,
+            protocol_name,
+            compressed_protocol,
             compressed_packed_pose,
             compressed_kwargs,
             q,
@@ -201,7 +208,7 @@ def user_spawn_thread(
     )
     p.start()
     results = get_target_results_kwargs(
-        q, p, compressed_kwargs, protocol.__name__, timeout, ignore_errors
+        q, p, compressed_kwargs, protocol_name, timeout, ignore_errors
     )
     p.join()
 

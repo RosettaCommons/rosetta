@@ -224,9 +224,9 @@ def bind_protocol(func: L) -> L:
     @wraps(func)
     def wrapper(*args, **kwargs):
         """Wrapper function to bind_protocol."""
-        # User-provided PyRosetta protocol is the first argument of 'user_spawn_thread' and 'target'
-        protocol = args[0]
-        value = current_protocol_name.set(protocol.__name__)
+        # User-provided PyRosetta protocol name is the first argument of 'user_spawn_thread' and 'target'
+        protocol_name = args[0]
+        value = current_protocol_name.set(protocol_name)
         try:
             return func(*args, **kwargs)
         finally:
@@ -270,7 +270,8 @@ def setup_target_logging(func: L) -> L:
     @bind_protocol
     @wraps(func)
     def wrapper(
-        protocol: Callable[..., Any],
+        protocol_name: str,
+        compressed_protocol: bytes,
         compressed_packed_pose: bytes,
         compressed_kwargs: bytes,
         q: Q,
@@ -289,7 +290,8 @@ def setup_target_logging(func: L) -> L:
         logger, handler = setup_logger(logging_level, socket_listener_address)
 
         result = func(
-            protocol,
+            protocol_name,
+            compressed_protocol,
             compressed_packed_pose,
             compressed_kwargs,
             q,
@@ -317,7 +319,8 @@ def setup_worker_logging(func: L) -> L:
     @bind_protocol
     @wraps(func)
     def wrapper(
-        protocol: Callable[..., Any],
+        protocol_name: str,
+        compressed_protocol: bytes,
         compressed_packed_pose: bytes,
         compressed_kwargs: bytes,
         pyrosetta_init_kwargs: Dict[str, Any],
@@ -331,7 +334,8 @@ def setup_worker_logging(func: L) -> L:
         logger, handler = setup_logger(logging_level, socket_listener_address)
 
         result = func(
-            protocol,
+            protocol_name,
+            compressed_protocol,
             compressed_packed_pose,
             compressed_kwargs,
             pyrosetta_init_kwargs,

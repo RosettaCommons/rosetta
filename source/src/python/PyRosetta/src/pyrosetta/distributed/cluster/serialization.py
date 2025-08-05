@@ -244,7 +244,7 @@ class Serialization(Generic[G]):
             raise TypeError("The 'kwargs' argument parameter must be of type `dict`.")
 
     @requires_compression
-    def decompress_kwargs(self, compressed_kwargs: Any) -> Union[NoReturn, Dict[Any, Any]]:
+    def decompress_kwargs(self, compressed_kwargs: bytes) -> Union[NoReturn, Dict[Any, Any]]:
         """
         Decompress a `bytes` object with the `bz2` and `cloudpickle` modules.
 
@@ -261,6 +261,32 @@ class Serialization(Generic[G]):
             return cloudpickle.loads(self.decoder(compressed_kwargs))
         else:
             raise TypeError("The 'compressed_kwargs' argument parameter must be of type `bytes`.")
+
+    @requires_compression
+    def compress_object(self, obj: Any) -> bytes:
+        """
+        Compress an object with the `cloudpickle` and `bz2` modules.
+
+        Args:
+            obj: the input object to compress.
+
+        Returns:
+            A `bytes` object representing the compressed object.
+        """
+        return self.encoder(cloudpickle.dumps(obj))
+
+    @requires_compression
+    def decompress_object(self, compressed_obj: bytes) -> Any:
+        """
+        Decompress a `bytes` object with the `bz2` and `cloudpickle` modules.
+
+        Args:
+            compressed_obj: the input `bytes` object to decompress.
+
+        Returns:
+            An object representing the decompressed `bytes` object.
+        """
+        return cloudpickle.loads(self.decoder(compressed_obj))
 
     @classmethod
     def deepcopy_kwargs(cls, kwargs: Any) -> Union[NoReturn, Dict[Any, Any]]:
