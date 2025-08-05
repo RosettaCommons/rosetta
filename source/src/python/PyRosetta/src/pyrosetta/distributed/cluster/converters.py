@@ -71,15 +71,6 @@ def _parse_decoy_ids(objs: Any) -> List[int]:
     return to_iterable(objs, to_int, "decoy_ids")
 
 
-def _parse_empty_queue(protocol_name: str, ignore_errors: bool) -> None:
-    """Return a `None` object when a protocol results in an error with `ignore_errors=True`."""
-    logging.warning(
-        f"User-provided PyRosetta protocol '{protocol_name}' resulted in an empty queue with `ignore_errors={ignore_errors}`!"
-        + "Putting a `None` object into the queue."
-    )
-    return None
-
-
 def _parse_environment(obj: Any) -> str:
     """Parse the input `environment` attribute of PyRosettaCluster."""
 
