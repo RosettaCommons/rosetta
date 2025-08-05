@@ -144,9 +144,9 @@ def trace_subprocess_exceptions(func: T) -> Union[T, NoReturn]:
                 if not p.is_alive():
                     if ignore_errors:
                         logging.error(WorkerError._ignore_errors_msg(protocol_name))
-                        _results = [
-                            (_parse_empty_queue(protocol_name, ignore_errors), compressed_kwargs),
-                        ]
+                        _results = func(
+                            q, p, compressed_kwargs, protocol_name, timeout, ignore_errors
+                        )
                         break
                     else:
                         raise WorkerError(protocol_name)
@@ -154,12 +154,3 @@ def trace_subprocess_exceptions(func: T) -> Union[T, NoReturn]:
         return _results
 
     return cast(T, wrapper)
-
-
-def _parse_empty_queue(protocol_name: str, ignore_errors: bool) -> None:
-    """Return a `None` object when a protocol results in an error with `ignore_errors=True`."""
-    logging.warning(
-        f"User-provided PyRosetta protocol '{protocol_name}' resulted in an empty queue with `ignore_errors={ignore_errors}`!"
-        + "Putting a `None` object into the queue."
-    )
-    return None

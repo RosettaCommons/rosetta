@@ -30,11 +30,11 @@ from pyrosetta.distributed.cluster.base import (
     capture_task_metadata,
 )
 from pyrosetta.distributed.cluster.converters import (
+    _parse_empty_queue,
     _parse_protocol_results,
     _parse_target_results,
 )
 from pyrosetta.distributed.cluster.exceptions import (
-    _parse_empty_queue,
     trace_protocol_exceptions,
     trace_subprocess_exceptions,
 )
