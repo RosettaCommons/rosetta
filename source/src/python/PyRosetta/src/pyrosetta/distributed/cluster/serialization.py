@@ -173,7 +173,7 @@ class Serialization(Generic[G]):
     @requires_compression
     def compress_packed_pose(self, packed_pose: Any) -> Union[NoReturn, None, bytes]:
         """
-        Compress a `PackedPose` object with the `bz2` module. If the 'packed_pose' argument parameter
+        Compress a `PackedPose` object with the custom serialization module. If the 'packed_pose' argument parameter
         is `None`, then just return `None`.
 
         Args:
@@ -200,7 +200,7 @@ class Serialization(Generic[G]):
     @requires_compression
     def decompress_packed_pose(self, compressed_packed_pose: Any) -> Union[NoReturn, None, PackedPose]:
         """
-        Decompress a `bytes` object with the `bz2` and `cloudpickle` modules. If the 'compressed_packed_pose'
+        Decompress a `bytes` object with the custom serialization and `cloudpickle` modules. If the 'compressed_packed_pose'
         argument parameter is `None`, then just return `None`.
 
         Args:
@@ -227,7 +227,7 @@ class Serialization(Generic[G]):
     @requires_compression
     def compress_kwargs(self, kwargs: Any) -> Union[NoReturn, bytes]:
         """
-        Compress a `dict` object with the `cloudpickle` and `bz2` modules.
+        Compress a `dict` object with the `cloudpickle` and custom serialization modules.
 
         Args:
             kwargs: the input `dict` object to compress.
@@ -246,7 +246,7 @@ class Serialization(Generic[G]):
     @requires_compression
     def decompress_kwargs(self, compressed_kwargs: bytes) -> Union[NoReturn, Dict[Any, Any]]:
         """
-        Decompress a `bytes` object with the `bz2` and `cloudpickle` modules.
+        Decompress a `bytes` object with the custom serialization and `cloudpickle` modules.
 
         Args:
             compressed_kwargs: the input `bytes` object to decompress.
@@ -265,7 +265,7 @@ class Serialization(Generic[G]):
     @requires_compression
     def compress_object(self, obj: Any) -> bytes:
         """
-        Compress an object with the `cloudpickle` and `bz2` modules.
+        Compress an object with the `cloudpickle` and custom serialization modules.
 
         Args:
             obj: the input object to compress.
@@ -278,7 +278,7 @@ class Serialization(Generic[G]):
     @requires_compression
     def decompress_object(self, compressed_obj: bytes) -> Any:
         """
-        Decompress a `bytes` object with the `bz2` and `cloudpickle` modules.
+        Decompress a `bytes` object with the custom serialization and `cloudpickle` modules.
 
         Args:
             compressed_obj: the input `bytes` object to decompress.
