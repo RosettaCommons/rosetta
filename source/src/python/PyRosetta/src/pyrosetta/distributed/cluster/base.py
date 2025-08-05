@@ -215,11 +215,11 @@ def capture_task_metadata(func: M) -> M:
             kwargs["PyRosettaCluster_datetime_start"] = datetime.now().strftime(
                 datetime_format
             )
+        seed = pyrosetta.rosetta.numeric.random.rg().get_seed()
         if not "PyRosettaCluster_seeds" in kwargs:
             kwargs["PyRosettaCluster_seeds"] = []
-        kwargs["PyRosettaCluster_seeds"].append(
-            (protocol_name, str(pyrosetta.rosetta.numeric.random.rg().get_seed()))
-        )
+        kwargs["PyRosettaCluster_seeds"].append((protocol_name, str(seed)))
+        kwargs["PyRosettaCluster_seed"] = seed
 
         return func(
             protocol_name,

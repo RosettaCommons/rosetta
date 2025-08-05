@@ -190,6 +190,7 @@ class IO(Generic[G]):
         kwargs.pop(self.protocols_key, None)
         kwargs.pop("PyRosettaCluster_protocol_number", None)
         kwargs.pop("PyRosettaCluster_protocol_name", None)
+        kwargs.pop("PyRosettaCluster_seed", None)
         kwargs.pop("PyRosettaCluster_output_path", None)
         kwargs.pop("PyRosettaCluster_tmp_path", None)
         kwargs.pop("PyRosettaCluster_client_repr", None)
