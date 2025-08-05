@@ -88,6 +88,7 @@ def user_protocol(
 
 @capture_task_metadata
 def run_protocol(
+    protocol_name: str,
     protocol: Callable[..., Any],
     packed_pose: PackedPose,
     datetime_format: str,
@@ -100,7 +101,7 @@ def run_protocol(
     """Parse the user-provided PyRosetta protocol results."""
 
     result = user_protocol(packed_pose, protocol, ignore_errors, **kwargs)
-    results = _parse_protocol_results(result, kwargs, protocol.__name__, protocols_key, decoy_ids, serializer)
+    results = _parse_protocol_results(result, kwargs, protocol_name, protocols_key, decoy_ids, serializer)
 
     return results
 
@@ -150,7 +151,15 @@ def target(
     kwargs = serializer.decompress_kwargs(compressed_kwargs)
     kwargs["PyRosettaCluster_client_repr"] = client_repr
     results = run_protocol(
-        protocol, packed_pose, datetime_format, ignore_errors, protocols_key, decoy_ids, serializer, **kwargs
+        protocol_name,
+        protocol,
+        packed_pose,
+        datetime_format,
+        ignore_errors,
+        protocols_key,
+        decoy_ids,
+        serializer,
+        **kwargs,
     )
     _validate_residue_type_sets(
         _get_residue_type_set(), client_residue_type_set,

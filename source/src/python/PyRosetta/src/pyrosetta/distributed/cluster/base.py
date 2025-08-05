@@ -192,6 +192,7 @@ def capture_task_metadata(func: M) -> M:
 
     @wraps(func)
     def wrapper(
+        protocol_name,
         protocol,
         compressed_packed_pose,
         datetime_format,
@@ -203,7 +204,6 @@ def capture_task_metadata(func: M) -> M:
     ):
         """Wrapper function to capture_task_metadata."""
 
-        protocol_name = str(protocol.__name__)
         kwargs["PyRosettaCluster_protocol_name"] = protocol_name
         if not "PyRosettaCluster_protocols" in kwargs:
             kwargs["PyRosettaCluster_protocols"] = []
@@ -222,6 +222,7 @@ def capture_task_metadata(func: M) -> M:
         )
 
         return func(
+            protocol_name,
             protocol,
             compressed_packed_pose,
             datetime_format,

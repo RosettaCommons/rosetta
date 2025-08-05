@@ -183,7 +183,7 @@ class LoggingSupport(Generic[G]):
         )
         handler.setFormatter(formatter)
         handler.addFilter(ProtocolDefaultFilter())
-        _host, _port = iter(s.strip() for s in self.logging_address.split(":"))
+        _host, _port = tuple(s.strip() for s in self.logging_address.split(":"))
         self.socket_listener = SocketListener(_host, int(_port), handler, self.timeout)
         self.socket_listener.daemon = True
         self.socket_listener.start()
