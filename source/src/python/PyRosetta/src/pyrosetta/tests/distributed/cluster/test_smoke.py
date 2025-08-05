@@ -883,7 +883,6 @@ class SerializationTest(unittest.TestCase):
 
 
 class MultipleClientsTest(unittest.TestCase):
-    @unittest.skipIf(sys.version_info.major == 3 and sys.version_info.minor in (9, 12), "Exit code 137 on benchmark server.")
     def test_clients(self):
         """Smoke test for the use case of multiple clients with PyRosettaCluster."""
         pyrosetta.distributed.init(
@@ -1112,7 +1111,6 @@ class ResourcesTest(unittest.TestCase):
                 scores_dict = get_scores_dict(decoy_file)
                 self.assertEqual(scores_dict["scores"]["sequence"], sequence)
 
-    @unittest.skipIf(sys.version_info.major == 3 and sys.version_info.minor in (9, 12), "Exit code 137 on benchmark server.")
     def test_resources_clients(self):
         """Smoke test for the use case of abstract resource constraints for dask workers with multiple clients in PyRosettaCluster."""
         pyrosetta.distributed.init(
@@ -1738,7 +1736,6 @@ class GeneratorTest(TestBase, unittest.TestCase):
             msg="Dry run failed while yielding results.",
         )
 
-    @unittest.skipIf(sys.version_info.major == 3 and sys.version_info.minor in (9, 12), "Exit code 137 on benchmark server.")
     def test_generate_partition_clients(self):
         """
         Test for `PyRosettaCluster().generate()` with `save_all=True`,
