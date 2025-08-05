@@ -44,7 +44,6 @@ from pyrosetta.distributed.cluster.logging_support import (
 )
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.validators import _validate_residue_type_sets
-
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
     AbstractSet,
@@ -118,9 +117,7 @@ def get_target_results_kwargs(
     """Get and parse the billiard subprocess results."""
 
     if p.is_alive():
-        return _parse_target_results(
-            [obj for obj in iter(q.get(block=True, timeout=timeout))]
-        )
+        return _parse_target_results(q.get(block=True, timeout=timeout))
     else:
         return [
             (_parse_empty_queue(protocol_name, ignore_errors), compressed_kwargs),
