@@ -241,10 +241,13 @@ def setup_logger(
     """Setup socket logging handler."""
     logger = logging.getLogger()
     logger.setLevel(logging_level)
-    for handler in logger.handlers[:]:
-        logger.removeHandler(handler)
+    for _handler in logger.handlers[:]:
+        logger.removeHandler(_handler)
         with suppress(Exception):
-            handler.close()
+            _handler.close()
+    for _filter in logger.filters[:]:
+        if isinstance(_filter, ProtocolContextFilter):
+            logger.removeFilter(_filter)
 
     host, port = socket_listener_address
     handler = logging.handlers.SocketHandler(host, port)
