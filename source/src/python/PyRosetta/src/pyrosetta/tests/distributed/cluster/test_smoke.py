@@ -11,6 +11,12 @@ PyRosettaCluster smoke tests using the `unittest` framework.
 
 __author__ = "Jason C. Klima"
 
+import multiprocessing
+try:
+    multiprocessing.set_start_method("spawn", force=True)
+except RuntimeError:
+    print("Could not set multiprocessing start method to 'spawn' in:", __file__)
+
 import glob
 import json
 import logging
@@ -41,7 +47,6 @@ except ImportError:
     )
     raise
 
-from contextlib import suppress
 from pyrosetta import Pose
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.utility import get_package_version
@@ -151,7 +156,7 @@ class SmokeTest(unittest.TestCase):
         def protocol_with_error(packed_pose, **kwargs):
             raise NotImplementedError("Testing an error in a user-provided PyRosetta protocol.")
 
-        _sep = "*" * 50
+        _sep = "*" * 60
         print(f"{_sep} Begin testing PyRosettaCluster(ignore_errors=...) {_sep}")
 
         with tempfile.TemporaryDirectory() as workdir:
