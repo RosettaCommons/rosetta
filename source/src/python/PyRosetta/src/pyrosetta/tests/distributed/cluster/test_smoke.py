@@ -11,11 +11,6 @@ PyRosettaCluster smoke tests using the `unittest` framework.
 
 __author__ = "Jason C. Klima"
 
-import multiprocessing
-try:
-    multiprocessing.set_start_method("spawn", force=True)
-except RuntimeError:
-    print("Could not set multiprocessing start method to 'spawn' in:", __file__)
 
 import glob
 import json

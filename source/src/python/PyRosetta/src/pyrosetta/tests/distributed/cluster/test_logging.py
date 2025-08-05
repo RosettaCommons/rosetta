@@ -12,11 +12,6 @@ PyRosettaCluster logger tests using the `unittest` framework.
 __author__ = "Bobby Langan"
 __email__ = "rlangan@lyell.com"
 
-import multiprocessing
-try:
-    multiprocessing.set_start_method("spawn", force=True)
-except RuntimeError:
-    print("Could not set multiprocessing start method to 'spawn' in:", __file__)
 
 import logging
 import os
