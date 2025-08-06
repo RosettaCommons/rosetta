@@ -149,7 +149,7 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler):
         self.hmac_key = hmac_key
 
     def makePickle(self, record: logging.LogRecord) -> bytes:
-        """Compress a logging record."""
+        """Compress a logging record with MessagePack and hash-based message authentication codes (HMAC)."""
         record_dict = dict(
             msg=record.msg,
             args=record.args,
