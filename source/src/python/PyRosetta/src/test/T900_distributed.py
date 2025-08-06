@@ -1,6 +1,7 @@
 from __future__ import print_function
 import shutil
 import sys
+import time
 
 
 if tuple(sys.version_info) < (3, 6):
@@ -106,4 +107,8 @@ tests = distributed_cluster_test_cases + distributed_test_suites
 
 for test in tests:
     sleep = 5 if test in distributed_cluster_test_cases else 1
+    t0 = time.time()
     e("{python} -m unittest {test}".format(python=sys.executable, test=test), sleep=sleep)
+    t1 = time.time()
+    dt = t1 - t0
+    print("Finished running test in {0} seconds: {1}\n".format(round(dt, 6)), test)
