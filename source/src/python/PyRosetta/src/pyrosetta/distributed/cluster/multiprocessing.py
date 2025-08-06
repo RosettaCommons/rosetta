@@ -142,6 +142,7 @@ def target(
     compression: Optional[Union[str, bool]],
     client_residue_type_set: AbstractSet[str],
     client_repr: str,
+    masked_key: bytes,
     **pyrosetta_init_kwargs: Dict[str, Any],
 ) -> None:
     """A wrapper function for a user-provided PyRosetta protocol."""
@@ -189,6 +190,7 @@ def user_spawn_thread(
     max_delay_time = extra_args["max_delay_time"]
     logging_level = extra_args["logging_level"]
     socket_listener_address = extra_args["socket_listener_address"]
+    masked_key = extra_args["masked_key"]
     client_residue_type_set = extra_args["client_residue_type_set"]
 
     # Set the start method to 'spawn' to prevent subprocesses from
@@ -212,6 +214,7 @@ def user_spawn_thread(
             compression,
             client_residue_type_set,
             client_repr,
+            masked_key,
         ),
         kwargs=pyrosetta_init_kwargs,
     )

@@ -759,7 +759,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         protocol_name = protocol.__name__
         compressed_protocol = self.serializer.compress_object(protocol)
         clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
-        socket_listener_address = self._setup_socket_listener()
+        socket_listener_address, masked_key = self._setup_socket_listener()
         client_residue_type_set = _get_residue_type_set()
         extra_args = dict(
             decoy_ids=self.decoy_ids,
@@ -771,6 +771,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             max_delay_time=self.max_delay_time,
             logging_level=self.logging_level,
             socket_listener_address=socket_listener_address,
+            masked_key=masked_key,
             client_residue_type_set=client_residue_type_set,
         )
         seq = as_completed(
