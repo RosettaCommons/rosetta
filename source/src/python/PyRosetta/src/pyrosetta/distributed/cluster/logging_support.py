@@ -77,7 +77,7 @@ class LogRecordRequestHandler(socketserver.StreamRequestHandler):
             while len(msg) < msg_len:
                 msg += self.connection.recv(msg_len - len(msg))
             try:
-                obj = self.decompress(msg)
+                obj = self.unPickle(msg)
                 record = logging.makeLogRecord(obj)
                 self.server.handler.handle(record)
             except Exception as ex:
@@ -87,7 +87,7 @@ class LogRecordRequestHandler(socketserver.StreamRequestHandler):
                     stacklevel=2,
                 )
 
-    def decompress(self, msg: bytes) -> Dict[str, Any]:
+    def unPickle(self, msg: bytes) -> Dict[str, Any]:
         packet = msgpack.unpackb(msg, raw=False)
         signature = packet["signature"]
         compressed_record = packet["compressed_record"]
