@@ -12,14 +12,16 @@ __author__ = "Jason C. Klima"
 try:
     import billiard
     import msgpack
+    from distributed import Client
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.logging_support' requires the "
-        + "third-party packages 'billiard' and 'msgpack' as dependencies!\n"
+        + "third-party packages 'billiard', 'msgpack', and 'distributed' as dependencies!\n"
         + "Please install the packages into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/billiard/\n"
         + "https://pypi.org/project/msgpack/\n"
+        + "https://pypi.org/project/distributed/\n"
     )
     raise
 
@@ -275,6 +277,25 @@ class LoggingSupport(Generic[G]):
         with suppress(Exception):
             handler.close()
 
+    def _close_worker_loggers(
+        self,
+        clients: Dict[int, Client],
+        logging_level: str,
+        socket_listener_address: Tuple[str, int],
+        masked_key: bytes
+    ) -> None:
+        for client in clients.values():
+            client.run(
+                close_worker_logger,
+                logging_level,
+                socket_listener_address,
+                masked_key,
+                workers=None,
+                wait=True,
+                nanny=False,
+                on_error="ignore",
+            )
+
 
 class ProtocolDefaultFilter(logging.Filter):
     """Set default protocol name for logging socket listener formatter."""
@@ -292,6 +313,25 @@ class ProtocolContextFilter(logging.Filter):
 
 
 current_protocol_name: ContextVar = ContextVar("current_protocol_name", default=DEFAULT_PROTOCOL_NAME)
+
+
+class WorkerLoggerCache(Generic[G]):
+    def __init__(self) -> None:
+        self.cache = {}
+
+    def get(self, *args) -> Tuple[logging.Logger, logging.handlers.SocketHandler, ProtocolContextFilter]:
+        if args not in self.cache:
+            self.cache[args] = setup_logger(*args)
+
+        return self.cache[args]
+
+    def pop(self, *args) -> None:
+        if args in self.cache:
+            close_logger(*self.cache.get(args))
+        self.cache.pop(args, None)
+
+
+worker_logger_cache: WorkerLoggerCache = WorkerLoggerCache()
 
 
 def bind_protocol(func: L) -> L:
@@ -312,7 +352,7 @@ def bind_protocol(func: L) -> L:
 
 def setup_logger(
     logging_level: str, socket_listener_address: Tuple[str, int], masked_key: bytes
-) -> Tuple[logging.RootLogger, logging.handlers.SocketHandler]:
+) -> Tuple[logging.Logger, logging.handlers.SocketHandler, ProtocolContextFilter]:
     """Setup socket logging handler."""
     logger = logging.getLogger()
     logger.setLevel(logging_level)
@@ -418,11 +458,9 @@ def setup_worker_logging(func: L) -> L:
         socket_listener_address = extra_args["socket_listener_address"]
         masked_key = extra_args["masked_key"]
 
-        logger, socket_handler, context_filter = setup_logger(
-            logging_level, socket_listener_address, masked_key
-        )
+        _ = worker_logger_cache.get(logging_level, socket_listener_address, masked_key)
 
-        result = func(
+        return func(
             protocol_name,
             compressed_protocol,
             compressed_packed_pose,
@@ -432,8 +470,8 @@ def setup_worker_logging(func: L) -> L:
             extra_args,
         )
 
-        close_logger(logger, socket_handler, context_filter)
-
-        return result
-
     return cast(L, wrapper)
+
+
+def close_worker_logger(*args):
+    worker_logger_cache.pop(*args)

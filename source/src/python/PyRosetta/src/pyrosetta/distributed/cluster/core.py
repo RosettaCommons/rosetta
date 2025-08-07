@@ -835,6 +835,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                     self.tasks_size += 1
                     self._maybe_adapt(adaptive)
 
+        self._close_worker_loggers(
+            clients,
+            extra_args["logging_level"],
+            extra_args["socket_listener_address"],
+            extra_args["masked_key"],
+        )
         self._close_socket_listener()
         self._maybe_teardown(clients, cluster)
         self._close_logger()
