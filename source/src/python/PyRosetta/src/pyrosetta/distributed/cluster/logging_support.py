@@ -83,11 +83,11 @@ class LogRecordRequestHandler(socketserver.StreamRequestHandler):
                 record = logging.makeLogRecord(obj)
                 self.server.handler.handle(record)
             except Exception as ex:
-                warnings.warn(
-                    f"{type(ex).__name__}: {ex}. Rejected log packet:\n{traceback.format_exc()}",
-                    RuntimeWarning,
-                    stacklevel=2,
-                )
+                _err_msg = f"{type(ex).__name__}: {ex}. Rejected log packet:\n{traceback.format_exc()}"
+                if self.server.ignore_errors:
+                    warnings.warn(_err_msg, RuntimeWarning, stacklevel=2)
+                else:
+                    raise BufferError(_err_msg)
 
     def unPickle(self, msg: bytes) -> Dict[str, Any]:
         packet = msgpack.unpackb(msg, raw=False)
@@ -106,12 +106,21 @@ class SocketListener(socketserver.ThreadingTCPServer):
     https://docs.python.org/3/howto/logging-cookbook.html#sending-and-receiving-logging-events-across-a-network
     """
     allow_reuse_address = True
-    def __init__(self, host: str, port: int, handler: logging.Handler, hmac_key: bytes, timeout: Union[float, int]) -> None:
+    def __init__(
+        self,
+        host: str,
+        port: int,
+        handler: logging.Handler,
+        hmac_key: bytes,
+        timeout: Union[float, int],
+        ignore_errors: bool,
+    ) -> None:
         super().__init__((host, port), LogRecordRequestHandler)
         self.handler = handler
         self.hmac_key = hmac_key
         self.max_packet_size = 10 * 1024 * 1024 # Maximum of 10 MiB per log message
         self.timeout = timeout
+        self.ignore_errors = ignore_errors
         self.abort = 0
         self._thread = None
 
@@ -260,7 +269,7 @@ class LoggingSupport(Generic[G]):
         handler.addFilter(ProtocolDefaultFilter())
         masked_key = MaskedBytes(os.urandom(32))
         _host, _port = tuple(s.strip() for s in self.logging_address.split(":"))
-        self.socket_listener = SocketListener(_host, int(_port), handler, masked_key, self.timeout)
+        self.socket_listener = SocketListener(_host, int(_port), handler, masked_key, self.timeout, self.ignore_errors)
         self.socket_listener.daemon = True
         self.socket_listener.start()
         socket_listener_address = self.socket_listener.socket.getsockname()
