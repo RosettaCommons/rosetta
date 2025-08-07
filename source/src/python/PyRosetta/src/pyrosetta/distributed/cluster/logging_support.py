@@ -25,6 +25,7 @@ except ImportError:
     )
     raise
 
+import collections
 import hashlib
 import hmac
 import logging
@@ -37,7 +38,6 @@ import traceback
 import warnings
 
 from contextlib import suppress
-from contextvars import ContextVar
 from functools import wraps
 from typing import (
     AbstractSet,
@@ -47,6 +47,7 @@ from typing import (
     Generic,
     List,
     Optional,
+    OrderedDict,
     Tuple,
     TypeVar,
     Union,
@@ -93,7 +94,7 @@ class LogRecordRequestHandler(socketserver.StreamRequestHandler):
         packet = msgpack.unpackb(msg, raw=False)
         signature = packet["signature"]
         compressed_record = packet["compressed_record"]
-        required_signature = hmac.new(self.server.hmac_key, compressed_record, hashlib.sha256).digest()
+        required_signature = hmac.new(self.server.masked_key, compressed_record, hashlib.sha256).digest()
         if not hmac.compare_digest(required_signature, signature):
             raise ValueError("Logging socket listener received a bad hash-based message authentication code!")
 
@@ -106,23 +107,45 @@ class SocketListener(socketserver.ThreadingTCPServer):
     https://docs.python.org/3/howto/logging-cookbook.html#sending-and-receiving-logging-events-across-a-network
     """
     allow_reuse_address = True
+
     def __init__(
         self,
-        host: str,
-        port: int,
-        handler: logging.Handler,
-        hmac_key: bytes,
+        logging_address: str,
+        logging_file: str,
+        logging_level: str,
         timeout: Union[float, int],
         ignore_errors: bool,
     ) -> None:
-        super().__init__((host, port), LogRecordRequestHandler)
-        self.handler = handler
-        self.hmac_key = hmac_key
-        self.max_packet_size = 10 * 1024 * 1024 # Maximum of 10 MiB per log message
+        _host, _port = tuple(s.strip() for s in logging_address.split(":"))
+        super().__init__((_host, int(_port)), LogRecordRequestHandler)
+        self.socket_listener_address = self.socket.getsockname()
+        self.handler = self.setup_handler(logging_file, logging_level)
+        self.masked_key = MaskedBytes(os.urandom(32))
         self.timeout = timeout
         self.ignore_errors = ignore_errors
+        self.max_packet_size = 10 * 1024 * 1024 # Maximum of 10 MiB per log message
         self.abort = 0
         self._thread = None
+
+    def setup_handler(self, logging_file: str, logging_level: str) -> logging.FileHandler:
+        """Setup logging file handler for logging socket listener."""
+        handler = logging.FileHandler(logging_file, mode="a")
+        handler.setLevel(logging_level)
+        handler.addFilter(SocketAddressFilter(self.socket_listener_address))
+        formatter = logging.Formatter(
+            ":".join(
+                [
+                    "%(levelname)s",
+                    "%(protocol_name)s", # Extra key
+                    "%(name)s",
+                    "%(asctime)s",
+                    " %(message)s",
+                ]
+            )
+        )
+        handler.setFormatter(formatter)
+
+        return handler
 
     def start(self) -> None:
         self._thread = threading.Thread(target=self.serve_forever, daemon=True)
@@ -149,18 +172,18 @@ class MaskedBytes(bytes):
         return super().__new__(cls, value)
 
     def __repr__(self) -> str:
-        return "<masked-value>"
+        return "mask"
 
 
 class MsgpackHmacSocketHandler(logging.handlers.SocketHandler):
     _supported_type = (str, int, float, bool, type(None))
 
-    def __init__(self, host: str, port: int, hmac_key: bytes) -> None:
+    def __init__(self, host: str, port: int, masked_key: bytes) -> None:
         super().__init__(host, port)
-        self.hmac_key = hmac_key
+        self.masked_key = masked_key
 
     def makePickle(self, record: logging.LogRecord) -> bytes:
-        """Compress a logging record with MessagePack and hash-based message authentication codes (HMAC)."""
+        """Compress a logging record with MessagePack and a hash-based message authentication code (HMAC)."""
         record_dict = dict(
             msg=record.msg,
             args=record.args,
@@ -178,7 +201,8 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler):
             processName=record.processName,
             thread=int(record.thread),
             threadName=record.threadName,
-            protocol_name=record.protocol_name,
+            protocol_name=record.protocol_name, # Set by `SetProtocolNameFilter``
+            socket_address=record.socket_address, # Set by `SetSocketAddressFilter`
         )
         if record.exc_info:
             record_dict["exc_text"] = logging.Formatter().formatException(record.exc_info)
@@ -186,7 +210,7 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler):
             record_dict["stack_info"] = record.stack_info
 
         compressed_record = msgpack.packb(record_dict, use_bin_type=True)
-        signature = hmac.new(self.hmac_key, compressed_record, hashlib.sha256).digest()
+        signature = hmac.new(self.masked_key, compressed_record, hashlib.sha256).digest()
         packet = dict(signature=signature, compressed_record=compressed_record, version=1.0)
         compressed_packet = msgpack.packb(packet, use_bin_type=True)
         header = struct.pack(">L", len(compressed_packet))
@@ -242,7 +266,7 @@ class LoggingSupport(Generic[G]):
         logging.shutdown()
 
     def _setup_socket_listener(self) -> Tuple[str, int]:
-        """Setup socket logging socket listener."""
+        """Setup logging socket listener."""
         logs_path = os.path.dirname(self.logging_file)
         if not os.path.isdir(logs_path):
             warnings.warn(
@@ -252,53 +276,34 @@ class LoggingSupport(Generic[G]):
             )
             os.makedirs(logs_path, exist_ok=True)
 
-        handler = logging.FileHandler(self.logging_file, mode="a")
-        handler.setLevel(self.logging_level)
-        formatter = logging.Formatter(
-            ":".join(
-                [
-                    "%(levelname)s",
-                    "%(protocol_name)s", # Extra key
-                    "%(name)s",
-                    "%(asctime)s",
-                    " %(message)s",
-                ]
-            )
+        self.socket_listener = SocketListener(
+            self.logging_address,
+            self.logging_file,
+            self.logging_level,
+            self.timeout,
+            self.ignore_errors,
         )
-        handler.setFormatter(formatter)
-        handler.addFilter(ProtocolDefaultFilter())
-        masked_key = MaskedBytes(os.urandom(32))
-        _host, _port = tuple(s.strip() for s in self.logging_address.split(":"))
-        self.socket_listener = SocketListener(_host, int(_port), handler, masked_key, self.timeout, self.ignore_errors)
         self.socket_listener.daemon = True
         self.socket_listener.start()
-        socket_listener_address = self.socket_listener.socket.getsockname()
-        host, port = socket_listener_address
-        logging.info(f"Logging socket listener: http://{host}:{port}")
+        socket_listener_address = self.socket_listener.socket_listener_address
+        masked_key = self.socket_listener.masked_key
+        logging.info("Logging socket listener: http://{0}:{1}".format(*socket_listener_address))
 
         return socket_listener_address, masked_key
 
     def _close_socket_listener(self) -> None:
-        """Teardown socket logging socket listener."""
+        """Close logging socket listener."""
         self.socket_listener.stop()
         handler = self.socket_listener.handler
         handler.flush()
         with suppress(Exception):
             handler.close()
 
-    def _close_worker_loggers(
-        self,
-        clients: Dict[int, Client],
-        logging_level: str,
-        socket_listener_address: Tuple[str, int],
-        masked_key: bytes
-    ) -> None:
+    def _close_worker_loggers(self, clients: Dict[int, Client]) -> None:
+        """Closer dask worker loggers."""
         for client in clients.values():
             client.run(
-                close_worker_logger,
-                logging_level,
-                socket_listener_address,
-                masked_key,
+                close_worker_loggers,
                 workers=None,
                 wait=True,
                 nanny=False,
@@ -306,68 +311,106 @@ class LoggingSupport(Generic[G]):
             )
 
 
-class ProtocolDefaultFilter(logging.Filter):
-    """Set default protocol name for logging socket listener formatter."""
+class SetProtocolNameFilter(logging.Filter):
+    """Set protocol name for logging socket listener formatter."""
+    def __init__(self, protocol_name: str) -> None:
+        super().__init__()
+        self.protocol_name = protocol_name
+
     def filter(self, record: logging.LogRecord) -> bool:
-        if not hasattr(record, "protocol_name"):
-            record.protocol_name = DEFAULT_PROTOCOL_NAME
+        record.protocol_name = self.protocol_name
         return True
 
 
-class ProtocolContextFilter(logging.Filter):
-    """Set bound protocol name for logging socket listener formatter."""
+class SetSocketAddressFilter(logging.Filter):
+    """Set socket address for logging socket listener filter."""
+    def __init__(self, socket_listener_address: Tuple[str, int]) -> None:
+        super().__init__()
+        self.socket_address = _norm_socket_address(socket_listener_address)
+
     def filter(self, record: logging.LogRecord) -> bool:
-        record.protocol_name = current_protocol_name.get()
+        record.socket_address = self.socket_address
         return True
 
 
-current_protocol_name: ContextVar = ContextVar("current_protocol_name", default=DEFAULT_PROTOCOL_NAME)
+class SocketAddressFilter(logging.Filter):
+    """Filter log records for the logging socket listener address."""
+    def __init__(self, socket_listener_address: Tuple[str, int]) -> None:
+        super().__init__()
+        self.socket_address = _norm_socket_address(socket_listener_address)
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        return record.socket_address == self.socket_address
 
 
-class WorkerLoggerCache(Generic[G]):
-    def __init__(self) -> None:
-        self.cache = {}
+class WorkerLoggerLRUCache(Generic[G]):
+    """
+    Memoize dask worker loggers up to a maximum sized cache, pruning least recently used (LRU)
+    dask worker loggers first.
+    """
+    def __init__(self, maxsize: int = 128) -> None:
+        self.cache: OrderedDict[
+            Tuple[str, Tuple[str, int]],
+            Tuple[logging.RootLogger, logging.handlers.SocketHandler, List[logging.Filter]]
+        ] = collections.OrderedDict()
+        self.maxsize: int = maxsize
 
-    def get(self, *args) -> Tuple[logging.Logger, logging.handlers.SocketHandler, ProtocolContextFilter]:
-        if args not in self.cache:
-            self.cache[args] = setup_logger(*args)
+    def to_key(
+        self, protocol_name: str, socket_listener_address: Tuple[str, int]
+    ) -> Tuple[str, Tuple[str, int]]:
+        """Get normalized key for worker logger cache."""
+        return (protocol_name, socket_listener_address)
 
-        return self.cache[args]
+    def maybe_prune(self) -> None:
+        """Prune worker logger cache to maximum capacity."""
+        if len(self.cache) >= self.maxsize:
+            _, (logger, socket_handler, filters) = self.cache.popitem(last=False)
+            close_logger(logger, socket_handler, filters)
 
-    def pop(self, *args) -> None:
-        if args in self.cache:
-            close_logger(*self.cache.get(args))
-        self.cache.pop(args, None)
+    def put(
+        self,
+        protocol_name: str,
+        socket_listener_address: Tuple[str, int],
+        masked_key: bytes,
+        logging_level: str,
+    ) -> None:
+        """Add item to worker logger cache if not already added, and prune worker logger cache."""
+        key = self.to_key(protocol_name, socket_listener_address)
+        if key not in self.cache:
+            self.cache[key] = setup_logger(
+                protocol_name, socket_listener_address, masked_key, logging_level
+            )
+        self.cache.move_to_end(key, last=True)
+        self.maybe_prune()
+
+    def clear(self):
+        """Close worker loggers and clear worker logger cache."""
+        for logger, socket_handler, filters in self.cache.values():
+            close_logger(logger, socket_handler, filters)
+        self.cache.clear()
 
 
-worker_logger_cache: WorkerLoggerCache = WorkerLoggerCache()
+# Instantiate worker logger cache in module scope for worker imports
+worker_logger_cache: WorkerLoggerLRUCache = WorkerLoggerLRUCache(maxsize=32)
 
 
-def bind_protocol(func: L) -> L:
-    """Set and reset current protocol name for socket logging filters."""
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        """Wrapper function to bind_protocol."""
-        # User-provided PyRosetta protocol name is the first argument of 'user_spawn_thread' and 'target'
-        protocol_name = args[0]
-        value = current_protocol_name.set(protocol_name)
-        try:
-            return func(*args, **kwargs)
-        finally:
-            current_protocol_name.reset(value)
-
-    return cast(L, wrapper)
+def _norm_socket_address(socket_listener_address: Tuple[str, int]) -> str:
+    """Normalize a socket listener address for socket listener handler filters."""
+    return ":".join(map(str, socket_listener_address))
 
 
 def setup_logger(
-    logging_level: str, socket_listener_address: Tuple[str, int], masked_key: bytes
-) -> Tuple[logging.Logger, logging.handlers.SocketHandler, ProtocolContextFilter]:
+    protocol_name: str,
+    socket_listener_address: Tuple[str, int],
+    masked_key: bytes,
+    logging_level: str,
+) -> Tuple[logging.RootLogger, logging.handlers.SocketHandler, List[logging.Filter]]:
     """Setup socket logging handler."""
     logger = logging.getLogger()
     logger.setLevel(logging_level)
     for _handler in logger.handlers[:]:
         for _filter in _handler.filters[:]:
-            if isinstance(_filter, ProtocolContextFilter):
+            if isinstance(_filter, (SetProtocolNameFilter, SetSocketAddressFilter)):
                 _handler.removeFilter(_filter)
         logger.removeHandler(_handler)
         with suppress(Exception):
@@ -375,22 +418,27 @@ def setup_logger(
 
     host, port = socket_listener_address
     socket_handler = MsgpackHmacSocketHandler(host, port, masked_key)
-    context_filter = ProtocolContextFilter()
-    socket_handler.addFilter(context_filter)
+    filters = [
+        SetProtocolNameFilter(protocol_name),
+        SetSocketAddressFilter(socket_listener_address),
+    ]
+    for _filter in filters:
+        socket_handler.addFilter(_filter)
     socket_handler.closeOnError = True
     logger.addHandler(socket_handler)
 
-    return logger, socket_handler, context_filter
+    return logger, socket_handler, filters
 
 
 def close_logger(
     logger: logging.RootLogger,
     socket_handler: logging.handlers.SocketHandler,
-    context_filter: ProtocolContextFilter,
+    filters: List[logging.Filter],
 ) -> None:
     """Teardown socket logging handler."""
     socket_handler.flush()
-    socket_handler.removeFilter(context_filter)
+    for _filter in filters:
+        socket_handler.removeFilter(_filter)
     logger.removeHandler(socket_handler)
     with suppress(Exception):
         socket_handler.close()
@@ -398,7 +446,6 @@ def close_logger(
 
 def setup_target_logging(func: L) -> L:
     """Support logging within the billiard spawned thread."""
-    @bind_protocol
     @wraps(func)
     def wrapper(
         protocol_name: str,
@@ -419,8 +466,8 @@ def setup_target_logging(func: L) -> L:
         **pyrosetta_init_kwargs: Dict[str, Any],
     ):
         """Wrapper function to setup_target_logging."""
-        logger, socket_handler, context_filter = setup_logger(
-            logging_level, socket_listener_address, masked_key
+        logger, socket_handler, filters = setup_logger(
+            protocol_name, socket_listener_address, masked_key, logging_level
         )
 
         result = func(
@@ -442,7 +489,7 @@ def setup_target_logging(func: L) -> L:
             **pyrosetta_init_kwargs,
         )
 
-        close_logger(logger, socket_handler, context_filter)
+        close_logger(logger, socket_handler, filters)
 
         return result
 
@@ -451,7 +498,6 @@ def setup_target_logging(func: L) -> L:
 
 def setup_worker_logging(func: L) -> L:
     """Support logging within the dask worker thread."""
-    @bind_protocol
     @wraps(func)
     def wrapper(
         protocol_name: str,
@@ -466,8 +512,7 @@ def setup_worker_logging(func: L) -> L:
         logging_level = extra_args["logging_level"]
         socket_listener_address = extra_args["socket_listener_address"]
         masked_key = extra_args["masked_key"]
-
-        _ = worker_logger_cache.get(logging_level, socket_listener_address, masked_key)
+        worker_logger_cache.put(protocol_name, socket_listener_address, masked_key, logging_level)
 
         return func(
             protocol_name,
@@ -482,5 +527,6 @@ def setup_worker_logging(func: L) -> L:
     return cast(L, wrapper)
 
 
-def close_worker_logger(*args):
-    worker_logger_cache.pop(*args)
+def close_worker_loggers():
+   """Clear dask worker logger cache."""
+   worker_logger_cache.clear()
