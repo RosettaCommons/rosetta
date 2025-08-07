@@ -380,7 +380,7 @@ class WorkerLoggerLRUCache(Generic[G]):
         self.cache.move_to_end(key, last=True)
         self.maybe_prune()
 
-    def clear(self):
+    def clear(self) -> None:
         """Close worker loggers and clear worker logger cache."""
         for logger, socket_handler, filters in self.cache.values():
             close_logger(logger, socket_handler, filters)
@@ -524,6 +524,6 @@ def setup_worker_logging(func: L) -> L:
     return cast(L, wrapper)
 
 
-def close_worker_loggers():
+def close_worker_loggers() -> None:
    """Clear dask worker logger cache."""
    worker_logger_cache.clear()
