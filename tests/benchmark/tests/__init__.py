@@ -502,8 +502,7 @@ def get_required_pyrosetta_python_packages_for_testing(platform, conda=False, st
     '''
     python_version = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
-    if python_version == (3, 12): packages = dict(numpy=DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED['numpy'])
-    else: packages = copy.deepcopy(DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED)
+    packages = copy.deepcopy(DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED)
 
     packages = update_packages_for_python_version(packages, python_version)
     packages = update_packages_for_conda(packages, conda)
@@ -984,7 +983,7 @@ def setup_python_virtual_environment(working_dir, python_environment, packages='
 
     #if packages: execute('Installing packages: {}...'.format(packages), 'unset __PYVENV_LAUNCHER__ && {bin}/python {bin}/pip install --no-cache-dir --upgrade pip setuptools && {bin}/python {bin}/pip install --no-cache-dir --progress-bar off {packages}'.format(**vars()) )
     if packages:
-        packages = ' '.join( f"'{p}'"for p in packages.split() )
+        packages = ' '.join( f"'{p}'" for p in packages.split() )
         execute('Installing packages: {}...'.format(packages), '{activate} && {bin}/pip install --no-cache-dir --upgrade pip setuptools && {bin}/pip install --no-cache-dir --progress-bar off {packages}'.format(**vars()) )
 
     return NT(activate = activate, python = bin + '/python', root = working_dir, bin = bin)
