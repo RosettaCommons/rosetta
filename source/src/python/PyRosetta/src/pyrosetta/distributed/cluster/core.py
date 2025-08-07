@@ -643,7 +643,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         self.serializer = Serialization(compression=self.compression)
         self.clients_dict = self._setup_clients_dict()
 
-    def create_future(
+    def _create_future(
         self,
         client: Client,
         protocol_name: str,
@@ -776,7 +776,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         )
         seq = as_completed(
             [
-                self.create_future(
+                self._create_future(
                     clients[clients_index],
                     protocol_name,
                     compressed_protocol,
@@ -821,7 +821,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                     protocol_name = protocol.__name__
                     compressed_protocol = self.serializer.compress_object(protocol)
                     seq.add(
-                        self.create_future(
+                        self._create_future(
                             clients[clients_index],
                             protocol_name,
                             compressed_protocol,
