@@ -60,9 +60,6 @@ L = TypeVar("L", bound=Callable[..., Any])
 Q = TypeVar("Q", bound=billiard.Queue)
 
 
-DEFAULT_PROTOCOL_NAME: str = "PyRosettaCluster"
-
-
 class LogRecordRequestHandler(socketserver.StreamRequestHandler):
     """
     Handler for a streaming logging request modified from logging cookbook recipe:
@@ -302,7 +299,7 @@ class LoggingSupport(Generic[G]):
     def _close_worker_loggers(self, clients: Dict[int, Client]) -> None:
         """Closer dask worker loggers."""
         for client in clients.values():
-            client.run(
+            _ = client.run(
                 close_worker_loggers,
                 workers=None,
                 wait=True,
