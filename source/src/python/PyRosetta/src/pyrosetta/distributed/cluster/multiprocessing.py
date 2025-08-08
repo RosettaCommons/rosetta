@@ -63,11 +63,11 @@ P = TypeVar("P", bound=billiard.context.Process)
 S = TypeVar("S", bound=Serialization)
 
 
-def _maybe_delay(dt: float, max_delay_time: Union[float, int]) -> None:
+def _maybe_delay(dt: float, max_delay_time: Union[float, int], logger: logging.Logger) -> None:
     """Maybe delay the user-provided PyRosetta protocol result(s)."""
     delay_time = max_delay_time - dt
     if delay_time > 0.0:
-        logging.info(f"Delaying worker results for {delay_time:0.6f} seconds.")
+        logger.info(f"Delaying dask worker results for {delay_time:0.6f} seconds.")
         time.sleep(delay_time)
 
 
@@ -177,9 +177,13 @@ def user_spawn_thread(
     pyrosetta_init_kwargs: Dict[str, Any],
     client_repr: str,
     extra_args: Dict[str, Any],
+    logger: Optional[logging.RootLogger] = None,
 ) -> List[Tuple[Optional[Union[PackedPose, bytes]], Union[Dict[Any, Any], bytes]]]:
     """Generic worker task using the billiard multiprocessing module."""
     t0 = time.time()
+
+    if logger is None:
+        raise TypeError("User must pass in the 'logger' keyword argument.")
 
     decoy_ids = extra_args["decoy_ids"]
     protocols_key = extra_args["protocols_key"]
@@ -225,6 +229,6 @@ def user_spawn_thread(
     p.join()
 
     dt = time.time() - t0
-    _maybe_delay(dt, max_delay_time)
+    _maybe_delay(dt, max_delay_time, logger)
 
     return results

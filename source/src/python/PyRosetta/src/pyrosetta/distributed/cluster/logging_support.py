@@ -299,13 +299,18 @@ class LoggingSupport(Generic[G]):
     def _close_worker_loggers(self, clients: Dict[int, Client]) -> None:
         """Closer dask worker loggers."""
         for client in clients.values():
-            _ = client.run(
+            results = client.run(
                 close_worker_loggers,
                 workers=None,
                 wait=True,
                 nanny=False,
-                on_error="ignore",
+                on_error="return",
             )
+            for worker_address, result in results.items():
+                if result is not True:
+                    logging.warning(
+                        f"Logger was not cleanly shutdown on dask worker ({worker_address}) - {result}"
+                    )
 
 
 class SetProtocolNameFilter(logging.Filter):
@@ -364,6 +369,9 @@ class WorkerLoggerLRUCache(Generic[G]):
             _, (logger, socket_handler, filters) = self.cache.popitem(last=False)
             close_logger(logger, socket_handler, filters)
 
+    def get(self, protocol_name: str, socket_listener_address: Tuple[str, int]):
+        return self.cache.get(self.to_key(protocol_name, socket_listener_address), None)
+
     def put(
         self,
         protocol_name: str,
@@ -375,7 +383,11 @@ class WorkerLoggerLRUCache(Generic[G]):
         key = self.to_key(protocol_name, socket_listener_address)
         if key not in self.cache:
             self.cache[key] = setup_logger(
-                protocol_name, socket_listener_address, masked_key, logging_level
+                protocol_name,
+                socket_listener_address,
+                masked_key,
+                logging_level,
+                name="{0}-{1}".format(*socket_listener_address),
             )
         self.cache.move_to_end(key, last=True)
         self.maybe_prune()
@@ -385,6 +397,7 @@ class WorkerLoggerLRUCache(Generic[G]):
         for logger, socket_handler, filters in self.cache.values():
             close_logger(logger, socket_handler, filters)
         self.cache.clear()
+        return True
 
 
 # Instantiate worker logger cache in module scope for worker imports
@@ -401,9 +414,13 @@ def setup_logger(
     socket_listener_address: Tuple[str, int],
     masked_key: bytes,
     logging_level: str,
+    name: Optional[str] = None,
 ) -> Tuple[logging.RootLogger, logging.handlers.SocketHandler, List[logging.Filter]]:
     """Setup socket logging handler."""
-    logger = logging.getLogger()
+    if isinstance(name, str):
+        logger = logging.getLogger(name)
+    else:
+        logger = logging.getLogger()
     logger.setLevel(logging_level)
     for _handler in logger.handlers[:]:
         for _filter in _handler.filters[:]:
@@ -510,6 +527,7 @@ def setup_worker_logging(func: L) -> L:
         socket_listener_address = extra_args["socket_listener_address"]
         masked_key = extra_args["masked_key"]
         worker_logger_cache.put(protocol_name, socket_listener_address, masked_key, logging_level)
+        logger, _, _ = worker_logger_cache.get(protocol_name, socket_listener_address)
 
         return func(
             protocol_name,
@@ -519,11 +537,12 @@ def setup_worker_logging(func: L) -> L:
             pyrosetta_init_kwargs,
             client_repr,
             extra_args,
+            logger=logger,
         )
 
     return cast(L, wrapper)
 
 
-def close_worker_loggers() -> None:
+def close_worker_loggers() -> Optional[bool]:
    """Clear dask worker logger cache."""
-   worker_logger_cache.clear()
+   return worker_logger_cache.clear()
