@@ -30,6 +30,7 @@ import sys
 
 from contextlib import suppress
 from typing import (
+    Any,
     Optional,
     OrderedDict,
     Tuple,
@@ -43,12 +44,30 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler):
     Subclass of `logging.handlers.SocketHandler` using MessagePack and hash-based message
     authentication codes (HMAC).
     """
+    _supported_types = (str, int, float, bool, type(None), bytes, bytearray)
+
     def __init__(self, host: str, port: int, masked_key: Optional[bytes] = None) -> None:
         super().__init__(host, port)
         self.masked_key = masked_key
 
     def set_masked_key(self, masked_key: bytes) -> None:
         self.masked_key = masked_key
+
+    def sanitize_record_arg(self, arg: Any) -> Any:
+        try:
+            return arg if isinstance(arg, MsgpackHmacSocketHandler._supported_types) else str(arg)
+        except Exception:
+            return repr(arg)
+
+    def sanitize_record_args(self, args: Any) -> Any:
+        if isinstance(args, dict):
+            return args
+        elif isinstance(args, list):
+            return list(map(self.sanitize_record_arg, args))
+        elif isinstance(args, tuple):
+            return tuple(map(self.sanitize_record_arg, args))
+        else:
+            return self.sanitize_record_arg(args)
 
     def makePickle(self, record: logging.LogRecord) -> bytes:
         """Compress a logging record with MessagePack and a hash-based message authentication code (HMAC)."""
@@ -57,7 +76,7 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler):
 
         record_dict = dict(
             msg=record.msg,
-            args=record.args,
+            args=self.sanitize_record_args(record.args),
             name=record.name,
             levelno=int(record.levelno),
             levelname=record.levelname,

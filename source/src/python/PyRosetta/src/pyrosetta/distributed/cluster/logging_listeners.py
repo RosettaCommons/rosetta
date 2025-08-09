@@ -72,14 +72,22 @@ class LogRecordRequestHandler(socketserver.StreamRequestHandler):
                     raise BufferError(_err_msg)
 
     def unPickle(self, msg: bytes) -> Dict[str, Any]:
+        """
+        Log record decompress method override using MessagePack and hash-based message authentication codes (HMAC).
+        """
         packet = msgpack.unpackb(msg, raw=False)
         signature = packet["signature"]
         compressed_record = packet["compressed_record"]
         required_signature = hmac.new(self.server.masked_key, compressed_record, hashlib.sha256).digest()
         if not hmac.compare_digest(required_signature, signature):
             raise ValueError("Logging socket listener received a bad hash-based message authentication code!")
+        record = msgpack.unpackb(compressed_record, raw=False)
+        # Update record.args for positional % formatting
+        args = record.get("args", ())
+        if isinstance(args, list):
+            record["args"] = tuple(args)
 
-        return msgpack.unpackb(compressed_record, raw=False)
+        return record
 
 
 class MaskedBytes(bytes):
