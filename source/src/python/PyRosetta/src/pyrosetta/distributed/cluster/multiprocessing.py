@@ -11,15 +11,13 @@ __author__ = "Jason C. Klima"
 
 try:
     import billiard
-    from dask.distributed import get_worker
 except ImportError:
     print(
-        "Importing 'pyrosetta.distributed.cluster.logging_support' requires the "
-        + "third-party packages 'billiard' and 'distributed' as dependencies!\n"
-        + "Please install the packages into your python environment. "
+        "Importing 'pyrosetta.distributed.cluster.multiprocessing' requires the "
+        + "third-party package 'billiard' as a dependency!\n"
+        + "Please install this package into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/billiard/\n"
-        + "https://pypi.org/project/distributed/\n"
     )
     raise
 
@@ -43,9 +41,7 @@ from pyrosetta.distributed.cluster.exceptions import (
 )
 from pyrosetta.distributed.cluster.logging_support import (
     setup_target_logging,
-    format_socket_address,
-    WORKER_LOGGER_NAME,
-    SOCKET_LOGGER_PLUGIN_NAME,
+    setup_worker_logger,
 )
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.validators import _validate_residue_type_sets
@@ -169,30 +165,6 @@ def target(
         _get_residue_type_set(), client_residue_type_set,
     )
     q.put(results)
-
-
-def setup_worker_logger(
-    protocol_name: str,
-    socket_listener_address: Tuple[str, int],
-    masked_key: bytes,
-) -> logging.LoggerAdapter:
-    """Setup dask worker `logging.LoggerAdapter` and register HMAC key."""
-    try:
-        worker = get_worker()
-    except BaseException as ex:
-        raise ValueError(f"Cannot get dask worker. {ex}")
-    # Set the HMAC key as an instance attribute of a socket logger handler
-    plugin = worker.plugins[SOCKET_LOGGER_PLUGIN_NAME]
-    router = plugin._router
-    router.set_masked_key(socket_listener_address, masked_key)
-    # Configure logger on dask worker
-    return logging.LoggerAdapter(
-        logger=logging.getLogger(WORKER_LOGGER_NAME),
-        extra=dict(
-            protocol_name=protocol_name,
-            socket_address=format_socket_address(socket_listener_address),
-        )
-    )
 
 
 def user_spawn_thread(
