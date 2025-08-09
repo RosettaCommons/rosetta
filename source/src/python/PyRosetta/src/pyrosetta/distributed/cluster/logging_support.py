@@ -161,7 +161,7 @@ class LoggingSupport(Generic[G]):
         socket_listener_address = self.socket_listener.socket_listener_address
         for client in clients.values():
             results = client.run(
-                self._purge_socket_logger_plugin_address,
+                purge_socket_logger_plugin_address,
                 socket_listener_address,
                 workers=None,
                 wait=True,
@@ -174,15 +174,15 @@ class LoggingSupport(Generic[G]):
                         f"Logger was not closed cleanly on dask worker ({worker_address}) - {result}"
                     )
 
-    def _purge_socket_logger_plugin_address(
-        self,
-        socket_listener_address: Tuple[str, int],
-        dask_worker: Worker,
-    ) -> None:
-        """Close and remove an item from the worker logger plugin router."""
-        router = dask_worker.plugins[SOCKET_LOGGER_PLUGIN_NAME]._router
-        with suppress(Exception):
-            router.purge_address(socket_listener_address)
+
+def purge_socket_logger_plugin_address(
+    socket_listener_address: Tuple[str, int],
+    dask_worker: Worker,
+) -> None:
+    """Close and remove an item from the worker logger plugin router."""
+    router = dask_worker.plugins[SOCKET_LOGGER_PLUGIN_NAME]._router
+    with suppress(Exception):
+        router.purge_address(socket_listener_address)
 
 
 def setup_target_logger(
