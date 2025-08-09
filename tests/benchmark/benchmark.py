@@ -182,7 +182,7 @@ def setup_from_options(options):
 
 
 def truncate_log(log):
-    _max_log_size_  = 1024*1024*10
+    _max_log_size_  = 1024*1024*1
     _max_line_size_ = _max_log_size_ // 2
 
     if len(log) > _max_log_size_:
