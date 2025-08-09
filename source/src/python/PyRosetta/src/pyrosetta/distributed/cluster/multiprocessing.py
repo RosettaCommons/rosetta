@@ -8,15 +8,18 @@
 
 __author__ = "Jason C. Klima"
 
+
 try:
     import billiard
+    from dask.distributed import get_worker
 except ImportError:
     print(
-        "Importing 'pyrosetta.distributed.cluster.multiprocessing' requires the "
-        + "third-party package 'billiard' as a dependency!\n"
-        + "Please install the package into your python environment. "
+        "Importing 'pyrosetta.distributed.cluster.logging_support' requires the "
+        + "third-party packages 'billiard' and 'distributed' as dependencies!\n"
+        + "Please install the packages into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/billiard/\n"
+        + "https://pypi.org/project/distributed/\n"
     )
     raise
 
@@ -40,7 +43,9 @@ from pyrosetta.distributed.cluster.exceptions import (
 )
 from pyrosetta.distributed.cluster.logging_support import (
     setup_target_logging,
-    setup_worker_logging,
+    format_socket_address,
+    WORKER_LOGGER_NAME,
+    SOCKET_LOGGER_PLUGIN_NAME,
 )
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.validators import _validate_residue_type_sets
@@ -99,7 +104,6 @@ def run_protocol(
     **kwargs: Dict[Any, Any],
 ) -> List[Tuple[bytes, bytes]]:
     """Parse the user-provided PyRosetta protocol results."""
-
     result = user_protocol(packed_pose, protocol, ignore_errors, **kwargs)
     results = _parse_protocol_results(result, kwargs, protocol_name, protocols_key, decoy_ids, serializer)
 
@@ -116,7 +120,6 @@ def get_target_results_kwargs(
     ignore_errors: bool,
 ) -> List[Tuple[Optional[bytes], bytes]]:
     """Get and parse the billiard subprocess results."""
-
     if p.is_alive():
         return _parse_target_results(q.get(block=True, timeout=timeout))
     else:
@@ -168,7 +171,30 @@ def target(
     q.put(results)
 
 
-@setup_worker_logging
+def setup_worker_logger(
+    protocol_name: str,
+    socket_listener_address: Tuple[str, int],
+    masked_key: bytes,
+) -> logging.LoggerAdapter:
+    """Setup dask worker `logging.LoggerAdapter` and register HMAC key."""
+    try:
+        worker = get_worker()
+    except BaseException as ex:
+        raise ValueError(f"Cannot get dask worker. {ex}")
+    # Set the HMAC key as an instance attribute of a socket logger handler
+    plugin = worker.plugins[SOCKET_LOGGER_PLUGIN_NAME]
+    router = plugin._router
+    router.set_masked_key(socket_listener_address, masked_key)
+    # Configure logger on dask worker
+    return logging.LoggerAdapter(
+        logger=logging.getLogger(WORKER_LOGGER_NAME),
+        extra=dict(
+            protocol_name=protocol_name,
+            socket_address=format_socket_address(socket_listener_address),
+        )
+    )
+
+
 def user_spawn_thread(
     protocol_name: str,
     compressed_protocol: bytes,
@@ -177,13 +203,9 @@ def user_spawn_thread(
     pyrosetta_init_kwargs: Dict[str, Any],
     client_repr: str,
     extra_args: Dict[str, Any],
-    logger: Optional[logging.RootLogger] = None,
 ) -> List[Tuple[Optional[Union[PackedPose, bytes]], Union[Dict[Any, Any], bytes]]]:
     """Generic worker task using the billiard multiprocessing module."""
     t0 = time.time()
-
-    if logger is None:
-        raise TypeError("User must pass in the 'logger' keyword argument.")
 
     decoy_ids = extra_args["decoy_ids"]
     protocols_key = extra_args["protocols_key"]
@@ -196,6 +218,8 @@ def user_spawn_thread(
     socket_listener_address = extra_args["socket_listener_address"]
     masked_key = extra_args["masked_key"]
     client_residue_type_set = extra_args["client_residue_type_set"]
+
+    logger = setup_worker_logger(protocol_name, socket_listener_address, masked_key)
 
     # Set the start method to 'spawn' to prevent subprocesses from
     # inheriting PyRosetta's already initialized static singletons

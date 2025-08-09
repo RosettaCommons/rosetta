@@ -11,30 +11,20 @@ __author__ = "Jason C. Klima"
 
 try:
     import billiard
-    import msgpack
-    from distributed import Client
+    from distributed import Client, Worker
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.logging_support' requires the "
-        + "third-party packages 'billiard', 'msgpack', and 'distributed' as dependencies!\n"
+        + "third-party packages 'billiard' and 'distributed' as dependencies!\n"
         + "Please install the packages into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/billiard/\n"
-        + "https://pypi.org/project/msgpack/\n"
         + "https://pypi.org/project/distributed/\n"
     )
     raise
 
-import collections
-import hashlib
-import hmac
 import logging
 import os
-import select
-import socketserver
-import struct
-import threading
-import traceback
 import warnings
 
 from contextlib import suppress
@@ -47,172 +37,30 @@ from typing import (
     Generic,
     List,
     Optional,
-    OrderedDict,
     Tuple,
     TypeVar,
     Union,
     cast,
 )
 
+from pyrosetta.distributed.cluster.worker_plugins import (
+    SocketLoggerPlugin,
+    SOCKET_LOGGER_PLUGIN_NAME,
+    WORKER_LOGGER_NAME,
+)
+from pyrosetta.distributed.cluster.logging_filters import (
+    SetProtocolNameFilter,
+    SetSocketAddressFilter,
+    format_socket_address,
+    split_socket_address,
+)
+from pyrosetta.distributed.cluster.logging_handlers import MsgpackHmacSocketHandler
+from pyrosetta.distributed.cluster.logging_listeners import SocketListener
+
 
 G = TypeVar("G")
 L = TypeVar("L", bound=Callable[..., Any])
 Q = TypeVar("Q", bound=billiard.Queue)
-
-
-class LogRecordRequestHandler(socketserver.StreamRequestHandler):
-    """
-    Handler for a streaming logging request modified from logging cookbook recipe:
-    https://docs.python.org/3/howto/logging-cookbook.html#sending-and-receiving-logging-events-across-a-network
-    """
-    def handle(self) -> None:
-        while True:
-            header = self.connection.recv(4)
-            if len(header) < 4:
-                break
-            msg_len = struct.unpack(">L", header)[0]
-            if msg_len <= 0 or msg_len > self.server.max_packet_size:
-                break
-            msg = self.connection.recv(msg_len)
-            while len(msg) < msg_len:
-                msg += self.connection.recv(msg_len - len(msg))
-            try:
-                obj = self.unPickle(msg)
-                record = logging.makeLogRecord(obj)
-                self.server.handler.handle(record)
-            except Exception as ex:
-                _err_msg = f"{type(ex).__name__}: {ex}. Rejected log packet:\n{traceback.format_exc()}"
-                if self.server.ignore_errors:
-                    warnings.warn(_err_msg, RuntimeWarning, stacklevel=2)
-                else:
-                    raise BufferError(_err_msg)
-
-    def unPickle(self, msg: bytes) -> Dict[str, Any]:
-        packet = msgpack.unpackb(msg, raw=False)
-        signature = packet["signature"]
-        compressed_record = packet["compressed_record"]
-        required_signature = hmac.new(self.server.masked_key, compressed_record, hashlib.sha256).digest()
-        if not hmac.compare_digest(required_signature, signature):
-            raise ValueError("Logging socket listener received a bad hash-based message authentication code!")
-
-        return msgpack.unpackb(compressed_record, raw=False)
-
-
-class SocketListener(socketserver.ThreadingTCPServer):
-    """
-    TCP socket-based logging receiver modified from logging cookbook recipe:
-    https://docs.python.org/3/howto/logging-cookbook.html#sending-and-receiving-logging-events-across-a-network
-    """
-    allow_reuse_address = True
-
-    def __init__(
-        self,
-        logging_address: str,
-        logging_file: str,
-        logging_level: str,
-        timeout: Union[float, int],
-        ignore_errors: bool,
-    ) -> None:
-        _host, _port = tuple(s.strip() for s in logging_address.split(":"))
-        super().__init__((_host, int(_port)), LogRecordRequestHandler)
-        self.socket_listener_address = self.socket.getsockname()
-        self.handler = self.setup_handler(logging_file, logging_level)
-        self.masked_key = MaskedBytes(os.urandom(32))
-        self.timeout = timeout
-        self.ignore_errors = ignore_errors
-        self.max_packet_size = 10 * 1024 * 1024 # Maximum of 10 MiB per log message
-        self.abort = 0
-        self._thread = None
-
-    def setup_handler(self, logging_file: str, logging_level: str) -> logging.FileHandler:
-        """Setup logging file handler for logging socket listener."""
-        handler = logging.FileHandler(logging_file, mode="a")
-        handler.setLevel(logging_level)
-        handler.addFilter(SocketAddressFilter(self.socket_listener_address))
-        formatter = logging.Formatter(
-            ":".join(
-                [
-                    "%(levelname)s",
-                    "%(protocol_name)s", # Extra key
-                    "%(name)s",
-                    "%(asctime)s",
-                    " %(message)s",
-                ]
-            )
-        )
-        handler.setFormatter(formatter)
-
-        return handler
-
-    def start(self) -> None:
-        self._thread = threading.Thread(target=self.serve_forever, daemon=True)
-        self._thread.start()
-
-    def stop(self) -> None:
-        self.shutdown()
-        self.server_close()
-        if self._thread:
-            self._thread.join()
-
-    def serve_until_stopped(self) -> None:
-        abort = 0
-        while not abort:
-            _read_ready, _, _ = select.select([self.socket.fileno()], [], [], self.timeout)
-            if _read_ready:
-                self.handle_request()
-            abort = self.abort
-
-
-class MaskedBytes(bytes):
-    """A `bytes` subclass to mask its contents if the `repr` method is called."""
-    def __new__(cls, value: bytes) -> bytes:
-        return super().__new__(cls, value)
-
-    def __repr__(self) -> str:
-        return "mask"
-
-
-class MsgpackHmacSocketHandler(logging.handlers.SocketHandler):
-    _supported_type = (str, int, float, bool, type(None))
-
-    def __init__(self, host: str, port: int, masked_key: bytes) -> None:
-        super().__init__(host, port)
-        self.masked_key = masked_key
-
-    def makePickle(self, record: logging.LogRecord) -> bytes:
-        """Compress a logging record with MessagePack and a hash-based message authentication code (HMAC)."""
-        record_dict = dict(
-            msg=record.msg,
-            args=record.args,
-            name=record.name,
-            levelno=int(record.levelno),
-            levelname=record.levelname,
-            pathname=record.pathname,
-            lineno=int(record.lineno),
-            module=record.module,
-            funcName=record.funcName,
-            created=float(record.created),
-            msecs=float(record.msecs),
-            relativeCreated=float(record.relativeCreated),
-            process=int(record.process),
-            processName=record.processName,
-            thread=int(record.thread),
-            threadName=record.threadName,
-            protocol_name=record.protocol_name, # Set by `SetProtocolNameFilter``
-            socket_address=record.socket_address, # Set by `SetSocketAddressFilter`
-        )
-        if record.exc_info:
-            record_dict["exc_text"] = logging.Formatter().formatException(record.exc_info)
-        if record.stack_info:
-            record_dict["stack_info"] = record.stack_info
-
-        compressed_record = msgpack.packb(record_dict, use_bin_type=True)
-        signature = hmac.new(self.masked_key, compressed_record, hashlib.sha256).digest()
-        packet = dict(signature=signature, compressed_record=compressed_record, version=1.0)
-        compressed_packet = msgpack.packb(packet, use_bin_type=True)
-        header = struct.pack(">L", len(compressed_packet))
-
-        return header + compressed_packet
 
 
 class LoggingSupport(Generic[G]):
@@ -262,7 +110,7 @@ class LoggingSupport(Generic[G]):
                 handler.close()
         logging.shutdown()
 
-    def _setup_socket_listener(self) -> Tuple[str, int]:
+    def _setup_socket_listener(self, clients: Dict[int, Client]) -> Tuple[Tuple[str, int], bytes]:
         """Setup logging socket listener."""
         logs_path = os.path.dirname(self.logging_file)
         if not os.path.isdir(logs_path):
@@ -285,142 +133,66 @@ class LoggingSupport(Generic[G]):
         socket_listener_address = self.socket_listener.socket_listener_address
         masked_key = self.socket_listener.masked_key
         logging.info("Logging socket listener: http://{0}:{1}".format(*socket_listener_address))
+        self._register_socket_logger_plugin(clients)
 
         return socket_listener_address, masked_key
 
-    def _close_socket_listener(self) -> None:
+    def _register_socket_logger_plugin(self, clients: Dict[int, Client]) -> None:
+        """Register `SocketLoggerPlugin` as a dask worker plugin on dask clients."""
+        for client in clients.values():
+            plugin = SocketLoggerPlugin(self.logging_level, maxsize=32)
+            plugin.idempotent = True # Never re-register plugin
+            if hasattr(client, "register_plugin"):
+                client.register_plugin(plugin=plugin, name=SOCKET_LOGGER_PLUGIN_NAME)
+            else: # Deprecated since dask version 2023.9.2
+                client.register_worker_plugin(plugin=plugin, name=SOCKET_LOGGER_PLUGIN_NAME, nanny=False)
+
+    def _close_socket_listener(self, clients: Dict[int, Client]) -> None:
         """Close logging socket listener."""
+        self._close_socket_logger_plugins(clients)
         self.socket_listener.stop()
         handler = self.socket_listener.handler
         handler.flush()
         with suppress(Exception):
             handler.close()
 
-    def _close_worker_loggers(self, clients: Dict[int, Client]) -> None:
-        """Closer dask worker loggers."""
+    def _close_socket_logger_plugins(self, clients: Dict[int, Client]) -> None:
+        """Purge cached logging socket addresses on all dask workers."""
+        socket_listener_address = self.socket_listener.socket_listener_address
         for client in clients.values():
             results = client.run(
-                close_worker_loggers,
+                self._purge_socket_logger_plugin_address,
+                socket_listener_address,
                 workers=None,
                 wait=True,
                 nanny=False,
                 on_error="return",
             )
             for worker_address, result in results.items():
-                if result is not True:
+                if result:
                     logging.warning(
-                        f"Logger was not cleanly shutdown on dask worker ({worker_address}) - {result}"
+                        f"Logger was not closed cleanly on dask worker ({worker_address}) - {result}"
                     )
 
-
-class SetProtocolNameFilter(logging.Filter):
-    """Set protocol name for logging socket listener formatter."""
-    def __init__(self, protocol_name: str) -> None:
-        super().__init__()
-        self.protocol_name = protocol_name
-
-    def filter(self, record: logging.LogRecord) -> bool:
-        record.protocol_name = self.protocol_name
-        return True
-
-
-class SetSocketAddressFilter(logging.Filter):
-    """Set socket address for logging socket listener filter."""
-    def __init__(self, socket_listener_address: Tuple[str, int]) -> None:
-        super().__init__()
-        self.socket_address = _norm_socket_address(socket_listener_address)
-
-    def filter(self, record: logging.LogRecord) -> bool:
-        record.socket_address = self.socket_address
-        return True
-
-
-class SocketAddressFilter(logging.Filter):
-    """Filter log records for the logging socket listener address."""
-    def __init__(self, socket_listener_address: Tuple[str, int]) -> None:
-        super().__init__()
-        self.socket_address = _norm_socket_address(socket_listener_address)
-
-    def filter(self, record: logging.LogRecord) -> bool:
-        return record.socket_address == self.socket_address
-
-
-class WorkerLoggerLRUCache(Generic[G]):
-    """
-    Memoize dask worker loggers up to a maximum sized cache, pruning least recently used (LRU)
-    dask worker loggers first.
-    """
-    def __init__(self, maxsize: int = 128) -> None:
-        self.cache: OrderedDict[
-            Tuple[str, Tuple[str, int]],
-            Tuple[logging.RootLogger, logging.handlers.SocketHandler, List[logging.Filter]]
-        ] = collections.OrderedDict()
-        self.maxsize: int = maxsize
-
-    def to_key(
-        self, protocol_name: str, socket_listener_address: Tuple[str, int]
-    ) -> Tuple[str, Tuple[str, int]]:
-        """Get normalized key for worker logger cache."""
-        return (protocol_name, socket_listener_address)
-
-    def maybe_prune(self) -> None:
-        """Prune worker logger cache to maximum capacity."""
-        if len(self.cache) >= self.maxsize:
-            _, (logger, socket_handler, filters) = self.cache.popitem(last=False)
-            close_logger(logger, socket_handler, filters)
-
-    def get(self, protocol_name: str, socket_listener_address: Tuple[str, int]):
-        return self.cache.get(self.to_key(protocol_name, socket_listener_address), None)
-
-    def put(
+    def _purge_socket_logger_plugin_address(
         self,
-        protocol_name: str,
         socket_listener_address: Tuple[str, int],
-        masked_key: bytes,
-        logging_level: str,
+        dask_worker: Worker,
     ) -> None:
-        """Add item to worker logger cache if not already added, and prune worker logger cache."""
-        key = self.to_key(protocol_name, socket_listener_address)
-        if key not in self.cache:
-            self.cache[key] = setup_logger(
-                protocol_name,
-                socket_listener_address,
-                masked_key,
-                logging_level,
-                name="{0}-{1}".format(*socket_listener_address),
-            )
-        self.cache.move_to_end(key, last=True)
-        self.maybe_prune()
-
-    def clear(self) -> None:
-        """Close worker loggers and clear worker logger cache."""
-        for logger, socket_handler, filters in self.cache.values():
-            close_logger(logger, socket_handler, filters)
-        self.cache.clear()
-        return True
+        """Close and remove an item from the worker logger plugin router."""
+        router = dask_worker.plugins[SOCKET_LOGGER_PLUGIN_NAME]._router
+        with suppress(Exception):
+            router.purge_address(socket_listener_address)
 
 
-# Instantiate worker logger cache in module scope for worker imports
-worker_logger_cache: WorkerLoggerLRUCache = WorkerLoggerLRUCache(maxsize=32)
-
-
-def _norm_socket_address(socket_listener_address: Tuple[str, int]) -> str:
-    """Normalize a socket listener address for socket listener handler filters."""
-    return ":".join(map(str, socket_listener_address))
-
-
-def setup_logger(
+def setup_target_logger(
     protocol_name: str,
     socket_listener_address: Tuple[str, int],
     masked_key: bytes,
     logging_level: str,
-    name: Optional[str] = None,
 ) -> Tuple[logging.RootLogger, logging.handlers.SocketHandler, List[logging.Filter]]:
     """Setup socket logging handler."""
-    if isinstance(name, str):
-        logger = logging.getLogger(name)
-    else:
-        logger = logging.getLogger()
+    logger = logging.getLogger()
     logger.setLevel(logging_level)
     for _handler in logger.handlers[:]:
         for _filter in _handler.filters[:]:
@@ -431,7 +203,7 @@ def setup_logger(
             _handler.close()
 
     host, port = socket_listener_address
-    socket_handler = MsgpackHmacSocketHandler(host, port, masked_key)
+    socket_handler = MsgpackHmacSocketHandler(host, port, masked_key=masked_key)
     filters = [
         SetProtocolNameFilter(protocol_name),
         SetSocketAddressFilter(socket_listener_address),
@@ -444,7 +216,7 @@ def setup_logger(
     return logger, socket_handler, filters
 
 
-def close_logger(
+def close_target_logger(
     logger: logging.RootLogger,
     socket_handler: logging.handlers.SocketHandler,
     filters: List[logging.Filter],
@@ -480,7 +252,7 @@ def setup_target_logging(func: L) -> L:
         **pyrosetta_init_kwargs: Dict[str, Any],
     ):
         """Wrapper function to setup_target_logging."""
-        logger, socket_handler, filters = setup_logger(
+        logger, socket_handler, filters = setup_target_logger(
             protocol_name, socket_listener_address, masked_key, logging_level
         )
 
@@ -503,46 +275,8 @@ def setup_target_logging(func: L) -> L:
             **pyrosetta_init_kwargs,
         )
 
-        close_logger(logger, socket_handler, filters)
+        close_target_logger(logger, socket_handler, filters)
 
         return result
 
     return cast(L, wrapper)
-
-
-def setup_worker_logging(func: L) -> L:
-    """Support logging within the dask worker thread."""
-    @wraps(func)
-    def wrapper(
-        protocol_name: str,
-        compressed_protocol: bytes,
-        compressed_packed_pose: bytes,
-        compressed_kwargs: bytes,
-        pyrosetta_init_kwargs: Dict[str, Any],
-        client_repr: str,
-        extra_args: Dict[str, Any],
-    ):
-        """Wrapper function to setup_worker_logging."""
-        logging_level = extra_args["logging_level"]
-        socket_listener_address = extra_args["socket_listener_address"]
-        masked_key = extra_args["masked_key"]
-        worker_logger_cache.put(protocol_name, socket_listener_address, masked_key, logging_level)
-        logger, _, _ = worker_logger_cache.get(protocol_name, socket_listener_address)
-
-        return func(
-            protocol_name,
-            compressed_protocol,
-            compressed_packed_pose,
-            compressed_kwargs,
-            pyrosetta_init_kwargs,
-            client_repr,
-            extra_args,
-            logger=logger,
-        )
-
-    return cast(L, wrapper)
-
-
-def close_worker_loggers() -> Optional[bool]:
-   """Clear dask worker logger cache."""
-   return worker_logger_cache.clear()
