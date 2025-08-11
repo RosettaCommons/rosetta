@@ -199,14 +199,15 @@ def setup_target_logger(
     logger.setLevel(logging_level)
     for _handler in logger.handlers[:]:
         for _filter in _handler.filters[:]:
-            if isinstance(_filter, (SetProtocolNameFilter, SetSocketAddressFilter)):
+            if isinstance(_filter, (SetProtocolNameFilter, SetSocketAddressFilter, SetTaskIdFilter)):
                 _handler.removeFilter(_filter)
         logger.removeHandler(_handler)
         with suppress(Exception):
             _handler.close()
 
     host, port = socket_listener_address
-    socket_handler = MsgpackHmacSocketHandler(host, port, masked_key=masked_key)
+    socket_handler = MsgpackHmacSocketHandler(host, port)
+    socket_handler.set_masked_key(task_id, masked_key)
     del masked_key
     filters = [
         SetProtocolNameFilter(protocol_name),
@@ -256,36 +257,35 @@ def setup_target_logging(func: L) -> L:
         masked_key: bytes,
         task_id: str,
         **pyrosetta_init_kwargs: Dict[str, Any],
-    ):
+    ) -> Any:
         """Wrapper function to setup_target_logging."""
         logger, socket_handler, filters = setup_target_logger(
             protocol_name, socket_listener_address, masked_key, task_id, logging_level
         )
-        del masked_key
 
-        result = func(
-            protocol_name,
-            compressed_protocol,
-            compressed_packed_pose,
-            compressed_kwargs,
-            q,
-            logging_level,
-            socket_listener_address,
-            datetime_format,
-            ignore_errors,
-            protocols_key,
-            decoy_ids,
-            compression,
-            client_residue_type_set,
-            client_repr,
-            masked_key,
-            task_id,
-            **pyrosetta_init_kwargs,
-        )
-
-        close_target_logger(logger, socket_handler, filters)
-
-        return result
+        try:
+            return func(
+                protocol_name,
+                compressed_protocol,
+                compressed_packed_pose,
+                compressed_kwargs,
+                q,
+                logging_level,
+                socket_listener_address,
+                datetime_format,
+                ignore_errors,
+                protocols_key,
+                decoy_ids,
+                compression,
+                client_residue_type_set,
+                client_repr,
+                masked_key,
+                task_id,
+                **pyrosetta_init_kwargs,
+            )
+        finally:
+            del masked_key
+            close_target_logger(logger, socket_handler, filters)
 
     return cast(L, wrapper)
 
@@ -293,20 +293,8 @@ def setup_target_logging(func: L) -> L:
 def setup_worker_logger(
     protocol_name: str,
     socket_listener_address: Tuple[str, int],
-    masked_key: bytes,
     task_id: str,
 ) -> logging.LoggerAdapter:
-    """Setup dask worker `logging.LoggerAdapter` and register HMAC key."""
-    try:
-        worker = get_worker()
-    except BaseException as ex:
-        raise ValueError(f"Cannot get dask worker. {ex}")
-    # Set the HMAC key as an instance attribute of a socket logger handler
-    plugin = worker.plugins[SOCKET_LOGGER_PLUGIN_NAME]
-    router = plugin.router
-    router.set_masked_key(socket_listener_address, masked_key)
-    del masked_key
-    # Configure logger on dask worker
     return logging.LoggerAdapter(
         logger=logging.getLogger(WORKER_LOGGER_NAME),
         extra=dict(
@@ -315,3 +303,46 @@ def setup_worker_logger(
             task_id=task_id,
         )
     )
+
+
+def setup_worker_logging(func: L) -> L:
+    @wraps(func)
+    def wrapper(
+        protocol_name: str,
+        compressed_protocol: bytes,
+        compressed_packed_pose: bytes,
+        compressed_kwargs: bytes,
+        pyrosetta_init_kwargs: Dict[str, Any],
+        client_repr: str,
+        extra_args: Dict[str, Any],
+        masked_key: bytes,
+        task_id: str,
+    ) -> Any:
+        try:
+            worker = get_worker()
+        except BaseException as ex:
+            raise ValueError(f"Cannot get dask worker. {ex}")
+
+        socket_listener_address = extra_args["socket_listener_address"]
+
+        plugin = worker.plugins[SOCKET_LOGGER_PLUGIN_NAME]
+        router = plugin.router
+        router.set_masked_key(socket_listener_address, task_id, masked_key)
+
+        try:
+            return func(
+                protocol_name,
+                compressed_protocol,
+                compressed_packed_pose,
+                compressed_kwargs,
+                pyrosetta_init_kwargs,
+                client_repr,
+                extra_args,
+                masked_key,
+                task_id,
+            )
+        finally:
+            del masked_key
+            router.pop_masked_key(socket_listener_address, task_id)
+
+    return cast(L, wrapper)

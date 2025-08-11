@@ -42,6 +42,7 @@ from pyrosetta.distributed.cluster.exceptions import (
 from pyrosetta.distributed.cluster.logging_support import (
     setup_target_logging,
     setup_worker_logger,
+    setup_worker_logging,
 )
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.validators import _validate_residue_type_sets
@@ -169,6 +170,7 @@ def target(
     q.put(results)
 
 
+@setup_worker_logging
 def user_spawn_thread(
     protocol_name: str,
     compressed_protocol: bytes,
@@ -194,8 +196,7 @@ def user_spawn_thread(
     socket_listener_address = extra_args["socket_listener_address"]
     client_residue_type_set = extra_args["client_residue_type_set"]
 
-    logger = setup_worker_logger(protocol_name, socket_listener_address, masked_key, task_id)
-    del masked_key
+    logger = setup_worker_logger(protocol_name, socket_listener_address, task_id)
 
     # Set the start method to 'spawn' to prevent subprocesses from
     # inheriting PyRosetta's already initialized static singletons
@@ -223,6 +224,7 @@ def user_spawn_thread(
         ),
         kwargs=pyrosetta_init_kwargs,
     )
+    del masked_key
     p.start()
     results = get_target_results_kwargs(
         q, p, compressed_kwargs, protocol_name, timeout, ignore_errors

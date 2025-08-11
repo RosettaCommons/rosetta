@@ -25,11 +25,11 @@ import hashlib
 import hmac
 import types
 
-from typing import Optional
+from typing import Optional, Union
 
 
 HASHMOD: types.BuiltinFunctionType = hashlib.sha256
-DERIVED_KEY_LEN: int = 32 
+DERIVED_KEY_LEN: int = 32
 
 
 def compare_digest(a: bytes, b: bytes) -> bool:
@@ -37,7 +37,7 @@ def compare_digest(a: bytes, b: bytes) -> bool:
     return hmac.compare_digest(a, b)
 
 
-def hmac_digest(key: bytes, data: bytes) -> bytes:
+def hmac_digest(key: Union[bytes, bytearray], data: Union[bytes, bytearray]) -> bytes:
     """Return the digest of a new hash-based message authentication code (HMAC) object."""
     return hmac.new(key, data, HASHMOD).digest()
 

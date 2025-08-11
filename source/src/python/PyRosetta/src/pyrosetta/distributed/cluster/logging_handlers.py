@@ -46,20 +46,57 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler):
     """
     _supported_types = (str, int, float, bool, type(None), bytes, bytearray)
 
-    def __init__(self, host: str, port: int, masked_key: Optional[bytes] = None) -> None:
+    def __init__(self, host: str, port: int) -> None:
         super().__init__(host, port)
-        self.masked_key = masked_key
+        self.masked_keys: Dict[str, bytearray] = {}
 
-    def set_masked_key(self, masked_key: bytes) -> None:
-        self.masked_key = masked_key
+    def set_masked_key(self, task_id: str, masked_key: bytes) -> None:
+        """Set a task ID and HMAC key into the cache."""
+        self.acquire()
+        try:
+            self.masked_keys[task_id] = bytearray(masked_key)
+        finally:
+            self.release()
+
+    def pop_masked_key(self, task_id: str) -> None:
+        """Pop a task ID and HMAC key from the cache."""
+        self.acquire()
+        try:
+            masked_key = self.masked_keys.pop(task_id, None)
+            self.zeroize(masked_key)
+        finally:
+            self.release()
+
+    def clear_masked_keys(self) -> None:
+        """Clear all task IDs and HMAC keys from the cache."""
+        self.acquire()
+        try:
+            for task_id in list(self.masked_keys.keys()):
+                masked_key = self.masked_keys.pop(task_id, None)
+                self.zeroize(masked_key)
+            self.masked_keys.clear()
+        finally:
+            self.release()
+
+    def zeroize(self, buffer: Optional[bytearray]) -> None:
+        """Zeroize a bytearray in memory."""
+        if isinstance(buffer, bytearray):
+            buffer[:] = b"\x00" * len(buffer)
+
+    def close(self) -> None:
+        """Close the handler."""
+        self.clear_masked_keys()
+        super().close()
 
     def sanitize_record_arg(self, arg: Any) -> Any:
+        """Sanitize a single element of log record `args` for MessagePack."""
         try:
             return arg if isinstance(arg, MsgpackHmacSocketHandler._supported_types) else str(arg)
         except Exception:
             return repr(arg)
 
     def sanitize_record_args(self, args: Any) -> Any:
+        """Sanitize log record `args` for MessagePack."""
         if isinstance(args, dict):
             return args
         elif isinstance(args, list):
@@ -71,9 +108,6 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler):
 
     def makePickle(self, record: logging.LogRecord) -> bytes:
         """Compress a logging record with MessagePack and a hash-based message authentication code (HMAC)."""
-        if not isinstance(self.masked_key, bytes):
-            raise TypeError(f"Cannot sign HMAC with key of type: {type(self.masked_key)}")
-
         record_dict = dict(
             msg=record.msg,
             args=self.sanitize_record_args(record.args),
@@ -102,9 +136,18 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler):
 
         packed_record = msgpack.packb(record_dict, use_bin_type=True)
         task_id = record.task_id # Set by `SetTaskIdFilter` or `logging.LoggerAdapter`
-        frame = dict(task_id=task_id, packed_record=packed_record, version=1.0)
-        packed_frame = msgpack.packb(frame, use_bin_type=True)
-        signature = hmac_digest(self.masked_key, packed_frame)
+        self.acquire()
+        try: # Acquire while getting masked key and HMAC digest
+            masked_key = self.masked_keys.get(task_id, None)
+            if masked_key is None:
+                raise ValueError("MsgpackHmacSocketHandler could not get key from task ID.")
+            frame = dict(task_id=task_id, packed_record=packed_record, version=1.0)
+            packed_frame = msgpack.packb(frame, use_bin_type=True)
+            signature = hmac_digest(masked_key, packed_frame)
+        except ValueError as ex:
+            raise ValueError(ex)
+        finally:
+            self.release()
         packet = dict(signature=signature, packed_frame=packed_frame)
         packed_packet = msgpack.packb(packet, use_bin_type=True)
         header = struct.pack(">L", len(packed_packet))
@@ -117,28 +160,41 @@ class MultiSocketHandler(logging.Handler):
     Cache mutable dask worker logger handlers up to a maximum size, pruning least recently used (LRU)
     dask worker loggers first.
     """
-    def __init__(self, maxsize=128):
+    def __init__(self, maxsize=128) -> None:
         super().__init__()
         self.cache: OrderedDict[Tuple[str, int], MsgpackHmacSocketHandler] = collections.OrderedDict()
         self.maxsize: int = maxsize
         self.stdout_handler: logging.Handler = get_stdout_handler()
 
     def set_masked_key(self, socket_listener_address: Tuple[str, int], task_id: str, masked_key: bytes) -> None:
+        """Set a masked key to handler cache."""
         host, port = socket_listener_address
         self.acquire()
         try:
             key, handler = self.get(host, port)
-            handler.set_masked_key(masked_key)
+            handler.set_masked_key(task_id, masked_key)
+        finally:
+            self.release()
+
+    def pop_masked_key(self, socket_listener_address: Tuple[str, int], task_id: str) -> None:
+        """Pop a masked key a handler cache."""
+        host, port = socket_listener_address
+        self.acquire()
+        try:
+            key, handler = self.get(host, port)
+            handler.pop_masked_key(task_id)
         finally:
             self.release()
 
     def setup_handler(self, host: str, port: int) -> MsgpackHmacSocketHandler:
+        """Setup a `MsgpackHmacSocketHandler` instance."""
         handler = MsgpackHmacSocketHandler(host, port)
         handler.closeOnError = True
 
         return handler
 
     def get(self, host: str, port: int) -> Tuple[Tuple[str, int], MsgpackHmacSocketHandler]:
+        """Set a key as most recently used, and return the key and value from the cache."""
         key = (host, port)
         handler = self.cache.pop(key, None) or self.setup_handler(host, port)
         self.cache[key] = handler # Most recently used
