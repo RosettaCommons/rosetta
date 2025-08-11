@@ -30,6 +30,7 @@ from typing import Optional, Union
 
 HASHMOD: types.BuiltinFunctionType = hashlib.sha256
 DERIVED_KEY_LEN: int = 32
+SALT: bytes = b"PyRosettaCluster_salt"
 
 
 def compare_digest(a: bytes, b: bytes) -> bool:
@@ -77,6 +78,6 @@ def derive_task_key(passkey: bytes, task_id: str) -> bytes:
     authentication code (HMAC)-based key derivation function (HKDF).
     """
     info = msgpack.packb(["PyRosettaCluster", task_id], use_bin_type=True)
-    prk = hkdf_extract(passkey, salt=b"PyRosettaCluster")
+    prk = hkdf_extract(passkey, salt=SALT)
 
     return hkdf_expand(prk, info)
