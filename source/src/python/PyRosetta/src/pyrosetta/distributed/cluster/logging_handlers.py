@@ -182,7 +182,7 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
     Cache mutable dask worker logger handlers up to a maximum size, pruning least recently used (LRU)
     dask worker loggers first.
     """
-    def __init__(self, logging_level=logging.NOTSET, maxsize=128) -> None:
+    def __init__(self, logging_level: str = logging.NOTSET, maxsize: int = 128) -> None:
         super().__init__()
         self.cache: OrderedDict[Tuple[str, int], MsgpackHmacSocketHandler] = collections.OrderedDict()
         self.maxsize: int = maxsize
