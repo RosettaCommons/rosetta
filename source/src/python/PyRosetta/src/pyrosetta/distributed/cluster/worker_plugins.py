@@ -55,7 +55,7 @@ class SocketLoggerPlugin(WorkerPlugin):
         logger = logging.getLogger(self.logger_name)
         logger.setLevel(self.logging_level)
         logger.propagate = False # Root logger records handled by `logging.StreamHandler(sys.stdout)`
-        self.router = MultiSocketHandler(maxsize=self.maxsize)
+        self.router = MultiSocketHandler(logging_level=self.logging_level, maxsize=self.maxsize)
         # On dask workers, contextual information from `logging.LoggerAdapter` supersedes
         # these default filters (added for any root logger records from third-party dependencies)
         self.router.addFilter(DefaultProtocolNameFilter())

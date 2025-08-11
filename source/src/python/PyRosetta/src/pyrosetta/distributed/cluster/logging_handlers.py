@@ -182,11 +182,11 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
     Cache mutable dask worker logger handlers up to a maximum size, pruning least recently used (LRU)
     dask worker loggers first.
     """
-    def __init__(self, maxsize=128) -> None:
+    def __init__(self, logging_level=logging.NOTSET, maxsize=128) -> None:
         super().__init__()
         self.cache: OrderedDict[Tuple[str, int], MsgpackHmacSocketHandler] = collections.OrderedDict()
         self.maxsize: int = maxsize
-        self.stdout_handler: logging.Handler = get_stdout_handler()
+        self.stdout_handler: logging.Handler = get_stdout_handler(logging_level=logging_level)
 
     def set_masked_key(self, socket_listener_address: Tuple[str, int], task_id: str, masked_key: bytes) -> None:
         """Set a masked key to handler cache."""
@@ -274,10 +274,10 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
         super().close()
 
 
-def get_stdout_handler() -> logging.Handler:
+def get_stdout_handler(logging_level=logging.NOTSET) -> logging.Handler:
     """Get a logging stream handler to `sys.stdout` for root logger records from dask workers."""
     handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(logging.NOTSET)
+    handler.setLevel(logging_level)
     formatter = logging.Formatter(
         ":".join(
             [
