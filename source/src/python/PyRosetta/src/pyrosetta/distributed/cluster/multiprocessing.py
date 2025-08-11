@@ -142,12 +142,11 @@ def target(
     compression: Optional[Union[str, bool]],
     client_residue_type_set: AbstractSet[str],
     client_repr: str,
-    masked_key: bytes,
+    masked_key: Optional[bytes],
     task_id: str,
     **pyrosetta_init_kwargs: Dict[str, Any],
 ) -> None:
     """A wrapper function for a user-provided PyRosetta protocol."""
-    del masked_key
     serializer = Serialization(compression=compression)
     protocol = serializer.decompress_object(compressed_protocol)
     packed_pose = serializer.decompress_packed_pose(compressed_packed_pose)

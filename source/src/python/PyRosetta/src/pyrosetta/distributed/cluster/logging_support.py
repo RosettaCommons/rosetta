@@ -262,6 +262,14 @@ def setup_target_logging(func: L) -> L:
         logger, socket_handler, filters = setup_target_logger(
             protocol_name, socket_listener_address, masked_key, task_id, logging_level
         )
+        del masked_key
+
+        if logging_level == "DEBUG":
+            _handler_cache = socket_handler.masked_keys
+            logger.debug(
+                "PyRosettaCluster target logger handler cache "
+                + f"({len(_handler_cache)}): {_handler_cache}"
+            )
 
         try:
             return func(
@@ -279,12 +287,11 @@ def setup_target_logging(func: L) -> L:
                 compression,
                 client_residue_type_set,
                 client_repr,
-                masked_key,
+                None,
                 task_id,
                 **pyrosetta_init_kwargs,
             )
         finally:
-            del masked_key
             close_target_logger(logger, socket_handler, filters)
 
     return cast(L, wrapper)
@@ -328,6 +335,14 @@ def setup_worker_logging(func: L) -> L:
         plugin = worker.plugins[SOCKET_LOGGER_PLUGIN_NAME]
         router = plugin.router
         router.set_masked_key(socket_listener_address, task_id, masked_key)
+
+        if extra_args["logging_level"] == "DEBUG":
+            _handler_cache = router.cache[socket_listener_address].masked_keys
+            logger = setup_worker_logger(protocol_name, socket_listener_address, task_id)
+            logger.debug(
+                "PyRosettaCluster worker logger handler cache "
+                + f"({len(_handler_cache)}): {_handler_cache}"
+            )
 
         try:
             return func(
