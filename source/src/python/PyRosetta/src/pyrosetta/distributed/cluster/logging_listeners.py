@@ -30,6 +30,7 @@ import threading
 import traceback
 import warnings
 
+from functools import partial
 from typing import (
     Any,
     Dict,
@@ -48,7 +49,13 @@ class LogRecordRequestHandler(socketserver.StreamRequestHandler):
     Handler for a streaming logging request modified from logging cookbook recipe:
     https://docs.python.org/3/howto/logging-cookbook.html#sending-and-receiving-logging-events-across-a-network
     """
+    def setup(self) -> None:
+        """Setup socket server."""
+        super().setup()
+        self.unpack: partial = partial(msgpack.unpackb, raw=False)
+
     def handle(self) -> None:
+        """Handle raw logging message and make log record."""
         while True:
             header = self.connection.recv(4)
             if len(header) < 4:
@@ -74,17 +81,17 @@ class LogRecordRequestHandler(socketserver.StreamRequestHandler):
         """
         Log record decompress method override using MessagePack and hash-based message authentication codes (HMAC).
         """
-        packet = msgpack.unpackb(msg, raw=False)
+        packet = self.unpack(msg)
         signature = packet["signature"]
         packed_frame = packet["packed_frame"]
-        frame = msgpack.unpackb(packed_frame, raw=False)
+        frame = self.unpack(packed_frame)
         task_id = frame["task_id"]
         packed_record = frame["packed_record"]
         masked_key = derive_task_key(self.server.passkey, task_id)
         required_signature = hmac_digest(masked_key, packed_frame)
         if not compare_digest(required_signature, signature):
             raise ValueError("Logging socket listener received a bad hash-based message authentication code!")
-        record = msgpack.unpackb(packed_record, raw=False)
+        record = self.unpack(packed_record)
         # Update record.args for positional % formatting
         args = record.get("args", ())
         if isinstance(args, list):

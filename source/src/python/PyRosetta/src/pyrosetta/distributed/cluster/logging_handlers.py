@@ -25,6 +25,7 @@ import collections
 import logging
 import struct
 import sys
+import types
 
 from contextlib import contextmanager, suppress
 from functools import wraps
@@ -82,7 +83,8 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler, HandlerMixin):
     def __init__(self, host: str, port: int) -> None:
         super().__init__(host, port)
         self.masked_keys: Dict[str, bytearray] = {}
-        self._default_bytes = b""
+        self.pack: types.BuiltinFunctionType = msgpack.Packer(use_bin_type=True).pack
+        self._default_bytes: bytes = b""
 
     @HandlerMixin.lock
     def set_masked_key(self, task_id: str, masked_key: bytes) -> None:
@@ -159,17 +161,17 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler, HandlerMixin):
         if record.stack_info:
             record_dict["stack_info"] = record.stack_info
 
-        packed_record = msgpack.packb(record_dict, use_bin_type=True)
+        packed_record = self.pack(record_dict)
         task_id = record.task_id # Set by `SetTaskIdFilter` or `logging.LoggerAdapter`
         with self._locked():
             masked_key = bytes(self.masked_keys.get(task_id, self._default_bytes))
         if masked_key == self._default_bytes:
             raise ValueError("`MsgpackHmacSocketHandler` could not get key from task ID.")
         frame = dict(task_id=task_id, packed_record=packed_record, version=1.0)
-        packed_frame = msgpack.packb(frame, use_bin_type=True)
+        packed_frame = self.pack(frame)
         signature = hmac_digest(masked_key, packed_frame)
         packet = dict(signature=signature, packed_frame=packed_frame)
-        packed_packet = msgpack.packb(packet, use_bin_type=True)
+        packed_packet = self.pack(packet)
         header = struct.pack(">L", len(packed_packet))
 
         return header + packed_packet
