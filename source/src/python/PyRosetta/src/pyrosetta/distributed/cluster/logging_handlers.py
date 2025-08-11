@@ -186,8 +186,9 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
     def __init__(self, logging_level: Union[str, int] = logging.NOTSET, maxsize: int = 128) -> None:
         super().__init__()
         self.cache: OrderedDict[Tuple[str, int], MsgpackHmacSocketHandler] = collections.OrderedDict()
+        self.logging_level: Union[str, int] = logging_level
         self.maxsize: int = maxsize
-        self.stdout_handler: logging.Handler = get_stdout_handler(logging_level=logging_level)
+        self.stdout_handler: logging.Handler = get_stdout_handler(logging_level=self.logging_level)
 
     def set_masked_key(self, socket_listener_address: Tuple[str, int], task_id: str, masked_key: bytes) -> None:
         """Set a masked key to handler cache."""
@@ -206,6 +207,7 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
     def setup_handler(self, host: str, port: int) -> MsgpackHmacSocketHandler:
         """Setup a `MsgpackHmacSocketHandler` instance."""
         handler = MsgpackHmacSocketHandler(host, port)
+        handler.setLevel(self.logging_level)
         handler.closeOnError = True
 
         return handler
