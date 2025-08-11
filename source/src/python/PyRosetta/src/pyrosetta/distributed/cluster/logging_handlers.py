@@ -79,13 +79,13 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler, HandlerMixin):
     def __init__(self, host: str, port: int) -> None:
         super().__init__(host, port)
         self.masked_keys: Dict[str, bytearray] = {}
+        self._default_bytes = b""
 
     @HandlerMixin.lock
     def set_masked_key(self, task_id: str, masked_key: bytes) -> None:
         """Set a task ID and HMAC key into the cache."""
         self.masked_keys[task_id] = bytearray(masked_key)
 
-    #@HandlerMixin.lock
     def pop_masked_key(self, task_id: str) -> None:
         """Pop a task ID and HMAC key from the cache."""
         with self._locked():
@@ -159,8 +159,8 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler, HandlerMixin):
         packed_record = msgpack.packb(record_dict, use_bin_type=True)
         task_id = record.task_id # Set by `SetTaskIdFilter` or `logging.LoggerAdapter`
         with self._locked():
-            masked_key = bytes(self.masked_keys.get(task_id, b""))
-        if masked_key == b"":
+            masked_key = bytes(self.masked_keys.get(task_id, self._default_bytes))
+        if masked_key == self._default_bytes:
             raise ValueError("`MsgpackHmacSocketHandler` could not get key from task ID.")
         frame = dict(task_id=task_id, packed_record=packed_record, version=1.0)
         packed_frame = msgpack.packb(frame, use_bin_type=True)
@@ -183,7 +183,6 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
         self.maxsize: int = maxsize
         self.stdout_handler: logging.Handler = get_stdout_handler()
 
-    #@HandlerMixin.lock
     def set_masked_key(self, socket_listener_address: Tuple[str, int], task_id: str, masked_key: bytes) -> None:
         """Set a masked key to handler cache."""
         host, port = socket_listener_address
@@ -191,7 +190,6 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
             key, handler = self.get(host, port)
         handler.set_masked_key(task_id, masked_key)
 
-    #@HandlerMixin.lock
     def pop_masked_key(self, socket_listener_address: Tuple[str, int], task_id: str) -> None:
         """Pop a masked key a handler cache."""
         host, port = socket_listener_address
@@ -209,8 +207,9 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
     def get(self, host: str, port: int) -> Tuple[Tuple[str, int], MsgpackHmacSocketHandler]:
         """Set a key as most recently used, and return the key and value from the cache."""
         key = (host, port)
-        handler = self.cache.pop(key, None) or self.setup_handler(host, port)
-        self.cache[key] = handler # Most recently used
+        with self._locked():
+            handler = self.cache.pop(key, None) or self.setup_handler(host, port)
+            self.cache[key] = handler # Most recently used
         self.maybe_prune()
 
         return key, handler
@@ -237,7 +236,6 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
                     with suppress(Exception):
                         handler.close()
 
-    #@HandlerMixin.lock
     def maybe_prune(self) -> None:
         """Prune the least recently used (LRU) items within the maximum size of the cache."""
         while len(self.cache) > self.maxsize:
@@ -247,7 +245,6 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
             with suppress(Exception):
                 handler.close()
 
-    #@HandlerMixin.lock
     def purge_address(self, key: Tuple[str, int]) -> None:
         """Close and remove an item from the cache."""
         with self._locked():
