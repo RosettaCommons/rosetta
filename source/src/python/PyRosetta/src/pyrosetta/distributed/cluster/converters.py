@@ -490,7 +490,7 @@ def _parse_target_results(objs: List[Tuple[bytes, bytes]]) -> List[Tuple[bytes, 
     return objs
 
 
-def _parse_tasks(objs):
+def _parse_tasks(objs: Any) -> Union[List[Dict[Any, Any]], NoReturn]:
     """Parse the input `tasks` attribute of PyRosettaCluster."""
 
     @singledispatch

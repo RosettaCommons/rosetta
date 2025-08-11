@@ -29,6 +29,7 @@ from pyrosetta.distributed.cluster.converters import _parse_protocols
 from pyrosetta.distributed.cluster.initialization import (
     _get_residue_type_set_name3 as _get_residue_type_set,
 )
+from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.validators import (
     _validate_clients_indices,
     _validate_protocols_seeds_decoy_ids,
@@ -51,6 +52,7 @@ from typing import (
 
 G = TypeVar("G")
 M = TypeVar("M", bound=Callable[..., Any])
+S = TypeVar("S", bound=Serialization)
 
 
 class TaskBase(Generic[G]):
@@ -192,16 +194,16 @@ def capture_task_metadata(func: M) -> M:
 
     @wraps(func)
     def wrapper(
-        protocol_name,
-        protocol,
-        compressed_packed_pose,
-        datetime_format,
-        ignore_errors,
-        protocols_key,
-        decoy_ids,
-        serializer,
-        **kwargs,
-    ):
+        protocol_name: str,
+        protocol: Callable[..., Any],
+        packed_pose: PackedPose,
+        datetime_format: str,
+        ignore_errors: bool,
+        protocols_key: str,
+        decoy_ids: List[int],
+        serializer: S,
+        **kwargs: Dict[Any, Any],
+    ) -> Any:
         """Wrapper function to capture_task_metadata."""
 
         kwargs["PyRosettaCluster_protocol_name"] = protocol_name
@@ -224,7 +226,7 @@ def capture_task_metadata(func: M) -> M:
         return func(
             protocol_name,
             protocol,
-            compressed_packed_pose,
+            packed_pose,
             datetime_format,
             ignore_errors,
             protocols_key,
