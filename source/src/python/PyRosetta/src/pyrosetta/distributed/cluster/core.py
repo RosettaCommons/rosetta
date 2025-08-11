@@ -252,6 +252,7 @@ except ImportError:
 
 import logging
 import os
+import uuid
 
 from datetime import datetime
 from pyrosetta.distributed.cluster.base import TaskBase, _get_residue_type_set
@@ -268,9 +269,10 @@ from pyrosetta.distributed.cluster.converters import (
     _parse_tasks,
     _parse_yield_results,
 )
+from pyrosetta.distributed.cluster.hkdf import derive_task_key
 from pyrosetta.distributed.cluster.initialization import _get_pyrosetta_init_args, _maybe_init_client
 from pyrosetta.distributed.cluster.io import IO
-from pyrosetta.distributed.cluster.logging_support import LoggingSupport
+from pyrosetta.distributed.cluster.logging_support import LoggingSupport, MaskedBytes
 from pyrosetta.distributed.cluster.multiprocessing import user_spawn_thread
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.utilities import SchedulerManager
@@ -652,9 +654,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         compressed_kwargs: bytes,
         pyrosetta_init_kwargs: Dict[str, Any],
         extra_args: Dict[str, Any],
+        passkey: bytes,
         resource: Optional[Dict[Any, Any]],
     ) -> Future:
         """Scatter data and return submitted 'user_spawn_thread' future."""
+        task_id = uuid.uuid4().hex
+        masked_key = MaskedBytes(derive_task_key(passkey, task_id))
         scatter = client.scatter(
             (
                 protocol_name,
@@ -664,6 +669,8 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                 pyrosetta_init_kwargs,
                 repr(client),
                 extra_args,
+                masked_key,
+                task_id,
             ),
             broadcast=False,
             hash=False,
@@ -759,7 +766,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         protocol_name = protocol.__name__
         compressed_protocol = self.serializer.compress_object(protocol)
         clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
-        socket_listener_address, masked_key = self._setup_socket_listener(clients)
+        socket_listener_address, passkey = self._setup_socket_listener(clients)
         client_residue_type_set = _get_residue_type_set()
         extra_args = dict(
             decoy_ids=self.decoy_ids,
@@ -771,7 +778,6 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             max_delay_time=self.max_delay_time,
             logging_level=self.logging_level,
             socket_listener_address=socket_listener_address,
-            masked_key=masked_key,
             client_residue_type_set=client_residue_type_set,
         )
         seq = as_completed(
@@ -784,6 +790,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                     compressed_kwargs,
                     pyrosetta_init_kwargs,
                     extra_args,
+                    passkey,
                     resource,
                 )
                 for compressed_kwargs, pyrosetta_init_kwargs in (
@@ -829,6 +836,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                             compressed_kwargs,
                             pyrosetta_init_kwargs,
                             extra_args,
+                            passkey,
                             resource,
                         )
                     )

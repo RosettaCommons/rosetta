@@ -21,8 +21,6 @@ except ImportError:
     )
     raise
 
-import hashlib
-import hmac
 import logging
 import os
 import select
@@ -38,6 +36,7 @@ from typing import (
     Union,
 )
 
+from pyrosetta.distributed.cluster.hkdf import compare_digest, derive_task_key, hmac_digest
 from pyrosetta.distributed.cluster.logging_filters import (
     SocketAddressFilter,
     split_socket_address,
@@ -77,11 +76,15 @@ class LogRecordRequestHandler(socketserver.StreamRequestHandler):
         """
         packet = msgpack.unpackb(msg, raw=False)
         signature = packet["signature"]
-        compressed_record = packet["compressed_record"]
-        required_signature = hmac.new(self.server.masked_key, compressed_record, hashlib.sha256).digest()
-        if not hmac.compare_digest(required_signature, signature):
+        packed_frame = packet["packed_frame"]
+        frame = msgpack.unpackb(packed_frame, raw=False)
+        task_id = frame["task_id"]
+        packed_record = frame["packed_record"]
+        masked_key = derive_task_key(self.server.passkey, task_id)
+        required_signature = hmac_digest(masked_key, packed_frame)
+        if not compare_digest(required_signature, signature):
             raise ValueError("Logging socket listener received a bad hash-based message authentication code!")
-        record = msgpack.unpackb(compressed_record, raw=False)
+        record = msgpack.unpackb(packed_record, raw=False)
         # Update record.args for positional % formatting
         args = record.get("args", ())
         if isinstance(args, list):
@@ -118,7 +121,7 @@ class SocketListener(socketserver.ThreadingTCPServer):
         super().__init__((_host, _port), LogRecordRequestHandler)
         self.socket_listener_address = self.socket.getsockname()
         self.handler = self.setup_handler(logging_file, logging_level)
-        self.masked_key = MaskedBytes(os.urandom(32))
+        self.passkey = MaskedBytes(os.urandom(32))
         self.timeout = timeout
         self.ignore_errors = ignore_errors
         self.max_packet_size = 10 * 1024 * 1024 # Maximum of 10 MiB per log message

@@ -51,11 +51,12 @@ from pyrosetta.distributed.cluster.worker_plugins import (
 from pyrosetta.distributed.cluster.logging_filters import (
     SetProtocolNameFilter,
     SetSocketAddressFilter,
+    SetTaskIdFilter,
     format_socket_address,
     split_socket_address,
 )
 from pyrosetta.distributed.cluster.logging_handlers import MsgpackHmacSocketHandler
-from pyrosetta.distributed.cluster.logging_listeners import SocketListener
+from pyrosetta.distributed.cluster.logging_listeners import MaskedBytes, SocketListener
 
 
 G = TypeVar("G")
@@ -131,16 +132,16 @@ class LoggingSupport(Generic[G]):
         self.socket_listener.daemon = True
         self.socket_listener.start()
         socket_listener_address = self.socket_listener.socket_listener_address
-        masked_key = self.socket_listener.masked_key
+        passkey = self.socket_listener.passkey
         logging.info("Logging socket listener: http://{0}:{1}".format(*socket_listener_address))
         self._register_socket_logger_plugin(clients)
 
-        return socket_listener_address, masked_key
+        return socket_listener_address, passkey
 
     def _register_socket_logger_plugin(self, clients: Dict[int, Client]) -> None:
         """Register `SocketLoggerPlugin` as a dask worker plugin on dask clients."""
         for client in clients.values():
-            plugin = SocketLoggerPlugin(self.logging_level, maxsize=32)
+            plugin = SocketLoggerPlugin(self.logging_level, maxsize=64)
             plugin.idempotent = True # Never re-register plugin
             if hasattr(client, "register_plugin"):
                 client.register_plugin(plugin=plugin, name=SOCKET_LOGGER_PLUGIN_NAME)
@@ -180,7 +181,8 @@ def purge_socket_logger_plugin_address(
     dask_worker: Worker,
 ) -> None:
     """Close and remove an item from the worker logger plugin router."""
-    router = dask_worker.plugins[SOCKET_LOGGER_PLUGIN_NAME]._router
+    plugin = dask_worker.plugins[SOCKET_LOGGER_PLUGIN_NAME]
+    router = plugin.router
     with suppress(Exception):
         router.purge_address(socket_listener_address)
 
@@ -189,6 +191,7 @@ def setup_target_logger(
     protocol_name: str,
     socket_listener_address: Tuple[str, int],
     masked_key: bytes,
+    task_id: str,
     logging_level: str,
 ) -> Tuple[logging.RootLogger, logging.handlers.SocketHandler, List[logging.Filter]]:
     """Setup socket logging handler."""
@@ -204,9 +207,11 @@ def setup_target_logger(
 
     host, port = socket_listener_address
     socket_handler = MsgpackHmacSocketHandler(host, port, masked_key=masked_key)
+    del masked_key
     filters = [
         SetProtocolNameFilter(protocol_name),
         SetSocketAddressFilter(socket_listener_address),
+        SetTaskIdFilter(task_id),
     ]
     for _filter in filters:
         socket_handler.addFilter(_filter)
@@ -249,12 +254,14 @@ def setup_target_logging(func: L) -> L:
         client_residue_type_set: AbstractSet[str],
         client_repr: str,
         masked_key: bytes,
+        task_id: str,
         **pyrosetta_init_kwargs: Dict[str, Any],
     ):
         """Wrapper function to setup_target_logging."""
         logger, socket_handler, filters = setup_target_logger(
-            protocol_name, socket_listener_address, masked_key, logging_level
+            protocol_name, socket_listener_address, masked_key, task_id, logging_level
         )
+        del masked_key
 
         result = func(
             protocol_name,
@@ -272,6 +279,7 @@ def setup_target_logging(func: L) -> L:
             client_residue_type_set,
             client_repr,
             masked_key,
+            task_id,
             **pyrosetta_init_kwargs,
         )
 
@@ -286,6 +294,7 @@ def setup_worker_logger(
     protocol_name: str,
     socket_listener_address: Tuple[str, int],
     masked_key: bytes,
+    task_id: str,
 ) -> logging.LoggerAdapter:
     """Setup dask worker `logging.LoggerAdapter` and register HMAC key."""
     try:
@@ -294,13 +303,15 @@ def setup_worker_logger(
         raise ValueError(f"Cannot get dask worker. {ex}")
     # Set the HMAC key as an instance attribute of a socket logger handler
     plugin = worker.plugins[SOCKET_LOGGER_PLUGIN_NAME]
-    router = plugin._router
+    router = plugin.router
     router.set_masked_key(socket_listener_address, masked_key)
+    del masked_key
     # Configure logger on dask worker
     return logging.LoggerAdapter(
         logger=logging.getLogger(WORKER_LOGGER_NAME),
         extra=dict(
             protocol_name=protocol_name,
             socket_address=format_socket_address(socket_listener_address),
+            task_id=task_id,
         )
     )

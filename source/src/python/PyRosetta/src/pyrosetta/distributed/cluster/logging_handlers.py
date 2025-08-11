@@ -22,8 +22,6 @@ except ImportError:
     raise
 
 import collections
-import hashlib
-import hmac
 import logging
 import struct
 import sys
@@ -31,11 +29,13 @@ import sys
 from contextlib import suppress
 from typing import (
     Any,
+    Dict,
     Optional,
     OrderedDict,
     Tuple,
 )
 
+from pyrosetta.distributed.cluster.hkdf import hmac_digest
 from pyrosetta.distributed.cluster.logging_filters import split_socket_address
 
 
@@ -91,7 +91,7 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler):
             processName=record.processName,
             thread=int(record.thread),
             threadName=record.threadName,
-            taskName=record.taskName if sys.version_info[:2] >= (3, 12) else None,
+            taskName=getattr(record, "taskName", None), # Added in Python-3.12
             protocol_name=record.protocol_name, # Set by `SetProtocolNameFilter` or `logging.LoggerAdapter`
             socket_address=record.socket_address, # Set by `SetSocketAddressFilter` or `logging.LoggerAdapter`
         )
@@ -100,13 +100,16 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler):
         if record.stack_info:
             record_dict["stack_info"] = record.stack_info
 
-        compressed_record = msgpack.packb(record_dict, use_bin_type=True)
-        signature = hmac.new(self.masked_key, compressed_record, hashlib.sha256).digest()
-        packet = dict(signature=signature, compressed_record=compressed_record, version=1.0)
-        compressed_packet = msgpack.packb(packet, use_bin_type=True)
-        header = struct.pack(">L", len(compressed_packet))
+        packed_record = msgpack.packb(record_dict, use_bin_type=True)
+        task_id = record.task_id # Set by `SetTaskIdFilter` or `logging.LoggerAdapter`
+        frame = dict(task_id=task_id, packed_record=packed_record, version=1.0)
+        packed_frame = msgpack.packb(frame, use_bin_type=True)
+        signature = hmac_digest(self.masked_key, packed_frame)
+        packet = dict(signature=signature, packed_frame=packed_frame)
+        packed_packet = msgpack.packb(packet, use_bin_type=True)
+        header = struct.pack(">L", len(packed_packet))
 
-        return header + compressed_packet
+        return header + packed_packet
 
 
 class MultiSocketHandler(logging.Handler):
@@ -118,8 +121,9 @@ class MultiSocketHandler(logging.Handler):
         super().__init__()
         self.cache: OrderedDict[Tuple[str, int], MsgpackHmacSocketHandler] = collections.OrderedDict()
         self.maxsize: int = maxsize
+        self.stdout_handler: logging.Handler = get_stdout_handler()
 
-    def set_masked_key(self, socket_listener_address, masked_key) -> None:
+    def set_masked_key(self, socket_listener_address: Tuple[str, int], task_id: str, masked_key: bytes) -> None:
         host, port = socket_listener_address
         self.acquire()
         try:
@@ -144,8 +148,12 @@ class MultiSocketHandler(logging.Handler):
 
     def emit(self, record: logging.LogRecord) -> None:
         """Logging handler custom emit method override."""
+        protocol_name = getattr(record, "protocol_name", None)
         socket_address = getattr(record, "socket_address", None)
-        if not socket_address:
+        task_id = getattr(record, "task_id", None)
+        if any(x in (None, "-", "-:0") for x in (protocol_name, socket_address, task_id)):
+            # Log record was emitted from root logger on dask worker
+            self.stdout_handler.handle(record)
             return
         host, port = split_socket_address(socket_address)
         self.acquire()
@@ -201,3 +209,23 @@ class MultiSocketHandler(logging.Handler):
         """Logging handler custom close method override."""
         self.purge_all()
         super().close()
+
+
+def get_stdout_handler() -> logging.Handler:
+    """Get a logging stream handler to `sys.stdout` for root logger records from dask workers."""
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(logging.NOTSET)
+    formatter = logging.Formatter(
+        ":".join(
+            [
+                "PyRosettaCluster_dask_worker_root",
+                "%(asctime)s",
+                "%(levelname)s",
+                "%(name)s",
+                " %(message)s",
+            ]
+        )
+    )
+    handler.setFormatter(formatter)
+
+    return handler

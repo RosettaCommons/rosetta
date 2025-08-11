@@ -142,9 +142,11 @@ def target(
     client_residue_type_set: AbstractSet[str],
     client_repr: str,
     masked_key: bytes,
+    task_id: str,
     **pyrosetta_init_kwargs: Dict[str, Any],
 ) -> None:
     """A wrapper function for a user-provided PyRosetta protocol."""
+    del masked_key
     serializer = Serialization(compression=compression)
     protocol = serializer.decompress_object(compressed_protocol)
     packed_pose = serializer.decompress_packed_pose(compressed_packed_pose)
@@ -175,6 +177,8 @@ def user_spawn_thread(
     pyrosetta_init_kwargs: Dict[str, Any],
     client_repr: str,
     extra_args: Dict[str, Any],
+    masked_key: bytes,
+    task_id: str,
 ) -> List[Tuple[Optional[Union[PackedPose, bytes]], Union[Dict[Any, Any], bytes]]]:
     """Generic worker task using the billiard multiprocessing module."""
     t0 = time.time()
@@ -188,10 +192,10 @@ def user_spawn_thread(
     max_delay_time = extra_args["max_delay_time"]
     logging_level = extra_args["logging_level"]
     socket_listener_address = extra_args["socket_listener_address"]
-    masked_key = extra_args["masked_key"]
     client_residue_type_set = extra_args["client_residue_type_set"]
 
-    logger = setup_worker_logger(protocol_name, socket_listener_address, masked_key)
+    logger = setup_worker_logger(protocol_name, socket_listener_address, masked_key, task_id)
+    del masked_key
 
     # Set the start method to 'spawn' to prevent subprocesses from
     # inheriting PyRosetta's already initialized static singletons
@@ -215,6 +219,7 @@ def user_spawn_thread(
             client_residue_type_set,
             client_repr,
             masked_key,
+            task_id,
         ),
         kwargs=pyrosetta_init_kwargs,
     )

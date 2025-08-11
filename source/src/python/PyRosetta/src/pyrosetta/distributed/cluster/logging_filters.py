@@ -68,6 +68,28 @@ class SocketAddressFilter(logging.Filter):
         return record.socket_address == self.socket_address
 
 
+class DefaultTaskIdFilter(logging.Filter):
+    """Maybe set task ID of third-party root log records for logging socket listener formatter."""
+    def __init__(self) -> None:
+        super().__init__()
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        if not hasattr(record, "task_id"):
+            record.task_id = "-"
+        return True
+
+
+class SetTaskIdFilter(logging.Filter):
+    """Set task ID for logging socket listener filter."""
+    def __init__(self, task_id: str) -> None:
+        super().__init__()
+        self.task_id = task_id
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        record.task_id = self.task_id
+        return True
+
+
 def format_socket_address(socket_listener_address: Tuple[str, int]) -> str:
     """Format a socket listener address for socket listener handler filters."""
     return ":".join(map(str, socket_listener_address))

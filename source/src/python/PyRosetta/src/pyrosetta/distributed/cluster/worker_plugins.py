@@ -28,11 +28,13 @@ except ImportError:
 import logging
 
 from contextlib import suppress
+from typing import Optional
 
 from pyrosetta.distributed.cluster.logging_handlers import MultiSocketHandler
 from pyrosetta.distributed.cluster.logging_filters import (
     DefaultProtocolNameFilter,
     DefaultSocketAddressFilter,
+    DefaultTaskIdFilter,
 )
 
 
@@ -42,33 +44,31 @@ WORKER_LOGGER_NAME: str = "PyRosettaCluster_dask_worker"
 
 class SocketLoggerPlugin(WorkerPlugin):
     """Install a `MultiSocketHandler` logging handler on a dask worker logger."""
-    def __init__(
-        self,
-        logging_level: str,
-        maxsize=128,
-    ):
-        self.logging_level = logging_level
-        self.maxsize = maxsize
-        self.logger_name = WORKER_LOGGER_NAME
-        self._router = None
+    def __init__(self, logging_level: str, maxsize: int = 128):
+        self.logging_level: str = logging_level
+        self.maxsize: int = maxsize
+        self.logger_name: str = WORKER_LOGGER_NAME
+        self.router: Optional[logging.Handler] = None
 
     def setup(self, worker: Worker):
         """Setup dask worker plugin."""
         logger = logging.getLogger(self.logger_name)
         logger.setLevel(self.logging_level)
-        self._router = MultiSocketHandler(maxsize=self.maxsize)
+        logger.propagate = False # Root logger records handled by `logging.StreamHandler(sys.stdout)`
+        self.router = MultiSocketHandler(maxsize=self.maxsize)
         # On dask workers, contextual information from `logging.LoggerAdapter` supersedes
-        # these default filters (added for any third-party software root loggers)
-        self._router.addFilter(DefaultProtocolNameFilter())
-        self._router.addFilter(DefaultSocketAddressFilter())
-        logger.addHandler(self._router)
+        # these default filters (added for any root logger records from third-party dependencies)
+        self.router.addFilter(DefaultProtocolNameFilter())
+        self.router.addFilter(DefaultSocketAddressFilter())
+        self.router.addFilter(DefaultTaskIdFilter())
+        logger.addHandler(self.router)
 
     def teardown(self, worker: Worker):
         """Teardown dask worker plugin."""
         logger = logging.getLogger(self.logger_name)
-        if self._router and self._router in logger.handlers:
-            self._router.flush()
-            logger.removeHandler(self._router)
+        if self.router and self.router in logger.handlers:
+            self.router.flush()
+            logger.removeHandler(self.router)
             with suppress(Exception):
-                self._router.close()
-        self._router = None
+                self.router.close()
+        self.router = None
