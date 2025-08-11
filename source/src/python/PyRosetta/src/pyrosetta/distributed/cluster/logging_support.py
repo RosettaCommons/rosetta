@@ -264,7 +264,7 @@ def setup_target_logging(func: L) -> L:
         )
         del masked_key
 
-        if logging_level == "DEBUG":
+        if logging_level in ("DEBUG", "NOTSET"):
             _handler_cache = socket_handler.masked_keys
             logger.debug(
                 "PyRosettaCluster target logger handler cache "
@@ -336,7 +336,7 @@ def setup_worker_logging(func: L) -> L:
         router = plugin.router
         router.set_masked_key(socket_listener_address, task_id, masked_key)
 
-        if extra_args["logging_level"] == "DEBUG":
+        if extra_args["logging_level"] in ("DEBUG", "NOTSET"):
             _handler_cache = router.cache[socket_listener_address].masked_keys
             logger = setup_worker_logger(protocol_name, socket_listener_address, task_id)
             logger.debug(
