@@ -156,6 +156,11 @@ class LoggingTest(unittest.TestCase):
             )
             prc_log = os.path.join(output_path, logs_dir_name, "PyRosettaCluster.log")
 
+            if verbose:
+                for log_file in (prc_log, protocol_log):
+                    with open(log_file, "r") as f:
+                        print(f"Output: '{log_file}':", f.read(), sep="\n")
+
             # Ensure the files populate
             self.assertTrue(os.path.exists(protocol_log), msg=f"'{protocol_log}' doesn't exist!")
             self.assertGreater(
@@ -191,11 +196,6 @@ class LoggingTest(unittest.TestCase):
                         "dictionary to remove this warning message."
                     )
                     self.assertIn(expected_msg, warning_msgs)
-
-            if verbose:
-                for log_file in (prc_log, protocol_log):
-                    with open(log_file, "r") as f:
-                        print(f"Output: '{log_file}':", f.read(), sep="\n")
 
 
 if __name__ == "__main__":
