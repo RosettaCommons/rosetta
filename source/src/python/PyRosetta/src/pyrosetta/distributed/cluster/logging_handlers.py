@@ -48,8 +48,10 @@ L = TypeVar("L", bound=Callable[..., Any])
 
 
 class HandlerMixin:
+    """Logging handler mixin class for acquiring and releasing a thread lock."""
     @staticmethod
     def lock(func: L) -> L:
+        """A decorator for methods requiring acquire and release of a thread lock."""
         @wraps(func)
         def wrapper(self, *args, **kwargs) -> Any:
             self.acquire()
@@ -62,6 +64,7 @@ class HandlerMixin:
 
     @contextmanager
     def _locked(self) -> Generator[Any, Any, Any]:
+        """A context manager for acquiring and releasing a thread lock."""
         self.acquire()
         try:
             yield
