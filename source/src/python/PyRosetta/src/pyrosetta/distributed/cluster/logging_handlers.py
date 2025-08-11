@@ -26,20 +26,50 @@ import logging
 import struct
 import sys
 
-from contextlib import suppress
+from contextlib import contextmanager, suppress
+from functools import wraps
 from typing import (
     Any,
+    Callable,
     Dict,
+    Generator,
     Optional,
     OrderedDict,
     Tuple,
+    TypeVar,
+    cast,
 )
 
 from pyrosetta.distributed.cluster.hkdf import hmac_digest
 from pyrosetta.distributed.cluster.logging_filters import split_socket_address
 
 
-class MsgpackHmacSocketHandler(logging.handlers.SocketHandler):
+L = TypeVar("L", bound=Callable[..., Any])
+
+
+class HandlerMixin:
+    @staticmethod
+    def lock(func: L) -> L:
+        @wraps(func)
+        def wrapper(self, *args, **kwargs) -> Any:
+            self.acquire()
+            try:
+                return func(self, *args, **kwargs)
+            finally:
+                self.release()
+
+        return cast(L, wrapper)
+
+    @contextmanager
+    def _locked(self) -> Generator[Any, Any, Any]:
+        self.acquire()
+        try:
+            yield
+        finally:
+            self.release()
+
+
+class MsgpackHmacSocketHandler(logging.handlers.SocketHandler, HandlerMixin):
     """
     Subclass of `logging.handlers.SocketHandler` using MessagePack and hash-based message
     authentication codes (HMAC).
@@ -50,33 +80,25 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler):
         super().__init__(host, port)
         self.masked_keys: Dict[str, bytearray] = {}
 
+    @HandlerMixin.lock
     def set_masked_key(self, task_id: str, masked_key: bytes) -> None:
         """Set a task ID and HMAC key into the cache."""
-        self.acquire()
-        try:
-            self.masked_keys[task_id] = bytearray(masked_key)
-        finally:
-            self.release()
+        self.masked_keys[task_id] = bytearray(masked_key)
 
+    #@HandlerMixin.lock
     def pop_masked_key(self, task_id: str) -> None:
         """Pop a task ID and HMAC key from the cache."""
-        self.acquire()
-        try:
+        with self._locked():
             masked_key = self.masked_keys.pop(task_id, None)
-            self.zeroize(masked_key)
-        finally:
-            self.release()
+        self.zeroize(masked_key)
 
+    @HandlerMixin.lock
     def clear_masked_keys(self) -> None:
         """Clear all task IDs and HMAC keys from the cache."""
-        self.acquire()
-        try:
-            for task_id in list(self.masked_keys.keys()):
-                masked_key = self.masked_keys.pop(task_id, None)
-                self.zeroize(masked_key)
-            self.masked_keys.clear()
-        finally:
-            self.release()
+        for task_id in list(self.masked_keys.keys()):
+            masked_key = self.masked_keys.pop(task_id, None)
+            self.zeroize(masked_key)
+        self.masked_keys.clear()
 
     def zeroize(self, buffer: Optional[bytearray]) -> None:
         """Zeroize a bytearray in memory."""
@@ -136,18 +158,13 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler):
 
         packed_record = msgpack.packb(record_dict, use_bin_type=True)
         task_id = record.task_id # Set by `SetTaskIdFilter` or `logging.LoggerAdapter`
-        self.acquire()
-        try: # Acquire while getting masked key and HMAC digest
-            masked_key = self.masked_keys.get(task_id, None)
-            if masked_key is None:
-                raise ValueError("MsgpackHmacSocketHandler could not get key from task ID.")
-            frame = dict(task_id=task_id, packed_record=packed_record, version=1.0)
-            packed_frame = msgpack.packb(frame, use_bin_type=True)
-            signature = hmac_digest(masked_key, packed_frame)
-        except ValueError as ex:
-            raise ValueError(ex)
-        finally:
-            self.release()
+        with self._locked():
+            masked_key = bytes(self.masked_keys.get(task_id, b""))
+        if masked_key == b"":
+            raise ValueError("`MsgpackHmacSocketHandler` could not get key from task ID.")
+        frame = dict(task_id=task_id, packed_record=packed_record, version=1.0)
+        packed_frame = msgpack.packb(frame, use_bin_type=True)
+        signature = hmac_digest(masked_key, packed_frame)
         packet = dict(signature=signature, packed_frame=packed_frame)
         packed_packet = msgpack.packb(packet, use_bin_type=True)
         header = struct.pack(">L", len(packed_packet))
@@ -155,7 +172,7 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler):
         return header + packed_packet
 
 
-class MultiSocketHandler(logging.Handler):
+class MultiSocketHandler(logging.Handler, HandlerMixin):
     """
     Cache mutable dask worker logger handlers up to a maximum size, pruning least recently used (LRU)
     dask worker loggers first.
@@ -166,25 +183,21 @@ class MultiSocketHandler(logging.Handler):
         self.maxsize: int = maxsize
         self.stdout_handler: logging.Handler = get_stdout_handler()
 
+    #@HandlerMixin.lock
     def set_masked_key(self, socket_listener_address: Tuple[str, int], task_id: str, masked_key: bytes) -> None:
         """Set a masked key to handler cache."""
         host, port = socket_listener_address
-        self.acquire()
-        try:
+        with self._locked():
             key, handler = self.get(host, port)
-            handler.set_masked_key(task_id, masked_key)
-        finally:
-            self.release()
+        handler.set_masked_key(task_id, masked_key)
 
+    #@HandlerMixin.lock
     def pop_masked_key(self, socket_listener_address: Tuple[str, int], task_id: str) -> None:
         """Pop a masked key a handler cache."""
         host, port = socket_listener_address
-        self.acquire()
-        try:
+        with self._locked():
             key, handler = self.get(host, port)
-            handler.pop_masked_key(task_id)
-        finally:
-            self.release()
+        handler.pop_masked_key(task_id)
 
     def setup_handler(self, host: str, port: int) -> MsgpackHmacSocketHandler:
         """Setup a `MsgpackHmacSocketHandler` instance."""
@@ -212,54 +225,46 @@ class MultiSocketHandler(logging.Handler):
             self.stdout_handler.handle(record)
             return
         host, port = split_socket_address(socket_address)
-        self.acquire()
-        try:
+        with self._locked():
             key, handler = self.get(host, port)
-            try:
-                handler.emit(record)
-            except Exception:
-                # Drop broken socket so next log recreates it
-                with suppress(Exception):
-                    handler.close()
-                self.cache.pop(key, None)
-        finally:
-            self.release()
+        try:
+            handler.handle(record)
+        except Exception:
+            # Drop broken socket so next log recreates it
+            with self._locked():
+                handler = self.cache.pop(key, None)
+                if handler:
+                    with suppress(Exception):
+                        handler.close()
 
+    #@HandlerMixin.lock
     def maybe_prune(self) -> None:
         """Prune the least recently used (LRU) items within the maximum size of the cache."""
-        self.acquire()
-        try:
-            while len(self.cache) > self.maxsize:
+        while len(self.cache) > self.maxsize:
+            with self._locked():
                 _, handler = self.cache.popitem(last=False)
-                handler.flush()
-                with suppress(Exception):
-                    handler.close()
-        finally:
-            self.release()
+            handler.flush()
+            with suppress(Exception):
+                handler.close()
 
+    #@HandlerMixin.lock
     def purge_address(self, key: Tuple[str, int]) -> None:
         """Close and remove an item from the cache."""
-        self.acquire()
-        try:
+        with self._locked():
             handler = self.cache.pop(key, None)
-            if handler:
-                handler.flush()
-                with suppress(Exception):
-                    handler.close()
-        finally:
-            self.release()
+        if handler:
+            handler.flush()
+            with suppress(Exception):
+                handler.close()
 
+    @HandlerMixin.lock
     def purge_all(self) -> None:
         """Close and remove all items from the cache."""
-        self.acquire()
-        try:
-            for handler in self.cache.values():
-                handler.flush()
-                with suppress(Exception):
-                    handler.close()
-            self.cache.clear()
-        finally:
-            self.release()
+        for handler in self.cache.values():
+            handler.flush()
+            with suppress(Exception):
+                handler.close()
+        self.cache.clear()
 
     def close(self) -> None:
         """Logging handler custom close method override."""
