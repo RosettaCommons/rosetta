@@ -8,6 +8,7 @@
 
 __author__ = "Jason C. Klima"
 
+
 try:
     import billiard
     from billiard import WorkerLostError
@@ -122,7 +123,7 @@ def trace_protocol_exceptions(func: T) -> Union[T, NoReturn]:
         protocol: Callable[..., Any],
         ignore_errors: bool,
         **kwargs: Dict[Any, Any],
-    ) -> Any:
+    ) -> Union[Any, NoReturn]:
         protocol_name = protocol.__name__
         try:
             result = func(packed_pose, protocol, ignore_errors, **kwargs)
