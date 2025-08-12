@@ -156,16 +156,19 @@ class SocketListener(socketserver.ThreadingTCPServer):
         return handler
 
     def start(self) -> None:
+        """Start logging socket listener."""
         self._thread = threading.Thread(target=self.serve_forever, daemon=True)
         self._thread.start()
 
     def stop(self) -> None:
+        """Stop logging socket listener."""
         self.shutdown()
         self.server_close()
         if self._thread:
             self._thread.join()
 
     def serve_until_stopped(self) -> None:
+        """Run logging socket listener until aborted."""
         abort = 0
         while not abort:
             _read_ready, _, _ = select.select([self.socket.fileno()], [], [], self.timeout)

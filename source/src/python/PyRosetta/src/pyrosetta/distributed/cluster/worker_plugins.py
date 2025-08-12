@@ -44,13 +44,13 @@ WORKER_LOGGER_NAME: str = "PyRosettaCluster_dask_worker"
 
 class SocketLoggerPlugin(WorkerPlugin):
     """Install a `MultiSocketHandler` logging handler on a dask worker logger."""
-    def __init__(self, logging_level: str, maxsize: int = 128):
+    def __init__(self, logging_level: str, maxsize: int = 128) -> None:
         self.logging_level: str = logging_level
         self.maxsize: int = maxsize
         self.logger_name: str = WORKER_LOGGER_NAME
         self.router: Optional[logging.Handler] = None
 
-    def setup(self, worker: Worker):
+    def setup(self, worker: Worker) -> None:
         """Setup dask worker plugin."""
         logger = logging.getLogger(self.logger_name)
         logger.setLevel(self.logging_level)
@@ -64,7 +64,7 @@ class SocketLoggerPlugin(WorkerPlugin):
         self.router.addFilter(DefaultTaskIdFilter())
         logger.addHandler(self.router)
 
-    def teardown(self, worker: Worker):
+    def teardown(self, worker: Worker) -> None:
         """Teardown dask worker plugin."""
         logger = logging.getLogger(self.logger_name)
         if self.router and self.router in logger.handlers:
