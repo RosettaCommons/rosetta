@@ -630,7 +630,6 @@ GALigandDock::apply( pose::Pose & pose )
 
 		//go back and calculate a probability for each ligand
 		if ( has_density_map_ ) {
-			core::Size i = 0;
 			OutputStructureStore temporary_outputs;
 			utility::vector1< core::Real > zscores;
 			utility::vector1< core::Real > lig_denses;
@@ -656,8 +655,6 @@ GALigandDock::apply( pose::Pose & pose )
 				zscores.push_back( zscore );
 
 				temporary_outputs.push( pose, score, rms, complexscore, ligscore, recscore, 0, ligandname );
-
-				i++;
 			}
 
 			//Clearing outputs
@@ -683,7 +680,6 @@ GALigandDock::apply( pose::Pose & pose )
 			}
 
 			//Adding back temp outputs
-			i = 1;
 			while ( temporary_outputs.has_data() ) {
 				pose = *temporary_outputs.pop();
 
@@ -700,7 +696,6 @@ GALigandDock::apply( pose::Pose & pose )
 				//core::pose::setPoseExtraScore( pose, "probability", id_probabilities[i] );
 
 				remaining_outputs_.push( pose, score, rms, complexscore, ligscore, recscore, 0, ligandname );
-				++i;
 			}
 			//pose = *temporary_outputs.pop();
 		}
