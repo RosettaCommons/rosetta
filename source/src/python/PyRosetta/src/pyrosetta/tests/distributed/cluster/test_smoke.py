@@ -125,7 +125,7 @@ class SmokeTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
-                filter_results=False,
+                filter_results=True,
             )
             cluster = PyRosettaCluster(**instance_kwargs)
             cluster.distribute(
@@ -620,7 +620,7 @@ class SmokeTestMulti(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
-                filter_results=False,
+                filter_results=True,
             ).distribute(protocols=(my_first_protocol, my_second_protocol, my_third_protocol))
 
             cluster = PyRosettaCluster(
@@ -659,7 +659,7 @@ class SmokeTestMulti(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
-                filter_results=False,
+                filter_results=True,
             )
 
             cluster.distribute(protocols=[my_first_protocol, my_second_protocol, my_third_protocol])
@@ -724,7 +724,7 @@ class SaveAllTest(unittest.TestCase):
                 save_all=True,
                 system_info=None,
                 pyrosetta_build=None,
-                filter_results=False,
+                filter_results=True,
             )
             protocol_args = [my_pyrosetta_protocol] * _total_protocols
             cluster.distribute(*protocol_args)
@@ -802,7 +802,7 @@ class SaveAllTest(unittest.TestCase):
                 save_all=True,
                 system_info=None,
                 pyrosetta_build=None,
-                filter_results=False,
+                filter_results=True,
             ).distribute(protocols=[my_pyrosetta_protocol] * _total_protocols)
 
             self.assertFalse(os.path.exists(os.path.join(output_path, scorefile_name)))
