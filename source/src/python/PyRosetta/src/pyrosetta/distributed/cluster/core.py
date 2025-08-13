@@ -215,7 +215,7 @@ Args:
         to the next protocol. This is used for filtering out decoys mid-trajectory through
         user-provided PyRosetta protocols if protocols return or yield any `None`, empty
         `Pose`, or empty `PackedPose` objects.
-        Default: False
+        Default: True
     save_all: A `bool` object specifying whether or not to save all of the returned
         or yielded `Pose` and `PackedPose` objects from all user-provided
         PyRosetta protocols. This option may be used for checkpointing trajectories.
@@ -269,6 +269,7 @@ from pyrosetta.distributed.cluster.base import TaskBase, _get_residue_type_set
 from pyrosetta.distributed.cluster.converters import (
     is_empty as _is_empty,
     _parse_decoy_ids,
+    _parse_filter_results,
     _parse_environment,
     _parse_input_packed_pose,
     _parse_logging_address,
@@ -580,9 +581,9 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
     )
     filter_results = attr.ib(
         type=bool,
-        default=False,
+        default=None,
         validator=attr.validators.instance_of(bool),
-        converter=attr.converters.default_if_none(default=False),
+        converter=_parse_filter_results,
     )
     save_all = attr.ib(
         type=bool,
