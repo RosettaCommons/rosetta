@@ -1107,7 +1107,7 @@ class ResourcesTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
-                filter_results=False,
+                filter_results=True,
             )
             produce(**instance_kwargs)
 
@@ -1237,7 +1237,7 @@ class ResourcesTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
-                filter_results=False,
+                filter_results=True,
             )
             produce(**instance_kwargs)
 
@@ -1299,7 +1299,7 @@ class ScoresTest(unittest.TestCase):
             save_all=False,
             system_info=None,
             pyrosetta_build=None,
-            filter_results=False,
+            filter_results=True,
         )
 
     @classmethod
@@ -1522,7 +1522,7 @@ class TestBase:
             pyrosetta_build=None,
             dry_run=False,
             save_all=False,
-            filter_results=False,
+            filter_results=True,
         )
 
     def tearDown(self):

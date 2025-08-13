@@ -147,7 +147,7 @@ class LoggingTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
-                filter_results=False,
+                filter_results=None,
                 max_delay_time=3.0,
             )
             cluster.distribute(my_pyrosetta_protocol_1, my_pyrosetta_protocol_2)
