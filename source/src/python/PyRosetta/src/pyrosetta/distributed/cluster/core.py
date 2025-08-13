@@ -176,6 +176,15 @@ Args:
         "WARNING", "ERROR", or "CRITICAL". The output log file is always written
         to `output_path`/`logs_dir_name`/`simulation_name`.log on disk.
         Default: "INFO"
+    logging_address: A `str` object specifying the socket endpoint for sending and receiving
+        log messages across a network, so log messages from user-provided PyRosetta
+        protocols may be written to a single log file on the host node. The `str` object
+        must take the format 'host:port' where 'host' is either an IP address, 'localhost',
+        or Domain Name System (DNS)-accessible domain name, and the 'port' is a digit greater
+        than or equal to 0. If the 'port' is '0', then the next free port is selected.
+        Default: 'localhost:0' if `scheduler=None` or either the `client` or `clients`
+            keyword argument parameters specify instances of `dask.distributed.LocalCluster`,
+            otherwise '0.0.0.0:0'
     ignore_errors: A `bool` object specifying for PyRosettaCluster to ignore errors
         raised in the user-provided PyRosetta protocols. This comes in handy when
         well-defined errors are sparse and sporadic (such as rare Segmentation Faults),
@@ -236,7 +245,7 @@ try:
     import attr
     import distributed
     import toolz
-    from dask.distributed import as_completed
+    from dask.distributed import Client, Future, as_completed
     from distributed.scheduler import KilledWorker
 except ImportError:
     print(
@@ -253,6 +262,7 @@ except ImportError:
 
 import logging
 import os
+import uuid
 
 from datetime import datetime
 from pyrosetta.distributed.cluster.base import TaskBase, _get_residue_type_set
@@ -261,6 +271,7 @@ from pyrosetta.distributed.cluster.converters import (
     _parse_decoy_ids,
     _parse_environment,
     _parse_input_packed_pose,
+    _parse_logging_address,
     _parse_pyrosetta_build,
     _parse_scratch_dir,
     _parse_seeds,
@@ -269,9 +280,10 @@ from pyrosetta.distributed.cluster.converters import (
     _parse_tasks,
     _parse_yield_results,
 )
+from pyrosetta.distributed.cluster.hkdf import derive_task_key
 from pyrosetta.distributed.cluster.initialization import _get_pyrosetta_init_args, _maybe_init_client
 from pyrosetta.distributed.cluster.io import IO
-from pyrosetta.distributed.cluster.logging_support import LoggingSupport
+from pyrosetta.distributed.cluster.logging_support import LoggingSupport, MaskedBytes
 from pyrosetta.distributed.cluster.multiprocessing import user_spawn_thread
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.utilities import SchedulerManager
@@ -280,6 +292,7 @@ from pyrosetta.distributed.cluster.validators import (
     _validate_dirs,
     _validate_float,
     _validate_int,
+    _validate_logging_address,
     _validate_min_len,
 )
 from pyrosetta.distributed.packed_pose.core import PackedPose
@@ -525,6 +538,11 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         init=False,
         validator=attr.validators.instance_of(str),
     )
+    logging_address = attr.ib(
+        type=str,
+        default=attr.Factory(_parse_logging_address, takes_self=True),
+        validator=[_validate_logging_address, attr.validators.instance_of(str)],
+    )
     compressed = attr.ib(
         type=bool,
         default=True,
@@ -644,6 +662,38 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         self.serializer = Serialization(compression=self.compression)
         self.clients_dict = self._setup_clients_dict()
 
+    def _create_future(
+        self,
+        client: Client,
+        protocol_name: str,
+        compressed_protocol: bytes,
+        compressed_packed_pose: bytes,
+        compressed_kwargs: bytes,
+        pyrosetta_init_kwargs: Dict[str, Any],
+        extra_args: Dict[str, Any],
+        passkey: bytes,
+        resource: Optional[Dict[Any, Any]],
+    ) -> Future:
+        """Scatter data and return submitted 'user_spawn_thread' future."""
+        task_id = uuid.uuid4().hex
+        masked_key = MaskedBytes(derive_task_key(passkey, task_id))
+        scatter = client.scatter(
+            (
+                protocol_name,
+                compressed_protocol,
+                compressed_packed_pose,
+                compressed_kwargs,
+                pyrosetta_init_kwargs,
+                repr(client),
+                extra_args,
+                masked_key,
+                task_id,
+            ),
+            broadcast=False,
+            hash=False,
+        )
+        return client.submit(user_spawn_thread, *scatter, pure=False, resources=resource)
+
     def _run(
         self,
         *args: Any,
@@ -730,31 +780,35 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         protocols, protocol, seed, clients_index, resource = self._setup_protocols_protocol_seed(
             args, protocols, clients_indices, resources
         )
+        protocol_name = protocol.__name__
+        compressed_protocol = self.serializer.compress_object(protocol)
         clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
+        socket_listener_address, passkey = self._setup_socket_listener(clients)
         client_residue_type_set = _get_residue_type_set()
-        extra_args = (
-            self.decoy_ids,
-            self.protocols_key,
-            self.timeout,
-            self.ignore_errors,
-            self.logging_file,
-            self.logging_level,
-            self.DATETIME_FORMAT,
-            self.compression,
-            self.max_delay_time,
-            client_residue_type_set,
+        extra_args = dict(
+            decoy_ids=self.decoy_ids,
+            protocols_key=self.protocols_key,
+            timeout=self.timeout,
+            ignore_errors=self.ignore_errors,
+            datetime_format=self.DATETIME_FORMAT,
+            compression=self.compression,
+            max_delay_time=self.max_delay_time,
+            logging_level=self.logging_level,
+            socket_listener_address=socket_listener_address,
+            client_residue_type_set=client_residue_type_set,
         )
         seq = as_completed(
             [
-                clients[clients_index].submit(
-                    user_spawn_thread,
-                    protocol,
+                self._create_future(
+                    clients[clients_index],
+                    protocol_name,
+                    compressed_protocol,
                     compressed_input_packed_pose,
                     compressed_kwargs,
                     pyrosetta_init_kwargs,
-                    *extra_args,
-                    pure=False,
-                    resources=resource,
+                    extra_args,
+                    passkey,
+                    resource,
                 )
                 for compressed_kwargs, pyrosetta_init_kwargs in (
                     self._setup_initial_kwargs(protocols, seed, task_kwargs) for task_kwargs in self.tasks
@@ -790,19 +844,25 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                     compressed_kwargs, pyrosetta_init_kwargs, protocol, clients_index, resource = self._setup_kwargs(
                         kwargs, clients_indices, resources
                     )
-                    scatter = clients[clients_index].scatter(
-                        (
-                            protocol,
+                    protocol_name = protocol.__name__
+                    compressed_protocol = self.serializer.compress_object(protocol)
+                    seq.add(
+                        self._create_future(
+                            clients[clients_index],
+                            protocol_name,
+                            compressed_protocol,
                             compressed_packed_pose,
                             compressed_kwargs,
                             pyrosetta_init_kwargs,
-                            *extra_args,
-                        ), hash=False,
+                            extra_args,
+                            passkey,
+                            resource,
+                        )
                     )
-                    seq.add(clients[clients_index].submit(user_spawn_thread, *scatter, pure=False, resources=resource))
                     self.tasks_size += 1
                     self._maybe_adapt(adaptive)
 
+        self._close_socket_listener(clients)
         self._maybe_teardown(clients, cluster)
         self._close_logger()
 
@@ -882,7 +942,11 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             client = Client()
             for packed_pose, kwargs in PyRosettaCluster(client=client).generate(protocols):
                 # Post-process results on host node asynchronously from results generation
-                prc = PyRosettaCluster(input_packed_pose=packed_pose, client=client)
+                prc = PyRosettaCluster(
+                    input_packed_pose=packed_pose,
+                    client=client,
+                    logs_dir_name=f"logs_{uuid.uuid4().hex}", # Make sure to write new log files
+                )
                 for packed_pose, kwargs in prc.generate(other_protocols):
                     ...
 
@@ -891,7 +955,11 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             client_2 = Client()
             for packed_pose, kwargs in PyRosettaCluster(client=client_1).generate(protocols):
                 # Post-process results on host node asynchronously from results generation
-                prc = PyRosettaCluster(input_packed_pose=packed_pose, client=client_2)
+                prc = PyRosettaCluster(
+                    input_packed_pose=packed_pose,
+                    client=client_2,
+                    logs_dir_name=f"logs_{uuid.uuid4().hex}", # Make sure to write new log files
+                )
                 for packed_pose, kwargs in prc.generate(other_protocols):
                     ...
 

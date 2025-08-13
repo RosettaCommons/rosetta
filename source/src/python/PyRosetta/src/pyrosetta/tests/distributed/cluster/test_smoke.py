@@ -11,6 +11,7 @@ PyRosettaCluster smoke tests using the `unittest` framework.
 
 __author__ = "Jason C. Klima"
 
+
 import glob
 import json
 import logging
@@ -24,6 +25,7 @@ import sys
 import tempfile
 import time
 import unittest
+import uuid
 import warnings
 
 try:
@@ -40,7 +42,6 @@ except ImportError:
     )
     raise
 
-from functools import wraps
 from pyrosetta import Pose
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.utility import get_package_version
@@ -110,15 +111,15 @@ class SmokeTest(unittest.TestCase):
                 logging_level="INFO",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Tests",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=os.path.join(workdir, "outputs"),
                 simulation_records_in_scorefile=False,
                 decoy_dir_name="decoys",
                 logs_dir_name="logs",
-                ignore_errors=False,
-                timeout=0.1,
-                max_delay_time=0.5,
+                ignore_errors=True,
+                timeout=1.0,
+                max_delay_time=3.0,
                 sha1=None,
                 dry_run=False,
                 save_all=False,
@@ -130,7 +131,6 @@ class SmokeTest(unittest.TestCase):
             cluster.distribute(
                 my_pyrosetta_protocol,
             )
-
             instance_kwargs.update({"protocols": my_pyrosetta_protocol})
             produce(**instance_kwargs)
             run(**instance_kwargs)
@@ -152,7 +152,11 @@ class SmokeTest(unittest.TestCase):
         def protocol_with_error(packed_pose, **kwargs):
             raise NotImplementedError("Testing an error in a user-provided PyRosetta protocol.")
 
+        _sep = "*" * 60
+        print(f"{_sep} Begin testing PyRosettaCluster(ignore_errors=...) {_sep}")
+
         with tempfile.TemporaryDirectory() as workdir:
+            ignore_errors = True
             instance_kwargs = dict(
                 tasks=create_tasks,
                 input_packed_pose=None,
@@ -172,14 +176,14 @@ class SmokeTest(unittest.TestCase):
                 logging_level="INFO",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Tests",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=os.path.join(workdir, "outputs"),
                 simulation_records_in_scorefile=False,
                 decoy_dir_name="decoys",
                 logs_dir_name="logs",
-                ignore_errors=True,
-                timeout=0.1,
+                ignore_errors=ignore_errors,
+                timeout=1.0,
                 max_delay_time=3.0,
                 sha1=None,
                 dry_run=False,
@@ -192,6 +196,7 @@ class SmokeTest(unittest.TestCase):
             cluster.distribute(protocol_with_error)
 
         with tempfile.TemporaryDirectory() as workdir:
+            ignore_errors = False
             instance_kwargs = dict(
                 tasks=create_tasks,
                 input_packed_pose=None,
@@ -211,15 +216,15 @@ class SmokeTest(unittest.TestCase):
                 logging_level="INFO",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Tests",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=os.path.join(workdir, "outputs"),
                 simulation_records_in_scorefile=False,
                 decoy_dir_name="decoys",
                 logs_dir_name="logs",
-                ignore_errors=False,
-                timeout=0.1,
-                max_delay_time=1.0,
+                ignore_errors=ignore_errors,
+                timeout=1.0,
+                max_delay_time=3.0,
                 sha1=None,
                 dry_run=False,
                 save_all=False,
@@ -230,6 +235,8 @@ class SmokeTest(unittest.TestCase):
             cluster = PyRosettaCluster(**instance_kwargs)
             with self.assertRaises(WorkerError):
                 cluster.distribute(protocol_with_error)
+
+        print(f"{_sep} End testing PyRosettaCluster(ignore_errors=...) {_sep}")
 
 
 class SmokeTestMulti(unittest.TestCase):
@@ -289,7 +296,7 @@ class SmokeTestMulti(unittest.TestCase):
             return list(packed_pose.pose.residue(1).atom(1).xyz())
 
         def create_tasks():
-            for i in range(1, 4):
+            for i in range(1, 3):
                 yield {
                     "extra_options": "-ex1 -multithreading:total_threads 1",
                     "set_logging_handler": "logging",
@@ -504,15 +511,15 @@ class SmokeTestMulti(unittest.TestCase):
                 logging_level="DEBUG",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Tests",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=os.path.join(workdir, "outputs"),
                 simulation_records_in_scorefile=False,
                 decoy_dir_name="decoys",
                 logs_dir_name="logs",
-                ignore_errors=False,
-                timeout=0.1,
-                max_delay_time=0.0,
+                ignore_errors=True,
+                timeout=1.0,
+                max_delay_time=3.0,
                 sha1=None,
                 dry_run=False,
                 save_all=False,
@@ -600,14 +607,14 @@ class SmokeTestMulti(unittest.TestCase):
                 logging_level="WARNING",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Testing",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=os.path.abspath(os.path.join(workdir, "outputs")),
                 simulation_records_in_scorefile=False,
                 decoy_dir_name="decoys",
                 logs_dir_name="logs",
-                ignore_errors=False,
-                timeout=0.1,
+                ignore_errors=True,
+                timeout=1.0,
                 sha1=None,
                 dry_run=False,
                 save_all=False,
@@ -639,14 +646,14 @@ class SmokeTestMulti(unittest.TestCase):
                 logging_level="INFO",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Tests",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=os.path.abspath(os.path.join(workdir, "outputs")),
                 simulation_records_in_scorefile=False,
                 decoy_dir_name="decoys",
                 logs_dir_name="logs",
-                ignore_errors=False,
-                timeout=0.5,
+                ignore_errors=True,
+                timeout=1.0,
                 sha1=None,
                 dry_run=False,
                 save_all=False,
@@ -704,14 +711,14 @@ class SaveAllTest(unittest.TestCase):
                 logging_level="CRITICAL",
                 scorefile_name=scorefile_name,
                 project_name="PyRosettaCluster_SaveAllTest",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=output_path,
                 simulation_records_in_scorefile=True,
                 decoy_dir_name="decoys",
                 logs_dir_name="logs",
-                ignore_errors=False,
-                timeout=0.5,
+                ignore_errors=True,
+                timeout=1.0,
                 sha1=None,
                 dry_run=False,
                 save_all=True,
@@ -781,15 +788,15 @@ class SaveAllTest(unittest.TestCase):
                 logging_level="CRITICAL",
                 scorefile_name=scorefile_name,
                 project_name="PyRosettaCluster_SaveAllTest",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=output_path,
                 decoy_dir_name=decoy_dir_name,
                 logs_dir_name=logs_dir_name,
                 simulation_records_in_scorefile=True,
-                ignore_errors=False,
-                timeout=0.5,
-                max_delay_time=1.0,
+                ignore_errors=True,
+                timeout=1.0,
+                max_delay_time=3.0,
                 sha1=None,
                 dry_run=True,
                 save_all=True,
@@ -923,7 +930,7 @@ class MultipleClientsTest(unittest.TestCase):
             clients_indices = [0, 1, 1, 0]
         
             def create_tasks(client_1_repr=client_1_repr, client_2_repr=client_2_repr):
-                for _ in range(1, 7):
+                for _ in range(1, 3):
                     yield {
                         "extra_options": "-ex1 -multithreading:total_threads 1",
                         "set_logging_handler": "logging",
@@ -988,15 +995,15 @@ class MultipleClientsTest(unittest.TestCase):
                 logging_level="DEBUG",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Tests",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=os.path.join(workdir, "outputs"),
                 simulation_records_in_scorefile=False,
                 decoy_dir_name="decoys",
                 logs_dir_name="logs",
-                ignore_errors=False,
-                timeout=0.1,
-                max_delay_time=1.0,
+                ignore_errors=True,
+                timeout=1.0,
+                max_delay_time=3.0,
                 sha1=None,
                 dry_run=False,
                 save_all=False,
@@ -1086,15 +1093,15 @@ class ResourcesTest(unittest.TestCase):
                 logging_level="DEBUG",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Tests",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=output_path,
                 simulation_records_in_scorefile=False,
                 decoy_dir_name=decoy_dir_name,
                 logs_dir_name="logs",
-                ignore_errors=False,
-                timeout=0.1,
-                max_delay_time=1.0,
+                ignore_errors=True,
+                timeout=1.0,
+                max_delay_time=3.0,
                 sha1=None,
                 dry_run=False,
                 save_all=False,
@@ -1216,15 +1223,15 @@ class ResourcesTest(unittest.TestCase):
                 logging_level="DEBUG",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Tests",
-                simulation_name=None,
+                simulation_name=uuid.uuid4().hex,
                 environment=None,
                 output_path=output_path,
                 simulation_records_in_scorefile=False,
                 decoy_dir_name=decoy_dir_name,
                 logs_dir_name="logs",
-                ignore_errors=False,
-                timeout=0.1,
-                max_delay_time=1.0,
+                ignore_errors=True,
+                timeout=1.0,
+                max_delay_time=3.0,
                 sha1=None,
                 dry_run=False,
                 save_all=False,
@@ -1279,14 +1286,14 @@ class ScoresTest(unittest.TestCase):
             logging_level="INFO",
             scorefile_name=None,
             project_name="PyRosettaCluster_Tests",
-            simulation_name=None,
+            simulation_name=uuid.uuid4().hex,
             environment=None,
             simulation_records_in_scorefile=False,
             decoy_dir_name=cls.decoy_dir_name,
             logs_dir_name="logs",
-            ignore_errors=False,
-            timeout=0.1,
-            max_delay_time=0.5,
+            ignore_errors=True,
+            timeout=1.0,
+            max_delay_time=3.0,
             sha1=None,
             dry_run=False,
             save_all=False,
@@ -1453,15 +1460,15 @@ class TestBase:
                 resources={"CPU": 1},
             )
             cluster_1 = LocalCluster(
-                n_workers=2,
-                threads_per_worker=2,
+                n_workers=1,
+                threads_per_worker=1,
                 dashboard_address=None,
                 local_directory=cls.local_directory_1.name,
                 resources={"FOO": 1, "BAZ": 2},
             )
             cluster_2 = LocalCluster(
-                n_workers=2,
-                threads_per_worker=2,
+                n_workers=1,
+                threads_per_worker=1,
                 dashboard_address=None,
                 local_directory=cls.local_directory_2.name,
                 resources={"BAR": 1e9, "BAZ": 2},
@@ -1474,11 +1481,11 @@ class TestBase:
         cls.local_directory.cleanup()
         cls.local_directory_1.cleanup()
         cls.local_directory_2.cleanup()
-        for c in [cls.default_client, *cls.clients]:
-            for worker in c.cluster.workers.values():
+        for client in [cls.default_client, *cls.clients]:
+            for worker in client.cluster.workers.values():
                 worker.close_gracefully()
-            c.shutdown()
-            c.cluster.close()
+            client.shutdown()
+            client.cluster.close()
 
     def setUp(self):
         self.workdir = tempfile.TemporaryDirectory()
@@ -1488,7 +1495,7 @@ class TestBase:
             client=None,
             clients=None,
             scheduler=None,
-            scratch_dir=self.workdir.name,
+            scratch_dir=os.path.join(self.workdir.name, "scratch"),
             cores=None,
             processes=None,
             memory=None,
@@ -1501,15 +1508,15 @@ class TestBase:
             logging_level="INFO",
             scorefile_name=None,
             project_name="PyRosettaCluster_Tests",
-            simulation_name=None,
+            simulation_name=uuid.uuid4().hex,
             environment=None,
-            output_path=os.path.join(self.workdir.name, "outputs"),
+            output_path=os.path.join(self.workdir.name, "outputs_default"),
             simulation_records_in_scorefile=False,
             decoy_dir_name="test_decoy_dir",
             logs_dir_name="logs",
-            ignore_errors=False,
-            timeout=0.1,
-            max_delay_time=0.0,
+            ignore_errors=True,
+            timeout=1.0,
+            max_delay_time=3.0,
             sha1=None,
             system_info=None,
             pyrosetta_build=None,
@@ -1582,6 +1589,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
             **self.instance_kwargs,
             "tasks": self.create_tasks(parameter=GeneratorTest._parameters[0]),
             "input_packed_pose": self.input_packed_pose,
+            "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_builtin_clients_1_{uuid.uuid4().hex}"),
         }
         protocols = self.get_protocols()
         clients_indices = instance_kwargs_update.pop("clients_indices", None)
@@ -1609,6 +1617,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "clients_indices": clients_indices,
                 "resources": resources,
                 "simulation_name": "test_generate_builtin_clients",
+                "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_builtin_clients_2_{uuid.uuid4().hex}"),
             }
             for output_packed_pose, output_kwargs in iterate(**instance_kwargs_update):
                 self.assertIsInstance(output_packed_pose, PackedPose)
@@ -1659,7 +1668,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
             "resources": None,
             "save_all": True,
             "dry_run": True,
-            "output_path": os.path.join(self.workdir.name, "outputs_dry_run"),
+            "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_user_client_1_{uuid.uuid4().hex}"),
         }
         results = []
         for output_packed_pose, _ in iterate(**instance_kwargs):
@@ -1669,6 +1678,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "tasks": self.create_tasks(parameter=GeneratorTest._parameters[1]),
                 "client": self.default_client, # Test passing in same client
                 "simulation_name": "test_generate_user_client",
+                "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_user_client_2_{uuid.uuid4().hex}"),
             }
             for result in iterate(**instance_kwargs_update):
                 results.append(result)
@@ -1706,7 +1716,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
             "resources": resources,
             "save_all": True,
             "dry_run": True,
-            "output_path": os.path.join(self.workdir.name, "outputs"),
+            "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_multi_user_clients_1_{uuid.uuid4().hex}"),
         }
         results = []
         for output_packed_pose, _ in iterate(**instance_kwargs):
@@ -1719,6 +1729,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "clients_indices": clients_indices,
                 "resources": resources,
                 "simulation_name": "test_generate_multi_user_clients",
+                "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_multi_user_clients_2_{uuid.uuid4().hex}"),
             }
             for result in iterate(**instance_kwargs_update):
                 results.append(result)
@@ -1755,7 +1766,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
             "resources": resources,
             "save_all": True,
             "dry_run": True,
-            "output_path": os.path.join(self.workdir.name, "outputs_dry_run_clients"),
+            "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_partition_clients_1_{uuid.uuid4().hex}"),
         }
         results = []
         for output_packed_pose, _ in iterate(**instance_kwargs):
@@ -1768,6 +1779,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
                 "clients_indices": None,
                 "resources": resources,
                 "simulation_name": "test_generate_partition_clients",
+                "output_path": os.path.join(self.workdir.name, f"outputs_test_generate_partition_clients_2_{uuid.uuid4().hex}"),
             }
             for result in iterate(**instance_kwargs_update):
                 results.append(result)

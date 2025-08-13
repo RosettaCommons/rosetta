@@ -80,7 +80,8 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
         packages: str = get_required_pyrosetta_python_packages_for_testing(platform, static_versions=False)
 
-        python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
+        #python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
+        python_virtual_environment = setup_python_virtual_environment(f'{working_dir}/.venv', result.python_environment, packages)
 
         additional_flags = ' --timeout 4096' if platform['os'].startswith('aarch64') else ''
 
@@ -113,6 +114,8 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
             # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
             with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
+
+        if os.path.isdir(python_virtual_environment.root): shutil.rmtree(python_virtual_environment.root)
 
     return results
 

@@ -503,6 +503,7 @@ def get_required_pyrosetta_python_packages_for_testing(platform, conda=False, st
     python_version = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
     packages = copy.deepcopy(DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED)
+
     packages = update_packages_for_python_version(packages, python_version)
     packages = update_packages_for_conda(packages, conda)
 
@@ -941,7 +942,9 @@ def local_python_install(platform, config):
         # if 'certifi' not in packages:
         #     packages += ' certifi'
 
-        if packages: execute( f'Installing packages {packages}...', f'cd {root} && unset __PYVENV_LAUNCHER__ && {root}/bin/pip{python_version} install --upgrade {packages}' )
+        if packages:
+            execute( f'Installing packages {packages}...', f'cd {root} && unset __PYVENV_LAUNCHER__ && {root}/bin/pip{python_version} install --no-cache-dir --upgrade pip' )
+            execute( f'Installing packages {packages}...', f'cd {root} && unset __PYVENV_LAUNCHER__ && {root}/bin/pip{python_version} install --no-cache-dir --upgrade {packages}' )
         #if packages: execute( f'Installing packages {packages}...', f'cd {root} && unset __PYVENV_LAUNCHER__ && {executable} -m pip install --upgrade {packages}' )
 
         remove_pip_and_easy_install(root)  # removing all pip's and easy_install's to make sure that environment is immutable
@@ -978,8 +981,10 @@ def setup_python_virtual_environment(working_dir, python_environment, packages='
 
     bin=working_dir+'/bin'
 
-    if packages: execute('Installing packages: {}...'.format(packages), 'unset __PYVENV_LAUNCHER__ && {bin}/python {bin}/pip install --upgrade pip setuptools && {bin}/python {bin}/pip install --progress-bar off {packages}'.format(**vars()) )
-    #if packages: execute('Installing packages: {}...'.format(packages), '{bin}/pip{python_environment.version} install {packages}'.format(**vars()) )
+    #if packages: execute('Installing packages: {}...'.format(packages), 'unset __PYVENV_LAUNCHER__ && {bin}/python {bin}/pip install --no-cache-dir --upgrade pip setuptools && {bin}/python {bin}/pip install --no-cache-dir --progress-bar off {packages}'.format(**vars()) )
+    if packages:
+        packages = ' '.join( f"'{p}'" for p in packages.split() )
+        execute('Installing packages: {}...'.format(packages), '{activate} && {bin}/pip install --no-cache-dir --upgrade pip setuptools && {bin}/pip install --no-cache-dir --progress-bar off {packages}'.format(**vars()) )
 
     return NT(activate = activate, python = bin + '/python', root = working_dir, bin = bin)
 

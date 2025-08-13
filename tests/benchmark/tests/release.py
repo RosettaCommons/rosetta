@@ -749,7 +749,7 @@ def native_libc_pyrosetta_conda_release(kind, rosetta_dir, working_dir, platform
                     build = [f'python {platform["python"]}'],
                     host  = [f'python {platform["python"]}', 'setuptools', 'zlib'],
                     #run   = [f'python =={platform["python"]}', "{{ pin_compatible('numpy') }}", 'zlib', 'pandas >=0.18', 'scipy >=1.0', 'traitlets', 'python-blosc'],
-                    run   = [f'python {platform["python"]}', 'zlib', ] + get_required_pyrosetta_python_packages_for_release_package(platform, conda=True),
+                    run   = [f'python {platform["python"]}', 'zlib', ] + get_required_pyrosetta_python_packages_for_release_package(platform, conda=True, static_versions=False),
                 ),
 
                 about = dict(

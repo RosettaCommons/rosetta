@@ -139,15 +139,13 @@ ProtocolSettingsMetric::parse_my_tag(
 	bool get_script_vars = tag->getOption< bool >("get_script_vars", true);
 	bool skip_corrections = tag->getOption< bool >("skip_corrections", true);
 
-	std::cout << "Skip user options " << get_user_options << std::endl;
-
 	if ( tag->hasOption("limit_to_options") ) {
 		std::string option_list_restriction = tag->getOption<std::string>("limit_to_options");
 		utility::vector1< std::string > limit_to = utility::string_split(option_list_restriction, ',');
 		set_only_report_these_options(limit_to);
 	}
 	if ( datamap.has_resource("options") ) {
-		parse_options(*datamap.get_resource<OptionCollection const>("options"), base_name_only, get_user_options, get_script_vars, skip_corrections);
+		parse_options(*datamap.get_resource<OptionCollection const>("options"), base_name_only, get_script_vars, get_user_options, skip_corrections);
 	} else {
 		parse_options(basic::options::option, base_name_only, get_script_vars, get_user_options, skip_corrections);
 	}

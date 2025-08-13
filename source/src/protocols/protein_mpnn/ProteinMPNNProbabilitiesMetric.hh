@@ -10,6 +10,7 @@
 /// @file protocols/protein_mpnn/ProteinMPNNProbabilitiesMetric.hh
 /// @brief A metric for predicting amino acid probabilities using ProteinMPNN (Dauparas et al.).
 /// @author Moritz Ertelt (moritz.ertelt@googlemail.com)
+/// @modified Jason C. Klima -- Added deterministic_flag option
 
 
 #ifndef INCLUDED_protocols_protein_mpnn_ProteinMPNNProbabilitiesMetric_HH
@@ -127,6 +128,13 @@ public:
 	/// @details If this returns nullptr, it means that no residue selector is being used.
 	core::select::residue_selector::ResidueSelectorCOP residue_selector() const;
 
+	/// @brief Set to true to run in deterministic mode.
+	void
+	set_deterministic_flag(bool deterministic_flag);
+
+	/// @brief Get the deterministic_flag mode.
+	bool deterministic_flag() const;
+
 private: //Data
 
 	/// @brief The output filename of the pssm
@@ -141,6 +149,9 @@ private: //Data
 
 	/// @brief An optional residue selector to limit the returned probabilities to a selection
 	core::select::residue_selector::ResidueSelectorCOP residue_selector_ = nullptr;
+
+	/// @brief An optional boolean flag to run in deterministic mode
+	bool deterministic_flag_ = false;
 
 #ifdef USE_TORCH
 	/// @brief Fill the return_map with the probabilities from the softmax_map for all amino acids
