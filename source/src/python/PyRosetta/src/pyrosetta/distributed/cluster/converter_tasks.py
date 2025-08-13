@@ -448,7 +448,7 @@ def is_empty(obj: Any) -> NoReturn:
 
 @is_empty.register(type(None))
 def _from_none(obj: None) -> bool:
-    # Protocol results return a `None` object when an error occurs with `ignore_errors=True`
+    # Protocol results return a `None` object when a segmentation fault occurs with `ignore_errors=True`
     return False
 
 @is_empty.register(PackedPose)
