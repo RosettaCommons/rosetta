@@ -1013,12 +1013,10 @@ class MultipleClientsTest(unittest.TestCase):
             )
             produce(**instance_kwargs)
 
-            for worker in cluster_1.workers.values():
-                worker.close_gracefully()
             client_1.close()
-            for worker in cluster_2.workers.values():
-                worker.close_gracefully()
+            cluster_1.close()
             client_2.close()
+            cluster_2.close()
 
 
 class ResourcesTest(unittest.TestCase):
@@ -1111,9 +1109,8 @@ class ResourcesTest(unittest.TestCase):
             )
             produce(**instance_kwargs)
 
-            for worker in cluster.workers.values():
-                worker.close_gracefully()
             client.close()
+            cluster.close()
 
             decoy_files = glob.glob(os.path.join(output_path, decoy_dir_name, "*", "*.bz2"))
             self.assertEqual(len(decoy_files), 3)
@@ -1247,12 +1244,10 @@ class ResourcesTest(unittest.TestCase):
                 scores_dict = get_scores_dict(decoy_file)
                 self.assertEqual(scores_dict["scores"]["sequence"], sequence)
 
-            for worker in cluster_1.workers.values():
-                worker.close_gracefully()
             client_1.close()
-            for worker in cluster_2.workers.values():
-                worker.close_gracefully()
+            cluster_1.close()
             client_2.close()
+            cluster_2.close()
 
 
 class ScoresTest(unittest.TestCase):
