@@ -11,12 +11,14 @@ __author__ = "Jason C. Klima"
 try:
     import git
     import toolz
+    from dask.distributed import Client, LocalCluster
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.converters' requires the "
-        + "third-party packages 'gitpython' and 'toolz' as dependencies!\n"
+        + "third-party packages 'dask', 'gitpython' and 'toolz' as dependencies!\n"
         + "Please install these packages into your python environment. "
         + "For installation instructions, visit:\n"
+        + "https://pypi.org/project/dask/\n"
         + "https://gitpython.readthedocs.io/en/stable/intro.html\n"
         + "https://pypi.org/project/toolz/\n"
     )
@@ -167,6 +169,28 @@ def _parse_protocols(objs: Any) -> List[Union[Callable[..., Any], Iterable[Any]]
         return list(objs)
 
     return converter(objs)
+
+
+def _parse_yield_results(yield_results: Any) -> bool:
+    @singledispatch
+    def converter(objs: Any) -> NoReturn:
+        raise ValueError("'yield_results' parameter must be of type `bool`.")
+    
+    @converter.register(bool)
+    def _to_bool(objs: bool) -> bool:
+        return objs
+    
+    @converter.register(int)
+    @converter.register(float)
+    @converter.register(str)
+    def _int_to_bool(objs: Union[int, float, str]) -> bool:
+        return bool(objs)
+    
+    @converter.register(type(None))
+    def _none_to_bool(objs: None) -> bool:
+        return False
+    
+    return converter(yield_results)
 
 
 def _parse_pyrosetta_build(obj: Any) -> str:
@@ -352,6 +376,28 @@ def _parse_system_info(obj: Any) -> Dict[Any, Any]:
         return toolz.dicttoolz.merge(obj, _sys_platform)
 
     return converter(obj)
+
+
+def _parse_logging_address(self) -> str:
+    _default_local = "localhost:0"
+    _default_remote = "0.0.0.0:0"
+
+    if all(attribute is None for attribute in (self.scheduler, self.client, self.clients)):
+        logging_address = _default_local
+    elif isinstance(self.client, Client):
+        logging_address = (
+            _default_local if isinstance(self.client.cluster, LocalCluster) else _default_remote
+        )
+    elif all(isinstance(_client, Client) for _client in self.clients):
+        logging_address = (
+            _default_local
+            if all(isinstance(_client.cluster, LocalCluster) for _client in self.clients)
+            else _default_remote
+        )
+    else:
+        logging_address = _default_remote
+
+    return logging_address
 
 
 def _get_decoy_id(protocols: Sized, decoy_ids: List[int]) -> Optional[int]:

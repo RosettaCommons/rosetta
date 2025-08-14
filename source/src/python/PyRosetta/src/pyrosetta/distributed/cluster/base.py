@@ -29,6 +29,7 @@ from pyrosetta.distributed.cluster.converters import _parse_protocols
 from pyrosetta.distributed.cluster.initialization import (
     _get_residue_type_set_name3 as _get_residue_type_set,
 )
+from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.validators import (
     _validate_clients_indices,
     _validate_protocols_seeds_decoy_ids,
@@ -51,6 +52,7 @@ from typing import (
 
 G = TypeVar("G")
 M = TypeVar("M", bound=Callable[..., Any])
+S = TypeVar("S", bound=Serialization)
 
 
 class TaskBase(Generic[G]):
@@ -192,18 +194,18 @@ def capture_task_metadata(func: M) -> M:
 
     @wraps(func)
     def wrapper(
-        protocol,
-        compressed_packed_pose,
-        DATETIME_FORMAT,
-        ignore_errors,
-        protocols_key,
-        decoy_ids,
-        serializer,
-        **kwargs,
-    ):
+        protocol_name: str,
+        protocol: Callable[..., Any],
+        packed_pose: PackedPose,
+        datetime_format: str,
+        ignore_errors: bool,
+        protocols_key: str,
+        decoy_ids: List[int],
+        serializer: S,
+        **kwargs: Dict[Any, Any],
+    ) -> Any:
         """Wrapper function to capture_task_metadata."""
 
-        protocol_name = str(protocol.__name__)
         kwargs["PyRosettaCluster_protocol_name"] = protocol_name
         if not "PyRosettaCluster_protocols" in kwargs:
             kwargs["PyRosettaCluster_protocols"] = []
@@ -213,18 +215,19 @@ def capture_task_metadata(func: M) -> M:
         )  # Pythonic indices
         if not "PyRosettaCluster_datetime_start" in kwargs:
             kwargs["PyRosettaCluster_datetime_start"] = datetime.now().strftime(
-                DATETIME_FORMAT
+                datetime_format
             )
+        seed = pyrosetta.rosetta.numeric.random.rg().get_seed()
         if not "PyRosettaCluster_seeds" in kwargs:
             kwargs["PyRosettaCluster_seeds"] = []
-        kwargs["PyRosettaCluster_seeds"].append(
-            (protocol_name, str(pyrosetta.rosetta.numeric.random.rg().get_seed()))
-        )
+        kwargs["PyRosettaCluster_seeds"].append((protocol_name, str(seed)))
+        kwargs["PyRosettaCluster_seed"] = seed
 
         return func(
+            protocol_name,
             protocol,
-            compressed_packed_pose,
-            DATETIME_FORMAT,
+            packed_pose,
+            datetime_format,
             ignore_errors,
             protocols_key,
             decoy_ids,

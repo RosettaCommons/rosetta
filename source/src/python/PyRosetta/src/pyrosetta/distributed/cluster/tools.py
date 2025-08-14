@@ -24,6 +24,7 @@ except ImportError:
     )
     raise
 
+import inspect
 import json
 import logging
 import os
@@ -33,7 +34,7 @@ import tempfile
 
 from datetime import datetime
 from functools import wraps
-from pyrosetta.distributed.cluster.converters import _parse_protocols
+from pyrosetta.distributed.cluster.converters import _parse_protocols, _parse_yield_results
 from pyrosetta.distributed.cluster.converter_tasks import (
     get_protocols_list_of_str,
     get_yml,
@@ -55,9 +56,11 @@ from typing import (
     Any,
     Callable,
     Dict,
+    Generator,
     List,
     NoReturn,
     Optional,
+    Tuple,
     TypeVar,
     Union,
     cast,
@@ -167,13 +170,24 @@ def get_protocols(
                 )
     else:
         # Get the protocols in the scope from the list of protocol names as strings
-        scope = globals()
+        # Use locals and globals back two frames to the scope of the caller of `reproduce`
+        scope = inspect.currentframe().f_back.f_back
         protocols = []
         for protocol_name in get_protocols_list_of_str(
             input_file=input_file, scorefile=scorefile, decoy_name=decoy_name
         ):
-            if protocol_name in scope:
-                protocols.append(scope[protocol_name])
+            if protocol_name in scope.f_locals:
+                logging.info(
+                    f"Automatically detected user-provided PyRosetta protocol '{protocol_name}' "
+                    + "in the local variables of the current frame."
+                )
+                protocols.append(scope.f_locals[protocol_name])
+            elif protocol_name in scope.f_globals:
+                logging.info(
+                    f"Automatically detected user-provided PyRosetta protocol '{protocol_name}' "
+                    + "in the global variables of the current frame."
+                )
+                protocols.append(scope.f_globals[protocol_name])
             else:
                 raise RuntimeError(
                     f"The original user-defined PyRosetta protocol '{protocol_name}' "
@@ -181,7 +195,7 @@ def get_protocols(
                     + "user-defined PyRosetta protocols are defined in the same scope as they were in "
                     + "the original production run. Alternatively, you may pass the original "
                     + "user-defined PyRosetta protocols (defined under the new scope) maintaining "
-                    + "the original protocol order as a parameter to the 'protocols' argument."
+                    + "the original protocol order as a parameter to the 'protocols' keyword argument."
                 )
 
     return _parse_protocols(protocols)
@@ -546,22 +560,18 @@ def reproduce(
 
 def produce(**kwargs: Any) -> Optional[NoReturn]:
     """
-    PyRosettaCluster.distribute shim requiring the 'protocols' keyword argument and optionally
-    any PyRosettaCluster keyword arguments or the 'clients_indices' keyword argument when using
-    the 'clients' keyword argument.
+    `PyRosettaCluster().distribute()` shim requiring the 'protocols' keyword argument, and optionally
+    any PyRosettaCluster keyword arguments or the 'clients_indices' keyword argument (when using
+    the `PyRosettaCluster(clients=...)` keyword argument), or the 'resources' keyword argument.
 
     Args:
-        **kwargs: See PyRosettaCluster docstring. The keyword arguments must also include
+        **kwargs: See `PyRosettaCluster` docstring. The keyword arguments must also include
             'protocols', an iterable object of function or generator objects specifying
             an ordered sequence of user-defined PyRosetta protocols to execute for
-            the simulation (see PyRosettaCluster.distribute docstring). The keyword arguments
-            may also optionally include 'clients_indices' (see PyRosettaCluster.distribute
-            docstring).
-
-    Returns:
-        None
+            the simulation (see `PyRosettaCluster().distribute` docstring). The keyword arguments
+            may also optionally include 'clients_indices' or 'resources' (see
+            `PyRosettaCluster().distribute` docstring).
     """
-
     protocols = kwargs.pop("protocols", None)
     clients_indices = kwargs.pop("clients_indices", None)
     resources = kwargs.pop("resources", None)
@@ -571,5 +581,28 @@ def produce(**kwargs: Any) -> Optional[NoReturn]:
         resources=resources,
     )
 
-
 run: Callable[..., Optional[NoReturn]] = produce
+
+@wraps(produce, assigned=("__doc__",), updated=())
+def iterate(**kwargs: Any) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[Any, Any]], None, None]]:
+    protocols = kwargs.pop("protocols", None)
+    clients_indices = kwargs.pop("clients_indices", None)
+    resources = kwargs.pop("resources", None)
+    for result in PyRosettaCluster(**kwargs).generate(
+        protocols=protocols,
+        clients_indices=clients_indices,
+        resources=resources,
+    ):
+        yield result
+
+produce.__doc__ += """
+    Returns:
+        None
+    """
+iterate.__doc__ = iterate.__doc__.replace(
+    "PyRosettaCluster().distribute", "PyRosettaCluster().generate"
+) + """
+    Yields:
+        (PackedPose, dict) tuples from the most recently run user-provided PyRosetta protocol if
+        `PyRosettaCluster(save_all=True)` otherwise from the final user-defined PyRosetta protocol.
+    """

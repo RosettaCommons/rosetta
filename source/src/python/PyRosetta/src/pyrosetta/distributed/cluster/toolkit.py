@@ -17,6 +17,7 @@ from pyrosetta.distributed.cluster.tools import (
     Serialization,
     get_instance_kwargs,
     get_protocols,
+    iterate,
     produce,
     recreate_environment,
     reproduce,

@@ -8,7 +8,9 @@
 
 __author__ = "Jason C. Klima"
 
+
 try:
+    import billiard
     from billiard import WorkerLostError
 except ImportError:
     print(
@@ -24,17 +26,24 @@ import logging
 import traceback
 
 from functools import wraps
+from pyrosetta.distributed.packed_pose.core import PackedPose
 from queue import Empty
 from typing import (
     Any,
     Callable,
+    Dict,
+    List,
     NoReturn,
+    Optional,
+    Tuple,
     TypeVar,
     Union,
     cast,
 )
 
 
+Q = TypeVar("Q", bound=billiard.Queue)
+P = TypeVar("P", bound=billiard.context.Process)
 T = TypeVar("T", bound=Callable[..., Any])
 
 
@@ -108,12 +117,16 @@ class WorkerError(WorkerLostError):
 
 def trace_protocol_exceptions(func: T) -> Union[T, NoReturn]:
     """Trace exceptions in user-provided PyRosetta protocols."""
-
     @wraps(func)
-    def wrapper(compressed_packed_pose, protocol, ignore_errors, **kwargs):
+    def wrapper(
+        packed_pose: PackedPose,
+        protocol: Callable[..., Any],
+        ignore_errors: bool,
+        **kwargs: Dict[Any, Any],
+    ) -> Union[Any, NoReturn]:
         protocol_name = protocol.__name__
         try:
-            result = func(compressed_packed_pose, protocol, ignore_errors, **kwargs)
+            result = func(packed_pose, protocol, ignore_errors, **kwargs)
         except:
             logging.error(
                 traceback.format_exc()
@@ -131,9 +144,15 @@ def trace_protocol_exceptions(func: T) -> Union[T, NoReturn]:
 
 def trace_subprocess_exceptions(func: T) -> Union[T, NoReturn]:
     """Trace exceptions in billiard subprocesses."""
-
     @wraps(func)
-    def wrapper(q, p, compressed_kwargs, protocol_name, timeout, ignore_errors):
+    def wrapper(
+        q: Q,
+        p: P,
+        compressed_kwargs: bytes,
+        protocol_name: str,
+        timeout: Union[float, int],
+        ignore_errors: bool,
+    ) -> Union[List[Tuple[Optional[bytes], bytes]], NoReturn]:
         while True:
             try:
                 _results = func(
