@@ -95,7 +95,6 @@ class TestReproducibility(unittest.TestCase):
                 logs_dir_name="logs",
                 ignore_errors=True,
                 timeout=1.0,
-                max_delay_time=3.0,
                 sha1=None,
                 dry_run=False,
                 save_all=False,
