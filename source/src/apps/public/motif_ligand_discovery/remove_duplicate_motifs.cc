@@ -69,7 +69,6 @@
 
 using namespace protocols::dna;
 using utility::vector1;
-using utility::string_split;
 
 using namespace core;
 using namespace basic;
