@@ -25,7 +25,7 @@
 	branch = bcl_rosetta
 [submodule "source/external/gemmi_repo"]
 	path = source/external/gemmi_repo
-	url = git@github.com:project-gemmi/gemmi.git
+	url = https://github.com/project-gemmi/gemmi.git
 ############################
 # Boost Modules
 ############################
