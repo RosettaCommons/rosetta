@@ -95,6 +95,7 @@ distributed_cluster_test_cases = [
     "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityMulti.test_reproducibility_packer_nstruct_multi_decoy_ids",
 ]
 distributed_test_suites = [
+    "pyrosetta.tests.bindings.init.test_init_files"
     "pyrosetta.tests.bindings.core.test_pose",
     "pyrosetta.tests.distributed.test_concurrency",
     "pyrosetta.tests.distributed.test_dask",
