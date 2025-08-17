@@ -217,6 +217,22 @@ Args:
     dry_run: A `bool` object specifying whether or not to save '.pdb' files to
         disk. If `True`, then do not write '.pdb' or '.pdb.bz2' files to disk.
         Default: False
+    init_file: A `str` object specifying the output '.init' file path. If a `NoneType`
+        object (or an empty `str` object ('')) is provided, or `dry_run=True`, then skip
+        writing an output '.init' file upon PyRosettaCluster instantiation. If skipped,
+        it is recommended to run `pyrosetta.dump_init_file()` before or after the simulation.
+        Default: `output_path`/`project_name`_`simulation_name`_pyrosetta.init
+    author: An optional `str` object specifying the author(s) of the simulation that is
+        written to the full simulation records and the PyRosetta initialization '.init' file.
+        Default: ""
+    email: An optional `str` object specifying the email address(es) of the author(s) of
+        the simulation that is written to the full simulation records and the PyRosetta
+        initialization '.init' file.
+        Default: ""
+    license: An optional `str` object specifying the license of the output data of the
+        simulation that is written to the full simulation records and the PyRosetta
+        initialization '.init' file (e.g., "ODC-ODbL", "CC BY-ND", "CDLA Permissive-2.0", etc.).
+        Default: ""
 
 Returns:
     A PyRosettaCluster instance.
@@ -610,6 +626,42 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         validator=attr.validators.instance_of(str),
         converter=_parse_environment,
     )
+    author = attr.ib(
+        type=str,
+        default=None,
+        validator=attr.validators.instance_of(str),
+        converter=attr.converters.default_if_none(""),
+    )
+    email = attr.ib(
+        type=str,
+        default=None,
+        validator=attr.validators.instance_of(str),
+        converter=attr.converters.default_if_none(""),
+    )
+    license = attr.ib(
+        type=str,
+        default=None,
+        validator=attr.validators.instance_of(str),
+        converter=attr.converters.default_if_none(""),
+    )
+    init_file = attr.ib(
+        type=str,
+        default=attr.Factory(
+            lambda self: os.path.join(
+                self.output_path,
+                "_".join(
+                    [
+                        self.project_name.replace(" ", "-"),
+                        self.simulation_name.replace(" ", "-"),
+                        "pyrosetta.init",
+                    ]
+                ),
+            ),
+            takes_self=True,
+        ),
+        validator=attr.validators.instance_of(str),
+        converter=attr.converters.default_if_none(""),
+    )
     environment_file = attr.ib(
         type=str,
         default=attr.Factory(
@@ -638,10 +690,11 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         ),
     )
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         _maybe_init_client()
         self._setup_logger()
         self._write_environment_file(self.environment_file)
+        self._write_init_file(self.init_file)
         self.serializer = Serialization(compression=self.compression)
         self.clients_dict = self._setup_clients_dict()
 

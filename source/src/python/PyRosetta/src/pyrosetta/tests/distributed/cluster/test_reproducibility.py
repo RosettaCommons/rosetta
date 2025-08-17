@@ -17,6 +17,8 @@ import os
 import pyrosetta
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
+import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -823,15 +825,18 @@ class TestReproducibilityMulti(unittest.TestCase):
                 yield p
 
         with tempfile.TemporaryDirectory() as workdir:
-
+            sequence = "ACDEFGHIKLMNPQRSTVWY"
             output_path = os.path.join(workdir, "outputs")
-            input_pose = io.to_pose(io.pose_from_sequence("ACDEFGHIKLMNPQRSTVWY"))
+            input_pose = io.to_pose(io.pose_from_sequence(sequence))
             tasks = list(create_tasks())
             seeds = [-77777777, 888888888, -999999999]
             decoy_ids = [0, 1, 2]
             decoy_dir_name = "test_decoys"
             scorefile_name = "test_scores.json"
             protocols = [my_first_protocol, my_second_protocol, my_third_protocol]
+            author = "Username"
+            email = "test@example"
+            license = "LICENSE.PyRosetta.md"
             self.assertEqual(len(seeds), len(protocols))
             self.assertEqual(len(decoy_ids), len(protocols))
 
@@ -867,6 +872,9 @@ class TestReproducibilityMulti(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                author=author,
+                email=email,
+                license=license,
             ).distribute(*protocols)
 
             scorefile_path = os.path.join(output_path, scorefile_name)
@@ -887,7 +895,9 @@ class TestReproducibilityMulti(unittest.TestCase):
                 instance_kwargs={
                     "sha1": None,
                     "scorefile_name": reproduce_scorefile_name,
+                    "init_file": None, # Skip `dump_init_file`
                 },
+                init_file=None, # Skip `init_from_file` since PyRosetta is initialized
             )
 
             reproduce_scorefile_path = os.path.join(
@@ -914,6 +924,11 @@ class TestReproducibilityMulti(unittest.TestCase):
                 original_record["instance"]["decoy_ids"],
                 reproduce_record["instance"]["decoy_ids"],
             )
+            for key in ("author", "email", "license"):
+                self.assertEqual(
+                    original_record["instance"][key],
+                    reproduce_record["instance"][key],
+                )
 
             # Reproduce decoy from scorefile and decoy_name
             reproduce2_scorefile_name = "reproduce2_test_scores.json"
@@ -930,7 +945,9 @@ class TestReproducibilityMulti(unittest.TestCase):
                 instance_kwargs={
                     "sha1": None,
                     "scorefile_name": reproduce2_scorefile_name,
+                    "init_file": "", # Skip `dump_init_file`
                 },
+                init_file=None, # Skip `init_from_file` since PyRosetta is initialized
             )
 
             reproduce2_scorefile_path = os.path.join(
@@ -941,22 +958,76 @@ class TestReproducibilityMulti(unittest.TestCase):
             self.assertEqual(len(reproduce2_data), 1)
             reproduce2_record = reproduce2_data[0]
 
-            self.assertEqual(
-                reproduce_record["scores"]["SEQUENCE"],
-                reproduce2_record["scores"]["SEQUENCE"],
+            for _record in (original_record, reproduce_record):
+                self.assertEqual(
+                    _record["scores"]["SEQUENCE"],
+                    reproduce2_record["scores"]["SEQUENCE"],
+                )
+                self.assertEqual(
+                    _record["scores"]["total_score"],
+                    reproduce2_record["scores"]["total_score"],
+                )
+                self.assertListEqual(
+                    _record["instance"]["seeds"],
+                    reproduce2_record["instance"]["seeds"],
+                )
+                self.assertListEqual(
+                    _record["instance"]["decoy_ids"],
+                    reproduce2_record["instance"]["decoy_ids"],
+                )
+                for key in ("author", "email", "license"):
+                    self.assertEqual(
+                        _record["instance"][key],
+                        reproduce2_record["instance"][key],
+                    )
+
+            # Reproduce decoy from .pdb.bz2 file with a .init file
+            reproduce3_scorefile_name = "reproduce_test_scores_init_file.json"
+            init_file = original_record["metadata"]["init_file"]
+            self.assertTrue(os.path.isfile(init_file))
+            test_script = os.path.join(os.path.dirname(__file__), "reproduce_from_init_file.py")
+            cmd = "{0} {1} --input_file {2} --scorefile_name {3} --init_file {4} --sequence {5}".format(
+                sys.executable,
+                test_script,
+                original_record["metadata"]["output_file"],
+                reproduce3_scorefile_name,
+                init_file,
+                sequence,
             )
-            self.assertEqual(
-                reproduce_record["scores"]["total_score"],
-                reproduce2_record["scores"]["total_score"],
+            p = subprocess.run(cmd, shell=True)
+            print("Return code: {0}".format(p.returncode))
+            self.assertEqual(p.returncode, 0, msg=f"Test script failed: {test_script}")
+
+            reproduce3_scorefile_path = os.path.join(
+                output_path, reproduce3_scorefile_name
             )
-            self.assertListEqual(
-                reproduce_record["instance"]["seeds"],
-                reproduce2_record["instance"]["seeds"],
-            )
-            self.assertListEqual(
-                reproduce_record["instance"]["decoy_ids"],
-                reproduce2_record["instance"]["decoy_ids"],
-            )
+            with open(reproduce3_scorefile_path, "r") as f:
+                reproduce3_data = [json.loads(line) for line in f]
+            self.assertEqual(len(reproduce3_data), 1)
+            reproduce3_record = reproduce3_data[0]
+
+            for _record in (original_record, reproduce_record, reproduce2_record):
+                self.assertEqual(
+                    _record["scores"]["SEQUENCE"],
+                    reproduce3_record["scores"]["SEQUENCE"],
+                )
+                self.assertEqual(
+                    _record["scores"]["total_score"],
+                    reproduce3_record["scores"]["total_score"],
+                )
+                self.assertListEqual(
+                    _record["instance"]["seeds"],
+                    reproduce3_record["instance"]["seeds"],
+                )
+                self.assertListEqual(
+                    _record["instance"]["decoy_ids"],
+                    reproduce3_record["instance"]["decoy_ids"],
+                )
+                for key in ("author", "email", "license"):
+                    self.assertEqual(
+                        _record["instance"][key],
+                        reproduce3_record["instance"][key],
+                    )
 
 
 if __name__ == "__main__":

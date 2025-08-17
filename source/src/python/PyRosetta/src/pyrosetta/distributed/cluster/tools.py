@@ -32,6 +32,7 @@ import tempfile
 
 from datetime import datetime
 from functools import wraps
+from pyrosetta import init_from_file
 from pyrosetta.distributed.cluster.converters import _parse_protocols, _parse_yield_results
 from pyrosetta.distributed.cluster.converter_tasks import (
     get_protocols_list_of_str,
@@ -49,6 +50,7 @@ from pyrosetta.distributed.cluster.serialization import (
 )
 from pyrosetta.distributed.cluster.core import PyRosettaCluster
 from pyrosetta.distributed.packed_pose.core import PackedPose
+from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.rosetta.core.pose import Pose
 from typing import (
     Any,
@@ -438,6 +440,7 @@ def reproduce(
     instance_kwargs: Optional[Dict[Any, Any]] = None,
     clients_indices: Optional[List[int]] = None,
     resources: Optional[Dict[Any, Any]] = None,
+    init_file: Optional[str] = None,
 ) -> Optional[NoReturn]:
     """
     Given an input file that was written by PyRosettaCluster (or a full scorefile
@@ -504,11 +507,43 @@ def reproduce(
             applied, the protocols will not run. See https://distributed.dask.org/en/latest/resources.html for more
             information.
             Default: None
+        init_file: An optional `str` object specifying the path to a PyRosetta initialization '.init' file with which
+            to initialize PyRosetta on the host node if the 'input_packed_pose' keyword argument parameter is `None`.
+            Default: None
 
     Returns:
         None
     """
-
+    if init_file is not None:
+        if input_packed_pose is not None and was_init_called():
+            raise ValueError(
+                f"Cannot set a {type(input_packed_pose)} object to the 'input_packed_pose' "
+                + "keyword argument and provide a file to the 'init_file' keyword argument "
+                + "because PyRosetta is already initialized! Please run `pyrosetta.init_from_file` "
+                + "before running `reproduce()` with the 'input_packed_pose' keyword argument "
+                + "and then use `None` for the 'init_file' keyword argument parameter."
+            )
+        _tmp_dir = tempfile.TemporaryDirectory(prefix="PyRosettaCluster_reproduce_")
+        init_from_file(
+            init_file,
+            output_dir=os.path.join(_tmp_dir.name, "pyrosetta_init_files"),
+            skip_corrections=False,
+            relative_paths=False,
+            dry_run=False,
+            database=None,
+            set_logging_handler="logging",
+            notebook=None,
+            silent=False,
+        )
+    else:
+        _tmp_dir = None
+    if isinstance(input_file, str) and input_file.endswith((".pose", ".pose.bz2")) and not was_init_called():
+        raise ValueError(
+            "If providing a '.pose' or '.pose.bz2' file to the 'input_file' keyword argument parameter, "
+            + "please also provide the '.init' file from the original simulation to the 'init_file' "
+            + "keyword argument parameter, otherwise ensure `pyrosetta.init` or `pyrosetta.init_from_file` "
+            + "has been properly called before running `reproduce`."
+        )
     PyRosettaCluster(
         **toolz.dicttoolz.keyfilter(
             lambda a: a not in ["client", "clients", "input_packed_pose"],
@@ -534,6 +569,8 @@ def reproduce(
         clients_indices=clients_indices,
         resources=resources,
     )
+    if isinstance(_tmp_dir, tempfile.TemporaryDirectory):
+        _tmp_dir.cleanup()
 
 
 def produce(**kwargs: Any) -> Optional[NoReturn]:
