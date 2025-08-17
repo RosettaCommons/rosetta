@@ -815,11 +815,11 @@ class PyRosettaInitFileParser(object):
         """
         Write a PyRosetta initialization '.init' file.
 
-        This method uses the `ProtocolSettingsMetric` SimpleMetric to get Rosetta command line options and compresses any PyRosetta input files
-        (including files containing lists of files) into the output '.init' file. The Rosetta database directory is automatically excluded.
+        This method uses the `ProtocolSettingsMetric` SimpleMetric to get Rosetta command line options and compresses any PyRosetta input
+        files (including subfiles within files) into the output '.init' file. The Rosetta database directory is automatically excluded.
         Only the relative paths of any input directories (from the current working directory) are saved in the Rosetta command line options
-        (e.g., '-in:path:bcl /path/to/current/directory/bcl_rosetta' is saved as '-in:path:bcl ./bcl_rosetta'). Therefore, it may be
-        helpful to add comments to the 'metadata' keyword argument parameter about specific PyRosetta initialization requirements. PyRosetta
+        (e.g., '-in:path:bcl /path/to/current/directory/bcl_rosetta' is saved as '-in:path:bcl ./bcl_rosetta'). Therefore, it may be helpful
+        to add comments to the 'metadata' keyword argument parameter about specific PyRosetta initialization requirements. PyRosetta
         initialization input files are automatically detected and compressed into the provided 'output_filename' argument parameter,
         and so it can be useful to start with the `dry_run` keyword argument enabled to confirm that the PyRosetta input files are correct.
         Note that automatic detection of PyRosetta input files containing any spaces (e.g., ' ') in file paths or filenames is not supported.
