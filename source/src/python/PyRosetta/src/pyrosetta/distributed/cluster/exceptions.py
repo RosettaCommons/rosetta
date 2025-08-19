@@ -133,6 +133,8 @@ def trace_protocol_exceptions(func: T) -> Union[T, NoReturn]:
                 + WorkerError._get_msg(protocol_name, ignore_errors)
             )
             if ignore_errors:
+                # Return a `NoneType` object to be converted to an empty `PackedPose` object
+                # when a non-system-exiting Python exception is raised
                 result = None
             else:
                 raise
