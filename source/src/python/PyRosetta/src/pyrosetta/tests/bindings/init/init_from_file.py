@@ -246,9 +246,6 @@ def main(tmp_dir):
         as_dict=True,
     )
     init_options_reproduce = pyrosetta.get_init_options(compressed=False, as_dict=True)
-    # from pprint import pprint
-    # pprint(init_options_original)
-    # pprint(init_options_reproduce)
     for option_name, original_values in init_options_original.items():
         reproduce_values = init_options_reproduce[option_name]
         assert len(reproduce_values) == len(original_values), f"{reproduce_values} != {original_values}"
