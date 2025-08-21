@@ -23,6 +23,7 @@ from pyrosetta.distributed.cluster.toolkit import (
     produce,
     recreate_environment,
     reproduce,
+    requires_packed_pose,
     reserve_scores,
     run,
     update_scores,
@@ -43,11 +44,12 @@ __all__: List[str] = [
     "produce",
     "recreate_environment",
     "reproduce",
+    "requires_packed_pose",
     "reserve_scores",
     "run",
     "update_scores",
 ]
-__version__: str = "2.0.0"
+__version__: str = "2.1.0"
 
 _print_conda_warnings()
 

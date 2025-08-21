@@ -125,6 +125,7 @@ class SmokeTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=True,
             )
             cluster = PyRosettaCluster(**instance_kwargs)
             cluster.distribute(
@@ -189,6 +190,7 @@ class SmokeTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=False,
             )
             cluster = PyRosettaCluster(**instance_kwargs)
             cluster.distribute(protocol_with_error)
@@ -228,6 +230,7 @@ class SmokeTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=False,
             )
             cluster = PyRosettaCluster(**instance_kwargs)
             with self.assertRaises(WorkerError):
@@ -522,6 +525,7 @@ class SmokeTestMulti(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=False,
             ).distribute(
                 protocols=(
                     my_first_protocol,
@@ -616,6 +620,7 @@ class SmokeTestMulti(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=True,
             ).distribute(protocols=(my_first_protocol, my_second_protocol, my_third_protocol))
 
             cluster = PyRosettaCluster(
@@ -654,6 +659,7 @@ class SmokeTestMulti(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=True,
             )
 
             cluster.distribute(protocols=[my_first_protocol, my_second_protocol, my_third_protocol])
@@ -718,6 +724,7 @@ class SaveAllTest(unittest.TestCase):
                 save_all=True,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=True,
             )
             protocol_args = [my_pyrosetta_protocol] * _total_protocols
             cluster.distribute(*protocol_args)
@@ -795,6 +802,7 @@ class SaveAllTest(unittest.TestCase):
                 save_all=True,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=True,
             ).distribute(protocols=[my_pyrosetta_protocol] * _total_protocols)
 
             self.assertFalse(os.path.exists(os.path.join(output_path, scorefile_name)))
@@ -1001,15 +1009,14 @@ class MultipleClientsTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=False,
             )
             produce(**instance_kwargs)
 
-            for worker in cluster_1.workers.values():
-                worker.close_gracefully()
             client_1.close()
-            for worker in cluster_2.workers.values():
-                worker.close_gracefully()
+            cluster_1.close()
             client_2.close()
+            cluster_2.close()
 
 
 class ResourcesTest(unittest.TestCase):
@@ -1098,12 +1105,12 @@ class ResourcesTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=True,
             )
             produce(**instance_kwargs)
 
-            for worker in cluster.workers.values():
-                worker.close_gracefully()
             client.close()
+            cluster.close()
 
             decoy_files = glob.glob(os.path.join(output_path, decoy_dir_name, "*", "*.bz2"))
             self.assertEqual(len(decoy_files), 3)
@@ -1227,6 +1234,7 @@ class ResourcesTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                filter_results=True,
             )
             produce(**instance_kwargs)
 
@@ -1236,12 +1244,10 @@ class ResourcesTest(unittest.TestCase):
                 scores_dict = get_scores_dict(decoy_file)
                 self.assertEqual(scores_dict["scores"]["sequence"], sequence)
 
-            for worker in cluster_1.workers.values():
-                worker.close_gracefully()
             client_1.close()
-            for worker in cluster_2.workers.values():
-                worker.close_gracefully()
+            cluster_1.close()
             client_2.close()
+            cluster_2.close()
 
 
 class ScoresTest(unittest.TestCase):
@@ -1288,6 +1294,7 @@ class ScoresTest(unittest.TestCase):
             save_all=False,
             system_info=None,
             pyrosetta_build=None,
+            filter_results=True,
         )
 
     @classmethod
@@ -1510,6 +1517,7 @@ class TestBase:
             pyrosetta_build=None,
             dry_run=False,
             save_all=False,
+            filter_results=True,
         )
 
     def tearDown(self):
@@ -1915,6 +1923,7 @@ class RuntimeTest(TestBase, unittest.TestCase):
             **self.instance_kwargs,
             **setup_kwargs,
             "client": self.clients[1],
+            "simulation_name": "test_timing_multi_instance",
         }
         for k in ("protocols", "clients_indices", "resources"):
             instance_kwargs_2.pop(k, None)
