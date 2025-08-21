@@ -36,6 +36,7 @@ from datetime import datetime
 from functools import wraps
 from pyrosetta.distributed.cluster.converters import _parse_protocols, _parse_yield_results
 from pyrosetta.distributed.cluster.converter_tasks import (
+    is_empty,
     get_protocols_list_of_str,
     get_yml,
     parse_client,
@@ -445,6 +446,53 @@ def reserve_scores(func: P) -> Union[P, NoReturn]:
         _output = func(packed_pose, **kwargs)
 
         return reserve_scores_in_results(_output, _scores_dict, func.__name__)
+
+    return cast(P, wrapper)
+
+
+def requires_packed_pose(func: P) -> Union[PackedPose, None, P]:
+    """
+    Use this as a Python decorator of any user-provided PyRosetta protocol.
+    If a user-provided PyRosetta protocol requires that the first argument
+    parameter be a non-empty `PackedPose` object, then return any received empty
+    `PackedPose` objects or `NoneType` objects and skip the decorated protocol,
+    otherwise run the decorated protocol.
+
+    If using `PyRosettaCluster(filter_results=False)` and the preceding protocol
+    returns or yields either `None`, an empty `Pose` object, or an empty `PackedPose`
+    object, then an empty `PackedPose` object is distributed to the next user-provided
+    PyRosetta protocol, in which case the next protocol and/or any downstream
+    protocols are skipped if they are decorated with this decorator. If using
+    `PyRosettaCluster(ignore_errors=True)` and an error is raised in the preceding
+    protocol, then a `NoneType` object is distributed to the next user-provided
+    PyRosetta protocol, in which case the next protocol and/or any downstream
+    protocols are skipped if they are decorated with this decorator.
+
+    For example:
+
+    @requires_packed_pose
+    def my_pyrosetta_protocol(packed_pose, **kwargs):
+        assert packed_pose.pose.size() > 0
+        return packed_pose
+
+    Args:
+        A user-provided PyRosetta function.
+
+    Returns:
+        The input `packed_pose` argument parameter if it is an empty `PackedPose` object
+        or a `NoneType` object, otherwise the results from the decorated protocol.
+    """
+    @wraps(func)
+    def wrapper(packed_pose, **kwargs):
+        _msg = "User-provided PyRosetta protocol '{0}' received and is duly returning {1} object."
+        if is_empty(packed_pose):
+            logging.info(_msg.format(func.__name__, "an empty `PackedPose`"))
+            return packed_pose
+        elif packed_pose is None:
+            logging.info(_msg.format(func.__name__, "a `NoneType`"))
+            return packed_pose
+        else:
+            return func(packed_pose, **kwargs)
 
     return cast(P, wrapper)
 

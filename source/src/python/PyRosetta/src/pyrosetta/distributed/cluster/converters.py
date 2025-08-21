@@ -30,6 +30,7 @@ import os
 import pyrosetta
 import sys
 import types
+import warnings
 
 from functools import singledispatch
 from pyrosetta.distributed.cluster.converter_tasks import (
@@ -37,6 +38,7 @@ from pyrosetta.distributed.cluster.converter_tasks import (
     get_yml,
     is_bytes,
     is_dict,
+    is_empty,
     is_packed,
     parse_input_packed_pose as _parse_input_packed_pose,
     to_int,
@@ -61,6 +63,38 @@ from typing import (
 )
 
 S = TypeVar("S", bound=Serialization)
+
+
+def _parse_filter_results(obj: Any) -> Union[bool, NoReturn]:
+    """Parse the input `filter_results` attribute of PyRosettaCluster."""
+    _issue_future_warning = True
+
+    @singledispatch
+    def converter(obj: Any) -> NoReturn:
+        raise ValueError("'filter_results' must be of type `bool` or `NoneType`!")
+
+    @converter.register(type(None))
+    def _parse_none(obj: None) -> bool:
+        if _issue_future_warning:
+            warnings.warn(
+                (
+                    "As of PyRosettaCluster version 2.1.0, the 'filter_results' instance attribute "
+                    "is enabled by default, which automatically filters empty `PackedPose` objects between "
+                    "user-provided PyRosetta protocols to help reduce compute overhead. Please explicitly set "
+                    "either `filter_results=True` (the currently enabled, new setting) or `filter_results=False` "
+                    "(to revert to legacy behavior before version 2.1.0) to silence this notice. This notice "
+                    "will disappear in a future version of PyRosettaCluster."
+                ),
+                FutureWarning,
+                stacklevel=5,
+            )
+        return True
+
+    @converter.register(bool)
+    def _parse_bool(obj: bool) -> bool:
+        return obj
+
+    return converter(obj)
 
 
 def _parse_decoy_ids(objs: Any) -> List[int]:

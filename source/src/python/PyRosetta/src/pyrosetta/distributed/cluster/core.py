@@ -226,6 +226,16 @@ Args:
         It's recommended to set this option to at least 1 second, but longer times may
         be used as a safety throttle in cases of overwhelmed dask scheduler processes.
         Default: 3.0
+    filter_results: A `bool` object specifying whether or not to filter out empty
+        `PackedPose` objects between user-provided PyRosetta protocols. When a protocol
+        returns or yields `NoneType`, PyRosettaCluster converts it to an empty `PackedPose`
+        object that gets passed to the next protocol. If `True`, then filter out any empty
+        `PackedPose` objects where there are no residues in the conformation as given by
+        `Pose.empty()`, otherwise if `False` then continue to pass empty `PackedPose` objects
+        to the next protocol. This is used for filtering out decoys mid-trajectory through
+        user-provided PyRosetta protocols if protocols return or yield any `None`, empty
+        `Pose`, or empty `PackedPose` objects.
+        Default: True
     save_all: A `bool` object specifying whether or not to save all of the returned
         or yielded `Pose` and `PackedPose` objects from all user-provided
         PyRosetta protocols. This option may be used for checkpointing trajectories.
@@ -277,7 +287,9 @@ import uuid
 from datetime import datetime
 from pyrosetta.distributed.cluster.base import TaskBase, _get_residue_type_set
 from pyrosetta.distributed.cluster.converters import (
+    is_empty as _is_empty,
     _parse_decoy_ids,
+    _parse_filter_results,
     _parse_environment,
     _parse_input_packed_pose,
     _parse_logging_address,
@@ -615,6 +627,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         validator=[_validate_float, attr.validators.instance_of((float, int))],
         converter=attr.converters.default_if_none(default=3.0),
     )
+    filter_results = attr.ib(
+        type=bool,
+        default=None,
+        validator=attr.validators.instance_of(bool),
+        converter=_parse_filter_results,
+    )
     save_all = attr.ib(
         type=bool,
         default=False,
@@ -870,6 +888,8 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                             compressed_packed_pose,
                             self.serializer.deepcopy_kwargs(kwargs),
                         )
+                    if self.filter_results and _is_empty(self.serializer.decompress_packed_pose(compressed_packed_pose)):
+                        continue
                     compressed_kwargs, pyrosetta_init_kwargs, protocol, clients_index, resource = self._setup_kwargs(
                         kwargs, clients_indices, resources
                     )

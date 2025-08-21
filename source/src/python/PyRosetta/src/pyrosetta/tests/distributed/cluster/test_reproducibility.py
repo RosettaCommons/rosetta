@@ -34,11 +34,16 @@ import tempfile
 import time
 import unittest
 
-from pyrosetta.distributed.cluster import PyRosettaCluster, reserve_scores, reproduce
+from pyrosetta.distributed.cluster import (
+    PyRosettaCluster,
+    requires_packed_pose,
+    reserve_scores,
+    reproduce,
+)
 
 
 class TestReproducibility(unittest.TestCase):
-    def test_reproducibility_packer_nstruct(self):
+    def test_reproducibility_packer_nstruct(self, filter_results=False):
         """Test for PyRosettaCluster decoy reproducibility with an nstruct of 2."""
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
@@ -64,7 +69,7 @@ class TestReproducibility(unittest.TestCase):
                 pose, "SEQUENCE", pose.sequence()
             )
             self.assertEqual(type(pose), type(pyrosetta.Pose()))
-            return io.to_packed(pose)
+            return io.to_packed(pose), None, pyrosetta.Pose(), io.to_packed(pyrosetta.Pose())
 
         with tempfile.TemporaryDirectory() as workdir:
             nstruct = 2
@@ -104,12 +109,13 @@ class TestReproducibility(unittest.TestCase):
                 logs_dir_name="logs",
                 ignore_errors=True,
                 timeout=1.0,
-                max_delay_time=3.0,
                 sha1=None,
                 dry_run=False,
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                max_delay_time=0.0 if filter_results else 1.0,
+                filter_results=filter_results,
             )
 
             cluster.distribute(protocols=[my_pyrosetta_protocol])
@@ -127,7 +133,7 @@ class TestReproducibility(unittest.TestCase):
                 data[0]["instance"]["seeds"], data[1]["instance"]["seeds"]
             )
 
-    def test_reproducibility_minimizer_nstruct(self):
+    def test_reproducibility_minimizer_nstruct(self, filter_results=False):
         """Test for PyRosettaCluster decoy reproducibility with an nstruct of 2."""
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
@@ -179,6 +185,8 @@ class TestReproducibility(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                max_delay_time=0.0 if filter_results else 1.0,
+                filter_results=filter_results,
             )
 
             def my_pyrosetta_protocol(packed_pose, **kwargs):
@@ -234,7 +242,7 @@ class TestReproducibility(unittest.TestCase):
 
                 scorefxn(pose)
 
-                return pose
+                return pose, None, pyrosetta.Pose(), io.to_packed(pyrosetta.Pose())
 
             cluster.distribute(my_pyrosetta_protocol,)
 
@@ -251,7 +259,7 @@ class TestReproducibility(unittest.TestCase):
                 data[0]["instance"]["seeds"], data[1]["instance"]["seeds"]
             )
 
-    def test_reproducibility_packer_separate(self):
+    def test_reproducibility_packer_separate(self, filter_results=False):
         """
         Test for PyRosettaCluster decoy reproducibility from two
         separate PyRosettaCluster instantiations.
@@ -287,7 +295,7 @@ class TestReproducibility(unittest.TestCase):
                 pose, "SEQUENCE", pose.sequence()
             )
 
-            return pose
+            return pose, None, pyrosetta.Pose(), io.to_packed(pyrosetta.Pose())
 
         with tempfile.TemporaryDirectory() as workdir:
 
@@ -328,6 +336,8 @@ class TestReproducibility(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                max_delay_time=0.0 if filter_results else 1.0,
+                filter_results=filter_results,
             )
 
             def sample_func(packed_pose, **kwargs):
@@ -367,6 +377,8 @@ class TestReproducibility(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                max_delay_time=0.0 if filter_results else 1.0,
+                filter_results=filter_results,
             )
 
             independent_cluster_instance.distribute(sample_func)
@@ -384,9 +396,18 @@ class TestReproducibility(unittest.TestCase):
                 data[0]["instance"]["seeds"], data[1]["instance"]["seeds"]
             )
 
+    def test_reproducibility_packer_nstruct_filter_results(self, filter_results=True):
+        return self.test_reproducibility_packer_nstruct(filter_results=filter_results)
+
+    def test_reproducibility_minimizer_nstruct_filter_results(self, filter_results=True):
+        return self.test_reproducibility_minimizer_nstruct(filter_results=filter_results)
+
+    def test_reproducibility_packer_separate_filter_results(self, filter_results=True):
+        return self.test_reproducibility_packer_separate(filter_results=filter_results)
+
 
 class TestReproducibilityMulti(unittest.TestCase):
-    def test_reproducibility_packer_nstruct_multi(self):
+    def test_reproducibility_packer_nstruct_multi(self, filter_results=False):
         """
         Test for PyRosettaCluster decoy reproducibility with an nstruct of 2
          with multiple protocols.
@@ -422,15 +443,22 @@ class TestReproducibilityMulti(unittest.TestCase):
             )
             pack_rotamers.apply(pose)
 
-            return pose
+            return pose, None, pyrosetta.Pose(), io.to_packed(pyrosetta.Pose())
 
         @reserve_scores
+        @requires_packed_pose
         def my_second_protocol(packed_pose, **kwargs):
             import pyrosetta
             import pyrosetta.distributed.io as io
             from pyrosetta.rosetta.protocols.minimization_packing import (
                 PackRotamersMover,
             )
+
+            if packed_pose.pose.empty() or packed_pose is None:
+                raise ValueError(
+                    "The user-provided PyRosetta protocol is decorated with `@requires_packed_pose`."
+                )
+            assert packed_pose.pose.size() >= 1
 
             self.assertEqual(
                 dict(packed_pose.scores),
@@ -447,7 +475,7 @@ class TestReproducibilityMulti(unittest.TestCase):
             )
             pack_rotamers.apply(pose)
 
-            return pose
+            return pose, None, pyrosetta.Pose(), io.to_packed(pyrosetta.Pose())
 
         def my_third_protocol(packed_pose, **kwargs):
             import pyrosetta
@@ -455,6 +483,10 @@ class TestReproducibilityMulti(unittest.TestCase):
             from pyrosetta.rosetta.protocols.minimization_packing import (
                 PackRotamersMover,
             )
+
+            if packed_pose.pose.empty():
+                assert filter_results == False
+                return None
 
             self.assertEqual(
                 dict(packed_pose.scores),
@@ -470,7 +502,7 @@ class TestReproducibilityMulti(unittest.TestCase):
             pyrosetta.rosetta.core.pose.setPoseExtraScore(
                 pose, "SEQUENCE", pose.sequence()
             )
-            return pose
+            return pose, None, pyrosetta.Pose(), io.to_packed(pyrosetta.Pose())
 
         with tempfile.TemporaryDirectory() as workdir:
 
@@ -515,6 +547,8 @@ class TestReproducibilityMulti(unittest.TestCase):
                     save_all=False,
                     system_info=None,
                     pyrosetta_build=None,
+                    max_delay_time=0.0 if filter_results else 1.0,
+                    filter_results=filter_results,
                 ).generate(*protocols)
             )
 
@@ -531,7 +565,7 @@ class TestReproducibilityMulti(unittest.TestCase):
                 data[0]["instance"]["seeds"], data[1]["instance"]["seeds"]
             )
 
-    def test_reproducibility_packer_nstruct_multi_decoy_ids(self):
+    def test_reproducibility_packer_nstruct_multi_decoy_ids(self, filter_results=False):
         """Test for PyRosettaCluster decoy reproducibility with an nstruct of 2
         with multiple protocols and a fixed decoy_ids list."""
         pyrosetta.distributed.init(
@@ -564,14 +598,28 @@ class TestReproducibilityMulti(unittest.TestCase):
             pack_rotamers.apply(pose)
             dummy_pose = io.to_pose(io.pose_from_sequence("W" * 6))
 
-            return pose.clone(), dummy_pose.clone(), dummy_pose.clone()
+            return (
+                pose.clone(),
+                dummy_pose.clone(),
+                dummy_pose.clone(),
+                None,
+                pyrosetta.Pose(),
+                io.to_packed(pyrosetta.Pose()),
+            )
 
+        @requires_packed_pose
         def my_second_protocol(packed_pose, **kwargs):
             """In my_second_protocol, the desired decoy_id to keep is 1."""
             import pyrosetta
             import pyrosetta.distributed.io as io
             from pyrosetta.rosetta.protocols.simple_moves import VirtualRootMover
             from pyrosetta.rosetta.protocols.rosetta_scripts import XmlObjects
+
+            if packed_pose.empty() or packed_pose is None:
+                raise ValueError(
+                    "The user-provided PyRosetta protocol is decorated with `@requires_packed_pose`."
+                )
+            assert packed_pose.pose.size() >= 1
 
             pose = io.to_pose(packed_pose)
             scorefxn = pyrosetta.create_score_function("ref2015_cst.wts")
@@ -628,7 +676,14 @@ class TestReproducibilityMulti(unittest.TestCase):
             scorefxn(pose)
             dummy_pose = io.to_pose(io.pose_from_sequence("W" * 6))
 
-            return dummy_pose.clone(), pose, dummy_pose.clone()
+            return (
+                dummy_pose.clone(),
+                pose,
+                dummy_pose.clone(),
+                None,
+                pyrosetta.Pose(),
+                io.to_packed(pyrosetta.Pose()),
+            )
 
         def my_third_protocol(packed_pose, **kwargs):
             """In my_third_protocol, the desired decoy_id to keep is 2."""
@@ -637,6 +692,11 @@ class TestReproducibilityMulti(unittest.TestCase):
             from pyrosetta.rosetta.protocols.minimization_packing import (
                 PackRotamersMover,
             )
+
+            if packed_pose.empty():
+                assert packed_pose.pose.empty()
+                assert filter_results == False
+                return None
 
             pose = io.to_pose(packed_pose)
             pack_rotamers = PackRotamersMover(
@@ -697,6 +757,8 @@ class TestReproducibilityMulti(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                max_delay_time=0.0 if filter_results else 1.0,
+                filter_results=filter_results,
             ).distribute(protocols=protocols)
 
             with open(os.path.join(output_path, "scores.json"), "r") as f:
@@ -715,7 +777,7 @@ class TestReproducibilityMulti(unittest.TestCase):
                 data[0]["instance"]["decoy_ids"], data[1]["instance"]["decoy_ids"]
             )
 
-    def test_reproducibility_from_reproduce(self):
+    def test_reproducibility_from_reproduce(self, filter_results=False):
         """Test for PyRosettaCluster decoy reproducibility from instance kwargs."""
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
@@ -747,7 +809,14 @@ class TestReproducibilityMulti(unittest.TestCase):
             pack_rotamers.apply(pose)
             dummy_pose = io.to_pose(io.pose_from_sequence("W" * 6))
 
-            return pose.clone(), dummy_pose.clone(), dummy_pose.clone()
+            return (
+                pose.clone(),
+                dummy_pose.clone(),
+                None,
+                pyrosetta.Pose(),
+                io.to_packed(pyrosetta.Pose()),
+                dummy_pose.clone(),
+            )
 
         def my_second_protocol(packed_pose, **kwargs):
             """In my_second_protocol, the desired decoy_id to keep is 1."""
@@ -755,6 +824,10 @@ class TestReproducibilityMulti(unittest.TestCase):
             import pyrosetta.distributed.io as io
             from pyrosetta.rosetta.protocols.simple_moves import VirtualRootMover
             from pyrosetta.rosetta.protocols.rosetta_scripts import XmlObjects
+
+            if packed_pose.pose.empty():
+                assert filter_results == False
+                return None
 
             pose = io.to_pose(packed_pose)
             scorefxn = pyrosetta.create_score_function("ref2015_cst.wts")
@@ -811,8 +884,16 @@ class TestReproducibilityMulti(unittest.TestCase):
             scorefxn(pose)
             dummy_pose = io.to_pose(io.pose_from_sequence("W" * 6))
 
-            return dummy_pose.clone(), pose, dummy_pose.clone()
+            return (
+                dummy_pose.clone(),
+                pose,
+                dummy_pose.clone(),
+                None,
+                pyrosetta.Pose(),
+                io.to_packed(pyrosetta.Pose()),
+            )
 
+        @requires_packed_pose
         def my_third_protocol(packed_pose, **kwargs):
             """In my_third_protocol, the desired decoy_id to keep is 2."""
             import pyrosetta
@@ -820,6 +901,12 @@ class TestReproducibilityMulti(unittest.TestCase):
             from pyrosetta.rosetta.protocols.minimization_packing import (
                 PackRotamersMover,
             )
+
+            if packed_pose.pose.empty() or packed_pose is None:
+                raise ValueError(
+                    "The user-provided PyRosetta protocol is decorated with `@requires_packed_pose`."
+                )
+            assert packed_pose.pose.size() >= 1
 
             pose = io.to_pose(packed_pose)
             pack_rotamers = PackRotamersMover(
@@ -881,6 +968,8 @@ class TestReproducibilityMulti(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                max_delay_time=0.0 if filter_results else 1.0,
+                filter_results=filter_results,
             ).distribute(*protocols)
 
             scorefile_path = os.path.join(output_path, scorefile_name)
@@ -971,6 +1060,15 @@ class TestReproducibilityMulti(unittest.TestCase):
                 reproduce_record["instance"]["decoy_ids"],
                 reproduce2_record["instance"]["decoy_ids"],
             )
+
+    def test_reproducibility_packer_nstruct_multi_filter_results(self):
+        return self.test_reproducibility_packer_nstruct_multi(filter_results=True)
+
+    def test_reproducibility_packer_nstruct_multi_decoy_ids_filter_results(self):
+        return self.test_reproducibility_packer_nstruct_multi_decoy_ids(filter_results=True)
+
+    def test_reproducibility_from_reproduce_filter_results(self):
+        return self.test_reproducibility_from_reproduce(filter_results=True)
 
 
 class TestReproducibilityPoseDataFrame(unittest.TestCase):
