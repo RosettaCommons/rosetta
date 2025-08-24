@@ -21,6 +21,7 @@ from pyrosetta.distributed.cluster.tools import (
     produce,
     recreate_environment,
     reproduce,
+    requires_packed_pose,
     reserve_scores,
     run,
     update_scores,
