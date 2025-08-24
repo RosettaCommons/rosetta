@@ -45,12 +45,16 @@ def get_protocols(*protocol_names):
 
 def main(input_file, scorefile_name, init_file, sequence):
     """Reproduce decoy from .pdb.bz2 file with a '.init' file."""
+    skip_corrections = False
     with tempfile.TemporaryDirectory() as tmp_dir:
         # Initialize PyRosetta on the host node before instantiating `input_pose`
         init_from_file(
             init_file, 
             output_dir=os.path.join(tmp_dir, "init_files"),
             dry_run=False,
+            skip_corrections=skip_corrections,
+            relative_paths=True,
+            max_decompressed_bytes=100_000,
             database=None,
             set_logging_handler="logging",
             notebook=None,
@@ -76,7 +80,7 @@ def main(input_file, scorefile_name, init_file, sequence):
                 "init_file": os.path.join(tmp_dir, "pyrosetta.init"), # Test `dump_init_file` with custom path
             },
             init_file=None, # Skip `init_from_file` since 'input_packed_pose' is provided
-            skip_corrections=False,
+            skip_corrections=skip_corrections,
         )
 
 
