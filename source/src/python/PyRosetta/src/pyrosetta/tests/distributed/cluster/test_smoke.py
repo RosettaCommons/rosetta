@@ -840,11 +840,8 @@ class SaveAllTest(unittest.TestCase):
                 save_all=True,
                 system_info=None,
                 pyrosetta_build=None,
-<<<<<<< HEAD
                 init_file=init_file,
-=======
                 filter_results=True,
->>>>>>> e842d23e18c6567d76c5ad2f2a8ab2de03c893ad
             ).distribute(protocols=[my_pyrosetta_protocol] * _total_protocols)
 
             self.assertFalse(os.path.exists(os.path.join(output_path, scorefile_name)))
