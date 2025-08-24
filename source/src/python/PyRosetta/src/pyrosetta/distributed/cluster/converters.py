@@ -145,7 +145,7 @@ def _parse_empty_queue(protocol_name: str, ignore_errors: bool) -> None:
     return None
 
 
-def _parse_environment(obj: Any) -> str:
+def _parse_environment(obj: Any) -> Union[str, NoReturn]:
     """Parse the input `environment` attribute of PyRosettaCluster."""
 
     @singledispatch
@@ -195,7 +195,7 @@ def _parse_environment(obj: Any) -> str:
     return converter(obj)
 
 
-def _parse_protocols(objs: Any) -> List[Union[Callable[..., Any], Iterable[Any]]]:
+def _parse_protocols(objs: Any) -> Union[List[Union[Callable[..., Any], Iterable[Any]]], NoReturn]:
     """
     Parse the `protocols` argument parameters from the PyRosettaCluster().distribute() method.
     """
@@ -236,7 +236,7 @@ def _parse_protocols(objs: Any) -> List[Union[Callable[..., Any], Iterable[Any]]
     return converter(objs)
 
 
-def _parse_yield_results(yield_results: Any) -> bool:
+def _parse_yield_results(yield_results: Any) -> Union[bool, NoReturn]:
     @singledispatch
     def converter(objs: Any) -> NoReturn:
         raise ValueError("'yield_results' parameter must be of type `bool`.")
@@ -258,7 +258,7 @@ def _parse_yield_results(yield_results: Any) -> bool:
     return converter(yield_results)
 
 
-def _parse_pyrosetta_build(obj: Any) -> str:
+def _parse_pyrosetta_build(obj: Any) -> Union[str, NoReturn]:
     """Parse the PyRosetta build string."""
 
     _pyrosetta_version_string = pyrosetta._version_string()
@@ -287,7 +287,7 @@ def _parse_pyrosetta_build(obj: Any) -> str:
     return converter(obj)
 
 
-def _parse_scratch_dir(obj: Any) -> str:
+def _parse_scratch_dir(obj: Any) -> Union[str, NoReturn]:
     """Parse the input `scratch_dir` attribute of PyRosettaCluster."""
 
     @singledispatch
@@ -320,7 +320,7 @@ def _parse_seeds(objs: Any) -> List[str]:
     return to_iterable(objs, to_str, "seeds")
 
 
-def _parse_sha1(obj: Any) -> str:
+def _parse_sha1(obj: Any) -> Union[str, NoReturn]:
     """Parse the input `sha1` attribute of PyRosettaCluster."""
 
     @singledispatch
@@ -391,7 +391,7 @@ def _parse_sha1(obj: Any) -> str:
     return converter(obj)
 
 
-def _parse_system_info(obj: Any) -> Dict[Any, Any]:
+def _parse_system_info(obj: Any) -> Union[Dict[Any, Any], NoReturn]:
     """Parse the input `system_info` attribute of PyRosettaCluster."""
 
     _sys_platform = {"sys.platform": sys.platform}
