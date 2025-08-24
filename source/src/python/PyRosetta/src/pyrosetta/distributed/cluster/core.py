@@ -227,6 +227,13 @@ Args:
     dry_run: A `bool` object specifying whether or not to save '.pdb' files to
         disk. If `True`, then do not write '.pdb' or '.pdb.bz2' files to disk.
         Default: False
+    norm_task_options: A `bool` object specifying whether or not to normalize the task
+        'options' and 'extra_options' values after PyRosetta initialization on the remote
+        compute cluster. If `True`, this enables more facile simulation reproduction by the
+        use of the `ProtocolSettingsMetric` SimpleMetric to standardize the PyRosetta
+        initialization options and by setting any input paths as relative to the directory
+        from which the simulation is running.
+        Default: True
     init_file: A `str` object specifying the output '.init' file path. If a `NoneType`
         object (or an empty `str` object ('')) is provided, or `dry_run=True`, then skip
         writing an output '.init' file upon PyRosettaCluster instantiation. If skipped,

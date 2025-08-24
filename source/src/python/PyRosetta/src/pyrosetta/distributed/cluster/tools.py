@@ -304,7 +304,7 @@ def get_instance_kwargs(
                         )
                 else:
                     raise TypeError(
-                        f"PyRosettaCluster task key '{option}' must have value of type `dict` or `str`. "
+                        f"PyRosettaCluster task key '{option}' must have a value of type `dict` or `str`. "
                         + f"Received: {type(instance_kwargs['tasks'][option])}"
                     )
 
@@ -520,7 +520,7 @@ def reproduce(
     clients_indices: Optional[List[int]] = None,
     resources: Optional[Dict[Any, Any]] = None,
     init_file: Optional[str] = None,
-    skip_corrections: Optional[bool] = None,
+    skip_corrections: bool = False,
 ) -> Optional[NoReturn]:
     """
     Given an input file that was written by PyRosettaCluster (or a full scorefile
@@ -591,11 +591,11 @@ def reproduce(
             to initialize PyRosetta on the host node if the 'input_packed_pose' keyword argument parameter is `None`.
             Default: None
         skip_corrections: A `bool` object specifying whether or not to skip any ScoreFunction corrections specified in
-            the PyRosettaCluster task 'options' or 'extra_options' keys (extracted from either the 'input_file' or
+            the PyRosettaCluster task 'options' or 'extra_options' values (extracted from either the 'input_file' or
             'scorefile' keyword argument parameter) and in the input PyRosetta initialization file (from the 'init_file'
             parameter, if provided), which are set in-code upon PyRosetta initialization. If the current PyRosetta build
             and conda environment are identical to those used for the original simulation, this parameter may be set to
-            `True` to enable the `reproduce` function results to be used for further simulation reproductions.
+            `True` to enable the reproduced output results to be used for successive reproductions.
             Default: False
 
     Returns:
@@ -631,7 +631,8 @@ def reproduce(
             "If providing a '.pose' or '.pose.bz2' file to the 'input_file' keyword argument parameter, "
             + "please also provide the '.init' file from the original simulation to the 'init_file' "
             + "keyword argument parameter, otherwise ensure `pyrosetta.init` or `pyrosetta.init_from_file` "
-            + "has been properly called before running `reproduce`."
+            + "has been properly called (with the same residue type set as that used to generate the "
+            + "original '.pose' or '.pose.bz2' file) before running `reproduce`."
         )
     PyRosettaCluster(
         **toolz.dicttoolz.keyfilter(
