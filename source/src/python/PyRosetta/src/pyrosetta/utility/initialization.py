@@ -394,7 +394,7 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         else:
             print(f"Dumping PyRosetta '.init' file to: {self.output_filename}")
         if len(self.cached_files) > 0:
-            print("Compressed {0} PyRosetta initialization input files:".format(len(self.cached_files)))
+            print("Compressed {0} PyRosetta initialization input file(s):".format(len(self.cached_files)))
             for file in self.cached_files:
                 print(os.path.relpath(file, start=os.curdir))
         else:
