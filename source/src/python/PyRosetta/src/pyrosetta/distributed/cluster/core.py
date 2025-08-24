@@ -277,6 +277,7 @@ from pyrosetta.distributed.cluster.converters import (
     _parse_environment,
     _parse_input_packed_pose,
     _parse_logging_address,
+    _parse_norm_task_options,
     _parse_pyrosetta_build,
     _parse_scratch_dir,
     _parse_seeds,
@@ -595,6 +596,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         validator=attr.validators.instance_of(bool),
         converter=attr.converters.default_if_none(False),
     )
+    norm_task_options = attr.ib(
+        type=bool,
+        default=False,
+        validator=attr.validators.instance_of(bool),
+        converter=_parse_norm_task_options,
+    )
     yield_results = attr.ib(
         type=bool,
         init=False,
@@ -821,12 +828,15 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
         socket_listener_address, passkey = self._setup_socket_listener(clients)
         client_residue_type_set = _get_residue_type_set()
+        simulation_dir = os.getcwd()
         extra_args = dict(
             decoy_ids=self.decoy_ids,
             protocols_key=self.protocols_key,
             timeout=self.timeout,
             ignore_errors=self.ignore_errors,
             datetime_format=self.DATETIME_FORMAT,
+            norm_task_options=self.norm_task_options,
+            simulation_dir=simulation_dir,
             compression=self.compression,
             max_delay_time=self.max_delay_time,
             logging_level=self.logging_level,

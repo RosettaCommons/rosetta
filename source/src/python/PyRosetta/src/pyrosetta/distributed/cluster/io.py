@@ -82,11 +82,6 @@ class IO(Generic[G]):
             if i.name == "input_packed_pose":
                 instance_kwargs.pop(i.name, None)
         instance_kwargs["tasks"] = kwargs.pop("task")
-        for option in ["extra_options", "options"]:
-            if option in instance_kwargs["tasks"]:
-                instance_kwargs["tasks"][option] = pyrosetta.distributed._normflags(
-                    instance_kwargs["tasks"][option]
-                )
         instance_kwargs["seeds"] = kwargs.pop("seeds")
         instance_kwargs["decoy_ids"] = kwargs.pop("decoy_ids")
 

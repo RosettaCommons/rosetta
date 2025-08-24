@@ -61,6 +61,7 @@ from typing import (
     NoReturn,
     Optional,
     Tuple,
+    Type,
     TypeVar,
     Union,
     cast,
@@ -205,6 +206,7 @@ def get_instance_kwargs(
     input_file: Optional[str] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
+    skip_corrections: Optional[bool] = None,
 ) -> Union[Dict[str, Any], NoReturn]:
     """
     Given an input file that was written by PyRosettaCluster, or a scorefile
@@ -213,7 +215,7 @@ def get_instance_kwargs(
 
     Args:
         input_file: A `str` object specifying the path to the '.pdb' or '.pdb.bz2'
-            file from which to extract PyRosettaCluster instance kwargs. If input_file
+            file from which to extract PyRosettaCluster instance kwargs. If 'input_file'
             is provided, then ignore the 'scorefile' and 'decoy_name' argument parameters.
             Default: None
         scorefile: A `str` object specifying the path to the JSON-formatted scorefile
@@ -225,6 +227,10 @@ def get_instance_kwargs(
         decoy_name: A `str` object specifying the decoy name for which to extract
             PyRosettaCluster instance kwargs. If 'decoy_name' is provided, 'scorefile'
             must also be provided.
+            Default: None
+        skip_corrections: A `bool` object specifying whether or not to skip any ScoreFunction
+            corrections specified in the PyRosettaCluster task initialization options
+            (extracted from the 'input_file' or 'scorefile' keyword argument parameter).
             Default: None
 
     Returns:
@@ -275,6 +281,31 @@ def get_instance_kwargs(
     assert isinstance(
         instance_kwargs, dict
     ), "Returned instance_kwargs were not of type `dict`."
+
+    if skip_corrections:
+        assert isinstance(
+            instance_kwargs["tasks"], dict
+        ), "PyRosettaCluster 'tasks' keyword argument parameter must be an instance of `dict`."
+        for option in ("extra_options", "options"):
+            if option in instance_kwargs["tasks"]:
+                if isinstance(instance_kwargs["tasks"][option], dict):
+                    instance_kwargs["tasks"][option] = toolz.dicttoolz.keyfilter(
+                        lambda k: not k.startswith(("corrections:", "-corrections:")),
+                        instance_kwargs["tasks"][option],
+                    )
+                elif isinstance(instance_kwargs["tasks"][option], str):
+                    if "corrections:" in instance_kwargs["tasks"][option]:
+                        raise NotImplementedError(
+                            "Cannot skip ScoreFunction corrections because the original simulation did not output "
+                            + "PyRosettaCluster results with normalized PyRosetta initialization options or configure "
+                            + "the PyRosetta initialization options as an instance of `dict`. Please disable the "
+                            + "'skip_corrections' keyword argument to continue with the reproduction."
+                        )
+                else:
+                    raise TypeError(
+                        f"PyRosettaCluster task key '{option}' must have value of type `dict` or `str`. "
+                        + f"Received: {type(instance_kwargs['tasks'][option])}"
+                    )
 
     return instance_kwargs
 
@@ -441,6 +472,7 @@ def reproduce(
     clients_indices: Optional[List[int]] = None,
     resources: Optional[Dict[Any, Any]] = None,
     init_file: Optional[str] = None,
+    skip_corrections: Optional[bool] = None,
 ) -> Optional[NoReturn]:
     """
     Given an input file that was written by PyRosettaCluster (or a full scorefile
@@ -510,10 +542,19 @@ def reproduce(
         init_file: An optional `str` object specifying the path to a PyRosetta initialization '.init' file with which
             to initialize PyRosetta on the host node if the 'input_packed_pose' keyword argument parameter is `None`.
             Default: None
+        skip_corrections: A `bool` object specifying whether or not to skip any ScoreFunction corrections specified in
+            the PyRosettaCluster task 'options' or 'extra_options' keys (extracted from either the 'input_file' or
+            'scorefile' keyword argument parameter) and in the input PyRosetta initialization file (from the 'init_file'
+            parameter, if provided), which are set in-code upon PyRosetta initialization. If the current PyRosetta build
+            and conda environment are identical to those used for the original simulation, this parameter may be set to
+            `True` to enable the `reproduce` function results to be used for further simulation reproductions.
+            Default: False
 
     Returns:
         None
     """
+    if not isinstance(skip_corrections, bool):
+        raise TypeError("The 'skip_corrections' keyword argument parameter must be of type `bool`.")
     if init_file is not None:
         if input_packed_pose is not None and was_init_called():
             raise ValueError(
@@ -527,7 +568,7 @@ def reproduce(
         init_from_file(
             init_file,
             output_dir=os.path.join(_tmp_dir.name, "pyrosetta_init_files"),
-            skip_corrections=False,
+            skip_corrections=skip_corrections,
             relative_paths=False,
             dry_run=False,
             database=None,
@@ -552,6 +593,7 @@ def reproduce(
                     input_file=input_file,
                     scorefile=scorefile,
                     decoy_name=decoy_name,
+                    skip_corrections=skip_corrections,
                 ),
                 parse_instance_kwargs(instance_kwargs),
             ),

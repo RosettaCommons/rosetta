@@ -26,11 +26,11 @@ try:
     from test_reproducibility import TestReproducibilityMulti
 except ImportError as ex:
     raise ImportError(ex)
+test_suite = globals().get("TestReproducibilityMulti")
 
 
 def get_protocols(*protocol_names):
     """Get original user-provided PyRosetta protocols from source code."""
-    test_suite = globals().get("TestReproducibilityMulti")
     test_case = test_suite.test_reproducibility_from_reproduce
     source_code = textwrap.dedent(inspect.getsource(test_case))
     source_code_lines = source_code.splitlines()
@@ -41,6 +41,7 @@ def get_protocols(*protocol_names):
     protocols = list(map(_locals.get, protocol_names))
 
     return protocols
+
 
 def main(input_file, scorefile_name, init_file, sequence):
     """Reproduce decoy from .pdb.bz2 file with a '.init' file."""
@@ -75,7 +76,9 @@ def main(input_file, scorefile_name, init_file, sequence):
                 "init_file": os.path.join(tmp_dir, "pyrosetta.init"), # Test `dump_init_file` with custom path
             },
             init_file=None, # Skip `init_from_file` since 'input_packed_pose' is provided
+            skip_corrections=False,
         )
+
 
 if __name__ == "__main__":
     print("Running: {0}".format(__file__))

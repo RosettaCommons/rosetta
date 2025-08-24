@@ -20,6 +20,7 @@ except ImportError:
     )
     raise
 
+import os
 import pyrosetta
 import pyrosetta.distributed
 
@@ -189,6 +190,24 @@ class TaskBase(Generic[G]):
         return _protocols, _protocol, _seed, _clients_index, _resource
 
 
+def get_norm_task_options(simulation_dir: str) -> Dict[str, str]:
+    """Get normalized PyRosetta initialization options."""
+
+    start = os.path.abspath(simulation_dir)
+    relpath = toolz.functoolz.curry(os.path.relpath)(start=start)
+    abspath = lambda v: v if os.path.isabs(v) else os.path.join(start, v)
+    normpath = lambda v: relpath(abspath(v)) if os.path.exists(abspath(v)) else v
+    to_normpath = toolz.functoolz.curry(map)(normpath)
+
+    return toolz.dicttoolz.valmap(
+        toolz.functoolz.compose_left(to_normpath, " ".join),
+        toolz.dicttoolz.keyfilter(
+            lambda k: k not in ("in:path:database", "run:constant_seed", "run:jran"),
+            pyrosetta.get_init_options(compressed=False, as_dict=True),
+        ),
+    )
+
+
 def capture_task_metadata(func: M) -> M:
     """Capture a task's metadata as kwargs."""
 
@@ -198,6 +217,8 @@ def capture_task_metadata(func: M) -> M:
         protocol: Callable[..., Any],
         packed_pose: PackedPose,
         datetime_format: str,
+        norm_task_options: bool,
+        simulation_dir: str,
         ignore_errors: bool,
         protocols_key: str,
         decoy_ids: List[int],
@@ -222,12 +243,24 @@ def capture_task_metadata(func: M) -> M:
             kwargs["PyRosettaCluster_seeds"] = []
         kwargs["PyRosettaCluster_seeds"].append((protocol_name, str(seed)))
         kwargs["PyRosettaCluster_seed"] = seed
+        if norm_task_options:
+            options = get_norm_task_options(simulation_dir)
+            if "extra_options" in kwargs["PyRosettaCluster_task"]:
+                kwargs["PyRosettaCluster_task"]["extra_options"] = options
+                if "options" in kwargs["PyRosettaCluster_task"]:
+                    kwargs["PyRosettaCluster_task"]["options"] = ""
+            elif "options" in kwargs["PyRosettaCluster_task"]:
+                kwargs["PyRosettaCluster_task"]["options"] = options
+            else:
+                kwargs["PyRosettaCluster_task"]["extra_options"] = options
 
         return func(
             protocol_name,
             protocol,
             packed_pose,
             datetime_format,
+            norm_task_options,
+            simulation_dir,
             ignore_errors,
             protocols_key,
             decoy_ids,

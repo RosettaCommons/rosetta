@@ -17,6 +17,7 @@ import os
 import pyrosetta
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
+import shlex
 import subprocess
 import sys
 import tempfile
@@ -705,15 +706,17 @@ class TestReproducibilityMulti(unittest.TestCase):
 
     def test_reproducibility_from_reproduce(self):
         """Test for PyRosettaCluster decoy reproducibility from instance kwargs."""
+        params_file = os.path.join(os.path.dirname(__file__), "data", "ZZZ.params")
+        self.assertTrue(os.path.isfile(params_file), msg=f"File does not exist: {params_file}")
         pyrosetta.distributed.init(
-            options="-run:constant_seed 1 -multithreading:total_threads 1",
+            options=f"-run:constant_seed 1 -multithreading:total_threads 1 -extra_res_fa {params_file}",
             extra_options="-out:level 300",
             set_logging_handler="logging",
         )
 
         def create_tasks():
             yield {
-                "options": "-ex1",
+                "options": f"-ex1 -extra_res_fa {params_file}",
                 "extra_options": "-out:level 300 -multithreading:total_threads 1",
                 "set_logging_handler": "logging",
             }
@@ -824,6 +827,15 @@ class TestReproducibilityMulti(unittest.TestCase):
                 )
                 yield p
 
+        def run_subprocess(cmd):
+            print("Running command:", cmd)
+            sys.path.insert(0, os.path.dirname(__file__))
+            p = subprocess.run(shlex.split(cmd), check=True, shell=False)
+            sys.path.pop(0)
+            print("Return code: {0}".format(p.returncode))
+
+            return p
+
         with tempfile.TemporaryDirectory() as workdir:
             sequence = "ACDEFGHIKLMNPQRSTVWY"
             output_path = os.path.join(workdir, "outputs")
@@ -872,6 +884,7 @@ class TestReproducibilityMulti(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                norm_task_options=True,
                 author=author,
                 email=email,
                 license=license,
@@ -898,6 +911,7 @@ class TestReproducibilityMulti(unittest.TestCase):
                     "init_file": None, # Skip `dump_init_file`
                 },
                 init_file=None, # Skip `init_from_file` since PyRosetta is initialized
+                skip_corrections=True,
             )
 
             reproduce_scorefile_path = os.path.join(
@@ -948,6 +962,7 @@ class TestReproducibilityMulti(unittest.TestCase):
                     "init_file": "", # Skip `dump_init_file`
                 },
                 init_file=None, # Skip `init_from_file` since PyRosetta is initialized
+                skip_corrections=True,
             )
 
             reproduce2_scorefile_path = os.path.join(
@@ -986,16 +1001,15 @@ class TestReproducibilityMulti(unittest.TestCase):
             init_file = original_record["metadata"]["init_file"]
             self.assertTrue(os.path.isfile(init_file))
             test_script = os.path.join(os.path.dirname(__file__), "reproduce_from_init_file.py")
-            cmd = "{0} {1} --input_file {2} --scorefile_name {3} --init_file {4} --sequence {5}".format(
+            cmd = "{0} -m {1} --input_file '{2}' --scorefile_name '{3}' --init_file '{4}' --sequence '{5}'".format(
                 sys.executable,
-                test_script,
+                os.path.splitext(os.path.basename(test_script))[0],
                 original_record["metadata"]["output_file"],
                 reproduce3_scorefile_name,
                 init_file,
                 sequence,
             )
-            p = subprocess.run(cmd, shell=True)
-            print("Return code: {0}".format(p.returncode))
+            p = run_subprocess(cmd)
             self.assertEqual(p.returncode, 0, msg=f"Test script failed: {test_script}")
 
             reproduce3_scorefile_path = os.path.join(
