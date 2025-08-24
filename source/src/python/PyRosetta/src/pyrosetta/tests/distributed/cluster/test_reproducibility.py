@@ -103,6 +103,7 @@ class TestReproducibility(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                norm_task_options=True,
                 max_delay_time=0.0 if filter_results else 1.0,
                 filter_results=filter_results,
             )
@@ -174,6 +175,7 @@ class TestReproducibility(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                norm_task_options=True,
                 max_delay_time=0.0 if filter_results else 1.0,
                 filter_results=filter_results,
             )
@@ -325,6 +327,7 @@ class TestReproducibility(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                norm_task_options=True,
                 max_delay_time=0.0 if filter_results else 1.0,
                 filter_results=filter_results,
             )
@@ -366,6 +369,7 @@ class TestReproducibility(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                norm_task_options=True,
                 max_delay_time=0.0 if filter_results else 1.0,
                 filter_results=filter_results,
             )
@@ -536,6 +540,7 @@ class TestReproducibilityMulti(unittest.TestCase):
                     save_all=False,
                     system_info=None,
                     pyrosetta_build=None,
+                    norm_task_options=True,
                     max_delay_time=0.0 if filter_results else 1.0,
                     filter_results=filter_results,
                 ).generate(*protocols)
@@ -746,6 +751,7 @@ class TestReproducibilityMulti(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                norm_task_options=True,
                 max_delay_time=0.0 if filter_results else 1.0,
                 filter_results=filter_results,
             ).distribute(protocols=protocols)

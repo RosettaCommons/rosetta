@@ -126,6 +126,7 @@ class SmokeTest(unittest.TestCase):
                 system_info=None,
                 pyrosetta_build=None,
                 filter_results=True,
+                norm_task_options=False,
             )
             cluster = PyRosettaCluster(**instance_kwargs)
             cluster.distribute(
@@ -621,6 +622,7 @@ class SmokeTestMulti(unittest.TestCase):
                 system_info=None,
                 pyrosetta_build=None,
                 filter_results=True,
+                norm_task_options=True,
             ).distribute(protocols=(my_first_protocol, my_second_protocol, my_third_protocol))
 
             cluster = PyRosettaCluster(
@@ -660,6 +662,7 @@ class SmokeTestMulti(unittest.TestCase):
                 system_info=None,
                 pyrosetta_build=None,
                 filter_results=True,
+                norm_task_options=True,
             )
 
             cluster.distribute(protocols=[my_first_protocol, my_second_protocol, my_third_protocol])
@@ -733,6 +736,7 @@ class SaveAllTest(unittest.TestCase):
                 email=email,
                 license=license,
                 filter_results=True,
+                norm_task_options=True,
             )
             protocol_args = [my_pyrosetta_protocol] * _total_protocols
             cluster.distribute(*protocol_args)
@@ -842,6 +846,7 @@ class SaveAllTest(unittest.TestCase):
                 pyrosetta_build=None,
                 init_file=init_file,
                 filter_results=True,
+                norm_task_options=True,
             ).distribute(protocols=[my_pyrosetta_protocol] * _total_protocols)
 
             self.assertFalse(os.path.exists(os.path.join(output_path, scorefile_name)))
@@ -1146,6 +1151,7 @@ class ResourcesTest(unittest.TestCase):
                 system_info=None,
                 pyrosetta_build=None,
                 filter_results=True,
+                norm_task_options=True,
             )
             produce(**instance_kwargs)
 
@@ -1275,6 +1281,7 @@ class ResourcesTest(unittest.TestCase):
                 system_info=None,
                 pyrosetta_build=None,
                 filter_results=True,
+                norm_task_options=True,
             )
             produce(**instance_kwargs)
 
@@ -1335,6 +1342,7 @@ class ScoresTest(unittest.TestCase):
             system_info=None,
             pyrosetta_build=None,
             filter_results=True,
+            norm_task_options=True,
         )
 
     @classmethod
@@ -1558,6 +1566,7 @@ class TestBase:
             dry_run=False,
             save_all=False,
             filter_results=True,
+            norm_task_options=True,
         )
 
     def tearDown(self):
