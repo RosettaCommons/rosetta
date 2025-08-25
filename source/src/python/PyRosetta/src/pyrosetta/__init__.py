@@ -37,6 +37,7 @@ except:
     pass
 
 from pyrosetta.toolbox import etable_atom_pair_energies, PyJobDistributor
+from pyrosetta.utility.initialization import PyRosettaInitFileParser
 
 # PyRosetta-3 comapatability
 # WARNING WARNING WARNING: do not add anything extra imports/names here! If you feel strongly that something needs to be added please contact author first!
@@ -210,6 +211,11 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
     rosetta.protocols.init.init(v)
     pyrosetta.protocols.h5_fragment_store_provider.init_H5FragmentStoreProvider()
     pyrosetta.protocols.h5_structure_store_provider.init_H5StructureStoreProvider()
+
+init_from_file = PyRosettaInitFileParser.init_from_file
+dump_init_file = PyRosettaInitFileParser.dump_init_file
+get_init_options_from_file = PyRosettaInitFileParser.get_init_options_from_file
+get_init_options = PyRosettaInitFileParser.get_init_options
 
 # FIXME: create 'version' struct in utility instead
 def _version_string():
