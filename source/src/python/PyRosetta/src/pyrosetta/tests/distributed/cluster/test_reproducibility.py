@@ -1006,7 +1006,7 @@ class TestReproducibilityMulti(unittest.TestCase):
                     "init_file": None, # Skip `dump_init_file`
                 },
                 init_file=None, # Skip `init_from_file` since PyRosetta is initialized
-                skip_corrections=True,
+                skip_corrections=True, # Skip corrections to reuse results for reproduction
             )
 
             reproduce_scorefile_path = os.path.join(
@@ -1057,7 +1057,7 @@ class TestReproducibilityMulti(unittest.TestCase):
                     "init_file": "", # Skip `dump_init_file`
                 },
                 init_file=None, # Skip `init_from_file` since PyRosetta is initialized
-                skip_corrections=True,
+                skip_corrections=True, # Skip corrections to reuse results for reproduction
             )
 
             reproduce2_scorefile_path = os.path.join(
@@ -1090,6 +1090,15 @@ class TestReproducibilityMulti(unittest.TestCase):
                         _record["instance"][key],
                         reproduce2_record["instance"][key],
                     )
+
+            # Test raised exceptions
+            with self.assertRaises(TypeError):
+                reproduce(skip_corrections=None)
+            with self.assertRaises(ValueError):
+                reproduce(
+                    input_packed_pose=input_pose,
+                    init_file=original_record["metadata"]["init_file"],
+                )
 
             # Reproduce decoy from .pdb.bz2 file with a .init file
             reproduce3_scorefile_name = "reproduce_test_scores_init_file.json"

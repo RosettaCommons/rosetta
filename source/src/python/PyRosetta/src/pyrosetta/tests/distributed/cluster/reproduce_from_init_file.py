@@ -45,7 +45,7 @@ def get_protocols(*protocol_names):
 
 def main(input_file, scorefile_name, init_file, sequence):
     """Reproduce decoy from .pdb.bz2 file with a '.init' file."""
-    skip_corrections = False
+    skip_corrections = False # Do not skip corrections since not using results for another reproduction
     with tempfile.TemporaryDirectory() as tmp_dir:
         # Initialize PyRosetta on the host node before instantiating `input_pose`
         init_from_file(
