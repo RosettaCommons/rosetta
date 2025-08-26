@@ -306,10 +306,10 @@ class IO(Generic[G]):
     def _write_init_file(self, filename: str) -> None:
         """Write compressed PyRosetta initialization input files to the input filename."""
         if filename != "":
-            logger_stdout = RedirectToLogger(logging.INFO)
-            logger_stderr = RedirectToLogger(logging.ERROR)
-            try:
-                with redirect_stdout(logger_stdout), redirect_stderr(logger_stderr):
+            out = RedirectToLogger(logging.INFO)
+            err = RedirectToLogger(logging.ERROR)
+            with redirect_stdout(out), redirect_stderr(err):
+                try:
                     dump_init_file(
                         filename,
                         author=self.author,
@@ -324,13 +324,13 @@ class IO(Generic[G]):
                         dry_run=self.dry_run,
                         verbose=True,
                     )
-                logger_stdout.flush()
-                logger_stderr.flush()
-                logging.debug("Successfully ran `pyrosetta.dump_init_file` on the host node.")
-            except BaseException as ex:
-                logging.error(
-                    f"{type(ex).__name__}: {ex}. `pyrosetta.dump_init_file` did not run successfully, "
-                    + "so PyRosetta initialization input data may not be saved! It is recommended to run "
-                    + "`pyrosetta.dump_init_file` to reproduce PyRosetta initialization options on the "
-                    + "host node later."
-                )
+                    logging.debug("Successfully ran `pyrosetta.dump_init_file` on the host node.")
+                except BaseException as ex:
+                    logging.error(
+                        f"{type(ex).__name__}: {ex}. `pyrosetta.dump_init_file` did not run successfully, "
+                        + "so PyRosetta initialization input data may not be saved! It is recommended to run "
+                        + "`pyrosetta.dump_init_file` to reproduce PyRosetta initialization options on the "
+                        + "host node later."
+                    )
+            out.flush()
+            err.flush()
