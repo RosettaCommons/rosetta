@@ -67,11 +67,13 @@ Q = TypeVar("Q", bound=billiard.Queue)
 class RedirectToLogger(Generic[G]):
     """Redirect stdout and stderr to a logging sink."""
     def __init__(self, level: int) -> None:
+        """Instantiate buffer for the root logger and a logging level."""
         self.logger = logging.getLogger()
         self.level = level
         self.buffer = ""
 
     def write(self, msg: str) -> int:
+        """Write logging buffer."""
         self.buffer += msg
         while "\n" in self.buffer:
             line, self.buffer = self.buffer.split("\n", 1)
@@ -82,6 +84,7 @@ class RedirectToLogger(Generic[G]):
         return len(msg)
 
     def flush(self) -> None:
+        """Flush logging buffer."""
         if self.buffer:
             self.logger.log(self.level, self.buffer)
             self.buffer = ""
