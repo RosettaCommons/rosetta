@@ -481,6 +481,12 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             kwargs["database"] = pyrosetta._rosetta_database_from_env()
         if not (isinstance(kwargs["database"], str) and os.path.isdir(kwargs["database"])):
             raise NotADirectoryError("PyRosetta database directory not found: {0}".format(kwargs["database"]))
+        if kwargs["verbose"] is None:
+            kwargs["verbose"] = True
+        if not isinstance(kwargs["verbose"], bool):
+            raise TypeError(
+                "The 'verbose' keyword argument parameter must be a `bool` object. Received: {0}".format(type(kwargs["verbose"]))
+            )
         fullargspec = inspect.getfullargspec(pyrosetta.init)
         default_init_kwargs = dict(zip(fullargspec.args, fullargspec.defaults))
         if kwargs["set_logging_handler"] is None:
@@ -489,12 +495,6 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             kwargs["notebook"] = default_init_kwargs["notebook"]
         if kwargs["silent"] is None:
             kwargs["silent"] = default_init_kwargs["silent"]
-        if kwargs["verbose"] is None:
-            kwargs["verbose"] = True
-        if not isinstance(kwargs["verbose"], bool):
-            raise TypeError(
-                "The 'verbose' keyword argument parameter must be a `bool` object. Received: {0}".format(type(kwargs["verbose"]))
-            )
 
         return kwargs
 
@@ -730,6 +730,8 @@ class PyRosettaInitFileParser(object):
                 is found using `pyrosetta._rosetta_database_from_env()`, but if the search fails then the Rosetta database path
                 may be manually input here.
                 Default: None
+            verbose: An optional `bool` object specifying whether or not to print PyRosetta initialization information.
+                Default: True
             set_logging_handler: An optional object passed to `pyrosetta.init(set_logging_handler=...)` during PyRosetta initialization.
                 If `None`, then the default `pyrosetta.init` keyword argument parameter is used. 
                 Default: None
@@ -739,8 +741,6 @@ class PyRosettaInitFileParser(object):
             silent: An optional object passed to `pyrosetta.init(silent=...)` during PyRosetta initialization.
                 If `None`, then the default `pyrosetta.init` keyword argument parameter is used.
                 Default: None
-            verbose: An optional `bool` object specifying whether or not to print PyRosetta initialization information.
-                Default: True
 
         Returns:
             None
@@ -753,10 +753,10 @@ class PyRosettaInitFileParser(object):
             relative_paths=relative_paths,
             max_decompressed_bytes=max_decompressed_bytes,
             database=database,
+            verbose=verbose,
             set_logging_handler=set_logging_handler,
             notebook=notebook,
             silent=silent,
-            verbose=verbose,
         ).init()
 
     @staticmethod
@@ -819,10 +819,10 @@ class PyRosettaInitFileParser(object):
             relative_paths=relative_paths,
             max_decompressed_bytes=max_decompressed_bytes,
             database=database,
+            verbose=False,
             set_logging_handler=None,
             notebook=None,
             silent=None,
-            verbose=False,
         )
         if as_dict:
             return reader.get_options_dict()
