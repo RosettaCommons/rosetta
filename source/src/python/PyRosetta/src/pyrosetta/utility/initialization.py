@@ -221,19 +221,19 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             kwargs["overwrite"] = False
         elif not isinstance(kwargs["overwrite"], bool):
             raise TypeError(
-                "The 'overwrite' keyword argument parameter must be a `bool` object. Received: {1}".format(type(kwargs["overwrite"]))
+                "The 'overwrite' keyword argument parameter must be a `bool` object. Received: {0}".format(type(kwargs["overwrite"]))
             )
         if "dry_run" in kwargs and kwargs["dry_run"] is None:
             kwargs["dry_run"] = False
         elif not isinstance(kwargs["dry_run"], bool):
             raise TypeError(
-                "The 'dry_run' keyword argument parameter must be a `bool` object. Received: {1}".format(type(kwargs["dry_run"]))
+                "The 'dry_run' keyword argument parameter must be a `bool` object. Received: {0}".format(type(kwargs["dry_run"]))
             )
         if "verbose" in kwargs and kwargs["verbose"] is None:
             kwargs["verbose"] = True
         elif not isinstance(kwargs["verbose"], bool):
             raise TypeError(
-                "The 'verbose' keyword argument parameter must be a `bool` object. Received: {1}".format(type(kwargs["verbose"]))
+                "The 'verbose' keyword argument parameter must be a `bool` object. Received: {0}".format(type(kwargs["verbose"]))
             )
         kwargs["version"] = __version__
 
