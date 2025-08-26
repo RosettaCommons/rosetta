@@ -812,6 +812,7 @@ class PyRosettaInitFileParser(object):
             set_logging_handler=None,
             notebook=None,
             silent=None,
+            verbose=False,
         )
         if as_dict:
             return reader.get_options_dict()
