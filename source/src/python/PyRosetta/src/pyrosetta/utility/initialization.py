@@ -229,6 +229,12 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             raise TypeError(
                 "The 'dry_run' keyword argument parameter must be a `bool` object. Received: {1}".format(type(kwargs["dry_run"]))
             )
+        if "verbose" in kwargs and kwargs["verbose"] is None:
+            kwargs["verbose"] = True
+        elif not isinstance(kwargs["verbose"], bool):
+            raise TypeError(
+                "The 'verbose' keyword argument parameter must be a `bool` object. Received: {1}".format(type(kwargs["verbose"]))
+            )
         kwargs["version"] = __version__
 
         return kwargs
@@ -407,15 +413,18 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         encoded_options_dict.pop(self._database_option_name, None)
         overwrite = self.kwargs.pop("overwrite")
         dry_run = self.kwargs.pop("dry_run")
+        verbose = self.kwargs.pop("verbose")
         data_dict = {
             **self.kwargs,
             "options": encoded_options_dict,
         }
-        self.print_cached_files(dry_run)
+        if verbose:
+            self.print_cached_files(dry_run)
         if not dry_run and ((not os.path.isfile(self.output_filename)) or overwrite):
             with open(self.output_filename, "w") as f:
                 json.dump(data_dict, f, indent=2)
-            print("Dumped PyRosetta '.init' file size:", round(os.path.getsize(self.output_filename) * 1e-6, 3), "MB")
+            if verbose:
+                print("Dumped PyRosetta '.init' file size:", round(os.path.getsize(self.output_filename) * 1e-6, 3), "MB")
 
 
 class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSerializer):
@@ -472,6 +481,10 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             kwargs["notebook"] = default_init_kwargs["notebook"]
         if kwargs["silent"] is None:
             kwargs["silent"] = default_init_kwargs["silent"]
+        if kwargs["verbose"] is None:
+            kwargs["verbose"] = True
+        if not isinstance(kwargs["verbose"], bool):
+            raise TypeError("The 'verbose' keyword argument parameter must be a `bool` object.")
 
         return kwargs
 
@@ -592,49 +605,47 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         )
 
     def print_results(self):
-        if not self.kwargs["silent"]:
-            if self.kwargs["dry_run"]:
-                print("Dry run PyRosetta initialization from file: {0}".format(self.init_file))
-                if self.file_counter == 0:
-                    print("No PyRosetta input files to decompress.")
-                else:
-                    print("Decompressed {0} PyRosetta input files.".format(self.file_counter))
+        if self.kwargs["dry_run"]:
+            print("Dry run PyRosetta initialization from file: {0}".format(self.init_file))
+            if self.file_counter == 0:
+                print("No PyRosetta input files to decompress.")
             else:
-                print("Initializing PyRosetta from file: {0}".format(self.init_file))
-                if self.file_counter == 0:
-                    print("No PyRosetta input files to decompress.")
-                else:
-                    print("Decompressed {0} PyRosetta input files written to: {1}".format(
-                            self.file_counter, self.kwargs["output_dir"]
-                        )
+                print("Decompressed {0} PyRosetta input files.".format(self.file_counter))
+        else:
+            print("Initializing PyRosetta from file: {0}".format(self.init_file))
+            if self.file_counter == 0:
+                print("No PyRosetta input files to decompress.")
+            else:
+                print("Decompressed {0} PyRosetta input files written to: {1}".format(
+                        self.file_counter, self.kwargs["output_dir"]
                     )
-            print(
-                "Author(s): {0}".format(self.init_dict["author"]),
-                "E-mail(s): {0}".format(self.init_dict["email"]),
-                "License(s): {0}".format(self.init_dict["license"]),
-                "Metadata: {0}".format(self.init_dict["metadata"]),
-                "Version: {0}".format(self.init_dict["version"]),
-                "PyRosetta build: {0}".format(self.init_dict["pyrosetta_build"]),
-                "Date/Time created (UTC): {0}".format(
-                    datetime.datetime.strptime(
-                        self.init_dict["datetime"],
-                        self._strftime_format,
-                    ).strftime("%b %d, %Y at %I:%M:%S %p")
-                ),
-                sep=os.linesep,
-            )
+                )
+        print(
+            "Author(s): {0}".format(self.init_dict["author"]),
+            "E-mail(s): {0}".format(self.init_dict["email"]),
+            "License(s): {0}".format(self.init_dict["license"]),
+            "Metadata: {0}".format(self.init_dict["metadata"]),
+            "Version: {0}".format(self.init_dict["version"]),
+            "PyRosetta build: {0}".format(self.init_dict["pyrosetta_build"]),
+            "Date/Time created (UTC): {0}".format(
+                datetime.datetime.strptime(
+                    self.init_dict["datetime"],
+                    self._strftime_format,
+                ).strftime("%b %d, %Y at %I:%M:%S %p")
+            ),
+            sep=os.linesep,
+        )
 
     def pprint_options(self, options):
-        if not self.kwargs["silent"]:
-            if self.kwargs["dry_run"]:
-                print("PyRosetta initialization options from dry run:")
-            else:
-                print("PyRosetta initialization options:")
-            pprint(options)
-            if self.kwargs["dry_run"]:
-                print("Skipping PyRosetta initialization...")
-            else:
-                print("Running PyRosetta initialization...")
+        if self.kwargs["dry_run"]:
+            print("PyRosetta initialization options from dry run:")
+        else:
+            print("PyRosetta initialization options:")
+        pprint(options)
+        if self.kwargs["dry_run"]:
+            print("Skipping PyRosetta initialization...")
+        else:
+            print("Running PyRosetta initialization...")
 
     def init(self):
         self.validate_init_was_not_called()
@@ -648,8 +659,9 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             if self.kwargs["skip_corrections"] is None:
                 self.kwargs["skip_corrections"] = True
         options = self.get_options()
-        self.print_results()
-        self.pprint_options(options)
+        if self.kwargs["verbose"]:
+            self.print_results()
+            self.pprint_options(options)
         if not self.kwargs["dry_run"]:
             pyrosetta.init(
                 options=options,
@@ -673,6 +685,7 @@ class PyRosettaInitFileParser(object):
         set_logging_handler=None,
         notebook=None,
         silent=None,
+        verbose=None,
     ):
         """
         Initialize PyRosetta from a '.init' file.
@@ -716,6 +729,8 @@ class PyRosettaInitFileParser(object):
             silent: An optional object passed to `pyrosetta.init(silent=...)` during PyRosetta initialization.
                 If `None`, then the default `pyrosetta.init` keyword argument parameter is used.
                 Default: None
+            verbose: An optional `bool` object specifying whether or not to print PyRosetta initialization information.
+                Default: True
 
         Returns:
             None
@@ -731,6 +746,7 @@ class PyRosettaInitFileParser(object):
             set_logging_handler=set_logging_handler,
             notebook=notebook,
             silent=silent,
+            verbose=verbose,
         ).init()
 
     @staticmethod
@@ -811,6 +827,7 @@ class PyRosettaInitFileParser(object):
         metadata=None,
         overwrite=None,
         dry_run=False,
+        verbose=None,
     ):
         """
         Write a PyRosetta initialization '.init' file.
@@ -842,6 +859,8 @@ class PyRosettaInitFileParser(object):
             dry_run: An optional `bool` object specifying whether or not to dump the output '.init' file. If `True`, then only print
                 the files that would be compressed into the '.init' file if it were `False`.
                 Default: False
+            verbose: An optional `bool` object specifying whether or not to print PyRosetta '.init' file information.
+                Default: True
 
         Returns:
             None
@@ -854,6 +873,7 @@ class PyRosettaInitFileParser(object):
             metadata=metadata,
             overwrite=overwrite,
             dry_run=dry_run,
+            verbose=verbose,
         ).dump()
 
     @staticmethod
@@ -892,6 +912,7 @@ class PyRosettaInitFileParser(object):
                 metadata=None,
                 overwrite=False,
                 dry_run=False,
+                verbose=False,
             )
         if compressed:
             if as_dict:

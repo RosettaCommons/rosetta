@@ -123,6 +123,7 @@ def main(tmp_dir):
             set_logging_handler=None,
             notebook=None,
             silent=False,
+            verbose=True,
         )
         raise RuntimeError("`pyrosetta.init_from_file` did not raise `BufferError` with `max_decompressed_bytes=1_000`.")
     except BufferError as ex:
@@ -141,6 +142,7 @@ def main(tmp_dir):
         set_logging_handler=None,
         notebook=None,
         silent=False,
+        verbose=True,
     )
     assert not pyrosetta.rosetta.basic.was_init_called(), "PyRosetta was initialized with `dry_run=True`"
 
@@ -155,6 +157,7 @@ def main(tmp_dir):
         set_logging_handler=None,
         notebook=None,
         silent=False,
+        verbose=True,
     )
     assert not pyrosetta.rosetta.basic.was_init_called(), "PyRosetta was initialized with `dry_run=True`"
 
@@ -169,6 +172,7 @@ def main(tmp_dir):
         set_logging_handler=None,
         notebook=None,
         silent=False,
+        verbose=True,
     )
 
     pose = pyrosetta.Pose()

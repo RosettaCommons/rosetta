@@ -114,6 +114,7 @@ def main(tmp_dir):
         metadata=metadata,
         overwrite=False,
         dry_run=True,
+        verbose=True,
     )
     assert not os.path.isfile(init_file), "'.init' file was dumped with `dry_run=True`."
 
@@ -125,6 +126,7 @@ def main(tmp_dir):
         metadata=metadata,
         overwrite=False,
         dry_run=False,
+        verbose=True,
     )
 
     pose = pyrosetta.Pose()
