@@ -458,17 +458,25 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
                 "The output directory already exists! Please remove the output directory and try again: {0}".format(output_dir)
             )
         if not isinstance(kwargs["skip_corrections"], (bool, type(None))):
-            raise TypeError("The 'skip_corrections' keyword argument parameter must be a `bool` or `NoneType` object.")
+            raise TypeError(
+                "The 'skip_corrections' keyword argument parameter must be a `bool` or `NoneType` object. Received: {0}".format(type(kwargs["skip_corrections"]))
+            )
         if kwargs["relative_paths"] is None:
             kwargs["relative_paths"] = False
         if not isinstance(kwargs["relative_paths"], bool):
-            raise TypeError("The 'relative_paths' keyword argument parameter must be a `bool` object.")
+            raise TypeError(
+                "The 'relative_paths' keyword argument parameter must be a `bool` object. Received: {0}".format(type(kwargs["relative_paths"]))
+            )
         if kwargs["max_decompressed_bytes"] is None:
             kwargs["max_decompressed_bytes"] = 200_000_000 # 200 MB
         if not isinstance(kwargs["max_decompressed_bytes"], int):
-            raise TypeError("The 'max_decompressed_bytes' keyword argument parameter must be a `int` object.")
+            raise TypeError(
+                "The 'max_decompressed_bytes' keyword argument parameter must be a `int` object. Received: {0}".format(type(kwargs["max_decompressed_bytes"]))
+            )
         elif kwargs["max_decompressed_bytes"] <= 0:
-            raise ValueError("The 'max_decompressed_bytes' keyword argument parameter must be greater than 0 bytes.")
+            raise ValueError(
+                "The 'max_decompressed_bytes' keyword argument parameter must be greater than 0 bytes. Received: {0}".format(kwargs["max_decompressed_bytes"])
+            )
         if kwargs["database"] is None:
             kwargs["database"] = pyrosetta._rosetta_database_from_env()
         if not (isinstance(kwargs["database"], str) and os.path.isdir(kwargs["database"])):
@@ -484,7 +492,9 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         if kwargs["verbose"] is None:
             kwargs["verbose"] = True
         if not isinstance(kwargs["verbose"], bool):
-            raise TypeError("The 'verbose' keyword argument parameter must be a `bool` object.")
+            raise TypeError(
+                "The 'verbose' keyword argument parameter must be a `bool` object. Received: {0}".format(type(kwargs["verbose"]))
+            )
 
         return kwargs
 
