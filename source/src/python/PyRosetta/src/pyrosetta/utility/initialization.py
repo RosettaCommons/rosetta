@@ -826,7 +826,7 @@ class PyRosettaInitFileParser(object):
         license=None,
         metadata=None,
         overwrite=None,
-        dry_run=False,
+        dry_run=None,
         verbose=None,
     ):
         """
