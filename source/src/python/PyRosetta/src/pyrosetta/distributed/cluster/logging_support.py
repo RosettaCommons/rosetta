@@ -56,7 +56,7 @@ from pyrosetta.distributed.cluster.logging_filters import (
     split_socket_address,
 )
 from pyrosetta.distributed.cluster.logging_handlers import MsgpackHmacSocketHandler
-from pyrosetta.distributed.cluster.logging_listeners import MaskedBytes, SocketListener
+from pyrosetta.distributed.cluster.logging_listeners import SocketListener
 
 
 G = TypeVar("G")
