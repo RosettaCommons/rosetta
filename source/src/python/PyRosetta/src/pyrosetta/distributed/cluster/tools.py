@@ -33,7 +33,7 @@ import tempfile
 from datetime import datetime
 from functools import wraps
 from pyrosetta import init_from_file
-from pyrosetta.distributed.cluster.converters import _parse_protocols, _parse_yield_results
+from pyrosetta.distributed.cluster.converters import _parse_protocols
 from pyrosetta.distributed.cluster.converter_tasks import (
     is_empty,
     get_protocols_list_of_str,
