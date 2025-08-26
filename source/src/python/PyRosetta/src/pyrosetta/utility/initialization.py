@@ -30,9 +30,6 @@ from pprint import pprint
 from pyrosetta.rosetta.core.simple_metrics.composite_metrics import ProtocolSettingsMetric
 
 
-__version__ = "1.0.0"
-
-
 class PyRosettaInitFileParserBase(object):
     _database_option_name = "in:path:database"
     _corrections_option_name = "corrections:"
@@ -235,7 +232,6 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             raise TypeError(
                 "The 'verbose' keyword argument parameter must be a `bool` object. Received: {0}".format(type(kwargs["verbose"]))
             )
-        kwargs["version"] = __version__
 
         return kwargs
 
@@ -635,7 +631,6 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             "E-mail(s): {0}".format(self.init_dict["email"]),
             "License(s): {0}".format(self.init_dict["license"]),
             "Metadata: {0}".format(self.init_dict["metadata"]),
-            "Version: {0}".format(self.init_dict["version"]),
             "PyRosetta build: {0}".format(self.init_dict["pyrosetta_build"]),
             "Date/Time created (UTC): {0}".format(
                 datetime.datetime.strptime(
