@@ -64,6 +64,29 @@ L = TypeVar("L", bound=Callable[..., Any])
 Q = TypeVar("Q", bound=billiard.Queue)
 
 
+class RedirectToLogger(Generic[G]):
+    """Redirect stdout and stderr to a logging sink."""
+    def __init__(self, level: int) -> None:
+        self.logger = logging.getLogger()
+        self.level = level
+        self.buffer = ""
+
+    def write(self, msg: str) -> int:
+        self.buffer += msg
+        while "\n" in self.buffer:
+            line, self.buffer = self.buffer.split("\n", 1)
+            if line.endswith("\r"):
+                line = line[:-1]
+            self.logger.log(self.level, line)
+
+        return len(msg)
+
+    def flush(self) -> None:
+        if self.buffer:
+            self.logger.log(self.level, self.buffer)
+            self.buffer = ""
+
+
 class LoggingSupport(Generic[G]):
     """Supporting logging methods for PyRosettaCluster."""
     def __init__(self) -> None:

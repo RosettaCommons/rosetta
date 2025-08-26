@@ -56,6 +56,7 @@ def main(input_file, scorefile_name, init_file, sequence):
             relative_paths=True,
             max_decompressed_bytes=100_000,
             database=None,
+            verbose=True,
             set_logging_handler="logging",
             notebook=None,
             silent=False,

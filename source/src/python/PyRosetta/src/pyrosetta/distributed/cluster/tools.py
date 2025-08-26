@@ -620,6 +620,7 @@ def reproduce(
             relative_paths=False,
             dry_run=False,
             database=None,
+            verbose=True,
             set_logging_handler="logging",
             notebook=None,
             silent=False,
