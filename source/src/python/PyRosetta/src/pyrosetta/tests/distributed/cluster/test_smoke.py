@@ -245,7 +245,7 @@ class SmokeTest(unittest.TestCase):
 
 class IOTest(unittest.TestCase):
     _my_string_value = "foo"
-    _my_real_value = 12.34
+    _my_real_value = 12.34567890123456789
     _my_pose_value = "DATA"
     _my_complex_value = 4j
 
@@ -372,7 +372,7 @@ class IOTest(unittest.TestCase):
                                     self.assertIn("my_string_score", entry["scores"])
                                     self.assertEqual(entry["scores"]["my_string_score"], IOTest._my_string_value)
                                     self.assertIn("my_real_score", entry["scores"])
-                                    self.assertAlmostEqual(entry["scores"]["my_real_score"], IOTest._my_real_value, places=6)
+                                    self.assertEqual(entry["scores"]["my_real_score"], IOTest._my_real_value)
                                     self.assertNotIn("my_pose_score", entry["scores"])
                                     self.assertNotIn("my_complex_score", entry["scores"])
                                 else:
@@ -382,7 +382,7 @@ class IOTest(unittest.TestCase):
                                     self.assertIn("my_string_score", scores)
                                     self.assertEqual(scores["my_string_score"], IOTest._my_string_value)
                                     self.assertIn("my_real_score", scores)
-                                    self.assertAlmostEqual(scores["my_real_score"], IOTest._my_real_value, places=6)
+                                    self.assertEqual(scores["my_real_score"], IOTest._my_real_value)
                                     self.assertNotIn("my_pose_score", scores)
                                     self.assertNotIn("my_complex_score", scores)
                         else:
@@ -396,7 +396,7 @@ class IOTest(unittest.TestCase):
                                     self.assertIn("my_string_score", scores.loc[index].keys())
                                     self.assertEqual(scores.loc[index]["my_string_score"], IOTest._my_string_value)
                                     self.assertIn("my_real_score", scores.loc[index].keys())
-                                    self.assertAlmostEqual(scores.loc[index]["my_real_score"], IOTest._my_real_value, places=6)
+                                    self.assertEqual(scores.loc[index]["my_real_score"], IOTest._my_real_value)
                                     self.assertIn("my_pose_score", scores.loc[index].keys())
                                     self.assertEqual(scores.loc[index]["my_pose_score"].sequence(), IOTest._my_pose_value)
                                     self.assertIn("my_complex_score", scores.loc[index].keys())
@@ -406,7 +406,7 @@ class IOTest(unittest.TestCase):
                                     self.assertIn("my_string_score", df.columns)
                                     self.assertEqual(df.at[index, "my_string_score"], IOTest._my_string_value)
                                     self.assertIn("my_real_score", df.columns)
-                                    self.assertAlmostEqual(df.at[index, "my_real_score"], IOTest._my_real_value, places=6)
+                                    self.assertEqual(df.at[index, "my_real_score"], IOTest._my_real_value)
                                     self.assertIn("my_pose_score", df.columns)
                                     self.assertEqual(df.at[index, "my_pose_score"].sequence(), IOTest._my_pose_value)
                                     self.assertIn("my_complex_score", df.columns)
