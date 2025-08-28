@@ -20,6 +20,7 @@ except ImportError:
     )
     raise
 
+import logging
 import os
 import pyrosetta
 import pyrosetta.distributed
@@ -193,19 +194,56 @@ class TaskBase(Generic[G]):
 def get_norm_task_options(simulation_dir: str) -> Dict[str, str]:
     """Get normalized PyRosetta initialization options."""
 
-    start = os.path.abspath(simulation_dir)
-    relpath = toolz.functoolz.curry(os.path.relpath)(start=start)
-    abspath = lambda v: v if os.path.isabs(v) else os.path.join(start, v)
-    normpath = lambda v: relpath(abspath(v)) if os.path.exists(abspath(v)) else v
-    to_normpath = toolz.functoolz.curry(map)(normpath)
+    start = os.path.abspath(os.path.expandvars(os.path.expanduser(simulation_dir)))
 
-    return toolz.dicttoolz.valmap(
-        toolz.functoolz.compose_left(to_normpath, " ".join),
-        toolz.dicttoolz.keyfilter(
-            lambda k: k not in ("in:path:database", "run:constant_seed", "run:jran"),
-            pyrosetta.get_init_options(compressed=False, as_dict=True),
-        ),
+    def get_target(value: str) -> Optional[str]:
+        expanded = os.path.expandvars(os.path.expanduser(value))
+        try:
+            if os.path.isabs(expanded) and os.path.lexists(expanded):
+                return expanded
+            rel_to_start = os.path.normpath(os.path.join(start, expanded))
+            if os.path.lexists(rel_to_start):
+                return rel_to_start
+            if os.path.lexists(expanded):
+                return os.path.abspath(expanded)
+        except:
+            return None
+
+        return None
+
+    def relativize(value: str) -> str:
+        target = get_target(value)
+        if target is None:
+            return value
+        try:
+            return os.path.relpath(target, start=start)
+        except Exception: # May be cross-drive path on Windows
+            return value
+
+    options_dict = toolz.dicttoolz.keyfilter(
+        lambda k: k not in ("in:path:database", "run:constant_seed", "run:jran"),
+        pyrosetta.get_init_options(compressed=False, as_dict=True),
     )
+
+    msgs: List[str] = []
+    options: Dict[str, str] = {}
+    for option_name, values in options_dict.items():
+        rel_values = []
+        for value in values:
+            rel_value = relativize(value)
+            if rel_value != value:
+                msgs.append(f"'{value}' -> '{rel_value}'")
+            rel_values.append(rel_value)
+        options[option_name] = " ".join(rel_values)
+
+    if msgs:
+        logging.info(
+            "PyRosettaCluster is normalizing the following paths in the task "
+            + "initialization options with `norm_task_options` enabled:\n"
+            + "\n".join(msgs)
+        )
+
+    return options
 
 
 def capture_task_metadata(func: M) -> M:
