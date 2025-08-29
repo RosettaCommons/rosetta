@@ -94,7 +94,6 @@ def run_protocol(
     protocol: Callable[..., Any],
     packed_pose: PackedPose,
     datetime_format: str,
-    norm_task_options: bool,
     simulation_dir: str,
     ignore_errors: bool,
     protocols_key: str,
@@ -138,7 +137,6 @@ def target(
     logging_level: str,
     socket_listener_address: Tuple[str, int],
     datetime_format: str,
-    norm_task_options: bool,
     simulation_dir: str,
     ignore_errors: bool,
     protocols_key: str,
@@ -161,7 +159,6 @@ def target(
         protocol,
         packed_pose,
         datetime_format,
-        norm_task_options,
         simulation_dir,
         ignore_errors,
         protocols_key,
@@ -195,7 +192,6 @@ def user_spawn_thread(
     timeout = extra_args["timeout"]
     ignore_errors = extra_args["ignore_errors"]
     datetime_format = extra_args["datetime_format"]
-    norm_task_options = extra_args["norm_task_options"]
     simulation_dir = extra_args["simulation_dir"]
     compression = extra_args["compression"]
     max_delay_time = extra_args["max_delay_time"]
@@ -220,7 +216,6 @@ def user_spawn_thread(
             logging_level,
             socket_listener_address,
             datetime_format,
-            norm_task_options,
             simulation_dir,
             ignore_errors,
             protocols_key,

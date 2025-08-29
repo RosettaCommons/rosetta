@@ -77,6 +77,7 @@ class IO(Generic[G]):
         instance_state.pop("clients", None)
         instance_state.pop("init_file", None)
         instance_state.pop("logging_address", None)
+        instance_state.pop("simulation_dir", None)
         instance_kwargs = self.serializer.deepcopy_kwargs(instance_state)
         for i in self.__attrs_attrs__:
             if not i.init:
@@ -187,7 +188,6 @@ class IO(Generic[G]):
             if not k.startswith("PyRosettaCluster_"):
                 kwargs.pop(k, None)
         kwargs.pop(self.protocols_key, None)
-        kwargs.pop("PyRosettaCluster_seed", None)
         kwargs.pop("PyRosettaCluster_protocol_number", None)
         kwargs.pop("PyRosettaCluster_protocol_name", None)
         kwargs.pop("PyRosettaCluster_seed", None)

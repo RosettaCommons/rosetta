@@ -227,13 +227,16 @@ Args:
     dry_run: A `bool` object specifying whether or not to save '.pdb' files to
         disk. If `True`, then do not write '.pdb' or '.pdb.bz2' files to disk.
         Default: False
-    norm_task_options: A `bool` object specifying whether or not to normalize the task
-        'options' and 'extra_options' values after PyRosetta initialization on the remote
-        compute cluster. If `True`, this enables more facile simulation reproduction by the
-        use of the `ProtocolSettingsMetric` SimpleMetric to standardize the PyRosetta
-        initialization options and by setting any input paths as relative to the directory
-        from which the simulation is running.
-        Default: True
+    simulation_dir: An optional `str` object specifying the directory from which the
+        tasks are running, which is used to relativize the task 'options' and 'extra_options'
+        values after PyRosetta initialization on the remote compute cluster. If set to a
+        non-empty `str`, then this enables more facile simulation reproduction by the use of
+        the `ProtocolSettingsMetric` SimpleMetric to normalize the PyRosetta initialization
+        options, and relativization of any input files and directory paths to this value. 
+        If set to `True` or `None`, then the current working directory on the host node
+        is used by default. If set to `False` or an empty string (''), then the task
+        'options' and 'extra_options' values will be saved unchanged from their input values.
+        Default: None
     init_file: A `str` object specifying the output '.init' file path. If a `NoneType`
         object (or an empty `str` object ('')) is provided, or `dry_run=True`, then skip
         writing an output '.init' file upon PyRosettaCluster instantiation. If skipped,
@@ -296,11 +299,11 @@ from pyrosetta.distributed.cluster.converters import (
     _parse_environment,
     _parse_input_packed_pose,
     _parse_logging_address,
-    _parse_norm_task_options,
     _parse_pyrosetta_build,
     _parse_scratch_dir,
     _parse_seeds,
     _parse_sha1,
+    _parse_simulation_dir,
     _parse_system_info,
     _parse_tasks,
     _parse_yield_results,
@@ -621,11 +624,11 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         validator=attr.validators.instance_of(bool),
         converter=attr.converters.default_if_none(False),
     )
-    norm_task_options = attr.ib(
-        type=bool,
-        default=False,
-        validator=attr.validators.instance_of(bool),
-        converter=_parse_norm_task_options,
+    simulation_dir = attr.ib(
+        type=str,
+        default=None,
+        validator=[_validate_dir, attr.validators.instance_of(str)],
+        converter=_parse_simulation_dir,
     )
     yield_results = attr.ib(
         type=bool,
@@ -853,15 +856,13 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
         socket_listener_address, passkey = self._setup_socket_listener(clients)
         client_residue_type_set = _get_residue_type_set()
-        simulation_dir = os.getcwd()
         extra_args = dict(
             decoy_ids=self.decoy_ids,
             protocols_key=self.protocols_key,
             timeout=self.timeout,
             ignore_errors=self.ignore_errors,
             datetime_format=self.DATETIME_FORMAT,
-            norm_task_options=self.norm_task_options,
-            simulation_dir=simulation_dir,
+            simulation_dir=self.simulation_dir,
             compression=self.compression,
             max_delay_time=self.max_delay_time,
             logging_level=self.logging_level,

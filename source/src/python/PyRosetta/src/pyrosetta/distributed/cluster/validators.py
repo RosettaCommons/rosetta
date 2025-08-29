@@ -114,7 +114,7 @@ def _validate_dir(self, attribute: str, value: str) -> Optional[NoReturn]:
 
     os.makedirs(value, exist_ok=True)
     if not os.path.isdir(value):
-        raise ValueError(f"`scratch_dir` directory {value} could not be created.")
+        raise ValueError(f"`{attribute}` directory {value} could not be created.")
 
 
 def _validate_int(self, attribute: str, value: int) -> Optional[NoReturn]:
