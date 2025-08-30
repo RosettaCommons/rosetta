@@ -27,7 +27,7 @@ import pyrosetta.distributed
 
 from datetime import datetime
 from functools import wraps
-from pyrosetta.distributed.cluster.converters import _norm_path, _parse_protocols
+from pyrosetta.distributed.cluster.converters import _parse_protocols
 from pyrosetta.distributed.cluster.initialization import (
     _get_residue_type_set_name3 as _get_residue_type_set,
 )
@@ -191,35 +191,29 @@ class TaskBase(Generic[G]):
         return _protocols, _protocol, _seed, _clients_index, _resource
 
 
-def get_norm_task_options(start: str) -> Dict[str, str]:
+@toolz.functoolz.curry
+def _maybe_relativize(value: str, start: str) -> str:
+    """Relativize a `str` object if it exists as a path."""
+    expanded_value = os.path.expandvars(os.path.expanduser(value))
+    try:
+        maybe_path = os.path.normpath(
+            expanded_value if os.path.isabs(expanded_value) else os.path.join(start, expanded_value)
+        )
+        if os.path.lexists(maybe_path):
+            try:
+                return os.path.relpath(maybe_path, start=start)
+            except Exception: # May be cross-drive path on Windows
+                return value
+        else:
+            return value
+    except Exception: # May be malformed path
+        return value
+
+
+def _get_norm_task_options() -> Dict[str, str]:
     """Get normalized task PyRosetta initialization options."""
 
-    def relativize(value: str) -> str:
-        expanded_value = os.path.expandvars(os.path.expanduser(value))
-        try:
-            maybe_path = os.path.normpath(
-                expanded_value if os.path.isabs(expanded_value) else os.path.join(start, expanded_value)
-            )
-            if os.path.lexists(maybe_path):
-                try:
-                    return os.path.relpath(maybe_path, start=start)
-                except Exception: # May be cross-drive path on Windows
-                    return value
-            else:
-                return value
-        except Exception: # May be malformed path
-            return value
-
-    cwd = _norm_path(os.getcwd())
-    if not os.path.samefile(start, cwd):
-        logging.warning(
-            "The PyRosettaCluster `simulation_dir` instance attribute value differs from the current working "
-            + f"directory of the spawned thread that initialized PyRosetta:\n'{start}' != '{cwd}'\nPlease "
-            + "consider launching dask workers from the set simulation directory instead, since the task "
-            + "PyRosetta initialization options are being relativized to the set simulation directory "
-            + "rather than the current working directory of the spawned thread on the dask worker."
-        )
-
+    relativize = _maybe_relativize(start=os.getcwd())
     options_dict: Dict[str, List[str]] = toolz.dicttoolz.keyfilter(
         lambda k: k not in ("in:path:database", "run:constant_seed", "run:jran"),
         pyrosetta.get_init_options(compressed=False, as_dict=True),
@@ -238,8 +232,8 @@ def get_norm_task_options(start: str) -> Dict[str, str]:
 
     if msgs:
         logging.info(
-            "PyRosettaCluster is relativizing the following paths in the task PyRosetta "
-            + "initialization options to the set `simulation_dir` instance attribute value:\n"
+            "PyRosettaCluster is normalizing the following paths in the task "
+            + "initialization options with `norm_task_options` enabled:\n"
             + "\n".join(msgs)
         )
 
@@ -255,7 +249,7 @@ def capture_task_metadata(func: M) -> M:
         protocol: Callable[..., Any],
         packed_pose: PackedPose,
         datetime_format: str,
-        simulation_dir: str,
+        norm_task_options: bool,
         ignore_errors: bool,
         protocols_key: str,
         decoy_ids: List[int],
@@ -280,35 +274,23 @@ def capture_task_metadata(func: M) -> M:
             kwargs["PyRosettaCluster_seeds"] = []
         kwargs["PyRosettaCluster_seeds"].append((protocol_name, str(seed)))
         kwargs["PyRosettaCluster_seed"] = seed
-        if simulation_dir != "":
-            if os.path.isdir(simulation_dir):
-                options = get_norm_task_options(simulation_dir)
-                if "extra_options" in kwargs["PyRosettaCluster_task"]:
-                    kwargs["PyRosettaCluster_task"]["extra_options"] = options
-                    if "options" in kwargs["PyRosettaCluster_task"]:
-                        kwargs["PyRosettaCluster_task"]["options"] = ""
-                elif "options" in kwargs["PyRosettaCluster_task"]:
-                    kwargs["PyRosettaCluster_task"]["options"] = options
-                else:
-                    kwargs["PyRosettaCluster_task"]["extra_options"] = options
+        if norm_task_options:
+            options = _get_norm_task_options()
+            if "extra_options" in kwargs["PyRosettaCluster_task"]:
+                kwargs["PyRosettaCluster_task"]["extra_options"] = options
+                if "options" in kwargs["PyRosettaCluster_task"]:
+                    kwargs["PyRosettaCluster_task"]["options"] = ""
+            elif "options" in kwargs["PyRosettaCluster_task"]:
+                kwargs["PyRosettaCluster_task"]["options"] = options
             else:
-                _msg = (
-                    "PyRosettaCluster cannot normalize the task 'options' and 'extra_options' values because the "
-                    + f"following simulation directory is not accessible by remote dask workers: '{simulation_dir}'. "
-                    + "Please ensure that the simulation directory is accessible by remote dask workers, or set the "
-                    + "`simulation_dir` instance attribute to `False` or an empty string to silence this error message."
-                )
-                if ignore_errors:
-                    logging.error(f"{_msg} Ignoring error because `ignore_errors` is enabled!")
-                else:
-                    raise NotADirectoryError(_msg)
+                kwargs["PyRosettaCluster_task"]["extra_options"] = options
 
         return func(
             protocol_name,
             protocol,
             packed_pose,
             datetime_format,
-            simulation_dir,
+            norm_task_options,
             ignore_errors,
             protocols_key,
             decoy_ids,

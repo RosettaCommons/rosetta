@@ -227,47 +227,35 @@ def _parse_yield_results(yield_results: Any) -> Union[bool, NoReturn]:
     return converter(yield_results)
 
 
-def _norm_path(value: str) -> str:
-    """Normalize an input path."""
-    return os.path.normcase(os.path.normpath(os.path.abspath(value)))
-
-
-def _parse_simulation_dir(simulation_dir: Any) -> Union[str, NoReturn]:
-    """Parse the `simulation_dir` instance attribute."""
-    _default_simulation_dir = _norm_path(os.getcwd())
-    _default_disabled = ""
+def _parse_norm_task_options(obj: Any) -> Union[bool, NoReturn]:
+    """Parse the input `norm_task_options` attribute of PyRosettaCluster."""
     _issue_future_warning = True
 
     @singledispatch
     def converter(obj: Any) -> NoReturn:
-        raise ValueError("'simulation_dir' parameter must be of type `str`, `bool` or `NoneType`!")
-
-    @converter.register(str)
-    def _from_str(obj: str) -> str:
-        return _norm_path(obj) if obj else obj
-
-    @converter.register(bool)
-    def _bool_to_str(obj: bool) -> str:
-        return _default_simulation_dir if obj else _default_disabled
+        raise ValueError("'norm_task_options' must be of type `bool` or `NoneType`!")
 
     @converter.register(type(None))
-    def _none_to_str(obj: None) -> str:
+    def _parse_none(obj: None) -> bool:
         if _issue_future_warning:
             warnings.warn(
                 (
-                    "As of PyRosettaCluster version 2.3.0, the 'simulation_dir' instance attribute is set by default, "
-                    "which results in normalization of the task 'options' and 'extra_options' keyword arguments for "
-                    "facile reproducibility. Please explicitly set the `simulation_dir` instance attribute to either "
-                    "a directory (i.e., `os.getcwd()`, which is the currently enabled, new setting) or an empty string "
-                    "(i.e., '', to revert to legacy behavior before version 2.3.0) to silence this notice. This notice "
-                    "will disappear in a future version of PyRosettaCluster."
+                    "As of PyRosettaCluster version 2.3.0, the 'norm_task_options' instance attribute is enabled by "
+                    "default, which automatically normalizes the task 'options' and 'extra_options' keyword arguments "
+                    "for facile reproducibility. Please explicitly set either `norm_task_options=True` (the currently "
+                    "enabled, new setting) or `norm_task_options=False` (to revert to legacy behavior before version 2.3.0) "
+                    "to silence this notice. This notice will disappear in a future version of PyRosettaCluster."
                 ),
                 FutureWarning,
                 stacklevel=5,
             )
-        return converter.dispatch(bool)(True)
+        return True
 
-    return converter(simulation_dir)
+    @converter.register(bool)
+    def _parse_bool(obj: bool) -> bool:
+        return obj
+
+    return converter(obj)
 
 
 def _parse_pyrosetta_build(obj: Any) -> Union[str, NoReturn]:
