@@ -20,8 +20,6 @@ except ImportError:
     )
     raise
 
-import logging
-import os
 import pyrosetta
 import pyrosetta.distributed
 
@@ -29,6 +27,7 @@ from datetime import datetime
 from functools import wraps
 from pyrosetta.distributed.cluster.converters import _parse_protocols
 from pyrosetta.distributed.cluster.initialization import (
+    _get_norm_task_options,
     _get_residue_type_set_name3 as _get_residue_type_set,
 )
 from pyrosetta.distributed.cluster.serialization import Serialization
@@ -189,66 +188,6 @@ class TaskBase(Generic[G]):
         )
 
         return _protocols, _protocol, _seed, _clients_index, _resource
-
-
-@toolz.functoolz.curry
-def _maybe_relativize(value: str, start: str) -> str:
-    """Relativize a `str` object if it exists as a path."""
-
-    expanded_value = os.path.expandvars(os.path.expanduser(value))
-    try:
-        maybe_path = os.path.normpath(
-            expanded_value if os.path.isabs(expanded_value) else os.path.join(start, expanded_value)
-        )
-        if os.path.lexists(maybe_path):
-            try:
-                return os.path.relpath(maybe_path, start=start)
-            except Exception as e: # May be cross-drive path on Windows
-                logging.warning(
-                    f"{type(e).__name__}: {e}. PyRosettaCluster cannot relativize a path in a task's "
-                    + f"PyRosetta initialization options; leaving value unchanged: '{value}'. "
-                    + "Please consider setting a relative path in the input task's PyRosetta "
-                    + "initialization options for facile reproducibility."
-                )
-                return value
-        else:
-            return value
-    except Exception as ex: # May be malformed path
-        logging.warning(
-            f"{type(ex).__name__}: {ex}. PyRosettaCluster cannot construct a candidate path in a task's "
-            + f"PyRosetta initialization options; leaving value unchanged: '{value}'. "
-        )
-        return value
-
-
-def _get_norm_task_options() -> Dict[str, str]:
-    """Get normalized task PyRosetta initialization options."""
-
-    relativize = _maybe_relativize(start=os.getcwd())
-    options_dict: Dict[str, List[str]] = toolz.dicttoolz.keyfilter(
-        lambda k: k not in ("in:path:database", "run:constant_seed", "run:jran"),
-        pyrosetta.get_init_options(compressed=False, as_dict=True),
-    )
-
-    msgs: List[str] = []
-    options: Dict[str, str] = {}
-    for option_name in sorted(options_dict.keys()):
-        rel_values = []
-        for value in options_dict[option_name]:
-            rel_value = relativize(value)
-            if rel_value != value:
-                msgs.append(f"'{value}' -> '{rel_value}'")
-            rel_values.append(rel_value)
-        options[option_name] = " ".join(rel_values)
-
-    if msgs:
-        logging.info(
-            "PyRosettaCluster is normalizing the following values in the task's PyRosetta "
-            + "initialization options with `norm_task_options` enabled:\n"
-            + "\n".join(msgs)
-        )
-
-    return options
 
 
 def capture_task_metadata(func: M) -> M:
