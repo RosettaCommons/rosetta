@@ -299,7 +299,7 @@ def get_instance_kwargs(
                         raise NotImplementedError(
                             "Cannot skip ScoreFunction corrections because the original simulation did not output "
                             + "PyRosettaCluster results with normalized PyRosetta initialization options or configure "
-                            + "the PyRosetta initialization options as an instance of `dict`. Please disable the "
+                            + "the task's PyRosetta initialization options as an instance of `dict`. Please disable the "
                             + "'skip_corrections' keyword argument to continue with the reproduction."
                         )
                 else:
