@@ -151,7 +151,7 @@ class LoggingTest(unittest.TestCase):
                 filter_results=None,
                 max_delay_time=3.0,
                 simulation_dir=None,
-                init_file=os.path.join(output_path, "pyrosetta.init"),
+                output_init_file=os.path.join(output_path, "pyrosetta.init"),
             )
             cluster.distribute(my_pyrosetta_protocol_1, my_pyrosetta_protocol_2)
 

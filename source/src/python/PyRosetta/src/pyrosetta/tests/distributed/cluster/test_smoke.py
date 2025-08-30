@@ -126,7 +126,7 @@ class SmokeTest(unittest.TestCase):
                 system_info=None,
                 pyrosetta_build=None,
                 filter_results=True,
-                norm_task_options=False,
+                simulation_dir=False,
             )
             cluster = PyRosettaCluster(**instance_kwargs)
             cluster.distribute(
@@ -844,7 +844,7 @@ class SaveAllTest(unittest.TestCase):
                 save_all=True,
                 system_info=None,
                 pyrosetta_build=None,
-                init_file=init_file,
+                output_init_file=init_file,
                 filter_results=True,
                 simulation_dir=None,
             ).distribute(protocols=[my_pyrosetta_protocol] * _total_protocols)

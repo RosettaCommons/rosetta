@@ -920,11 +920,14 @@ class TestReproducibilityMulti(unittest.TestCase):
                 )
                 yield p
 
-        def run_subprocess(cmd):
+        def run_subprocess(cmd, module_dir=None):
             print("Running command:", cmd)
-            sys.path.insert(0, os.path.dirname(__file__))
-            p = subprocess.run(shlex.split(cmd), check=True, shell=False)
-            sys.path.pop(0)
+            if module_dir:
+                env = os.environ.copy()
+                env["PYTHONPATH"] = f"{module_dir}{os.pathsep}{os.environ.get('PYTHONPATH', '')}"
+            else:
+                env = None
+            p = subprocess.run(shlex.split(cmd), env=env, check=True, shell=False)
             print("Return code: {0}".format(p.returncode))
 
             return p
@@ -1003,9 +1006,9 @@ class TestReproducibilityMulti(unittest.TestCase):
                 instance_kwargs={
                     "sha1": None,
                     "scorefile_name": reproduce_scorefile_name,
-                    "init_file": None, # Skip `dump_init_file`
+                    "output_init_file": None, # Skip `dump_init_file`
                 },
-                init_file=None, # Skip `init_from_file` since PyRosetta is initialized
+                input_init_file=None, # Skip `init_from_file` since PyRosetta is initialized
                 skip_corrections=True, # Skip corrections to reuse results for reproduction
             )
 
@@ -1054,9 +1057,9 @@ class TestReproducibilityMulti(unittest.TestCase):
                 instance_kwargs={
                     "sha1": None,
                     "scorefile_name": reproduce2_scorefile_name,
-                    "init_file": "", # Skip `dump_init_file`
+                    "output_init_file": "", # Skip `dump_init_file`
                 },
-                init_file=None, # Skip `init_from_file` since PyRosetta is initialized
+                input_init_file=None, # Skip `init_from_file` since PyRosetta is initialized
                 skip_corrections=True, # Skip corrections to reuse results for reproduction
             )
 
@@ -1097,7 +1100,7 @@ class TestReproducibilityMulti(unittest.TestCase):
             with self.assertRaises(ValueError):
                 reproduce(
                     input_packed_pose=input_pose,
-                    init_file=original_record["metadata"]["init_file"],
+                    input_init_file=original_record["metadata"]["init_file"],
                 )
 
             # Reproduce decoy from .pdb.bz2 file with a .init file
@@ -1105,15 +1108,16 @@ class TestReproducibilityMulti(unittest.TestCase):
             init_file = original_record["metadata"]["init_file"]
             self.assertTrue(os.path.isfile(init_file))
             test_script = os.path.join(os.path.dirname(__file__), "reproduce_from_init_file.py")
-            cmd = "{0} -m {1} --input_file '{2}' --scorefile_name '{3}' --init_file '{4}' --sequence '{5}'".format(
+            module = os.path.splitext(os.path.basename(test_script))[0]
+            cmd = "{0} -m {1} --input_file '{2}' --scorefile_name '{3}' --input_init_file '{4}' --sequence '{5}'".format(
                 sys.executable,
-                os.path.splitext(os.path.basename(test_script))[0],
+                module,
                 original_record["metadata"]["output_file"],
                 reproduce3_scorefile_name,
                 init_file,
                 sequence,
             )
-            p = run_subprocess(cmd)
+            p = run_subprocess(cmd, module_dir=os.path.dirname(test_script))
             self.assertEqual(p.returncode, 0, msg=f"Test script failed: {test_script}")
 
             reproduce3_scorefile_path = os.path.join(

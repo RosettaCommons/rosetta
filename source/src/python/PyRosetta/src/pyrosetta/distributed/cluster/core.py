@@ -237,7 +237,7 @@ Args:
         is used by default. If set to `False` or an empty string (''), then the task
         'options' and 'extra_options' values will be saved unchanged from their input values.
         Default: None
-    init_file: A `str` object specifying the output '.init' file path. If a `NoneType`
+    output_init_file: A `str` object specifying the output '.init' file path. If a `NoneType`
         object (or an empty `str` object ('')) is provided, or `dry_run=True`, then skip
         writing an output '.init' file upon PyRosettaCluster instantiation. If skipped,
         it is recommended to run `pyrosetta.dump_init_file()` before or after the simulation.
@@ -679,7 +679,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         validator=attr.validators.instance_of(str),
         converter=attr.converters.default_if_none(""),
     )
-    init_file = attr.ib(
+    output_init_file = attr.ib(
         type=str,
         default=attr.Factory(
             lambda self: os.path.join(
@@ -729,7 +729,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         _maybe_init_client()
         self._setup_logger()
         self._write_environment_file(self.environment_file)
-        self._write_init_file(self.init_file)
+        self._write_init_file(self.output_init_file)
         self.serializer = Serialization(compression=self.compression)
         self.clients_dict = self._setup_clients_dict()
 

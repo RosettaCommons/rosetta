@@ -75,7 +75,7 @@ class IO(Generic[G]):
         assert isinstance(instance_state, dict)
         instance_state.pop("client", None)
         instance_state.pop("clients", None)
-        instance_state.pop("init_file", None)
+        instance_state.pop("output_init_file", None)
         instance_state.pop("logging_address", None)
         instance_state.pop("simulation_dir", None)
         instance_kwargs = self.serializer.deepcopy_kwargs(instance_state)
@@ -238,8 +238,8 @@ class IO(Generic[G]):
             }
             if os.path.isfile(self.environment_file):
                 extra_kwargs["PyRosettaCluster_environment_file"] = self.environment_file
-            if os.path.isfile(self.init_file):
-                extra_kwargs["PyRosettaCluster_init_file"] = self.init_file
+            if os.path.isfile(self.output_init_file):
+                extra_kwargs["PyRosettaCluster_init_file"] = self.output_init_file
             if "PyRosettaCluster_datetime_start" in kwargs:
                 datetime_end = datetime.now().strftime(self.DATETIME_FORMAT)
                 duration = str(

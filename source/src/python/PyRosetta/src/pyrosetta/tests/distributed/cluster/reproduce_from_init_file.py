@@ -43,14 +43,14 @@ def get_protocols(*protocol_names):
     return protocols
 
 
-def main(input_file, scorefile_name, init_file, sequence):
+def main(input_file, scorefile_name, input_init_file, sequence):
     """Reproduce decoy from .pdb.bz2 file with a '.init' file."""
     skip_corrections = False # Do not skip corrections since not using results for another reproduction
     with tempfile.TemporaryDirectory() as tmp_dir:
         # Initialize PyRosetta on the host node before instantiating `input_pose`
         init_from_file(
-            init_file, 
-            output_dir=os.path.join(tmp_dir, "init_files"),
+            input_init_file,
+            output_dir=os.path.join(tmp_dir, "pyrosetta_init_input_files"),
             dry_run=False,
             skip_corrections=skip_corrections,
             relative_paths=True,
@@ -78,9 +78,9 @@ def main(input_file, scorefile_name, init_file, sequence):
             instance_kwargs={
                 "sha1": None,
                 "scorefile_name": scorefile_name,
-                "init_file": os.path.join(tmp_dir, "pyrosetta.init"), # Test `dump_init_file` with custom path
+                "output_init_file": os.path.join(tmp_dir, "pyrosetta.init"), # Test `dump_init_file` with custom path
             },
-            init_file=None, # Skip `init_from_file` since 'input_packed_pose' is provided
+            input_init_file=None, # Skip `init_from_file` since 'input_packed_pose' is provided
             skip_corrections=skip_corrections,
         )
 
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_file', type=str)
     parser.add_argument('--scorefile_name', type=str)
-    parser.add_argument('--init_file', type=str)
+    parser.add_argument('--input_init_file', type=str)
     parser.add_argument('--sequence', type=str)
     args = parser.parse_args()
-    main(args.input_file, args.scorefile_name, args.init_file, args.sequence)
+    main(args.input_file, args.scorefile_name, args.input_init_file, args.sequence)
