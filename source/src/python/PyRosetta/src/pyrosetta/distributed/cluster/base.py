@@ -194,6 +194,7 @@ class TaskBase(Generic[G]):
 @toolz.functoolz.curry
 def _maybe_relativize(value: str, start: str) -> str:
     """Relativize a `str` object if it exists as a path."""
+
     expanded_value = os.path.expandvars(os.path.expanduser(value))
     try:
         maybe_path = os.path.normpath(
@@ -202,11 +203,21 @@ def _maybe_relativize(value: str, start: str) -> str:
         if os.path.lexists(maybe_path):
             try:
                 return os.path.relpath(maybe_path, start=start)
-            except Exception: # May be cross-drive path on Windows
+            except Exception as e: # May be cross-drive path on Windows
+                logging.warning(
+                    f"{type(e).__name__}: {e}. PyRosettaCluster cannot relativize a path in a task's "
+                    + f"PyRosetta initialization options; leaving value unchanged: '{value}'. "
+                    + "Please consider setting a relative path in the input task's PyRosetta "
+                    + "initialization options for facile reproducibility."
+                )
                 return value
         else:
             return value
-    except Exception: # May be malformed path
+    except Exception as ex: # May be malformed path
+        logging.warning(
+            f"{type(ex).__name__}: {ex}. PyRosettaCluster cannot construct a candidate path in a task's "
+            + f"PyRosetta initialization options; leaving value unchanged: '{value}'. "
+        )
         return value
 
 
@@ -232,7 +243,7 @@ def _get_norm_task_options() -> Dict[str, str]:
 
     if msgs:
         logging.info(
-            "PyRosettaCluster is normalizing the following paths in the task "
+            "PyRosettaCluster is normalizing the following values in the task's PyRosetta "
             + "initialization options with `norm_task_options` enabled:\n"
             + "\n".join(msgs)
         )
