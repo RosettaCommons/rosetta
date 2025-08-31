@@ -225,7 +225,7 @@ def capture_task_metadata(func: M) -> M:
         kwargs["PyRosettaCluster_seeds"].append((protocol_name, str(seed)))
         kwargs["PyRosettaCluster_seed"] = seed
         if norm_task_options:
-            options = _get_norm_task_options()
+            options = _get_norm_task_options(ignore_errors)
             if "extra_options" in kwargs["PyRosettaCluster_task"]:
                 kwargs["PyRosettaCluster_task"]["extra_options"] = options
                 if "options" in kwargs["PyRosettaCluster_task"]:
