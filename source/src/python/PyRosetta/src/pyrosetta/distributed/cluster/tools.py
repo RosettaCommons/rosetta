@@ -615,10 +615,11 @@ def reproduce(
         _tmp_dir = tempfile.TemporaryDirectory(prefix="PyRosettaCluster_reproduce_")
         init_from_file(
             input_init_file,
-            output_dir=os.path.join(_tmp_dir.name, "pyrosetta_init_files"),
+            output_dir=os.path.join(_tmp_dir.name, "pyrosetta_init_input_files"),
             skip_corrections=skip_corrections,
             relative_paths=False,
             dry_run=False,
+            max_decompressed_bytes=pow(2, 30), # 1 GiB
             database=None,
             verbose=True,
             set_logging_handler="logging",

@@ -53,7 +53,7 @@ def main(input_file, scorefile_name, input_init_file, sequence):
             output_dir=os.path.join(tmp_dir, "pyrosetta_init_input_files"),
             dry_run=False,
             skip_corrections=skip_corrections,
-            relative_paths=True,
+            relative_paths=False,
             max_decompressed_bytes=100_000,
             database=None,
             verbose=True,

@@ -973,7 +973,7 @@ class TestReproducibilityMulti(unittest.TestCase):
                 simulation_records_in_scorefile=True,
                 decoy_dir_name=decoy_dir_name,
                 logs_dir_name="logs",
-                ignore_errors=True,
+                ignore_errors=False,
                 timeout=1.0,
                 sha1=None,
                 dry_run=False,
