@@ -105,7 +105,7 @@ def _maybe_relativize(
         "initialization option value. Ignoring error because `ignore_errors` is enabled!"
     )
     _err_msg = (
-        "{0}. {1}. Please correct the task's PyRosetta initialization option value, "
+        "{0}. {1}. Please update the task's PyRosetta initialization option value, "
         "disable `norm_task_options`, or enable `ignore_errors` to continue."
     )
 
