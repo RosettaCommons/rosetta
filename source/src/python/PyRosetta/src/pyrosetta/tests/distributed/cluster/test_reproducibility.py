@@ -103,9 +103,10 @@ class TestReproducibility(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
-                norm_task_options=None,
                 max_delay_time=0.0 if filter_results else 1.0,
                 filter_results=filter_results,
+                norm_task_options=None,
+                output_init_file=None,
             )
 
             cluster.distribute(protocols=[my_pyrosetta_protocol])
@@ -175,9 +176,10 @@ class TestReproducibility(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
-                norm_task_options=None,
                 max_delay_time=0.0 if filter_results else 1.0,
                 filter_results=filter_results,
+                norm_task_options=None,
+                output_init_file=None,
             )
 
             def my_pyrosetta_protocol(packed_pose, **kwargs):
@@ -327,9 +329,10 @@ class TestReproducibility(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
-                norm_task_options=None,
                 max_delay_time=0.0 if filter_results else 1.0,
                 filter_results=filter_results,
+                norm_task_options=None,
+                output_init_file=None,
             )
 
             def sample_func(packed_pose, **kwargs):
@@ -369,9 +372,10 @@ class TestReproducibility(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
-                norm_task_options=None,
                 max_delay_time=0.0 if filter_results else 1.0,
                 filter_results=filter_results,
+                norm_task_options=None,
+                output_init_file=None,
             )
 
             independent_cluster_instance.distribute(sample_func)
@@ -540,9 +544,10 @@ class TestReproducibilityMulti(unittest.TestCase):
                     save_all=False,
                     system_info=None,
                     pyrosetta_build=None,
-                    norm_task_options=None,
                     max_delay_time=0.0 if filter_results else 1.0,
                     filter_results=filter_results,
+                    norm_task_options=None,
+                    output_init_file=None,
                 ).generate(*protocols)
             )
 
@@ -751,9 +756,10 @@ class TestReproducibilityMulti(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
-                norm_task_options=None,
                 max_delay_time=0.0 if filter_results else 1.0,
                 filter_results=filter_results,
+                norm_task_options=None,
+                output_init_file=None,
             ).distribute(protocols=protocols)
 
             with open(os.path.join(output_path, "scores.json"), "r") as f:
@@ -980,12 +986,13 @@ class TestReproducibilityMulti(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
-                norm_task_options=None,
                 author=author,
                 email=email,
                 license=license,
                 max_delay_time=0.0 if filter_results else 1.0,
                 filter_results=filter_results,
+                norm_task_options=None,
+                output_init_file=None,
             ).distribute(*protocols)
 
             scorefile_path = os.path.join(output_path, scorefile_name)

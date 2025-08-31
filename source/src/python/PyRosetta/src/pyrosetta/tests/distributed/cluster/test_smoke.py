@@ -127,6 +127,7 @@ class SmokeTest(unittest.TestCase):
                 pyrosetta_build=None,
                 filter_results=True,
                 norm_task_options=False,
+                output_init_file=None,
             )
             cluster = PyRosettaCluster(**instance_kwargs)
             cluster.distribute(
@@ -191,7 +192,9 @@ class SmokeTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                norm_task_options=True,
                 filter_results=False,
+                output_init_file=None,
             )
             cluster = PyRosettaCluster(**instance_kwargs)
             cluster.distribute(protocol_with_error)
@@ -231,7 +234,9 @@ class SmokeTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
+                norm_task_options=True,
                 filter_results=False,
+                output_init_file=None,
             )
             cluster = PyRosettaCluster(**instance_kwargs)
             with self.assertRaises(WorkerError):
@@ -527,6 +532,8 @@ class SmokeTestMulti(unittest.TestCase):
                 system_info=None,
                 pyrosetta_build=None,
                 filter_results=False,
+                norm_task_options=True,
+                output_init_file=None,
             ).distribute(
                 protocols=(
                     my_first_protocol,
@@ -623,6 +630,7 @@ class SmokeTestMulti(unittest.TestCase):
                 pyrosetta_build=None,
                 filter_results=True,
                 norm_task_options=None,
+                output_init_file=None,
             ).distribute(protocols=(my_first_protocol, my_second_protocol, my_third_protocol))
 
             cluster = PyRosettaCluster(
@@ -663,6 +671,7 @@ class SmokeTestMulti(unittest.TestCase):
                 pyrosetta_build=None,
                 filter_results=True,
                 norm_task_options=None,
+                output_init_file=None,
             )
 
             cluster.distribute(protocols=[my_first_protocol, my_second_protocol, my_third_protocol])
@@ -737,6 +746,7 @@ class SaveAllTest(unittest.TestCase):
                 license=license,
                 filter_results=True,
                 norm_task_options=None,
+                output_init_file=None,
             )
             protocol_args = [my_pyrosetta_protocol] * _total_protocols
             cluster.distribute(*protocol_args)
@@ -844,9 +854,9 @@ class SaveAllTest(unittest.TestCase):
                 save_all=True,
                 system_info=None,
                 pyrosetta_build=None,
-                output_init_file=init_file,
                 filter_results=True,
                 norm_task_options=None,
+                output_init_file=init_file,
             ).distribute(protocols=[my_pyrosetta_protocol] * _total_protocols)
 
             self.assertFalse(os.path.exists(os.path.join(output_path, scorefile_name)))
@@ -1055,6 +1065,8 @@ class MultipleClientsTest(unittest.TestCase):
                 system_info=None,
                 pyrosetta_build=None,
                 filter_results=False,
+                norm_task_options=None,
+                output_init_file=None,
             )
             produce(**instance_kwargs)
 
@@ -1152,6 +1164,7 @@ class ResourcesTest(unittest.TestCase):
                 pyrosetta_build=None,
                 filter_results=True,
                 norm_task_options=None,
+                output_init_file=None,
             )
             produce(**instance_kwargs)
 
@@ -1282,6 +1295,7 @@ class ResourcesTest(unittest.TestCase):
                 pyrosetta_build=None,
                 filter_results=True,
                 norm_task_options=None,
+                output_init_file=None,
             )
             produce(**instance_kwargs)
 
@@ -1343,6 +1357,7 @@ class ScoresTest(unittest.TestCase):
             pyrosetta_build=None,
             filter_results=True,
             norm_task_options=None,
+            output_init_file=None,
         )
 
     @classmethod
@@ -1567,6 +1582,7 @@ class TestBase:
             save_all=False,
             filter_results=True,
             norm_task_options=None,
+            output_init_file=None,
         )
 
     def tearDown(self):
