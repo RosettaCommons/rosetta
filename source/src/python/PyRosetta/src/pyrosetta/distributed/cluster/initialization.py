@@ -100,46 +100,32 @@ def _maybe_relativize(
 ) -> Union[str, NoReturn]:
     """Relativize a `str` object if it exists as a path."""
 
-    _log_msg = (
-        "{0}: {1}. {2}. Please consider setting a relative path in the task's PyRosetta "
-        "initialization option value. Ignoring error because `ignore_errors` is enabled!"
-    )
-    _err_msg = (
-        "{0}. {1}. Please update the task's PyRosetta initialization option value, "
-        "disable `norm_task_options`, or enable `ignore_errors` to continue."
-    )
-
     try:
         expanded = os.path.expandvars(os.path.expanduser(value))
         maybe_path = os.path.normpath(
             expanded if os.path.isabs(expanded) else os.path.join(start, expanded)
         )
-    except Exception as ex: # May be malformed object
-        msg = (
-            "PyRosettaCluster (with `norm_task_options` enabled) cannot construct a candidate path "
-            f"in the task's PyRosetta initialization option '-{option_name}' with value: '{value}'"
+        return os.path.relpath(maybe_path, start=start) if os.path.lexists(maybe_path) else value
+    except Exception as ex: # May be malformed object or cross-drive path on Windows
+        _msg = (
+            "PyRosettaCluster (with `norm_task_options` enabled) cannot relativize a path in the "
+            f"task's PyRosetta initialization option '-{option_name}' with value: '{value}'"
         )
         if ignore_errors:
-            logging.error(_log_msg.format(type(ex).__name__, ex, msg))
+            logging.error(
+                (
+                    "{0}: {1}. {2}. Please consider setting a relative path in the task's PyRosetta "
+                    "initialization option value. Ignoring error because `ignore_errors` is enabled!"
+                ).format(type(ex).__name__, ex, _msg)
+            )
             return value
         else:
-            raise ValueError(_err_msg.format(ex, msg))
-
-    if os.path.lexists(maybe_path):
-        try:
-            return os.path.relpath(maybe_path, start=start)
-        except Exception as ex: # May be cross-drive path on Windows
-            msg = (
-                "PyRosettaCluster (with `norm_task_options` enabled) cannot relativize a path in the "
-                f"task's PyRosetta initialization option '-{option_name}' with value: '{value}'"
+            raise ValueError(
+                (
+                    "{0}. {1}. Please update the task's PyRosetta initialization option value, "
+                    "disable `norm_task_options`, or enable `ignore_errors` to continue."
+                ).format(ex, _msg)
             )
-            if ignore_errors:
-                logging.error(_log_msg.format(type(ex).__name__, ex, msg))
-                return value
-            else:
-                raise ValueError(_err_msg.format(ex, msg))
-    else:
-        return value
 
 
 def _get_norm_task_options(ignore_errors: bool) -> Dict[str, str]:
