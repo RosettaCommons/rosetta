@@ -941,6 +941,7 @@ class TestReproducibilityMulti(unittest.TestCase):
         with tempfile.TemporaryDirectory() as workdir:
             sequence = "ACDEFGHIKLMNPQRSTVWY"
             output_path = os.path.join(workdir, "outputs")
+            output_init_file = os.path.join(output_path, "pyrosetta.init")
             input_pose = io.to_pose(io.pose_from_sequence(sequence))
             tasks = list(create_tasks())
             seeds = [-77777777, 888888888, -999999999]
@@ -992,7 +993,7 @@ class TestReproducibilityMulti(unittest.TestCase):
                 max_delay_time=0.0 if filter_results else 1.0,
                 filter_results=filter_results,
                 norm_task_options=None,
-                output_init_file=None,
+                output_init_file=output_init_file,
             ).distribute(*protocols)
 
             scorefile_path = os.path.join(output_path, scorefile_name)
