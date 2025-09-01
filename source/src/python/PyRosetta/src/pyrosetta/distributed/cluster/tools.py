@@ -610,22 +610,35 @@ def reproduce(
                 + "keyword argument and provide a file to the 'input_init_file' keyword argument "
                 + "because PyRosetta is already initialized! Please run `pyrosetta.init_from_file` "
                 + "before running `reproduce()` with the 'input_packed_pose' keyword argument "
-                + "and then use `None` for the 'input_init_file' keyword argument parameter."
+                + "and use `None` for the 'input_init_file' keyword argument parameter."
             )
         _tmp_dir = tempfile.TemporaryDirectory(prefix="PyRosettaCluster_reproduce_")
-        init_from_file(
-            input_init_file,
-            output_dir=os.path.join(_tmp_dir.name, "pyrosetta_init_input_files"),
-            skip_corrections=skip_corrections,
-            relative_paths=False,
-            dry_run=False,
-            max_decompressed_bytes=pow(2, 30), # 1 GiB
-            database=None,
-            verbose=True,
-            set_logging_handler="logging",
-            notebook=None,
-            silent=False,
-        )
+        try:
+            init_from_file(
+                input_init_file,
+                output_dir=os.path.join(_tmp_dir.name, "pyrosetta_init_input_files"),
+                skip_corrections=skip_corrections,
+                relative_paths=True,
+                dry_run=False,
+                max_decompressed_bytes=pow(2, 30), # 1 GiB
+                database=None,
+                verbose=True,
+                set_logging_handler="logging",
+                notebook=None,
+                silent=False,
+            )
+        except BufferError as ex:
+            raise BufferError(
+                f"{ex}. Please run `pyrosetta.init_from_file` with a larger `max_decompressed_bytes` "
+                + "keyword argument parameter before running `reproduce()` to initialize PyRosetta "
+                + f"with the input PyRosetta initialization file: '{input_init_file}'"
+            )
+        except Exception as ex:
+            raise Exception(
+                f"{type(ex).__name__}: {ex}. Could not initialize PyRosetta from the input PyRosetta "
+                + f"initialization file: '{input_init_file}'. Please run `pyrosetta.init_from_file` before "
+                + "running `reproduce()` and use `None` for the 'input_init_file' keyword argument parameter."
+            )
     else:
         _tmp_dir = None
     if isinstance(input_file, str) and input_file.endswith((".pose", ".pose.bz2")) and not was_init_called():
