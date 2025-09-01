@@ -25,6 +25,7 @@ except ImportError:
 
 import logging
 import os
+import time
 import warnings
 
 from contextlib import suppress
@@ -108,6 +109,7 @@ class LoggingSupport(Generic[G]):
         for handler in logger.handlers[:]:
             logger.removeHandler(handler)
             with suppress(Exception):
+                handler.flush()
                 handler.close()
         logging.shutdown()
 
@@ -153,8 +155,9 @@ class LoggingSupport(Generic[G]):
         self._close_socket_logger_plugins(clients)
         self.socket_listener.stop()
         handler = self.socket_listener.handler
-        handler.flush()
         with suppress(Exception):
+            handler.flush()
+            self._cooldown()
             handler.close()
 
     def _close_socket_logger_plugins(self, clients: Dict[int, Client]) -> None:
@@ -174,6 +177,9 @@ class LoggingSupport(Generic[G]):
                     logging.warning(
                         f"Logger was not closed cleanly on dask worker ({worker_address}) - {result}"
                     )
+
+    def _cooldown(self) -> None:
+        time.sleep(self.cooldown_time)
 
 
 def purge_socket_logger_plugin_address(
