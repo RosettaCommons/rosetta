@@ -746,36 +746,25 @@ class SaveAllTest(unittest.TestCase):
                 license=license,
                 filter_results=True,
                 norm_task_options=None,
-                output_init_file=None,
-            )
+            ) # Test 'output_init_file' default
             protocol_args = [my_pyrosetta_protocol] * _total_protocols
             cluster.distribute(*protocol_args)
 
             with open(os.path.join(output_path, scorefile_name), "r") as f:
                 data = [json.loads(line) for line in f]
             self.assertEqual(len(data), _total_tasks * _total_protocols)
-            for record in data:
-                for key in ("author", "email", "license"):
-                    self.assertIn(key, record["instance"])
-                    self.assertNotIn(key, record["metadata"])
-                    self.assertNotIn(key, record["scores"])
-            self.assertEqual(record["instance"]["author"], author)
-            self.assertEqual(record["instance"]["email"], email)
-            self.assertEqual(record["instance"]["license"], license)
+
             _project_name = "PyRosettaCluster" if project_name is None else project_name
             _simulation_name = "PyRosettaCluster" if simulation_name is None else simulation_name
             init_file = os.path.join(output_path, f"{_project_name}_{_simulation_name}_pyrosetta.init")
-            self.assertNotIn("init_file", record["instance"])
-            self.assertIn("init_file", record["metadata"])
             self.assertTrue(os.path.isfile(init_file))
-            self.assertEqual(record["metadata"]["init_file"], init_file)
             with open(init_file, "r") as f:
                 init_data = json.load(f)
+
             self.assertEqual(init_data["author"], author)
             self.assertEqual(init_data["email"], email)
             self.assertEqual(init_data["license"], license)
             self.assertEqual(init_data["pyrosetta_build"], pyrosetta._version_string())
-            self.assertEqual(init_data["pyrosetta_build"], record["instance"]["pyrosetta_build"])
             self.assertListEqual(init_data["options"]["run:constant_seed"], ["true"])
             self.assertEqual(
                 init_data["metadata"][0],
@@ -783,12 +772,23 @@ class SaveAllTest(unittest.TestCase):
                     pyrosetta.distributed.cluster.__version__
                 )
             )
-            _decoy_names = []
+            _decoy_names = set()
             for record in data:
+                self.assertEqual(init_data["pyrosetta_build"], record["instance"]["pyrosetta_build"])
+                for key in ("author", "email", "license"):
+                    self.assertIn(key, record["instance"])
+                    self.assertNotIn(key, record["metadata"])
+                    self.assertNotIn(key, record["scores"])
+                self.assertEqual(record["instance"]["author"], author)
+                self.assertEqual(record["instance"]["email"], email)
+                self.assertEqual(record["instance"]["license"], license)
+                self.assertNotIn("init_file", record["instance"])
+                self.assertIn("init_file", record["metadata"])
+                self.assertEqual(record["metadata"]["init_file"], init_file)
                 self.assertDictEqual(record["scores"], {})
                 _decoy_name = record["metadata"]["decoy_name"]
                 self.assertNotIn(_decoy_name, _decoy_names)
-                _decoy_names.append(_decoy_name)
+                _decoy_names.add(_decoy_name)
                 self.assertEqual(record["instance"]["nstruct"], nstruct)
 
     def test_save_all_dry_run(self):
