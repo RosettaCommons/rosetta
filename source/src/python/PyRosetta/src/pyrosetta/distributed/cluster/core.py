@@ -229,8 +229,8 @@ Args:
         Default: False
     cooldown_time: A `float` or `int` object specifying how many seconds to sleep after the
         simulation is complete to allow loggers to flush. For very slow network filesystems,
-        2.0 seconds may be reasonable.
-        Default: 1.0
+        2.0 or more seconds may be reasonable.
+        Default: 0.5
 
 Returns:
     A PyRosettaCluster instance.
@@ -610,9 +610,9 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
     )
     cooldown_time = attr.ib(
         type=float,
-        default=1.0,
+        default=0.5,
         validator=[_validate_float, attr.validators.instance_of((float, int))],
-        converter=attr.converters.default_if_none(default=1.0),
+        converter=attr.converters.default_if_none(default=0.5),
     )
     protocols_key = attr.ib(
         type=str,
