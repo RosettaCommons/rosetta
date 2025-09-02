@@ -29,20 +29,6 @@ except ImportError as ex:
 test_suite = globals().get("TestReproducibilityMulti")
 
 
-def get_protocols(*protocol_names):
-    """Get original user-provided PyRosetta protocols from source code."""
-    test_case = test_suite.test_reproducibility_from_reproduce
-    source_code = textwrap.dedent(inspect.getsource(test_case))
-    source_code_lines = source_code.splitlines()
-    for node in ast.walk(ast.parse(source_code)):
-        if isinstance(node, ast.FunctionDef) and node.name in protocol_names:
-            exec(textwrap.dedent(os.linesep.join(source_code_lines[node.lineno - 1: node.end_lineno])))
-    _locals = locals()
-    protocols = list(map(_locals.get, protocol_names))
-
-    return protocols
-
-
 def main(input_file, scorefile_name, input_init_file, sequence):
     """Reproduce decoy from .pdb.bz2 file with a '.init' file."""
     skip_corrections = False # Do not skip corrections since not using results for another reproduction
@@ -66,7 +52,14 @@ def main(input_file, scorefile_name, input_init_file, sequence):
         # Get protocols
         scores_dict = get_scores_dict(input_file)
         protocol_names = scores_dict["metadata"]["protocols"]
-        protocols = get_protocols(*protocol_names)
+        test_case = test_suite.test_reproducibility_from_reproduce
+        source_code = textwrap.dedent(inspect.getsource(test_case))
+        source_code_lines = source_code.splitlines()
+        for node in ast.walk(ast.parse(source_code)):
+            if isinstance(node, ast.FunctionDef) and node.name in protocol_names:
+                exec(textwrap.dedent(os.linesep.join(source_code_lines[node.lineno - 1: node.end_lineno])))
+        _locals = locals()
+        protocols = list(map(_locals.get, protocol_names))
         # Reproduce
         reproduce(
             input_file=input_file,

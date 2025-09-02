@@ -198,7 +198,8 @@ def _parse_protocols(objs: Any) -> Union[List[Union[Callable[..., Any], Iterable
             if not isinstance(obj, (types.FunctionType, types.GeneratorType)):
                 raise TypeError(
                     "Each member of PyRosetta protocols must be of type "
-                    + "`types.FunctionType` or `types.GeneratorType`!"
+                    + "`types.FunctionType` or `types.GeneratorType`! "
+                    + f"Received: {type(obj)}"
                 )
         return list(objs)
 
