@@ -53,10 +53,10 @@ else:
         print("Printing pip environment failed with return code: {0}.".format(ex.returncode))
 
 
-def e(cmd, sleep=0):
-    """Run command getting return code and output with subsequent sleep step to provide extra time to flush loggers."""
+def e(cmd):
+    """Run command getting return code and output."""
     print("Executing:\n{0}".format(cmd))
-    status, output = subprocess.getstatusoutput("{0} && sleep {1}".format(cmd, sleep))
+    status, output = subprocess.getstatusoutput(cmd)
     print("Output:\n{0}".format(output))
     if status != 0:
         print(
