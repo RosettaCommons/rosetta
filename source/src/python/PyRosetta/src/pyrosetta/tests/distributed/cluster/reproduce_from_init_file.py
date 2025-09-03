@@ -17,7 +17,9 @@ import pyrosetta.distributed.io as io
 import sys
 import tempfile
 import textwrap
+import types
 
+from functools import partial
 from pyrosetta import init_from_file
 from pyrosetta.distributed.cluster import get_scores_dict, reproduce
 
@@ -55,11 +57,15 @@ def main(input_file, scorefile_name, input_init_file, sequence):
         test_case = test_suite.test_reproducibility_from_reproduce
         source_code = textwrap.dedent(inspect.getsource(test_case))
         source_code_lines = source_code.splitlines()
+        module = types.ModuleType("_protocols")
         for node in ast.walk(ast.parse(source_code)):
             if isinstance(node, ast.FunctionDef) and node.name in protocol_names:
-                exec(textwrap.dedent(os.linesep.join(source_code_lines[node.lineno - 1: node.end_lineno])))
-        _locals = locals()
-        protocols = list(map(_locals.get, protocol_names))
+                exec(
+                    textwrap.dedent(os.linesep.join(source_code_lines[node.lineno - 1: node.end_lineno])),
+                    module.__dict__,
+                )
+        _get_protocol = partial(getattr, module)
+        protocols = list(map(_get_protocol, protocol_names))
         # Reproduce
         reproduce(
             input_file=input_file,
