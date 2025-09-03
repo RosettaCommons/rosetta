@@ -31,7 +31,11 @@ import pyrosetta.distributed.io as io
 import subprocess
 
 from functools import singledispatch
-from pyrosetta.distributed.cluster.config import environment_cmd, source_domains
+from pyrosetta.distributed.cluster.config import (
+    environment_cmd,
+    environment_manager,
+    source_domains,
+)
 from pyrosetta.distributed.cluster.exceptions import (
     InputError,
     InputFileError,

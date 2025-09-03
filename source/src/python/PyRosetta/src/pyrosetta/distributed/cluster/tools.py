@@ -34,6 +34,7 @@ from datetime import datetime
 from functools import wraps
 from pyrosetta.distributed.cluster.converters import _parse_protocols, _parse_yield_results
 from pyrosetta.distributed.cluster.converter_tasks import (
+    environment_manager,
     is_empty,
     get_protocols_list_of_str,
     get_yml,
@@ -79,7 +80,7 @@ def _print_conda_warnings() -> None:
     except ValueError:
         _worker = None
     if not _worker:
-        if shutil.which("conda"):  # Anaconda or Miniconda is installed
+        if shutil.which(environment_manager):  # Anaconda or Miniconda is installed
             if get_yml() == "":
                 print(
                     "Warning: To use the `pyrosetta.distributed.cluster` namespace, please "
@@ -90,7 +91,8 @@ def _print_conda_warnings() -> None:
                 )  # Warn that we are not in an active conda environment
         else:  # Anaconda or Miniconda is not installed
             print(
-                "Warning: Use of `pyrosetta.distributed.cluster` namespace requires Anaconda "
+                f"Warning: the environment manager '{environment_manager}' is set but it's not an executable! "
+                + "Use of `pyrosetta.distributed.cluster` namespace requires Anaconda "
                 + "(or Miniconda) to be properly installed for reproducibility of PyRosetta "
                 + "simulations. Please install Anaconda (or Miniconda) onto your system "
                 + "to enable running `which conda`. For installation instructions, visit:\n"
