@@ -451,13 +451,13 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         if kwargs["dry_run"] is None:
             kwargs["dry_run"] = False
         if not isinstance(kwargs["dry_run"], bool):
-            raise TypeError("The 'dry_run' keyword argument parameter must be a `bool` object.")
+            raise TypeError("The 'dry_run' keyword argument parameter must be a `bool` object. Received: {0}".format(type(kwargs["dry_run"])))
         if kwargs["output_dir"] is None:
             output_dir = os.path.join(os.getcwd(), "pyrosetta_init_files")
         elif isinstance(kwargs["output_dir"], str):
             output_dir = os.path.abspath(kwargs["output_dir"])
         else:
-            raise TypeError("The 'output_dir' keyword argument parameter must be a `str` object.")
+            raise TypeError("The 'output_dir' keyword argument parameter must be a `str` object. Received: {0}".format(type(kwargs["output_dir"])))
         if not os.path.isdir(output_dir):
             kwargs["output_dir"] = output_dir
         elif kwargs["dry_run"]:
