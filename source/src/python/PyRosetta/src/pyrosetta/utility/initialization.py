@@ -42,7 +42,7 @@ class PyRosettaInitFileParserBase(object):
     def pyrosetta_build_warning(self, original_pyrosetta_build, current_pyrosetta_build):
         _msg = os.linesep.join(
             [
-                "The PyRosetta version that generated the '.init' file "
+                "The PyRosetta version that generated the '{0}' file ".format(self._init_file_extension)
                 + "does not match the current PyRosetta version. Please inspect "
                 + "the PyRosetta input files if you encounter any issues during "
                 + "or after PyRosetta initialization: {0}".format(self.kwargs["output_dir"]),
@@ -59,16 +59,16 @@ class PyRosettaInitFileParserBase(object):
     def validate_init_was_called(self):
         if not self.was_init_called:
             raise RuntimeError(
-                "PyRosetta must be already initialized to dump a '.init' file. "
+                "PyRosetta must be already initialized to dump a '{0}' file. ".format(self._init_file_extension)
                 + "Please run `pyrosetta.init()` with custom options and try again."
             )
 
     def validate_init_was_not_called(self):
         if self.was_init_called:
             raise RuntimeError(
-                "PyRosetta must not be already initialized to initialize from a '.init' file. "
-                "Please ensure that `pyrosetta.init()` was not already called (e.g., "
-                "if using a Jupyter notebook, please restart the kernel) and try again."
+                "PyRosetta must not be already initialized to initialize from a '{0}' file. ".format(self._init_file_extension)
+                + "Please ensure that `pyrosetta.init()` was not already called (e.g., "
+                + "if using a Jupyter notebook, please restart the kernel) and try again."
             )
 
 
@@ -185,7 +185,7 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             raise TypeError(
                 "Output file must be a `str` object. Received: {0}".format(type(output_filename))
             )
-        if not output_filename.endswith(".init"):
+        if not output_filename.endswith(self._init_file_extension):
             raise NameError(
                 "Output file must end with the '{0}' filename extension.".format(self._init_file_extension)
             )
@@ -392,9 +392,9 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
 
     def print_cached_files(self, dry_run):
         if dry_run:
-            print(f"Dry run dump PyRosetta '.init' file:")
+            print(f"Dry run dump PyRosetta '{self._init_file_extension}' file:")
         else:
-            print(f"Dumping PyRosetta '.init' file to: {self.output_filename}")
+            print(f"Dumping PyRosetta '{self._init_file_extension}' file to: {self.output_filename}")
         if len(self.cached_files) > 0:
             print("Compressed {0} PyRosetta initialization input file(s):".format(len(self.cached_files)))
             for file in self.cached_files:
@@ -402,7 +402,7 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         else:
             print("No PyRosetta input files to compress.")
         if dry_run:
-            print(f"Skipping dumping PyRosetta initialization '.init' file...")
+            print(f"Skipping dumping PyRosetta initialization '{self._init_file_extension}' file...")
 
     def dump(self):
         encoded_options_dict = self.get_encoded_options_dict()
@@ -432,7 +432,12 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
                     sort_keys=True,
                 )
             if verbose:
-                print("Dumped PyRosetta '.init' file size:", round(os.path.getsize(self.output_filename) * 1e-6, 3), "MB")
+                print(
+                    f"Dumped PyRosetta '{self._init_file_extension}' file size:",
+                    round(os.path.getsize(self.output_filename) * 1e-6, 3),
+                    "MB",
+                    sep=" ",
+                )
 
 
 class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSerializer):
@@ -507,12 +512,12 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         return kwargs
 
     def setup_init_dict(self, init_file):
-        if isinstance(init_file, str) and init_file.endswith(".init") and os.path.isfile(init_file):
+        if isinstance(init_file, str) and init_file.endswith(self._init_file_extension) and os.path.isfile(init_file):
             with open(self.init_file, "r") as f:
                 return json.load(f)
         else:
             raise ValueError(
-                "Please provide a valid input PyRosetta '.init' file. Received: {0}".format(init_file)
+                "Please provide a valid input PyRosetta '{0}' file. Received: {1}".format(self._init_file_extension, init_file)
             )
 
     def get_encoded_options_dict(self):
@@ -523,7 +528,7 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
 
     @property
     def _malformed_init_file_error_msg(self):
-        return "Cannot read malformed PyRosetta '.init' file: {0}".format(self.init_file)
+        return "Cannot read malformed PyRosetta '{0}' file: {1}".format(self._init_file_extension, self.init_file)
 
     def format_decode_binary(self, value):
         return self.decode_binary(value.split(PyRosettaInitFileSerializer._prefix_binary)[-1])
