@@ -418,7 +418,19 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             self.print_cached_files(dry_run)
         if not dry_run and ((not os.path.isfile(self.output_filename)) or overwrite):
             with open(self.output_filename, "w") as f:
-                json.dump(data_dict, f, indent=2)
+                json.dump(
+                    data_dict,
+                    f,
+                    skipkeys=False,
+                    ensure_ascii=False,
+                    check_circular=True,
+                    allow_nan=False,
+                    cls=None,
+                    indent=2,
+                    separators=(", ", ": "),
+                    default=None,
+                    sort_keys=True,
+                )
             if verbose:
                 print("Dumped PyRosetta '.init' file size:", round(os.path.getsize(self.output_filename) * 1e-6, 3), "MB")
 
