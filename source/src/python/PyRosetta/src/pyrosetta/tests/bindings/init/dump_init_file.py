@@ -135,6 +135,12 @@ def main(tmp_dir):
     with open(os.path.join(tmp_dir, "res_types.json"), "w") as f:
         json.dump(list(name3_set), f)
 
+    _print_init_file_contents = False
+    if _print_init_file_contents:
+        _delim = "*" * 100
+        with open(init_file, "r") as f:
+            print(_delim, f.read(), _delim, sep=os.linesep)
+
 
 if __name__ == "__main__":
     print("Running: {0}".format(__file__))
