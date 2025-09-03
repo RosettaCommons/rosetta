@@ -628,13 +628,13 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             if self.file_counter == 0:
                 print("No PyRosetta input files to decompress.")
             else:
-                print("Decompressed {0} PyRosetta input files.".format(self.file_counter))
+                print("Decompressed {0} PyRosetta input file(s).".format(self.file_counter))
         else:
             print("Initializing PyRosetta from file: {0}".format(self.init_file))
             if self.file_counter == 0:
                 print("No PyRosetta input files to decompress.")
             else:
-                print("Decompressed {0} PyRosetta input files written to: {1}".format(
+                print("Decompressed {0} PyRosetta input file(s) written to: {1}".format(
                         self.file_counter, self.kwargs["output_dir"]
                     )
                 )
