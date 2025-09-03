@@ -514,7 +514,15 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
     def setup_init_dict(self, init_file):
         if isinstance(init_file, str) and init_file.endswith(self._init_file_extension) and os.path.isfile(init_file):
             with open(self.init_file, "r") as f:
-                return json.load(f)
+                return json.load(
+                    f,
+                    cls=None,
+                    object_hook=None,
+                    parse_float=None,
+                    parse_int=None,
+                    parse_constant=None,
+                    object_pairs_hook=None,
+                )
         else:
             raise ValueError(
                 "Please provide a valid input PyRosetta '{0}' file. Received: {1}".format(self._init_file_extension, init_file)
