@@ -41,7 +41,7 @@ __all__ = [
     "to_pickle",
     "to_silent",
     "to_pdbstring",
-    "to_output_record"
+    "to_output_record",
     "dump_file",
     "dump_pdb",
     "dump_scored_pdb",
@@ -66,8 +66,12 @@ def pose_from_file(*args, **kwargs):
         - bz2-encoded files ending with file extensions: (".pdb.bz2", ".bz2")
         - gzip-encoded files ending with file extensions: (".pdb.gz", ".gz")
         - xz-encoded files ending with file extensions: (".pdb.xz", ".xz")
-        - base64-encoded files ending with file extensions: (".base64", ".b64", ".B64", ".pose")
-        - pickle-encoded files ending with file extensions: (".pickle", ".pickled_pose")
+        - base64-encoded files ending with file extension: ".b64_pose"
+            *Warning*: This function uses the pickle module to deserialize ".b64_pose" files.
+            Use of the pickle module is not secure. Only unpickle data you trust.
+        - pickle-encoded files ending with file extension: ".pkl_pose"
+            *Warning*: This function uses the pickle module to deserialize ".pkl_pose" files.
+            Use of the pickle module is not secure. Only unpickle data you trust.
     Otherwise, implements `io.to_packed(pyrosetta.io.pose_from_file(*args, **kwargs))`.
 
     @klimaj
@@ -80,9 +84,9 @@ def pose_from_file(*args, **kwargs):
             f"Could not find filename in arguments '{args}' or keyword arguments '{kwargs}'."
         )
 
-    if filename.endswith((".base64", ".b64", ".B64", ".pose")):
+    if filename.endswith(".b64_pose"):
         pack_or_pose = pose_from_base64(filename)  # returns `PackedPose` object
-    elif filename.endswith((".pickle", ".pickled_pose")):
+    elif filename.endswith(".pkl_pose"):
         pack_or_pose = pose_from_pickle(filename)  # returns `PackedPose` object
     else:
         pack_or_pose = pyrosetta.io.pose_from_file(*args, **kwargs)  # returns `Pose` object
@@ -126,6 +130,9 @@ def pose_from_base64(filename):
     """
     Load a `PackedPose` object from a base64-encoded file.
 
+    *Warning*: This function uses the pickle module to deserialize the input file.
+    Use of the pickle module is not secure. Only unpickle data you trust.
+
     To load a `PackedPose` object from an input base64-encoded string,
     use `io.to_packed(string)` or `io.to_packed(io.to_pose(string))`.
 
@@ -152,6 +159,9 @@ def _pose_from_str(filename):
 def pose_from_pickle(filename):
     """
     Load a `PackedPose` object from a pickle-encoded binary file.
+
+    *Warning*: This function uses the pickle module to deserialize the input file.
+    Use of the pickle module is not secure. Only unpickle data you trust.
 
     To load a `PackedPose` object from an input pickle-encoded bytestring,
     use `io.to_packed(bytestring)` or `io.to_packed(io.to_pose(bytestring))`.
@@ -319,9 +329,9 @@ def dump_base64(inp, output_filename):
 
     @klimaj
     """
-    if not output_filename.endswith((".base64", ".b64", ".B64", ".pose")):
+    if not output_filename.endswith(".b64_pose"):
         warnings.warn(
-            "Output filename does not end with '.base64', '.b64', '.B64', or '.pose', "
+            "Output filename does not end with '.b64_pose', "
             + "which `pyrosetta.distributed.io.pose_from_file` expects."
         )
     with open(output_filename, "w") as f:
@@ -335,9 +345,9 @@ def dump_pickle(inp, output_filename):
 
     @klimaj
     """
-    if not output_filename.endswith((".pickle", ".pickled_pose")):
+    if not output_filename.endswith(".pkl_pose"):
         warnings.warn(
-            "Output filename does not end with '.pickle' or '.pickled_pose', "
+            "Output filename does not end with '.pkl_pose', "
             + "which `pyrosetta.distributed.io.pose_from_file` expects."
         )
     with open(output_filename, "wb") as f:
