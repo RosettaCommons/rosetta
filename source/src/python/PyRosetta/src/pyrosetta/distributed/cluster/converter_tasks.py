@@ -171,7 +171,7 @@ def get_scores_dict(obj):
 
 def get_yml() -> str:
     """
-    Use `conda env export` to return a YML file string with the current conda
+    Run environment command to return a YML file string with the current virtual
     enviroment, excluding certain source domains.
     """
 

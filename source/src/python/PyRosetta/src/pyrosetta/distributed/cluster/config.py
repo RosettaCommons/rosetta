@@ -13,18 +13,20 @@ import shutil
 import sys
 
 from pyrosetta.utility import get_package_version
-from typing import Dict, List, Tuple
+from typing import Dict, Generic, List, Tuple, TypeVar
 
 
 __dask_version__: Tuple[int, int, int] = get_package_version("dask")
 __dask_jobqueue_version__: Tuple[int, int, int] = get_package_version("dask-jobqueue")
 
+G = TypeVar("G")
 
-class EnvironmentConfig:
+
+class EnvironmentConfig(Generic[G]):
     _env_var: str = "PYROSETTACLUSTER_ENVIRONMENT_MANAGER"
     _environment_cmds: Dict[str, str] = {
         "pixi": "pixi workspace export conda-environment",
-        "uv": "uv export --format requirements-txt",
+        "uv": "uv export --format requirements-txt --frozen",
         "mamba": "mamba env export --prefix {0}".format(sys.prefix),
         "conda": "conda env export --prefix {0}".format(sys.prefix),
     }
@@ -54,8 +56,9 @@ class EnvironmentConfig:
             else:
                 self.environment_manager = "conda"
                 print(
-                    f"Warning: could not configure environment manager for PyRosettaCluster. "
-                    "Please ensure either of 'pixi', 'uv', 'mamba', or 'conda' is an executable."
+                    f"Warning: could not configure an environment manager for PyRosettaCluster. "
+                    + "Please ensure that either of 'pixi', 'uv', 'mamba', or 'conda' is installed. "
+                    + "Using 'conda' as the default environment manager."
                 )
         self.environment_cmd = self._environment_cmds[self.environment_manager]
 
