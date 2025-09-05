@@ -21,7 +21,6 @@ import inspect
 import json
 import os
 import pyrosetta
-import pyrosetta.distributed.io as io
 import re
 import tempfile
 import warnings
@@ -64,6 +63,18 @@ class PyRosettaInitFileParserBase(object):
             return True
         except (ImportError, AssertionError):
             return False
+
+    def get_to_base64(self):
+        try:
+            import pyrosetta.distributed.io as io  # noqa: F401
+            return io.to_base64
+        except ImportError as ex:
+            raise ImportError(
+                "{0}. Please ensure that all 'pyrosetta.distributed' framework ".format(ex)
+                + "package dependencies are installed. For instructions, please visit:\n"
+                + "https://pypi.org/project/pyrosetta-installer\n"
+                + "https://pypi.org/project/pyrosetta-distributed\n"
+            )
 
     @property
     def was_init_called(self):
@@ -220,14 +231,15 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
                 + "file, please ensure that PyRosetta is built with serialization support. "
                 + "Current PyRosetta build: {0}".format(self.get_pyrosetta_build()),
             )
+            to_base64 = self.get_to_base64()
             objs = kwargs["poses"]
             if isinstance(objs, (Pose, PackedPose)):
-                kwargs["poses"] = [io.to_base64(objs)]
+                kwargs["poses"] = [to_base64(objs)]
             elif isinstance(objs, collections.abc.Iterable):
                 kwargs["poses"] = []
                 for obj in objs:
                     if isinstance(obj, (Pose, PackedPose)):
-                        kwargs["poses"].append(io.to_base64(obj))
+                        kwargs["poses"].append(to_base64(obj))
                     else:
                         raise TypeError(
                             "The 'poses' keyword argument parameter must be a `Pose` or `PackedPose` object, "
