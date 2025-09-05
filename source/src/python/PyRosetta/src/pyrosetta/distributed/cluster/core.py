@@ -250,6 +250,10 @@ Args:
     dry_run: A `bool` object specifying whether or not to save '.pdb' files to
         disk. If `True`, then do not write '.pdb' or '.pdb.bz2' files to disk.
         Default: False
+    cooldown_time: A `float` or `int` object specifying how many seconds to sleep after the
+        simulation is complete to allow loggers to flush. For very slow network filesystems,
+        2.0 or more seconds may be reasonable.
+        Default: 0.5
 
 Returns:
     A PyRosettaCluster instance.
@@ -654,6 +658,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         default=False,
         validator=attr.validators.instance_of(bool),
         converter=_parse_yield_results,
+    )
+    cooldown_time = attr.ib(
+        type=float,
+        default=0.5,
+        validator=[_validate_float, attr.validators.instance_of((float, int))],
+        converter=attr.converters.default_if_none(default=0.5),
     )
     protocols_key = attr.ib(
         type=str,
