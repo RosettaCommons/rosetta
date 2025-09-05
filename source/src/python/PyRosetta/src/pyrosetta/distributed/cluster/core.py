@@ -156,18 +156,18 @@ Args:
         to disk.
         Default: "./outputs"
     output_decoy_types: An iterable of `str` objects representing the output decoy
-        filetypes to save during the simulation. Available options are: '.pdb' for PDB
-        files, and ".b64_pose" for base64-encoded pickle files. If `compressed=True`,
+        filetypes to save during the simulation. Available options are: ".pdb" for PDB
+        files, and ".b64_pose" for base64-encoded pickled Pose files. If `compressed=True`,
         then each output decoy file is compressed by `bzip2`, and ".bz2" is appended to the
         filename.
-        Default: ["pdb",]
+        Default: [".pdb",]
     output_scorefile_types: An iterable of `str` objects representing the output scorefile
         filetypes to save during the simulation. Available options are: ".json" for a
         JSON-encoded scorefile, and any filename extensions accepted by
         `pandas.DataFrame().to_pickle(compression="infer")` (including ".gz", ".bz2",
         and ".xz") for pickled `pandas.DataFrame` objects of scorefile data that can later
         be analyzed using `pandas.read_pickle(compression="infer")`.
-        Default: ["json",]
+        Default: [".json",]
     scorefile_name: A `str` object specifying the name of the output JSON-formatted
         scorefile. The scorefile location is always `output_path`/`scorefile_name`.
         Default: "scores.json"
