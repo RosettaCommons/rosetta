@@ -56,6 +56,16 @@ class PyRosettaInitFileParserBase(object):
         warnings.warn(_msg, UserWarning, stacklevel=4)
 
     @property
+    def has_cereal(self):
+        try:
+            import pyrosetta.rosetta.cereal as cereal  # noqa: F401
+            assert hasattr(cereal, "BinaryInputArchive")
+            assert hasattr(cereal, "BinaryOutputArchive")
+            return True
+        except (ImportError, AssertionError):
+            return False
+
+    @property
     def was_init_called(self):
         return pyrosetta.rosetta.basic.was_init_called()
 
@@ -205,7 +215,7 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         if "poses" in kwargs and kwargs["poses"] is None:
             kwargs["poses"] = []
         else:
-            assert "serialization" in self.get_pyrosetta_build(), (
+            assert self.has_cereal, (
                 f"To cache `Pose` and/or `PackedPose` objects in the output '{self._init_file_extension}' "
                 "file, please ensure that PyRosetta is built with serialization support."
             )
