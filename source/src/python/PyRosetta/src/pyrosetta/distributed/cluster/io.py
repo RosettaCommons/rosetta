@@ -299,7 +299,8 @@ class IO(Generic[G]):
                     with open(output_pose_file, "wb") as f:
                         f.write(bz2.compress(str.encode(io.to_base64(_packed_pose))))
                 else:
-                    io.dump_base64(_packed_pose, output_pose_file)
+                    with open(output_pose_file, "w") as f:
+                        f.write(io.to_base64(_packed_pose))
 
             # Output JSON-encoded scorefile
             if ".json" in self.output_scorefile_types:
