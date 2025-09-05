@@ -169,7 +169,10 @@ Args:
         be analyzed using `pandas.read_pickle(compression="infer")`.
         Default: [".json",]
     scorefile_name: A `str` object specifying the name of the output JSON-formatted
-        scorefile. The scorefile location is always `output_path`/`scorefile_name`.
+        scorefile, which must end in ".json". The scorefile location is always
+        `output_path`/`scorefile_name`. If ".json" is not in the 'output_scorefile_types'
+        keyword argument parameter, the JSON-formatted scorefile will not be output,
+        but other scorefile types will get the same filename before the ".json" extension.
         Default: "scores.json"
     simulation_records_in_scorefile: A `bool` object specifying whether or not to
         write full simulation records to the scorefile. If `True`, then write
