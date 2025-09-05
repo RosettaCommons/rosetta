@@ -1,15 +1,11 @@
 """IO routines operating on PackedPose representations."""
-import bz2
 import functools
-import gzip
+import json
 import os
-import sys
 import warnings
 
 import pyrosetta.io
 import pyrosetta.rosetta.utility as utility
-import pyrosetta.rosetta.core.pose as pose
-import pyrosetta.rosetta.core.import_pose as import_pose
 import pyrosetta.rosetta.core.scoring as scoring
 import pyrosetta.distributed.tasks.score as score
 
@@ -17,11 +13,6 @@ from pyrosetta.distributed import requires_init
 from pyrosetta.distributed.packed_pose import (
     pack_result, pose_result, to_pose, to_packed, to_dict, to_base64, to_pickle, register_container_traversal
 )
-
-try:
-    import lzma as xz
-except ImportError:
-    pass
 
 
 __all__ = [
@@ -139,7 +130,7 @@ def pose_from_base64(filename):
     @klimaj
     """
     raise FileNotFoundError(
-        f"The input filename must be an instance of `str`. Recieved: {type(filename)}"
+        f"The input filename must be an instance of `str`. Received: {type(filename)}"
     )
 
 @pose_from_base64.register(type(None))
@@ -169,7 +160,7 @@ def pose_from_pickle(filename):
     @klimaj
     """
     raise FileNotFoundError(
-        f"The input filename must be an instance of `str`. Recieved: {type(filename)}"
+        f"The input filename must be an instance of `str`. Received: {type(filename)}"
     )
 
 @pose_from_pickle.register(type(None))
@@ -183,6 +174,49 @@ def _pose_from_none(none):
 def _pose_from_str(filename):
     with open(filename, "rb") as f:
         return f.read()
+
+
+@functools.singledispatch
+def poses_from_init_file(filename):
+    """
+    Return a `list` object of `PackedPose` objects from a '.init' file.
+
+    *Warning*: This function uses the pickle module to deserialize the input file.
+    Use of the pickle module is not secure. Only unpickle data you trust.
+
+    @klimaj
+    """
+    raise FileNotFoundError(
+        f"The input filename must be an instance of `str`. Received: {type(filename)}"
+    )
+
+@poses_from_init_file.register(type(None))
+def _poses_from_none(none):
+    return None
+
+@poses_from_init_file.register(str)
+def _poses_from_str(filename):
+    if isinstance(filename, str) and filename.endswith(".init") and os.path.isfile(filename):
+        with open(filename, "r") as f:
+            init_dict = json.load(
+                f,
+                cls=None,
+                object_hook=None,
+                parse_float=None,
+                parse_int=None,
+                parse_constant=None,
+                object_pairs_hook=None,
+            )
+            objs = init_dict.get("poses", [])
+            assert isinstance(objs, list), (
+                f"The 'poses' key value must be a `list` object! Received: {type(objs)}"
+            )
+            return [to_packed(to_pose(obj)) for obj in objs]
+    else:
+        raise ValueError(
+            "The input filename must be an instance of `str`, must end with the "
+            + f"'.init' extension, and must be a file on disk. Received: {filename}"
+        )
 
 
 # Output functions
