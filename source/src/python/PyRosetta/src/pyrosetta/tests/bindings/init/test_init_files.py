@@ -16,6 +16,17 @@ import tempfile
 import unittest
 
 
+def _is_not_cereal():
+    try:
+        import pyrosetta.rosetta.cereal as cereal  # noqa: F401
+        assert hasattr(cereal, "BinaryInputArchive")
+        assert hasattr(cereal, "BinaryOutputArchive")
+        return False
+    except (ImportError, AssertionError):
+        return True
+
+
+@unittest.skipIf(_is_not_cereal, "PyRosetta is not built with serialization support.")
 class InitFromFileTest(unittest.TestCase):
     def test_pipeline(self):
         tmp_dir = tempfile.TemporaryDirectory(dir=os.getcwd(), suffix="_my_work_dir")
