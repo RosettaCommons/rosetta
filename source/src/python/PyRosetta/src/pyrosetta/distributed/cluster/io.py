@@ -242,7 +242,8 @@ class IO(Generic[G]):
             kwargs = self._process_kwargs(kwargs)
             output_dir = self._get_output_dir(decoy_dir=self.decoy_path)
             decoy_name = "_".join([self.simulation_name, uuid.uuid4().hex])
-            output_file = os.path.join(output_dir, decoy_name + ".pdb")
+            output_file_extension = self.output_decoy_types[0]
+            output_file = os.path.join(output_dir, decoy_name + output_file_extension)
             if self.compressed:
                 output_file += ".bz2"
             extra_kwargs = {
@@ -289,11 +290,13 @@ class IO(Generic[G]):
             if ".pdb" in self.output_decoy_types:
                 # Write full .pdb record
                 pdbstring_data = pdbstring + os.linesep + self.REMARK_FORMAT + pdbfile_data
+                output_pdb_file = os.path.join(output_dir, decoy_name + ".pdb")
                 if self.compressed:
-                    with open(output_file, "wb") as f:
+                    output_pdb_file += ".bz2"
+                    with open(output_pdb_file, "wb") as f:
                         f.write(bz2.compress(str.encode(pdbstring_data)))
                 else:
-                    with open(output_file, "w") as f:
+                    with open(output_pdb_file, "w") as f:
                         f.write(pdbstring_data)
 
             # Output pickled Pose file
