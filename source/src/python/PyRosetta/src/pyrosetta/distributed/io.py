@@ -185,7 +185,7 @@ def poses_from_init_file(filename):
     Return a `list` object of `PackedPose` objects from a '.init' file if PyRosetta
     is initialized. If PyRosetta is not yet initialized, then first initialize PyRosetta
     from the '.init' file using the `pyrosetta.init_from_file()` function, then return a
-    `list` object of `PackedPose` objects from the '.init' file
+    `list` object of `PackedPose` objects from the '.init' file.
 
     *Warning*: This function uses the pickle module to deserialize the input file.
     Use of the pickle module is not secure. Only unpickle data you trust.
@@ -202,7 +202,7 @@ def _poses_from_none(none):
 
 @poses_from_init_file.register(str)
 def _poses_from_str(filename):
-    if isinstance(filename, str) and filename.endswith(".init") and os.path.isfile(filename):
+    if filename.endswith(".init") and os.path.isfile(filename):
         if not was_init_called():
             with tempfile.TemporaryDirectory() as tmp_dir:
                 try:
