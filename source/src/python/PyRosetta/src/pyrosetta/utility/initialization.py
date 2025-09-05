@@ -737,10 +737,10 @@ class PyRosettaInitFileParser(object):
         relative_paths=None,
         max_decompressed_bytes=None,
         database=None,
+        verbose=None,
         set_logging_handler=None,
         notebook=None,
         silent=None,
-        verbose=None,
     ):
         """
         Initialize PyRosetta from a '.init' file.
