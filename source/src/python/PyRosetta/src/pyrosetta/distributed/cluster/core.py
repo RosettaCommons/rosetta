@@ -157,7 +157,7 @@ Args:
         Default: "./outputs"
     output_decoy_types: An iterable of `str` objects representing the output decoy
         filetypes to save during the simulation. Available options are: '.pdb' for PDB
-        files (required), and ".pose" for base64-encoded pickle files. If `compressed=True`,
+        files (required), and ".b64_pose" for base64-encoded pickle files. If `compressed=True`,
         then each output decoy file is compressed by `bzip2`, and ".bz2" is appended to the
         filename.
         Default: ["pdb",]

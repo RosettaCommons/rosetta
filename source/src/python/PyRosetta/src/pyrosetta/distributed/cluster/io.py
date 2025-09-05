@@ -285,7 +285,7 @@ class IO(Generic[G]):
                         f.write(pdbstring_data)
 
             # Output pose file
-            if ".pose" in self.output_decoy_types:
+            if ".b64_pose" in self.output_decoy_types:
                 _pose = packed_pose.pose.clone()
                 add_comment(
                     _pose,
@@ -293,7 +293,7 @@ class IO(Generic[G]):
                     pdbfile_data,
                 )
                 _packed_pose = io.to_packed(_pose)
-                output_pose_file = os.path.join(output_dir, decoy_name + ".pose")
+                output_pose_file = os.path.join(output_dir, decoy_name + ".b64_pose")
                 if self.compressed:
                     output_pose_file += ".bz2"
                     with open(output_pose_file, "wb") as f:

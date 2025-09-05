@@ -168,17 +168,17 @@ def get_scores_dict(obj):
         elif obj.endswith(".pdb"):
             with open(obj, "r") as f:
                 pdbstring = f.read()
-        elif obj.endswith((".pose", ".pose.bz2")):
+        elif obj.endswith((".b64_pose", ".b64_pose.bz2")):
             if not was_init_called():
                 raise RuntimeError(
-                    "To get the PyRosettaCluster scores dictionary from a '.pose' or '.pose.bz2' file, "
+                    "To get the PyRosettaCluster scores dictionary from a '.b64_pose' or '.b64_pose.bz2' file, "
                     "PyRosetta must be initialized (with the same residue type set that was used to save "
-                    "the original '.pose' or '.pose.bz2' file)."
+                    "the original '.b64_pose' or '.b64_pose.bz2' file)."
                 )
-            if obj.endswith(".pose.bz2"):
+            if obj.endswith(".b64_pose.bz2"):
                 with open(obj, "rb") as fbz2:
                     pdbstring = io.to_pdbstring(io.to_pose(bz2.decompress(fbz2.read()).decode()))
-            elif obj.endswith(".pose"):
+            elif obj.endswith(".b64_pose"):
                 with open(obj, "r") as f:
                     pdbstring = io.to_pdbstring(io.to_pose(f.read()))
         scores_dict = None
@@ -189,7 +189,7 @@ def get_scores_dict(obj):
         else:
             raise IOError(
                 "The `input_file` argument parameter must end in "
-                + "'.pdb', '.pdb.bz2', '.pose', or '.pose.bz2'."
+                + "'.pdb', '.pdb.bz2', '.b64_pose', or '.b64_pose.bz2'."
             )
 
         if scores_dict is None:

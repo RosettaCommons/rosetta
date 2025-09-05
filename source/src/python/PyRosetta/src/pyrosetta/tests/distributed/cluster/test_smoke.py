@@ -127,7 +127,7 @@ class SmokeTest(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
-                output_decoy_types=[".pdb", ".pose"],
+                output_decoy_types=[".pdb", ".b64_pose"],
                 output_scorefile_types=[".json", ".gz", ".xz"],
                 filter_results=True,
             )
@@ -325,7 +325,7 @@ class IOTest(unittest.TestCase):
 
     def test_io(self):
         """Smoke test for basic PyRosettaCluster I/O."""
-        output_decoy_types = [".pdb", ".pose"]
+        output_decoy_types = [".pdb", ".b64_pose"]
         output_scorefile_types = [".json", ".gz", ".bz2", ".xz", ".tar.gz", ".tar.bz2", ".tar.xz", ".zip"]
         for compressed in (True, False):
             for simulation_records_in_scorefile in (True, False):

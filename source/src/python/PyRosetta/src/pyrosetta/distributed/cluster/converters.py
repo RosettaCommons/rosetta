@@ -593,7 +593,7 @@ def _parse_tasks(objs: Any) -> Union[List[Dict[Any, Any]], NoReturn]:
 
 def _parse_output_decoy_types(objs: Any) -> Union[List[str], NoReturn]:
     """Parse the input `output_decoy_types` attribute of PyRosettaCluster."""
-    _output_decoy_types = (".pdb", ".pose")
+    _output_decoy_types = (".pdb", ".b64_pose")
 
     @singledispatch
     def converter(objs: Any) -> NoReturn:

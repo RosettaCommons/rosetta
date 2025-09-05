@@ -1316,7 +1316,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             save_all=False,
             system_info=None,
             pyrosetta_build=None,
-            output_decoy_types=[".pdb", ".pose"],
+            output_decoy_types=[".pdb", ".b64_pose"],
             output_scorefile_types=[".json", ".gz"],
         ).distribute(
             protocols=protocols,
@@ -1341,7 +1341,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         # Reproduce decoy from .pose file
         reproduce_output_path = os.path.join(self.workdir.name, "reproduce_outputs")
         reproduce_scorefile_name = "reproduce_test_scores.json"
-        reproduce_input_file = os.path.splitext(original_record["metadata"]["output_file"])[0] + ".pose"
+        reproduce_input_file = os.path.splitext(original_record["metadata"]["output_file"])[0] + ".b64_pose"
         reproduce(
             input_file=reproduce_input_file,
             scorefile=None,
@@ -1353,7 +1353,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
                 "output_path": reproduce_output_path,
                 "sha1": None,
                 "scorefile_name": reproduce_scorefile_name,
-                "output_decoy_types": [".pdb", ".pose"],
+                "output_decoy_types": [".pdb", ".b64_pose"],
                 "output_scorefile_types": [".json", ".xz"],
             },
         )
@@ -1365,7 +1365,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         self.assertEqual(df_reproduce.index.size, 1)
         reproduce_record = df_reproduce.iloc[0]
         self.assertListEqual(original_record["instance"]["seeds"], reproduce_record["instance"]["seeds"])
-        reproduce_output_file = os.path.splitext(reproduce_record["metadata"]["output_file"])[0] + ".pose"
+        reproduce_output_file = os.path.splitext(reproduce_record["metadata"]["output_file"])[0] + ".b64_pose"
 
         self.assertEqual(
             original_record["scores"]["SEQUENCE"],
@@ -1409,7 +1409,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
                 "output_path": reproduce2_output_path,
                 "sha1": None,
                 "scorefile_name": reproduce2_scorefile_name,
-                "output_decoy_types": [".pdb", ".pose"],
+                "output_decoy_types": [".pdb", ".b64_pose"],
                 "output_scorefile_types": [".json", ".tar"],
             },
         )
@@ -1422,7 +1422,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         reproduce2_record = df_reproduce2.iloc[0]
         self.assertListEqual(reproduce_record["instance"]["decoy_ids"], reproduce2_record["instance"]["decoy_ids"])
         self.assertListEqual(reproduce_record["instance"]["seeds"], reproduce2_record["instance"]["seeds"])
-        reproduce2_output_file = os.path.splitext(reproduce2_record["metadata"]["output_file"])[0] + ".pose"
+        reproduce2_output_file = os.path.splitext(reproduce2_record["metadata"]["output_file"])[0] + ".b64_pose"
 
         self.assertEqual(
             reproduce_record["scores"]["SEQUENCE"],
