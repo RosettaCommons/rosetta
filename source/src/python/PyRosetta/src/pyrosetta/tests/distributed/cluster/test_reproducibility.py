@@ -1316,7 +1316,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             save_all=False,
             system_info=None,
             pyrosetta_build=None,
-            output_decoy_types=[".pdb", ".b64_pose"],
+            output_decoy_types=[".pdb", ".pkl_pose", ".b64_pose"],
             output_scorefile_types=[".json", ".gz"],
         ).distribute(
             protocols=protocols,
@@ -1338,10 +1338,13 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
                 break
         self.assertIsNotNone(original_record, msg=f"Could not locate decoy with selected 'decoy_ids'.")
 
-        # Reproduce decoy from .pose file
+        # Reproduce decoy from .b64_pose or .pkl_pose file
         reproduce_output_path = os.path.join(self.workdir.name, "reproduce_outputs")
         reproduce_scorefile_name = "reproduce_test_scores.json"
-        reproduce_input_file = os.path.splitext(original_record["metadata"]["output_file"])[0] + ".b64_pose"
+        reproduce_input_file_extension = ".b64_pose" # ".pkl_pose"
+        self.assertIn(reproduce_input_file_extension, (".b64_pose", ".pkl_pose"))
+        reproduce_input_file = os.path.splitext(original_record["metadata"]["output_file"])[0] + reproduce_input_file_extension
+
         reproduce(
             input_file=reproduce_input_file,
             scorefile=None,
@@ -1388,7 +1391,10 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             reproduce_record["instance"]["decoy_ids"],
         )
 
-        original_pose = io.pose_from_base64(reproduce_input_file).pose
+        if reproduce_input_file_extension == ".b64_pose":
+            original_pose = io.pose_from_base64(reproduce_input_file).pose
+        elif reproduce_input_file_extension == ".pkl_pose":
+            original_pose = io.pose_from_pickle(reproduce_input_file).pose
         reproduce_pose = io.pose_from_base64(reproduce_output_file).pose
         self.assert_atom_coordinates(original_pose, reproduce_pose)
 

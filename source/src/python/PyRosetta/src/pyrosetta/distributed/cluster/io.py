@@ -216,6 +216,18 @@ class IO(Generic[G]):
 
         return kwargs
 
+    def _add_pose_comment(self, packed_pose: PackedPose, pdbfile_data: str) -> PackedPose:
+        """Cache simulation data as a pose comment."""
+
+        _pose = packed_pose.pose.clone()
+        add_comment(
+            _pose,
+            self.REMARK_FORMAT.rstrip(), # Remove extra space since `add_comment` adds a space
+            pdbfile_data,
+        )
+
+        return io.to_packed(_pose)
+
     def _save_results(self, results: Any, kwargs: Dict[Any, Any]) -> None:
         """Write results and kwargs to disk."""
 
@@ -284,22 +296,28 @@ class IO(Generic[G]):
                     with open(output_file, "w") as f:
                         f.write(pdbstring_data)
 
-            # Output pose file
-            if ".b64_pose" in self.output_decoy_types:
-                _pose = packed_pose.pose.clone()
-                add_comment(
-                    _pose,
-                    self.REMARK_FORMAT.rstrip(), # Remove extra space since `add_comment` adds a space
-                    pdbfile_data,
-                )
-                _packed_pose = io.to_packed(_pose)
-                output_pose_file = os.path.join(output_dir, decoy_name + ".b64_pose")
+            # Output pickled Pose file
+            if ".pkl_pose" in self.output_decoy_types:
+                _packed_pose = self._add_pose_comment(packed_pose, pdbfile_data)
+                output_pkl_pose_file = os.path.join(output_dir, decoy_name + ".pkl_pose")
                 if self.compressed:
-                    output_pose_file += ".bz2"
-                    with open(output_pose_file, "wb") as f:
+                    output_pkl_pose_file += ".bz2"
+                    with open(output_pkl_pose_file, "wb") as f:
+                        f.write(bz2.compress(io.to_pickle(_packed_pose)))
+                else:
+                    with open(output_pkl_pose_file, "wb") as f:
+                        f.write(io.to_pickle(_packed_pose))
+
+            # Output base64-encoded pickled Pose file
+            if ".b64_pose" in self.output_decoy_types:
+                _packed_pose = self._add_pose_comment(packed_pose, pdbfile_data)
+                output_b64_pose_file = os.path.join(output_dir, decoy_name + ".b64_pose")
+                if self.compressed:
+                    output_b64_pose_file += ".bz2"
+                    with open(output_b64_pose_file, "wb") as f:
                         f.write(bz2.compress(str.encode(io.to_base64(_packed_pose))))
                 else:
-                    with open(output_pose_file, "w") as f:
+                    with open(output_b64_pose_file, "w") as f:
                         f.write(io.to_base64(_packed_pose))
 
             # Output JSON-encoded scorefile

@@ -157,9 +157,9 @@ Args:
         Default: "./outputs"
     output_decoy_types: An iterable of `str` objects representing the output decoy
         filetypes to save during the simulation. Available options are: ".pdb" for PDB
-        files, and ".b64_pose" for base64-encoded pickled Pose files. If `compressed=True`,
-        then each output decoy file is compressed by `bzip2`, and ".bz2" is appended to the
-        filename.
+        files, ".pkl_pose" for pickled Pose files, and ".b64_pose" for base64-encoded
+        pickled Pose files. If `compressed=True`, then each output decoy file is further
+        compressed by `bzip2`, and ".bz2" is appended to the filename.
         Default: [".pdb",]
     output_scorefile_types: An iterable of `str` objects representing the output scorefile
         filetypes to save during the simulation. Available options are: ".json" for a
