@@ -1409,8 +1409,8 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
                 "output_path": reproduce2_output_path,
                 "sha1": None,
                 "scorefile_name": reproduce2_scorefile_name,
-                "output_decoy_types": [".pdb", ".b64_pose"],
-                "output_scorefile_types": [".json", ".tar"],
+                "output_decoy_types": [".b64_pose"],
+                "output_scorefile_types": [".tar"],
             },
         )
 

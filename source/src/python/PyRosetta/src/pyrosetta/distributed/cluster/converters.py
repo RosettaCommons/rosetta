@@ -617,15 +617,8 @@ def _parse_output_decoy_types(objs: Any) -> Union[List[str], NoReturn]:
                     raise ValueError(f"Available output decoy types are: {_output_decoy_types}")
             else:
                 converter.dispatch(object)(obj)
-        if len(_types) == 0:
-            return converter(None)
-        elif _output_decoy_types[0] not in _types:
-            raise ValueError(
-                f"The '{_output_decoy_types[0]}' option must be enabled in the "
-                + "'output_decoy_types' keyword argument parameter."
-            )
 
-        return list(_types)
+        return list(_types) if len(_types) >= 1 else converter(None)
 
     return converter(objs)
 
@@ -658,14 +651,7 @@ def _parse_output_scorefile_types(objs: Any) -> Union[List[str], NoReturn]:
                 _types.add(obj)
             else:
                 converter.dispatch(object)(obj)
-        if len(_types) == 0:
-            return converter(None)
-        elif _output_scorefile_types[0] not in _types:
-            raise ValueError(
-                f"The '{_output_scorefile_types[0]}' option must be enabled in the "
-                + "'output_scorefile_types' keyword argument parameter."
-            )
 
-        return list(_types)
+        return list(_types) if len(_types) >= 1 else converter(None)
 
     return converter(objs)
