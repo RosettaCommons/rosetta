@@ -104,10 +104,12 @@ def main(tmp_dir):
     init_file = os.path.join(tmp_dir, "my.init")
     metadata = [
         "Contains IGU, GNP, CYX, CED, R1A, and T3P Rosetta residue topology files and the 3prime5prime_methyl_phosphate patch file",
+        "Also contains an input pose for my project."
         "Version 2.0",
     ]
     pyrosetta.dump_init_file(
         init_file,
+        poses=None,
         author="Username",
         email="test@example",
         license="LICENSE.PyRosetta.md",
@@ -120,6 +122,7 @@ def main(tmp_dir):
 
     pyrosetta.dump_init_file(
         init_file,
+        poses=pyrosetta.pose_from_sequence("DATA"),
         author="Username",
         email="test@example",
         license="LICENSE.PyRosetta.md",
