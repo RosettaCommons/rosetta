@@ -24,6 +24,7 @@ class InitFromFileTest(unittest.TestCase):
             os.path.join(cwd, "write_test_files.py"),
             os.path.join(cwd, "dump_init_file.py"),
             os.path.join(cwd, "init_from_file.py"),
+            os.path.join(cwd, "poses_from_init_file.py"),
         ]
         for test_script in test_scripts:
             cmd = "{0} {1} --tmp_dir {2}".format(sys.executable, test_script, tmp_dir.name)
