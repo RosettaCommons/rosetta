@@ -180,6 +180,38 @@ def _pose_from_str(filename):
 
 
 @functools.singledispatch
+def pose_from_init_file(filename):
+    """
+    Return the first `PackedPose` object from the list in a '.init' file if PyRosetta
+    is initialized. If PyRosetta is not yet initialized, then initialize PyRosetta
+    from the '.init' file using the `pyrosetta.init_from_file()` function, then return
+    the first `PackedPose` object from the list in the '.init' file.
+
+    *Warning*: This function uses the pickle module to deserialize the input file.
+    Use of the pickle module is not secure. Only unpickle data you trust.
+
+    @klimaj
+    """
+    raise FileNotFoundError(
+        f"The input filename must be an instance of `str`. Received: {type(filename)}"
+    )
+
+@pose_from_init_file.register(type(None))
+def _pose_from_none(none):
+    return None
+
+@pose_from_init_file.register(str)
+def _pose_from_str(filename):
+    packed_poses = poses_from_init_file(filename)
+    if len(packed_poses) >= 1:
+        return next(iter(packed_poses))
+    else:
+        raise IOError(
+            f"The input filename did not produce any `PackedPose` objects: '{filename}'"
+        )
+
+
+@functools.singledispatch
 def poses_from_init_file(filename):
     """
     Return a `list` object of `PackedPose` objects from a '.init' file if PyRosetta

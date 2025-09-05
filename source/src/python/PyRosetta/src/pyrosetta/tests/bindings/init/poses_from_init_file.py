@@ -27,11 +27,11 @@ except ImportError as ex:
 def main(tmp_dir):
     os.chdir(tmp_dir)
     init_file = os.path.join(tmp_dir, "my.init")
+
     assert not was_init_called(), "PyRosetta is already initialized before calling `io.poses_from_init_file`."
-
-    assert io.poses_from_init_file(None) is None, "NoneType I/O failed."
+    none = io.poses_from_init_file(None)
+    assert none is None, "NoneType I/O failed."
     packed_poses = io.poses_from_init_file(init_file)
-
     assert was_init_called(), "PyRosetta is not initialized after calling `io.poses_from_init_file`."
     assert len(packed_poses) == 1, f"Number of PackedPose objects failed: {len(packed_poses)}"
     packed_pose = packed_poses[0]
@@ -44,12 +44,19 @@ def main(tmp_dir):
     assert score == POSE_SCORE, f"Pose score identity failed: {score}"
 
     packed_poses_copy = io.poses_from_init_file(init_file)
-
     pose_copy = packed_poses_copy[0].pose
-    sequence_copy = pose_copy.sequence()
-    assert sequence_copy == sequence, f"Pose sequence failed: {sequence_copy}"
-    assert score == POSE_SCORE, f"Pose score identity failed: {score}"
+    assert pose_copy.sequence() == POSE_SEQUENCE, f"Pose sequence failed: {pose_copy.sequence()}"
+    score_copy = pose_copy.cache["foo"]
+    assert score_copy == POSE_SCORE, f"Pose score identity failed: {score_copy}"
     assert id(pose_copy) != id(pose), "Pose memory addresses failed."
+
+    packed_pose_first = io.pose_from_init_file(init_file)
+    assert isinstance(packed_pose_first, PackedPose), f"PackedPose object type failed: {packed_pose_first}"
+    pose_first = packed_pose_first.pose
+    assert pose_first.sequence() == POSE_SEQUENCE, f"Pose sequence failed: {pose_first.sequence()}"
+    score_first = pose_first.cache["foo"]
+    assert score_first == POSE_SCORE, f"Pose score identity failed: {score_first}"
+    assert id(pose_first) != id(pose_copy) != id(pose), "Pose memory addresses failed."
 
 
 if __name__ == "__main__":
