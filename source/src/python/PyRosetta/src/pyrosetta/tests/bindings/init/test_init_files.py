@@ -26,7 +26,7 @@ def _is_not_cereal():
         return True
 
 
-@unittest.skipIf(_is_not_cereal, "PyRosetta is not built with serialization support.")
+@unittest.skipIf(_is_not_cereal(), "PyRosetta is not built with serialization support.")
 class InitFromFileTest(unittest.TestCase):
     def test_pipeline(self):
         tmp_dir = tempfile.TemporaryDirectory(dir=os.getcwd(), suffix="_my_work_dir")
