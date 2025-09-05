@@ -230,16 +230,15 @@ def _poses_from_str(filename):
                         filename,
                         output_dir=os.path.join(tmp_dir, "pyrosetta_init_input_files"),
                         skip_corrections=False,
-                        relative_paths=True,
+                        relative_paths=False,
                         dry_run=False,
-                        max_decompressed_bytes=pow(2, 30), # 1 GiB
+                        max_decompressed_bytes=None,
                         database=None,
                         verbose=True,
                         set_logging_handler=None,
                         notebook=None,
                         silent=False,
                     )
-                    return _parse_poses(filename)
                 except BufferError as ex:
                     raise BufferError(
                         f"{ex}. Please run `pyrosetta.init_from_file` with a larger `max_decompressed_bytes` "
@@ -252,6 +251,7 @@ def _poses_from_str(filename):
                         + f"initialization file: '{filename}'. Please run `pyrosetta.init_from_file` before "
                         + "running `poses_from_init_file()`."
                     )
+                return _parse_poses(filename)
     else:
         raise ValueError(
             "The input filename must be an instance of `str`, must end with the "
