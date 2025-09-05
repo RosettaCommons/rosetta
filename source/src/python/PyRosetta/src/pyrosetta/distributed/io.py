@@ -2,6 +2,7 @@
 import functools
 import json
 import os
+import tempfile
 import warnings
 
 import pyrosetta.io
@@ -13,6 +14,7 @@ from pyrosetta.distributed import requires_init
 from pyrosetta.distributed.packed_pose import (
     pack_result, pose_result, to_pose, to_packed, to_dict, to_base64, to_pickle, register_container_traversal
 )
+from pyrosetta.rosetta.basic import was_init_called
 
 
 __all__ = [
@@ -28,6 +30,7 @@ __all__ = [
     "poses_from_sequences",
     "poses_from_multimodel_pdb",
     "poses_from_silent",
+    "poses_from_init_file",
     "to_base64",
     "to_pickle",
     "to_silent",
@@ -179,7 +182,10 @@ def _pose_from_str(filename):
 @functools.singledispatch
 def poses_from_init_file(filename):
     """
-    Return a `list` object of `PackedPose` objects from a '.init' file.
+    Return a `list` object of `PackedPose` objects from a '.init' file if PyRosetta
+    is initialized. If PyRosetta is not yet initialized, then first initialize PyRosetta
+    from the '.init' file using the `pyrosetta.init_from_file()` function, then return a
+    `list` object of `PackedPose` objects from the '.init' file
 
     *Warning*: This function uses the pickle module to deserialize the input file.
     Use of the pickle module is not secure. Only unpickle data you trust.
@@ -197,6 +203,34 @@ def _poses_from_none(none):
 @poses_from_init_file.register(str)
 def _poses_from_str(filename):
     if isinstance(filename, str) and filename.endswith(".init") and os.path.isfile(filename):
+        if not was_init_called():
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                try:
+                    pyrosetta.init_from_file(
+                        filename,
+                        output_dir=os.path.join(tmp_dir, "pyrosetta_init_input_files"),
+                        skip_corrections=False,
+                        relative_paths=True,
+                        dry_run=False,
+                        max_decompressed_bytes=pow(2, 30), # 1 GiB
+                        database=None,
+                        verbose=True,
+                        set_logging_handler=None,
+                        notebook=None,
+                        silent=True,
+                    )
+                except BufferError as ex:
+                    raise BufferError(
+                        f"{ex}. Please run `pyrosetta.init_from_file` with a larger `max_decompressed_bytes` "
+                        + "keyword argument parameter before running `reproduce()` to initialize PyRosetta "
+                        + f"with the input PyRosetta initialization file: '{filename}'"
+                    )
+                except Exception as ex:
+                    raise Exception(
+                        f"{type(ex).__name__}: {ex}. Could not initialize PyRosetta from the input PyRosetta "
+                        + f"initialization file: '{filename}'. Please run `pyrosetta.init_from_file` before "
+                        + "running `poses_from_init_file()`."
+                    )
         with open(filename, "r") as f:
             init_dict = json.load(
                 f,
@@ -207,11 +241,11 @@ def _poses_from_str(filename):
                 parse_constant=None,
                 object_pairs_hook=None,
             )
-            objs = init_dict.get("poses", [])
-            assert isinstance(objs, list), (
-                f"The 'poses' key value must be a `list` object! Received: {type(objs)}"
-            )
-            return [to_packed(to_pose(obj)) for obj in objs]
+        objs = init_dict.get("poses", [])
+        assert isinstance(objs, list), (
+            f"The 'poses' key value must be a `list` object! Received: {type(objs)}"
+        )
+        return [to_packed(to_pose(obj)) for obj in objs]
     else:
         raise ValueError(
             "The input filename must be an instance of `str`, must end with the "
