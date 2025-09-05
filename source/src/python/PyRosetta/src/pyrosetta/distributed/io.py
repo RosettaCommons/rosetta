@@ -242,7 +242,7 @@ def _poses_from_str(filename):
                 except BufferError as ex:
                     raise BufferError(
                         f"{ex}. Please run `pyrosetta.init_from_file` with a larger `max_decompressed_bytes` "
-                        + "keyword argument parameter before running `reproduce()` to initialize PyRosetta "
+                        + "keyword argument parameter before running `poses_from_init_file()` to initialize PyRosetta "
                         + f"with the input PyRosetta initialization file: '{filename}'"
                     )
                 except Exception as ex:
