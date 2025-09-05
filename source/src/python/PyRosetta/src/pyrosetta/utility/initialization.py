@@ -217,7 +217,8 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         else:
             assert self.has_cereal, (
                 f"To cache `Pose` and/or `PackedPose` objects in the output '{self._init_file_extension}' "
-                "file, please ensure that PyRosetta is built with serialization support."
+                + "file, please ensure that PyRosetta is built with serialization support. "
+                + "Current PyRosetta build: {0}".format(self.get_pyrosetta_build()),
             )
             objs = kwargs["poses"]
             if isinstance(objs, (Pose, PackedPose)):
