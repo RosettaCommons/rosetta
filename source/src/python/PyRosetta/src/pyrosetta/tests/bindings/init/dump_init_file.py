@@ -15,6 +15,9 @@ import json
 import os
 import pyrosetta
 
+POSE_SEQUENCE = "DATA"
+POSE_SCORE = 1 + 0.5j
+
 
 def truncate_str(value, _index=50):
     return value[:_index] + "..."
@@ -120,9 +123,11 @@ def main(tmp_dir):
     )
     assert not os.path.isfile(init_file), "'.init' file was dumped with `dry_run=True`."
 
+    pose = pyrosetta.pose_from_sequence(POSE_SEQUENCE)
+    pose.cache["foo"] = POSE_SCORE
     pyrosetta.dump_init_file(
         init_file,
-        poses=pyrosetta.pose_from_sequence("DATA"),
+        poses=pose,
         author="Username",
         email="test@example",
         license="LICENSE.PyRosetta.md",
