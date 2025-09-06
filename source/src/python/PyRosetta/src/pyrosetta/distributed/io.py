@@ -206,7 +206,7 @@ def _pose_from_str(filename):
     if len(packed_poses) >= 1:
         return next(iter(packed_poses))
     else:
-        raise IOError(
+        raise ValueError(
             f"The input filename did not produce any `PackedPose` objects: '{filename}'"
         )
 
