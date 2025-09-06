@@ -62,10 +62,10 @@ def pose_from_file(*args, **kwargs):
         - xz-encoded files ending with file extensions: (".pdb.xz", ".xz")
         - base64-encoded files ending with file extension: ".b64_pose"
             *Warning*: This function uses the pickle module to deserialize ".b64_pose" files.
-            Use of the pickle module is not secure. Only unpickle data you trust.
+            Using the pickle module is not secure, so please only run with ".b64_pose" files you trust.
         - pickle-encoded files ending with file extension: ".pkl_pose"
             *Warning*: This function uses the pickle module to deserialize ".pkl_pose" files.
-            Use of the pickle module is not secure. Only unpickle data you trust.
+            Using the pickle module is not secure, so please only run with ".pkl_pose" files you trust.
     Otherwise, implements `io.to_packed(pyrosetta.io.pose_from_file(*args, **kwargs))`.
 
     @klimaj
@@ -122,10 +122,10 @@ def _pose_from_none(none):
 @functools.singledispatch
 def pose_from_base64(filename):
     """
-    Load a `PackedPose` object from a base64-encoded file.
+    *Warning*: This function uses the pickle module to deserialize the input filename.
+    Using the pickle module is not secure, so please only run with input files you trust.
 
-    *Warning*: This function uses the pickle module to deserialize the input file.
-    Use of the pickle module is not secure. Only unpickle data you trust.
+    Load a `PackedPose` object from a base64-encoded pickled Pose file.
 
     To load a `PackedPose` object from an input base64-encoded string,
     use `io.to_packed(string)` or `io.to_packed(io.to_pose(string))`.
@@ -152,10 +152,10 @@ def _pose_from_str(filename):
 @functools.singledispatch
 def pose_from_pickle(filename):
     """
-    Load a `PackedPose` object from a pickle-encoded binary file.
+    *Warning*: This function uses the pickle module to deserialize the input filename.
+    Using the pickle module is not secure, so please only run with input files you trust.
 
-    *Warning*: This function uses the pickle module to deserialize the input file.
-    Use of the pickle module is not secure. Only unpickle data you trust.
+    Load a `PackedPose` object from a pickled Pose file.
 
     To load a `PackedPose` object from an input pickle-encoded bytestring,
     use `io.to_packed(bytestring)` or `io.to_packed(io.to_pose(bytestring))`.
@@ -182,13 +182,13 @@ def _pose_from_str(filename):
 @functools.singledispatch
 def pose_from_init_file(filename):
     """
+    *Warning*: This function uses the pickle module to deserialize the input filename.
+    Using the pickle module is not secure, so please only run with input files you trust.
+
     Return the first `PackedPose` object from the list in a '.init' file if PyRosetta
     is initialized. If PyRosetta is not yet initialized, then initialize PyRosetta
     from the '.init' file using the `pyrosetta.init_from_file()` function, then return
     the first `PackedPose` object from the list in the '.init' file.
-
-    *Warning*: This function uses the pickle module to deserialize the input file.
-    Use of the pickle module is not secure. Only unpickle data you trust.
 
     @klimaj
     """
@@ -214,13 +214,13 @@ def _pose_from_str(filename):
 @functools.singledispatch
 def poses_from_init_file(filename):
     """
+    *Warning*: This function uses the pickle module to deserialize the input filename.
+    Using the pickle module is not secure, so please only run with input files you trust.
+
     Return a `list` object of `PackedPose` objects from a '.init' file if PyRosetta
     is initialized. If PyRosetta is not yet initialized, then first initialize PyRosetta
     from the '.init' file using the `pyrosetta.init_from_file()` function, then return a
     `list` object of `PackedPose` objects from the '.init' file.
-
-    *Warning*: This function uses the pickle module to deserialize the input file.
-    Use of the pickle module is not secure. Only unpickle data you trust.
 
     @klimaj
     """
