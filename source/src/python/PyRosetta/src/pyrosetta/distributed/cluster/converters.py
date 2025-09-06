@@ -608,17 +608,19 @@ def _parse_output_decoy_types(objs: Any) -> Union[List[str], NoReturn]:
 
     @converter.register(collections.abc.Iterable)
     def _from_iterable(objs: collections.abc.Iterable) -> Union[List[str], NoReturn]:
-        _types = set()
+        _seen = set()
+        _types = []
         for obj in objs:
             if isinstance(obj, str):
-                if obj in _output_decoy_types:
-                    _types.add(obj)
+                if obj in _output_decoy_types and obj not in _seen:
+                    _types.append(obj)
+                    _seen.add(obj)
                 else:
                     raise ValueError(f"Available output decoy types are: {_output_decoy_types}")
             else:
                 converter.dispatch(object)(obj)
 
-        return list(_types) if len(_types) >= 1 else converter(None)
+        return _types if len(_types) >= 1 else converter(None)
 
     return converter(objs)
 
@@ -640,18 +642,20 @@ def _parse_output_scorefile_types(objs: Any) -> Union[List[str], NoReturn]:
 
     @converter.register(collections.abc.Iterable)
     def _from_iterable(objs: collections.abc.Iterable) -> Union[List[str], NoReturn]:
-        _types = set()
+        _seen = set()
+        _types = []
         for obj in objs:
-            if isinstance(obj, str):
+            if isinstance(obj, str) and obj not in _seen:
                 if not obj.startswith("."):
                     raise ValueError(
                         f"The element '{obj}' in the 'output_scorefile_types' keyword argument "
                         "parameter must start with '.' to be a valid filename extension."
                     )
-                _types.add(obj)
+                _types.append(obj)
+                _seen.add(obj)
             else:
                 converter.dispatch(object)(obj)
 
-        return list(_types) if len(_types) >= 1 else converter(None)
+        return _types if len(_types) >= 1 else converter(None)
 
     return converter(objs)
