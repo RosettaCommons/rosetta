@@ -441,12 +441,16 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             print(f"Dry run dump PyRosetta '{self._init_file_extension}' file:")
         else:
             print(f"Dumping PyRosetta '{self._init_file_extension}' file to: {self.output_filename}")
+        if len(self.kwargs["poses"]) > 0:
+            print("Compressed {0} PyRosetta `PackedPose` object(s).".format(len(self.kwargs["poses"])))
+        else:
+            print("No input PyRosetta `Pose` or `PackedPose` object(s) to compress.")
         if len(self.cached_files) > 0:
             print("Compressed {0} PyRosetta initialization input file(s):".format(len(self.cached_files)))
             for file in self.cached_files:
                 print(os.path.relpath(file, start=os.curdir))
         else:
-            print("No PyRosetta input files to compress.")
+            print("No PyRosetta initialization input files to compress.")
         if dry_run:
             print(f"Skipping dumping PyRosetta initialization '{self._init_file_extension}' file...")
 
@@ -456,6 +460,8 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         overwrite = self.kwargs.pop("overwrite")
         dry_run = self.kwargs.pop("dry_run")
         verbose = self.kwargs.pop("verbose")
+        self.kwargs["num_files"] = len(self.cached_files)
+        self.kwargs["num_poses"] = len(self.kwargs["poses"])
         data_dict = {
             **self.kwargs,
             "options": encoded_options_dict,
