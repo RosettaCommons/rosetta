@@ -663,13 +663,16 @@ def reproduce(
             )
     else:
         _tmp_dir = None
-    if isinstance(input_file, str) and input_file.endswith((".pose", ".pose.bz2")) and not was_init_called():
+    if isinstance(input_file, str) and input_file.endswith(
+        (".pkl_pose", ".pkl_pose.bz2", ".b64_pose", ".b64_pose.bz2")
+    ) and not was_init_called():
         raise ValueError(
-            "If providing a '.pose' or '.pose.bz2' file to the 'input_file' keyword argument parameter, "
-            + "please also provide the '.init' file from the original simulation to the 'input_init_file' "
-            + "keyword argument parameter, otherwise ensure `pyrosetta.init` or `pyrosetta.init_from_file` "
-            + "has been properly called (with the same residue type set as that used to generate the "
-            + "original '.pose' or '.pose.bz2' file) before running `reproduce`."
+            "If providing a '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file to the "
+            + "'input_file' keyword argument parameter, please also provide the '.init' file from the "
+            + "original simulation to the 'input_init_file' keyword argument parameter, otherwise ensure "
+            + "`pyrosetta.init` or `pyrosetta.init_from_file` has been properly called (with the same "
+            + "residue type set as that used to generate the original '.pkl_pose', '.pkl_pose.bz2', "
+            + "'.b64_pose', or '.b64_pose.bz2' file) before running `reproduce`."
         )
     PyRosettaCluster(
         **toolz.dicttoolz.keyfilter(
