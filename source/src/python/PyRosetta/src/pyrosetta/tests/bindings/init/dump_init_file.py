@@ -15,6 +15,9 @@ import json
 import os
 import pyrosetta
 
+POSE_SEQUENCE = "DATA"
+POSE_SCORE = 1 + 0.5j
+
 
 def truncate_str(value, _index=50):
     return value[:_index] + "..."
@@ -40,13 +43,13 @@ def truncate_init_options(init_options):
 
 def main(tmp_dir):
     os.chdir(tmp_dir)
-    pdb_files = glob.glob(os.path.join(tmp_dir, "tmp_*.pdb")) + glob.glob(os.path.join(tmp_dir, "tmp_*.pdb.gz"))
+    pdb_files = sorted(glob.glob(os.path.join(tmp_dir, "tmp_*.pdb")) + glob.glob(os.path.join(tmp_dir, "tmp_*.pdb.gz")))
     assert len(pdb_files) > 0, "PDB files do not exist."
     list_file = os.path.join(tmp_dir, "my_file.list")
     assert os.path.isfile(list_file), "List file does not exist."
-    extra_res_fa_files = glob.glob(os.path.join(tmp_dir, "*.params"))
+    extra_res_fa_files = sorted(glob.glob(os.path.join(tmp_dir, "*.params")))
     assert len(extra_res_fa_files) > 0, "Extra residue files do not exist."
-    patch_files = glob.glob(os.path.join(tmp_dir, "*.txt"))
+    patch_files = sorted(glob.glob(os.path.join(tmp_dir, "*.txt")))
     assert len(patch_files) > 0, "Patch files do not exist."
     bcl_dir = os.path.join(tmp_dir, "bcl_rosetta")
     os.makedirs(bcl_dir, exist_ok=False)
@@ -104,10 +107,12 @@ def main(tmp_dir):
     init_file = os.path.join(tmp_dir, "my.init")
     metadata = [
         "Contains IGU, GNP, CYX, CED, R1A, and T3P Rosetta residue topology files and the 3prime5prime_methyl_phosphate patch file",
+        "Also contains an input pose for my project."
         "Version 2.0",
     ]
     pyrosetta.dump_init_file(
         init_file,
+        poses=None,
         author="Username",
         email="test@example",
         license="LICENSE.PyRosetta.md",
@@ -118,8 +123,11 @@ def main(tmp_dir):
     )
     assert not os.path.isfile(init_file), "'.init' file was dumped with `dry_run=True`."
 
+    pose = pyrosetta.pose_from_sequence(POSE_SEQUENCE)
+    pose.cache["foo"] = POSE_SCORE
     pyrosetta.dump_init_file(
         init_file,
+        poses=pose,
         author="Username",
         email="test@example",
         license="LICENSE.PyRosetta.md",
@@ -134,6 +142,12 @@ def main(tmp_dir):
     name3_set = set(base_res_set.pop().name3() for _ in range(base_res_set.capacity()))
     with open(os.path.join(tmp_dir, "res_types.json"), "w") as f:
         json.dump(list(name3_set), f)
+
+    _print_init_file_contents = False
+    if _print_init_file_contents:
+        _delim = "*" * 100
+        with open(init_file, "r") as f:
+            print(_delim, f.read(), _delim, sep=os.linesep)
 
 
 if __name__ == "__main__":

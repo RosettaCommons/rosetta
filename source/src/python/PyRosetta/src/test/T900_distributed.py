@@ -88,11 +88,17 @@ distributed_cluster_test_cases = [
     "pyrosetta.tests.distributed.cluster.test_smoke.RuntimeTest.test_timing_single_instance",
     "pyrosetta.tests.distributed.cluster.test_logging.LoggingTest.test_logging",
     "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_minimizer_nstruct",
+    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_minimizer_nstruct_filter_results",
     "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_packer_nstruct",
+    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_packer_nstruct_filter_results",
     "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_packer_separate",
+    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_packer_separate_filter_results",
     "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityMulti.test_reproducibility_from_reproduce",
+    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityMulti.test_reproducibility_from_reproduce_filter_results",
     "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityMulti.test_reproducibility_packer_nstruct_multi",
+    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityMulti.test_reproducibility_packer_nstruct_multi_filter_results",
     "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityMulti.test_reproducibility_packer_nstruct_multi_decoy_ids",
+    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityMulti.test_reproducibility_packer_nstruct_multi_decoy_ids_filter_results",
 ]
 distributed_test_suites = [
     "pyrosetta.tests.bindings.init.test_init_files",

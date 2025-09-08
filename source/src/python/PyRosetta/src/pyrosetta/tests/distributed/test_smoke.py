@@ -282,12 +282,8 @@ class SmokeTestDistributed(unittest.TestCase):
             "gz": io.dump_pdb,
             "pdb.xz": io.dump_pdb,
             "xz": io.dump_pdb,
-            "base64": io.dump_base64,
-            "b64": io.dump_base64,
-            "B64": io.dump_base64,
-            "pose": io.dump_base64,
-            "pickle": io.dump_pickle,
-            "pickled_pose": io.dump_pickle,
+            "b64_pose": io.dump_base64,
+            "pkl_pose": io.dump_pickle,
         }
         input_packed_pose = io.pose_from_sequence("CATALYST/X[ATP]")
         scorefxn = pyrosetta.create_score_function("ref2015")
