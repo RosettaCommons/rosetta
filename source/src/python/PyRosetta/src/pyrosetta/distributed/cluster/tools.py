@@ -213,10 +213,10 @@ def get_instance_kwargs(
     instance kwargs needed to reproduce the decoy using PyRosettaCluster.
 
     Args:
-        input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pose',
-            or '.pose.bz2' file from which to extract PyRosettaCluster instance kwargs.
-            If 'input_file' is provided, then ignore the 'scorefile' and 'decoy_name' argument
-            parameters.
+        input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
+            '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file from which to extract
+            PyRosettaCluster instance kwargs. If 'input_file' is provided, then ignore the
+            'scorefile' and 'decoy_name' argument parameters.
             Default: None
         scorefile: A `str` object specifying the path to the JSON-formatted scorefile
             (or pickled `pandas.DataFrame` scorefile) from a PyRosettaCluster simulation
