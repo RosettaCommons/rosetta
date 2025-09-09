@@ -81,3 +81,14 @@ def derive_task_key(passkey: bytes, task_id: str) -> bytes:
     prk = hkdf_extract(passkey, salt=SALT)
 
     return hkdf_expand(prk, info)
+
+
+def derive_init_key(key: bytes, data: bytes) -> bytes:
+    """
+    Derive a PyRosetta initialization file secret key using the extract-and-expand
+    hash-based message authentication code (HMAC)-based key derivation function (HKDF).
+    """
+    info = msgpack.packb([b"PyRosettaInitFile", data], use_bin_type=True)
+    prk = hkdf_extract(key, salt=SALT)
+
+    return hkdf_expand(prk, info)
