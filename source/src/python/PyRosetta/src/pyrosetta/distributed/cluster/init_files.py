@@ -17,6 +17,7 @@ import pyrosetta.distributed.io as io
 
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.rosetta.basic import was_init_called
+from pyrosetta.utility.initialization import PyRosettaInitFileReader
 from typing import Any, Dict, Generic, List, Optional, Tuple, TypeVar
 
 from pyrosetta.distributed.cluster.hkdf import HASHMOD, compare_digest, derive_init_key
@@ -137,16 +138,7 @@ def get_poses_from_init_file(
         "The input 'init_file' argument parameter must be a `str` object and exist on disk. "
         + f"Received: '{init_file}'"
     )
-    with open(init_file, "r") as f:
-        init_dict = json.load(
-            f,
-            cls=None,
-            object_hook=None,
-            parse_float=None,
-            parse_int=None,
-            parse_constant=None,
-            object_pairs_hook=None,
-        )
+    init_dict = PyRosettaInitFileReader.read_json(init_file)
     for key in ("metadata", "poses"):
         assert key in init_dict.keys(), (
             f"The 'init_file' argument parameter does not contain the '{key}' key: '{init_file}'"
