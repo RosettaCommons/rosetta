@@ -17,6 +17,7 @@ __author__ = "Jason C. Klima"
 import base64
 import collections
 import datetime
+import hashlib
 import inspect
 import json
 import os
@@ -94,6 +95,27 @@ class PyRosettaInitFileParserBase(object):
                 + "Please ensure that `pyrosetta.init()` was not already called (e.g., "
                 + "if using a Jupyter notebook, please restart the kernel) and try again."
             )
+
+    def md5_warning(self, md5, expected_md5):
+        if md5 is None:
+            warnings.warn(
+                "The 'md5' key is missing from the '{0}' file!".format(self._init_file_extension),
+                UserWarning,
+                stacklevel=5,
+            )
+        elif isinstance(md5, str):
+            if md5 != expected_md5:
+                warnings.warn(
+                    (
+                        "The expected MD5 value differs from the 'md5' key value in the '{0}' file!\n".format(self._init_file_extension)
+                        + "Expected: '{0}'\n".format(expected_md5)
+                        + "Value:    '{0}'\n".format(md5)
+                    ),
+                    UserWarning,
+                    stacklevel=5,
+                )
+        else:
+            raise TypeError(self._malformed_init_file_error_msg)
 
 
 class PyRosettaInitFileSerializer(object):
@@ -195,6 +217,23 @@ class PyRosettaInitFileSerializer(object):
 
     def get_zlib_decompress_err_msg(self, arr, max_decompressed_bytes):
         return "Decompressed data exceeds maximum bytes size limit: {0} > {1}".format(len(arr), max_decompressed_bytes)
+
+    @staticmethod
+    def get_md5(init_dict):
+        return hashlib.md5(
+            json.dumps(
+                init_dict,
+                skipkeys=False,
+                ensure_ascii=False,
+                check_circular=True,
+                allow_nan=False,
+                cls=None,
+                indent=None,
+                separators=(",", ":"),
+                default=None,
+                sort_keys=True,
+            ).encode(PyRosettaInitFileSerializer._encoding)
+        ).hexdigest()
 
 
 class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSerializer):
@@ -466,6 +505,7 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             **self.kwargs,
             "options": encoded_options_dict,
         }
+        data_dict["md5"] = PyRosettaInitFileSerializer.get_md5(data_dict)
         if verbose:
             self.print_cached_files(dry_run)
         if not dry_run and ((not os.path.isfile(self.output_filename)) or overwrite):
@@ -575,6 +615,9 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
                     parse_constant=None,
                     object_pairs_hook=None,
                 )
+                _md5 = _init_dict.pop("md5", None)
+                _expected_md5 = PyRosettaInitFileSerializer.get_md5(_init_dict)
+                self.md5_warning(_md5, _expected_md5)
                 _init_dict.pop("poses", None)
                 return _init_dict
         else:
