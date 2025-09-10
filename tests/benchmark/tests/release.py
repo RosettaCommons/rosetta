@@ -553,8 +553,9 @@ def pyrosetta_documentation(kind, rosetta_dir, working_dir, platform, config, hp
 
     result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, skip_compile=debug, version=version_file)
 
-    packages: str = get_required_pyrosetta_python_packages_for_testing(platform) + ' sphinx==5.2.3'
-    python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
+    packages: str = get_required_pyrosetta_python_packages_for_testing(platform, static_versions=False) + ' sphinx==5.2.3'
+    # python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
+    python_virtual_environment = setup_python_virtual_environment(f'{working_dir}/.venv', result.python_environment, packages)
 
     res = result.exitcode
     output = result.output
