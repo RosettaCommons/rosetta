@@ -39,6 +39,7 @@ import unittest
 
 from pyrosetta.distributed.cluster import (
     PyRosettaCluster,
+    export_init_file,
     requires_packed_pose,
     reserve_scores,
     reproduce,
@@ -1129,12 +1130,16 @@ class TestReproducibilityMulti(unittest.TestCase):
             reproduce3_scorefile_name = "reproduce_test_scores_init_file.json"
             init_file = original_record["metadata"]["init_file"]
             self.assertTrue(os.path.isfile(init_file))
+            input_file = original_record["metadata"]["output_file"]
+            self.assertTrue(os.path.isfile(input_file))
+            export_init_file(input_file, output_init_file=init_file)
+
             test_script = os.path.join(os.path.dirname(__file__), "reproduce_from_init_file.py")
             module = os.path.splitext(os.path.basename(test_script))[0]
             cmd = "{0} -m {1} --input_file '{2}' --scorefile_name '{3}' --input_init_file '{4}' --sequence '{5}'".format(
                 sys.executable,
                 module,
-                original_record["metadata"]["output_file"],
+                input_file,
                 reproduce3_scorefile_name,
                 init_file,
                 sequence,
