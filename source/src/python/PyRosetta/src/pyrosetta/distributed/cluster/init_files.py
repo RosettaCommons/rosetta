@@ -29,67 +29,69 @@ class InitFileSigner(Generic[G]):
 
     _encoding = "utf-8"
     _prefix = b'PyRosettaCluster_init_file_signer'
-    _secret = b'\xdc\xb2\xcc\x94\xab\xa0(\x89\xcdU\xdd\xaf\x80\x94-I\xa9\x1b%\xe1\xa4\xf7\xa1\x82M#\x02\x17\\\xffX3'
 
     def __init__(self, input_packed_pose=None, output_packed_pose=None) -> None:
-        self.inp_pkl = self.to_pickle(input_packed_pose)
-        self.out_pkl = self.to_pickle(output_packed_pose)
+        self.inp_pkl = self._to_pickle(input_packed_pose)
+        self.out_pkl = self._to_pickle(output_packed_pose)
 
-    def to_pickle(self, packed_pose: Optional[PackedPose]) -> bytes:
+    def _to_pickle(self, packed_pose: Optional[PackedPose]) -> bytes:
         return io.to_pickle(packed_pose) if isinstance(packed_pose, PackedPose) else b'\x00'
 
-    def get_pose_digest(self, pkl: bytes) -> bytes:
+    def _get_pose_digest(self, pkl: bytes) -> bytes:
         return HASHMOD(pkl).digest()
 
-    def join_bytes(self, *values: List[bytes]) -> bytes:
+    def _join_bytes(self, *values: List[bytes]) -> bytes:
         return b'+'.join(values)
 
-    def setup_poses_pair(self, inp_pkl: bytes, out_pkl: bytes) -> bytes:
-        return self.join_bytes(InitFileSigner._prefix, inp_pkl, out_pkl)
+    def _setup_poses_pair(self, inp_pkl: bytes, out_pkl: bytes) -> bytes:
+        return self._join_bytes(InitFileSigner._prefix, inp_pkl, out_pkl)
 
-    def get_poses_digest(self, inp_pkl: bytes, out_pkl: bytes) -> bytes:
-        return HASHMOD(self.setup_poses_pair(inp_pkl, out_pkl)).digest()
+    def _get_poses_digest(self, inp_pkl: bytes, out_pkl: bytes) -> bytes:
+        return HASHMOD(self._setup_poses_pair(inp_pkl, out_pkl)).digest()
 
-    def get_poses_hexdigest(self, inp_pkl: bytes, out_pkl: bytes) -> str:
-        return HASHMOD(self.setup_poses_pair(inp_pkl, out_pkl)).hexdigest()
+    def _get_poses_hexdigest(self, inp_pkl: bytes, out_pkl: bytes) -> str:
+        return HASHMOD(self._setup_poses_pair(inp_pkl, out_pkl)).hexdigest()
 
-    def get_pkg_data(self, poses_digest: bytes) -> bytes:
-        return self.join_bytes(
+    def _get_pkg_data(self) -> bytes:
+        return self._join_bytes(
             InitFileSigner._prefix,
             pyrosetta._version_string().encode(InitFileSigner._encoding),
             pyrosetta.distributed.cluster.__version__.encode(InitFileSigner._encoding),
-            poses_digest,
         )
 
-    def get_hmac_hexdigest(self, key: bytes, data: bytes) -> str:
+    def _get_hmac_hexdigest(self, key: bytes, data: bytes) -> str:
         return hmac.new(key, data, HASHMOD).hexdigest()
 
-    def sign(self) -> Dict[str, str]:
-        inp_digest = self.get_pose_digest(self.inp_pkl)
-        out_digest = self.get_pose_digest(self.out_pkl)
-        poses_digest = self.get_poses_digest(self.inp_pkl, self.out_pkl)
-        pkg_data = self.get_pkg_data(poses_digest)
-        key = derive_init_key(InitFileSigner._secret, pkg_data)
-        msg = self.join_bytes(InitFileSigner._prefix, inp_digest, out_digest, pkg_data)
+    def _get_init_key_and_msg(self) -> Tuple[bytes, bytes]:
+        inp_digest = self._get_pose_digest(self.inp_pkl)
+        out_digest = self._get_pose_digest(self.out_pkl)
+        poses_digest = self._get_poses_digest(self.inp_pkl, self.out_pkl)
+        pkg_data = self._join_bytes(self._get_pkg_data(), poses_digest)
+        init_key = derive_init_key(b'InitFileSigner', pkg_data)
+        msg = self._join_bytes(InitFileSigner._prefix, inp_digest, out_digest, pkg_data)
 
+        return init_key, msg
+
+    def sign_sha256(self) -> str:
+        return self._get_poses_hexdigest(self.inp_pkl, self.out_pkl)
+
+    def sign_digest(self) -> str:
+        return self._get_hmac_hexdigest(*self._get_init_key_and_msg())
+
+    def sign(self) -> Dict[str, str]:
         return {
-            "sha256": self.get_poses_hexdigest(self.inp_pkl, self.out_pkl),
-            "signature": self.get_hmac_hexdigest(key, msg),
+            "sha256": self.sign_sha256(),
+            "signature": self.sign_digest(),
         }
 
-    def verify(self, sha256: str, signature: str) -> bool:
-        expected_sha256 = self.get_poses_hexdigest(self.inp_pkl, self.out_pkl)
-        if sha256 != expected_sha256:
-            return False
-        inp_digest = self.get_pose_digest(self.inp_pkl)
-        out_digest = self.get_pose_digest(self.out_pkl)
-        poses_digest = self.get_poses_digest(self.inp_pkl, self.out_pkl)
-        pkg_data = self.get_pkg_data(poses_digest)
-        key = derive_init_key(InitFileSigner._secret, pkg_data)
-        msg = self.join_bytes(InitFileSigner._prefix, inp_digest, out_digest, pkg_data)
-        expected_signature = self.get_hmac_hexdigest(key, msg)
+    def verify_sha256(self, sha256: str) -> bool:
+        return sha256 == self._get_poses_hexdigest(self.inp_pkl, self.out_pkl)
 
-        return compare_digest(signature, expected_signature)
+    def verify_signature(self, signature: str) -> bool:
+        return compare_digest(signature, self.sign_digest())
+
+    def verify(self, sha256: str, signature: str) -> bool:
+        return self.verify_sha256(sha256) and self.verify_signature(signature)
 
 
 def setup_init_file_metadata_and_poses(
