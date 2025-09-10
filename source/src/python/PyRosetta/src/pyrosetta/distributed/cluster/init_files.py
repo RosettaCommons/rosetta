@@ -9,6 +9,18 @@
 __author__ = "Jason C. Klima"
 
 
+try:
+    import toolz
+except ImportError:
+    print(
+        "Importing 'pyrosetta.distributed.cluster.init_files' requires the "
+        + "third-party package 'toolz' as a dependency!\n"
+        + "Please install this package into your python environment. "
+        + "For installation instructions, visit:\n"
+        + "https://pypi.org/project/toolz/\n"
+    )
+    raise
+
 import json
 import hmac
 import os
@@ -22,6 +34,9 @@ from typing import Any, Dict, Generic, List, Optional, Tuple, TypeVar
 
 from pyrosetta.distributed.cluster.hkdf import HASHMOD, compare_digest, derive_init_key
 
+
+METADATA_INPUT_DECOY_KEY: str = "idx_input"
+METADATA_OUTPUT_DECOY_KEY: str = "idx_output"
 
 G = TypeVar("G")
 
@@ -112,10 +127,10 @@ def setup_init_file_metadata_and_poses(
     poses = []
     if isinstance(output_packed_pose, PackedPose): # Set output decoy to front of poses list if present
         poses.append(output_packed_pose)
-        metadata["idx_output"] = poses.index(output_packed_pose)
+        metadata[METADATA_OUTPUT_DECOY_KEY] = poses.index(output_packed_pose)
     if isinstance(input_packed_pose, PackedPose):
         poses.append(input_packed_pose)
-        metadata["idx_input"] = poses.index(input_packed_pose)
+        metadata[METADATA_INPUT_DECOY_KEY] = poses.index(input_packed_pose)
     signer = InitFileSigner(
         input_packed_pose=input_packed_pose,
         output_packed_pose=output_packed_pose,
@@ -133,6 +148,14 @@ def get_poses_from_init_file(
     Return a `tuple` of the input `PackedPose` object and the 
     output `PackedPose` object from a '.init' file.
     """
+    @toolz.functoolz.curry
+    def _maybe_to_packed(
+        key: str, poses: List[str], metadata: Dict[str, str]
+    ) -> Optional[PackedPose]:
+        assert was_init_called(), (
+            f"Please first initialize PyRosetta with the 'init_file' argument parameter: '{init_file}'"
+        )
+        return io.to_packed(io.to_pose(poses[metadata[key]])) if key in metadata else None
 
     assert isinstance(init_file, str) and os.path.isfile(init_file), (
         "The input 'init_file' argument parameter must be a `str` object and exist on disk. "
@@ -143,17 +166,8 @@ def get_poses_from_init_file(
         assert key in init_dict.keys(), (
             f"The 'init_file' argument parameter does not contain the '{key}' key: '{init_file}'"
         )
-    metadata = init_dict["metadata"]
-    poses = init_dict["poses"]
-
-    assert was_init_called(), (
-        f"Please first initialize PyRosetta with the 'init_file' argument parameter: '{init_file}'"
-    )
-    input_packed_pose = io.to_packed(
-        io.to_pose(poses[metadata["idx_input"]])
-    ) if "idx_input" in metadata else None
-    output_packed_pose = io.to_packed(
-        io.to_pose(poses[metadata["idx_output"]])
-    ) if "idx_output" in metadata else None
+    _get_packed_pose = _maybe_to_packed(poses=init_dict["poses"], metadata=init_dict["metadata"])
+    input_packed_pose = _get_packed_pose(METADATA_INPUT_DECOY_KEY)
+    output_packed_pose = _get_packed_pose(METADATA_OUTPUT_DECOY_KEY)
 
     return (input_packed_pose, output_packed_pose)
