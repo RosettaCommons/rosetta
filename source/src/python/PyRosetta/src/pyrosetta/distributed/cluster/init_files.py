@@ -16,6 +16,7 @@ import pyrosetta
 import pyrosetta.distributed.io as io
 
 from pyrosetta.distributed.packed_pose.core import PackedPose
+from pyrosetta.rosetta.basic import was_init_called
 from typing import Any, Dict, Generic, List, Optional, Tuple, TypeVar
 
 from pyrosetta.distributed.cluster.hkdf import HASHMOD, compare_digest, derive_init_key
@@ -141,12 +142,16 @@ def get_poses_from_init_file(
             parse_constant=None,
             object_pairs_hook=None,
         )
-    for key in ("metdata", "poses"):
+    for key in ("metadata", "poses"):
         assert key in init_dict.keys(), (
             f"The 'init_file' argument parameter does not contain the '{key}' key: '{init_file}'"
         )
     metadata = init_dict["metadata"]
     poses = init_dict["poses"]
+
+    assert was_init_called(), (
+        f"Please first initialize PyRosetta with the 'init_file' argument parameter: '{init_file}'"
+    )
     input_packed_pose = io.to_packed(
         io.to_pose(poses[metadata["idx_input"]])
     ) if "idx_input" in metadata else None
