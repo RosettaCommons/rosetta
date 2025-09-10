@@ -48,7 +48,11 @@ from pyrosetta.distributed.cluster.io import IO
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.rosetta.core.pose import Pose
-from pyrosetta.utility.initialization import PyRosettaInitFileSerializer
+from pyrosetta.utility.initialization import (
+    PyRosettaInitFileReader,
+    PyRosettaInitFileSerializer,
+    PyRosettaInitFileWriter,
+)
 from typing import (
     Any,
     Callable,
@@ -261,7 +265,6 @@ def export_init_file(
                         + "initialized (using the `pyrosetta.init_from_file()` function) with the "
                         + "following '.init' file: '{init_file}'"
                     )
-
                 input_packed_pose, _output_packed_pose = get_poses_from_init_file(init_file)
                 if _output_packed_pose is not None:
                     raise ValueError(
@@ -282,33 +285,11 @@ def export_init_file(
                     output_packed_pose=output_packed_pose,
                 )
                 # Update PyRosetta initialization file
-                with open(init_file, "r") as f:
-                    init_dict = json.load(
-                        f,
-                        cls=None,
-                        object_hook=None,
-                        parse_float=None,
-                        parse_int=None,
-                        parse_constant=None,
-                        object_pairs_hook=None,
-                    )
+                init_dict = PyRosettaInitFileReader.read_json(init_file)
                 init_dict["metadata"] = metadata
                 init_dict["poses"] = list(map(io.to_base64, poses))
                 init_dict["md5"] = PyRosettaInitFileSerializer.get_md5(init_dict)
-                with open(output_init_file, "w") as f:
-                    json.dump(
-                        init_dict,
-                        f,
-                        skipkeys=False,
-                        ensure_ascii=False,
-                        check_circular=True,
-                        allow_nan=False,
-                        cls=None,
-                        indent=2,
-                        separators=(", ", ": "),
-                        default=None,
-                        sort_keys=True,
-                    )
+                PyRosettaInitFileWriter.write_json(init_dict, output_init_file)
                 print(
                     f"Exported PyRosettaCluster decoy output file '{output_file}' to "
                     + f"PyRosetta initialization file: '{output_init_file}'"
