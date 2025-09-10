@@ -48,6 +48,7 @@ from pyrosetta.distributed.cluster.io import IO
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.rosetta.core.pose import Pose
+from pyrosetta.utility.initialization import PyRosettaInitFileSerializer
 from typing import (
     Any,
     Callable,
@@ -254,6 +255,13 @@ def export_init_file(
         init_file = scores_dict["metadata"]["init_file"]
         if init_file:
             if os.path.isfile(init_file):
+                if not was_init_called():
+                    raise RuntimeError(
+                        "In order to export a '.init' file, please ensure that PyRosetta is already "
+                        + "initialized (using the `pyrosetta.init_from_file()` function) with the "
+                        + "following '.init' file: '{init_file}'"
+                    )
+
                 input_packed_pose, _output_packed_pose = get_poses_from_init_file(init_file)
                 if _output_packed_pose is not None:
                     raise ValueError(
@@ -285,7 +293,8 @@ def export_init_file(
                         object_pairs_hook=None,
                     )
                 init_dict["metadata"] = metadata
-                init_dict["poses"] = poses
+                init_dict["poses"] = list(map(io.to_base64, poses))
+                init_dict["md5"] = PyRosettaInitFileSerializer.get_md5(init_dict)
                 with open(output_init_file, "w") as f:
                     json.dump(
                         init_dict,
