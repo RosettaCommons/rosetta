@@ -31,12 +31,16 @@ class InitFileSigner(Generic[G]):
     _encoding = "utf-8"
     _prefix = b'PyRosettaCluster_init_file_signer'
 
-    def __init__(self, input_packed_pose=None, output_packed_pose=None) -> None:
+    def __init__(self, input_packed_pose=None, output_packed_pose=None, metadata=None) -> None:
         self.inp_pkl = self._to_pickle(input_packed_pose)
         self.out_pkl = self._to_pickle(output_packed_pose)
+        self.metadata_pkl = self._to_encoding(metadata)
 
     def _to_pickle(self, packed_pose: Optional[PackedPose]) -> bytes:
         return io.to_pickle(packed_pose) if isinstance(packed_pose, PackedPose) else b'\x00'
+
+    def _to_encoding(self, obj: Any) -> bytes:
+        return json.dumps(obj).encode(InitFileSigner._encoding)
 
     def _get_pose_digest(self, pkl: bytes) -> bytes:
         return HASHMOD(pkl).digest()
@@ -67,7 +71,7 @@ class InitFileSigner(Generic[G]):
         inp_digest = self._get_pose_digest(self.inp_pkl)
         out_digest = self._get_pose_digest(self.out_pkl)
         poses_digest = self._get_poses_digest(self.inp_pkl, self.out_pkl)
-        pkg_data = self._join_bytes(self._get_pkg_data(), poses_digest)
+        pkg_data = self._join_bytes(self._get_pkg_data(), self.metadata_pkl, poses_digest)
         init_key = derive_init_key(b'InitFileSigner', pkg_data)
         msg = self._join_bytes(InitFileSigner._prefix, inp_digest, out_digest, pkg_data)
 
@@ -114,6 +118,7 @@ def setup_init_file_metadata_and_poses(
     signer = InitFileSigner(
         input_packed_pose=input_packed_pose,
         output_packed_pose=output_packed_pose,
+        metadata=metadata,
     )
     metadata.update(signer.sign())
 
