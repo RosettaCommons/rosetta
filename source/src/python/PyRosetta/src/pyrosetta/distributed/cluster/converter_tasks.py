@@ -263,7 +263,7 @@ def export_init_file(
                     raise RuntimeError(
                         "In order to export a '.init' file, please ensure that PyRosetta is already "
                         + "initialized (using the `pyrosetta.init_from_file()` function) with the "
-                        + "following '.init' file: '{init_file}'"
+                        + f"following '.init' file: '{init_file}'"
                     )
                 input_packed_pose, _output_packed_pose = get_poses_from_init_file(init_file)
                 if _output_packed_pose is not None:
