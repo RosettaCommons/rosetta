@@ -493,6 +493,23 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         if dry_run:
             print(f"Skipping dumping PyRosetta initialization '{self._init_file_extension}' file...")
 
+    @staticmethod
+    def write_json(data_dict, output_filename):
+        with open(output_filename, "w") as f:
+            return json.dump(
+                data_dict,
+                f,
+                skipkeys=False,
+                ensure_ascii=False,
+                check_circular=True,
+                allow_nan=False,
+                cls=None,
+                indent=2,
+                separators=(", ", ": "),
+                default=None,
+                sort_keys=True,
+            )
+
     def dump(self):
         encoded_options_dict = self.get_encoded_options_dict()
         encoded_options_dict.pop(self._database_option_name, None)
@@ -509,20 +526,7 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         if verbose:
             self.print_cached_files(dry_run)
         if not dry_run and ((not os.path.isfile(self.output_filename)) or overwrite):
-            with open(self.output_filename, "w") as f:
-                json.dump(
-                    data_dict,
-                    f,
-                    skipkeys=False,
-                    ensure_ascii=False,
-                    check_circular=True,
-                    allow_nan=False,
-                    cls=None,
-                    indent=2,
-                    separators=(", ", ": "),
-                    default=None,
-                    sort_keys=True,
-                )
+            PyRosettaInitFileWriter.write_json(data_dict, self.output_filename)
             if verbose:
                 print(
                     f"Dumped PyRosetta '{self._init_file_extension}' file size:",
@@ -603,23 +607,27 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
 
         return kwargs
 
+    @staticmethod
+    def read_json(init_file):
+        with open(init_file, "r") as f:
+            return json.load(
+                f,
+                cls=None,
+                object_hook=None,
+                parse_float=None,
+                parse_int=None,
+                parse_constant=None,
+                object_pairs_hook=None,
+            )
+
     def setup_init_dict(self, init_file):
         if isinstance(init_file, str) and init_file.endswith(self._init_file_extension) and os.path.isfile(init_file):
-            with open(self.init_file, "r") as f:
-                _init_dict = json.load(
-                    f,
-                    cls=None,
-                    object_hook=None,
-                    parse_float=None,
-                    parse_int=None,
-                    parse_constant=None,
-                    object_pairs_hook=None,
-                )
-                _md5 = _init_dict.pop("md5", None)
-                _expected_md5 = PyRosettaInitFileSerializer.get_md5(_init_dict)
-                self.md5_warning(_md5, _expected_md5)
-                _init_dict.pop("poses", None)
-                return _init_dict
+            _init_dict = PyRosettaInitFileReader.read_json(self.init_file)
+            _md5 = _init_dict.pop("md5", None)
+            _expected_md5 = PyRosettaInitFileSerializer.get_md5(_init_dict)
+            self.md5_warning(_md5, _expected_md5)
+            _init_dict.pop("poses", None)
+            return _init_dict
         else:
             raise ValueError(
                 "Please provide a valid input PyRosetta initialization '{0}' file. Received: {1}".format(self._init_file_extension, init_file)
