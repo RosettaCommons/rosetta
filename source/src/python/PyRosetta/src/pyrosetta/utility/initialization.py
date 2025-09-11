@@ -280,10 +280,9 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
                     if isinstance(obj, (Pose, PackedPose)):
                         kwargs["poses"].append(to_base64(obj))
                     else:
-                        raise TypeError(
-                            "The 'poses' keyword argument parameter must be a `Pose` or `PackedPose` object, "
-                            + "or an iterable of `Pose` or `PackedPose` objects. Received: {0}".format(type(obj))
-                        )
+                        raise TypeError(self._poses_error_msg(obj))
+            else:
+                raise TypeError(self._poses_error_msg(objs))
         for key in ("author", "email", "license"):
             if key in kwargs and kwargs[key] is None:
                 kwargs[key] = ""
@@ -319,6 +318,12 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             )
 
         return kwargs
+
+    def _poses_error_msg(self, obj):
+        return (
+            "The 'poses' keyword argument parameter must be a `Pose` or `PackedPose` object, or an "
+            + "iterable of `Pose` or `PackedPose` objects. Received: '{0}' of type {1}".format(obj, type(obj))
+        )
 
     def assert_metadata_json_serializable(self, data):
         try:
