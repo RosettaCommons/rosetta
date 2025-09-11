@@ -66,6 +66,11 @@ class PyRosettaInitFileParserBase(object):
             return False
 
     def get_to_base64(self):
+        assert self.has_cereal, (
+            f"To cache `Pose` and/or `PackedPose` objects in the output '{self._init_file_extension}' "
+            + "file, please ensure that PyRosetta is built with serialization support. "
+            + "Current PyRosetta build: {0}".format(self.get_pyrosetta_build())
+        )
         try:
             import pyrosetta.distributed.io as io  # noqa: F401
             return io.to_base64
@@ -265,11 +270,6 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         if "poses" in kwargs and kwargs["poses"] is None:
             kwargs["poses"] = []
         else:
-            assert self.has_cereal, (
-                f"To cache `Pose` and/or `PackedPose` objects in the output '{self._init_file_extension}' "
-                + "file, please ensure that PyRosetta is built with serialization support. "
-                + "Current PyRosetta build: {0}".format(self.get_pyrosetta_build()),
-            )
             to_base64 = self.get_to_base64()
             objs = kwargs["poses"]
             if isinstance(objs, (Pose, PackedPose)):
