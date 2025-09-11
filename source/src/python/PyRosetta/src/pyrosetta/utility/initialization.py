@@ -834,7 +834,7 @@ class PyRosettaInitFileParser(object):
                 initialization. If `True`, then only print the PyRosetta initialization options that would be run if it were `False`.
                 Default: False
             output_dir: An optional `str` object representing the output directory into which to decompress PyRosetta input files.
-                Default: `./pyrosetta_init_files`
+                Default: ./pyrosetta_init_files
             skip_corrections: An optional `bool` object specifying whether or not to skip any ScoreFunction corrections specified
                 in the input '.init' file, which are set in-code upon PyRosetta initialization. If a `NoneType` object is provided,
                 then the input ScoreFunction corrections are automatically used for PyRosetta initialization only if the PyRosetta
@@ -854,13 +854,13 @@ class PyRosettaInitFileParser(object):
             verbose: An optional `bool` object specifying whether or not to print PyRosetta initialization information.
                 Default: True
             set_logging_handler: An optional object passed to `pyrosetta.init(set_logging_handler=...)` during PyRosetta initialization.
-                If `None`, then the default `pyrosetta.init` keyword argument parameter is used. 
+                If a `NoneType` object is provided, then the default `pyrosetta.init` keyword argument parameter is used.
                 Default: None
             notebook: An optional object passed to `pyrosetta.init(notebook=...)` during PyRosetta initialization.
-                If `None`, then the default `pyrosetta.init` keyword argument parameter is used.
+                If a `NoneType` object is provided, then the default `pyrosetta.init` keyword argument parameter is used.
                 Default: None
             silent: An optional object passed to `pyrosetta.init(silent=...)` during PyRosetta initialization.
-                If `None`, then the default `pyrosetta.init` keyword argument parameter is used.
+                If a `NoneType` object is provided, then the default `pyrosetta.init` keyword argument parameter is used.
                 Default: None
 
         Returns:
@@ -893,10 +893,10 @@ class PyRosettaInitFileParser(object):
         """
         Get PyRosetta initialization options from a '.init' file.
 
-        This method returns the PyRosetta initialization options from an input '.init' file without running `pyrosetta.init`. The 
+        This method returns the PyRosetta initialization options from an input '.init' file without running `pyrosetta.init()`. The
         'dry_run' keyword argument is enabled by default in order to inspect the Rosetta command line options before committing
         to decompressing and writing all PyRosetta input files to disk. If 'dry_run' is disabled, then also decompress the PyRosetta
-        input files into an output directory given by the 'output_dir' keyword argument parameter without running `pyrosetta.init`.
+        input files into an output directory given by the 'output_dir' keyword argument parameter without running `pyrosetta.init()`.
 
         Args:
             init_file: A required `str` object representing the input '.init' file.
@@ -908,7 +908,7 @@ class PyRosettaInitFileParser(object):
                 Default: True
             output_dir: An optional `str` object representing the output directory into which to decompress PyRosetta input files if
                 the 'dry_run' keyword argument parameter is `False`.
-                Default: `./pyrosetta_init_files`
+                Default: ./pyrosetta_init_files
             relative_paths: An optional `bool` object specifying whether or not to return the relative paths (with respect to
                 the current working directory) of the files written to the 'output_dir' keyword argument parameter.
                 Default: False
