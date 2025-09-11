@@ -622,7 +622,7 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
 
     def setup_init_dict(self, init_file):
         if isinstance(init_file, str) and init_file.endswith(self._init_file_extension) and os.path.isfile(init_file):
-            _init_dict = PyRosettaInitFileReader.read_json(self.init_file)
+            _init_dict = PyRosettaInitFileReader.read_json(init_file)
             _md5 = _init_dict.pop("md5", None)
             _expected_md5 = PyRosettaInitFileSerializer.get_md5(_init_dict)
             self.md5_warning(_md5, _expected_md5)
