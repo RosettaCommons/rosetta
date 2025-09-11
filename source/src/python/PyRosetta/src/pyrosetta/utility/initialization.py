@@ -28,9 +28,10 @@ import warnings
 import zlib
 
 from pprint import pprint
-from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.distributed.packed_pose.core import PackedPose
+from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.rosetta.core.simple_metrics.composite_metrics import ProtocolSettingsMetric
+from pyrosetta.utility import has_cereal
 
 
 class PyRosettaInitFileParserBase(object):
@@ -55,17 +56,12 @@ class PyRosettaInitFileParserBase(object):
         )
         warnings.warn(_msg, UserWarning, stacklevel=4)
 
-    @property
-    def has_cereal(self):
-        try:
-            import pyrosetta.rosetta.cereal as cereal  # noqa: F401
-            assert hasattr(cereal, "BinaryInputArchive")
-            assert hasattr(cereal, "BinaryOutputArchive")
-            return True
-        except (ImportError, AssertionError):
-            return False
-
     def get_to_base64(self):
+        assert has_cereal(), (
+            f"To cache `Pose` and/or `PackedPose` objects in the output '{self._init_file_extension}' "
+            + "file, please ensure that PyRosetta is built with serialization support. "
+            + "Current PyRosetta build: {0}".format(self.get_pyrosetta_build())
+        )
         try:
             import pyrosetta.distributed.io as io  # noqa: F401
             return io.to_base64
@@ -265,11 +261,6 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         if "poses" in kwargs and kwargs["poses"] is None:
             kwargs["poses"] = []
         else:
-            assert self.has_cereal, (
-                f"To cache `Pose` and/or `PackedPose` objects in the output '{self._init_file_extension}' "
-                + "file, please ensure that PyRosetta is built with serialization support. "
-                + "Current PyRosetta build: {0}".format(self.get_pyrosetta_build()),
-            )
             to_base64 = self.get_to_base64()
             objs = kwargs["poses"]
             if isinstance(objs, (Pose, PackedPose)):
@@ -280,10 +271,9 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
                     if isinstance(obj, (Pose, PackedPose)):
                         kwargs["poses"].append(to_base64(obj))
                     else:
-                        raise TypeError(
-                            "The 'poses' keyword argument parameter must be a `Pose` or `PackedPose` object, "
-                            + "or an iterable of `Pose` or `PackedPose` objects. Received: {0}".format(type(obj))
-                        )
+                        raise TypeError(self._poses_error_msg(obj))
+            else:
+                raise TypeError(self._poses_error_msg(objs))
         for key in ("author", "email", "license"):
             if key in kwargs and kwargs[key] is None:
                 kwargs[key] = ""
@@ -319,6 +309,12 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             )
 
         return kwargs
+
+    def _poses_error_msg(self, obj):
+        return (
+            "The 'poses' keyword argument parameter must be a `Pose` or `PackedPose` object, or an "
+            + "iterable of `Pose` or `PackedPose` objects. Received: '{0}' of type {1}".format(obj, type(obj))
+        )
 
     def assert_metadata_json_serializable(self, data):
         try:
@@ -622,7 +618,7 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
 
     def setup_init_dict(self, init_file):
         if isinstance(init_file, str) and init_file.endswith(self._init_file_extension) and os.path.isfile(init_file):
-            _init_dict = PyRosettaInitFileReader.read_json(self.init_file)
+            _init_dict = PyRosettaInitFileReader.read_json(init_file)
             _md5 = _init_dict.pop("md5", None)
             _expected_md5 = PyRosettaInitFileSerializer.get_md5(_init_dict)
             self.md5_warning(_md5, _expected_md5)
