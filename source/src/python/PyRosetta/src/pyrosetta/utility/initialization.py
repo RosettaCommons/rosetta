@@ -28,9 +28,10 @@ import warnings
 import zlib
 
 from pprint import pprint
-from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.distributed.packed_pose.core import PackedPose
+from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.rosetta.core.simple_metrics.composite_metrics import ProtocolSettingsMetric
+from pyrosetta.utility import has_cereal
 
 
 class PyRosettaInitFileParserBase(object):
@@ -55,18 +56,8 @@ class PyRosettaInitFileParserBase(object):
         )
         warnings.warn(_msg, UserWarning, stacklevel=4)
 
-    @property
-    def has_cereal(self):
-        try:
-            import pyrosetta.rosetta.cereal as cereal  # noqa: F401
-            assert hasattr(cereal, "BinaryInputArchive")
-            assert hasattr(cereal, "BinaryOutputArchive")
-            return True
-        except (ImportError, AssertionError):
-            return False
-
     def get_to_base64(self):
-        assert self.has_cereal, (
+        assert has_cereal(), (
             f"To cache `Pose` and/or `PackedPose` objects in the output '{self._init_file_extension}' "
             + "file, please ensure that PyRosetta is built with serialization support. "
             + "Current PyRosetta build: {0}".format(self.get_pyrosetta_build())
