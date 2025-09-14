@@ -23,7 +23,6 @@ except ImportError:
 
 import json
 import hmac
-import os
 import pyrosetta
 import pyrosetta.distributed.io as io
 
@@ -42,7 +41,6 @@ from typing import (
     Union,
 )
 
-
 from pyrosetta.distributed.cluster.hkdf import HASHMOD, compare_digest, derive_init_key
 
 
@@ -53,7 +51,7 @@ G = TypeVar("G")
 
 
 class InitFileSigner(Generic[G]):
-    """Sign PyRosetta initialization files by PyRosettaCluster."""
+    """Sign or verify PyRosetta initialization files by PyRosettaCluster."""
 
     _encoding = "utf-8"
     _prefix = b'PyRosettaCluster_init_file_signer'
@@ -116,24 +114,30 @@ class InitFileSigner(Generic[G]):
         return init_key, msg
 
     def sign_sha256(self) -> str:
+        """Sign PyRosetta initialization file pose data."""
         return self._get_poses_hexdigest(self.inp_pkl, self.out_pkl)
 
     def sign_digest(self) -> str:
+        """Sign PyRosetta initialization file package data, pose data, and metadata."""
         return self._get_hmac_hexdigest(*self._get_init_key_and_msg())
 
     def sign(self) -> Dict[str, str]:
+        """Return a `dict` object with SHA256 and HMAC signature metadata."""
         return {
             "sha256": self.sign_sha256(),
             "signature": self.sign_digest(),
         }
 
-    def verify_sha256(self, sha256: str) -> bool:
+    def verify_sha256(self, sha256: Optional[str]) -> bool:
+        """Verify PyRosetta initialization file pose data."""
         return sha256 == self._get_poses_hexdigest(self.inp_pkl, self.out_pkl)
 
-    def verify_signature(self, signature: str) -> bool:
+    def verify_signature(self, signature: Optional[str]) -> bool:
+        """Verify PyRosetta initialization file package data, pose data, and metadata."""
         return compare_digest(signature, self.sign_digest())
 
-    def verify(self, sha256: str, signature: str) -> bool:
+    def verify(self, sha256: Optional[str], signature: Optional[str]) -> bool:
+        """Verify PyRosetta initialization file SHA256 and HMAC signature metadata."""
         return self.verify_sha256(sha256) and self.verify_signature(signature)
 
 
