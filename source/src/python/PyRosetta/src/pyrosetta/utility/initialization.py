@@ -34,11 +34,52 @@ from pyrosetta.rosetta.core.simple_metrics.composite_metrics import ProtocolSett
 from pyrosetta.utility import has_cereal
 
 
+
+class PyRosettaInitializationError(RuntimeError):
+    def __init__(self, message):
+        super().__init__(message)
+        self.message = message
+
+    def __str__(self):
+        return self.message
+
+    def __repr__(self):
+        return "{0}({1!r})".format(self.__class__.__name__, self.message)
+
+
+class PyRosettaIsInitializedError(PyRosettaInitializationError):
+    def __init__(self, message):
+        super().__init__(
+            "{0}\nPlease ensure that PyRosetta is not already initialized (e.g., ".format(message)
+            + "if using a Jupyter notebook, please restart the kernel) and try again."
+        )
+
+
+class PyRosettaIsNotInitializedError(PyRosettaInitializationError):
+    def __init__(self, message):
+        super().__init__(
+            "{0}\nPlease ensure that PyRosetta is initialized and try again.".format(message)
+        )
+
+
 class PyRosettaInitFileParserBase(object):
     _database_option_name = "in:path:database"
     _corrections_option_name = "corrections:"
     _init_file_extension = ".init"
     _strftime_format = "%Y-%m-%d-%H-%M-%S"
+    _required_keys = (
+        "author",
+        "datetime",
+        "email",
+        "license",
+        "md5",
+        "metadata",
+        "num_files",
+        "num_poses",
+        "options",
+        "poses",
+        "pyrosetta_build",
+    )
 
     def get_pyrosetta_build(self):
         return pyrosetta._version_string()
@@ -79,19 +120,16 @@ class PyRosettaInitFileParserBase(object):
 
     def validate_init_was_called(self):
         if not self.was_init_called:
-            raise RuntimeError(
-                "PyRosetta must be already initialized to dump a '{0}' file. ".format(self._init_file_extension)
-                + "Please run `pyrosetta.init()` with custom options and try again."
+            raise PyRosettaIsNotInitializedError(
+                "PyRosetta must be already initialized to dump a '{0}' file.".format(self._init_file_extension)
             )
 
     def validate_init_was_not_called(self):
         if self.was_init_called:
-            raise RuntimeError(
-                "PyRosetta must not be already initialized to initialize from a '{0}' file. ".format(
+            raise PyRosettaIsInitializedError(
+                "PyRosetta must not be already initialized to initialize from a '{0}' file.".format(
                     self._init_file_extension
                 )
-                + "Please ensure that `pyrosetta.init()` was not already called (e.g., "
-                + "if using a Jupyter notebook, please restart the kernel) and try again."
             )
 
     def md5_warning(self, md5, expected_md5):
@@ -566,7 +604,7 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
                 )
             )
         if kwargs["output_dir"] is None:
-            output_dir = os.path.join(os.getcwd(), "pyrosetta_init_files")
+            output_dir = os.path.join(os.getcwd(), "pyrosetta_init_input_files")
         elif isinstance(kwargs["output_dir"], str):
             output_dir = os.path.abspath(kwargs["output_dir"])
         else:
@@ -644,31 +682,43 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
 
     @staticmethod
     def read_json(init_file):
-        with open(init_file, "r") as f:
-            return json.load(
-                f,
-                cls=None,
-                object_hook=None,
-                parse_float=None,
-                parse_int=None,
-                parse_constant=None,
-                object_pairs_hook=None,
-            )
-
-    def setup_init_dict(self, init_file):
-        if isinstance(init_file, str) and init_file.endswith(self._init_file_extension) and os.path.isfile(init_file):
-            _init_dict = PyRosettaInitFileReader.read_json(init_file)
-            _md5 = _init_dict.pop("md5", None)
-            _expected_md5 = PyRosettaInitFileSerializer.get_md5(_init_dict)
-            self.md5_warning(_md5, _expected_md5)
-            _init_dict.pop("poses", None)
-            return _init_dict
+        if (
+            isinstance(init_file, str)
+            and init_file.endswith(PyRosettaInitFileParserBase._init_file_extension)
+            and os.path.isfile(init_file)
+        ):
+            with open(init_file, "r") as f:
+                init_dict = json.load(
+                    f,
+                    cls=None,
+                    object_hook=None,
+                    parse_float=None,
+                    parse_int=None,
+                    parse_constant=None,
+                    object_pairs_hook=None,
+                )
+            for key in PyRosettaInitFileParserBase._required_keys:
+                assert key in init_dict, (
+                    "The input '{0}' file is not valid because it is missing the '{1}' key: '{2}'".format(
+                        PyRosettaInitFileParserBase._init_file_extension, key, init_file
+                    )
+                )
+            return init_dict
         else:
             raise ValueError(
                 "Please provide a valid input PyRosetta initialization '{0}' file. Received: {1}".format(
-                    self._init_file_extension, init_file
+                    PyRosettaInitFileParserBase._init_file_extension, init_file
                 )
             )
+
+    def setup_init_dict(self, init_file):
+        _init_dict = PyRosettaInitFileReader.read_json(init_file)
+        _md5 = _init_dict.pop("md5", None)
+        _expected_md5 = PyRosettaInitFileSerializer.get_md5(_init_dict)
+        self.md5_warning(_md5, _expected_md5)
+        _init_dict.pop("poses", None)
+
+        return _init_dict
 
     def get_encoded_options_dict(self):
         encoded_options_dict = self.init_dict["options"]
@@ -881,7 +931,7 @@ class PyRosettaInitFileParser(object):
                 initialization. If `True`, then only print the PyRosetta initialization options that would be run if it were `False`.
                 Default: False
             output_dir: An optional `str` object representing the output directory into which to decompress PyRosetta input files.
-                Default: ./pyrosetta_init_files
+                Default: ./pyrosetta_init_input_files
             skip_corrections: An optional `bool` object specifying whether or not to skip any ScoreFunction corrections specified
                 in the input '.init' file, which are set in-code upon PyRosetta initialization. If a `NoneType` object is provided,
                 then the input ScoreFunction corrections are automatically used for PyRosetta initialization only if the PyRosetta
@@ -955,7 +1005,7 @@ class PyRosettaInitFileParser(object):
                 Default: True
             output_dir: An optional `str` object representing the output directory into which to decompress PyRosetta input files if
                 the 'dry_run' keyword argument parameter is `False`.
-                Default: ./pyrosetta_init_files
+                Default: ./pyrosetta_init_input_files
             relative_paths: An optional `bool` object specifying whether or not to return the relative paths (with respect to
                 the current working directory) of the files written to the 'output_dir' keyword argument parameter.
                 Default: False
