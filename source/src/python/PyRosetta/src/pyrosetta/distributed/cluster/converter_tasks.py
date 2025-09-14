@@ -49,11 +49,11 @@ from pyrosetta.distributed.cluster.io import IO
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.rosetta.core.pose import Pose
+from pyrosetta.utility.exceptions import PyRosettaIsNotInitializedError
 from pyrosetta.utility.initialization import (
     PyRosettaInitFileReader,
     PyRosettaInitFileSerializer,
     PyRosettaInitFileWriter,
-    PyRosettaIsNotInitializedError,
 )
 from typing import (
     Any,

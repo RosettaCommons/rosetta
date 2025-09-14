@@ -32,34 +32,8 @@ from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.rosetta.core.simple_metrics.composite_metrics import ProtocolSettingsMetric
 from pyrosetta.utility import has_cereal
+from pyrosetta.utility.exceptions import PyRosettaIsInitializedError, PyRosettaIsNotInitializedError
 
-
-
-class PyRosettaInitializationError(RuntimeError):
-    def __init__(self, message):
-        super().__init__(message)
-        self.message = message
-
-    def __str__(self):
-        return self.message
-
-    def __repr__(self):
-        return "{0}({1!r})".format(self.__class__.__name__, self.message)
-
-
-class PyRosettaIsInitializedError(PyRosettaInitializationError):
-    def __init__(self, message):
-        super().__init__(
-            "{0}\nPlease ensure that PyRosetta is not already initialized (e.g., ".format(message)
-            + "if using a Jupyter notebook, please restart the kernel) and try again."
-        )
-
-
-class PyRosettaIsNotInitializedError(PyRosettaInitializationError):
-    def __init__(self, message):
-        super().__init__(
-            "{0}\nPlease ensure that PyRosetta is initialized and try again.".format(message)
-        )
 
 
 class PyRosettaInitFileParserBase(object):
