@@ -274,10 +274,10 @@ def export_init_file(
                             + "Please set the 'output_init_file' keyword argument parameter to a different value."
                         )
                     break
-        else:
-            assert isinstance(output_init_file, str), (
+        elif not isinstance(output_init_file, str):
+            raise TypeError(
                 "The 'output_init_file' keyword argument parameter must be a `str` or `NoneType` object. "
-                + f"Received: '{type(output_init_file)}'"
+                + f"Received: {type(output_init_file)}"
             )
 
         scores_dict = get_scores_dict(output_file)
