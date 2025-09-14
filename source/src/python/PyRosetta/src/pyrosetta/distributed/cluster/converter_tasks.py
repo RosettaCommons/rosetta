@@ -53,6 +53,7 @@ from pyrosetta.utility.initialization import (
     PyRosettaInitFileReader,
     PyRosettaInitFileSerializer,
     PyRosettaInitFileWriter,
+    PyRosettaIsNotInitializedError,
 )
 from typing import (
     Any,
@@ -166,7 +167,7 @@ def get_protocols_list_of_str(
     return protocols_list_of_str
 
 
-def get_scores_dict(obj):
+def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Any], NoReturn]:
     """
     Get the PyRosettaCluster scores dictionary from either a `PackedPose` object or a
     '.pdb', '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file.
@@ -187,7 +188,7 @@ def get_scores_dict(obj):
                 pdbstring = f.read()
         elif obj.endswith((".pkl_pose", ".pkl_pose.bz2", ".b64_pose", ".b64_pose.bz2")):
             if not was_init_called():
-                raise RuntimeError(
+                raise PyRosettaIsNotInitializedError(
                     "To get the PyRosettaCluster scores dictionary from a '.pkl_pose', '.pkl_pose.bz2', "
                     + "'.b64_pose' or '.b64_pose.bz2' file, PyRosetta must be initialized (with the same "
                     + "residue type set that was used to save the original file)."
@@ -211,8 +212,8 @@ def get_scores_dict(obj):
             )
     else:
         raise TypeError(
-            "The `input_file` argument parameter must be a `PackedPose` or `str` object that ends in "
-            + "'.pdb', '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2'."
+            "The `input_file` argument parameter must be a `Pose`, `PackedPose` or `str` object that ends"
+            + "in '.pdb', '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2'."
         )
 
     scores_dict = None
@@ -247,7 +248,7 @@ def export_init_file(
     Export a PyRosetta initialization file from a decoy output file. The PyRosettaCluster simulation
     that produced the decoy output file must have had the 'output_init_file' instance attribute enabled,
     so the 'init_file' key value can be detected in the metadata of the decoy output file. This function
-    can be used to append the decoy output file to the detected PyRosetta initialization file for more
+    can be used to prepend the decoy output file to the detected PyRosetta initialization file for more
     facile simulation reproduction using the `reproduce()` function.
 
     Args:
@@ -283,7 +284,7 @@ def export_init_file(
         if init_file:
             if os.path.isfile(init_file):
                 if not was_init_called():
-                    raise RuntimeError(
+                    raise PyRosettaIsNotInitializedError(
                         "In order to export a '.init' file, please ensure that PyRosetta is already "
                         + "initialized (using the `pyrosetta.init_from_file()` function) with the "
                         + f"following '.init' file: '{init_file}'"
