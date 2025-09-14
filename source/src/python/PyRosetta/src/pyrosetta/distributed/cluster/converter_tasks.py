@@ -177,9 +177,7 @@ def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Any], 
         pdbstring = io.to_pdbstring(obj)
     elif isinstance(obj, str):
         if not os.path.exists(obj):
-            raise IOError(
-                "The `input_file` argument parameter must exist! Received: '{0}'".format(obj)
-            )
+            raise IOError(f"The `input_file` argument parameter must exist on disk! Received: '{obj}'")
         if obj.endswith(".pdb.bz2"):
             with open(obj, "rb") as fbz2:
                 pdbstring = bz2.decompress(fbz2.read()).decode()
@@ -208,12 +206,14 @@ def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Any], 
         else:
             raise ValueError(
                 "The `input_file` argument parameter must end in "
-                + "'.pdb', '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2'."
+                + "'.pdb', '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2'. "
+                + f"Received: '{obj}'"
             )
     else:
         raise TypeError(
             "The `input_file` argument parameter must be a `Pose`, `PackedPose` or `str` object that ends"
-            + "in '.pdb', '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2'."
+            + "in '.pdb', '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2'. "
+            + f"Received: '{type(obj)}'"
         )
 
     scores_dict = None
