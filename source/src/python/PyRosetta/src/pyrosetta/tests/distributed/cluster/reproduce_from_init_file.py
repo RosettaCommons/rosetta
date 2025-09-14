@@ -31,8 +31,27 @@ except ImportError as ex:
 test_suite = globals().get("TestReproducibilityMulti")
 
 
+def get_protocols(scores_dict):
+    """Get PyRosettaCluster protocols from the source code."""
+    protocol_names = scores_dict["metadata"]["protocols"]
+    test_case = test_suite.test_reproducibility_from_reproduce
+    source_code = textwrap.dedent(inspect.getsource(test_case))
+    source_code_lines = source_code.splitlines()
+    module = types.ModuleType("_protocols")
+    for node in ast.walk(ast.parse(source_code)):
+        if isinstance(node, ast.FunctionDef) and node.name in protocol_names:
+            exec(
+                textwrap.dedent(os.linesep.join(source_code_lines[node.lineno - 1: node.end_lineno])),
+                module.__dict__,
+            )
+    _get_protocol = partial(getattr, module)
+    protocols = list(map(_get_protocol, protocol_names))
+
+    return protocols
+
+
 def reproduce_init_from_file_test(input_file, scorefile_name, input_init_file, sequence):
-    """Reproduce decoy from .pdb.bz2 file with a '.init' file."""
+    """Reproduce decoy from '.pdb.bz2' file with a '.init' file."""
     skip_corrections = False # Do not skip corrections since not using results for another reproduction
     with tempfile.TemporaryDirectory() as tmp_dir:
         # Initialize PyRosetta on the host node before instantiating `input_pose`
@@ -53,19 +72,7 @@ def reproduce_init_from_file_test(input_file, scorefile_name, input_init_file, s
         input_pose = io.to_pose(io.pose_from_sequence(sequence))
         # Get protocols
         scores_dict = get_scores_dict(input_file)
-        protocol_names = scores_dict["metadata"]["protocols"]
-        test_case = test_suite.test_reproducibility_from_reproduce
-        source_code = textwrap.dedent(inspect.getsource(test_case))
-        source_code_lines = source_code.splitlines()
-        module = types.ModuleType("_protocols")
-        for node in ast.walk(ast.parse(source_code)):
-            if isinstance(node, ast.FunctionDef) and node.name in protocol_names:
-                exec(
-                    textwrap.dedent(os.linesep.join(source_code_lines[node.lineno - 1: node.end_lineno])),
-                    module.__dict__,
-                )
-        _get_protocol = partial(getattr, module)
-        protocols = list(map(_get_protocol, protocol_names))
+        protocols = get_protocols(scores_dict)
         # Reproduce
         reproduce(
             input_file=input_file,
@@ -85,7 +92,7 @@ def reproduce_init_from_file_test(input_file, scorefile_name, input_init_file, s
 
 
 def reproduce_test(input_file, scorefile_name, input_init_file, sequence):
-    """Reproduce decoy from .pdb.bz2 file with a '.init' file."""
+    """Reproduce decoy from a '.init' file."""
     skip_corrections = False # Do not skip corrections since not using results for another reproduction
     with tempfile.TemporaryDirectory() as tmp_dir:
         init_from_file_kwargs = dict(
@@ -102,19 +109,7 @@ def reproduce_test(input_file, scorefile_name, input_init_file, sequence):
         )
         # Get protocols
         scores_dict = get_scores_dict(input_file)
-        protocol_names = scores_dict["metadata"]["protocols"]
-        test_case = test_suite.test_reproducibility_from_reproduce
-        source_code = textwrap.dedent(inspect.getsource(test_case))
-        source_code_lines = source_code.splitlines()
-        module = types.ModuleType("_protocols")
-        for node in ast.walk(ast.parse(source_code)):
-            if isinstance(node, ast.FunctionDef) and node.name in protocol_names:
-                exec(
-                    textwrap.dedent(os.linesep.join(source_code_lines[node.lineno - 1: node.end_lineno])),
-                    module.__dict__,
-                )
-        _get_protocol = partial(getattr, module)
-        protocols = list(map(_get_protocol, protocol_names))
+        protocols = get_protocols(scores_dict)
         # Reproduce
         reproduce(
             input_file=input_init_file,
@@ -132,6 +127,7 @@ def reproduce_test(input_file, scorefile_name, input_init_file, sequence):
             init_from_file_kwargs=init_from_file_kwargs,
         )
 
+
 if __name__ == "__main__":
     print("Running: {0}".format(__file__))
     parser = argparse.ArgumentParser()
@@ -141,7 +137,7 @@ if __name__ == "__main__":
     parser.add_argument('--sequence', type=str)
     parser.add_argument('--test_case', type=int)
     args = parser.parse_args()
-    if args.test_case == 1:
+    if args.test_case == 0:
         reproduce_init_from_file_test(args.input_file, args.scorefile_name, args.input_init_file, args.sequence)
-    elif args.test_case == 0:
+    elif args.test_case == 1:
         reproduce_test(args.input_file, args.scorefile_name, args.input_init_file, args.sequence)
