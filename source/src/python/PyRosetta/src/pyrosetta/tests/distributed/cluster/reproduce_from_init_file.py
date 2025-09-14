@@ -57,7 +57,7 @@ def reproduce_init_from_file_test(input_file, scorefile_name, input_init_file, s
         # Initialize PyRosetta on the host node before instantiating `input_pose`
         init_from_file(
             input_init_file,
-            output_dir=os.path.join(tmp_dir, "pyrosetta_init_input_files"),
+            output_dir=os.path.join(tmp_dir, "reproduce_init_from_file_test"),
             dry_run=False,
             skip_corrections=skip_corrections,
             relative_paths=False,
@@ -80,7 +80,7 @@ def reproduce_init_from_file_test(input_file, scorefile_name, input_init_file, s
             decoy_name=None,
             protocols=protocols,
             input_packed_pose=input_pose,
-            client=None,
+            clients=None,
             instance_kwargs={
                 "sha1": None,
                 "scorefile_name": scorefile_name,
@@ -96,7 +96,7 @@ def reproduce_test(input_file, scorefile_name, input_init_file, sequence):
     skip_corrections = False # Do not skip corrections since not using results for another reproduction
     with tempfile.TemporaryDirectory() as tmp_dir:
         init_from_file_kwargs = dict(
-            output_dir=os.path.join(tmp_dir, "pyrosetta_init_input_files"),
+            output_dir=os.path.join(tmp_dir, "reproduce_test"),
             dry_run=False,
             skip_corrections=skip_corrections,
             relative_paths=False,
@@ -117,7 +117,7 @@ def reproduce_test(input_file, scorefile_name, input_init_file, sequence):
             decoy_name=None,
             protocols=protocols,
             input_packed_pose=None,
-            client=None,
+            clients=None,
             instance_kwargs={
                 "sha1": None,
                 "scorefile_name": scorefile_name,
