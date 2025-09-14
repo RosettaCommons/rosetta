@@ -106,10 +106,11 @@ def get_protocols_list_of_str(
     )
     if input_file:
         if scorefile or decoy_name:
-            logging.warning(
-                "`get_protocols_list_of_str()` received `input_file` and either `scorefile` "
-                + " or `decoy_name` keyword argument parameters. Ignoring `scorefile` or "
-                + "`decoy_name` keyword argument parameters and using `input_file`!"
+            warnings.warn(
+                "Received 'input_file' and either 'scorefile' or 'decoy_name' keyword argument parameters. "
+                + "Ignoring 'scorefile' and 'decoy_name' and using 'input_file' keyword argument parameter!",
+                UserWarning,
+                stacklevel=3,
             )
         protocols_list_of_str = parse_input_file_to_protocols_str(input_file)
     elif scorefile and decoy_name:
