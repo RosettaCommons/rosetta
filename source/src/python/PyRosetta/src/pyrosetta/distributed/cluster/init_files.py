@@ -141,8 +141,8 @@ def verify_init_file(
     init_file: str,
     input_packed_pose: Optional[PackedPose],
     output_packed_pose: Optional[PackedPose],
-    metadata: Dict[str, str],
-) -> None:
+    metadata: Dict[str, Any],
+) -> Optional[NoReturn]:
     """Verify a PyRosetta initialization file."""
 
     sha256 = metadata.pop("sha256", None)
