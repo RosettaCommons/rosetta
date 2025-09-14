@@ -38,6 +38,11 @@ except:
 
 from pyrosetta.toolbox import etable_atom_pair_energies, PyJobDistributor
 from pyrosetta.utility.initialization import PyRosettaInitFileParser
+from pyrosetta.utility.exceptions import (
+    PyRosettaInitializationBaseException,
+    PyRosettaIsInitializedError,
+    PyRosettaIsNotInitializedError,
+)
 
 # PyRosetta-3 comapatability
 # WARNING WARNING WARNING: do not add anything extra imports/names here! If you feel strongly that something needs to be added please contact author first!

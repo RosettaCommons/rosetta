@@ -32,6 +32,8 @@ from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.rosetta.core.simple_metrics.composite_metrics import ProtocolSettingsMetric
 from pyrosetta.utility import has_cereal
+from pyrosetta.utility.exceptions import PyRosettaIsInitializedError, PyRosettaIsNotInitializedError
+
 
 
 class PyRosettaInitFileParserBase(object):
@@ -39,6 +41,19 @@ class PyRosettaInitFileParserBase(object):
     _corrections_option_name = "corrections:"
     _init_file_extension = ".init"
     _strftime_format = "%Y-%m-%d-%H-%M-%S"
+    _required_keys = (
+        "author",
+        "datetime",
+        "email",
+        "license",
+        "md5",
+        "metadata",
+        "num_files",
+        "num_poses",
+        "options",
+        "poses",
+        "pyrosetta_build",
+    )
 
     def get_pyrosetta_build(self):
         return pyrosetta._version_string()
@@ -79,17 +94,16 @@ class PyRosettaInitFileParserBase(object):
 
     def validate_init_was_called(self):
         if not self.was_init_called:
-            raise RuntimeError(
-                "PyRosetta must be already initialized to dump a '{0}' file. ".format(self._init_file_extension)
-                + "Please run `pyrosetta.init()` with custom options and try again."
+            raise PyRosettaIsNotInitializedError(
+                "PyRosetta must be already initialized to dump a '{0}' file.".format(self._init_file_extension)
             )
 
     def validate_init_was_not_called(self):
         if self.was_init_called:
-            raise RuntimeError(
-                "PyRosetta must not be already initialized to initialize from a '{0}' file. ".format(self._init_file_extension)
-                + "Please ensure that `pyrosetta.init()` was not already called (e.g., "
-                + "if using a Jupyter notebook, please restart the kernel) and try again."
+            raise PyRosettaIsInitializedError(
+                "PyRosetta must not be already initialized to initialize from a '{0}' file.".format(
+                    self._init_file_extension
+                )
             )
 
     def md5_warning(self, md5, expected_md5):
@@ -103,7 +117,9 @@ class PyRosettaInitFileParserBase(object):
             if md5 != expected_md5:
                 warnings.warn(
                     (
-                        "The expected MD5 value differs from the 'md5' key value in the '{0}' file!\n".format(self._init_file_extension)
+                        "The expected MD5 value differs from the 'md5' key value in the '{0}' file!\n".format(
+                            self._init_file_extension
+                        )
                         + "Expected: '{0}'\n".format(expected_md5)
                         + "Value:    '{0}'\n".format(md5)
                     ),
@@ -118,6 +134,7 @@ class PyRosettaInitFileSerializer(object):
     _chunk_size = 64 * 1024 # bytes
     _compression_level = 9
     _encoding = "utf-8"
+    _decode_errors = "strict"
     _prefix_string = "[PyRosettaInitTextFile]"
     _prefix_binary = "[PyRosettaInitBinaryFile]"
     _tag_str = b'Txt'
@@ -161,7 +178,9 @@ class PyRosettaInitFileSerializer(object):
         return tag, raw
 
     def encode_bytestring(self, bytestring):
-        return base64.b64encode(bytestring).decode(PyRosettaInitFileSerializer._encoding, errors="strict")
+        return base64.b64encode(bytestring).decode(
+            PyRosettaInitFileSerializer._encoding, errors=PyRosettaInitFileSerializer._decode_errors,
+        )
 
     def encode_string(self, obj):
         if isinstance(obj, str):
@@ -186,7 +205,7 @@ class PyRosettaInitFileSerializer(object):
         obj = self.decode_binary(bytestring)
         tag, raw = self.split_tag(obj)
         decompressed = self.zlib_decompress(raw, max_decompressed_bytes).decode(
-            PyRosettaInitFileSerializer._encoding, errors="strict"
+            PyRosettaInitFileSerializer._encoding, errors=PyRosettaInitFileSerializer._decode_errors,
         )
         if tag == PyRosettaInitFileSerializer._tag_str:
             result = decompressed
@@ -212,7 +231,9 @@ class PyRosettaInitFileSerializer(object):
         return bytes(arr)
 
     def get_zlib_decompress_err_msg(self, arr, max_decompressed_bytes):
-        return "Decompressed data exceeds maximum bytes size limit: {0} > {1}".format(len(arr), max_decompressed_bytes)
+        return "Decompressed data exceeds maximum bytes size limit: {0} > {1}".format(
+            len(arr), max_decompressed_bytes
+        )
 
     @staticmethod
     def get_md5(init_dict):
@@ -250,7 +271,7 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             )
         if os.path.isfile(output_filename) and not self.kwargs["overwrite"]:
             raise FileExistsError(
-                "Output '{0}' file already exists! Please remove the file and try again: {1}".format(
+                "Output '{0}' file already exists! Please remove the file and try again: '{1}'".format(
                     self._init_file_extension, output_filename
                 )
             )
@@ -293,19 +314,25 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             kwargs["overwrite"] = False
         elif not isinstance(kwargs["overwrite"], bool):
             raise TypeError(
-                "The 'overwrite' keyword argument parameter must be a `bool` object. Received: {0}".format(type(kwargs["overwrite"]))
+                "The 'overwrite' keyword argument parameter must be a `bool` object. Received: {0}".format(
+                    type(kwargs["overwrite"])
+                )
             )
         if "dry_run" in kwargs and kwargs["dry_run"] is None:
             kwargs["dry_run"] = False
         elif not isinstance(kwargs["dry_run"], bool):
             raise TypeError(
-                "The 'dry_run' keyword argument parameter must be a `bool` object. Received: {0}".format(type(kwargs["dry_run"]))
+                "The 'dry_run' keyword argument parameter must be a `bool` object. Received: {0}".format(
+                    type(kwargs["dry_run"])
+                )
             )
         if "verbose" in kwargs and kwargs["verbose"] is None:
             kwargs["verbose"] = True
         elif not isinstance(kwargs["verbose"], bool):
             raise TypeError(
-                "The 'verbose' keyword argument parameter must be a `bool` object. Received: {0}".format(type(kwargs["verbose"]))
+                "The 'verbose' keyword argument parameter must be a `bool` object. Received: {0}".format(
+                    type(kwargs["verbose"])
+                )
             )
 
         return kwargs
@@ -313,7 +340,9 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
     def _poses_error_msg(self, obj):
         return (
             "The 'poses' keyword argument parameter must be a `Pose` or `PackedPose` object, or an "
-            + "iterable of `Pose` or `PackedPose` objects. Received: '{0}' of type {1}".format(obj, type(obj))
+            + "iterable of `Pose` or `PackedPose` objects. Received: '{0}' of type {1}".format(
+                obj, type(obj)
+            )
         )
 
     def assert_metadata_json_serializable(self, data):
@@ -543,44 +572,64 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         if kwargs["dry_run"] is None:
             kwargs["dry_run"] = False
         if not isinstance(kwargs["dry_run"], bool):
-            raise TypeError("The 'dry_run' keyword argument parameter must be a `bool` object. Received: {0}".format(type(kwargs["dry_run"])))
+            raise TypeError(
+                "The 'dry_run' keyword argument parameter must be a `bool` object. Received: {0}".format(
+                    type(kwargs["dry_run"])
+                )
+            )
         if kwargs["output_dir"] is None:
-            output_dir = os.path.join(os.getcwd(), "pyrosetta_init_files")
+            output_dir = os.path.join(os.getcwd(), "pyrosetta_init_input_files")
         elif isinstance(kwargs["output_dir"], str):
             output_dir = os.path.abspath(kwargs["output_dir"])
         else:
-            raise TypeError("The 'output_dir' keyword argument parameter must be a `str` object. Received: {0}".format(type(kwargs["output_dir"])))
+            raise TypeError(
+                "The 'output_dir' keyword argument parameter must be a `str` object. Received: {0}".format(
+                    type(kwargs["output_dir"])
+                )
+            )
         if not os.path.isdir(output_dir):
             kwargs["output_dir"] = output_dir
         elif kwargs["dry_run"]:
             warnings.warn(
-                "The output directory already exists! Please remove the output directory before disabling dry run: {0}".format(output_dir),
+                "The output directory already exists! Please remove the output directory before disabling dry run: {0}".format(
+                    output_dir
+                ),
                 UserWarning,
                 stacklevel=4,
             )
         else:
             raise IsADirectoryError(
-                "The output directory already exists! Please remove the output directory and try again: {0}".format(output_dir)
+                "The output directory already exists! Please remove the output directory and try again: {0}".format(
+                    output_dir
+                )
             )
         if not isinstance(kwargs["skip_corrections"], (bool, type(None))):
             raise TypeError(
-                "The 'skip_corrections' keyword argument parameter must be a `bool` or `NoneType` object. Received: {0}".format(type(kwargs["skip_corrections"]))
+                "The 'skip_corrections' keyword argument parameter must be a `bool` or `NoneType` object. Received: {0}".format(
+                    type(kwargs["skip_corrections"])
+                )
             )
         if kwargs["relative_paths"] is None:
             kwargs["relative_paths"] = False
         if not isinstance(kwargs["relative_paths"], bool):
             raise TypeError(
-                "The 'relative_paths' keyword argument parameter must be a `bool` object. Received: {0}".format(type(kwargs["relative_paths"]))
+                "The 'relative_paths' keyword argument parameter must be a `bool` object. Received: {0}".format(
+                    type(kwargs["relative_paths"])
+                )
             )
         if kwargs["max_decompressed_bytes"] is None:
             kwargs["max_decompressed_bytes"] = 200_000_000 # 200 MB
         if not isinstance(kwargs["max_decompressed_bytes"], int):
             raise TypeError(
-                "The 'max_decompressed_bytes' keyword argument parameter must be a `int` object. Received: {0}".format(type(kwargs["max_decompressed_bytes"]))
+                "The 'max_decompressed_bytes' keyword argument parameter must be a `int` object. Received: {0}".format(
+                    type(kwargs["max_decompressed_bytes"])
+                )
             )
         elif kwargs["max_decompressed_bytes"] <= 0:
             raise ValueError(
-                "The 'max_decompressed_bytes' keyword argument parameter must be greater than 0 bytes. Received: {0}".format(kwargs["max_decompressed_bytes"])
+                "The 'max_decompressed_bytes' keyword argument parameter must be greater than 0 bytes. Received: {0}".format(
+                    kwargs["max_decompressed_bytes"]
+                )
             )
         if kwargs["database"] is None:
             kwargs["database"] = pyrosetta._rosetta_database_from_env()
@@ -590,7 +639,9 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             kwargs["verbose"] = True
         if not isinstance(kwargs["verbose"], bool):
             raise TypeError(
-                "The 'verbose' keyword argument parameter must be a `bool` object. Received: {0}".format(type(kwargs["verbose"]))
+                "The 'verbose' keyword argument parameter must be a `bool` object. Received: {0}".format(
+                    type(kwargs["verbose"])
+                )
             )
         fullargspec = inspect.getfullargspec(pyrosetta.init)
         default_init_kwargs = dict(zip(fullargspec.args, fullargspec.defaults))
@@ -605,29 +656,43 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
 
     @staticmethod
     def read_json(init_file):
-        with open(init_file, "r") as f:
-            return json.load(
-                f,
-                cls=None,
-                object_hook=None,
-                parse_float=None,
-                parse_int=None,
-                parse_constant=None,
-                object_pairs_hook=None,
+        if (
+            isinstance(init_file, str)
+            and init_file.endswith(PyRosettaInitFileParserBase._init_file_extension)
+            and os.path.isfile(init_file)
+        ):
+            with open(init_file, "r") as f:
+                init_dict = json.load(
+                    f,
+                    cls=None,
+                    object_hook=None,
+                    parse_float=None,
+                    parse_int=None,
+                    parse_constant=None,
+                    object_pairs_hook=None,
+                )
+            for key in PyRosettaInitFileParserBase._required_keys:
+                assert key in init_dict, (
+                    "The input '{0}' file is not valid because it is missing the '{1}' key: '{2}'".format(
+                        PyRosettaInitFileParserBase._init_file_extension, key, init_file
+                    )
+                )
+            return init_dict
+        else:
+            raise ValueError(
+                "Please provide a valid input PyRosetta initialization '{0}' file. Received: {1}".format(
+                    PyRosettaInitFileParserBase._init_file_extension, init_file
+                )
             )
 
     def setup_init_dict(self, init_file):
-        if isinstance(init_file, str) and init_file.endswith(self._init_file_extension) and os.path.isfile(init_file):
-            _init_dict = PyRosettaInitFileReader.read_json(init_file)
-            _md5 = _init_dict.pop("md5", None)
-            _expected_md5 = PyRosettaInitFileSerializer.get_md5(_init_dict)
-            self.md5_warning(_md5, _expected_md5)
-            _init_dict.pop("poses", None)
-            return _init_dict
-        else:
-            raise ValueError(
-                "Please provide a valid input PyRosetta initialization '{0}' file. Received: {1}".format(self._init_file_extension, init_file)
-            )
+        _init_dict = PyRosettaInitFileReader.read_json(init_file)
+        _md5 = _init_dict.pop("md5", None)
+        _expected_md5 = PyRosettaInitFileSerializer.get_md5(_init_dict)
+        self.md5_warning(_md5, _expected_md5)
+        _init_dict.pop("poses", None)
+
+        return _init_dict
 
     def get_encoded_options_dict(self):
         encoded_options_dict = self.init_dict["options"]
@@ -643,12 +708,16 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         return self.decode_binary(value.split(PyRosettaInitFileSerializer._prefix_binary)[-1])
 
     def format_decode_string(self, value, option_name):
-        obj = self.decode_string(value.split(PyRosettaInitFileSerializer._prefix_string)[-1], self.kwargs["max_decompressed_bytes"])
+        obj = self.decode_string(
+            value.split(PyRosettaInitFileSerializer._prefix_string)[-1], self.kwargs["max_decompressed_bytes"]
+        )
 
         return self.decode(obj, option_name)
 
     def format_decode_substring(self, value):
-        return self.decode_string(value.split(PyRosettaInitFileSerializer._prefix_string)[-1], self.kwargs["max_decompressed_bytes"])
+        return self.decode_string(
+            value.split(PyRosettaInitFileSerializer._prefix_string)[-1], self.kwargs["max_decompressed_bytes"]
+        )
 
     def decode(self, encoded_object, option_name):
         file_content = ""
@@ -676,7 +745,9 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         return file_content
 
     def setup_new_file(self, option_name, basename):
-        file = os.path.join(self.kwargs["output_dir"], option_name.replace(":", "_"), str(self.file_counter), basename)
+        file = os.path.join(
+            self.kwargs["output_dir"], option_name.replace(":", "_"), str(self.file_counter), basename
+        )
         if self.kwargs["relative_paths"]:
             file = os.path.relpath(file, start=os.curdir)
         self.file_counter += 1
@@ -834,7 +905,7 @@ class PyRosettaInitFileParser(object):
                 initialization. If `True`, then only print the PyRosetta initialization options that would be run if it were `False`.
                 Default: False
             output_dir: An optional `str` object representing the output directory into which to decompress PyRosetta input files.
-                Default: `./pyrosetta_init_files`
+                Default: ./pyrosetta_init_input_files
             skip_corrections: An optional `bool` object specifying whether or not to skip any ScoreFunction corrections specified
                 in the input '.init' file, which are set in-code upon PyRosetta initialization. If a `NoneType` object is provided,
                 then the input ScoreFunction corrections are automatically used for PyRosetta initialization only if the PyRosetta
@@ -854,13 +925,13 @@ class PyRosettaInitFileParser(object):
             verbose: An optional `bool` object specifying whether or not to print PyRosetta initialization information.
                 Default: True
             set_logging_handler: An optional object passed to `pyrosetta.init(set_logging_handler=...)` during PyRosetta initialization.
-                If `None`, then the default `pyrosetta.init` keyword argument parameter is used. 
+                If a `NoneType` object is provided, then the default `pyrosetta.init` keyword argument parameter is used.
                 Default: None
             notebook: An optional object passed to `pyrosetta.init(notebook=...)` during PyRosetta initialization.
-                If `None`, then the default `pyrosetta.init` keyword argument parameter is used.
+                If a `NoneType` object is provided, then the default `pyrosetta.init` keyword argument parameter is used.
                 Default: None
             silent: An optional object passed to `pyrosetta.init(silent=...)` during PyRosetta initialization.
-                If `None`, then the default `pyrosetta.init` keyword argument parameter is used.
+                If a `NoneType` object is provided, then the default `pyrosetta.init` keyword argument parameter is used.
                 Default: None
 
         Returns:
@@ -893,10 +964,10 @@ class PyRosettaInitFileParser(object):
         """
         Get PyRosetta initialization options from a '.init' file.
 
-        This method returns the PyRosetta initialization options from an input '.init' file without running `pyrosetta.init`. The 
+        This method returns the PyRosetta initialization options from an input '.init' file without running `pyrosetta.init()`. The
         'dry_run' keyword argument is enabled by default in order to inspect the Rosetta command line options before committing
         to decompressing and writing all PyRosetta input files to disk. If 'dry_run' is disabled, then also decompress the PyRosetta
-        input files into an output directory given by the 'output_dir' keyword argument parameter without running `pyrosetta.init`.
+        input files into an output directory given by the 'output_dir' keyword argument parameter without running `pyrosetta.init()`.
 
         Args:
             init_file: A required `str` object representing the input '.init' file.
@@ -908,7 +979,7 @@ class PyRosettaInitFileParser(object):
                 Default: True
             output_dir: An optional `str` object representing the output directory into which to decompress PyRosetta input files if
                 the 'dry_run' keyword argument parameter is `False`.
-                Default: `./pyrosetta_init_files`
+                Default: ./pyrosetta_init_input_files
             relative_paths: An optional `bool` object specifying whether or not to return the relative paths (with respect to
                 the current working directory) of the files written to the 'output_dir' keyword argument parameter.
                 Default: False
