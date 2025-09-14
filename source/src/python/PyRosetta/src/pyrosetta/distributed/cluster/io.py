@@ -118,7 +118,7 @@ class IO(Generic[G]):
     def _filter_scores_dict(scores_dict: Dict[Any, Any]) -> Dict[Any, Any]:
         for key in list(scores_dict.keys()):
             try:
-                json.dumps(scores_dict[key])
+                IO._dump_json(scores_dict[key])
             except:
                 logging.warning(
                     f"Removing score key '{key}' with value of type '{type(scores_dict[key])}' before "
@@ -230,6 +230,23 @@ class IO(Generic[G]):
 
         return io.to_packed(_pose)
 
+    @staticmethod
+    def _dump_json(data: Dict[str, Any]) -> str:
+        """Return JSON-serialized data."""
+
+        return json.dumps(
+            data,
+            skipkeys=False,
+            ensure_ascii=False,
+            check_circular=True,
+            allow_nan=False,
+            cls=None,
+            indent=None,
+            separators=(", ", ": "),
+            default=None,
+            sort_keys=False,
+        )
+
     def _save_results(self, results: Any, kwargs: Dict[Any, Any]) -> None:
         """Write results and kwargs to disk."""
 
@@ -287,7 +304,7 @@ class IO(Generic[G]):
             simulation_data["scores"] = collections.OrderedDict(sorted(scores.items()))
             simulation_data_json = self.serializer.deepcopy_kwargs(instance_metadata)
             simulation_data_json["scores"] = collections.OrderedDict(sorted(scores_json.items()))
-            pdbfile_data = json.dumps(simulation_data_json, sort_keys=False, indent=None, separators=(", ", ": "))
+            pdbfile_data = IO._dump_json(simulation_data_json)
             # Output PDB file
             if ".pdb" in self.output_decoy_types:
                 # Write full .pdb record
@@ -356,7 +373,7 @@ class IO(Generic[G]):
                 if self.simulation_records_in_scorefile:
                     scorefile_data = pdbfile_data
                 else:
-                    scorefile_data = json.dumps(
+                    scorefile_data = IO._dump_json(
                         {
                             metadata["output_file"]: collections.OrderedDict(
                                 sorted(scores_json.items())

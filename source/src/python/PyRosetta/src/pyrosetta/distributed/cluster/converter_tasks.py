@@ -254,7 +254,7 @@ def export_init_file(
 
     Args:
         output_file: A required `str` object representing the decoy output file. The file must end in
-            either: ".pdb", ".pdb.bz2", ".pkl_pose", ".pkl_pose.bz2", ".b64_pose", or ".b64_pose.bz2".
+            either: '.pdb', '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2'.
         output_init_file: An optional `str` object specifying the output PyRosetta initialization file
             path. If `NoneType` is provided, then the PyRosetta initialization file path is derived
             from the 'output_file' argument parameter by replacing the file extension with '.init'.
@@ -305,11 +305,14 @@ def export_init_file(
                         output_packed_pose = io.to_packed(io.to_pose(string))
                 else:
                     output_packed_pose = io.pose_from_file(output_file)
+                # Cache simulation data from '.pdb' and '.pdb.bz2' files
+                # loaded from `io.pose_from_pdbstring` or `io.pose_from_file`
                 if output_file.endswith((".pdb", ".pdb.bz2")):
                     output_packed_pose = IO._add_pose_comment(
                         output_packed_pose,
-                        json.dumps(get_scores_dict(output_file)),
+                        IO._dump_json(get_scores_dict(output_file)),
                     )
+                # Setup metadata and poses
                 metadata, poses = setup_init_file_metadata_and_poses(
                     input_packed_pose=input_packed_pose,
                     output_packed_pose=output_packed_pose,
