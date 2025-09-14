@@ -34,14 +34,15 @@ import tempfile
 
 from datetime import datetime
 from functools import wraps
-from pyrosetta import init_from_file
 from pyrosetta.distributed.cluster.converters import _parse_protocols
 from pyrosetta.distributed.cluster.converter_tasks import (
+    is_dict,
     is_empty,
     get_protocols_list_of_str,
     get_yml,
     parse_client,
     parse_decoy_name,
+    parse_init_file,
     parse_input_file_to_instance_kwargs,
     parse_instance_kwargs,
     parse_scorefile,
@@ -55,6 +56,7 @@ from pyrosetta.distributed.cluster.core import PyRosettaCluster
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.rosetta.core.pose import Pose
+from pyrosetta.utility.initialization import PyRosettaIsNotInitializedError
 from typing import (
     Any,
     Callable,
@@ -64,7 +66,6 @@ from typing import (
     NoReturn,
     Optional,
     Tuple,
-    Type,
     TypeVar,
     Union,
     cast,
@@ -541,8 +542,8 @@ def reproduce(
     instance_kwargs: Optional[Dict[Any, Any]] = None,
     clients_indices: Optional[List[int]] = None,
     resources: Optional[Dict[Any, Any]] = None,
-    input_init_file: Optional[str] = None,
     skip_corrections: bool = False,
+    init_from_file_kwargs: Optional[Dict[str, Any]] = None,
 ) -> Optional[NoReturn]:
     """
     Given an input file that was written by PyRosettaCluster (or a full scorefile
@@ -551,11 +552,16 @@ def reproduce(
     given decoy with a new instance of PyRosettaCluster.
 
     Args:
-        input_file: A `str` object specifying the path to the '.pdb' or '.pdb.bz2'
+        input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2',
+            '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', or '.init'
             file from which to extract PyRosettaCluster instance kwargs. If 'input_file'
             is provided, then ignore the 'scorefile' and 'decoy_name' argument parameters.
+            If a '.init' file is provided and PyRosetta is not yet initialized, first
+            initialize PyRosetta with the '.init' file (see the 'init_from_file_kwargs'
+            keyword argument).
             Default: None
         scorefile: A `str` object specifying the path to the JSON-formatted scorefile
+            (or pickled `pandas.DataFrame` scorefile) from a PyRosettaCluster simulation
             from which to extract PyRosettaCluster instance kwargs. If 'scorefile'
             is provided, 'decoy_name' must also be provided. In order to use a scorefile,
             it must contain full simulation records from the original production
@@ -609,35 +615,44 @@ def reproduce(
             applied, the protocols will not run. See https://distributed.dask.org/en/latest/resources.html for more
             information.
             Default: None
-        input_init_file: An optional `str` object specifying the path to a PyRosetta initialization '.init' file with which
-            to initialize PyRosetta on the host node if the 'input_packed_pose' keyword argument parameter is `None`.
-            Default: None
         skip_corrections: A `bool` object specifying whether or not to skip any ScoreFunction corrections specified in
             the PyRosettaCluster task 'options' or 'extra_options' values (extracted from either the 'input_file' or
-            'scorefile' keyword argument parameter) and in the input PyRosetta initialization file (from the 'input_init_file'
-            parameter, if provided), which are set in-code upon PyRosetta initialization. If the current PyRosetta build
-            and conda environment are identical to those used for the original simulation, this parameter may be set to
-            `True` to enable the reproduced output results to be used for successive reproductions.
+            'scorefile' keyword argument parameter), which are set in-code upon PyRosetta initialization. If the current
+            PyRosetta build and conda environment are identical to those used for the original simulation, this parameter
+            may be set to `True` to enable the reproduced decoy output file to be used for successive reproductions. If
+            reproducing from a '.init' file, it is recommended to also set 'skip_corrections' of the 'init_from_file_kwargs'
+            keyword argument to the same value.
             Default: False
+        init_from_file_kwargs: An optional `dict` object to override the default `pyrosetta.init_from_file()` keyword
+            arguments if the 'input_file' keyword argument parameter is a path to a '.init' file, otherwise it is not used.
+            See the `pyrosetta.init_from_file` docstring for more information.
+            Default: {
+                'output_dir': os.path.join(tempfile.TemporaryDirectory().name, "pyrosetta_init_input_files"),
+                'skip_corrections': skip_corrections, # Defaults to the 'skip_corrections' value from `reproduce()`
+                'relative_paths': True,
+                'dry_run': False,
+                'max_decompressed_bytes': pow(2, 30), # 1 GiB
+                'database': None,
+                'verbose': True,
+                'set_logging_handler': 'logging',
+                'notebook': None,
+                'silent': False,
+            }
 
     Returns:
         None
     """
     if not isinstance(skip_corrections, bool):
-        raise TypeError("The 'skip_corrections' keyword argument parameter must be of type `bool`.")
-    if input_init_file is not None:
-        if input_packed_pose is not None and was_init_called():
-            raise ValueError(
-                f"Cannot set a {type(input_packed_pose)} object to the 'input_packed_pose' "
-                + "keyword argument and provide a file to the 'input_init_file' keyword argument "
-                + "because PyRosetta is already initialized! Please run `pyrosetta.init_from_file` "
-                + "before running `reproduce()` with the 'input_packed_pose' keyword argument "
-                + "and use `None` for the 'input_init_file' keyword argument parameter."
-            )
-        _tmp_dir = tempfile.TemporaryDirectory(prefix="PyRosettaCluster_reproduce_")
-        try:
-            init_from_file(
-                input_init_file,
+        raise TypeError(
+            "The 'skip_corrections' keyword argument parameter must be of type `bool`. "
+            + f"Received: {type(skip_corrections)}"
+        )
+
+    _tmp_dir = None
+    if isinstance(input_file, str):
+        if input_file.endswith(".init"):
+            _tmp_dir = tempfile.TemporaryDirectory(prefix="PyRosettaCluster_reproduce_")
+            default_init_from_file_kwargs = dict(
                 output_dir=os.path.join(_tmp_dir.name, "pyrosetta_init_input_files"),
                 skip_corrections=skip_corrections,
                 relative_paths=True,
@@ -649,31 +664,26 @@ def reproduce(
                 notebook=None,
                 silent=False,
             )
-        except BufferError as ex:
-            raise BufferError(
-                f"{ex}. Please run `pyrosetta.init_from_file` with a larger `max_decompressed_bytes` "
-                + "keyword argument parameter before running `reproduce()` to initialize PyRosetta "
-                + f"with the input PyRosetta initialization file: '{input_init_file}'"
+            input_packed_pose, input_file = parse_init_file(
+                input_file,
+                input_packed_pose,
+                skip_corrections,
+                toolz.dicttoolz.merge(
+                    default_init_from_file_kwargs,
+                    init_from_file_kwargs if is_dict(init_from_file_kwargs) else {},
+                ),
             )
-        except Exception as ex:
-            raise Exception(
-                f"{type(ex).__name__}: {ex}. Could not initialize PyRosetta from the input PyRosetta "
-                + f"initialization file: '{input_init_file}'. Please run `pyrosetta.init_from_file` before "
-                + "running `reproduce()` and use `None` for the 'input_init_file' keyword argument parameter."
-            )
-    else:
-        _tmp_dir = None
-    if isinstance(input_file, str) and input_file.endswith(
-        (".pkl_pose", ".pkl_pose.bz2", ".b64_pose", ".b64_pose.bz2")
-    ) and not was_init_called():
-        raise ValueError(
-            "If providing a '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file to the "
-            + "'input_file' keyword argument parameter, please also provide the '.init' file from the "
-            + "original simulation to the 'input_init_file' keyword argument parameter, otherwise ensure "
-            + "`pyrosetta.init` or `pyrosetta.init_from_file` has been properly called (with the same "
-            + "residue type set as that used to generate the original '.pkl_pose', '.pkl_pose.bz2', "
-            + "'.b64_pose', or '.b64_pose.bz2' file) before running `reproduce`."
-        )
+        elif input_file.endswith((".pkl_pose", ".pkl_pose.bz2", ".b64_pose", ".b64_pose.bz2")):
+            if not was_init_called():
+                raise PyRosettaIsNotInitializedError(
+                    "If providing a '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file to the 'input_file' "
+                    + "keyword argument parameter, please ensure `pyrosetta.init()` or `pyrosetta.init_from_file()` has been "
+                    + "properly called (with the same residue type set as that used to generate the original '.pkl_pose', "
+                    + "'.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file) before running the `reproduce()` function. "
+                    + "If an output '.init' file from the original simulation is available, it is recommended to run "
+                    + "`pyrosetta.init_from_file()` with that '.init' file before running the `reproduce()` function."
+                )
+
     PyRosettaCluster(
         **toolz.dicttoolz.keyfilter(
             lambda a: a not in ["client", "clients", "input_packed_pose"],

@@ -44,6 +44,7 @@ from pyrosetta.distributed.cluster import (
     reserve_scores,
     reproduce,
 )
+from pyrosetta.utility.initialization import PyRosettaInitFileReader
 
 
 class TestReproducibility(unittest.TestCase):
@@ -1009,6 +1010,8 @@ class TestReproducibilityMulti(unittest.TestCase):
                 filter_results=filter_results,
                 norm_task_options=None,
                 output_init_file=output_init_file,
+                output_decoy_types=[".pdb", ".b64_pose"],
+                output_scorefile_types=[".json"],
             ).distribute(*protocols)
 
             scorefile_path = os.path.join(output_path, scorefile_name)
@@ -1018,165 +1021,197 @@ class TestReproducibilityMulti(unittest.TestCase):
             original_record = data[0]
 
             # Reproduce decoy from .pdb.bz2 file
-            reproduce_scorefile_name = "reproduce_test_scores.json"
-            reproduce(
-                input_file=original_record["metadata"]["output_file"],
-                scorefile=None,
-                decoy_name=None,
-                protocols=protocols,
-                input_packed_pose=input_pose,
-                client=None,
-                instance_kwargs={
-                    "sha1": None,
-                    "scorefile_name": reproduce_scorefile_name,
-                    "output_init_file": None, # Skip `dump_init_file`
-                },
-                input_init_file=None, # Skip `init_from_file` since PyRosetta is initialized
-                skip_corrections=True, # Skip corrections to reuse results for reproduction
-            )
-
-            reproduce_scorefile_path = os.path.join(
-                output_path, reproduce_scorefile_name
-            )
-            with open(reproduce_scorefile_path, "r") as f:
-                reproduce_data = [json.loads(line) for line in f]
-            self.assertEqual(len(reproduce_data), 1)
-            reproduce_record = reproduce_data[0]
-
-            self.assertEqual(
-                original_record["scores"]["SEQUENCE"],
-                reproduce_record["scores"]["SEQUENCE"],
-            )
-            self.assertEqual(
-                original_record["scores"]["total_score"],
-                reproduce_record["scores"]["total_score"],
-            )
-            self.assertListEqual(
-                original_record["instance"]["seeds"],
-                reproduce_record["instance"]["seeds"],
-            )
-            self.assertListEqual(
-                original_record["instance"]["decoy_ids"],
-                reproduce_record["instance"]["decoy_ids"],
-            )
-            for key in ("author", "email", "license"):
-                self.assertEqual(
-                    original_record["instance"][key],
-                    reproduce_record["instance"][key],
+            run_reproduce_from_pdb_bz2_file = True
+            if run_reproduce_from_pdb_bz2_file:
+                reproduce_scorefile_name = "reproduce_test_scores.json"
+                reproduce(
+                    input_file=original_record["metadata"]["output_file"],
+                    scorefile=None,
+                    decoy_name=None,
+                    protocols=protocols,
+                    input_packed_pose=input_pose,
+                    client=None,
+                    instance_kwargs={
+                        "sha1": None,
+                        "scorefile_name": reproduce_scorefile_name,
+                        "output_init_file": None, # Skip `dump_init_file`
+                    },
+                    skip_corrections=True, # Skip corrections to reuse task result for reproduction
+                    init_from_file_kwargs=None,
                 )
 
-            # Reproduce decoy from scorefile and decoy_name
-            reproduce2_scorefile_name = "reproduce2_test_scores.json"
-            reproduce(
-                input_file=None,
-                scorefile=os.path.join(
-                    reproduce_record["instance"]["output_path"],
-                    reproduce_record["instance"]["scorefile_name"],
-                ),
-                decoy_name=reproduce_record["metadata"]["decoy_name"],
-                input_packed_pose=input_pose,
-                protocols=None, # Test detecting protocols in current scope
-                client=None,
-                instance_kwargs={
-                    "sha1": None,
-                    "scorefile_name": reproduce2_scorefile_name,
-                    "output_init_file": "", # Skip `dump_init_file`
-                },
-                input_init_file=None, # Skip `init_from_file` since PyRosetta is initialized
-                skip_corrections=True, # Skip corrections to reuse results for reproduction
-            )
+                reproduce_scorefile_path = os.path.join(
+                    output_path, reproduce_scorefile_name
+                )
+                with open(reproduce_scorefile_path, "r") as f:
+                    reproduce_data = [json.loads(line) for line in f]
+                self.assertEqual(len(reproduce_data), 1)
+                reproduce_record = reproduce_data[0]
 
-            reproduce2_scorefile_path = os.path.join(
-                output_path, reproduce2_scorefile_name
-            )
-            with open(reproduce2_scorefile_path, "r") as f:
-                reproduce2_data = [json.loads(line) for line in f]
-            self.assertEqual(len(reproduce2_data), 1)
-            reproduce2_record = reproduce2_data[0]
-
-            for _record in (original_record, reproduce_record):
                 self.assertEqual(
-                    _record["scores"]["SEQUENCE"],
-                    reproduce2_record["scores"]["SEQUENCE"],
+                    original_record["scores"]["SEQUENCE"],
+                    reproduce_record["scores"]["SEQUENCE"],
                 )
                 self.assertEqual(
-                    _record["scores"]["total_score"],
-                    reproduce2_record["scores"]["total_score"],
+                    original_record["scores"]["total_score"],
+                    reproduce_record["scores"]["total_score"],
                 )
                 self.assertListEqual(
-                    _record["instance"]["seeds"],
-                    reproduce2_record["instance"]["seeds"],
+                    original_record["instance"]["seeds"],
+                    reproduce_record["instance"]["seeds"],
                 )
                 self.assertListEqual(
-                    _record["instance"]["decoy_ids"],
-                    reproduce2_record["instance"]["decoy_ids"],
+                    original_record["instance"]["decoy_ids"],
+                    reproduce_record["instance"]["decoy_ids"],
                 )
                 for key in ("author", "email", "license"):
                     self.assertEqual(
-                        _record["instance"][key],
-                        reproduce2_record["instance"][key],
+                        original_record["instance"][key],
+                        reproduce_record["instance"][key],
                     )
+
+            # Reproduce decoy from scorefile and decoy_name
+            run_reproduce_from_scorefile = True
+            if run_reproduce_from_scorefile:
+                reproduce2_scorefile_name = "reproduce2_test_scores.json"
+                reproduce(
+                    input_file=None,
+                    scorefile=os.path.join(
+                        reproduce_record["instance"]["output_path"],
+                        reproduce_record["instance"]["scorefile_name"],
+                    ),
+                    decoy_name=reproduce_record["metadata"]["decoy_name"],
+                    input_packed_pose=input_pose,
+                    protocols=None, # Test detecting protocols in current scope
+                    client=None,
+                    instance_kwargs={
+                        "sha1": None,
+                        "scorefile_name": reproduce2_scorefile_name,
+                        "output_init_file": "", # Skip `dump_init_file`
+                    },
+                    skip_corrections=True, # Skip corrections to reuse task result for reproduction
+                    init_from_file_kwargs=None,
+                )
+
+                reproduce2_scorefile_path = os.path.join(
+                    output_path, reproduce2_scorefile_name
+                )
+                with open(reproduce2_scorefile_path, "r") as f:
+                    reproduce2_data = [json.loads(line) for line in f]
+                self.assertEqual(len(reproduce2_data), 1)
+                reproduce2_record = reproduce2_data[0]
+
+                _records = [original_record]
+                if run_reproduce_from_pdb_bz2_file:
+                    _records.append(reproduce_record)
+                for _record in _records:
+                    self.assertEqual(
+                        _record["scores"]["SEQUENCE"],
+                        reproduce2_record["scores"]["SEQUENCE"],
+                    )
+                    self.assertEqual(
+                        _record["scores"]["total_score"],
+                        reproduce2_record["scores"]["total_score"],
+                    )
+                    self.assertListEqual(
+                        _record["instance"]["seeds"],
+                        reproduce2_record["instance"]["seeds"],
+                    )
+                    self.assertListEqual(
+                        _record["instance"]["decoy_ids"],
+                        reproduce2_record["instance"]["decoy_ids"],
+                    )
+                    for key in ("author", "email", "license"):
+                        self.assertEqual(
+                            _record["instance"][key],
+                            reproduce2_record["instance"][key],
+                        )
 
             # Test raised exceptions
             with self.assertRaises(TypeError):
+                # Test invalid 'skip_corrections' parameter
                 reproduce(skip_corrections=None)
             with self.assertRaises(ValueError):
-                reproduce(
-                    input_packed_pose=input_pose,
-                    input_init_file=original_record["metadata"]["init_file"],
-                )
+                # Test PyRosetta intialization file without an output decoy
+                reproduce(input_file=original_record["metadata"]["init_file"])
 
-            # Reproduce decoy from .pdb.bz2 file with a .init file
-            reproduce3_scorefile_name = "reproduce_test_scores_init_file.json"
+            # Reproduce decoy with a .init file
             init_file = original_record["metadata"]["init_file"]
             self.assertTrue(os.path.isfile(init_file))
             input_file = original_record["metadata"]["output_file"]
             self.assertTrue(os.path.isfile(input_file))
+            # Export
+            _init_dict_before_export = PyRosettaInitFileReader.read_json(init_file)
             export_init_file(input_file, output_init_file=init_file)
+            _init_dict_after_export = PyRosettaInitFileReader.read_json(init_file)
+            self.assertNotEqual(_init_dict_before_export, _init_dict_after_export)
+            self.assertNotEqual(
+                _init_dict_before_export["metadata"]["sha256"],
+                _init_dict_after_export["metadata"]["sha256"],
+            )
+            self.assertNotEqual(
+                _init_dict_before_export["metadata"]["signature"],
+                _init_dict_after_export["metadata"]["signature"],
+            )
+
+            with self.assertRaises(TypeError):
+                # Test PyRosetta intialization file with the output decoy, but wrong input decoy
+                reproduce(
+                    input_file=init_file,
+                    input_packed_pose=io.pose_from_sequence("INVALID")
+                )
 
             test_script = os.path.join(os.path.dirname(__file__), "reproduce_from_init_file.py")
             module = os.path.splitext(os.path.basename(test_script))[0]
-            cmd = "{0} -m {1} --input_file '{2}' --scorefile_name '{3}' --input_init_file '{4}' --sequence '{5}'".format(
-                sys.executable,
-                module,
-                input_file,
-                reproduce3_scorefile_name,
-                init_file,
-                sequence,
-            )
-            p = run_subprocess(cmd, module_dir=os.path.dirname(test_script))
-            self.assertEqual(p.returncode, 0, msg=f"Test script failed: {test_script}")
+            for test_case in range(2):
+                reproduce3_scorefile_name = f"reproduce_test_scores_init_file_{test_case}.json"
+                cmd = "{0} -m {1} --input_file '{2}' --scorefile_name '{3}' --input_init_file '{4}' --sequence '{5}' --test_case {6}".format(
+                    sys.executable,
+                    module,
+                    input_file,
+                    reproduce3_scorefile_name,
+                    init_file,
+                    sequence,
+                    test_case,
+                )
+                p = run_subprocess(cmd, module_dir=os.path.dirname(test_script))
+                self.assertEqual(p.returncode, 0, msg=f"Test script failed: {test_script}")
 
-            reproduce3_scorefile_path = os.path.join(
-                output_path, reproduce3_scorefile_name
-            )
-            with open(reproduce3_scorefile_path, "r") as f:
-                reproduce3_data = [json.loads(line) for line in f]
-            self.assertEqual(len(reproduce3_data), 1)
-            reproduce3_record = reproduce3_data[0]
+                reproduce3_scorefile_path = os.path.join(
+                    output_path, reproduce3_scorefile_name
+                )
+                with open(reproduce3_scorefile_path, "r") as f:
+                    reproduce3_data = [json.loads(line) for line in f]
+                self.assertEqual(len(reproduce3_data), 1)
+                reproduce3_record = reproduce3_data[0]
 
-            for _record in (original_record, reproduce_record, reproduce2_record):
-                self.assertEqual(
-                    _record["scores"]["SEQUENCE"],
-                    reproduce3_record["scores"]["SEQUENCE"],
-                )
-                self.assertEqual(
-                    _record["scores"]["total_score"],
-                    reproduce3_record["scores"]["total_score"],
-                )
-                self.assertListEqual(
-                    _record["instance"]["seeds"],
-                    reproduce3_record["instance"]["seeds"],
-                )
-                self.assertListEqual(
-                    _record["instance"]["decoy_ids"],
-                    reproduce3_record["instance"]["decoy_ids"],
-                )
-                for key in ("author", "email", "license"):
+                _records = [original_record]
+                if run_reproduce_from_pdb_bz2_file:
+                    _records.append(reproduce_record)
+                if run_reproduce_from_scorefile:
+                    _records.append(reproduce2_record)
+                for _record in _records:
                     self.assertEqual(
-                        _record["instance"][key],
-                        reproduce3_record["instance"][key],
+                        _record["scores"]["SEQUENCE"],
+                        reproduce3_record["scores"]["SEQUENCE"],
                     )
+                    self.assertEqual(
+                        _record["scores"]["total_score"],
+                        reproduce3_record["scores"]["total_score"],
+                    )
+                    self.assertListEqual(
+                        _record["instance"]["seeds"],
+                        reproduce3_record["instance"]["seeds"],
+                    )
+                    self.assertListEqual(
+                        _record["instance"]["decoy_ids"],
+                        reproduce3_record["instance"]["decoy_ids"],
+                    )
+                    for key in ("author", "email", "license"):
+                        self.assertEqual(
+                            _record["instance"][key],
+                            reproduce3_record["instance"][key],
+                        )
 
     def test_reproducibility_packer_nstruct_multi_filter_results(self):
         return self.test_reproducibility_packer_nstruct_multi(filter_results=True)

@@ -217,13 +217,14 @@ class IO(Generic[G]):
 
         return kwargs
 
-    def _add_pose_comment(self, packed_pose: PackedPose, pdbfile_data: str) -> PackedPose:
+    @staticmethod
+    def _add_pose_comment(packed_pose: PackedPose, pdbfile_data: str) -> PackedPose:
         """Cache simulation data as a pose comment."""
 
         _pose = packed_pose.pose.clone()
         add_comment(
             _pose,
-            self.REMARK_FORMAT.rstrip(), # Remove extra space since `add_comment` adds a space
+            IO.REMARK_FORMAT.rstrip(), # Remove extra space since `add_comment` adds a space
             pdbfile_data,
         )
 
@@ -286,7 +287,7 @@ class IO(Generic[G]):
             simulation_data["scores"] = collections.OrderedDict(sorted(scores.items()))
             simulation_data_json = self.serializer.deepcopy_kwargs(instance_metadata)
             simulation_data_json["scores"] = collections.OrderedDict(sorted(scores_json.items()))
-            pdbfile_data = json.dumps(simulation_data_json)
+            pdbfile_data = json.dumps(simulation_data_json, sort_keys=False, indent=None, separators=(", ", ": "))
             # Output PDB file
             if ".pdb" in self.output_decoy_types:
                 # Write full .pdb record
@@ -302,7 +303,7 @@ class IO(Generic[G]):
 
             # Output pickled Pose file
             if ".pkl_pose" in self.output_decoy_types:
-                _packed_pose = self._add_pose_comment(packed_pose, pdbfile_data)
+                _packed_pose = IO._add_pose_comment(packed_pose, pdbfile_data)
                 output_pkl_pose_file = os.path.join(output_dir, decoy_name + ".pkl_pose")
                 if self.compressed:
                     output_pkl_pose_file += ".bz2"
@@ -314,7 +315,7 @@ class IO(Generic[G]):
 
             # Output base64-encoded pickled Pose file
             if ".b64_pose" in self.output_decoy_types:
-                _packed_pose = self._add_pose_comment(packed_pose, pdbfile_data)
+                _packed_pose = IO._add_pose_comment(packed_pose, pdbfile_data)
                 output_b64_pose_file = os.path.join(output_dir, decoy_name + ".b64_pose")
                 if self.compressed:
                     output_b64_pose_file += ".bz2"
@@ -326,7 +327,7 @@ class IO(Generic[G]):
 
             # Output PyRosetta initialization file
             if ".init" in self.output_decoy_types:
-                _packed_pose = self._add_pose_comment(packed_pose, pdbfile_data)
+                _packed_pose = IO._add_pose_comment(packed_pose, pdbfile_data)
                 output_init_file = os.path.join(output_dir, decoy_name + ".init")
                 if self.compressed:
                     with tempfile.TemporaryDirectory() as tmp_dir:

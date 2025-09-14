@@ -30,7 +30,18 @@ import pyrosetta.distributed.io as io
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.utility.initialization import PyRosettaInitFileReader
-from typing import Any, Dict, Generic, List, Optional, Tuple, TypeVar
+from typing import (
+    Any,
+    Dict,
+    Generic,
+    List,
+    NoReturn,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
+)
+
 
 from pyrosetta.distributed.cluster.hkdf import HASHMOD, compare_digest, derive_init_key
 
@@ -53,10 +64,21 @@ class InitFileSigner(Generic[G]):
         self.metadata_pkl = self._to_encoding(metadata)
 
     def _to_pickle(self, packed_pose: Optional[PackedPose]) -> bytes:
-        return io.to_pickle(packed_pose) if isinstance(packed_pose, PackedPose) else b'\x00'
+        return io.to_pickle(packed_pose) if isinstance(packed_pose, PackedPose) else (b'\x00' * 32)
 
     def _to_encoding(self, obj: Any) -> bytes:
-        return json.dumps(obj).encode(InitFileSigner._encoding)
+        return json.dumps(
+            obj,
+            skipkeys=False,
+            ensure_ascii=False,
+            check_circular=True,
+            allow_nan=False,
+            cls=None,
+            indent=None,
+            separators=(",", ":"),
+            default=None,
+            sort_keys=True,
+        ).encode(InitFileSigner._encoding)
 
     def _get_pose_digest(self, pkl: bytes) -> bytes:
         return HASHMOD(pkl).digest()
@@ -115,6 +137,46 @@ class InitFileSigner(Generic[G]):
         return self.verify_sha256(sha256) and self.verify_signature(signature)
 
 
+def verify_init_file(
+    init_file: str,
+    input_packed_pose: Optional[PackedPose],
+    output_packed_pose: Optional[PackedPose],
+    metadata: Dict[str, str],
+) -> None:
+    """Verify a PyRosetta initialization file."""
+
+    sha256 = metadata.pop("sha256", None)
+    signature = metadata.pop("signature", None)
+    signer = InitFileSigner(
+        input_packed_pose=input_packed_pose,
+        output_packed_pose=output_packed_pose,
+        metadata=metadata,
+    )
+    _err_msg = f"Could not verify data integrity of the input file: '{init_file}'"
+    if (sha256 is not None) and (not signer.verify_sha256(sha256)):
+        raise ValueError(
+            "The expected SHA256 value differs from the metadata 'sha256' key value in the '.init' file! "
+            + "The '.init' file 'poses' key value appears to have been altered from the original simulation "
+            + "or '.init' file export, so the simulation cannot necessarily be reproduced! To override "
+            + "data integrity verification, delete the 'sha256' key from the metadata in the '.init' file.\n"
+            + "Expected: '{0}'\n".format(signer.sign_sha256())
+            + "Value:    '{0}'\n".format(sha256)
+            + _err_msg
+        )
+    if (signature is not None) and (not signer.verify_signature(signature)):
+        raise ValueError(
+            "The expected PyRosettaCluster signature differs from the metadata 'signature' key value in the "
+            + "'.init' file! The '.init' file data appears to have been altered from the original simulation "
+            + "or '.init' file export, so the simulation cannot necessarily be reproduced! To override "
+            + "data integrity verification, delete the 'signature' key from the metadata in the '.init' file.\n"
+            + "Expected: '{0}'\n".format(signer.sign_digest())
+            + "Value:    '{0}'\n".format(signature)
+            + _err_msg
+        )
+    if all(val is not None for val in (sha256, signature)):
+        assert signer.verify(sha256, signature), _err_msg
+
+
 def setup_init_file_metadata_and_poses(
     input_packed_pose: Optional[PackedPose] = None,
     output_packed_pose: Optional[PackedPose] = None,
@@ -142,32 +204,38 @@ def setup_init_file_metadata_and_poses(
 
 
 def get_poses_from_init_file(
-    init_file: str
-) -> Tuple[Optional[PackedPose], Optional[PackedPose]]:
+    init_file: str,
+    verify: bool = False,
+) -> Union[Tuple[Optional[PackedPose], Optional[PackedPose]], NoReturn]:
     """
-    Return a `tuple` of the input `PackedPose` object and the 
-    output `PackedPose` object from a '.init' file.
+    Return a `tuple` object of the input `PackedPose` object and the output `PackedPose` object
+    from a '.init' file, and optionally verify PyRosettaCluster metadata in the '.init' file.
     """
+
     @toolz.functoolz.curry
     def _maybe_to_packed(
         key: str, poses: List[str], metadata: Dict[str, str]
-    ) -> Optional[PackedPose]:
+    ) -> Union[Optional[PackedPose], NoReturn]:
         assert was_init_called(), (
             f"Please first initialize PyRosetta with the 'init_file' argument parameter: '{init_file}'"
         )
+        assert isinstance(metadata, dict), (
+            f"The '.init' file 'metadata' key value must be a `dict` object. Received: {type(metadata)}"
+        )
+        assert isinstance(poses, list), (
+            f"The '.init' file 'poses' key value must be a `list` object. Received: {type(poses)}"
+        )
+
         return io.to_packed(io.to_pose(poses[metadata[key]])) if key in metadata else None
 
-    assert isinstance(init_file, str) and os.path.isfile(init_file), (
-        "The input 'init_file' argument parameter must be a `str` object and exist on disk. "
-        + f"Received: '{init_file}'"
-    )
     init_dict = PyRosettaInitFileReader.read_json(init_file)
-    for key in ("metadata", "poses"):
-        assert key in init_dict.keys(), (
-            f"The 'init_file' argument parameter does not contain the '{key}' key: '{init_file}'"
-        )
-    _get_packed_pose = _maybe_to_packed(poses=init_dict["poses"], metadata=init_dict["metadata"])
+    metadata = init_dict["metadata"]
+    poses = init_dict["poses"]
+    _get_packed_pose = _maybe_to_packed(poses=poses, metadata=metadata)
     input_packed_pose = _get_packed_pose(METADATA_INPUT_DECOY_KEY)
     output_packed_pose = _get_packed_pose(METADATA_OUTPUT_DECOY_KEY)
+
+    if verify:
+        verify_init_file(init_file, input_packed_pose, output_packed_pose, metadata)
 
     return (input_packed_pose, output_packed_pose)

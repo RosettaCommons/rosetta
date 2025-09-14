@@ -31,7 +31,7 @@ except ImportError as ex:
 test_suite = globals().get("TestReproducibilityMulti")
 
 
-def main(input_file, scorefile_name, input_init_file, sequence):
+def reproduce_init_from_file_test(input_file, scorefile_name, input_init_file, sequence):
     """Reproduce decoy from .pdb.bz2 file with a '.init' file."""
     skip_corrections = False # Do not skip corrections since not using results for another reproduction
     with tempfile.TemporaryDirectory() as tmp_dir:
@@ -79,10 +79,58 @@ def main(input_file, scorefile_name, input_init_file, sequence):
                 "scorefile_name": scorefile_name,
                 "output_init_file": os.path.join(tmp_dir, "pyrosetta.init"), # Test `dump_init_file` with custom path
             },
-            input_init_file=None, # Skip `init_from_file` since 'input_packed_pose' is provided
             skip_corrections=skip_corrections,
+            init_from_file_kwargs={},
         )
 
+
+def reproduce_test(input_file, scorefile_name, input_init_file, sequence):
+    """Reproduce decoy from .pdb.bz2 file with a '.init' file."""
+    skip_corrections = False # Do not skip corrections since not using results for another reproduction
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        init_from_file_kwargs = dict(
+            output_dir=os.path.join(tmp_dir, "pyrosetta_init_input_files"),
+            dry_run=False,
+            skip_corrections=skip_corrections,
+            relative_paths=False,
+            max_decompressed_bytes=100_000,
+            database=None,
+            verbose=True,
+            set_logging_handler="logging",
+            notebook=None,
+            silent=False,
+        )
+        # Get protocols
+        scores_dict = get_scores_dict(input_file)
+        protocol_names = scores_dict["metadata"]["protocols"]
+        test_case = test_suite.test_reproducibility_from_reproduce
+        source_code = textwrap.dedent(inspect.getsource(test_case))
+        source_code_lines = source_code.splitlines()
+        module = types.ModuleType("_protocols")
+        for node in ast.walk(ast.parse(source_code)):
+            if isinstance(node, ast.FunctionDef) and node.name in protocol_names:
+                exec(
+                    textwrap.dedent(os.linesep.join(source_code_lines[node.lineno - 1: node.end_lineno])),
+                    module.__dict__,
+                )
+        _get_protocol = partial(getattr, module)
+        protocols = list(map(_get_protocol, protocol_names))
+        # Reproduce
+        reproduce(
+            input_file=input_init_file,
+            scorefile=None,
+            decoy_name=None,
+            protocols=protocols,
+            input_packed_pose=None,
+            client=None,
+            instance_kwargs={
+                "sha1": None,
+                "scorefile_name": scorefile_name,
+                "output_init_file": os.path.join(tmp_dir, "pyrosetta.init"), # Test `dump_init_file` with custom path
+            },
+            skip_corrections=skip_corrections,
+            init_from_file_kwargs=init_from_file_kwargs,
+        )
 
 if __name__ == "__main__":
     print("Running: {0}".format(__file__))
@@ -91,5 +139,9 @@ if __name__ == "__main__":
     parser.add_argument('--scorefile_name', type=str)
     parser.add_argument('--input_init_file', type=str)
     parser.add_argument('--sequence', type=str)
+    parser.add_argument('--test_case', type=int)
     args = parser.parse_args()
-    main(args.input_file, args.scorefile_name, args.input_init_file, args.sequence)
+    if args.test_case == 1:
+        reproduce_init_from_file_test(args.input_file, args.scorefile_name, args.input_init_file, args.sequence)
+    elif args.test_case == 0:
+        reproduce_test(args.input_file, args.scorefile_name, args.input_init_file, args.sequence)
