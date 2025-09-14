@@ -683,9 +683,9 @@ def parse_init_file(
     else:
         _skip_corrections_warning_msg = (
             "Please ensure that PyRosetta was initialized from the same '.init' file using `pyrosetta.init_from_file"
-            + f"(skip_corrections={skip_corrections})` before running the `reproduce()` function. To  silence this "
+            + f"(skip_corrections={skip_corrections})` before running the `reproduce()` function. To silence this "
             + "warning, please ensure that PyRosetta is not already initialized before running the `reproduce()` "
-            + "function with the '.init' file."
+            + f"function with the input PyRosetta initialization file: '{input_file}'"
         )
         if skip_corrections:
             warnings.warn(
@@ -715,19 +715,15 @@ def parse_init_file(
 
     input_packed_pose = parse_input_packed_pose(input_packed_pose)
     if input_packed_pose is not None and not identical_b64_poses(input_packed_pose, _input_packed_pose):
-        if _input_packed_pose is not None:
-            _reason = (
-                "the input `PackedPose` object from the original PyRosettaCluster simulation is not identical "
-                "to the 'input_packed_pose' keyword argument parameter of the `reproduce()` function"
-            )
-        else:
-            _reason = (
-                "the '.init' file does not contain an input `PackedPose` object from the original "
-                "PyRosettaCluster simulation"
-            )
+        _input_packed_pose_error_msg = (
+            "the input `PackedPose` object from the original PyRosettaCluster simulation is not identical "
+            "to the provided 'input_packed_pose' keyword argument parameter of the `reproduce()` function"
+        ) if _input_packed_pose is not None else (
+            "the '.init' file does not contain an input `PackedPose` object from the original PyRosettaCluster simulation"
+        )
         raise TypeError(
-            "Please set the 'input_packed_pose' argument parameter to a `NoneType` object when "
-            + f"reproducing from a '.init' file, because {_reason}."
+            "Please set the 'input_packed_pose' keyword argument parameter to a `NoneType` object when "
+            + f"reproducing from a '.init' file, because {_input_packed_pose_error_msg}."
         )
 
     return (_input_packed_pose, _output_packed_pose)
