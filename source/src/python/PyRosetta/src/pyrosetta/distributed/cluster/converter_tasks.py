@@ -169,8 +169,8 @@ def get_protocols_list_of_str(
 
 def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Any], NoReturn]:
     """
-    Get the PyRosettaCluster scores dictionary from either a `PackedPose` object or a
-    '.pdb', '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file.
+    Get the PyRosettaCluster scores dictionary from either a `Pose` or `PackedPose` object, or
+    a '.pdb', '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file.
     """
 
     if isinstance(obj, (Pose, PackedPose)):
