@@ -126,6 +126,9 @@ def reproduce_test(input_file, scorefile_name, input_init_file, sequence):
             skip_corrections=skip_corrections,
             init_from_file_kwargs=init_from_file_kwargs,
         )
+        # Test `get_scores_dict()` with '.init' file syntax after PyRosetta initialization
+        _scores_dict = get_scores_dict(input_init_file)
+        assert scores_dict == _scores_dict, f"Scores dictionaries differ: {scores_dict} != {_scores_dict}"
 
 
 if __name__ == "__main__":
