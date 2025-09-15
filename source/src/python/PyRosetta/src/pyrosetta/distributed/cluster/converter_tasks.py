@@ -70,7 +70,7 @@ from typing import (
 
 
 def get_protocols_list_of_str(
-    input_file: Optional[str] = None,
+    input_file: Optional[Union[str, Pose, PackedPose]] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
 ) -> Union[List[str], NoReturn]:
@@ -78,9 +78,10 @@ def get_protocols_list_of_str(
     Get the user-defined PyRosetta protocols as a `list` object of `str` objects.
 
     Args:
-        input_file: A `str` object specifying the path to the '.pdb' or '.pdb.bz2'
-            file from which to extract PyRosettaCluster instance kwargs. If input_file
-            is provided, then ignore the scorefile and decoy_name argument parameters.
+        input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
+            '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file, or a `Pose`or `PackedPose`
+            object, from which to extract PyRosettaCluster instance kwargs. If 'input_file' is
+            provided, then ignore the 'scorefile' and 'decoy_name' keyword argument parameters.
             Default: None
         scorefile: A `str` object specifying the path to the JSON-formatted scorefile
             from which to extract PyRosettaCluster instance kwargs. If 'scorefile'
@@ -220,7 +221,14 @@ def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Any], 
     scores_dict = None
     for line in reversed(pdbstring.split(os.linesep)):
         if line.startswith(IO.REMARK_FORMAT):
-            scores_dict = json.loads(line.split(IO.REMARK_FORMAT)[-1])
+            scores_dict = json.loads(
+                line.split(IO.REMARK_FORMAT)[-1],
+                cls=None,
+                object_hook=None,
+                object_pairs_hook=None,
+                parse_int=None,
+                parse_constant=None,
+            )
             break
     else:
         _err_msg = f"Could not parse '{IO.REMARK_FORMAT}' comment from input file: '{obj}'"
@@ -288,7 +296,7 @@ def export_init_file(
                     raise PyRosettaIsNotInitializedError(
                         "In order to export a '.init' file, please ensure that PyRosetta is already "
                         + "initialized (using the `pyrosetta.init_from_file()` function) with the "
-                        + f"following '.init' file: '{init_file}'"
+                        + f"following '.init' file, and then run `export_init_file()`: '{init_file}'"
                     )
                 input_packed_pose, _output_packed_pose = get_poses_from_init_file(init_file, verify=True)
                 if _output_packed_pose is not None:

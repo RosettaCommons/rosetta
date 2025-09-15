@@ -109,7 +109,7 @@ def get_protocols(
     protocols: Union[
         List[Union[Callable[..., Any], str]], Callable[..., Any], Optional[str]
     ] = None,
-    input_file: Optional[str] = None,
+    input_file: Optional[Union[str, Pose, PackedPose]] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
 ) -> Union[List[Union[Callable[..., Any], str]], NoReturn]:
@@ -209,7 +209,7 @@ def get_protocols(
 
 
 def get_instance_kwargs(
-    input_file: Optional[str] = None,
+    input_file: Optional[Union[str, Pose, PackedPose]] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
     skip_corrections: Optional[bool] = None,
