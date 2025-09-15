@@ -340,7 +340,7 @@ def get_instance_kwargs(
 
 def recreate_environment(
     environment_name: Optional[str] = None,
-    input_file: Optional[str] = None,
+    input_file: Optional[Union[str, Pose, PackedPose]] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
     timeout: Optional[int] = None,
@@ -354,9 +354,10 @@ def recreate_environment(
         environment_name: A `str` object specifying the new name of the conda environment
             to recreate.
             Default: 'PyRosettaCluster_' + datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f")
-        input_file: A `str` object specifying the path to the '.pdb' or '.pdb.bz2'
-            file from which to extract PyRosettaCluster instance kwargs. If input_file
-            is provided, then ignore the 'scorefile' and 'decoy_name' argument parameters.
+        input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
+            '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file, or a `Pose`or `PackedPose`
+            object, from which to extract PyRosettaCluster instance kwargs. If 'input_file' is
+            provided, then ignore the 'scorefile' and 'decoy_name' keyword argument parameters.
             Default: None
         scorefile: A `str` object specifying the path to the JSON-formatted scorefile
             from which to extract PyRosettaCluster instance kwargs. If 'scorefile'
