@@ -31,6 +31,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+import warnings
 
 from datetime import datetime
 from functools import wraps
@@ -124,9 +125,10 @@ def get_protocols(
         protocols: An iterable of `str` objects specifying the names of user-provided
             PyRosetta protocols to validate or return.
             Default: None
-        input_file: A `str` object specifying the path to the '.pdb' or '.pdb.bz2'
-            file from which to extract PyRosettaCluster instance kwargs. If input_file
-            is provided, then ignore the scorefile and decoy_name argument parameters.
+        input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
+            '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file, or a `Pose`or `PackedPose`
+            object, from which to extract PyRosettaCluster instance kwargs. If 'input_file' is
+            provided, then ignore the 'scorefile' and 'decoy_name' keyword argument parameters.
             Default: None
         scorefile: A `str` object specifying the path to the JSON-formatted scorefile
             from which to extract PyRosettaCluster instance kwargs. If 'scorefile'
@@ -219,9 +221,9 @@ def get_instance_kwargs(
 
     Args:
         input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
-            '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file from which to extract
-            PyRosettaCluster instance kwargs. If 'input_file' is provided, then ignore the
-            'scorefile' and 'decoy_name' argument parameters.
+            '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file, or a `Pose`or `PackedPose`
+            object, from which to extract PyRosettaCluster instance kwargs. If 'input_file' is
+            provided, then ignore the 'scorefile' and 'decoy_name' keyword argument parameters.
             Default: None
         scorefile: A `str` object specifying the path to the JSON-formatted scorefile
             (or pickled `pandas.DataFrame` scorefile) from a PyRosettaCluster simulation
@@ -252,9 +254,11 @@ def get_instance_kwargs(
     )
     if input_file:
         if scorefile or decoy_name:
-            logging.warning(
-                "get_instance_kwargs() received `input_file` and `scorefile` or `decoy_name` argument parameters."
-                + " Ignoring `scorefile` or `decoy_name` argument parameters and using `input_file`!"
+            warnings.warn(
+                "Received 'input_file' and either 'scorefile' or 'decoy_name' keyword argument parameters. "
+                + "Ignoring 'scorefile' and 'decoy_name' and using 'input_file' keyword argument parameter!",
+                UserWarning,
+                stacklevel=2,
             )
         instance_kwargs = parse_input_file_to_instance_kwargs(input_file)
     elif scorefile and decoy_name:

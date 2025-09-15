@@ -75,7 +75,7 @@ class InitFileSigner(Generic[G]):
             indent=None,
             separators=(",", ":"),
             default=None,
-            sort_keys=True,
+            sort_keys=True, # Deterministic
         ).encode(InitFileSigner._encoding)
 
     def _get_pose_digest(self, pkl: bytes) -> bytes:
