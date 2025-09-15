@@ -41,11 +41,11 @@ from pyrosetta.distributed.cluster.exceptions import (
     InputFileError,
     OutputError,
 )
-from pyrosetta.distributed.cluster.init_files import (
+from pyrosetta.distributed.cluster.io import (
+    IO,
     get_poses_from_init_file,
     sign_init_file_metadata_and_poses,
 )
-from pyrosetta.distributed.cluster.io import IO
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.rosetta.core.pose import Pose
