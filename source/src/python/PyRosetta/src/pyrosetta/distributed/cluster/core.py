@@ -155,11 +155,26 @@ Args:
         (to be created if it doesn't exist) where the output results will be saved
         to disk.
         Default: "./outputs"
+    output_init_file: A `str` object specifying the output ".init" file path that caches
+        the 'input_packed_pose' keyword argument parameter upon PyRosettaCluster instantiation,
+        and not including any output decoys, which is optionally used for exporting ".init"
+        files with output decoys by the `pyrosetta.distributed.cluster.export_init_file()`
+        function after the simulation completes (see the 'output_decoy_types' keyword argument).
+        If a `NoneType` object (or an empty `str` object ('')) is provided, or `dry_run=True`,
+        then skip writing an output ".init" file upon PyRosettaCluster instantiation. If skipped,
+        it is recommended to run `pyrosetta.dump_init_file()` before or after the simulation.
+        Default: `output_path`/`project_name`_`simulation_name`_pyrosetta.init
     output_decoy_types: An iterable of `str` objects representing the output decoy
         filetypes to save during the simulation. Available options are: ".pdb" for PDB
-        files, ".pkl_pose" for pickled Pose files, and ".b64_pose" for base64-encoded
-        pickled Pose files. If `compressed=True`, then each output decoy file is further
-        compressed by `bzip2`, and ".bz2" is appended to the filename.
+        files; ".pkl_pose" for pickled Pose files; ".b64_pose" for base64-encoded
+        pickled Pose files; and ".init" for PyRosetta initialization files, each caching
+        the 'input_packed_pose' keyword argument parameter (if any) and an output decoy.
+        Because each ".init" file contains a copy of the input `PackedPose` object and
+        PyRosetta initialization options, unless these objects are relatively small
+        in size or there is a relatively small number of output decoys, then it is recommended
+        to run `pyrosetta.distributed.cluster.export_init_file()` on only decoys of interest
+        after the simulation completes. If `compressed=True`, then each decoy output file
+        is further compressed by `bzip2`, and ".bz2" is appended to the filename.
         Default: [".pdb",]
     output_scorefile_types: An iterable of `str` objects representing the output scorefile
         filetypes to save during the simulation. Available options are: ".json" for a
@@ -261,11 +276,6 @@ Args:
         initialization options and by relativization of any input files and directory paths
         to the current working directory from which the task is running.
         Default: True
-    output_init_file: A `str` object specifying the output '.init' file path. If a `NoneType`
-        object (or an empty `str` object ('')) is provided, or `dry_run=True`, then skip
-        writing an output '.init' file upon PyRosettaCluster instantiation. If skipped,
-        it is recommended to run `pyrosetta.dump_init_file()` before or after the simulation.
-        Default: `output_path`/`project_name`_`simulation_name`_pyrosetta.init
     author: An optional `str` object specifying the author(s) of the simulation that is
         written to the full simulation records and the PyRosetta initialization '.init' file.
         Default: ""
