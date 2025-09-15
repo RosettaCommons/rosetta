@@ -91,14 +91,18 @@ def reproduce_init_from_file_test(input_file, scorefile_name, input_init_file, s
         )
 
 
-def reproduce_test(input_file, scorefile_name, input_init_file, sequence):
+def reproduce_test(input_file, scorefile_name, input_init_file, skip_corrections, init_from_file_skip_corrections):
     """Reproduce decoy from a '.init' file."""
-    skip_corrections = False # Do not skip corrections since not using results for another reproduction
+    print(
+        "Running test case with:",
+        f"`skip_corrections={skip_corrections}`,",
+        f"`init_from_file_skip_corrections={init_from_file_skip_corrections}`",
+    )
     with tempfile.TemporaryDirectory() as tmp_dir:
         init_from_file_kwargs = dict(
             output_dir=os.path.join(tmp_dir, "reproduce_test"),
             dry_run=False,
-            skip_corrections=skip_corrections,
+            skip_corrections=init_from_file_skip_corrections,
             relative_paths=False,
             max_decompressed_bytes=100_000,
             database=None,
@@ -143,4 +147,10 @@ if __name__ == "__main__":
     if args.test_case == 0:
         reproduce_init_from_file_test(args.input_file, args.scorefile_name, args.input_init_file, args.sequence)
     elif args.test_case == 1:
-        reproduce_test(args.input_file, args.scorefile_name, args.input_init_file, args.sequence)
+        reproduce_test(args.input_file, args.scorefile_name, args.input_init_file, False, False)
+    elif args.test_case == 2:
+        reproduce_test(args.input_file, args.scorefile_name, args.input_init_file, True, True)
+    elif args.test_case == 3:
+        reproduce_test(args.input_file, args.scorefile_name, args.input_init_file, True, False)
+    elif args.test_case == 4:
+        reproduce_test(args.input_file, args.scorefile_name, args.input_init_file, False, True)

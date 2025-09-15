@@ -949,7 +949,7 @@ class TestReproducibilityMulti(unittest.TestCase):
                 env["PYTHONPATH"] = f"{module_dir}{os.pathsep}{os.environ.get('PYTHONPATH', '')}"
             else:
                 env = None
-            p = subprocess.run(shlex.split(cmd), env=env, check=True, shell=False)
+            p = subprocess.run(shlex.split(cmd), env=env, check=True, shell=False, stderr=subprocess.PIPE)
             print("Return code: {0}".format(p.returncode))
 
             return p
@@ -1163,7 +1163,7 @@ class TestReproducibilityMulti(unittest.TestCase):
 
             test_script = os.path.join(os.path.dirname(__file__), "reproduce_from_init_file.py")
             module = os.path.splitext(os.path.basename(test_script))[0]
-            for test_case in range(2):
+            for test_case in range(5):
                 reproduce3_scorefile_name = f"reproduce_test_scores_init_file_{test_case}.json"
                 cmd = "{0} -m {1} --input_file '{2}' --scorefile_name '{3}' --input_init_file '{4}' --sequence '{5}' --test_case {6}".format(
                     sys.executable,
