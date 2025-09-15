@@ -168,13 +168,14 @@ Args:
         filetypes to save during the simulation. Available options are: ".pdb" for PDB
         files; ".pkl_pose" for pickled Pose files; ".b64_pose" for base64-encoded
         pickled Pose files; and ".init" for PyRosetta initialization files, each caching
-        the 'input_packed_pose' keyword argument parameter (if any) and an output decoy.
-        Because each ".init" file contains a copy of the input `PackedPose` object and
-        PyRosetta initialization options, unless these objects are relatively small
-        in size or there is a relatively small number of output decoys, then it is recommended
-        to run `pyrosetta.distributed.cluster.export_init_file()` on only decoys of interest
-        after the simulation completes. If `compressed=True`, then each decoy output file
-        is further compressed by `bzip2`, and ".bz2" is appended to the filename.
+        the host node PyRosetta initialization options (and input files, if any), the
+        'input_packed_pose' keyword argument parameter (if any) and an output decoy.
+        Because each ".init" file contains a copy of the PyRosetta initialization input files
+        and input `PackedPose` object, unless these objects are relatively small in size
+        or there are relatively few expected output decoys, then it is recommended to run
+        `pyrosetta.distributed.cluster.export_init_file()` on only decoys of interest after the
+        simulation completes without specifying ".init". If `compressed=True`, then each decoy
+        output file is further compressed by `bzip2`, and ".bz2" is appended to the filename.
         Default: [".pdb",]
     output_scorefile_types: An iterable of `str` objects representing the output scorefile
         filetypes to save during the simulation. Available options are: ".json" for a
