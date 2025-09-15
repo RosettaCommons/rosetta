@@ -61,12 +61,11 @@ from pyrosetta.distributed.cluster import (
     update_scores,
 )
 from pyrosetta.distributed.cluster.exceptions import WorkerError
-from pyrosetta.distributed.cluster.init_files import (
-    InitFileSigner,
+from pyrosetta.distributed.cluster.init_files import InitFileSigner
+from pyrosetta.distributed.cluster.io import (
     METADATA_INPUT_DECOY_KEY,
     METADATA_OUTPUT_DECOY_KEY,
 )
-
 
 class SmokeTest(unittest.TestCase):
     def test_smoke(self):
