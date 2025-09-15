@@ -565,8 +565,17 @@ def get_poses_from_init_file(
         assert isinstance(poses, list), (
             f"The '.init' file 'poses' key value must be a `list` object. Received: {type(poses)}"
         )
-
-        return io.to_packed(io.to_pose(poses[metadata[key]])) if key in metadata else None
+        if key in metadata:
+            idx = metadata[key]
+            if isinstance(idx, int):
+                return io.to_packed(io.to_pose(poses[idx]))
+            else:
+                raise TypeError(
+                    "The '.init' file metadata '{key}' key value must be an `int` object. "
+                    + f"Received: {type(idx)}"
+                )
+        else:
+            return None
 
     init_dict = PyRosettaInitFileReader.read_json(init_file)
     metadata = init_dict["metadata"]
