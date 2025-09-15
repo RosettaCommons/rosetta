@@ -51,7 +51,7 @@ from typing import (
 )
 
 from pyrosetta.distributed.cluster.exceptions import OutputError
-from pyrosetta.distributed.cluster.init_files import setup_init_file_metadata_and_poses
+from pyrosetta.distributed.cluster.init_files import sign_init_file_metadata_and_poses
 from pyrosetta.distributed.cluster.serialization import update_scores
 from pyrosetta.distributed.cluster.logging_support import RedirectToLogger
 
@@ -437,7 +437,7 @@ class IO(Generic[G]):
         out = RedirectToLogger(logging.INFO)
         err = RedirectToLogger(logging.ERROR)
         with redirect_stdout(out), redirect_stderr(err):
-            metadata, poses = setup_init_file_metadata_and_poses(
+            metadata, poses = sign_init_file_metadata_and_poses(
                 input_packed_pose=input_packed_pose,
                 output_packed_pose=output_packed_pose,
             )

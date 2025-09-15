@@ -43,7 +43,7 @@ from pyrosetta.distributed.cluster.exceptions import (
 )
 from pyrosetta.distributed.cluster.init_files import (
     get_poses_from_init_file,
-    setup_init_file_metadata_and_poses,
+    sign_init_file_metadata_and_poses,
 )
 from pyrosetta.distributed.cluster.io import IO
 from pyrosetta.distributed.packed_pose.core import PackedPose
@@ -205,6 +205,23 @@ def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Any], 
             elif obj.endswith(".b64_pose"):
                 with open(obj, "r") as f:
                     pdbstring = io.to_pdbstring(io.to_pose(f.read()))
+        elif obj.endswith(".init"):
+            if not was_init_called():
+                raise PyRosettaIsNotInitializedError(
+                    "To get the PyRosettaCluster scores dictionary from a '.init' file, please first "
+                    + "initialize PyRosetta using the `pyrosetta.init_from_file()`function with the "
+                    + f"input '.init' file: '{obj}'"
+                )
+            _input_packed_pose, output_packed_pose = get_poses_from_init_file(obj, verify=True)
+            if output_packed_pose is None:
+                raise ValueError(
+                    "The input '.init' file does not contain an output decoy from a PyRosettaCluster simulation: "
+                    + f"'{obj}'. To get the PyRosettaCluster scores dictionary from a '.init' file, please ensure "
+                    + "that `pyrosetta.distributed.cluster.export_init_file()` was run on the original decoy output file, "
+                    + "or that the `PyRosettaCluster(output_decoy_types=['.init'])` PyRosetta initialization file output "
+                    + "decoy type was enabled in the original PyRosettaCluster simulation."
+                )
+            pdbstring = io.to_pdbstring(output_packed_pose)
         else:
             raise ValueError(
                 "The `input_file` argument parameter must end in "
@@ -321,7 +338,7 @@ def export_init_file(
                         IO._dump_json(get_scores_dict(output_file)),
                     )
                 # Setup metadata and poses
-                metadata, poses = setup_init_file_metadata_and_poses(
+                metadata, poses = sign_init_file_metadata_and_poses(
                     input_packed_pose=input_packed_pose,
                     output_packed_pose=output_packed_pose,
                 )
