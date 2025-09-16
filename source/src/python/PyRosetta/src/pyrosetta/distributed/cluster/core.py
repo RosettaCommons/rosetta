@@ -159,7 +159,9 @@ Args:
         filetypes to save during the simulation. Available options are: ".pdb" for PDB
         files, ".pkl_pose" for pickled Pose files, and ".b64_pose" for base64-encoded
         pickled Pose files. If `compressed=True`, then each output decoy file is further
-        compressed by `bzip2`, and ".bz2" is appended to the filename.
+        compressed by `bzip2`, and ".bz2" is appended to the filename. Note that pickled
+        files have security issues, you can learn more `here <https://docs.python.org/3/library/pickle.html>`_.
+        Only deserialize these files if you know and trust their source. 
         Default: [".pdb",]
     output_scorefile_types: An iterable of `str` objects representing the output scorefile
         filetypes to save during the simulation. Available options are: ".json" for a
