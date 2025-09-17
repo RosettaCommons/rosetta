@@ -55,7 +55,7 @@ from typing import (
 from pyrosetta.distributed.cluster.exceptions import OutputError
 from pyrosetta.distributed.cluster.init_files import InitFileSigner
 from pyrosetta.distributed.cluster.logging_support import RedirectToLogger
-from pyrosetta.distributed.cluster.serialization import update_scores
+from pyrosetta.distributed.cluster.serialization import Serialization, update_scores
 
 
 METADATA_INPUT_DECOY_KEY: str = "idx_input"
@@ -488,7 +488,7 @@ def verify_init_file(
         _err_msg = (
             "The expected {0} differs from the metadata '{1}' key value in the '.init' file! {2}. The "
             + "simulation cannot necessarily be reproduced! To override '.init' file data verification, "
-            + "delete the '{1}' key and value from the metadata in the '.init' file."
+            + "delete the '{1}' key and value from the metadata in the '.init' file.\n"
             + "Expected: '{3}'\n"
             + "Value:    '{4}'\n"
             + _init_file_err_msg
@@ -529,9 +529,10 @@ def verify_init_file(
             assert _signer.verify(_sha256, _signature), _err_msg
 
 
+    metadata = Serialization(compression=False).deepcopy_kwargs(metadata)
     verifier = _verify_signer(
-        _sha256=metadata.get("sha256", None),
-        _signature=metadata.get("signature", None),
+        _sha256=metadata.pop("sha256", None),
+        _signature=metadata.pop("signature", None),
     )
     _io_kwargs = dict(
         input_packed_pose=input_packed_pose,
