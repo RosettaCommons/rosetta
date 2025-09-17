@@ -184,6 +184,7 @@ def pose_from_init_file(filename):
     """
     *Warning*: This function uses the pickle module to deserialize the input filename.
     Using the pickle module is not secure, so please only run with input files you trust.
+    Learn more about the pickle module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Return the first `PackedPose` object from the list in a '.init' file if PyRosetta
     is initialized. If PyRosetta is not yet initialized, then initialize PyRosetta
