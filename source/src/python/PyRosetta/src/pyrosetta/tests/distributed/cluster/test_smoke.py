@@ -1792,7 +1792,7 @@ class TestInitFileSigner(unittest.TestCase):
                 input_packed_pose=input_packed_pose,
                 output_packed_pose=output_packed_pose,
                 metadata=metadata,
-            )
+            )  # Bypass verification with 'sha256' and 'signature' as `NoneType`
             pyrosetta.dump_init_file(
                 output_init_file,
                 poses=poses.copy(),
@@ -1831,7 +1831,7 @@ class TestInitFileSigner(unittest.TestCase):
                 input_packed_pose=input_packed_pose,
                 output_packed_pose=output_packed_pose,
                 metadata=metadata,
-            )
+            )  # Bypass verification with 'sha256' and 'signature' missing
             pyrosetta.dump_init_file(
                 output_init_file,
                 poses=poses.copy(),
