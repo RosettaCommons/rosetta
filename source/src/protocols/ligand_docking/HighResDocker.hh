@@ -59,7 +59,6 @@ public:
 
 	HighResDocker();
 	~HighResDocker() override;
-	HighResDocker(HighResDocker const & that);
 	HighResDocker(
 		core::Size num_cycles,
 		core::Size repack_every_Nth,
