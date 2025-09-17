@@ -224,8 +224,8 @@ def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Any], 
             pdbstring = io.to_pdbstring(output_packed_pose)
         else:
             raise ValueError(
-                "The `input_file` argument parameter must end in "
-                + "'.pdb', '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2'. "
+                "The `input_file` argument parameter must end in '.pdb', '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', "
+                + "'.b64_pose', '.b64_pose.bz2', or '.init'. "
                 + f"Received: '{obj}'"
             )
     else:
@@ -284,6 +284,9 @@ def export_init_file(
             path. If `NoneType` is provided, then the PyRosetta initialization file path is derived
             from the 'output_file' argument parameter by replacing the file extension with '.init'.
             Default: None
+
+    Returns:
+        None
     """
 
     _types = (".pdb", ".pdb.bz2", ".pkl_pose", ".pkl_pose.bz2", ".b64_pose", ".b64_pose.bz2")
