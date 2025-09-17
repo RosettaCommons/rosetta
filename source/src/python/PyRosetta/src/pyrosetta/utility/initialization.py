@@ -74,9 +74,9 @@ class PyRosettaInitFileParserBase(object):
 
     def get_to_base64(self):
         assert has_cereal(), (
-            f"To cache `Pose` and/or `PackedPose` objects in the output '{self._init_file_extension}' "
+            "To cache `Pose` and/or `PackedPose` objects in the output '{0}' ".format(self._init_file_extension)
             + "file, please ensure that PyRosetta is built with serialization support. "
-            + "Current PyRosetta build: {0}".format(self.get_pyrosetta_build())
+            + "Current PyRosetta build: '{0}'".format(self.get_pyrosetta_build())
         )
         try:
             import pyrosetta.distributed.io as io  # noqa: F401
@@ -505,9 +505,9 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
 
     def print_cached_files(self, dry_run):
         if dry_run:
-            print(f"Dry run dump PyRosetta '{self._init_file_extension}' file:")
+            print("Dry run dump PyRosetta '{0}' file:".format(self._init_file_extension))
         else:
-            print(f"Dumping PyRosetta '{self._init_file_extension}' file to: {self.output_filename}")
+            print("Dumping PyRosetta '{0}' file to: '{1}'".format(self._init_file_extension, self.output_filename))
         if len(self.kwargs["poses"]) > 0:
             print("Compressed {0} PyRosetta `PackedPose` object(s).".format(len(self.kwargs["poses"])))
         else:
@@ -519,7 +519,7 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         else:
             print("No PyRosetta initialization input files to compress.")
         if dry_run:
-            print(f"Skipping dumping PyRosetta initialization '{self._init_file_extension}' file...")
+            print("Skipping dumping PyRosetta initialization '{0}' file...".format(self._init_file_extension))
 
     @staticmethod
     def write_json(data_dict, output_filename):
@@ -577,11 +577,30 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             PyRosettaInitFileWriter.write_json(data_dict, self.output_filename)
             if self.kwargs["verbose"]:
                 print(
-                    f"Dumped PyRosetta '{self._init_file_extension}' file size:",
+                    "Dumped PyRosetta '{0}' file size:".format(self._init_file_extension),
                     round(os.path.getsize(self.output_filename) * 1e-6, 3),
                     "MB",
                     sep=" ",
                 )
+
+
+class PyRosettaInitDictWriter(PyRosettaInitFileWriter):
+    def __init__(self, **kwargs):
+        self.validate_init_was_called()
+        self.kwargs = self.setup_kwargs(**kwargs)
+        self.cached_files = []
+
+    @property
+    def _init_file_writer_err_msg(self):
+        return "Please use `PyRosettaInitFileWriter` to dump '{0}' files.".format(
+            self._init_file_extension
+        )
+
+    def print_cached_files(self, dry_run):
+        raise NotImplementedError(self._init_file_writer_err_msg)
+
+    def dump(self):
+        raise NotImplementedError(self._init_file_writer_err_msg)
 
 
 class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSerializer):
@@ -845,7 +864,7 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             if self.file_counter == 0:
                 print("No PyRosetta input files to decompress.")
             else:
-                print("Decompressed {0} PyRosetta input file(s) written to: {1}".format(
+                print("Decompressed {0} PyRosetta input file(s) written to: '{1}'".format(
                         self.file_counter, self.kwargs["output_dir"]
                     )
                 )
@@ -927,7 +946,7 @@ class PyRosettaInitDictReader(PyRosettaInitFileReader):
             if self.file_counter == 0:
                 print("No PyRosetta input files to decompress.")
             else:
-                print("Decompressed {0} PyRosetta input file(s) written to: {1}".format(
+                print("Decompressed {0} PyRosetta input file(s) written to: '{1}'".format(
                         self.file_counter, self.kwargs["output_dir"]
                     )
                 )
@@ -1061,7 +1080,7 @@ class PyRosettaInitFileParser(object):
             A `str` or `dict` object representing the PyRosetta initialization options.
         """
         if not isinstance(as_dict, bool):
-            raise ValueError(f"The 'as_dict' keyword argument parameter must be a `bool` object. Received: {type(as_dict)}")
+            raise ValueError("The 'as_dict' keyword argument parameter must be a `bool` object. Received: {0}".format(type(as_dict)))
         reader = PyRosettaInitFileReader(
             init_file,
             dry_run=dry_run,
@@ -1166,9 +1185,9 @@ class PyRosettaInitFileParser(object):
             A `str` or `dict` object representing the PyRosetta initialization options.
         """
         if not isinstance(compressed, bool):
-            raise ValueError(f"The 'compressed' keyword argument parameter must be a `bool` object. Received: {type(compressed)}")
+            raise ValueError("The 'compressed' keyword argument parameter must be a `bool` object. Received: {0}".format(type(compressed)))
         if not isinstance(as_dict, bool):
-            raise ValueError(f"The 'as_dict' keyword argument parameter must be a `bool` object. Received: {type(as_dict)}")
+            raise ValueError("The 'as_dict' keyword argument parameter must be a `bool` object. Received: {0}".format(type(as_dict)))
         with tempfile.TemporaryDirectory() as tmp_dir:
             writer = PyRosettaInitFileWriter(
                 os.path.join(tmp_dir, "tmp.init"),
