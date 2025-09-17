@@ -94,9 +94,9 @@ def reproduce_init_from_file_test(input_file, scorefile_name, input_init_file, s
 def reproduce_test(input_file, scorefile_name, input_init_file, skip_corrections, init_from_file_skip_corrections):
     """Reproduce decoy from a '.init' file."""
     print(
-        "Running test case with:",
-        f"`skip_corrections={skip_corrections}`,",
-        f"`init_from_file_skip_corrections={init_from_file_skip_corrections}`",
+        "Running test case:",
+        f"`reproduce(skip_corrections={skip_corrections}, "
+        + f"init_from_file_kwargs=dict(skip_corrections={init_from_file_skip_corrections}))`",
     )
     with tempfile.TemporaryDirectory() as tmp_dir:
         init_from_file_kwargs = dict(
