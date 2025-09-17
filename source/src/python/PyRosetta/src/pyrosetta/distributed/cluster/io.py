@@ -478,17 +478,17 @@ def verify_init_file(
 ) -> Optional[NoReturn]:
     """Verify a PyRosetta initialization file."""
 
+    @toolz.functoolz.curry
     def _verify_signer(_signer: InitFileSigner, _sha256: str, _signature: str) -> Optional[NoReturn]:
         """Verify that current PyRosetta and PyRosettaCluster versions match that dumped in the '.init' file"""
 
         _init_file_err_msg = (
-            f"Failed to verify data integrity of the input PyRosetta initialiation file: '{init_file}'"
+            f"Failed to verify data integrity of the input PyRosetta initialization file: '{init_file}'"
         )
         _err_msg = (
             "The expected {0} differs from the metadata '{1}' key value in the '.init' file! {2}. The "
             + "simulation cannot necessarily be reproduced! To override '.init' file data verification, "
-            + "either delete (or comment out) the '{1}' key from the metadata in the '.init' file, or set "
-            + "the value to 'null'.\n"
+            + "delete the '{1}' key and value from the metadata in the '.init' file."
             + "Expected: '{3}'\n"
             + "Value:    '{4}'\n"
             + _init_file_err_msg
@@ -528,29 +528,32 @@ def verify_init_file(
         if all(val is not None for val in (_sha256, _signature)):
             assert _signer.verify(_sha256, _signature), _err_msg
 
-    # Verify metadata in the '.init' file matches originally dumped metadata
-    sha256 = metadata.get("sha256", None)
-    signature = metadata.get("signature", None)
-    signer = InitFileSigner(
+
+    verifier = _verify_signer(
+        _sha256=metadata.get("sha256", None),
+        _signature=metadata.get("signature", None),
+    )
+    _io_kwargs = dict(
         input_packed_pose=input_packed_pose,
         output_packed_pose=output_packed_pose,
-        metadata=metadata,
     )
-    _verify_signer(signer, sha256, signature)
+
+    # Verify metadata in the '.init' file matches originally dumped metadata
+    verifier(
+        _signer=InitFileSigner(
+            **toolz.dicttoolz.merge(_io_kwargs, dict(metadata=metadata))
+        ),
+    )
 
     # Verify metadata dumped in the '.init' file matches expected metadata format from PyRosettaCluster
-    expected_metadata, _poses = sign_init_file_metadata_and_poses(
-        input_packed_pose=input_packed_pose,
-        output_packed_pose=output_packed_pose,
-    )
+    expected_metadata, _poses = sign_init_file_metadata_and_poses(**_io_kwargs)
     expected_metadata.pop("sha256", None)
     expected_metadata.pop("signature", None)
-    expected_signer = InitFileSigner(
-        input_packed_pose=input_packed_pose,
-        output_packed_pose=output_packed_pose,
-        metadata=expected_metadata,
+    verifier(
+        _signer=InitFileSigner(
+            **toolz.dicttoolz.merge(_io_kwargs, dict(metadata=expected_metadata))
+        ),
     )
-    _verify_signer(expected_signer, sha256, signature)
 
 
 def sign_init_file_metadata_and_poses(
