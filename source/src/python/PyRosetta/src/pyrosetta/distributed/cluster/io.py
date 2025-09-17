@@ -478,36 +478,79 @@ def verify_init_file(
 ) -> Optional[NoReturn]:
     """Verify a PyRosetta initialization file."""
 
-    sha256 = metadata.pop("sha256", None)
-    signature = metadata.pop("signature", None)
+    def _verify_signer(_signer: InitFileSigner, _sha256: str, _signature: str) -> Optional[NoReturn]:
+        """Verify that current PyRosetta and PyRosettaCluster versions match that dumped in the '.init' file"""
+
+        _init_file_err_msg = (
+            f"Failed to verify data integrity of the input PyRosetta initialiation file: '{init_file}'"
+        )
+        _err_msg = (
+            "The expected {0} differs from the metadata '{1}' key value in the '.init' file! {2}. The "
+            + "simulation cannot necessarily be reproduced! To override '.init' file data verification, "
+            + "either delete (or comment out) the '{1}' key from the metadata in the '.init' file, or set "
+            + "the value to 'null'.\n"
+            + "Expected: '{3}'\n"
+            + "Value:    '{4}'\n"
+            + _init_file_err_msg
+        )
+        _sha256_err_msg = (
+            "Either (1) the current PyRosetta build differs from that used to write the original '.init' file, "
+            + f"or (2) the '.init' file 'poses' key value (or the metadata key '{METADATA_INPUT_DECOY_KEY}' and "
+            + f"'{METADATA_OUTPUT_DECOY_KEY}' and their values) has been altered from the original simulation or "
+            + "'.init' file export"
+        )
+        _signature_err_msg = (
+            "Either (1) the current PyRosetta build differs from that used to write the original '.init' file, (2) "
+            + "the '.init' file metadata does not match the expected output format by PyRosettaCluster, or (3) the "
+            + "'.init' file data has been altered from the original PyRosettaCluster simulation or '.init' file export"
+        )
+
+        if (_sha256 is not None) and (not _signer.verify_sha256(_sha256)):
+            raise ValueError(
+                _err_msg.format(
+                    "SHA256 value",
+                    "sha256",
+                    _sha256_err_msg,
+                    _signer.sign_sha256(),
+                    _sha256,
+                )
+            )
+        if (_signature is not None) and (not _signer.verify_signature(_signature)):
+            raise ValueError(
+                _err_msg.format(
+                    "PyRosettaCluster signature",
+                    "signature",
+                    _signature_err_msg,
+                    _signer.sign_digest(),
+                    _signature,
+                )
+            )
+        if all(val is not None for val in (_sha256, _signature)):
+            assert _signer.verify(_sha256, _signature), _err_msg
+
+    # Verify metadata in the '.init' file matches originally dumped metadata
+    sha256 = metadata.get("sha256", None)
+    signature = metadata.get("signature", None)
     signer = InitFileSigner(
         input_packed_pose=input_packed_pose,
         output_packed_pose=output_packed_pose,
         metadata=metadata,
     )
-    _err_msg = f"Could not verify data integrity of the input file: '{init_file}'"
-    if (sha256 is not None) and (not signer.verify_sha256(sha256)):
-        raise ValueError(
-            "The expected SHA256 value differs from the metadata 'sha256' key value in the '.init' file! "
-            + "The '.init' file 'poses' key value appears to have been altered from the original simulation "
-            + "or '.init' file export, so the simulation cannot necessarily be reproduced! To override "
-            + "data integrity verification, delete the 'sha256' key from the metadata in the '.init' file.\n"
-            + "Expected: '{0}'\n".format(signer.sign_sha256())
-            + "Value:    '{0}'\n".format(sha256)
-            + _err_msg
-        )
-    if (signature is not None) and (not signer.verify_signature(signature)):
-        raise ValueError(
-            "The expected PyRosettaCluster signature differs from the metadata 'signature' key value in the "
-            + "'.init' file! The '.init' file data appears to have been altered from the original simulation "
-            + "or '.init' file export, so the simulation cannot necessarily be reproduced! To override "
-            + "data integrity verification, delete the 'signature' key from the metadata in the '.init' file.\n"
-            + "Expected: '{0}'\n".format(signer.sign_digest())
-            + "Value:    '{0}'\n".format(signature)
-            + _err_msg
-        )
-    if all(val is not None for val in (sha256, signature)):
-        assert signer.verify(sha256, signature), _err_msg
+    _verify_signer(signer, sha256, signature)
+
+    # Verify metadata dumped in the '.init' file matches expected metadata format from PyRosettaCluster
+    expected_metadata, _poses = sign_init_file_metadata_and_poses(
+        input_packed_pose=input_packed_pose,
+        output_packed_pose=output_packed_pose,
+    )
+    expected_metadata.pop("sha256", None)
+    expected_metadata.pop("signature", None)
+    expected_signer = InitFileSigner(
+        input_packed_pose=input_packed_pose,
+        output_packed_pose=output_packed_pose,
+        metadata=expected_metadata,
+    )
+    _verify_signer(expected_signer, sha256, signature)
 
 
 def sign_init_file_metadata_and_poses(
@@ -571,7 +614,7 @@ def get_poses_from_init_file(
                 return io.to_packed(io.to_pose(poses[idx]))
             else:
                 raise TypeError(
-                    "The '.init' file metadata '{key}' key value must be an `int` object. "
+                    f"The '.init' file metadata '{key}' key value must be an `int` object. "
                     + f"Received: {type(idx)}"
                 )
         else:
