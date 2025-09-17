@@ -171,8 +171,8 @@ def get_protocols_list_of_str(
 
 def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Any], NoReturn]:
     """
-    Get the PyRosettaCluster scores dictionary from either a `Pose` or `PackedPose` object, or a
-    '.pdb', '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', or '.init' file.
+    Get the PyRosettaCluster scores dictionary from either a `Pose` or `PackedPose` object, or a '.pdb',
+    '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init' or '.init.bz2' file.
     """
 
     if isinstance(obj, (Pose, PackedPose)):
@@ -205,18 +205,25 @@ def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Any], 
             elif obj.endswith(".b64_pose"):
                 with open(obj, "r") as f:
                     pdbstring = io.to_pdbstring(io.to_pose(f.read()))
-        elif obj.endswith(".init"):
+        elif obj.endswith((".init", ".init.bz2")):
             if not was_init_called():
-                raise PyRosettaIsNotInitializedError(
-                    "To get the PyRosettaCluster scores dictionary from a '.init' file, please first "
-                    + "initialize PyRosetta using the `pyrosetta.init_from_file()`function with the "
-                    + f"input '.init' file: '{obj}'"
-                )
+                if obj.endswith(".init.bz2"):
+                    raise PyRosettaIsNotInitializedError(
+                        "To get the PyRosettaCluster scores dictionary from a '.init.bz2' file, please first initialize "
+                        + "PyRosetta using the `pyrosetta.init_from_file()` function with the decompressed '.init' file. "
+                        + "Alternatively, please first run `io.poses_from_init_file()` with the '.init.bz2' file to "
+                        + f"automatically undergo PyRosetta initialization: '{obj}'"
+                    )
+                elif obj.endswith(".init"):
+                    raise PyRosettaIsNotInitializedError(
+                        "To get the PyRosettaCluster scores dictionary from a '.init' file, please first initialize "
+                        + f"PyRosetta using the `pyrosetta.init_from_file()` function with the '.init' file: '{obj}'"
+                    )
             _input_packed_pose, output_packed_pose = get_poses_from_init_file(obj, verify=True)
             if output_packed_pose is None:
                 raise ValueError(
-                    "The input '.init' file does not contain an output decoy from a PyRosettaCluster simulation: "
-                    + f"'{obj}'. To get the PyRosettaCluster scores dictionary from a '.init' file, please ensure "
+                    "The input '.init' or '.init.bz2' file does not contain an output decoy from a PyRosettaCluster simulation: "
+                    + f"'{obj}'. To get the PyRosettaCluster scores dictionary from a '.init' or '.init.bz2' file, please ensure "
                     + "that `pyrosetta.distributed.cluster.export_init_file()` was run on the original decoy output file, "
                     + "or that the `PyRosettaCluster(output_decoy_types=['.init'])` PyRosetta initialization file output "
                     + "decoy type was enabled in the original PyRosettaCluster simulation."
@@ -225,13 +232,13 @@ def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Any], 
         else:
             raise ValueError(
                 "The `input_file` argument parameter must end in '.pdb', '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', "
-                + "'.b64_pose', '.b64_pose.bz2', or '.init'. "
+                + "'.b64_pose', '.b64_pose.bz2', '.init', or '.init.bz2'. "
                 + f"Received: '{obj}'"
             )
     else:
         raise TypeError(
-            "The `input_file` argument parameter must be a `Pose`, `PackedPose` or `str` object that ends"
-            + "in '.pdb', '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2'. "
+            "The `input_file` argument parameter must be a `Pose`, `PackedPose` or `str` object that ends in '.pdb', "
+            + "'.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init', or '.init.bz2'. "
             + f"Received: '{type(obj)}'"
         )
 
