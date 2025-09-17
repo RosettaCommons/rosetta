@@ -29,9 +29,10 @@ class LoggingTest(unittest.TestCase):
 
     def test_logging(self, verbose=True):
         """A test for capturing logging information in the distributed protocol."""
-
+        params_file = os.path.join(os.path.dirname(__file__), "data", "ZZZ.params")
+        self.assertTrue(os.path.isfile(params_file), msg=f"File does not exist: {params_file}")
         pyrosetta.distributed.init(
-            options="-run:constant_seed 1 -multithreading:total_threads 1",
+            options=f"-run:constant_seed 1 -multithreading:total_threads 1 -extra_res_fa {params_file}",
             extra_options="-out:level 300",
             set_logging_handler="logging",
         )
@@ -39,7 +40,7 @@ class LoggingTest(unittest.TestCase):
         def create_tasks():
             for i in range(1, 5):
                 yield {
-                    "extra_options": "-ex1 -multithreading:total_threads 1",
+                    "extra_options": f"-ex1 -multithreading:total_threads 1 -extra_res_fa {params_file}",
                     "seq": "LYELL" * i,
                     "set_logging_handler": "logging",
                 }
@@ -149,6 +150,8 @@ class LoggingTest(unittest.TestCase):
                 pyrosetta_build=None,
                 filter_results=None,
                 max_delay_time=3.0,
+                norm_task_options=None,
+                output_init_file=os.path.join(output_path, "pyrosetta.init"),
             )
             cluster.distribute(my_pyrosetta_protocol_1, my_pyrosetta_protocol_2)
 

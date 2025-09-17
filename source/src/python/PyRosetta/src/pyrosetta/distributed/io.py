@@ -1,15 +1,13 @@
 """IO routines operating on PackedPose representations."""
 import bz2
 import functools
-import gzip
+import json
 import os
-import sys
+import tempfile
 import warnings
 
 import pyrosetta.io
 import pyrosetta.rosetta.utility as utility
-import pyrosetta.rosetta.core.pose as pose
-import pyrosetta.rosetta.core.import_pose as import_pose
 import pyrosetta.rosetta.core.scoring as scoring
 import pyrosetta.distributed.tasks.score as score
 
@@ -17,11 +15,8 @@ from pyrosetta.distributed import requires_init
 from pyrosetta.distributed.packed_pose import (
     pack_result, pose_result, to_pose, to_packed, to_dict, to_base64, to_pickle, register_container_traversal
 )
-
-try:
-    import lzma as xz
-except ImportError:
-    pass
+from pyrosetta.rosetta.basic import was_init_called
+from pyrosetta.utility.initialization import PyRosettaInitDictReader, PyRosettaInitFileReader
 
 
 __all__ = [
@@ -33,15 +28,17 @@ __all__ = [
     "pose_from_pdb",
     "pose_from_base64",
     "pose_from_pickle",
+    "pose_from_init_file",
     "poses_from_files",
     "poses_from_sequences",
     "poses_from_multimodel_pdb",
     "poses_from_silent",
+    "poses_from_init_file",
     "to_base64",
     "to_pickle",
     "to_silent",
     "to_pdbstring",
-    "to_output_record"
+    "to_output_record",
     "dump_file",
     "dump_pdb",
     "dump_scored_pdb",
@@ -66,8 +63,14 @@ def pose_from_file(*args, **kwargs):
         - bz2-encoded files ending with file extensions: (".pdb.bz2", ".bz2")
         - gzip-encoded files ending with file extensions: (".pdb.gz", ".gz")
         - xz-encoded files ending with file extensions: (".pdb.xz", ".xz")
-        - base64-encoded files ending with file extensions: (".base64", ".b64", ".B64", ".pose")
-        - pickle-encoded files ending with file extensions: (".pickle", ".pickled_pose")
+        - base64-encoded files ending with file extension: ".b64_pose"
+            *Warning*: This function uses the pickle module to deserialize ".b64_pose" files.
+            Using the pickle module is not secure, so please only run with ".b64_pose" files you trust.
+            Learn more about the pickle module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+        - pickle-encoded files ending with file extension: ".pkl_pose"
+            *Warning*: This function uses the pickle module to deserialize ".pkl_pose" files.
+            Using the pickle module is not secure, so please only run with ".pkl_pose" files you trust.
+            Learn more about the pickle module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
     Otherwise, implements `io.to_packed(pyrosetta.io.pose_from_file(*args, **kwargs))`.
 
     @klimaj
@@ -80,9 +83,9 @@ def pose_from_file(*args, **kwargs):
             f"Could not find filename in arguments '{args}' or keyword arguments '{kwargs}'."
         )
 
-    if filename.endswith((".base64", ".b64", ".B64", ".pose")):
+    if filename.endswith(".b64_pose"):
         pack_or_pose = pose_from_base64(filename)  # returns `PackedPose` object
-    elif filename.endswith((".pickle", ".pickled_pose")):
+    elif filename.endswith(".pkl_pose"):
         pack_or_pose = pose_from_pickle(filename)  # returns `PackedPose` object
     else:
         pack_or_pose = pyrosetta.io.pose_from_file(*args, **kwargs)  # returns `Pose` object
@@ -124,7 +127,11 @@ def _pose_from_none(none):
 @functools.singledispatch
 def pose_from_base64(filename):
     """
-    Load a `PackedPose` object from a base64-encoded file.
+    *Warning*: This function uses the pickle module to deserialize the input filename.
+    Using the pickle module is not secure, so please only run with input files you trust.
+    Learn more about the pickle module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+
+    Load a `PackedPose` object from a base64-encoded pickled Pose file.
 
     To load a `PackedPose` object from an input base64-encoded string,
     use `io.to_packed(string)` or `io.to_packed(io.to_pose(string))`.
@@ -132,7 +139,7 @@ def pose_from_base64(filename):
     @klimaj
     """
     raise FileNotFoundError(
-        f"The input filename must be an instance of `str`. Recieved: {type(filename)}"
+        f"The input filename must be an instance of `str`. Received: {type(filename)}"
     )
 
 @pose_from_base64.register(type(None))
@@ -151,7 +158,11 @@ def _pose_from_str(filename):
 @functools.singledispatch
 def pose_from_pickle(filename):
     """
-    Load a `PackedPose` object from a pickle-encoded binary file.
+    *Warning*: This function uses the pickle module to deserialize the input filename.
+    Using the pickle module is not secure, so please only run with input files you trust.
+    Learn more about the pickle module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+
+    Load a `PackedPose` object from a pickled Pose file.
 
     To load a `PackedPose` object from an input pickle-encoded bytestring,
     use `io.to_packed(bytestring)` or `io.to_packed(io.to_pose(bytestring))`.
@@ -159,7 +170,7 @@ def pose_from_pickle(filename):
     @klimaj
     """
     raise FileNotFoundError(
-        f"The input filename must be an instance of `str`. Recieved: {type(filename)}"
+        f"The input filename must be an instance of `str`. Received: {type(filename)}"
     )
 
 @pose_from_pickle.register(type(None))
@@ -173,6 +184,118 @@ def _pose_from_none(none):
 def _pose_from_str(filename):
     with open(filename, "rb") as f:
         return f.read()
+
+
+@functools.singledispatch
+def pose_from_init_file(filename):
+    """
+    *Warning*: This function uses the pickle module to deserialize the input filename.
+    Using the pickle module is not secure, so please only run with input files you trust.
+    Learn more about the pickle module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+
+    Return the first `PackedPose` object from the list in a '.init' file if PyRosetta
+    is initialized. If PyRosetta is not yet initialized, then initialize PyRosetta
+    from the '.init' file using the `pyrosetta.init_from_file()` function, then return
+    the first `PackedPose` object from the list in the '.init' file.
+
+    @klimaj
+    """
+    raise FileNotFoundError(
+        f"The input filename must be an instance of `str`. Received: {type(filename)}"
+    )
+
+@pose_from_init_file.register(type(None))
+def _pose_from_none(none):
+    return None
+
+@pose_from_init_file.register(str)
+def _pose_from_str(filename):
+    packed_poses = poses_from_init_file(filename)
+    if len(packed_poses) >= 1:
+        return next(iter(packed_poses))
+    else:
+        raise ValueError(
+            f"The input filename did not produce any `PackedPose` objects: '{filename}'"
+        )
+
+
+@functools.singledispatch
+def poses_from_init_file(filename):
+    """
+    *Warning*: This function uses the pickle module to deserialize the input filename.
+    Using the pickle module is not secure, so please only run with input files you trust.
+    Learn more about the pickle module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+
+    Return a `list` object of `PackedPose` objects from a '.init' file if PyRosetta
+    is initialized. If PyRosetta is not yet initialized, then first initialize PyRosetta
+    from the '.init' file using the `pyrosetta.init_from_file()` function, then return a
+    `list` object of `PackedPose` objects from the '.init' file.
+
+    @klimaj
+    """
+    raise FileNotFoundError(
+        f"The input filename must be an instance of `str`. Received: {type(filename)}"
+    )
+
+@poses_from_init_file.register(type(None))
+def _poses_from_none(none):
+    return None
+
+@poses_from_init_file.register(str)
+def _poses_from_str(filename):
+
+    def _parse_poses(init_dict):
+        objs = init_dict.get("poses", [])
+        assert isinstance(objs, list), (
+            f"The 'poses' key value must be a `list` object! Received: {type(objs)}"
+        )
+        return [to_packed(to_pose(obj)) for obj in objs]
+
+    if not filename.endswith((".init", ".init.bz2")) or not os.path.isfile(filename):
+        raise ValueError(
+            "The input filename must be an instance of `str`, must end with the '.init' "
+            + f"or '.init.bz2' extension, and must be a file on disk. Received: {filename}"
+        )
+
+    if filename.endswith(".init.bz2"):
+        with open(filename, "rb") as fbz2:
+            init_dict = PyRosettaInitFileReader.from_json(
+                bz2.decompress(fbz2.read()).decode()
+            )
+    elif filename.endswith(".init"):
+        init_dict = PyRosettaInitFileReader.read_json(filename)
+
+    if not was_init_called():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            try:
+                PyRosettaInitDictReader(
+                    init_dict,
+                    output_dir=os.path.join(tmp_dir, "pyrosetta_init_input_files"),
+                    skip_corrections=False,
+                    relative_paths=False,
+                    dry_run=False,
+                    max_decompressed_bytes=None,
+                    database=None,
+                    verbose=True,
+                    set_logging_handler=None,
+                    notebook=None,
+                    silent=False,
+                ).init()
+            except BufferError as ex:
+                raise BufferError(
+                    f"{ex}. Please run `pyrosetta.init_from_file()` with a larger 'max_decompressed_bytes' "
+                    + "keyword argument parameter before running `poses_from_init_file()` to initialize PyRosetta "
+                    + f"with the input PyRosetta initialization file: '{filename}'"
+                )
+            except Exception as ex:
+                raise Exception(
+                    f"{type(ex).__name__}: {ex}. Could not initialize PyRosetta from the input PyRosetta "
+                    + f"initialization file: '{filename}'. Please run `pyrosetta.init_from_file()` before "
+                    + "running `poses_from_init_file()`."
+                )
+            return _parse_poses(init_dict)
+    else:
+        return _parse_poses(init_dict)
 
 
 # Output functions
@@ -319,9 +442,9 @@ def dump_base64(inp, output_filename):
 
     @klimaj
     """
-    if not output_filename.endswith((".base64", ".b64", ".B64", ".pose")):
+    if not output_filename.endswith(".b64_pose"):
         warnings.warn(
-            "Output filename does not end with '.base64', '.b64', '.B64', or '.pose', "
+            "Output filename does not end with '.b64_pose', "
             + "which `pyrosetta.distributed.io.pose_from_file` expects."
         )
     with open(output_filename, "w") as f:
@@ -335,9 +458,9 @@ def dump_pickle(inp, output_filename):
 
     @klimaj
     """
-    if not output_filename.endswith((".pickle", ".pickled_pose")):
+    if not output_filename.endswith(".pkl_pose"):
         warnings.warn(
-            "Output filename does not end with '.pickle' or '.pickled_pose', "
+            "Output filename does not end with '.pkl_pose', "
             + "which `pyrosetta.distributed.io.pose_from_file` expects."
         )
     with open(output_filename, "wb") as f:

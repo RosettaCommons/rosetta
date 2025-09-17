@@ -27,6 +27,7 @@ from datetime import datetime
 from functools import wraps
 from pyrosetta.distributed.cluster.converters import _parse_protocols
 from pyrosetta.distributed.cluster.initialization import (
+    _get_norm_task_options,
     _get_residue_type_set_name3 as _get_residue_type_set,
 )
 from pyrosetta.distributed.cluster.serialization import Serialization
@@ -198,6 +199,7 @@ def capture_task_metadata(func: M) -> M:
         protocol: Callable[..., Any],
         packed_pose: PackedPose,
         datetime_format: str,
+        norm_task_options: bool,
         ignore_errors: bool,
         protocols_key: str,
         decoy_ids: List[int],
@@ -222,12 +224,23 @@ def capture_task_metadata(func: M) -> M:
             kwargs["PyRosettaCluster_seeds"] = []
         kwargs["PyRosettaCluster_seeds"].append((protocol_name, str(seed)))
         kwargs["PyRosettaCluster_seed"] = seed
+        if norm_task_options:
+            options = _get_norm_task_options(ignore_errors)
+            if "extra_options" in kwargs["PyRosettaCluster_task"]:
+                kwargs["PyRosettaCluster_task"]["extra_options"] = options
+                if "options" in kwargs["PyRosettaCluster_task"]:
+                    kwargs["PyRosettaCluster_task"]["options"] = ""
+            elif "options" in kwargs["PyRosettaCluster_task"]:
+                kwargs["PyRosettaCluster_task"]["options"] = options
+            else:
+                kwargs["PyRosettaCluster_task"]["extra_options"] = options
 
         return func(
             protocol_name,
             protocol,
             packed_pose,
             datetime_format,
+            norm_task_options,
             ignore_errors,
             protocols_key,
             decoy_ids,
