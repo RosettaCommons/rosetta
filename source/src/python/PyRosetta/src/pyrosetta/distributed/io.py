@@ -66,9 +66,11 @@ def pose_from_file(*args, **kwargs):
         - base64-encoded files ending with file extension: ".b64_pose"
             *Warning*: This function uses the pickle module to deserialize ".b64_pose" files.
             Using the pickle module is not secure, so please only run with ".b64_pose" files you trust.
+            Learn more about the pickle module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
         - pickle-encoded files ending with file extension: ".pkl_pose"
             *Warning*: This function uses the pickle module to deserialize ".pkl_pose" files.
             Using the pickle module is not secure, so please only run with ".pkl_pose" files you trust.
+            Learn more about the pickle module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
     Otherwise, implements `io.to_packed(pyrosetta.io.pose_from_file(*args, **kwargs))`.
 
     @klimaj
@@ -127,6 +129,7 @@ def pose_from_base64(filename):
     """
     *Warning*: This function uses the pickle module to deserialize the input filename.
     Using the pickle module is not secure, so please only run with input files you trust.
+    Learn more about the pickle module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Load a `PackedPose` object from a base64-encoded pickled Pose file.
 
@@ -157,6 +160,7 @@ def pose_from_pickle(filename):
     """
     *Warning*: This function uses the pickle module to deserialize the input filename.
     Using the pickle module is not secure, so please only run with input files you trust.
+    Learn more about the pickle module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Load a `PackedPose` object from a pickled Pose file.
 
