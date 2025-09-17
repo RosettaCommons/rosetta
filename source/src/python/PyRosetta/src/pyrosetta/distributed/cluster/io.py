@@ -38,7 +38,10 @@ from datetime import datetime
 from pyrosetta.rosetta.core.pose import Pose, add_comment, get_all_comments
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.rosetta.basic import was_init_called
-from pyrosetta.utility.initialization import PyRosettaInitFileReader
+from pyrosetta.utility.initialization import (
+    PyRosettaInitDictWriter,
+    PyRosettaInitFileReader,
+)
 from typing import (
     Any,
     Dict,
@@ -222,6 +225,26 @@ class IO(Generic[G]):
 
         return kwargs
 
+    def _get_init_file_json(self, packed_pose: PackedPose) -> str:
+        """Return a PyRosetta initialization file as a JSON-serialized string."""
+
+        metadata, poses = sign_init_file_metadata_and_poses(
+            input_packed_pose=self.input_packed_pose,
+            output_packed_pose=packed_pose,
+        )
+        writer = PyRosettaInitDictWriter(
+            poses=poses,
+            author=self.author,
+            email=self.email,
+            license=self.license,
+            metadata=metadata,
+            overwrite=False,
+            dry_run=self.dry_run,
+            verbose=False,
+        )
+
+        return writer.get_json()
+
     @staticmethod
     def _add_pose_comment(packed_pose: PackedPose, pdbfile_data: str) -> PackedPose:
         """Cache simulation data as a pose comment."""
@@ -350,28 +373,15 @@ class IO(Generic[G]):
             # Output PyRosetta initialization file
             if ".init" in self.output_decoy_types:
                 _packed_pose = IO._add_pose_comment(packed_pose, pdbfile_data)
+                init_file_json = self._get_init_file_json(_packed_pose)
                 output_init_file = os.path.join(output_dir, decoy_name + ".init")
                 if self.compressed:
-                    with tempfile.TemporaryDirectory() as tmp_dir:
-                        _tmp_init_file = os.path.join(tmp_dir, "tmp.init")
-                        self._dump_init_file(
-                            _tmp_init_file,
-                            input_packed_pose=self.input_packed_pose,
-                            output_packed_pose=_packed_pose,
-                            verbose=False,
-                        )
-                        with open(_tmp_init_file, "r") as f:
-                            init_file_str = f.read()
                     output_init_file += ".bz2"
                     with open(output_init_file, "wb") as f:
-                        f.write(bz2.compress(str.encode(init_file_str)))
+                        f.write(bz2.compress(str.encode(init_file_json)))
                 else:
-                    self._dump_init_file(
-                        output_init_file,
-                        input_packed_pose=self.input_packed_pose,
-                        output_packed_pose=_packed_pose,
-                        verbose=False,
-                    )
+                    with open(output_init_file, "w") as f:
+                        f.write(init_file_json)
 
             # Output JSON-encoded scorefile
             if ".json" in self.output_scorefile_types:
@@ -624,7 +634,16 @@ def get_poses_from_init_file(
         else:
             return None
 
-    init_dict = PyRosettaInitFileReader.read_json(init_file)
+    if not isinstance(init_file, str):
+        raise TypeError(f"The 'init_file' argument parameter must be a `str` object. Received: {type(init_file)}")
+    if init_file.endswith(".init.bz2"):
+        with open(init_file, "rb") as fbz2:
+            init_dict = PyRosettaInitFileReader.from_json(bz2.decompress(fbz2.read()).decode())
+    elif init_file.endswith(".init"):
+        init_dict = PyRosettaInitFileReader.read_json(init_file)
+    else:
+        raise ValueError("The 'init_file' argument parameter must end with '.init' or '.init.bz2'.")
+
     metadata = init_dict["metadata"]
     poses = init_dict["poses"]
     _get_packed_pose = _maybe_to_packed(poses=poses, metadata=metadata)
