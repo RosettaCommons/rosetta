@@ -16,6 +16,7 @@ __author__ = "Jason C. Klima"
 
 import base64
 import collections
+import copy
 import datetime
 import hashlib
 import inspect
@@ -236,20 +237,28 @@ class PyRosettaInitFileSerializer(object):
         )
 
     @staticmethod
+    def to_json(init_dict):
+        return json.dumps(
+            init_dict,
+            skipkeys=False,
+            ensure_ascii=False,
+            check_circular=True,
+            allow_nan=False,
+            cls=None,
+            indent=None,
+            separators=(", ", ": "),
+            default=None,
+            sort_keys=True,
+        )
+
+    @staticmethod
+    def from_json(string):
+        return PyRosettaInitFileSerializer().load_json(string)
+
+    @staticmethod
     def get_md5(init_dict):
         return hashlib.md5(
-            json.dumps(
-                init_dict,
-                skipkeys=False,
-                ensure_ascii=False,
-                check_circular=True,
-                allow_nan=False,
-                cls=None,
-                indent=None,
-                separators=(",", ":"),
-                default=None,
-                sort_keys=True,
-            ).encode(PyRosettaInitFileSerializer._encoding)
+            PyRosettaInitFileSerializer.to_json(init_dict).encode(PyRosettaInitFileSerializer._encoding)
         ).hexdigest()
 
 
@@ -268,12 +277,6 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         if not output_filename.endswith(self._init_file_extension):
             raise NameError(
                 "Output file must end with the '{0}' filename extension.".format(self._init_file_extension)
-            )
-        if os.path.isfile(output_filename) and not self.kwargs["overwrite"]:
-            raise FileExistsError(
-                "Output '{0}' file already exists! Please remove the file and try again: '{1}'".format(
-                    self._init_file_extension, output_filename
-                )
             )
 
         return output_filename
@@ -535,24 +538,44 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
                 sort_keys=True,
             )
 
-    def dump(self):
+    def get_dict(self):
+        init_data = {k: v for k, v in self.kwargs.items() if k not in ("overwrite", "dry_run", "verbose")}
         encoded_options_dict = self.get_encoded_options_dict()
         encoded_options_dict.pop(self._database_option_name, None)
-        overwrite = self.kwargs.pop("overwrite")
-        dry_run = self.kwargs.pop("dry_run")
-        verbose = self.kwargs.pop("verbose")
-        self.kwargs["num_files"] = len(self.cached_files)
-        self.kwargs["num_poses"] = len(self.kwargs["poses"])
+        init_data["num_files"] = len(self.cached_files)
+        init_data["num_poses"] = len(init_data["poses"])
         data_dict = {
-            **self.kwargs,
+            **init_data,
             "options": encoded_options_dict,
         }
         data_dict["md5"] = PyRosettaInitFileSerializer.get_md5(data_dict)
-        if verbose:
-            self.print_cached_files(dry_run)
-        if not dry_run and ((not os.path.isfile(self.output_filename)) or overwrite):
+        for key in self._required_keys:
+            if key not in data_dict:
+                raise KeyError(
+                    "The output PyRosetta initialization file `dict` object "
+                    + "requires the '{0}' key. Received keys: {1}".format(
+                        key, list(data_dict.keys())
+                    )
+                )
+
+        return data_dict
+
+    def get_json(self):
+        return PyRosettaInitFileSerializer.to_json(self.get_dict())
+
+    def dump(self):
+        data_dict = self.get_dict()
+        if self.kwargs["verbose"]:
+            self.print_cached_files(self.kwargs["dry_run"])
+        if not self.kwargs["dry_run"]:
+            if os.path.isfile(self.output_filename) and not self.kwargs["overwrite"]:
+                raise FileExistsError(
+                    "Output '{0}' file already exists! Please remove the file and try again: '{1}'".format(
+                        self._init_file_extension, self.output_filename
+                    )
+                )
             PyRosettaInitFileWriter.write_json(data_dict, self.output_filename)
-            if verbose:
+            if self.kwargs["verbose"]:
                 print(
                     f"Dumped PyRosetta '{self._init_file_extension}' file size:",
                     round(os.path.getsize(self.output_filename) * 1e-6, 3),
@@ -564,7 +587,7 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
 class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSerializer):
     def __init__(self, init_file, **kwargs):
         self.init_file = init_file
-        self.init_dict = self.setup_init_dict(init_file)
+        self.init_dict = self.setup_init_dict(PyRosettaInitFileReader.read_json(init_file))
         self.kwargs = self.setup_kwargs(**kwargs)
         self.file_counter = 0
 
@@ -655,6 +678,10 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         return kwargs
 
     @staticmethod
+    def from_json(string):
+        return PyRosettaInitFileSerializer.from_json(string)
+
+    @staticmethod
     def read_json(init_file):
         if (
             isinstance(init_file, str)
@@ -685,8 +712,7 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
                 )
             )
 
-    def setup_init_dict(self, init_file):
-        _init_dict = PyRosettaInitFileReader.read_json(init_file)
+    def setup_init_dict(self, _init_dict):
         _md5 = _init_dict.pop("md5", None)
         _expected_md5 = PyRosettaInitFileSerializer.get_md5(_init_dict)
         self.md5_warning(_md5, _expected_md5)
@@ -823,6 +849,8 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
                         self.file_counter, self.kwargs["output_dir"]
                     )
                 )
+
+    def print_info(self):
         print(
             "Author(s): {0}".format(self.init_dict["author"]),
             "E-mail(s): {0}".format(self.init_dict["email"]),
@@ -863,6 +891,7 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         options = self.get_options()
         if self.kwargs["verbose"]:
             self.print_results()
+            self.print_info()
             self.pprint_options(options)
         if not self.kwargs["dry_run"]:
             pyrosetta.init(
@@ -872,6 +901,36 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
                 notebook=self.kwargs["notebook"],
                 silent=self.kwargs["silent"],
             )
+
+
+class PyRosettaInitDictReader(PyRosettaInitFileReader):
+    def __init__(self, init_dict, **kwargs):
+        self.init_dict = self.setup_init_dict(copy.deepcopy(init_dict))
+        self.kwargs = self.setup_kwargs(**kwargs)
+        self.file_counter = 0
+
+    @property
+    def _malformed_init_file_error_msg(self):
+        return "Cannot read malformed PyRosetta '{0}' dictionary keys: {1}".format(
+            self._init_file_extension, list(self.init_dict.keys())
+        )
+
+    def print_results(self):
+        if self.kwargs["dry_run"]:
+            print("Dry run PyRosetta initialization from dictionary keys: {0}".format(list(self.init_dict.keys())))
+            if self.file_counter == 0:
+                print("No PyRosetta input files to decompress.")
+            else:
+                print("Decompressed {0} PyRosetta input file(s).".format(self.file_counter))
+        else:
+            print("Initializing PyRosetta from dictionary keys: {0}".format(list(self.init_dict.keys())))
+            if self.file_counter == 0:
+                print("No PyRosetta input files to decompress.")
+            else:
+                print("Decompressed {0} PyRosetta input file(s) written to: {1}".format(
+                        self.file_counter, self.kwargs["output_dir"]
+                    )
+                )
 
 
 class PyRosettaInitFileParser(object):
