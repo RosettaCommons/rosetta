@@ -1,4 +1,5 @@
 """IO routines operating on PackedPose representations."""
+import bz2
 import functools
 import json
 import os
@@ -15,6 +16,7 @@ from pyrosetta.distributed.packed_pose import (
     pack_result, pose_result, to_pose, to_packed, to_dict, to_base64, to_pickle, register_container_traversal
 )
 from pyrosetta.rosetta.basic import was_init_called
+from pyrosetta.utility.initialization import PyRosettaInitDictReader, PyRosettaInitFileReader
 
 
 __all__ = [
@@ -26,6 +28,7 @@ __all__ = [
     "pose_from_pdb",
     "pose_from_base64",
     "pose_from_pickle",
+    "pose_from_init_file",
     "poses_from_files",
     "poses_from_sequences",
     "poses_from_multimodel_pdb",
@@ -63,9 +66,11 @@ def pose_from_file(*args, **kwargs):
         - base64-encoded files ending with file extension: ".b64_pose"
             *Warning*: This function uses the pickle module to deserialize ".b64_pose" files.
             Using the pickle module is not secure, so please only run with ".b64_pose" files you trust.
+            Learn more about the pickle module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
         - pickle-encoded files ending with file extension: ".pkl_pose"
             *Warning*: This function uses the pickle module to deserialize ".pkl_pose" files.
             Using the pickle module is not secure, so please only run with ".pkl_pose" files you trust.
+            Learn more about the pickle module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
     Otherwise, implements `io.to_packed(pyrosetta.io.pose_from_file(*args, **kwargs))`.
 
     @klimaj
@@ -124,6 +129,7 @@ def pose_from_base64(filename):
     """
     *Warning*: This function uses the pickle module to deserialize the input filename.
     Using the pickle module is not secure, so please only run with input files you trust.
+    Learn more about the pickle module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Load a `PackedPose` object from a base64-encoded pickled Pose file.
 
@@ -154,6 +160,7 @@ def pose_from_pickle(filename):
     """
     *Warning*: This function uses the pickle module to deserialize the input filename.
     Using the pickle module is not secure, so please only run with input files you trust.
+    Learn more about the pickle module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Load a `PackedPose` object from a pickled Pose file.
 
@@ -217,6 +224,7 @@ def poses_from_init_file(filename):
     """
     *Warning*: This function uses the pickle module to deserialize the input filename.
     Using the pickle module is not secure, so please only run with input files you trust.
+    Learn more about the pickle module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Return a `list` object of `PackedPose` objects from a '.init' file if PyRosetta
     is initialized. If PyRosetta is not yet initialized, then first initialize PyRosetta
@@ -236,60 +244,58 @@ def _poses_from_none(none):
 @poses_from_init_file.register(str)
 def _poses_from_str(filename):
 
-    def _parse_poses(filename):
-        with open(filename, "r") as f:
-            init_dict = json.load(
-                f,
-                cls=None,
-                object_hook=None,
-                parse_float=None,
-                parse_int=None,
-                parse_constant=None,
-                object_pairs_hook=None,
-            )
+    def _parse_poses(init_dict):
         objs = init_dict.get("poses", [])
         assert isinstance(objs, list), (
             f"The 'poses' key value must be a `list` object! Received: {type(objs)}"
         )
         return [to_packed(to_pose(obj)) for obj in objs]
 
-    if filename.endswith(".init") and os.path.isfile(filename):
-        if was_init_called():
-            return _parse_poses(filename)
-        else:
-            with tempfile.TemporaryDirectory() as tmp_dir:
-                try:
-                    pyrosetta.init_from_file(
-                        filename,
-                        output_dir=os.path.join(tmp_dir, "pyrosetta_init_input_files"),
-                        skip_corrections=False,
-                        relative_paths=False,
-                        dry_run=False,
-                        max_decompressed_bytes=None,
-                        database=None,
-                        verbose=True,
-                        set_logging_handler=None,
-                        notebook=None,
-                        silent=False,
-                    )
-                except BufferError as ex:
-                    raise BufferError(
-                        f"{ex}. Please run `pyrosetta.init_from_file` with a larger `max_decompressed_bytes` "
-                        + "keyword argument parameter before running `poses_from_init_file()` to initialize PyRosetta "
-                        + f"with the input PyRosetta initialization file: '{filename}'"
-                    )
-                except Exception as ex:
-                    raise Exception(
-                        f"{type(ex).__name__}: {ex}. Could not initialize PyRosetta from the input PyRosetta "
-                        + f"initialization file: '{filename}'. Please run `pyrosetta.init_from_file` before "
-                        + "running `poses_from_init_file()`."
-                    )
-                return _parse_poses(filename)
-    else:
+    if not filename.endswith((".init", ".init.bz2")) or not os.path.isfile(filename):
         raise ValueError(
-            "The input filename must be an instance of `str`, must end with the "
-            + f"'.init' extension, and must be a file on disk. Received: {filename}"
+            "The input filename must be an instance of `str`, must end with the '.init' "
+            + f"or '.init.bz2' extension, and must be a file on disk. Received: {filename}"
         )
+
+    if filename.endswith(".init.bz2"):
+        with open(filename, "rb") as fbz2:
+            init_dict = PyRosettaInitFileReader.from_json(
+                bz2.decompress(fbz2.read()).decode()
+            )
+    elif filename.endswith(".init"):
+        init_dict = PyRosettaInitFileReader.read_json(filename)
+
+    if not was_init_called():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            try:
+                PyRosettaInitDictReader(
+                    init_dict,
+                    output_dir=os.path.join(tmp_dir, "pyrosetta_init_input_files"),
+                    skip_corrections=False,
+                    relative_paths=False,
+                    dry_run=False,
+                    max_decompressed_bytes=None,
+                    database=None,
+                    verbose=True,
+                    set_logging_handler=None,
+                    notebook=None,
+                    silent=False,
+                ).init()
+            except BufferError as ex:
+                raise BufferError(
+                    f"{ex}. Please run `pyrosetta.init_from_file()` with a larger 'max_decompressed_bytes' "
+                    + "keyword argument parameter before running `poses_from_init_file()` to initialize PyRosetta "
+                    + f"with the input PyRosetta initialization file: '{filename}'"
+                )
+            except Exception as ex:
+                raise Exception(
+                    f"{type(ex).__name__}: {ex}. Could not initialize PyRosetta from the input PyRosetta "
+                    + f"initialization file: '{filename}'. Please run `pyrosetta.init_from_file()` before "
+                    + "running `poses_from_init_file()`."
+                )
+            return _parse_poses(init_dict)
+    else:
+        return _parse_poses(init_dict)
 
 
 # Output functions

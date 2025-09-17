@@ -31,6 +31,7 @@ def main(tmp_dir):
     assert not was_init_called(), "PyRosetta is already initialized before calling `io.poses_from_init_file`."
     none = io.poses_from_init_file(None)
     assert none is None, "NoneType I/O failed."
+    assert not was_init_called(), "PyRosetta is initialized after running `io.poses_from_init_file(None)`."
     packed_poses = io.poses_from_init_file(init_file)
     assert was_init_called(), "PyRosetta is not initialized after calling `io.poses_from_init_file`."
     assert len(packed_poses) == 1, f"Number of PackedPose objects failed: {len(packed_poses)}"
