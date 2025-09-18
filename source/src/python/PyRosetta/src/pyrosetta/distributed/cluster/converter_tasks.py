@@ -678,7 +678,8 @@ def parse_init_file(
 ) -> Union[Tuple[Optional[PackedPose], PackedPose], NoReturn]:
     """
     Return a `tuple` object of the input `PackedPose` object and the output `PackedPose`
-    object from a '.init' file, verifying PyRosettaCluster metadata in the '.init' file.
+    object from a '.init' or '.init.bz2' file, verifying PyRosettaCluster metadata in the
+    '.init' or '.init.bz2' file.
     """
 
     if not was_init_called():
@@ -702,7 +703,7 @@ def parse_init_file(
                     stacklevel=3,
                 )
         try:
-            pyrosetta.init_from_file(input_file, **init_from_file_kwargs)
+            io.init_from_file(input_file, **init_from_file_kwargs)
         except BufferError as ex:
             raise BufferError(
                 f"{ex}. Please set a larger 'max_decompressed_bytes' parameter in the 'init_from_file_kwargs' "
@@ -713,17 +714,17 @@ def parse_init_file(
             raise Exception(
                 f"{type(ex).__name__}: {ex}. Could not initialize PyRosetta from the input PyRosetta initialization "
                 + f"file '{input_file}' using `pyrosetta.init_from_file()` keyword arguments: '{init_from_file_kwargs}'. "
-                + "Please ensure `pyrosetta.init_from_file()` runs with the '.init' file separately before passing it "
-                + "into `reproduce()`, and update any necessary `pyrosetta.init_from_file()` keyword arguments in the "
-                + "'init_from_file_kwargs' keyword argument parameter of the `reproduce()` function. The '.init' file "
-                + "may also be passed to `reproduce()` after a separate PyRosetta initialization."
+                + "Please ensure `pyrosetta.distributed.io.init_from_file()` runs with the '.init' or '.init.bz2' file "
+                + "separately before passing it into `reproduce()`, and update any necessary `pyrosetta.init_from_file()` "
+                + "keyword arguments in the 'init_from_file_kwargs' keyword argument parameter of the `reproduce()` function. "
+                + "The '.init' or '.init.bz2' file may also be passed to `reproduce()` after a separate PyRosetta initialization."
             )
     else:
         _skip_corrections_warning_msg = (
-            "Please ensure that PyRosetta was initialized from the same '.init' file using `pyrosetta.init_from_file"
-            + f"(skip_corrections={skip_corrections})` before running the `reproduce()` function. To silence this "
-            + "warning, please ensure that PyRosetta is not already initialized before running the `reproduce()` "
-            + f"function with the input PyRosetta initialization file: '{input_file}'"
+            "Please ensure that PyRosetta was initialized from the same PyRosetta initialization file using "
+            + f"`pyrosetta.init_from_file(skip_corrections={skip_corrections})` before running the `reproduce()` "
+            + "function. To silence this warning, please ensure that PyRosetta is not already initialized before "
+            + f"running the `reproduce()` function with the input PyRosetta initialization file: '{input_file}'"
         )
         if skip_corrections:
             warnings.warn(

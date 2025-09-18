@@ -655,7 +655,7 @@ def reproduce(
 
     _tmp_dir = None
     if isinstance(input_file, str):
-        if input_file.endswith(".init"):
+        if input_file.endswith((".init", ".init.bz2")):
             _tmp_dir = tempfile.TemporaryDirectory(prefix="PyRosettaCluster_reproduce_")
             default_init_from_file_kwargs = dict(
                 output_dir=os.path.join(_tmp_dir.name, "pyrosetta_init_input_files"),

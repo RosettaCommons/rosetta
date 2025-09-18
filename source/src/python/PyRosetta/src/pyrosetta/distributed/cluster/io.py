@@ -38,6 +38,7 @@ from datetime import datetime
 from pyrosetta.rosetta.core.pose import Pose, add_comment, get_all_comments
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.rosetta.basic import was_init_called
+from pyrosetta.utility.exceptions import PyRosettaIsNotInitializedError
 from pyrosetta.utility.initialization import (
     PyRosettaInitDictWriter,
     PyRosettaInitFileReader,
@@ -613,14 +614,13 @@ def get_poses_from_init_file(
     def _maybe_to_packed(
         key: str, poses: List[str], metadata: Dict[str, str]
     ) -> Union[Optional[PackedPose], NoReturn]:
-        assert was_init_called(), (
-            f"Please first initialize PyRosetta with the 'init_file' argument parameter: '{init_file}'"
-        )
         assert isinstance(metadata, dict), (
-            f"The '.init' file 'metadata' key value must be a `dict` object. Received: {type(metadata)}"
+            "The PyRosetta initialization file 'metadata' key value must be a `dict` object. "
+            + f"Received: {type(metadata)}"
         )
         assert isinstance(poses, list), (
-            f"The '.init' file 'poses' key value must be a `list` object. Received: {type(poses)}"
+            "The PyRosetta initialization file 'poses' key value must be a `list` object. "
+            + f"Received: {type(poses)}"
         )
         if key in metadata:
             idx = metadata[key]
@@ -628,12 +628,16 @@ def get_poses_from_init_file(
                 return io.to_packed(io.to_pose(poses[idx]))
             else:
                 raise TypeError(
-                    f"The '.init' file metadata '{key}' key value must be an `int` object. "
+                    f"The PyRosetta initialization file metadata '{key}' key value must be an `int` object. "
                     + f"Received: {type(idx)}"
                 )
         else:
             return None
 
+    if not was_init_called():
+        raise PyRosettaIsNotInitializedError(
+            f"Please first initialize PyRosetta with the 'init_file' argument parameter: '{init_file}'"
+        )
     if not isinstance(init_file, str):
         raise TypeError(f"The 'init_file' argument parameter must be a `str` object. Received: {type(init_file)}")
     if init_file.endswith(".init.bz2"):
