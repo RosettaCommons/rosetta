@@ -554,6 +554,8 @@ def pyrosetta_documentation(kind, rosetta_dir, working_dir, platform, config, hp
     result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, skip_compile=debug, version=version_file)
 
     packages: str = get_required_pyrosetta_python_packages_for_testing(platform, static_versions=False) + ' sphinx==5.2.3'
+    # packages: str = ' '.join(get_required_pyrosetta_python_packages_for_release_package(platform, static_versions=False, distributed_packages=False) + ['sphinx==5.2.3'] )
+
     # python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
     python_virtual_environment = setup_python_virtual_environment(f'{working_dir}/.venv', result.python_environment, packages)
 
@@ -584,10 +586,11 @@ def pyrosetta_documentation(kind, rosetta_dir, working_dir, platform, config, hp
             with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
 
         else:
+            release_documentation_root = f'{release_root}/PyRosetta4/documentation'
+            if not os.path.isdir(release_documentation_root): os.makedirs(release_documentation_root)
+            with FileLock( f'{release_documentation_root}/.release.lock' ):
 
-            with FileLock( f'{release_root}/PyRosetta4/documentation/.release.lock' ):
-
-                release_path = '{release_root}/PyRosetta4/documentation/PyRosetta-4.documentation.{branch}.{kind}.python{python_version}.{os}'.format(branch=config['branch'], os=platform['os'], python_version=platform['python'].replace('.', ''), **vars())
+                release_path = '{release_documentation_root}/PyRosetta-4.documentation.{branch}.{kind}.python{python_version}.{os}'.format(release_documentation_root=release_documentation_root, branch=config['branch'], os=platform['os'], python_version=platform['python'].replace('.', ''), **vars())
 
                 if os.path.isdir(release_path): shutil.rmtree(release_path)
                 shutil.move(documentation_dir, release_path)

@@ -62,5 +62,5 @@ class BasicTest(unittest.TestCase):
         ).distribute(protocols=[my_pyrosetta_protocol, my_pyrosetta_protocol_2])
 
 
-if __name__ == "__main__":
-    unittest.main(verbosity=2)
+# if __name__ == "__main__":
+#     unittest.main(verbosity=2)
