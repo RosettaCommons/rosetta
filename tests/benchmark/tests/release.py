@@ -590,7 +590,7 @@ def pyrosetta_documentation(kind, rosetta_dir, working_dir, platform, config, hp
             if not os.path.isdir(release_documentation_root): os.makedirs(release_documentation_root)
             with FileLock( f'{release_documentation_root}/.release.lock' ):
 
-                release_path = '{release_documentation_root}/PyRosetta-4.documentation.{branch}.{kind}.python{python_version}.{os}'.format(release_documentation_root=release_documentation_root, branch=config['branch'], os=platform['os'], python_version=platform['python'].replace('.', ''), **vars())
+                release_path = '{release_documentation_root}/PyRosetta-4.documentation.{branch}.{kind}.python{python_version}.{os}'.format(branch=config['branch'], os=platform['os'], python_version=platform['python'].replace('.', ''), **vars())
 
                 if os.path.isdir(release_path): shutil.rmtree(release_path)
                 shutil.move(documentation_dir, release_path)
