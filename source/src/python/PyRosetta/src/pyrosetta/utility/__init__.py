@@ -59,3 +59,16 @@ def get_package_version(distribution_name):
             _version = None
 
     return to_tuple(_version)
+
+
+def has_cereal():
+    try:
+        import pyrosetta.rosetta.cereal as cereal  # noqa: F401
+    except ImportError:
+        return False
+    try:
+        assert hasattr(cereal, "BinaryInputArchive")
+        assert hasattr(cereal, "BinaryOutputArchive")
+        return True
+    except AssertionError:
+        return False
