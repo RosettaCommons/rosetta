@@ -6,6 +6,7 @@
 # (c) For more information, see http://www.rosettacommons.org.
 # (c) Questions about this can be addressed to University of Washington CoMotion, email: license@uw.edu.
 
+import base64
 import glob
 import math
 import os
@@ -38,6 +39,13 @@ from pyrosetta.rosetta.core.simple_metrics.per_residue_metrics import (
 from pyrosetta.rosetta.core.simple_metrics.composite_metrics import (
     BestMutationsFromProbabilitiesMetric,
     ProtocolSettingsMetric,
+)
+from pyrosetta.secure_unpickle import (
+    SecureSerializerBase,
+    UnpickleSecurityError,
+    UnpickleIntegrityError,
+    get_unpickle_hmac_key,
+    set_unpickle_hmac_key,
 )
 
 
@@ -998,6 +1006,83 @@ class TestPosesToSilent(unittest.TestCase):
                     all_atom_rmsd(test_poses[i], returned_poses[i]), 
                     places=3,
                     msg="List position recovery failed.")
+
+
+class TestPoseSecureUnpickler(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        pyrosetta.init("-run:constant_seed 1")
+
+    def test_secure_unpickler(self):
+        # Test secure packages
+        self.assertIn("numpy", pyrosetta.get_secure_packages())
+        pyrosetta.clear_secure_packages()
+        self.assertEqual(pyrosetta.get_secure_packages(), ())
+        pyrosetta.add_secure_package("pandas.core.frame")  # Normalizes to 'pandas'
+        self.assertEqual(pyrosetta.get_secure_packages(), ("pandas",))
+        pyrosetta.add_secure_package("pandas")  # Also normalizes to 'pandas'
+        self.assertEqual(pyrosetta.get_secure_packages(), ("pandas",))
+        pyrosetta.remove_secure_package("pandas.io.parquet")  # Also normalizes to 'pandas'
+        self.assertEqual(pyrosetta.get_secure_packages(), ())
+        pyrosetta.clear_secure_packages()
+        pyrosetta.set_secure_packages(("numpy",))
+        self.assertEqual(pyrosetta.get_secure_packages(), ("numpy",))
+
+        # Test secure serialization round-trip
+        data = {"foo": [1, 2, 3], "bar": ("String", b"Bytes"), "baz": complex(1, -2)}
+        obj = pickle.dumps(data, protocol=5)
+        key = get_unpickle_hmac_key()
+        if key is not None:
+            obj = SecureSerializerBase._prepend_hmac_tag(obj, key)
+        string = base64.b64encode(obj).decode(SecureSerializerBase._encoder)
+        out = SecureSerializerBase.secure_from_base64_pickle(string)
+        self.assertEqual(out, data)
+
+        # Test a disallowed module
+        class _CauseHavoc:
+            """Problematic class using the `pickle` module to attempt to import and run `os.system`."""
+            def __reduce__(self):
+                import os
+                return (os.system, ("echo 'Wreaking havoc...'",))
+
+        pyrosetta.clear_secure_packages()
+        _obj = pickle.dumps(_CauseHavoc(), protocol=5)
+        with self.assertRaises(UnpickleSecurityError) as ex:
+            _ = SecureSerializerBase.secure_loads(_obj)
+            _msg = str(ex.value)
+            self.assertIn(f"Disallowed unpickling of 'os.system' namespace!\n", _msg)
+            self.assertIn("`pyrosetta.add_secure_package('os')`", _msg)
+
+        # Test custom HMAC key
+        data = {
+            "foo": list(range(10)),
+            "bar": dict(enumerate([complex(1, i) for i in range(10)])),
+            "baz": pyrosetta.pose_from_sequence("TEST"),
+        }
+        _hmac_size = 32
+        set_unpickle_hmac_key(os.urandom(_hmac_size))
+        self.assertEqual(len(get_unpickle_hmac_key()), _hmac_size)
+        string = SecureSerializerBase.secure_to_base64_pickle(data)
+        out = SecureSerializerBase.secure_from_base64_pickle(string)
+        self.assertEqual(out["foo"], data["foo"])
+        self.assertEqual(out["bar"], data["bar"])
+        self.assertIsInstance(out["baz"], pyrosetta.Pose)
+        self.assertEqual(out["baz"].sequence(), data["baz"].sequence())
+        # Test tampering with HMAC tag
+        arr = bytearray(base64.b64decode(string.encode(SecureSerializerBase._encoder)))
+        _hmac_tag_idx = 3
+        self.assertLessEqual(_hmac_tag_idx + 1, _hmac_size)
+        arr[_hmac_tag_idx] ^= int("0x01", 16)
+        string_hmac_tampered = base64.b64encode(bytes(arr)).decode(SecureSerializerBase._encoder)
+        with self.assertRaises(UnpickleIntegrityError):
+            _ = SecureSerializerBase.secure_from_base64_pickle(string_hmac_tampered)
+        # Test tampering with data
+        arr = bytearray(base64.b64decode(string.encode(SecureSerializerBase._encoder)))
+        arr[-1] ^= int("0x01", 16)
+        string_data_tampered = base64.b64encode(bytes(arr)).decode(SecureSerializerBase._encoder)
+        with self.assertRaises(UnpickleIntegrityError):
+            _ = SecureSerializerBase.secure_from_base64_pickle(string_data_tampered)
+        set_unpickle_hmac_key(None)
 
 
 if __name__ == "__main__":
