@@ -139,7 +139,12 @@ class UnpickleSecurityError(pickle.UnpicklingError):
             + "The currently allowed packages to be securely unpickled are: %s\n" % (allowed_sorted,)
             + "The received object requires the %r package. " % (top_package,)
         )
-        if "%s.%s" % (module, name,) in get_disallowed_packages():
+        disallowed = get_disallowed_packages()
+        if (
+            module in disallowed
+            or "%s.%s" % (module, name,) in disallowed
+            or "%s.%s*" % (module, name,) in disallowed
+        ):
             msg += (
                 "However, the '%s.%s' namespace cannot be added to the set of trusted packages " % (module, name)
                 + "since it is permanently disallowed! To view the set of permanently disallowed packages, please run:\n"
@@ -218,7 +223,7 @@ def set_secure_packages(packages: Iterable[str]) -> None:
 def get_disallowed_packages() -> Tuple[str, ...]:
     """
     Return a `tuple` of packages and methods that are permanently disallowed
-    from being unpickled in PyRosetta.
+    from being unpickled in PyRosetta, where '*' matches any string.
     """
     disallowed = set()
     for _package in BLOCKED_PACKAGES:
@@ -227,7 +232,7 @@ def get_disallowed_packages() -> Tuple[str, ...]:
         disallowed.add("%s.%s" % (_package, _method,))
     for _package, _methods in BLOCKED_PREFIXES.items():
         for _method in _methods:
-            disallowed.add("%s.%s" % (_package, _method,))
+            disallowed.add("%s.%s*" % (_package, _method,))
 
     return tuple(sorted(disallowed))
 
