@@ -1057,5 +1057,5 @@ class TestReproducibilityMulti(unittest.TestCase):
         return self.test_reproducibility_from_reproduce(filter_results=True)
 
 
-if __name__ == "__main__":
-    unittest.main(verbosity=2)
+# if __name__ == "__main__":
+#     unittest.main(verbosity=2)

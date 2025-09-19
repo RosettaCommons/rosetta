@@ -1085,5 +1085,5 @@ class TestPoseSecureUnpickler(unittest.TestCase):
         set_unpickle_hmac_key(None)
 
 
-if __name__ == "__main__":
-    unittest.main()
+# if __name__ == "__main__":
+#    unittest.main()

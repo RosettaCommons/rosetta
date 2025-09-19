@@ -21,8 +21,8 @@ def main(root):
     test_cases = (test_case.id() for test_case in flatten(suite))
     print(*test_cases, sep="\n")
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--root", type=str, default=os.curdir, help="Root directory path (Default: '.')")
-    args = parser.parse_args()
-    main(args.root)
+# if __name__ == "__main__":
+#     parser = argparse.ArgumentParser()
+#     parser.add_argument("--root", type=str, default=os.curdir, help="Root directory path (Default: '.')")
+#     args = parser.parse_args()
+#     main(args.root)
