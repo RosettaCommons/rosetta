@@ -164,6 +164,14 @@ class UnpickleSecurityError(pickle.UnpicklingError):
         self._allowed = _allowed
         self._disallowed = _disallowed
 
+class PyRosettaModuleNotFoundError(ModuleNotFoundError):
+    """
+    Subclass of `ModuleNotFoundError` raised when a PyRosetta module is not found under the
+    'pyrosetta.rosetta' namespace or found under the 'pyrosetta' package base directory.
+    """
+    def __init__(self, module: str) -> None:
+        super().__init__("The %r module cannot be found in the PyRosetta install." % (module,))
+
 
 # Methods to update the unpickle-allowed list of secure packages:
 
@@ -304,7 +312,7 @@ class ModuleCache(object):
             ):
                 return True
             else:
-                raise ModuleNotFoundError(module)
+                raise PyRosettaModuleNotFoundError(module)
         else: # Maybe trust other modules
             top = _split_top_package(module)
             if top in SECURE_EXTRA_PACKAGES and ModuleCache._is_under_package(module, top):
