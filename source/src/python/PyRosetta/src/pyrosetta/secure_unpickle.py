@@ -307,7 +307,10 @@ class ModuleCache(object):
 
 
 class SecureUnpickler(pickle.Unpickler):
-    def find_class(self, module, name):
+    """
+    Secure subclass of `pickle.Unpickler` predicated on allowed and disallowed globals, modules, and prefixes.
+    """
+    def find_class(self, module: str, name: str) -> Union[Any, NoReturn]:
         if module in BLOCKED_PACKAGES:
             raise UnpickleSecurityError(module, name, get_secure_packages())
         if (module, name) in BLOCKED_GLOBALS:
@@ -333,7 +336,7 @@ class SecureUnpickler(pickle.Unpickler):
 
 class SecureSerializerBase(object):
     """
-    Base class for for `PackedPose`, `Pose`, and `Pose.cache` score
+    Base class for `PackedPose`, `Pose`, and `Pose.cache` score
     object secure serialization.
     """
     _encoder: str = "utf-8"
