@@ -9,48 +9,36 @@
 __author__ = "Jason C. Klima"
 
 
-import base64
 import collections
-import pickle
+
+from pyrosetta.secure_unpickle import SecureSerializerBase
 
 
 class PoseScoreSerializerBase(object):
     """Base class for `PoseScoreSerializer` methods."""
-
     @staticmethod
     def to_pickle(value):
-        try:
-            return pickle.dumps(value)
-        except (TypeError, OverflowError, MemoryError, pickle.PicklingError) as ex:
-            raise TypeError(
-                "Only pickle-serializable object types are allowed to be set "
-                + "as score values. Received: %r. %s" % (type(value), ex)
-            )
+        return SecureSerializerBase.to_pickle(value)
 
     @staticmethod
     def from_pickle(value):
-        try:
-            return pickle.loads(value)
-        except (TypeError, OverflowError, MemoryError, EOFError, pickle.UnpicklingError) as ex:
-            raise TypeError(
-                "Could not deserialize score value of type %r. %s" % (type(value), ex)
-            )
+        return SecureSerializerBase.secure_loads(value)
 
     @staticmethod
     def to_base64(value):
-        return base64.b64encode(value).decode()
+        return SecureSerializerBase.to_base64(value)
 
     @staticmethod
     def from_base64(value):
-        return base64.b64decode(value, validate=True)
+        return SecureSerializerBase.from_base64(value)
 
     @staticmethod
-    def to_base64_pickle(value):
-        return PoseScoreSerializerBase.to_base64(PoseScoreSerializerBase.to_pickle(value))
+    def to_base64_pickle(obj):
+        return SecureSerializerBase.secure_to_base64_pickle(obj)
 
     @staticmethod
     def from_base64_pickle(value):
-        return PoseScoreSerializerBase.from_pickle(PoseScoreSerializerBase.from_base64(value))
+        return SecureSerializerBase.secure_from_base64_pickle(value)
 
     @staticmethod
     def bool_from_str(value):
