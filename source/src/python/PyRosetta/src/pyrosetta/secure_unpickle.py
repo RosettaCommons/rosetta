@@ -49,9 +49,10 @@ SECURE_EXTRA_PACKAGES: Tuple[str, ...] = ("numpy",)
 BLOCKED_PACKAGES: AbstractSet[str] = {
     "subprocess",  # Block `subprocess.*` calls (including `run`, `check_output`, `Popen`, etc.)
     "ctypes",  # Block arbitrary code
-    # Block pickle alternatives:
+    # Block pickle and alternatives:
     "dill",
     "joblib",
+    "pickle",
     "zodbpickle",
     # Block process spawning:
     "billiard",
@@ -317,9 +318,10 @@ class SecureUnpickler(pickle.Unpickler):
         if module == "builtins" and name in SECURE_PYTHON_BUILTINS:
             return getattr(sys.modules["builtins"], name)
         # For pickle protocols 0 and 1, include `copyreg` unpickle helper function:
-        # if module == "copyreg" and name == "_reconstructor":
-        #     __import__(module)
-        #     return getattr(sys.modules[module], name)
+        if SecureSerializerBase._pickle_protocol in (0, 1):
+            if module == "copyreg" and name == "_reconstructor":
+                __import__(module)
+                return getattr(sys.modules[module], name)
         if ModuleCache._is_allowed_module(module):
             __import__(module)
             return getattr(sys.modules[module], name) 
@@ -334,12 +336,13 @@ class SecureSerializerBase(object):
     Base class for for `PackedPose`, `Pose`, and `Pose.cache` score
     object secure serialization.
     """
-    _encoder = "utf-8"
+    _encoder: str = "utf-8"
+    _pickle_protocol: int = pickle.DEFAULT_PROTOCOL
 
     @staticmethod
     def to_pickle(value: Any) -> Union[bytes, NoReturn]:
         try:
-            return pickle.dumps(value, protocol=5)
+            return pickle.dumps(value, protocol=SecureSerializerBase._pickle_protocol)
         except (TypeError, OverflowError, MemoryError, pickle.PicklingError) as ex:
             raise Exception(
                 "%s: %s. Only pickle-serializable object types are " % (type(ex).__name__, ex,)
