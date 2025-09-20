@@ -49,7 +49,10 @@ SECURE_EXTRA_PACKAGES: Tuple[str, ...] = ("numpy",)
 BLOCKED_PACKAGES: AbstractSet[str] = {
     "subprocess",  # Block `subprocess.*` calls (including `run`, `check_output`, `Popen`, etc.)
     "ctypes",  # Block arbitrary code
-    "dill",  # Block pickle alternative
+    # Block pickle alternatives:
+    "dill",
+    "joblib",
+    "zodbpickle",
     # Block process spawning:
     "billiard",
     "celery",
@@ -110,7 +113,7 @@ def set_unpickle_hmac_key(key: Optional[bytes]) -> None:
 
 def get_unpickle_hmac_key() -> Optional[bytes]:
     """
-    Set the global Hash-based Message Authentication Code (HMAC) key
+    Get the global Hash-based Message Authentication Code (HMAC) key
     for Pose.cache` score object secure serialization.
     """
     return HMAC_KEY
