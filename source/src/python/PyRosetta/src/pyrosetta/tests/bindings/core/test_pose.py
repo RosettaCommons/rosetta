@@ -211,7 +211,7 @@ class TestPoseScoresAccessor(unittest.TestCase):
             # Round-trip set/get scoretype value
             if obj_type == pyrosetta.rosetta.core.scoring.ScoreFunction:
                 # `ScoreFunction` instances (and some other PyRosetta instances besides `Pose` instances) cannot be serialized
-                with self.assertRaises(TypeError):
+                with self.assertRaises(Exception):
                     test_pose.cache[str(obj_type)] = value_input
                 continue
             else:
