@@ -108,14 +108,14 @@ BLOCKED_PREFIXES: Dict[str, Tuple[str, ...]] = {
 
 
 # Hash-based Message Authentication Code (HMAC) key for data integrity:
-HASHMOD: partial = partial(hashlib.blake2s, digest_size=8)
+HASHMOD: partial = partial(hashlib.blake2s, digest_size=16, salt=b'cache')
 HMAC_SIZE: int = HASHMOD().digest_size
 HMAC_KEY: Optional[bytes] = None  # Disabled by default
 
 def set_unpickle_hmac_key(key: Optional[bytes]) -> None:
     """
     Set the global Hash-based Message Authentication Code (HMAC) key
-    for Pose.cache` score object secure serialization.
+    for `Pose.cache` score object secure serialization.
     """
     global HMAC_KEY
     if key is not None and not isinstance(key, bytes):
@@ -128,7 +128,7 @@ def set_unpickle_hmac_key(key: Optional[bytes]) -> None:
 def get_unpickle_hmac_key() -> Optional[bytes]:
     """
     Get the global Hash-based Message Authentication Code (HMAC) key
-    for Pose.cache` score object secure serialization.
+    for `Pose.cache` score object secure serialization.
     """
     return HMAC_KEY
 
