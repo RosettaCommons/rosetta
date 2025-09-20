@@ -279,7 +279,7 @@ class ModuleCache(object):
     Resolve modules and packages by path, and determine if they are allowed or blocked.
     """
     @staticmethod
-    @lru_cache(maxsize=None)
+    @lru_cache(maxsize=1024, typed=True)
     def _package_base_dir(package_name: str) -> Optional[Path]:
         try:
             _package = importlib.import_module(package_name)
@@ -290,7 +290,7 @@ class ModuleCache(object):
         return Path(_file).resolve().parent if _file else None
 
     @staticmethod
-    @lru_cache(maxsize=None)
+    @lru_cache(maxsize=4096, typed=True)
     def _module_file(module_name: str) -> Optional[Path]:
         try:
             _module = importlib.import_module(module_name)
@@ -388,7 +388,7 @@ class SecureSerializerBase(object):
             )
 
     @staticmethod
-    def from_base64(value: str) -> bytes:
+    def from_base64(value: Union[str, bytes]) -> bytes:
         return base64.b64decode(value, validate=True)
 
     @staticmethod
