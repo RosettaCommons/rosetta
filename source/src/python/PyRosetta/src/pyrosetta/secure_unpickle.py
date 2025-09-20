@@ -133,33 +133,36 @@ class UnpickleSecurityError(pickle.UnpicklingError):
     reference disallowed globals and modules.
     """
     def __init__(self, module: str, name: str, allowed: Tuple[str, ...]) -> None:
-        self.module = module
-        self.name = name
-        self.allowed = allowed
-        top_package = _split_top_package(module)
-        allowed_sorted = tuple(sorted(set(("pyrosetta",) + self.allowed)))
-        msg = (
-            "Disallowed unpickling of the '%s.%s' namespace!\n" % (module, name)
-            + "The currently allowed packages to be securely unpickled are: %s\n" % (allowed_sorted,)
-            + "The received object requires the %r package. " % (top_package,)
+        _top_package = _split_top_package(module)
+        _allowed = tuple(sorted(set(("pyrosetta",) + allowed)))
+        _disallowed = get_disallowed_packages()
+        _msg = (
+            "Disallowed unpickling of the '%s.%s' namespace!\n" % (module, name,)
+            + "The currently allowed packages to be securely unpickled are: %s\n" % (_allowed,)
+            + "The received object requires the %r package. " % (_top_package,)
         )
-        disallowed = get_disallowed_packages()
         if (
-            module in disallowed
-            or "%s.%s" % (module, name,) in disallowed
-            or "%s.%s*" % (module, name,) in disallowed
+            module in _disallowed
+            or "%s.%s" % (module, name,) in _disallowed
+            or "%s.%s*" % (module, name,) in _disallowed
         ):
-            msg += (
-                "However, the '%s.%s' namespace cannot be added to the set of trusted packages " % (module, name)
+            _msg += (
+                "However, the '%s.%s' namespace cannot be added to the set of trusted packages " % (module, name,)
                 + "since it is permanently disallowed! To view the set of permanently disallowed packages, "
                 + "please run:\n    `pyrosetta.get_disallowed_packages()`\n"
             )
         else:
-            msg += (
+            _msg += (
                 "To add it to the set of trusted packages, please run the following then try again:\n"
-                + "    `pyrosetta.add_secure_package(%r)`\n" % (top_package,)
+                + "    `pyrosetta.add_secure_package(%r)`\n" % (_top_package,)
             )
-        super().__init__(msg)
+        super().__init__(_msg)
+        self.module = module
+        self.name = name
+        self.allowed = allowed
+        self._top_package = _top_package
+        self._allowed = _allowed
+        self._disallowed = _disallowed
 
 
 # Methods to update the unpickle-allowed list of secure packages:
@@ -216,13 +219,17 @@ def set_secure_packages(packages: Iterable[str]) -> None:
     seen = set()
     out = []
     for package in packages:
+        if not isinstance(package, str):
+            raise TypeError(
+                f"The 'packages' argument parameter items must be of type `str`. Received: {type(package)}"
+            )
         if not package:
             continue
-        top = _split_top_package(str(package))
+        top = _split_top_package(package)
         if top not in seen:
             seen.add(top)
             out.append(top)
-    SECURE_EXTRA_PACKAGES = tuple(out)
+    SECURE_EXTRA_PACKAGES = tuple(sorted(out))
 
 def get_disallowed_packages() -> Tuple[str, ...]:
     """
@@ -321,7 +328,7 @@ class SecureUnpickler(pickle.Unpickler):
         if module == "builtins" and name in SECURE_PYTHON_BUILTINS:
             return getattr(sys.modules["builtins"], name)
         # For pickle protocols 0 and 1, include `copyreg` unpickle helper function:
-        if SecureSerializerBase._pickle_protocol in (0, 1):
+        if SecureSerializerBase._pickle_protocol in (0, 1,):
             if module == "copyreg" and name == "_reconstructor":
                 __import__(module)
                 return getattr(sys.modules[module], name)
@@ -369,8 +376,6 @@ class SecureSerializerBase(object):
             raise Exception(
                 "%s: %s. Could not deserialize value of type %r." % (type(ex).__name__, ex, type(value),)
             )
-        except UnpickleSecurityError as ex:
-            raise UnpickleSecurityError(ex.module, ex.name, ex.allowed) from ex
 
     @staticmethod
     def secure_from_base64_pickle(string: str) -> Any:
