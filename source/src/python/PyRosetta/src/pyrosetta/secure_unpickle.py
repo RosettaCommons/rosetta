@@ -17,6 +17,7 @@ import hmac
 import importlib
 import io
 import pickle
+import pyrosetta.rosetta  # noqa
 import sys
 
 from pathlib import Path
@@ -165,10 +166,16 @@ class UnpickleSecurityError(pickle.UnpicklingError):
                 + "please run:\n    `pyrosetta.get_disallowed_packages()`\n"
             )
         else:
-            _msg += (
-                "To add it to the set of trusted packages, please run the following then try again:\n"
-                + "    `pyrosetta.add_secure_package(%r)`\n" % (_top_package,)
-            )
+            if _top_package in allowed:
+                _msg += (
+                    "However, the %r package is already a trusted package, so the %r module could not be resolved! " % (_top_package, module,)
+                    + "Please consider reporting an issue if the %r module needs to be unpickled for your application." % (module,)
+                )
+            else:
+                _msg += (
+                    "To add it to the set of trusted packages, please run the following then try again:\n"
+                    + "    `pyrosetta.add_secure_package(%r)`\n" % (_top_package,)
+                )
         super().__init__(_msg)
         self.module = module
         self.name = name
@@ -279,6 +286,29 @@ class ModuleCache(object):
     Resolve modules and packages by path, and determine if they are allowed or blocked.
     """
     @staticmethod
+    @lru_cache(maxsize=1, typed=True)
+    def _rosetta_module() -> object:
+        _module = sys.modules.get("pyrosetta.rosetta", None)
+        if _module is None:
+            __import__("pyrosetta.rosetta")
+            _module = sys.modules.get("pyrosetta.rosetta", None)
+            if _module is None:
+                raise ImportError("pyrosetta.rosetta")
+
+        return _module
+
+    @staticmethod
+    @lru_cache(maxsize=1, typed=True)
+    def _rosetta_origin() -> Optional[Path]:
+        _rosetta_module = ModuleCache._rosetta_module()
+        _rosetta_spec = getattr(_rosetta_module, "__spec__", None)
+        _rosetta_origin = getattr(_rosetta_spec, "origin", None) or getattr(_rosetta_module, "__file__", None)
+        if _rosetta_origin:
+            _rosetta_origin = Path(_rosetta_origin).resolve()
+
+        return _rosetta_origin
+
+    @staticmethod
     @lru_cache(maxsize=1024, typed=True)
     def _package_base_dir(package_name: str) -> Optional[Path]:
         try:
@@ -320,19 +350,38 @@ class ModuleCache(object):
         )
 
     @staticmethod
+    def _is_under_rosetta(module: str) -> bool:
+        if not (module == "pyrosetta.rosetta" or module.startswith("pyrosetta.rosetta.")):
+            return False
+        _rosetta_module = ModuleCache._rosetta_module()
+        _rosetta_origin = ModuleCache._rosetta_origin()
+        _pyrosetta_base_dir = ModuleCache._package_base_dir("pyrosetta")
+        # Ensure that the `rosetta.so` binary is under the 'pyrosetta' package base directory
+        if _rosetta_origin and _pyrosetta_base_dir and not ModuleCache._is_relative_to(_rosetta_origin, _pyrosetta_base_dir):
+            raise PyRosettaModuleNotFoundError("pyrosetta.rosetta")
+        # Check if submodule has an origin identical to the 'pyrosetta.rosetta' origin
+        _module = sys.modules.get(module, None)
+        if _module is not None:
+            _module_spec = getattr(_module, "__spec__", None)
+            _module_origin = getattr(_module_spec, "origin", None) or getattr(_module, "__file__", None)
+            if _module_origin:
+                return Path(_module_origin).resolve() == _rosetta_origin
+        # Otherwise, walk down attributes of imported module
+        _obj = _rosetta_module
+        for _name in module.split(".")[2:]:  # Skip 'pyrosetta.rosetta'
+            _obj = getattr(_obj, _name, None)
+            if _obj is None:
+                return False
+        # Attribute exists under the 'pyrosetta.rosetta' module
+        return True
+
+    @staticmethod
     def _is_allowed_module(module: str) -> bool:
         # Always trust PyRosetta modules by path
-        if (module == "pyrosetta"):
-            return True
-        if module.startswith("pyrosetta."):
-            if (
-                (module == "pyrosetta.rosetta")
-                or module.startswith("pyrosetta.rosetta.")
-                or ModuleCache._is_under_package(module, "pyrosetta")
-            ):
-                return True
-            else:
-                raise PyRosettaModuleNotFoundError(module)
+        if (module == "pyrosetta" or module.startswith("pyrosetta.")):
+            if (module == "pyrosetta.rosetta" or module.startswith("pyrosetta.rosetta.")):
+                return ModuleCache._is_under_rosetta(module)
+            return ModuleCache._is_under_package(module, "pyrosetta")
         else: # Maybe trust other modules
             top = _split_top_package(module)
             if top in SECURE_EXTRA_PACKAGES and ModuleCache._is_under_package(module, top):
