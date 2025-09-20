@@ -9,6 +9,7 @@
 import base64
 import glob
 import math
+import numpy
 import os
 import pickle
 import pyrosetta
@@ -1083,6 +1084,20 @@ class TestPoseSecureUnpickler(unittest.TestCase):
         with self.assertRaises(UnpickleIntegrityError):
             _ = SecureSerializerBase.secure_from_base64_pickle(string_data_tampered)
         set_unpickle_hmac_key(None)
+
+        pyrosetta.set_secure_packages(("numpy",))
+        for hmac_key in (None,  b"", os.urandom(16), b"TestingMyKey", "String", {1, 2, 3}, {"foo": "bar"}):
+            if not isinstance(hmac_key, (type(None), bytes)):
+                with self.assertRaises(TypeError):
+                    set_unpickle_hmac_key(hmac_key)
+            else:
+                set_unpickle_hmac_key(hmac_key)
+            arr = numpy.array([[1, 2, 3], [4, 5, 6]], dtype=numpy.float64)
+            test_pose = pyrosetta.pose_from_sequence("SEQ")
+            test_pose.cache["test_numpy"] = arr
+            _arr = test_pose.cache["test_numpy"]
+            numpy.testing.assert_equal(arr, _arr)
+            set_unpickle_hmac_key(None)
 
 
 # if __name__ == "__main__":
