@@ -49,7 +49,8 @@ SECURE_EXTRA_PACKAGES: Tuple[str, ...] = ("numpy",)
 BLOCKED_PACKAGES: AbstractSet[str] = {
     "subprocess",  # Block `subprocess.*` calls (including `run`, `check_output`, `Popen`, etc.)
     "ctypes",  # Block arbitrary code
-    # Block pickle and alternatives:
+    # Block pickle and relatives:
+    "cloudpickle",
     "dill",
     "joblib",
     "pickle",
@@ -59,7 +60,18 @@ BLOCKED_PACKAGES: AbstractSet[str] = {
     "celery",
     "dask",
     "distributed",
-    "multiprocessing", 
+    "multiprocessing",
+    # https://docs.python.org/3/library/security_warnings.html:
+    "base64",
+    "hashlib",
+    "http",
+    "logging",
+    "random",
+    "shelve",
+    "ssl",
+    "tempfile",
+    "xml",
+    "zipfile",
 }
 
 # Globals that will always be blocked:
@@ -69,6 +81,7 @@ BLOCKED_GLOBALS: AbstractSet[Tuple[str, str]] = {
     ("builtins", "compile"),
     ("builtins", "__import__"),
     ("builtins", "open"),
+    ("http", "server"),
     ("os", "system"),
     ("os", "popen"),
     ("posix", "system"),
