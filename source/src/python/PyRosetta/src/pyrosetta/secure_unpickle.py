@@ -385,7 +385,7 @@ class SecureSerializerBase(object):
             raise Exception(
                 "%s: %s. Only pickle-serializable object types are " % (type(ex).__name__, ex,)
                 + "allowed to be dumped. Received: %r. %s" % (type(value), ex,)
-            )
+            ) from ex
 
     @staticmethod
     def from_base64(value: Union[str, bytes]) -> bytes:
@@ -403,7 +403,7 @@ class SecureSerializerBase(object):
         except (TypeError, OverflowError, MemoryError, EOFError) as ex:
             raise Exception(
                 "%s: %s. Could not deserialize value of type %r." % (type(ex).__name__, ex, type(value),)
-            )
+            ) from ex
 
     @staticmethod
     def secure_from_base64_pickle(string: str) -> Any:
