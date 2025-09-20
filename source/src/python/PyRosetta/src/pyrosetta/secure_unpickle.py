@@ -345,6 +345,15 @@ class SecureUnpickler(pickle.Unpickler):
     """
     Secure subclass of `pickle.Unpickler` predicated on allowed and disallowed globals, modules, and prefixes.
     """
+    def __init__(self, file: io.BytesIO, *, stream_protocol: int = -1) -> None:
+        super().__init__(file)
+        if not isinstance(stream_protocol, int):
+            raise TypeError(
+                "The 'stream_protocol' keyword argument parameter must be "
+                + "an `int` object. Received: %s" % (type(stream_protocol),)
+            )
+        self._stream_protocol = stream_protocol
+
     def find_class(self, module: str, name: str) -> Union[Any, NoReturn]:
         if module in BLOCKED_PACKAGES:
             raise UnpickleSecurityError(module, name, get_secure_packages())
@@ -355,14 +364,17 @@ class SecureUnpickler(pickle.Unpickler):
         # Builtins:
         if module == "builtins" and name in SECURE_PYTHON_BUILTINS:
             return getattr(sys.modules["builtins"], name)
-        # For pickle protocols 0 and 1, include `copyreg` unpickle helper function:
-        if SecureSerializerBase._pickle_protocol in (0, 1,):
-            if module == "copyreg" and name == "_reconstructor":
+        # Maybe include `copyreg` unpickle helper functions, depending on incoming stream protocol:
+        if module == "copyreg":
+            if (0 <= self._stream_protocol <= 1 and name == "_reconstructor") or (
+                2 <= self._stream_protocol <= pickle.HIGHEST_PROTOCOL and name in ("__newobj__", "__newobj_ex__",)
+            ):
                 __import__(module)
                 return getattr(sys.modules[module], name)
+            raise UnpickleSecurityError(module, name, get_secure_packages())
         if ModuleCache._is_allowed_module(module):
             __import__(module)
-            return getattr(sys.modules[module], name) 
+            return getattr(sys.modules[module], name)
 
         raise UnpickleSecurityError(module, name, get_secure_packages())
 
@@ -398,8 +410,10 @@ class SecureSerializerBase(object):
     @staticmethod
     def secure_loads(value: bytes) -> Any:
         """Secure replacement for `pickle.loads`."""
+        stream = io.BytesIO(initial_bytes=value)
+        stream_protocol = SecureSerializerBase._get_stream_protocol(value)
         try:
-            return SecureUnpickler(io.BytesIO(value)).load()
+            return SecureUnpickler(stream, stream_protocol=stream_protocol).load()
         except (TypeError, OverflowError, MemoryError, EOFError) as ex:
             raise Exception(
                 "%s: %s. Could not deserialize value of type %r." % (type(ex).__name__, ex, type(value),)
@@ -446,3 +460,7 @@ class SecureSerializerBase(object):
             )
 
         return data
+
+    @staticmethod
+    def _get_stream_protocol(obj: bytes) -> int:
+        return obj[1] if len(obj) >= 2 and obj[0] == pickle.PROTO[0] else -1
