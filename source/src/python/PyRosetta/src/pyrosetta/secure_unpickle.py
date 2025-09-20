@@ -269,35 +269,42 @@ class ModuleCache(object):
     @lru_cache(maxsize=None)
     def _package_base_dir(package_name: str) -> Optional[Path]:
         try:
-            package = importlib.import_module(package_name)
+            _package = importlib.import_module(package_name)
         except Exception:
             return None
-        f = getattr(package, "__file__", None)
-        return Path(f).resolve().parent if f else None
+        _file = getattr(_package, "__file__", None)
+
+        return Path(_file).resolve().parent if _file else None
 
     @staticmethod
     @lru_cache(maxsize=None)
-    def _module_file(module: str) -> Optional[Path]:
+    def _module_file(module_name: str) -> Optional[Path]:
         try:
-            mod = importlib.import_module(module)
+            _module = importlib.import_module(module_name)
         except Exception:
             return None
-        f = getattr(mod, "__file__", None)
-        return Path(f).resolve() if f else None
+        _file = getattr(_module, "__file__", None)
+
+        return Path(_file).resolve() if _file else None
 
     @staticmethod
-    def _is_relative_to(p: Path, base: Path) -> bool:
+    def _is_relative_to(path: Path, base: Path) -> bool:
         try:
-            p.relative_to(base)
+            path.relative_to(base)
             return True
         except Exception:
             return False
 
     @staticmethod
     def _is_under_package(module: str, package: str) -> bool:
-        base = ModuleCache._package_base_dir(package)
-        mf = ModuleCache._module_file(module)
-        return bool(base and mf and ModuleCache._is_relative_to(mf, base))
+        _base_dir = ModuleCache._package_base_dir(package)
+        _module_file = ModuleCache._module_file(module)
+
+        return bool(
+            _base_dir
+            and _module_file
+            and ModuleCache._is_relative_to(_module_file, _base_dir)
+        )
 
     @staticmethod
     def _is_allowed_module(module: str) -> bool:
