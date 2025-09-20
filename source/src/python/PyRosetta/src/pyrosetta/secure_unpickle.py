@@ -129,14 +129,14 @@ class UnpickleIntegrityError(pickle.UnpicklingError):
 class UnpickleSecurityError(pickle.UnpicklingError):
     """
     Subclass of `pickle.UnpicklingError` raised when pickled objects
-    reference disallowed globals, classes, or modules.
+    reference disallowed globals and modules.
     """
     def __init__(self, module: str, name: str, allowed: Tuple[str, ...]) -> None:
         self.module = module
         self.name = name
         self.allowed = allowed
         top_package = _split_top_package(module)
-        allowed_sorted = tuple(sorted(set(("pyrosetta",) + allowed)))
+        allowed_sorted = tuple(sorted(set(("pyrosetta",) + self.allowed)))
         msg = (
             "Disallowed unpickling of the '%s.%s' namespace!\n" % (module, name)
             + "The currently allowed packages to be securely unpickled are: %s\n" % (allowed_sorted,)
@@ -150,8 +150,8 @@ class UnpickleSecurityError(pickle.UnpicklingError):
         ):
             msg += (
                 "However, the '%s.%s' namespace cannot be added to the set of trusted packages " % (module, name)
-                + "since it is permanently disallowed! To view the set of permanently disallowed packages, please run:\n"
-                + "    `pyrosetta.get_disallowed_packages()`\n"
+                + "since it is permanently disallowed! To view the set of permanently disallowed packages, "
+                + "please run:\n    `pyrosetta.get_disallowed_packages()`\n"
             )
         else:
             msg += (
@@ -165,7 +165,7 @@ class UnpickleSecurityError(pickle.UnpicklingError):
 
 def add_secure_package(package: str) -> None:
     """
-    Add a secure package by top-level name to the unpickle allowed list.
+    Add a secure package by top-level name to the unpickle-allowed list.
     """
     if not package:
         return None
@@ -189,7 +189,7 @@ def get_secure_packages() -> Tuple[str, ...]:
 
 def remove_secure_package(package: str) -> None:
     """
-    Remove a secure pacakge by top-level name if present in the unpickle allowed list.
+    Remove a secure package by top-level name if present in the unpickle-allowed list.
     """
     if not package:
         return None
@@ -199,7 +199,7 @@ def remove_secure_package(package: str) -> None:
 
 def set_secure_packages(packages: Iterable[str]) -> None:
     """
-    Set the secure extra packages in the unpickle allowed list, excluding 'pyrosetta' which is
+    Set the secure extra packages in the unpickle-allowed list, excluding 'pyrosetta' which is
     always implicitly allowed.
 
     Example:
