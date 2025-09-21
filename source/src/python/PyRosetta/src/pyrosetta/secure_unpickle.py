@@ -418,12 +418,12 @@ class SecureUnpickler(pickle.Unpickler):
             if (0 <= self._stream_protocol <= 1 and name == "_reconstructor") or (
                 2 <= self._stream_protocol <= pickle.HIGHEST_PROTOCOL and name in ("__newobj__", "__newobj_ex__",)
             ):
-                __import__(module)
-                return getattr(sys.modules[module], name)
+                _module = sys.modules.get(module, None) or importlib.import_module(module)
+                return getattr(_module, name)
             raise UnpickleSecurityError(module, name, get_secure_packages())
         if ModuleCache._is_allowed_module(module):
-            __import__(module)
-            return getattr(sys.modules[module], name)
+            _module = sys.modules.get(module, None) or importlib.import_module(module)
+            return getattr(_module, name)
 
         raise UnpickleSecurityError(module, name, get_secure_packages())
 
