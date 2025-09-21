@@ -189,7 +189,7 @@ class UnpickleSecurityError(pickle.UnpicklingError):
 class PyRosettaModuleNotFoundError(ModuleNotFoundError):
     """
     Subclass of `ModuleNotFoundError` raised when a PyRosetta module is not found under the
-    'pyrosetta.rosetta' namespace or found under the 'pyrosetta' package base directory.
+    'pyrosetta.rosetta' virtual submodule.
     """
     def __init__(self, module: str) -> None:
         super().__init__("The %r module cannot be found in the PyRosetta install." % (module,))
@@ -355,23 +355,29 @@ class ModuleCache(object):
     def _is_under_rosetta(module: str) -> bool:
         if not (module == "pyrosetta.rosetta" or module.startswith("pyrosetta.rosetta.")):
             return False
-        _rosetta_module = ModuleCache._rosetta_module()
-        _rosetta_origin = ModuleCache._rosetta_origin()
         # Check if submodule has an origin identical to the 'pyrosetta.rosetta' origin
         _module = sys.modules.get(module, None)
         if _module is not None:
             _module_spec = getattr(_module, "__spec__", None)
             _module_origin = getattr(_module_spec, "origin", None) or getattr(_module, "__file__", None)
             if _module_origin:
-                return Path(_module_origin).resolve() == _rosetta_origin
-        # Otherwise, walk down attributes of imported module
-        _obj = _rosetta_module
+                return Path(_module_origin).resolve() == ModuleCache._rosetta_origin()
+        # Otherwise, walk down attributes of imported virtual submodule
+        if ModuleCache._walk_rosetta_module(module) is None:
+            return False
+        # Otherwise, attribute exists under the 'pyrosetta.rosetta' module
+        return True
+
+    @staticmethod
+    def _walk_rosetta_module(module: str) -> Any:
+        assert (module == "pyrosetta.rosetta" or module.startswith("pyrosetta.rosetta."))
+        _obj = ModuleCache._rosetta_module()
         for _name in module.split(".")[2:]:  # Skip 'pyrosetta.rosetta'
             _obj = getattr(_obj, _name, None)
             if _obj is None:
-                return False
-        # Attribute exists under the 'pyrosetta.rosetta' module
-        return True
+                return None
+
+        return _obj
 
     @staticmethod
     def _is_allowed_module(module: str) -> bool:
@@ -386,6 +392,18 @@ class ModuleCache(object):
                 return True
             else:
                 return False
+
+    @staticmethod
+    def _get_allowed_module_attr(module: str, name: str) -> Any:
+        if (module == "pyrosetta.rosetta" or module.startswith("pyrosetta.rosetta.")):
+            # Prevent re-import; instead walk down attributes of imported virtual submodule
+            _module = ModuleCache._walk_rosetta_module(module)
+            if _module is None:
+                raise PyRosettaModuleNotFoundError(module)
+        else:
+            _module = sys.modules.get(module, None) or importlib.import_module(module)
+
+        return getattr(_module, name)
 
 
 class SecureUnpickler(pickle.Unpickler):
@@ -416,13 +434,10 @@ class SecureUnpickler(pickle.Unpickler):
             if (0 <= self._stream_protocol <= 1 and name == "_reconstructor") or (
                 2 <= self._stream_protocol <= pickle.HIGHEST_PROTOCOL and name in ("__newobj__", "__newobj_ex__",)
             ):
-                _module = sys.modules.get(module, None) or importlib.import_module(module)
-                return getattr(_module, name)
+                return ModuleCache._get_allowed_module_attr(module, name)
             raise UnpickleSecurityError(module, name, get_secure_packages())
         if ModuleCache._is_allowed_module(module):
-            _module = sys.modules.get(module, None) or importlib.import_module(module)
-            return getattr(_module, name)
-
+            return ModuleCache._get_allowed_module_attr(module, name)
         raise UnpickleSecurityError(module, name, get_secure_packages())
 
 
@@ -461,16 +476,16 @@ class SecureSerializerBase(object):
         stream_protocol = SecureSerializerBase._get_stream_protocol(value)
         try:
             return SecureUnpickler(stream, stream_protocol=stream_protocol).load()
-        except (TypeError, OverflowError, MemoryError, EOFError) as ex:
-            raise Exception(
-                "%s: %s. Could not deserialize value of type %r." % (type(ex).__name__, ex, type(value),)
-            ) from ex
+        except (UnpickleSecurityError, UnpickleIntegrityError):
+            raise
         except pickle.UnpicklingError as ex:
             raise pickle.UnpicklingError(
                 f"{ex}. PyRosetta secure unpickle failed with stream protocol {stream_protocol}."
             ) from ex
-        except (UnpickleSecurityError, UnpickleIntegrityError):
-            raise
+        except (TypeError, OverflowError, MemoryError, EOFError) as ex:
+            raise Exception(
+                "%s: %s. Could not deserialize value of type %r." % (type(ex).__name__, ex, type(value),)
+            ) from ex
 
     @staticmethod
     def secure_from_base64_pickle(string: str) -> Any:
