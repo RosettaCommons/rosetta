@@ -951,10 +951,15 @@ class SaveAllTest(unittest.TestCase):
             _project_name = "PyRosettaCluster" if project_name is None else project_name
             _simulation_name = "PyRosettaCluster" if simulation_name is None else simulation_name
             init_file = os.path.join(output_path, f"{_project_name}_{_simulation_name}_pyrosetta.init")
+            if compressed:
+                init_file += ".bz2"
             self.assertTrue(os.path.isfile(init_file))
             for record in data:
                 self.assertTrue(os.path.samefile(init_file, record["metadata"]["init_file"]))
-            init_data = PyRosettaInitFileReader.read_json(init_file)
+            if compressed:
+                init_data = io.read_init_file(init_file)
+            else:
+                init_data = PyRosettaInitFileReader.read_json(init_file)
 
             # Verify output PyRosetta initialization file
             self.assertEqual(init_data["author"], author)
@@ -996,10 +1001,14 @@ class SaveAllTest(unittest.TestCase):
                     self.assertTrue(os.path.isfile(decoy_init_file))
                     with open(decoy_init_file, "rb") as fbz2:
                         decoy_init_data = PyRosettaInitFileReader.from_json(bz2.decompress(fbz2.read()).decode())
+                    _decoy_init_data = io.read_init_file(decoy_init_file)
+                    self.assertDictEqual(decoy_init_data, _decoy_init_data)
                 else:
                     decoy_init_file = os.path.splitext(output_file)[0] + ".init"
                     self.assertTrue(os.path.isfile(decoy_init_file))
                     decoy_init_data = PyRosettaInitFileReader.read_json(decoy_init_file)
+                    _decoy_init_data = io.read_init_file(decoy_init_file)
+                    self.assertDictEqual(decoy_init_data, _decoy_init_data)
 
                 # Verify decoy output PyRosetta initialization file
                 self.assertEqual(decoy_init_data["author"], author)
@@ -1048,16 +1057,45 @@ class SaveAllTest(unittest.TestCase):
                 self.assertTrue(decoy_signer_3.verify_signature(decoy_signature))
 
             custom_output_init_file = os.path.join(workdir, "custom_output.init")
-            export_init_file(output_file, output_init_file=custom_output_init_file) # Test custom output file path
+            export_init_file(
+                output_file,
+                output_init_file=custom_output_init_file,  # Test custom output file path
+                compressed=False,  # Test not compressed
+            )
             self.assertTrue(os.path.isfile(custom_output_init_file))
-            export_init_file(output_file, output_init_file=None) # Test default output file path
-            exported_init_file = (
-                output_file[: -len(f"{output_decoy_types[0]}.bz2")]
-                if compressed
-                else output_file[: -len(output_decoy_types[0])]
-            ) + ".init"
+            export_init_file(
+                output_file,
+                output_init_file=custom_output_init_file,  # Test custom output file path
+                compressed=True,  # Test compressed
+            )
+            custom_output_init_bz2_file = custom_output_init_file + ".bz2"
+            self.assertTrue(os.path.isfile(custom_output_init_bz2_file))
+            if ".init" not in output_decoy_types:
+                export_init_file(
+                    output_file,
+                    output_init_file=None,  # Test default output file path
+                    compressed=compressed,
+                )
+                exported_init_file = (
+                    output_file[: -len(f"{output_decoy_types[0]}.bz2")]
+                    if compressed
+                    else output_file[: -len(output_decoy_types[0])]
+                ) + (".init.bz2" if compressed else ".init")
+            else:
+                exported_init_file = (
+                    output_file[: -len(f"{output_decoy_types[0]}.bz2")]
+                    if compressed
+                    else output_file[: -len(output_decoy_types[0])]
+                ) + "_my_custom.init"
+                export_init_file(
+                    output_file,
+                    output_init_file=exported_init_file,
+                    compressed=compressed,
+                )
+                if compressed:
+                    exported_init_file += ".bz2"
             self.assertTrue(os.path.isfile(exported_init_file))
-            exported_init_data = PyRosettaInitFileReader.read_json(exported_init_file)
+            exported_init_data = io.read_init_file(exported_init_file)
 
             # Verify exported PyRosetta initialization file
             self.assertEqual(exported_init_data["author"], author)
