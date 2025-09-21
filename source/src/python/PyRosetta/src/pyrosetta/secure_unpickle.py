@@ -470,9 +470,7 @@ class SecureSerializerBase(object):
 
     @staticmethod
     def secure_from_base64_pickle(string: str) -> Any:
-        raw = SecureSerializerBase.from_base64(
-            string.encode(SecureSerializerBase._encoder)
-        )
+        raw = SecureSerializerBase.from_base64(string)
         key = get_unpickle_hmac_key()
         if key is not None:
             raw = SecureSerializerBase._verify_and_remove_hmac_tag(key, raw)
