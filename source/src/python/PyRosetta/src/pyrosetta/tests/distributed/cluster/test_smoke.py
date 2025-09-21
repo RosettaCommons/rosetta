@@ -1097,12 +1097,12 @@ class MultipleClientsTest(unittest.TestCase):
             client_1 = Client(cluster_1)
             client_1_repr = repr(client_1)
 
-            client_2 = Client(cluster_2)        
+            client_2 = Client(cluster_2)
             client_2_repr = repr(client_2)
 
             clients = [client_1, client_2]
             clients_indices = [0, 1, 1, 0]
-        
+
             def create_tasks(client_1_repr=client_1_repr, client_2_repr=client_2_repr):
                 for _ in range(1, 3):
                     yield {
@@ -1125,7 +1125,7 @@ class MultipleClientsTest(unittest.TestCase):
                     self.assertEqual(_client_repr, _client_2_repr)
                     self.assertNotEqual(_client_repr, _client_1_repr)
                 self.assertNotIn(_protocol_number, (1, 3))
-            
+
             def my_pyrosetta_protocol_2(packed_pose, **kwargs):
                 _client_repr = kwargs["PyRosettaCluster_client_repr"]
                 _protocol_number = kwargs["PyRosettaCluster_protocol_number"]
@@ -1139,14 +1139,14 @@ class MultipleClientsTest(unittest.TestCase):
                     self.assertEqual(_client_repr, _client_1_repr)
                     self.assertNotEqual(_client_repr, _client_2_repr)
                 self.assertNotIn(_protocol_number, (0, 2))
-            
+
             protocols = [
                 my_pyrosetta_protocol_1,
                 my_pyrosetta_protocol_2,
                 my_pyrosetta_protocol_1,
                 my_pyrosetta_protocol_2,
             ]
-        
+
             instance_kwargs = dict(
                 tasks=create_tasks,
                 input_packed_pose=io.pose_from_sequence("TESTING"),
@@ -1218,7 +1218,7 @@ class ResourcesTest(unittest.TestCase):
                     resources={"foo": 1, "bar": 2, "baz": 3},
                 )
             client = Client(cluster)
-        
+
             def create_tasks():
                 for _ in range(1, 4):
                     yield {
@@ -1226,12 +1226,12 @@ class ResourcesTest(unittest.TestCase):
                         "set_logging_handler": "logging",
                     }
 
-            def my_pyrosetta_protocol_1(packed_pose, **kwargs):   
+            def my_pyrosetta_protocol_1(packed_pose, **kwargs):
                 return packed_pose.update_scores(sequence=packed_pose.pose.sequence())
-            
+
             def my_pyrosetta_protocol_2(packed_pose, **kwargs):
                 return packed_pose
-            
+
             protocols = [
                 my_pyrosetta_protocol_1,
                 my_pyrosetta_protocol_2,
@@ -1326,12 +1326,12 @@ class ResourcesTest(unittest.TestCase):
             client_1 = Client(cluster_1)
             client_1_repr = repr(client_1)
 
-            client_2 = Client(cluster_2)        
+            client_2 = Client(cluster_2)
             client_2_repr = repr(client_2)
 
             clients = [client_1, client_2]
             clients_indices = [0, 1]
-        
+
             def create_tasks(client_1_repr=client_1_repr, client_2_repr=client_2_repr):
                 for _ in range(1, 4):
                     yield {
@@ -1352,7 +1352,7 @@ class ResourcesTest(unittest.TestCase):
                 self.assertNotEqual(_client_repr, _client_2_repr)
 
                 return packed_pose.update_scores(sequence=packed_pose.pose.sequence())
-                
+
             def my_pyrosetta_protocol_2(packed_pose, **kwargs):
                 _client_repr = kwargs["PyRosettaCluster_client_repr"]
                 _protocol_number = kwargs["PyRosettaCluster_protocol_number"]
@@ -1364,7 +1364,7 @@ class ResourcesTest(unittest.TestCase):
                 self.assertNotEqual(_client_repr, _client_1_repr)
 
                 return packed_pose
-            
+
             protocols = [my_pyrosetta_protocol_1, my_pyrosetta_protocol_2]
             resources = [{"FOO": 1}, {"BAR": 9e8}]
             output_path = os.path.join(workdir, "outputs")
@@ -2125,5 +2125,5 @@ class RuntimeTest(TestBase, unittest.TestCase):
         self.tear_down_logger(_logger, _stream_handler)
 
 
-if __name__ == "__main__":
-    unittest.main(verbosity=2)
+# if __name__ == "__main__":
+#     unittest.main(verbosity=2)

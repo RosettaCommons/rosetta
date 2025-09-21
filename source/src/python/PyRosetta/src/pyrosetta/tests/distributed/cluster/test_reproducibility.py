@@ -1456,5 +1456,5 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         self.assert_atom_coordinates(original_pose, reproduce2_pose)
 
 
-if __name__ == "__main__":
-    unittest.main(verbosity=2)
+# if __name__ == "__main__":
+#     unittest.main(verbosity=2)
