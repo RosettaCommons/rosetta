@@ -51,7 +51,7 @@ from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.utility.exceptions import PyRosettaIsNotInitializedError
 from pyrosetta.utility.initialization import (
-    PyRosettaInitFileReader,
+    PyRosettaInitDictWriter,
     PyRosettaInitFileSerializer,
     PyRosettaInitFileWriter,
 )
@@ -276,6 +276,7 @@ def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Any], 
 def export_init_file(
     output_file: str,
     output_init_file: Optional[str] = None,
+    compressed: Optional[bool] = None,
 ) -> None:
     """
     Export a PyRosetta initialization file from a decoy output file. The PyRosettaCluster simulation
@@ -288,9 +289,13 @@ def export_init_file(
         output_file: A required `str` object representing the decoy output file. The file must end in
             either: '.pdb', '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2'.
         output_init_file: An optional `str` object specifying the output PyRosetta initialization file
-            path. If `NoneType` is provided, then the PyRosetta initialization file path is derived
-            from the 'output_file' argument parameter by replacing the file extension with '.init'.
+            path ending with '.init'. If `NoneType` is provided, then the PyRosetta initialization file
+            path is derived from the 'output_file' argument parameter by replacing the file extension
+            with '.init' (or '.init.bz2' when the 'compressed' argument parameter is set to `True`).
             Default: None
+        compressed: A `bool` object specifying whether or not to compress the output PyRosetta initialization
+            file with `bzip2`, resulting in a '.init.bz2' output PyRosetta initialization file.
+                Default: True
 
     Returns:
         None
@@ -303,16 +308,29 @@ def export_init_file(
             for _type in _types:
                 if output_file.endswith(_type):
                     output_init_file = f"{output_file[: -len(_type)]}.init"
-                    if os.path.isfile(output_init_file):
-                        raise FileExistsError(
-                            f"The PyRosetta initialization file path already exists: '{output_init_file}'. "
-                            + "Please set the 'output_init_file' keyword argument parameter to a different value."
-                        )
                     break
-        elif not isinstance(output_init_file, str):
+        elif isinstance(output_init_file, str):
+            if not output_init_file.endswith(".init"):
+                raise ValueError(
+                    "The 'output_init_file' keyword argument parameter must end with '.init'. "
+                    f"Received: '{output_init_file}'"
+            )
+        else:
             raise TypeError(
                 "The 'output_init_file' keyword argument parameter must be a `str` or `NoneType` object. "
                 + f"Received: {type(output_init_file)}"
+            )
+        if not isinstance(compressed, (type(None), bool)):
+            raise TypeError(
+                "The 'compressed' keyword argument parameter must be a `bool` or `NoneType` object. "
+                + f"Received: {type(compressed)}"
+            )
+        if compressed:
+            output_init_file += ".bz2"
+        if os.path.isfile(output_init_file):
+            raise FileExistsError(
+                f"The PyRosetta initialization file path already exists: '{output_init_file}'. "
+                + "Please set the 'output_init_file' keyword argument parameter to a different value."
             )
 
         scores_dict = get_scores_dict(output_file)
@@ -321,9 +339,9 @@ def export_init_file(
             if os.path.isfile(init_file):
                 if not was_init_called():
                     raise PyRosettaIsNotInitializedError(
-                        "In order to export a '.init' file, please ensure that PyRosetta is already "
-                        + "initialized (using the `pyrosetta.init_from_file()` function) with the "
-                        + f"following '.init' file, and then run `export_init_file()`: '{init_file}'"
+                        "In order to export a PyRosetta initialization file, please ensure that PyRosetta is already "
+                        + "initialized (using the `pyrosetta.distributed.io.init_from_file()` function) with the "
+                        + f"following PyRosetta initialization file, and then run `export_init_file()`: '{init_file}'"
                     )
                 input_packed_pose, _output_packed_pose = get_poses_from_init_file(init_file, verify=True)
                 if _output_packed_pose is not None:
@@ -353,11 +371,20 @@ def export_init_file(
                     output_packed_pose=output_packed_pose,
                 )
                 # Update PyRosetta initialization file
-                init_dict = PyRosettaInitFileReader.read_json(init_file)
-                init_dict["metadata"] = metadata
-                init_dict["poses"] = list(map(io.to_base64, poses))
-                init_dict["md5"] = PyRosettaInitFileSerializer.get_md5(init_dict)
-                PyRosettaInitFileWriter.write_json(init_dict, output_init_file)
+                init_dict = io.read_init_file(init_file)
+                init_dict["metadata"] = metadata  # Overwrite
+                init_dict["poses"] = poses  # Overwrite
+                init_dict.update(dict(dry_run=False, overwrite=False, verbose=True))
+                writer = PyRosettaInitDictWriter(**init_dict)
+                init_file_json = writer.get_json() # Sign MD5
+                if init_dict["verbose"]:
+                    writer.print_cached_files(output_init_file, init_dict["dry_run"])
+                if compressed:
+                    with open(output_init_file, "wb") as f:
+                        f.write(bz2.compress(str.encode(init_file_json)))
+                else:
+                    with open(output_init_file, "w") as f:
+                        f.write(init_file_json)
                 print(
                     f"Exported PyRosettaCluster decoy output file '{output_file}' to "
                     + f"PyRosetta initialization file: '{output_init_file}'"
@@ -365,9 +392,9 @@ def export_init_file(
             else:
                 raise ValueError(
                     "The 'output_file' argument parameter contains an 'init_file' key value in the "
-                    + f"cached metadata, but the specified '.init' file cannot be found: '{init_file}'. "
-                    + "Please ensure the '.init' file exists in the same path to use the "
-                    + "`export_init_file()` function."
+                    + "cached metadata, but the specified '.init' or '.init.bz2' file cannot be found: "
+                    + f"'{init_file}'. Please ensure the '.init' or '.init.bz2' file exists in the same "
+                    + "path to use the `export_init_file()` function."
                 )
         else:
             raise ValueError(

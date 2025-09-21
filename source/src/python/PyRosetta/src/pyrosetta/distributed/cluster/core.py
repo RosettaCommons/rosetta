@@ -96,8 +96,9 @@ Args:
         user-provided PyRosetta protocol run later.
         Default: 1
     compressed: A `bool` object specifying whether or not to compress the output
-        '.pdb' files with `bzip2`, resulting in '.pdb.bz2' output decoy files. Also
-        see the 'output_decoy_types' keyword argument.
+        ".pdb", ".pkl_pose", ".b64_pose", and ".init" files with `bzip2`, resulting
+        in appending ".bz2" to decoy output files and PyRosetta initialization files.
+        Also see the 'output_decoy_types' and 'output_init_file' keyword arguments.
         Default: True
     compression: A `str` object of 'xz', 'zlib' or 'bz2', or a `bool` or `NoneType`
         object representing the internal compression library for pickled `PackedPose` 
@@ -157,12 +158,14 @@ Args:
         Default: "./outputs"
     output_init_file: A `str` object specifying the output ".init" file path that caches
         the 'input_packed_pose' keyword argument parameter upon PyRosettaCluster instantiation,
-        and not including any output decoys, which is optionally used for exporting ".init"
-        files with output decoys by the `pyrosetta.distributed.cluster.export_init_file()`
+        and not including any output decoys, which is optionally used for exporting PyRosetta
+        initialization files with output decoys by the `pyrosetta.distributed.cluster.export_init_file()`
         function after the simulation completes (see the 'output_decoy_types' keyword argument).
         If a `NoneType` object (or an empty `str` object ('')) is provided, or `dry_run=True`,
         then skip writing an output ".init" file upon PyRosettaCluster instantiation. If skipped,
         it is recommended to run `pyrosetta.dump_init_file()` before or after the simulation.
+        If `compressed=True`, then the output file is further compressed by `bzip2`, and ".bz2"
+        is appended to the filename.
         Default: `output_path`/`project_name`_`simulation_name`_pyrosetta.init
     output_decoy_types: An iterable of `str` objects representing the output decoy
         filetypes to save during the simulation. Available options are: ".pdb" for PDB
@@ -359,6 +362,7 @@ from pyrosetta.distributed.cluster.validators import (
     _validate_int,
     _validate_logging_address,
     _validate_min_len,
+    _validate_output_init_file,
     _validate_scorefile_name,
 )
 from pyrosetta.distributed.packed_pose.core import PackedPose
@@ -763,7 +767,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             ),
             takes_self=True,
         ),
-        validator=attr.validators.instance_of(str),
+        validator=[attr.validators.instance_of(str), _validate_output_init_file],
         converter=attr.converters.default_if_none(""),
     )
     environment_file = attr.ib(
@@ -798,7 +802,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         _maybe_init_client()
         self._setup_logger()
         self._write_environment_file(self.environment_file)
-        self._write_init_file(self.output_init_file)
+        self._write_init_file()
         self.serializer = Serialization(compression=self.compression)
         self.clients_dict = self._setup_clients_dict()
 

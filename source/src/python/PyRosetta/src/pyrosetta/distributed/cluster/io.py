@@ -430,12 +430,20 @@ class IO(Generic[G]):
             with open(filename, "w") as f:
                 f.write(self.environment)
 
-    def _write_init_file(self, filename: str) -> None:
+    def _write_init_file(self) -> None:
         """Maybe write PyRosetta initialization file to the input filename."""
 
-        if filename != "":
+        if self.output_init_file != "":
+            if self.compressed and self.output_init_file.endswith(".init"):
+                self.output_init_file += ".bz2"
+            if not self.output_init_file.endswith((".init", ".init.bz2")):
+                raise ValueError(
+                    "The output PyRosetta initialization file must end in '.init' or '.init.bz2'. "
+                    + "The current PyRosettaCluster 'output_init_file' instance attribute is: "
+                    + f"'{self.output_init_file}'"
+                )
             self._dump_init_file(
-                filename,
+                self.output_init_file,
                 input_packed_pose=self.input_packed_pose,
                 output_packed_pose=None,
                 verbose=True,
@@ -457,26 +465,39 @@ class IO(Generic[G]):
                 input_packed_pose=input_packed_pose,
                 output_packed_pose=output_packed_pose,
             )
-            try:
-                pyrosetta.dump_init_file(
-                    filename,
-                    poses=poses,
-                    author=self.author,
-                    email=self.email,
-                    license=self.license,
-                    metadata=metadata,
-                    overwrite=True,
-                    dry_run=self.dry_run,
-                    verbose=verbose,
-                )
-                logging.debug("Successfully ran `pyrosetta.dump_init_file` on the host node.")
-            except Exception as ex:
-                logging.error(
-                    f"{type(ex).__name__}: {ex}. `pyrosetta.dump_init_file` did not run successfully, "
-                    + "so PyRosetta initialization input data may not be saved! It is recommended to run "
-                    + "`pyrosetta.dump_init_file` to reproduce PyRosetta initialization options on the "
-                    + "host node later."
-                )
+            dump_init_file_kwargs = dict(
+                poses=poses,
+                author=self.author,
+                email=self.email,
+                license=self.license,
+                metadata=metadata,
+                overwrite=True,
+                dry_run=self.dry_run,
+                verbose=verbose,
+            )
+            _logging_debug_msg = "Successfully ran `{0}` on the host node."
+            _logging_error_msg = (
+                "{0}: {1}. `{2}` did not run successfully, so PyRosetta initialization input data may not "
+                "be saved! It is recommended to run `pyrosetta.dump_init_file()` to reproduce PyRosetta "
+                "initialization options on the host node later."
+            )
+            if self.compressed:
+                try:
+                    writer = PyRosettaInitDictWriter(**dump_init_file_kwargs)
+                    init_file_json = writer.get_json()
+                    if verbose:
+                        writer.print_cached_files(filename, dump_init_file_kwargs["dry_run"])
+                    with open(filename, "wb") as f:
+                        f.write(bz2.compress(str.encode(init_file_json)))
+                    logging.debug(_logging_debug_msg.format("PyRosettaInitDictWriter().get_json()"))
+                except Exception as ex:
+                    logging.error(_logging_error_msg.format(type(ex).__name__, ex, "PyRosettaInitDictWriter().get_json()"))
+            else:
+                try:
+                    pyrosetta.dump_init_file(filename, **dump_init_file_kwargs)
+                    logging.debug(_logging_debug_msg.format("pyrosetta.dump_init_file()"))
+                except Exception as ex:
+                    logging.error(_logging_error_msg.format(type(ex).__name__, ex, "pyrosetta.dump_init_file()"))
         out.flush()
         err.flush()
 

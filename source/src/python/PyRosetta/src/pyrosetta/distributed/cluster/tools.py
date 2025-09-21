@@ -558,12 +558,12 @@ def reproduce(
 
     Args:
         input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2',
-            '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', or '.init'
+            '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init' or '.init.bz2'
             file from which to extract PyRosettaCluster instance kwargs. If 'input_file'
             is provided, then ignore the 'scorefile' and 'decoy_name' argument parameters.
-            If a '.init' file is provided and PyRosetta is not yet initialized, first
-            initialize PyRosetta with the '.init' file (see the 'init_from_file_kwargs'
-            keyword argument).
+            If a '.init' or '.init.bz2' file is provided and PyRosetta is not yet initialized,
+            this first initializes PyRosetta with the PyRosetta initialization file (see the
+            'init_from_file_kwargs' keyword argument).
             Default: None
         scorefile: A `str` object specifying the path to the JSON-formatted scorefile
             (or pickled `pandas.DataFrame` scorefile) from a PyRosettaCluster simulation

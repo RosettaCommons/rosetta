@@ -25,6 +25,7 @@ except ImportError:
     raise
 
 import functools
+import glob
 import json
 import os
 import pyrosetta
@@ -794,7 +795,7 @@ class TestReproducibilityMulti(unittest.TestCase):
                 data[0]["instance"]["decoy_ids"], data[1]["instance"]["decoy_ids"]
             )
 
-    def test_reproducibility_from_reproduce(self, filter_results=False):
+    def test_reproducibility_from_reproduce(self, filter_results=False, verbose=False):
         """Test for PyRosettaCluster decoy reproducibility from instance kwargs."""
         params_file = os.path.join(os.path.dirname(__file__), "data", "ZZZ.params")
         self.assertTrue(os.path.isfile(params_file), msg=f"File does not exist: {params_file}")
@@ -952,7 +953,7 @@ class TestReproducibilityMulti(unittest.TestCase):
             p = subprocess.run(shlex.split(cmd), env=env, check=True, shell=False, stderr=subprocess.PIPE)
             print("Return code: {0}".format(p.returncode))
 
-            return p
+            return p.returncode
 
         with tempfile.TemporaryDirectory() as workdir:
             sequence = "ACDEFGHIKLMNPQRSTVWY"
@@ -1019,6 +1020,14 @@ class TestReproducibilityMulti(unittest.TestCase):
                 data = [json.loads(line) for line in f]
             self.assertEqual(len(data), 1)
             original_record = data[0]
+
+            if verbose:
+                logging_file = original_record["metadata"]["logging_file"]
+                _logging_files = glob.glob(os.path.join(os.path.dirname(logging_file), "*"))
+                for _logging_file in _logging_files:
+                    print("Output from logging file:", _logging_file)
+                    with open(_logging_file, "r") as f:
+                        print(f.read())
 
             # Reproduce decoy from .pdb.bz2 file
             run_reproduce_from_pdb_bz2_file = True
@@ -1127,23 +1136,48 @@ class TestReproducibilityMulti(unittest.TestCase):
                             reproduce2_record["instance"][key],
                         )
 
-            # Test raised exceptions
+            # Test raised exceptions:
             with self.assertRaises(TypeError):
                 # Test invalid 'skip_corrections' parameter
                 reproduce(skip_corrections=None)
+
+            self.assertIn("init_file", original_record["metadata"])
             with self.assertRaises(ValueError):
                 # Test PyRosetta intialization file without an output decoy
                 reproduce(input_file=original_record["metadata"]["init_file"])
 
             # Reproduce decoy with a .init file
-            init_file = original_record["metadata"]["init_file"]
-            self.assertTrue(os.path.isfile(init_file))
+            original_init_file = original_record["metadata"]["init_file"]  # Without output decoy
+            original_compressed = original_record["instance"]["compressed"]
+            self.assertTrue(os.path.isfile(original_init_file))
             input_file = original_record["metadata"]["output_file"]
             self.assertTrue(os.path.isfile(input_file))
             # Export
-            _init_dict_before_export = PyRosettaInitFileReader.read_json(init_file)
-            export_init_file(input_file, output_init_file=init_file)
-            _init_dict_after_export = PyRosettaInitFileReader.read_json(init_file)
+            _init_dict_before_export = io.read_init_file(original_init_file)
+            with self.assertRaises(FileExistsError):
+                # Cannot overwrite original .init or .init.bz2 file
+                if original_compressed:
+                    output_init_file = os.path.splitext(original_init_file)[0]
+                else:
+                    output_init_file = original_init_file
+                export_init_file(
+                    input_file,
+                    output_init_file=output_init_file,
+                    compressed=original_compressed,
+                )
+            export_init_file(
+                input_file,
+                output_init_file=None,  # Default
+                compressed=original_compressed,
+            )
+            default_output_init_file = os.path.splitext(input_file)[0]
+            if original_compressed:
+                default_output_init_file = os.path.splitext(default_output_init_file)[0]
+            default_output_init_file += ".init"
+            if original_compressed:
+                default_output_init_file += ".bz2"
+            self.assertTrue(os.path.isfile(default_output_init_file), msg=f"File not found: {default_output_init_file}")
+            _init_dict_after_export = io.read_init_file(default_output_init_file)
             self.assertNotEqual(_init_dict_before_export, _init_dict_after_export)
             self.assertNotEqual(
                 _init_dict_before_export["metadata"]["sha256"],
@@ -1155,9 +1189,9 @@ class TestReproducibilityMulti(unittest.TestCase):
             )
 
             with self.assertRaises(TypeError):
-                # Test PyRosetta intialization file with the output decoy, but wrong input decoy
+                # Test PyRosetta initialization file with the output decoy, but wrong input decoy
                 reproduce(
-                    input_file=init_file,
+                    input_file=default_output_init_file,
                     input_packed_pose=io.pose_from_sequence("INVALID")
                 )
 
@@ -1170,12 +1204,12 @@ class TestReproducibilityMulti(unittest.TestCase):
                     module,
                     input_file,
                     reproduce3_scorefile_name,
-                    init_file,
+                    default_output_init_file,
                     sequence,
                     test_case,
                 )
-                p = run_subprocess(cmd, module_dir=os.path.dirname(test_script))
-                self.assertEqual(p.returncode, 0, msg=f"Test script failed: {test_script}")
+                returncode = run_subprocess(cmd, module_dir=os.path.dirname(test_script))
+                self.assertEqual(returncode, 0, msg=f"Test script failed: {test_script}")
 
                 reproduce3_scorefile_path = os.path.join(
                     output_path, reproduce3_scorefile_name

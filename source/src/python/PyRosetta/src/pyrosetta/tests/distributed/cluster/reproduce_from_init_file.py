@@ -52,10 +52,10 @@ def get_protocols(scores_dict):
 
 def reproduce_init_from_file_test(input_file, scorefile_name, input_init_file, sequence):
     """Reproduce decoy from '.pdb.bz2' file with a '.init' file."""
-    skip_corrections = False # Do not skip corrections since not using results for another reproduction
+    skip_corrections = False  # Do not skip corrections since not using results for another reproduction
     with tempfile.TemporaryDirectory() as tmp_dir:
         # Initialize PyRosetta on the host node before instantiating `input_pose`
-        init_from_file(
+        io.init_from_file(
             input_init_file,
             output_dir=os.path.join(tmp_dir, "reproduce_init_from_file_test"),
             dry_run=False,
@@ -74,6 +74,8 @@ def reproduce_init_from_file_test(input_file, scorefile_name, input_init_file, s
         scores_dict = get_scores_dict(input_file)
         protocols = get_protocols(scores_dict)
         # Reproduce
+        output_init_file = os.path.join(tmp_dir, "pyrosetta.init")
+        compressed = False
         reproduce(
             input_file=input_file,
             scorefile=None,
@@ -84,11 +86,16 @@ def reproduce_init_from_file_test(input_file, scorefile_name, input_init_file, s
             instance_kwargs={
                 "sha1": None,
                 "scorefile_name": scorefile_name,
-                "output_init_file": os.path.join(tmp_dir, "pyrosetta.init"), # Test `dump_init_file` with custom path
+                "output_init_file": output_init_file, # Test `IO._dump_init_file` with custom path
+                "compressed": compressed,
             },
             skip_corrections=skip_corrections,
             init_from_file_kwargs={},
         )
+        # Test output '.init' file compression
+        if compressed:
+            output_init_file += ".bz2"
+        assert os.path.isfile(output_init_file)
 
 
 def reproduce_test(input_file, scorefile_name, input_init_file, skip_corrections, init_from_file_skip_corrections):
@@ -99,6 +106,12 @@ def reproduce_test(input_file, scorefile_name, input_init_file, skip_corrections
         + f"init_from_file_kwargs=dict(skip_corrections={init_from_file_skip_corrections}))`",
     )
     with tempfile.TemporaryDirectory() as tmp_dir:
+        # Get protocols
+        scores_dict = get_scores_dict(input_file)
+        protocols = get_protocols(scores_dict)
+        # Reproduce
+        output_init_file = os.path.join(tmp_dir, "pyrosetta.init")
+        compressed = True
         init_from_file_kwargs = dict(
             output_dir=os.path.join(tmp_dir, "reproduce_test"),
             dry_run=False,
@@ -111,10 +124,6 @@ def reproduce_test(input_file, scorefile_name, input_init_file, skip_corrections
             notebook=None,
             silent=False,
         )
-        # Get protocols
-        scores_dict = get_scores_dict(input_file)
-        protocols = get_protocols(scores_dict)
-        # Reproduce
         reproduce(
             input_file=input_init_file,
             scorefile=None,
@@ -125,7 +134,8 @@ def reproduce_test(input_file, scorefile_name, input_init_file, skip_corrections
             instance_kwargs={
                 "sha1": None,
                 "scorefile_name": scorefile_name,
-                "output_init_file": os.path.join(tmp_dir, "pyrosetta.init"), # Test `dump_init_file` with custom path
+                "output_init_file": output_init_file, # Test `IO._dump_init_file` with custom path
+                "compressed": compressed,
             },
             skip_corrections=skip_corrections,
             init_from_file_kwargs=init_from_file_kwargs,
@@ -133,6 +143,10 @@ def reproduce_test(input_file, scorefile_name, input_init_file, skip_corrections
         # Test `get_scores_dict()` with '.init' file syntax after PyRosetta initialization
         _scores_dict = get_scores_dict(input_init_file)
         assert scores_dict == _scores_dict, f"Scores dictionaries differ: {scores_dict} != {_scores_dict}"
+        # Test output '.init' file compression
+        if compressed:
+            output_init_file += ".bz2"
+        assert os.path.isfile(output_init_file)
 
 
 if __name__ == "__main__":

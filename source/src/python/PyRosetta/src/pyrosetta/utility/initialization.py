@@ -503,11 +503,11 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
 
         return results
 
-    def print_cached_files(self, dry_run):
+    def print_cached_files(self, output_filename, dry_run):
         if dry_run:
             print("Dry run dump PyRosetta '{0}' file:".format(self._init_file_extension))
         else:
-            print("Dumping PyRosetta '{0}' file to: '{1}'".format(self._init_file_extension, self.output_filename))
+            print("Dumping PyRosetta '{0}' file to: '{1}'".format(self._init_file_extension, output_filename))
         if len(self.kwargs["poses"]) > 0:
             print("Compressed {0} PyRosetta `PackedPose` object(s).".format(len(self.kwargs["poses"])))
         else:
@@ -566,7 +566,7 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
     def dump(self):
         data_dict = self.get_dict()
         if self.kwargs["verbose"]:
-            self.print_cached_files(self.kwargs["dry_run"])
+            self.print_cached_files(self.output_filename, self.kwargs["dry_run"])
         if not self.kwargs["dry_run"]:
             if os.path.isfile(self.output_filename) and not self.kwargs["overwrite"]:
                 raise FileExistsError(
@@ -589,15 +589,13 @@ class PyRosettaInitDictWriter(PyRosettaInitFileWriter):
         self.validate_init_was_called()
         self.kwargs = self.setup_kwargs(**kwargs)
         self.cached_files = []
+        self.output_filename = None
 
     @property
     def _init_file_writer_err_msg(self):
         return "Please use `PyRosettaInitFileWriter` to dump '{0}' files.".format(
             self._init_file_extension
         )
-
-    def print_cached_files(self, dry_run):
-        raise NotImplementedError(self._init_file_writer_err_msg)
 
     def dump(self):
         raise NotImplementedError(self._init_file_writer_err_msg)
