@@ -38,7 +38,9 @@ SECURE_PYTHON_BUILTINS: AbstractSet[str] = {
     "list",
     "NoneType",
     "memoryview",
+    "range",
     "set",
+    "slice",
     "str",
     "tuple",
 }
