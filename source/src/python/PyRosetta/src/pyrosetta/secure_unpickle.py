@@ -286,7 +286,7 @@ class ModuleCache(object):
     Resolve modules and packages by path, and determine if they are allowed or blocked.
     """
     @staticmethod
-    @lru_cache(maxsize=1, typed=True)
+    @lru_cache(maxsize=1)
     def _rosetta_module() -> object:
         _module = sys.modules.get("pyrosetta.rosetta", None)
         if _module is None:
@@ -298,7 +298,7 @@ class ModuleCache(object):
         return _module
 
     @staticmethod
-    @lru_cache(maxsize=1, typed=True)
+    @lru_cache(maxsize=1)
     def _rosetta_origin() -> Optional[Path]:
         _rosetta_module = ModuleCache._rosetta_module()
         _rosetta_spec = getattr(_rosetta_module, "__spec__", None)
