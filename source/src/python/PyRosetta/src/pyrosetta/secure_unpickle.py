@@ -459,7 +459,7 @@ class SecureSerializerBase(object):
     @staticmethod
     def secure_loads(value: bytes) -> Any:
         """Secure replacement for `pickle.loads`."""
-        stream = io.BytesIO(initial_bytes=value)
+        stream = io.BytesIO(value)
         stream_protocol = SecureSerializerBase._get_stream_protocol(value)
         try:
             return SecureUnpickler(stream, stream_protocol=stream_protocol).load()
