@@ -465,6 +465,12 @@ class SecureSerializerBase(object):
             raise Exception(
                 "%s: %s. Could not deserialize value of type %r." % (type(ex).__name__, ex, type(value),)
             ) from ex
+        except pickle.UnpicklingError as ex:
+            raise pickle.UnpicklingError(
+                f"{ex}. PyRosetta secure unpickle failed with stream protocol {stream_protocol}."
+            ) from ex
+        except (UnpickleSecurityError, UnpickleIntegrityError):
+            raise
 
     @staticmethod
     def secure_from_base64_pickle(string: str) -> Any:
