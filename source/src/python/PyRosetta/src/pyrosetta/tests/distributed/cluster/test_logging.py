@@ -202,5 +202,5 @@ class LoggingTest(unittest.TestCase):
                     self.assertIn(expected_msg, warning_msgs)
 
 
-if __name__ == "__main__":
-    unittest.main(verbosity=2)
+# if __name__ == "__main__":
+#     unittest.main(verbosity=2)

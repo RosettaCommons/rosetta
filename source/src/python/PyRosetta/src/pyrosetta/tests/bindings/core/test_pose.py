@@ -1000,5 +1000,5 @@ class TestPosesToSilent(unittest.TestCase):
                     msg="List position recovery failed.")
 
 
-if __name__ == "__main__":
-    unittest.main()
+# if __name__ == "__main__":
+#    unittest.main()
