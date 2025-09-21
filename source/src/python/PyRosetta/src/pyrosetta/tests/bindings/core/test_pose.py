@@ -1050,9 +1050,9 @@ class TestPoseSecureUnpickler(unittest.TestCase):
         _obj = pickle.dumps(_CauseHavoc(), protocol=5)
         with self.assertRaises(UnpickleSecurityError) as ex:
             _ = SecureSerializerBase.secure_loads(_obj)
-            _msg = str(ex.value)
-            self.assertIn(f"Disallowed unpickling of 'os.system' namespace!\n", _msg)
-            self.assertIn("`pyrosetta.add_secure_package('os')`", _msg)
+        _msg = str(ex.exception)
+        self.assertIn("Disallowed unpickling of the 'posix.system' namespace!", _msg)
+        self.assertIn("the 'posix.system' namespace cannot be added", _msg)
 
         # Test custom HMAC key
         data = {
