@@ -50,7 +50,7 @@ SECURE_EXTRA_PACKAGES: Tuple[str, ...] = ("numpy",)
 
 # Modules that will not be callable targets via the `pickle` module:
 BLOCKED_PACKAGES: AbstractSet[str] = {
-    "subprocess",  # Block `subprocess.*` calls (including `run`, `check_output`, `Popen`, etc.)
+    "subprocess",  # Block `subprocess.*` calls
     "ctypes",  # Block arbitrary code
     # Block pickle and relatives:
     "cloudpickle",
@@ -64,7 +64,7 @@ BLOCKED_PACKAGES: AbstractSet[str] = {
     "dask",
     "distributed",
     "multiprocessing",
-    # https://docs.python.org/3/library/security_warnings.html:
+    # Other security concerns <https://docs.python.org/3/library/security_warnings.html>:
     "base64",
     "hashlib",
     "http",
@@ -79,34 +79,47 @@ BLOCKED_PACKAGES: AbstractSet[str] = {
 
 # Globals that will always be blocked:
 BLOCKED_GLOBALS: AbstractSet[Tuple[str, str]] = {
-    ("builtins", "eval"),
-    ("builtins", "exec"),
-    ("builtins", "compile"),
-    ("builtins", "__import__"),
-    ("builtins", "open"),
-    ("http", "server"),
-    ("os", "system"),
-    ("os", "popen"),
-    ("posix", "system"),
-    ("posix", "popen"),
-    ("sys", "exit"),
+    ("builtins",  "eval"),
+    ("builtins",  "exec"),
+    ("builtins",  "compile"),
+    ("builtins",  "__import__"),
+    ("builtins",  "open"),
+    ("http",      "server"),
     ("importlib", "import_module")
+    ("os",        "_exit"),
+    ("os",        "popen"),
+    ("os",        "system"),
+    ("posix",     "popen"),
+    ("posix",     "system"),
+    ("sys",       "exit"),
 }
 
 # Package:prefix pairs for specific method prefixes that will always be blocked:
 BLOCKED_PREFIXES: Dict[str, Tuple[str, ...]] = {
     "os": (
-        "execl", "execle", "execlp", "execlpe",
-        "execv", "execve", "execvp", "execvpe",
-        "spawnl", "spawnle", "spawnlp", "spawnlpe",
-        "spawnv", "spawnve", "spawnvp", "spawnvpe",
-        "posix_spawn", "posix_spawnp",
-        "remove", "rmdir", "unlink",
-        "startfile",
+        "execl",       "execle",       "execlp",      "execlpe",
+        "execv",       "execve",       "execvp",      "execvpe",
+        "spawnl",      "spawnle",      "spawnlp",     "spawnlpe",
+        "spawnv",      "spawnve",      "spawnvp",     "spawnvpe",
+        "abort",       "access",       "chdir",       "chflags",
+        "chmod",       "chown",        "chroot",      "close",
+        "fchdir",      "fchmod",       "fchown",      "fdopen",
+        "fork",        "forkpty",      "fsync",       "kill",
+        "lchmod",      "lchown",       "link",        "pipe",
+        "posix_spawn", "posix_spawnp", "remove",      "rename",
+        "rmdir",       "startfile",    "sync",        "sys",
+        "unlink",      "write",
     ),
-    "posix": ("close", "execv", "execve", "kill", "open",),
-    "shutil": ("chown", "make_archive", "move", "rmtree",),
-    "sys": ("addaudithook", "setprofile", "settrace",),
+    "posix": (
+        "close", "execv", "execve", "kill",
+        "open",
+    ),
+    "shutil": (
+        "chown", "make_archive", "move", "rmtree",
+    ),
+    "sys": (
+        "addaudithook", "setprofile", "settrace",
+    ),
 }
 
 
