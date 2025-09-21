@@ -357,10 +357,6 @@ class ModuleCache(object):
             return False
         _rosetta_module = ModuleCache._rosetta_module()
         _rosetta_origin = ModuleCache._rosetta_origin()
-        _pyrosetta_base_dir = ModuleCache._package_base_dir("pyrosetta")
-        # Ensure that the `rosetta.so` binary is under the 'pyrosetta' package base directory
-        if _rosetta_origin and _pyrosetta_base_dir and not ModuleCache._is_relative_to(_rosetta_origin, _pyrosetta_base_dir):
-            raise PyRosettaModuleNotFoundError("pyrosetta.rosetta")
         # Check if submodule has an origin identical to the 'pyrosetta.rosetta' origin
         _module = sys.modules.get(module, None)
         if _module is not None:
