@@ -460,28 +460,29 @@ class SecureUnpickler(pickle.Unpickler):
         self._stream_protocol = stream_protocol
 
     def find_class(self, module: str, name: str) -> Union[Any, NoReturn]:
+        _secure_packages = get_secure_packages()
         if module in BLOCKED_PACKAGES:
-            raise UnpickleSecurityError(module, name, get_secure_packages())
+            raise UnpickleSecurityError(module, name, _secure_packages)
         if (module, name) in BLOCKED_GLOBALS:
-            raise UnpickleSecurityError(module, name, get_secure_packages())
+            raise UnpickleSecurityError(module, name, _secure_packages)
         if module in BLOCKED_PREFIXES and any(name.startswith(prefix) for prefix in BLOCKED_PREFIXES[module]):
-            raise UnpickleSecurityError(module, name, get_secure_packages())
+            raise UnpickleSecurityError(module, name, _secure_packages)
         # Builtins:
         if module == "builtins":
             if name in SECURE_PYTHON_BUILTINS:
                 return ModuleCache._get_allowed_module_attr(module, name)
-            raise UnpickleSecurityError(module, name, get_secure_packages())
+            raise UnpickleSecurityError(module, name, _secure_packages)
         # Maybe include `copyreg` unpickle helper functions, depending on incoming stream protocol:
         if module == "copyreg":
             if (0 <= self._stream_protocol <= 1 and name == "_reconstructor") or (
                 2 <= self._stream_protocol <= pickle.HIGHEST_PROTOCOL and name in ("__newobj__", "__newobj_ex__",)
             ):
                 return ModuleCache._get_allowed_module_attr(module, name)
-            raise UnpickleSecurityError(module, name, get_secure_packages())
+            raise UnpickleSecurityError(module, name, _secure_packages)
         if ModuleCache._is_allowed_module(module):
             return ModuleCache._get_allowed_module_attr(module, name)
 
-        raise UnpickleSecurityError(module, name, get_secure_packages())
+        raise UnpickleSecurityError(module, name, _secure_packages)
 
 
 # Secure serialization for `PackedPose` and `Pose.cache` score objects:
