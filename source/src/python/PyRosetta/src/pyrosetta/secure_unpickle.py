@@ -309,7 +309,7 @@ def _split_top_package(module: str) -> str:
 
 class ModuleCache(object):
     """
-    Resolve modules and packages by path, and determine if they are allowed or blocked.
+    Resolve modules and packages by path, and determine if they are allowed or disallowed.
     """
     @staticmethod
     @lru_cache(maxsize=1)
@@ -472,6 +472,7 @@ class SecureUnpickler(pickle.Unpickler):
             raise UnpickleSecurityError(module, name, get_secure_packages())
         if ModuleCache._is_allowed_module(module):
             return ModuleCache._get_allowed_module_attr(module, name)
+
         raise UnpickleSecurityError(module, name, get_secure_packages())
 
 
@@ -504,7 +505,7 @@ class SecureSerializerBase(object):
         return base64.b64encode(value).decode(SecureSerializerBase._encoder)
 
     @staticmethod
-    def secure_loads(value: bytes) -> Any:
+    def secure_loads(value: bytes) -> Union[Any, NoReturn]:
         """Secure replacement for `pickle.loads`."""
         stream = io.BytesIO(value)
         stream_protocol = SecureSerializerBase._get_stream_protocol(value)
