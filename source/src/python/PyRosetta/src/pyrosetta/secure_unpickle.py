@@ -80,10 +80,10 @@ BLOCKED_PACKAGES: AbstractSet[str] = {
 
 # Globals that will always be blocked:
 BLOCKED_GLOBALS: AbstractSet[Tuple[str, str]] = {
+    ("builtins",  "__import__"),
+    ("builtins",  "compile"),
     ("builtins",  "eval"),
     ("builtins",  "exec"),
-    ("builtins",  "compile"),
-    ("builtins",  "__import__"),
     ("builtins",  "open"),
     ("http",      "server"),
     ("importlib", "import_module"),
@@ -98,28 +98,28 @@ BLOCKED_GLOBALS: AbstractSet[Tuple[str, str]] = {
 # Package:prefix pairs for specific method prefixes that will always be blocked:
 BLOCKED_PREFIXES: Dict[str, Tuple[str, ...]] = {
     "os": (
-        "execl",       "execle",       "execlp",      "execlpe",
-        "execv",       "execve",       "execvp",      "execvpe",
-        "spawnl",      "spawnle",      "spawnlp",     "spawnlpe",
-        "spawnv",      "spawnve",      "spawnvp",     "spawnvpe",
-        "abort",       "access",       "chdir",       "chflags",
-        "chmod",       "chown",        "chroot",      "close",
-        "fchdir",      "fchmod",       "fchown",      "fdopen",
-        "fork",        "forkpty",      "fsync",       "kill",
-        "lchmod",      "lchown",       "link",        "pipe",
-        "posix_spawn", "posix_spawnp", "remove",      "rename",
-        "rmdir",       "startfile",    "sync",        "sys",
-        "unlink",      "write",
+        "execl",        "execle",       "execlp",      "execlpe",
+        "execv",        "execve",       "execvp",      "execvpe",
+        "spawnl",       "spawnle",      "spawnlp",     "spawnlpe",
+        "spawnv",       "spawnve",      "spawnvp",     "spawnvpe",
+        "abort",        "access",       "chdir",       "chflags",
+        "chmod",        "chown",        "chroot",      "close",
+        "fchdir",       "fchmod",       "fchown",      "fdopen",
+        "fork",         "forkpty",      "fsync",       "kill",
+        "lchmod",       "lchown",       "link",        "pipe",
+        "posix_spawn",  "posix_spawnp", "remove",      "rename",
+        "rmdir",        "startfile",    "sync",        "sys",
+        "unlink",       "write",
     ),
     "posix": (
-        "close", "execv", "execve", "kill",
+        "close",        "execv",        "execve",      "kill",
         "open",
     ),
     "shutil": (
-        "chown", "make_archive", "move", "rmtree",
+        "chown",        "make_archive", "move",        "rmtree",
     ),
     "sys": (
-        "addaudithook", "setprofile", "settrace",
+        "addaudithook", "setprofile",   "settrace",
     ),
 }
 
@@ -228,10 +228,10 @@ def add_secure_package(package: str) -> None:
     """
     if not package:
         return None
-    top = _split_top_package(str(package))
-    current = list(get_secure_packages())
-    if top not in current:
-        set_secure_packages(tuple(current + [top]))
+    _top_package = _split_top_package(str(package))
+    _secure_packages = list(get_secure_packages())
+    if _top_package not in _secure_packages:
+        set_secure_packages(tuple(_secure_packages + [_top_package]))
 
 def clear_secure_packages() -> None:
     """
@@ -252,9 +252,9 @@ def remove_secure_package(package: str) -> None:
     """
     if not package:
         return None
-    top = _split_top_package(str(package))
-    current = [p for p in get_secure_packages() if p != top]
-    set_secure_packages(tuple(current))
+    _top_package = _split_top_package(str(package))
+    _secure_packages = [p for p in get_secure_packages() if p != _top_package]
+    set_secure_packages(tuple(_secure_packages))
 
 def set_secure_packages(packages: Iterable[str]) -> None:
     """
@@ -271,8 +271,8 @@ def set_secure_packages(packages: Iterable[str]) -> None:
             "The 'packages' argument parameter must be a `list`, `tuple`, or `set` object. "
             + "Received: %s" % type(packages)
         )
-    seen = set()
-    out = []
+    _seen = set()
+    _out = []
     for package in packages:
         if not isinstance(package, str):
             raise TypeError(
@@ -280,11 +280,11 @@ def set_secure_packages(packages: Iterable[str]) -> None:
             )
         if not package:
             continue
-        top = _split_top_package(package)
-        if top not in seen:
-            seen.add(top)
-            out.append(top)
-    SECURE_EXTRA_PACKAGES = tuple(sorted(out))
+        _top_package = _split_top_package(package)
+        if _top_package not in _seen:
+            _seen.add(_top_package)
+            _out.append(_top_package)
+    SECURE_EXTRA_PACKAGES = tuple(sorted(_out))
 
 def get_disallowed_packages() -> Tuple[str, ...]:
     """
@@ -412,8 +412,8 @@ class ModuleCache(object):
                 return ModuleCache._is_under_rosetta(module)
             return ModuleCache._is_under_package(module, "pyrosetta")
         else: # Maybe trust other modules
-            top = _split_top_package(module)
-            if top in SECURE_EXTRA_PACKAGES and ModuleCache._is_under_package(module, top):
+            _top_package = _split_top_package(module)
+            if _top_package in SECURE_EXTRA_PACKAGES and ModuleCache._is_under_package(module, _top_package):
                 return True
             else:
                 return False
