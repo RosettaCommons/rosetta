@@ -1129,10 +1129,9 @@ class TestPoseSecureUnpickler(unittest.TestCase):
 
         # Test disallowed packages
         test_pose = pyrosetta.pose_from_sequence("TEST/CACHE")
-        disallowed_packaged = sorted(pyrosetta.secure_unpickle.BLOCKED_PACKAGES)
-        for package in disallowed_packaged:
-            # Try to import
-            try:
+        disallowed_packages = sorted(pyrosetta.secure_unpickle.BLOCKED_PACKAGES)
+        for package in disallowed_packages:
+            try:  # Try to import
                 _module = sys.modules.get(package, None) or importlib.import_module(package)
             except ImportError:
                 continue
@@ -1148,6 +1147,30 @@ class TestPoseSecureUnpickler(unittest.TestCase):
                         break
                     except Exception: # Catch `pickle.PicklingError`
                         continue
+            else:
+                continue
+            with self.assertRaises(UnpickleSecurityError) as ex:
+                _obj = test_pose.cache[package]
+            _msg = str(ex.exception)
+            self.assertTrue(_msg.startswith("Disallowed unpickling"), msg=_msg)
+
+        # Test disallowed globals
+        test_pose = pyrosetta.pose_from_sequence("RISKY/DATA")
+        disallowed_packages = sorted(pyrosetta.secure_unpickle.BLOCKED_GLOBALS)
+        for package, attr in disallowed_packages:
+            try:  # Try to import
+                _module = sys.modules.get(package, None) or importlib.import_module(package)
+            except ImportError:
+                continue
+            obj = getattr(_module, attr, None)
+            if callable(obj):
+                class _ReduceObject:
+                    def __reduce__(self):
+                        return (obj, tuple())
+                try:  # Try `pickle.dumps`
+                    test_pose.cache[package] = _ReduceObject()
+                except Exception: # Catch `pickle.PicklingError`
+                    continue
             else:
                 continue
             with self.assertRaises(UnpickleSecurityError) as ex:
