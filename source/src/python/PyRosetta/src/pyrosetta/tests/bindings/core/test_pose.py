@@ -1156,8 +1156,8 @@ class TestPoseSecureUnpickler(unittest.TestCase):
 
         # Test disallowed globals
         test_pose = pyrosetta.pose_from_sequence("RISKY/DATA")
-        disallowed_packages = sorted(pyrosetta.secure_unpickle.BLOCKED_GLOBALS)
-        for package, attr in disallowed_packages:
+        disallowed_globals = sorted(pyrosetta.secure_unpickle.BLOCKED_GLOBALS)
+        for package, attr in disallowed_globals:
             try:  # Try to import
                 _module = sys.modules.get(package, None) or importlib.import_module(package)
             except ImportError:
@@ -1167,16 +1167,44 @@ class TestPoseSecureUnpickler(unittest.TestCase):
                 class _ReduceObject:
                     def __reduce__(self):
                         return (obj, tuple())
+                key = f"{package}.{attr}"
                 try:  # Try `pickle.dumps`
-                    test_pose.cache[package] = _ReduceObject()
+                    test_pose.cache[key] = _ReduceObject()
                 except Exception: # Catch `pickle.PicklingError`
                     continue
             else:
                 continue
             with self.assertRaises(UnpickleSecurityError) as ex:
-                _obj = test_pose.cache[package]
+                _obj = test_pose.cache[key]
             _msg = str(ex.exception)
             self.assertTrue(_msg.startswith("Disallowed unpickling"), msg=_msg)
+
+        # Test disallowed prefixes
+        test_pose = pyrosetta.pose_from_sequence("TEST/NAMESPACE")
+        disallowed_prefixes = dict(pyrosetta.secure_unpickle.BLOCKED_PREFIXES)
+        for package, prefixes in disallowed_prefixes.items():
+            try:  # Try to import
+                _module = sys.modules.get(package, None) or importlib.import_module(package)
+            except ImportError:
+                continue
+            for prefix in prefixes:
+                for attr in filter(lambda a: a.startswith(prefix), dir(_module)):
+                    obj = getattr(_module, attr, None)
+                    if callable(obj):
+                        class _ReduceObject:
+                            def __reduce__(self):
+                                return (obj, tuple())
+                        key = f"{package}.{attr}"
+                        try:  # Try `pickle.dumps`
+                            test_pose.cache[key] = _ReduceObject()
+                        except Exception: # Catch `pickle.PicklingError`
+                            continue
+                    else:
+                        continue
+                    with self.assertRaises(UnpickleSecurityError) as ex:
+                        _obj = test_pose.cache[key]
+                    _msg = str(ex.exception)
+                    self.assertTrue(_msg.startswith("Disallowed unpickling"), msg=_msg)
 
 
 # if __name__ == "__main__":
