@@ -160,7 +160,7 @@ class UnpickleCompatibilityError(pickle.UnpicklingError):
     def __init__(self, module: str, name: str) -> None:
         _top_package = _split_top_package(module)
         _msg = (
-            "Unable to unpickle the allowed '%s.%s' module due to " % (module, name,)
+            "Unable to unpickle the allowed '%s.%s' symbol due to " % (module, name,)
             + "a Python version mismatch, a virtual environment mismatch, or a "
             + "missing dependency of the pickled data. Please install or upgrade the "
             + "required package and try again: %r" % (_top_package,)
@@ -423,7 +423,7 @@ class ModuleCache(object):
             # Prevent re-import; instead walk down attributes of imported virtual submodule
             _module = ModuleCache._walk_rosetta_module(module)
             if _module is None:
-                raise UnpickleCompatibilityError(module)
+                raise UnpickleCompatibilityError(module, name)
         elif module == "builtins":
             if name == "NoneType":
                 return type(None)
@@ -461,8 +461,10 @@ class SecureUnpickler(pickle.Unpickler):
         if module in BLOCKED_PREFIXES and any(name.startswith(prefix) for prefix in BLOCKED_PREFIXES[module]):
             raise UnpickleSecurityError(module, name, get_secure_packages())
         # Builtins:
-        if module == "builtins" and name in SECURE_PYTHON_BUILTINS:
-            return ModuleCache._get_allowed_module_attr(module, name)
+        if module == "builtins":
+            if name in SECURE_PYTHON_BUILTINS:
+                return ModuleCache._get_allowed_module_attr(module, name)
+            raise UnpickleSecurityError(module, name, get_secure_packages())
         # Maybe include `copyreg` unpickle helper functions, depending on incoming stream protocol:
         if module == "copyreg":
             if (0 <= self._stream_protocol <= 1 and name == "_reconstructor") or (
