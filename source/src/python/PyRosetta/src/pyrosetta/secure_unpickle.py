@@ -576,7 +576,8 @@ class SecureSerializerBase(object):
 
     @staticmethod
     def _get_stream_protocol(obj: bytes) -> int:
-        if len(obj) >= 2 and obj[0] == pickle.PROTO[0]:
+        _proto = getattr(pickle, "PROTO", b'\x80')
+        if len(obj) >= 2 and obj[0] == _proto[0]:
             return obj[1] if 0 <= obj[1] <= pickle.HIGHEST_PROTOCOL else -1
         else:
             return -1
