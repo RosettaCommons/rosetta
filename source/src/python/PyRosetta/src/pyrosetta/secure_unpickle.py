@@ -573,4 +573,4 @@ class SecureSerializerBase(object):
         if len(obj) >= 2 and obj[0] == pickle.PROTO[0]:
             return obj[1] if 0 <= obj[1] <= pickle.HIGHEST_PROTOCOL else -1
         else:
-            return 0
+            return -1
