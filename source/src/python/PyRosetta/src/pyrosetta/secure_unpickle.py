@@ -208,7 +208,7 @@ class UnpickleSecurityError(pickle.UnpicklingError):
         elif (module == "builtins" and name not in SECURE_PYTHON_BUILTINS):
             _msg += (
                 "However, the '%s.%s' method cannot be added to the set of trusted packages " % (module, name,)
-                + "since it is not allowed! Please consider reporting an issue if the %r python builtins " % (name,)
+                + "since it is not allowed! Please consider reporting an issue if the %r python builtin " % (name,)
                 + "needs to be unpickled for your application."
             )
         else:
@@ -298,6 +298,7 @@ def set_secure_packages(packages: Iterable[str]) -> None:
     with _CONFIG_LOCK:
         SECURE_EXTRA_PACKAGES = tuple(sorted(_out))
 
+@lru_cache(maxsize=1)
 def get_disallowed_packages() -> Tuple[str, ...]:
     """
     Return a `tuple` of packages and methods that are permanently disallowed
@@ -563,7 +564,7 @@ class SecureSerializerBase(object):
 
     @staticmethod
     def _get_hmac_tag(key: bytes, data: bytes) -> bytes:
-        return hmac.digest(key, data, HASHMOD)
+        return hmac.new(key, data, HASHMOD).digest()
 
     @staticmethod
     def _prepend_hmac_tag(key: bytes, data: bytes) -> bytes:
