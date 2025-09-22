@@ -22,11 +22,11 @@ import sys
 
 from pathlib import Path
 from functools import lru_cache, partial
-from typing import AbstractSet, Any, Dict, Iterable, NoReturn, Optional, Tuple, Union
+from typing import Any, Dict, FrozenSet, Iterable, NoReturn, Optional, Tuple, Union
 
 
 # Default secure python builtins:
-SECURE_PYTHON_BUILTINS: AbstractSet[str] = {
+SECURE_PYTHON_BUILTINS: FrozenSet[str] = frozenset({
     "bool",
     "bytearray",
     "bytes",
@@ -43,13 +43,13 @@ SECURE_PYTHON_BUILTINS: AbstractSet[str] = {
     "str",
     "tuple",
     "type",
-}
+})
 
 # Default secure packages, not including PyRosetta:
 SECURE_EXTRA_PACKAGES: Tuple[str, ...] = ("numpy",)
 
 # Modules that will not be callable targets via the `pickle` module:
-BLOCKED_PACKAGES: AbstractSet[str] = {
+BLOCKED_PACKAGES: FrozenSet[str] = frozenset({
     "subprocess",  # Block `subprocess.*` calls
     "ctypes",  # Block arbitrary code
     # Block pickle and relatives:
@@ -75,10 +75,10 @@ BLOCKED_PACKAGES: AbstractSet[str] = {
     "tempfile",
     "xml",
     "zipfile",
-}
+})
 
 # Globals that will always be blocked:
-BLOCKED_GLOBALS: AbstractSet[Tuple[str, str]] = {
+BLOCKED_GLOBALS: FrozenSet[Tuple[str, str]] = frozenset({
     ("builtins",  "__import__"),
     ("builtins",  "compile"),
     ("builtins",  "eval"),
@@ -92,7 +92,7 @@ BLOCKED_GLOBALS: AbstractSet[Tuple[str, str]] = {
     ("posix",     "popen"),
     ("posix",     "system"),
     ("sys",       "exit"),
-}
+})
 
 # Package:prefix pairs for specific method prefixes that will always be blocked:
 BLOCKED_PREFIXES: Dict[str, Tuple[str, ...]] = {
