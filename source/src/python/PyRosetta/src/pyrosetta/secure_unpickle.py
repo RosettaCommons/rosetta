@@ -43,6 +43,7 @@ SECURE_PYTHON_BUILTINS: AbstractSet[str] = {
     "slice",
     "str",
     "tuple",
+    "type",
 }
 
 # Default secure packages, not including PyRosetta:
