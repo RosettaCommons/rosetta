@@ -515,11 +515,15 @@ class SecureSerializerBase(object):
             return SecureUnpickler(stream, stream_protocol=stream_protocol).load()
         except (UnpickleSecurityError, UnpickleIntegrityError, UnpickleCompatibilityError):
             raise
+        except MemoryError:
+            raise
+        except KeyboardInterrupt:
+            raise
         except pickle.UnpicklingError as ex:
             raise pickle.UnpicklingError(
                 f"{ex}. PyRosetta secure unpickle failed with stream protocol {stream_protocol}."
             ) from ex
-        except (TypeError, OverflowError, MemoryError, EOFError) as ex:
+        except (TypeError, OverflowError, EOFError) as ex:
             raise Exception(
                 "%s: %s. Could not deserialize value of type %r." % (type(ex).__name__, ex, type(value),)
             ) from ex
