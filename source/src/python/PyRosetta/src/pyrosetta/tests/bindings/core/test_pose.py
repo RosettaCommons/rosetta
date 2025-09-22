@@ -8,12 +8,14 @@
 
 import base64
 import glob
+import importlib
 import math
 import numpy
 import os
 import pickle
 import pyrosetta
 import pyrosetta.rosetta.core.pose as pose
+import sys
 import tempfile
 import unittest
 
@@ -1047,7 +1049,7 @@ class TestPoseSecureUnpickler(unittest.TestCase):
                 return (os.system, ("echo 'Wreaking havoc...'",))
 
         pyrosetta.clear_secure_packages()
-        _obj = pickle.dumps(_CauseHavoc(), protocol=5)
+        _obj = pickle.dumps(_CauseHavoc(), protocol=pickle.DEFAULT_PROTOCOL)
         with self.assertRaises(UnpickleSecurityError) as ex:
             _ = SecureSerializerBase.secure_loads(_obj)
         _msg = str(ex.exception)
@@ -1098,6 +1100,60 @@ class TestPoseSecureUnpickler(unittest.TestCase):
             _arr = test_pose.cache["test_numpy"]
             numpy.testing.assert_equal(arr, _arr)
             set_unpickle_hmac_key(None)
+
+        # Test secure builtins roundtrip
+        test_pose = pyrosetta.pose_from_sequence("TEST/CACHE")
+        secure_builtins = pyrosetta.secure_unpickle.SECURE_PYTHON_BUILTINS
+        for builtin in secure_builtins:
+            if builtin == "NoneType":
+                builtin = "None"
+            module = getattr(sys.modules["builtins"], builtin)
+            if module == None:
+                instance = None
+            elif module == type:
+                instance = type(None)
+            elif module == slice:
+                instance = slice(0, 3, 5)
+            elif module == range:
+                instance = range(1, 10)
+            elif module == type(complex):
+                instance = complex(0, -1)
+            else:
+                instance = module()
+            test_pose.cache[builtin] = instance
+            _test_pose = SecureSerializerBase.secure_loads(
+                pickle.dumps(test_pose, protocol=pickle.HIGHEST_PROTOCOL)
+            )
+            _instance = _test_pose.cache[builtin]
+            self.assertIsInstance(_instance, type(instance))
+
+        # Test disallowed packages
+        test_pose = pyrosetta.pose_from_sequence("TEST/CACHE")
+        disallowed_packaged = sorted(pyrosetta.secure_unpickle.BLOCKED_PACKAGES)
+        for package in disallowed_packaged:
+            # Try to import
+            try:
+                _module = sys.modules.get(package, None) or importlib.import_module(package)
+            except ImportError:
+                continue
+            # Find a callable
+            for attr in reversed(dir(_module)): # Reverse to defer dunder methods
+                obj = getattr(_module, attr)
+                if callable(obj):
+                    class _ReduceObject:
+                        def __reduce__(self):
+                            return (obj, tuple())
+                    try:  # Try `pickle.dumps`
+                        test_pose.cache[package] = _ReduceObject()
+                        break
+                    except Exception: # Catch `pickle.PicklingError`
+                        continue
+            else:
+                continue
+            with self.assertRaises(UnpickleSecurityError) as ex:
+                _obj = test_pose.cache[package]
+            _msg = str(ex.exception)
+            self.assertTrue(_msg.startswith("Disallowed unpickling"), msg=_msg)
 
 
 # if __name__ == "__main__":
