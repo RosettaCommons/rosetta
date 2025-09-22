@@ -85,7 +85,7 @@ BLOCKED_GLOBALS: AbstractSet[Tuple[str, str]] = {
     ("builtins",  "__import__"),
     ("builtins",  "open"),
     ("http",      "server"),
-    ("importlib", "import_module")
+    ("importlib", "import_module"),
     ("os",        "_exit"),
     ("os",        "popen"),
     ("os",        "system"),
@@ -151,6 +151,25 @@ def get_unpickle_hmac_key() -> Optional[bytes]:
 
 # `UnpicklingError` exception subclasses:
 
+class UnpickleCompatibilityError(pickle.UnpicklingError):
+    """
+    Subclass of `pickle.UnpicklingError` raised when an unpickle-allowed module
+    cannot be resolved due to a Python package version or environment mismatch
+    from that used to pickle the module.
+    """
+    def __init__(self, module: str, name: str) -> None:
+        _top_package = _split_top_package(module)
+        _msg = (
+            "Unable to unpickle the allowed '%s.%s' module due to " % (module, name,)
+            + "a Python version mismatch, a virtual environment mismatch, or a "
+            + "missing dependency of the pickled data. Please install or upgrade the "
+            + "required package and try again: %r" % (_top_package,)
+        )
+        super().__init__(_msg)
+        self.module = module
+        self.name = name
+        self._top_package = _top_package
+
 class UnpickleIntegrityError(pickle.UnpicklingError):
     """Subclass of `pickle.UnpicklingError` raised on failed HMAC verification."""
     def __init__(self, *args: Any) -> None:
@@ -198,14 +217,6 @@ class UnpickleSecurityError(pickle.UnpicklingError):
         self._top_package = _top_package
         self._allowed = _allowed
         self._disallowed = _disallowed
-
-class PyRosettaModuleNotFoundError(ModuleNotFoundError):
-    """
-    Subclass of `ModuleNotFoundError` raised when a PyRosetta module is not found under the
-    'pyrosetta.rosetta' virtual submodule.
-    """
-    def __init__(self, module: str) -> None:
-        super().__init__("The %r module cannot be found in the PyRosetta install." % (module,))
 
 
 # Methods to update the unpickle-allowed list of secure packages:
@@ -412,11 +423,21 @@ class ModuleCache(object):
             # Prevent re-import; instead walk down attributes of imported virtual submodule
             _module = ModuleCache._walk_rosetta_module(module)
             if _module is None:
-                raise PyRosettaModuleNotFoundError(module)
+                raise UnpickleCompatibilityError(module)
+        elif module == "builtins":
+            if name == "NoneType":
+                return type(None)
+            _module = sys.modules["builtins"]
         else:
-            _module = sys.modules.get(module, None) or importlib.import_module(module)
-
-        return getattr(_module, name)
+            # Prevent re-import if the module is already imported
+            try:
+                _module = sys.modules.get(module, None) or importlib.import_module(module)
+            except ImportError as ex:
+                raise UnpickleCompatibilityError(module, name) from ex
+        try:
+            return getattr(_module, name)
+        except AttributeError as ex:
+            raise UnpickleCompatibilityError(module, name) from ex
 
 
 class SecureUnpickler(pickle.Unpickler):
@@ -441,7 +462,7 @@ class SecureUnpickler(pickle.Unpickler):
             raise UnpickleSecurityError(module, name, get_secure_packages())
         # Builtins:
         if module == "builtins" and name in SECURE_PYTHON_BUILTINS:
-            return getattr(sys.modules["builtins"], name)
+            return ModuleCache._get_allowed_module_attr(module, name)
         # Maybe include `copyreg` unpickle helper functions, depending on incoming stream protocol:
         if module == "copyreg":
             if (0 <= self._stream_protocol <= 1 and name == "_reconstructor") or (
@@ -489,7 +510,7 @@ class SecureSerializerBase(object):
         stream_protocol = SecureSerializerBase._get_stream_protocol(value)
         try:
             return SecureUnpickler(stream, stream_protocol=stream_protocol).load()
-        except (UnpickleSecurityError, UnpickleIntegrityError):
+        except (UnpickleSecurityError, UnpickleIntegrityError, UnpickleCompatibilityError):
             raise
         except pickle.UnpicklingError as ex:
             raise pickle.UnpicklingError(
