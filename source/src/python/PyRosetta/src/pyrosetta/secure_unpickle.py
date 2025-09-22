@@ -42,7 +42,6 @@ SECURE_PYTHON_BUILTINS: FrozenSet[str] = frozenset({
     "slice",
     "str",
     "tuple",
-    "type",
 })
 
 # Default secure packages, not including PyRosetta:
