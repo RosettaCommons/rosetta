@@ -37,7 +37,6 @@ SECURE_PYTHON_BUILTINS: AbstractSet[str] = {
     "int",
     "list",
     "NoneType",
-    "memoryview",
     "range",
     "set",
     "slice",
@@ -199,6 +198,12 @@ class UnpickleSecurityError(pickle.UnpicklingError):
                 "However, the '%s.%s' namespace cannot be added to the set of trusted packages " % (module, name,)
                 + "since it is permanently disallowed! To view the set of permanently disallowed packages, "
                 + "please run:\n    `pyrosetta.get_disallowed_packages()`\n"
+            )
+        elif (module == "builtins" and name not in SECURE_PYTHON_BUILTINS):
+            _msg += (
+                "However, the '%s.%s' method cannot be added to the set of trusted packages " % (module, name,)
+                + "since it is not allowed! Please consider reporting an issue if the %r python builtins " % (name,)
+                + "needs to be unpickled for your application."
             )
         else:
             if _top_package in allowed:
