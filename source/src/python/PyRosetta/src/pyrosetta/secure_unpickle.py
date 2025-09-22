@@ -19,6 +19,7 @@ import io
 import pickle
 import pyrosetta.rosetta  # noqa
 import sys
+import threading
 
 from pathlib import Path
 from functools import lru_cache, partial
@@ -122,6 +123,10 @@ BLOCKED_PREFIXES: Dict[str, Tuple[str, ...]] = {
 }
 
 
+# Thread lock for mutating global variables
+_CONFIG_LOCK = threading.RLock()
+
+
 # Hash-based Message Authentication Code (HMAC) key for data integrity:
 HASHMOD: partial = partial(hashlib.blake2s, digest_size=16, salt=b'cache')
 HMAC_SIZE: int = HASHMOD().digest_size
@@ -138,14 +143,16 @@ def set_unpickle_hmac_key(key: Optional[bytes]) -> None:
             "The 'key' argument parameter must be a `bytes` or `NoneType` object. "
             + "Received: %s" % type(key)
         )
-    HMAC_KEY = key
+    with _CONFIG_LOCK:
+        HMAC_KEY = key
 
 def get_unpickle_hmac_key() -> Optional[bytes]:
     """
     Get the global Hash-based Message Authentication Code (HMAC) key
     for `Pose.cache` score object secure serialization.
     """
-    return HMAC_KEY
+    with _CONFIG_LOCK:
+        return HMAC_KEY
 
 
 # `UnpicklingError` exception subclasses:
@@ -248,7 +255,8 @@ def get_secure_packages() -> Tuple[str, ...]:
     Return the extra secure packages currently allowed, excluding 'pyrosetta' which is
     always implicitly allowed.
     """
-    return SECURE_EXTRA_PACKAGES
+    with _CONFIG_LOCK:
+        return SECURE_EXTRA_PACKAGES
 
 def remove_secure_package(package: str) -> None:
     """
@@ -269,7 +277,6 @@ def set_secure_packages(packages: Iterable[str]) -> None:
         `set_secure_packages(('numpy', 'pandas'))`
     """
     global SECURE_EXTRA_PACKAGES
-
     if not isinstance(packages, (list, tuple, set)):
         raise TypeError(
             "The 'packages' argument parameter must be a `list`, `tuple`, or `set` object. "
@@ -288,7 +295,8 @@ def set_secure_packages(packages: Iterable[str]) -> None:
         if _top_package not in _seen:
             _seen.add(_top_package)
             _out.append(_top_package)
-    SECURE_EXTRA_PACKAGES = tuple(sorted(_out))
+    with _CONFIG_LOCK:
+        SECURE_EXTRA_PACKAGES = tuple(sorted(_out))
 
 def get_disallowed_packages() -> Tuple[str, ...]:
     """
@@ -417,7 +425,8 @@ class ModuleCache(object):
             return ModuleCache._is_under_package(module, "pyrosetta")
         else: # Maybe trust other modules
             _top_package = _split_top_package(module)
-            if _top_package in SECURE_EXTRA_PACKAGES and ModuleCache._is_under_package(module, _top_package):
+            _allowed = get_secure_packages()
+            if _top_package in _allowed and ModuleCache._is_under_package(module, _top_package):
                 return True
             else:
                 return False
