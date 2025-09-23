@@ -6,6 +6,13 @@
 # (c) For more information, see http://www.rosettacommons.org.
 # (c) Questions about this can be addressed to University of Washington CoMotion, email: license@uw.edu.
 # Secure unpickling in PyRosetta
+"""
+**Warning**: ONLY LOAD DATA YOU TRUST. 
+The pose.cache dictionary uses the pickle module to serialze and deserialize arbitrary scores in the Pose object. 
+When depickling (deserializing) is performed arbitrary code can be executed, learn more `here <https://docs.python.org/3/library/pickle.html>`_.
+The pose.cache object is only stored in memory, so this is only a risk if these objects are sent to a user in memory over a network
+such as a socket, queue, shared cache, etc. If you need to retrieve a pose.cache dictionary this way please make sure it is from a trusted source.
+"""
 
 
 __author__ = "Jason C. Klima"
