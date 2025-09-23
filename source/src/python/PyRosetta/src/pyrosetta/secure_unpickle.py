@@ -8,10 +8,10 @@
 # Secure unpickling in PyRosetta
 """
 **Warning**: ONLY LOAD DATA YOU TRUST. 
-The pose.cache dictionary uses the pickle module to serialze and deserialize arbitrary scores in the Pose object. 
-When depickling (deserializing) is performed arbitrary code can be executed, learn more `here <https://docs.python.org/3/library/pickle.html>`_.
-The pose.cache object is only stored in memory, so this is only a risk if these objects are sent to a user in memory over a network
-such as a socket, queue, shared cache, etc. If you need to retrieve a pose.cache dictionary this way please make sure it is from a trusted source.
+When depickling (deserializing) is performed arbitrary code can be executed, learn more at https://docs.python.org/3/library/pickle.html
+We (the PyRosetta developers) have made reasonable efforts to prevent malicious usage, however 
+the system’s complexity means it cannot be guaranteed to be entirely foolproof. To avoid finding
+any remaining security issues from the pickle module, only use inputs and data from known, trusted sources.
 """
 
 
