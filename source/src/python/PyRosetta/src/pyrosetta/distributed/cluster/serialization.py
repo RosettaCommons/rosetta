@@ -38,6 +38,7 @@ except ImportError:
 
 from functools import singledispatch, wraps
 from pyrosetta.distributed.packed_pose.core import PackedPose
+from pyrosetta.secure_unpickle import SecureSerializerBase
 from typing import (
     Any,
     Dict,
@@ -189,7 +190,7 @@ class Serialization(Generic[G]):
             compressed_packed_pose = None
         elif isinstance(packed_pose, PackedPose):
             packed_pose = update_scores(packed_pose)
-            compressed_packed_pose = self.encoder(packed_pose.pickled_pose)
+            compressed_packed_pose = self.encoder(io.to_pickle(packed_pose))
         else:
             raise TypeError(
                 "The 'packed_pose' argument parameter must be of type `NoneType` or `PackedPose`."
@@ -200,8 +201,8 @@ class Serialization(Generic[G]):
     @requires_compression
     def decompress_packed_pose(self, compressed_packed_pose: Any) -> Union[NoReturn, None, PackedPose]:
         """
-        Decompress a `bytes` object with the custom serialization and `cloudpickle` modules. If the 'compressed_packed_pose'
-        argument parameter is `None`, then just return `None`.
+        Decompress a `bytes` object with the custom serialization module and secure implementation of the `pickle` module.
+        If the 'compressed_packed_pose' argument parameter is `None`, then just return `None`.
 
         Args:
             compressed_packed_pose: the input `bytes` object to decompress. If `None`, then just return `None`.
@@ -215,7 +216,7 @@ class Serialization(Generic[G]):
         if compressed_packed_pose is None:
             packed_pose = None
         elif isinstance(compressed_packed_pose, bytes):
-            pose = cloudpickle.loads(self.decoder(compressed_packed_pose))
+            pose = SecureSerializerBase.secure_loads(self.decoder(compressed_packed_pose))
             packed_pose = io.to_packed(pose)
         else:
             raise TypeError(
