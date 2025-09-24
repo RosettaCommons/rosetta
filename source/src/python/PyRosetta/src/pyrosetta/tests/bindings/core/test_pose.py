@@ -1018,18 +1018,18 @@ class TestPoseSecureUnpickler(unittest.TestCase):
 
     def test_secure_unpickler(self):
         # Test secure packages
-        self.assertIn("numpy", pyrosetta.get_secure_packages())
-        pyrosetta.clear_secure_packages()
-        self.assertEqual(pyrosetta.get_secure_packages(), ())
-        pyrosetta.add_secure_package("pandas.core.frame")  # Normalizes to 'pandas'
-        self.assertEqual(pyrosetta.get_secure_packages(), ("pandas",))
-        pyrosetta.add_secure_package("pandas")  # Also normalizes to 'pandas'
-        self.assertEqual(pyrosetta.get_secure_packages(), ("pandas",))
-        pyrosetta.remove_secure_package("pandas.io.parquet")  # Also normalizes to 'pandas'
-        self.assertEqual(pyrosetta.get_secure_packages(), ())
-        pyrosetta.clear_secure_packages()
-        pyrosetta.set_secure_packages(("numpy",))
-        self.assertEqual(pyrosetta.get_secure_packages(), ("numpy",))
+        self.assertIn("numpy", pyrosetta.secure_unpickle.get_secure_packages())
+        pyrosetta.secure_unpickle.clear_secure_packages()
+        self.assertEqual(pyrosetta.secure_unpickle.get_secure_packages(), ())
+        pyrosetta.secure_unpickle.add_secure_package("pandas.core.frame")  # Normalizes to 'pandas'
+        self.assertEqual(pyrosetta.secure_unpickle.get_secure_packages(), ("pandas",))
+        pyrosetta.secure_unpickle.add_secure_package("pandas")  # Also normalizes to 'pandas'
+        self.assertEqual(pyrosetta.secure_unpickle.get_secure_packages(), ("pandas",))
+        pyrosetta.secure_unpickle.remove_secure_package("pandas.io.parquet")  # Also normalizes to 'pandas'
+        self.assertEqual(pyrosetta.secure_unpickle.get_secure_packages(), ())
+        pyrosetta.secure_unpickle.clear_secure_packages()
+        pyrosetta.secure_unpickle.set_secure_packages(("numpy",))
+        self.assertEqual(pyrosetta.secure_unpickle.get_secure_packages(), ("numpy",))
 
         # Test secure serialization round-trip
         data = {"foo": [1, 2, 3], "bar": ("String", b"Bytes"), "baz": complex(1, -2)}
@@ -1048,7 +1048,7 @@ class TestPoseSecureUnpickler(unittest.TestCase):
                 import os
                 return (os.system, ("echo 'Wreaking havoc...'",))
 
-        pyrosetta.clear_secure_packages()
+        pyrosetta.secure_unpickle.clear_secure_packages()
         _obj = pickle.dumps(_CauseHavoc(), protocol=pickle.DEFAULT_PROTOCOL)
         with self.assertRaises(UnpickleSecurityError) as ex:
             _ = SecureSerializerBase.secure_loads(_obj)
@@ -1087,7 +1087,7 @@ class TestPoseSecureUnpickler(unittest.TestCase):
             _ = SecureSerializerBase.secure_from_base64_pickle(string_data_tampered)
         set_unpickle_hmac_key(None)
 
-        pyrosetta.set_secure_packages(("numpy",))
+        pyrosetta.secure_unpickle.set_secure_packages(("numpy",))
         for hmac_key in (None,  b"", os.urandom(16), b"TestingMyKey", "String", {1, 2, 3}, {"foo": "bar"}):
             if not isinstance(hmac_key, (type(None), bytes)):
                 with self.assertRaises(TypeError):
