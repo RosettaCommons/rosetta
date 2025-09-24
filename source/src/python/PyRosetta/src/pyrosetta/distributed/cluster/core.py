@@ -249,7 +249,7 @@ try:
     import attr
     import distributed
     import toolz
-    from dask.distributed import Client, Future, as_completed
+    from dask.distributed import Client, Future, Security, as_completed
     from distributed.scheduler import KilledWorker
 except ImportError:
     print(
@@ -631,6 +631,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         default=None,
         validator=attr.validators.instance_of(str),
         converter=_parse_pyrosetta_build,
+    )
+    security = attr.ib(
+        type=Union[bool, Security],
+        default=None,
+        validator=attr.validators.instance_of((bool, Security)),
+        converter=attr.converters.default_if_none(default=True),
     )
     environment = attr.ib(
         type=str,

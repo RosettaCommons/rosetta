@@ -83,6 +83,8 @@ class SchedulerManager(Generic[G]):
                     dashboard_address=self.dashboard_address,
                     local_directory=self.scratch_dir,
                 )
+                if self.security:
+                    _cluster_kwargs["security"] = self.security
                 if __dask_version__ <= (2, 1, 0):
                     _cluster_kwargs["local_dir"] = _cluster_kwargs.pop("local_directory", self.scratch_dir)
                 cluster = LocalCluster(**_cluster_kwargs)
@@ -104,6 +106,10 @@ class SchedulerManager(Generic[G]):
                 death_timeout=9999,
                 dashboard_address=self.dashboard_address,
             )
+            if self.security:
+                _cluster_kwargs["security"] = self.security
+                if self.security is True:
+                    _cluster_kwargs["shared_temp_directory"] = self.output_path
             if __dask_version__ <= (2, 1, 0):
                 _cluster_kwargs["local_dir"] = _cluster_kwargs.pop("local_directory", self.scratch_dir)
             if __dask_jobqueue_version__ < (0, 8, 0):
