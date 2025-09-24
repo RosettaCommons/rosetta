@@ -10,6 +10,22 @@
 __author__ = "Jason C. Klima"
 
 
+import pyrosetta.rosetta as rosetta
+
+
+class PyRosettaException(Exception):
+    def __str__(self):
+        return 'PyRosettaException'
+
+
+class PythonPyExitCallback(rosetta.utility.py.PyExitCallback):
+    def __init__(self):
+        rosetta.utility.py.PyExitCallback.__init__(self)
+
+    def exit_callback(self):
+        raise PyRosettaException()
+
+
 class PyRosettaInitializationBaseException(RuntimeError):
     def __init__(self, message):
         super().__init__(message)
