@@ -83,7 +83,17 @@ def _validate_resources(resources: Any, _protocols: List[Callable[..., Any]]) ->
                 + f"Received `PyRosettaCluster().distribute(protocols=...)`: {_protocols}\n"
                 + f"Received `PyRosettaCluster().distribute(resources=...)`: {resources}\n"
             )
-        
+
+
+def _validate_scorefile_name(self, attribute: str, value: Any) -> Optional[NoReturn]:
+    if not value.endswith(".json"):
+        raise ValueError(f"The '{attribute}' keyword argument parameter must end in '.json'.")
+
+
+def _validate_output_init_file(self, attribute: str, value: Any) -> Optional[NoReturn]:
+    if value != "" and not value.endswith(".init"):
+        raise ValueError(f"The '{attribute}' keyword argument parameter must end in '.init'.")
+
 
 def _validate_logging_address(self, attribute: str, value: Any) -> Optional[NoReturn]:
     if not isinstance(value, str):
@@ -111,10 +121,10 @@ def _validate_dirs(self, attribute: str, value: Any) -> Optional[NoReturn]:
 
 def _validate_dir(self, attribute: str, value: str) -> Optional[NoReturn]:
     """Validate the scratch directory."""
-
-    os.makedirs(value, exist_ok=True)
-    if not os.path.isdir(value):
-        raise ValueError(f"`scratch_dir` directory {value} could not be created.")
+    if value != "":
+        os.makedirs(value, exist_ok=True)
+        if not os.path.isdir(value):
+            raise ValueError(f"`{attribute}` directory {value} could not be created.")
 
 
 def _validate_int(self, attribute: str, value: int) -> Optional[NoReturn]:
@@ -190,10 +200,12 @@ def _validate_residue_type_sets(
 
     if _target_residue_type_set != _client_residue_type_set:
         _msg = (
-            "Error! The compute instance (distributed worker) ResidueType set does not equal "
+            "The compute instance (distributed worker) ResidueType set does not equal "
             + "the client instance (local host) ResidueType set! Please ensure that the "
             + "compute instance (distributed worker) and client instance (local host) have "
-            + "initialized PyRosetta with identical '-extra_res_fa' and '-extra_res_cen' options."
+            + "initialized PyRosetta with identical '-extra_res_fa' and '-extra_res_cen' options.\n"
+            + f"Compute instance unique ResidueTypes: {_target_residue_type_set.difference(_client_residue_type_set)}\n"
+            + f"Client instance unique ResidueTypes: {_client_residue_type_set.difference(_target_residue_type_set)}\n"
         )
         logging.error(_msg)
         raise AssertionError(_msg)

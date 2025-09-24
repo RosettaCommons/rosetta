@@ -7,7 +7,6 @@ if sys.version_info.major >= 3:
 else:
     from pkgutil import simplegeneric as singledispatch
 
-import pickle
 import base64
 
 import pyrosetta.rosetta.core.pose as pose

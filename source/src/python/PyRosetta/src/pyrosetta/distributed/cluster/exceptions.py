@@ -104,7 +104,7 @@ class WorkerError(WorkerLostError):
     def _ignore_errors_msg(protocol_name: str) -> str:
         return (
             WorkerError._msg(protocol_name)
-            + "Ignoring error because `ignore_errors` is enabled!"
+            + " Ignoring error because `ignore_errors` is enabled!"
         )
 
     @staticmethod

@@ -1,7 +1,7 @@
 """IO routines operating on PackedPose representations."""
 import bz2
 import functools
-import json
+import inspect
 import os
 import tempfile
 import warnings
@@ -220,16 +220,47 @@ def _pose_from_str(filename):
 
 
 @functools.singledispatch
+def read_init_file(filename):
+    """
+    Return the PyRosetta initialization file dictionary from a '.init' or '.init.bz2' file.
+
+    @klimaj
+    """
+    raise ValueError(
+        "The input filename must be an instance of `str`, must end with the '.init' "
+        + f"or '.init.bz2' extension, and must be a file on disk. Received: {filename}"
+    )
+
+@read_init_file.register(str)
+def _dict_from_str(filename):
+    if not filename.endswith((".init", ".init.bz2")) or not os.path.isfile(filename):
+        read_init_file.dispatch(object)(filename)
+    if filename.endswith(".init.bz2"):
+        with open(filename, "rb") as fbz2:
+            init_dict = PyRosettaInitFileReader.from_json(
+                bz2.decompress(fbz2.read()).decode()
+            )
+    elif filename.endswith(".init"):
+        init_dict = PyRosettaInitFileReader.read_json(filename)
+
+    return init_dict
+
+@read_init_file.register(type(None))
+def _dict_from_none(none):
+    return None
+
+
+@functools.singledispatch
 def poses_from_init_file(filename):
     """
     *Warning*: This function uses the pickle module to deserialize the input filename.
     Using the pickle module is not secure, so please only run with input files you trust.
     Learn more about the pickle module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
 
-    Return a `list` object of `PackedPose` objects from a '.init' file if PyRosetta
-    is initialized. If PyRosetta is not yet initialized, then first initialize PyRosetta
-    from the '.init' file using the `pyrosetta.init_from_file()` function, then return a
-    `list` object of `PackedPose` objects from the '.init' file.
+    Return a `list` object of `PackedPose` objects from a '.init' or '.init.bz2' file if PyRosetta
+    is initialized. If PyRosetta is not yet initialized, then first initialize PyRosetta from the
+    '.init' or '.init.bz2' file using the `pyrosetta.distributed.io.init_from_file()` function,
+    then return a `list` object of `PackedPose` objects from the '.init' or '.init.bz2' file.
 
     @klimaj
     """
@@ -244,32 +275,19 @@ def _poses_from_none(none):
 @poses_from_init_file.register(str)
 def _poses_from_str(filename):
 
-    def _parse_poses(init_dict):
+    def _parse_poses(filename):
+        init_dict = read_init_file(filename)
         objs = init_dict.get("poses", [])
         assert isinstance(objs, list), (
             f"The 'poses' key value must be a `list` object! Received: {type(objs)}"
         )
         return [to_packed(to_pose(obj)) for obj in objs]
 
-    if not filename.endswith((".init", ".init.bz2")) or not os.path.isfile(filename):
-        raise ValueError(
-            "The input filename must be an instance of `str`, must end with the '.init' "
-            + f"or '.init.bz2' extension, and must be a file on disk. Received: {filename}"
-        )
-
-    if filename.endswith(".init.bz2"):
-        with open(filename, "rb") as fbz2:
-            init_dict = PyRosettaInitFileReader.from_json(
-                bz2.decompress(fbz2.read()).decode()
-            )
-    elif filename.endswith(".init"):
-        init_dict = PyRosettaInitFileReader.read_json(filename)
-
     if not was_init_called():
         with tempfile.TemporaryDirectory() as tmp_dir:
             try:
-                PyRosettaInitDictReader(
-                    init_dict,
+                init_from_file(
+                    filename,
                     output_dir=os.path.join(tmp_dir, "pyrosetta_init_input_files"),
                     skip_corrections=False,
                     relative_paths=False,
@@ -280,22 +298,51 @@ def _poses_from_str(filename):
                     set_logging_handler=None,
                     notebook=None,
                     silent=False,
-                ).init()
+                )
             except BufferError as ex:
                 raise BufferError(
-                    f"{ex}. Please run `pyrosetta.init_from_file()` with a larger 'max_decompressed_bytes' "
-                    + "keyword argument parameter before running `poses_from_init_file()` to initialize PyRosetta "
+                    f"{ex}. Please run `pyrosetta.distributed.io.init_from_file()` with a larger "
+                    + "'max_decompressed_bytes' keyword argument parameter before running "
+                    + "`pyrosetta.distributed.io.poses_from_init_file()` to initialize PyRosetta "
                     + f"with the input PyRosetta initialization file: '{filename}'"
                 )
             except Exception as ex:
                 raise Exception(
                     f"{type(ex).__name__}: {ex}. Could not initialize PyRosetta from the input PyRosetta "
-                    + f"initialization file: '{filename}'. Please run `pyrosetta.init_from_file()` before "
-                    + "running `poses_from_init_file()`."
+                    + f"initialization file: '{filename}'. Please run `pyrosetta.distributed.io.init_from_file()` "
+                    + "before running `pyrosetta.distributed.io.poses_from_init_file()`."
                 )
-            return _parse_poses(init_dict)
+            return _parse_poses(filename)
     else:
-        return _parse_poses(init_dict)
+        return _parse_poses(filename)
+
+
+def init_from_file(filename, **init_from_file_kwargs):
+    """
+    Initialize PyRosetta from a '.init' or '.init.bz2' file.
+
+    Args:
+        filename: A `str` object representing the '.init' or '.init.bz2' file.
+
+    Keyword Args:
+        init_from_file_kwargs: Any optional keyword arguments and parameters to
+            override the default `pyrosetta.init_from_file()` keyword arguments
+            used for the PyRosetta initialization from file. See the
+            `pyrosetta.init_from_file` function docstring for more information.
+
+    Returns:
+        None
+
+    @klimaj
+    """
+    _init_dict = read_init_file(filename)
+    _fullargspec = inspect.getfullargspec(pyrosetta.init_from_file)
+    _default_init_from_file_kwargs = dict(
+        zip(_fullargspec.args[-len(_fullargspec.defaults): ], _fullargspec.defaults)
+    )
+    _init_from_file_kwargs = {**_default_init_from_file_kwargs, **init_from_file_kwargs}
+    # Allow any exceptions to be raised without handling:
+    PyRosettaInitDictReader(_init_dict, **_init_from_file_kwargs).init()
 
 
 # Output functions
