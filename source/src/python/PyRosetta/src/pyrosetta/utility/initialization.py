@@ -33,7 +33,7 @@ from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.rosetta.core.simple_metrics.composite_metrics import ProtocolSettingsMetric
 from pyrosetta.utility import has_cereal
-from pyrosetta.utility.exceptions import PyRosettaIsInitializedError, PyRosettaIsNotInitializedError
+from pyrosetta.exceptions import PyRosettaIsInitializedError, PyRosettaIsNotInitializedError
 
 
 
