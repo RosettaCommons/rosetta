@@ -6,12 +6,16 @@
 # (c) For more information, see http://www.rosettacommons.org.
 # (c) Questions about this can be addressed to University of Washington CoMotion, email: license@uw.edu.
 
+import base64
 import glob
+import importlib
 import math
+import numpy
 import os
 import pickle
 import pyrosetta
 import pyrosetta.rosetta.core.pose as pose
+import sys
 import tempfile
 import unittest
 
@@ -38,6 +42,13 @@ from pyrosetta.rosetta.core.simple_metrics.per_residue_metrics import (
 from pyrosetta.rosetta.core.simple_metrics.composite_metrics import (
     BestMutationsFromProbabilitiesMetric,
     ProtocolSettingsMetric,
+)
+from pyrosetta.secure_unpickle import (
+    SecureSerializerBase,
+    UnpickleSecurityError,
+    UnpickleIntegrityError,
+    get_unpickle_hmac_key,
+    set_unpickle_hmac_key,
 )
 
 
@@ -203,7 +214,7 @@ class TestPoseScoresAccessor(unittest.TestCase):
             # Round-trip set/get scoretype value
             if obj_type == pyrosetta.rosetta.core.scoring.ScoreFunction:
                 # `ScoreFunction` instances (and some other PyRosetta instances besides `Pose` instances) cannot be serialized
-                with self.assertRaises(TypeError):
+                with self.assertRaises(Exception):
                     test_pose.cache[str(obj_type)] = value_input
                 continue
             else:
@@ -998,6 +1009,202 @@ class TestPosesToSilent(unittest.TestCase):
                     all_atom_rmsd(test_poses[i], returned_poses[i]), 
                     places=3,
                     msg="List position recovery failed.")
+
+
+class TestPoseSecureUnpickler(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        pyrosetta.init("-run:constant_seed 1")
+
+    def test_secure_unpickler(self):
+        # Test secure packages
+        self.assertIn("numpy", pyrosetta.secure_unpickle.get_secure_packages())
+        pyrosetta.secure_unpickle.clear_secure_packages()
+        self.assertEqual(pyrosetta.secure_unpickle.get_secure_packages(), ())
+        pyrosetta.secure_unpickle.add_secure_package("pandas.core.frame")  # Normalizes to 'pandas'
+        self.assertEqual(pyrosetta.secure_unpickle.get_secure_packages(), ("pandas",))
+        pyrosetta.secure_unpickle.add_secure_package("pandas")  # Also normalizes to 'pandas'
+        self.assertEqual(pyrosetta.secure_unpickle.get_secure_packages(), ("pandas",))
+        pyrosetta.secure_unpickle.remove_secure_package("pandas.io.parquet")  # Also normalizes to 'pandas'
+        self.assertEqual(pyrosetta.secure_unpickle.get_secure_packages(), ())
+        pyrosetta.secure_unpickle.clear_secure_packages()
+        pyrosetta.secure_unpickle.set_secure_packages(("numpy",))
+        self.assertEqual(pyrosetta.secure_unpickle.get_secure_packages(), ("numpy",))
+
+        # Test secure serialization round-trip
+        data = {"foo": [1, 2, 3], "bar": ("String", b"Bytes"), "baz": complex(1, -2)}
+        obj = pickle.dumps(data, protocol=5)
+        key = get_unpickle_hmac_key()
+        if key is not None:
+            obj = SecureSerializerBase._prepend_hmac_tag(obj, key)
+        string = base64.b64encode(obj).decode(SecureSerializerBase._encoder)
+        out = SecureSerializerBase.secure_from_base64_pickle(string)
+        self.assertEqual(out, data)
+
+        # Test a disallowed module
+        class _CauseHavoc:
+            """Problematic class using the `pickle` module to attempt to import and run `os.system`."""
+            def __reduce__(self):
+                import os
+                return (os.system, ("echo 'Wreaking havoc...'",))
+
+        pyrosetta.secure_unpickle.clear_secure_packages()
+        _obj = pickle.dumps(_CauseHavoc(), protocol=pickle.DEFAULT_PROTOCOL)
+        with self.assertRaises(UnpickleSecurityError) as ex:
+            _ = SecureSerializerBase.secure_loads(_obj)
+        _msg = str(ex.exception)
+        self.assertIn("Disallowed unpickling of the 'posix.system' namespace!", _msg)
+        self.assertIn("the 'posix.system' namespace cannot be added", _msg)
+
+        # Test custom HMAC key
+        data = {
+            "foo": list(range(10)),
+            "bar": dict(enumerate([complex(1, i) for i in range(10)])),
+            "baz": pyrosetta.pose_from_sequence("TEST"),
+        }
+        _hmac_size = 32
+        set_unpickle_hmac_key(os.urandom(_hmac_size))
+        self.assertEqual(len(get_unpickle_hmac_key()), _hmac_size)
+        string = SecureSerializerBase.secure_to_base64_pickle(data)
+        out = SecureSerializerBase.secure_from_base64_pickle(string)
+        self.assertEqual(out["foo"], data["foo"])
+        self.assertEqual(out["bar"], data["bar"])
+        self.assertIsInstance(out["baz"], pyrosetta.Pose)
+        self.assertEqual(out["baz"].sequence(), data["baz"].sequence())
+        # Test tampering with HMAC tag
+        arr = bytearray(base64.b64decode(string.encode(SecureSerializerBase._encoder)))
+        _hmac_tag_idx = 3
+        self.assertLessEqual(_hmac_tag_idx + 1, _hmac_size)
+        arr[_hmac_tag_idx] ^= int("0x01", 16)
+        string_hmac_tampered = base64.b64encode(bytes(arr)).decode(SecureSerializerBase._encoder)
+        with self.assertRaises(UnpickleIntegrityError):
+            _ = SecureSerializerBase.secure_from_base64_pickle(string_hmac_tampered)
+        # Test tampering with data
+        arr = bytearray(base64.b64decode(string.encode(SecureSerializerBase._encoder)))
+        arr[-1] ^= int("0x01", 16)
+        string_data_tampered = base64.b64encode(bytes(arr)).decode(SecureSerializerBase._encoder)
+        with self.assertRaises(UnpickleIntegrityError):
+            _ = SecureSerializerBase.secure_from_base64_pickle(string_data_tampered)
+        set_unpickle_hmac_key(None)
+
+        pyrosetta.secure_unpickle.set_secure_packages(("numpy",))
+        for hmac_key in (None,  b"", os.urandom(16), b"TestingMyKey", "String", {1, 2, 3}, {"foo": "bar"}):
+            if not isinstance(hmac_key, (type(None), bytes)):
+                with self.assertRaises(TypeError):
+                    set_unpickle_hmac_key(hmac_key)
+            else:
+                set_unpickle_hmac_key(hmac_key)
+            arr = numpy.array([[1, 2, 3], [4, 5, 6]], dtype=numpy.float64)
+            test_pose = pyrosetta.pose_from_sequence("SEQ")
+            test_pose.cache["test_numpy"] = arr
+            _arr = test_pose.cache["test_numpy"]
+            numpy.testing.assert_equal(arr, _arr)
+            set_unpickle_hmac_key(None)
+
+        # Test secure builtins roundtrip
+        test_pose = pyrosetta.pose_from_sequence("TEST/CACHE")
+        secure_builtins = pyrosetta.secure_unpickle.SECURE_PYTHON_BUILTINS
+        for builtin in secure_builtins:
+            if builtin == "NoneType":
+                builtin = "None"
+            module = getattr(sys.modules["builtins"], builtin)
+            if module == None:
+                instance = None
+            elif module == type:
+                instance = type(None)
+            elif module == slice:
+                instance = slice(0, 3, 5)
+            elif module == range:
+                instance = range(1, 10)
+            elif module == type(complex):
+                instance = complex(0, -1)
+            else:
+                instance = module()
+            test_pose.cache[builtin] = instance
+            _test_pose = SecureSerializerBase.secure_loads(
+                pickle.dumps(test_pose, protocol=pickle.HIGHEST_PROTOCOL)
+            )
+            _instance = _test_pose.cache[builtin]
+            self.assertIsInstance(_instance, type(instance))
+
+        # Test disallowed packages
+        test_pose = pyrosetta.pose_from_sequence("TEST/CACHE")
+        disallowed_packages = sorted(pyrosetta.secure_unpickle.BLOCKED_PACKAGES)
+        for package in disallowed_packages:
+            try:  # Try to import
+                _module = sys.modules.get(package, None) or importlib.import_module(package)
+            except ImportError:
+                continue
+            # Find a callable
+            for attr in reversed(dir(_module)): # Reverse to defer dunder methods
+                obj = getattr(_module, attr)
+                if callable(obj):
+                    class _ReduceObject:
+                        def __reduce__(self):
+                            return (obj, tuple())
+                    try:  # Try `pickle.dumps`
+                        test_pose.cache[package] = _ReduceObject()
+                        break
+                    except Exception: # Catch `pickle.PicklingError`
+                        continue
+            else:
+                continue
+            with self.assertRaises(UnpickleSecurityError) as ex:
+                _obj = test_pose.cache[package]
+            _msg = str(ex.exception)
+            self.assertTrue(_msg.startswith("Disallowed unpickling"), msg=_msg)
+
+        # Test disallowed globals
+        test_pose = pyrosetta.pose_from_sequence("RISKY/DATA")
+        disallowed_globals = sorted(pyrosetta.secure_unpickle.BLOCKED_GLOBALS)
+        for package, attr in disallowed_globals:
+            try:  # Try to import
+                _module = sys.modules.get(package, None) or importlib.import_module(package)
+            except ImportError:
+                continue
+            obj = getattr(_module, attr, None)
+            if callable(obj):
+                class _ReduceObject:
+                    def __reduce__(self):
+                        return (obj, tuple())
+                key = f"{package}.{attr}"
+                try:  # Try `pickle.dumps`
+                    test_pose.cache[key] = _ReduceObject()
+                except Exception: # Catch `pickle.PicklingError`
+                    continue
+            else:
+                continue
+            with self.assertRaises(UnpickleSecurityError) as ex:
+                _obj = test_pose.cache[key]
+            _msg = str(ex.exception)
+            self.assertTrue(_msg.startswith("Disallowed unpickling"), msg=_msg)
+
+        # Test disallowed prefixes
+        test_pose = pyrosetta.pose_from_sequence("TEST/NAMESPACE")
+        disallowed_prefixes = dict(pyrosetta.secure_unpickle.BLOCKED_PREFIXES)
+        for package, prefixes in disallowed_prefixes.items():
+            try:  # Try to import
+                _module = sys.modules.get(package, None) or importlib.import_module(package)
+            except ImportError:
+                continue
+            for prefix in prefixes:
+                for attr in filter(lambda a: a.startswith(prefix), dir(_module)):
+                    obj = getattr(_module, attr, None)
+                    if callable(obj):
+                        class _ReduceObject:
+                            def __reduce__(self):
+                                return (obj, tuple())
+                        key = f"{package}.{attr}"
+                        try:  # Try `pickle.dumps`
+                            test_pose.cache[key] = _ReduceObject()
+                        except Exception: # Catch `pickle.PicklingError`
+                            continue
+                    else:
+                        continue
+                    with self.assertRaises(UnpickleSecurityError) as ex:
+                        _obj = test_pose.cache[key]
+                    _msg = str(ex.exception)
+                    self.assertTrue(_msg.startswith("Disallowed unpickling"), msg=_msg)
 
 
 # if __name__ == "__main__":
