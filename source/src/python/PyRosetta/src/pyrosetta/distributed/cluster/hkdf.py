@@ -33,6 +33,15 @@ DERIVED_KEY_LEN: int = 32
 SALT: bytes = b"PyRosettaCluster_salt"
 
 
+class MaskedBytes(bytes):
+    """A `bytes` subclass to mask its contents if the `repr` method is called."""
+    def __new__(cls, value: bytes) -> bytes:
+        return super().__new__(cls, value)
+
+    def __repr__(self) -> str:
+        return "#"
+
+
 def compare_digest(a: bytes, b: bytes) -> bool:
     """Return `a == b` result."""
     return hmac.compare_digest(a, b)

@@ -37,7 +37,7 @@ from typing import (
     Union,
 )
 
-from pyrosetta.distributed.cluster.hkdf import compare_digest, derive_task_key, hmac_digest
+from pyrosetta.distributed.cluster.hkdf import MaskedBytes, compare_digest, derive_task_key, hmac_digest
 from pyrosetta.distributed.cluster.logging_filters import (
     SocketAddressFilter,
     split_socket_address,
@@ -98,15 +98,6 @@ class LogRecordRequestHandler(socketserver.StreamRequestHandler):
             record["args"] = tuple(args)
 
         return record
-
-
-class MaskedBytes(bytes):
-    """A `bytes` subclass to mask its contents if the `repr` method is called."""
-    def __new__(cls, value: bytes) -> bytes:
-        return super().__new__(cls, value)
-
-    def __repr__(self) -> str:
-        return "#"
 
 
 class SocketListener(socketserver.ThreadingTCPServer):
