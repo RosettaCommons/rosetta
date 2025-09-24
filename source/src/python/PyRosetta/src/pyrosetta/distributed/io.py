@@ -257,10 +257,10 @@ def poses_from_init_file(filename):
     Using the pickle module is not secure, so please only run with input files you trust.
     Learn more about the pickle module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
 
-    Return a `list` object of `PackedPose` objects from a '.init' or '.init.bz2' file if
-    PyRosetta is initialized. If PyRosetta is not yet initialized, then first initialize
-    PyRosetta from the '.init' or '.init.bz2' file using the `pyrosetta.distributed.io.init_from_file()`
-    function, then return a `list` object of `PackedPose` objects from the '.init' file.
+    Return a `list` object of `PackedPose` objects from a '.init' or '.init.bz2' file if PyRosetta
+    is initialized. If PyRosetta is not yet initialized, then first initialize PyRosetta from the
+    '.init' or '.init.bz2' file using the `pyrosetta.distributed.io.init_from_file()` function,
+    then return a `list` object of `PackedPose` objects from the '.init' or '.init.bz2' file.
 
     @klimaj
     """
@@ -327,7 +327,7 @@ def init_from_file(filename, **init_from_file_kwargs):
     Keyword Args:
         init_from_file_kwargs: Any optional keyword arguments and parameters to
             override the default `pyrosetta.init_from_file()` keyword arguments
-            used for PyRosetta initialization from file. See the
+            used for the PyRosetta initialization from file. See the
             `pyrosetta.init_from_file` function docstring for more information.
 
     Returns:
@@ -338,7 +338,7 @@ def init_from_file(filename, **init_from_file_kwargs):
     _init_dict = read_init_file(filename)
     _fullargspec = inspect.getfullargspec(pyrosetta.init_from_file)
     _default_init_from_file_kwargs = dict(
-        zip(_fullargspec.args[-len(_fullargspec.defaults):], _fullargspec.defaults)
+        zip(_fullargspec.args[-len(_fullargspec.defaults): ], _fullargspec.defaults)
     )
     _init_from_file_kwargs = {**_default_init_from_file_kwargs, **init_from_file_kwargs}
     # Allow any exceptions to be raised without handling:

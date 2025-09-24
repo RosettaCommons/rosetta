@@ -7,11 +7,13 @@ if sys.version_info.major >= 3:
 else:
     from pkgutil import simplegeneric as singledispatch
 
-import pickle
 import base64
 
 import pyrosetta.rosetta.core.pose as pose
 import pyrosetta.distributed
+
+from pyrosetta.secure_unpickle import SecureSerializerBase
+
 
 __all__ = ["pack_result", "pose_result", "to_packed", "to_pose", "to_dict", "to_base64", "to_pickle", "PackedPose"]
 
@@ -38,7 +40,7 @@ class PackedPose:
     def __init__(self, pose_or_pack):
         """Create a packed pose from pose, pack, or pickled bytes."""
         if isinstance(pose_or_pack, pose.Pose):
-            self.pickled_pose = pickle.dumps(pose_or_pack)
+            self.pickled_pose = SecureSerializerBase.to_pickle(pose_or_pack)
             self.scores = dict(pose_or_pack.cache)
 
         elif isinstance(pose_or_pack, PackedPose):
@@ -61,7 +63,7 @@ class PackedPose:
 
         Deserialize the `PackedPose` object.
         """
-        return pickle.loads(self.pickled_pose)
+        return SecureSerializerBase.secure_loads(self.pickled_pose)
 
     def update_scores(self, *score_dicts, **score_kwargs):
         new_scores = {}
@@ -77,7 +79,9 @@ class PackedPose:
 
     def clone(self):
         result = PackedPose(self.pose)
-        result.scores = pickle.loads(pickle.dumps(self.scores))
+        result.scores = SecureSerializerBase.secure_loads(
+            SecureSerializerBase.to_pickle(self.scores)
+        )
         return result
 
     def empty(self):
