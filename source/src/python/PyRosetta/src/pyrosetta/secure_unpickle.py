@@ -183,10 +183,12 @@ class UnpickleCompatibilityError(pickle.UnpicklingError):
         self.name = name
         self._top_package = _top_package
 
+
 class UnpickleIntegrityError(pickle.UnpicklingError):
     """Subclass of `pickle.UnpicklingError` raised on failed HMAC verification."""
     def __init__(self, *args: Any) -> None:
         super().__init__(*args)
+
 
 class UnpickleSecurityError(pickle.UnpicklingError):
     """
@@ -210,7 +212,7 @@ class UnpickleSecurityError(pickle.UnpicklingError):
             _msg += (
                 "However, the '%s.%s' namespace cannot be added to the set of trusted packages " % (module, name,)
                 + "since it is permanently disallowed! To view the set of permanently disallowed packages, "
-                + "please run:\n    `pyrosetta.get_disallowed_packages()`\n"
+                + "please run:\n    `pyrosetta.secure_unpickle.get_disallowed_packages()`\n"
             )
         elif (module == "builtins" and name not in SECURE_PYTHON_BUILTINS):
             _msg += (
@@ -227,7 +229,7 @@ class UnpickleSecurityError(pickle.UnpicklingError):
             else:
                 _msg += (
                     "To add it to the set of trusted packages, please run the following then try again:\n"
-                    + "    `pyrosetta.add_secure_package(%r)`\n" % (_top_package,)
+                    + "    `pyrosetta.secure_unpickle.add_secure_package(%r)`\n" % (_top_package,)
                 )
         super().__init__(_msg)
         self.module = module
