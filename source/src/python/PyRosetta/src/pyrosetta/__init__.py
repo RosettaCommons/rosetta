@@ -37,6 +37,8 @@ except:
     pass
 
 from pyrosetta.toolbox import etable_atom_pair_energies, PyJobDistributor
+from pyrosetta.utility.initialization import PyRosettaInitFileParser
+from pyrosetta.exceptions import PyRosettaException, PythonPyExitCallback
 
 # PyRosetta-3 comapatability
 # WARNING WARNING WARNING: do not add anything extra imports/names here! If you feel strongly that something needs to be added please contact author first!
@@ -69,22 +71,7 @@ from pyrosetta.io import (
 )
 
 ###############################################################################
-# Exception handling.
-class PyRosettaException(Exception):
-    def __str__(self):
-        return 'PyRosettaException'
 
-
-class PythonPyExitCallback(rosetta.utility.py.PyExitCallback):
-    def __init__(self):
-        rosetta.utility.py.PyExitCallback.__init__(self)
-
-    def exit_callback(self):
-        raise PyRosettaException()
-
-
-###############################################################################
-#
 def _rosetta_database_from_env():
     """Read rosetta database directory from environment or standard install locations.
 
@@ -210,6 +197,11 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
     rosetta.protocols.init.init(v)
     pyrosetta.protocols.h5_fragment_store_provider.init_H5FragmentStoreProvider()
     pyrosetta.protocols.h5_structure_store_provider.init_H5StructureStoreProvider()
+
+init_from_file = PyRosettaInitFileParser.init_from_file
+dump_init_file = PyRosettaInitFileParser.dump_init_file
+get_init_options_from_file = PyRosettaInitFileParser.get_init_options_from_file
+get_init_options = PyRosettaInitFileParser.get_init_options
 
 # FIXME: create 'version' struct in utility instead
 def _version_string():

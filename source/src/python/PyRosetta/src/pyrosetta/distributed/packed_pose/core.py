@@ -58,6 +58,12 @@ class PackedPose:
     @property
     @pyrosetta.distributed.requires_init
     def pose(self):
+        """
+        *Warning*: This method uses the pickle module to deserialize the `PackedPose` object.
+        Using the pickle module is not secure, so please only run with `PackedPose` objects you trust.
+
+        Deserialize the `PackedPose` object.
+        """
         return SecureSerializerBase.secure_loads(self.pickled_pose)
 
     def update_scores(self, *score_dicts, **score_kwargs):
