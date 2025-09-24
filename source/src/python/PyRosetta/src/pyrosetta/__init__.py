@@ -67,16 +67,6 @@ from pyrosetta.io import (
     get_score_function,
     Pose,
 )
-from pyrosetta.secure_unpickle import (
-    add_secure_package,
-    remove_secure_package,
-    clear_secure_packages,
-    get_disallowed_packages,
-    get_secure_packages,
-    set_secure_packages,
-    UnpickleSecurityError,
-    UnpickleIntegrityError,
-)
 
 ###############################################################################
 # Exception handling.
