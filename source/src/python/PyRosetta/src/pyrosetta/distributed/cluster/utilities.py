@@ -26,6 +26,7 @@ except ImportError:
 
 import logging
 import os
+import sys
 import warnings
 
 from typing import (
@@ -114,7 +115,30 @@ class SchedulerManager(Generic[G]):
                 _cluster_kwargs["local_dir"] = _cluster_kwargs.pop("local_directory", self.scratch_dir)
             if __dask_jobqueue_version__ < (0, 8, 0):
                 _cluster_kwargs["job_extra"] = _cluster_kwargs.pop("job_extra_directives", _job_extra_directives)
-            cluster = cluster_func(**_cluster_kwargs)
+            if self.security is True:
+                if sys.version_info[:2] <= (3, 7):
+                    raise NotImplementedError(
+                        "Use of `PyRosettaCluster(security=True)` requires Python version 3.8 or higher to use the "
+                        + "`cryptography` package. Please upgrade your python version, or otherwise provide a dask "
+                        + "`Security()` object (recommended) or `False` (not recommended unless using a firewall) "
+                        + "to the PyRosettaCluster `security` keyword argument parameter."
+                    )
+                try:  # Uses `cryptography` package: https://distributed.dask.org/en/latest/_modules/distributed/security.html#Security.temporary
+                    cluster = cluster_func(**_cluster_kwargs)
+                except ImportError as ex:
+                    raise ImportError(
+                        f"Use of `PyRosettaCluster(security=True)` implements `Security.temporary` from the 'dask' package. {ex}"
+                    )
+            else:
+                if self.security is False:
+                    logging.warning(
+                        "Warning! Dask TLS/SSL communication is not enabled while using a remote compute cluster! "
+                        + "PyRosettaCluster uses the `cloudpickle` module to serialize user-provided PyRosetta "
+                        + "protocols, which requires unpickling of the data received over the network. If not using "
+                        + "a firewall, it is highly recommended to provide a dask `Security()` object (or `True` to "
+                        + "automatically generate one) to the PyRosettaCluster `security` keyword argument parameter. "
+                    )
+                cluster = cluster_func(**_cluster_kwargs)
         logging.info(f"Dashboard link: {cluster.dashboard_link}")
 
         return cluster

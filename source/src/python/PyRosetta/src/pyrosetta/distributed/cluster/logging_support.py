@@ -257,7 +257,10 @@ def setup_target_logging(func: L) -> L:
         ignore_errors: bool,
         protocols_key: str,
         decoy_ids: List[int],
+        instance_id: str,
+        prk: bytes,
         compression: Optional[Union[str, bool]],
+        with_nonce: bool,
         client_residue_type_set: AbstractSet[str],
         client_repr: str,
         masked_key: bytes,
@@ -290,7 +293,10 @@ def setup_target_logging(func: L) -> L:
                 ignore_errors,
                 protocols_key,
                 decoy_ids,
+                instance_id,
+                prk,
                 compression,
+                with_nonce,
                 client_residue_type_set,
                 client_repr,
                 None,
@@ -298,6 +304,7 @@ def setup_target_logging(func: L) -> L:
                 **pyrosetta_init_kwargs,
             )
         finally:
+            del prk
             close_target_logger(logger, socket_handler, filters)
 
     return cast(L, wrapper)

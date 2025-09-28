@@ -90,3 +90,14 @@ def derive_task_key(passkey: bytes, task_id: str) -> bytes:
     prk = hkdf_extract(passkey, salt=SALT)
 
     return hkdf_expand(prk, info)
+
+
+def derive_instance_key(key: bytes, instance_id: str) -> bytes:
+    """
+    Derive a per-instance secret key using the extract-and-expand hash-based message
+    authentication code (HMAC)-based key derivation function (HKDF).
+    """
+    info = msgpack.packb(["PyRosettaCluster.instance_id", instance_id], use_bin_type=True)
+    prk = hkdf_extract(key, salt=SALT)
+
+    return hkdf_expand(prk, info)

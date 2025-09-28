@@ -126,6 +126,7 @@ class SmokeTest(unittest.TestCase):
                 system_info=None,
                 pyrosetta_build=None,
                 filter_results=True,
+                security=False,
             )
             cluster = PyRosettaCluster(**instance_kwargs)
             cluster.distribute(
