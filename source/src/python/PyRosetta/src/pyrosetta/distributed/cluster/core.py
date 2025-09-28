@@ -232,7 +232,7 @@ Args:
         `scheduler=None` or passed to 'dask-jobqueue' if using `scheduler="slurm"` or
         `scheduler="sge"`. If `True` is provided, then invoke the 'cryptography' package
         to generate a `Security.temporary()` object through 'dask' or 'dask-jobqueue'. See
-        https://distributed.dask.org/en/latest/_modules/distributed/security.html#Security.temporary
+        https://distributed.dask.org/en/latest/tls.html#distributed.security.Security.temporary
         for more information. If a dask `Security()` object is provided, then pass it to
         dask with `scheduler=None`, or pass it to 'dask-jobqueue' (where 'shared_temp_directory'
         is set to the `output_path` keyword argument parameter) with `scheduler="slurm"` or
