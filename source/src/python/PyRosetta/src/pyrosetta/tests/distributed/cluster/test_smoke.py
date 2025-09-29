@@ -42,6 +42,12 @@ except ImportError:
     )
     raise
 
+try:
+    import cryptography
+    has_cryptography = True
+except ImportError as ex:
+    has_cryptography = False
+
 from pyrosetta import Pose
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.utility import get_package_version
@@ -92,6 +98,13 @@ class SmokeTest(unittest.TestCase):
             return packed_pose
 
         with tempfile.TemporaryDirectory() as workdir:
+            security = pyrosetta.distributed.cluster.generate_dask_tls_security(
+                os.path.join(workdir, "security_test")
+            )
+            print(
+                "Successfully ran `pyrosetta.distributed.cluster.generate_dask_tls_security()` "
+                + f"to generate a dask `Security` object: {security}"
+            )
             instance_kwargs = dict(
                 tasks=create_tasks,
                 input_packed_pose=io.pose_from_sequence("TESTING"),
@@ -126,15 +139,20 @@ class SmokeTest(unittest.TestCase):
                 system_info=None,
                 pyrosetta_build=None,
                 filter_results=True,
-                security=False,
+                security=security,
             )
             cluster = PyRosettaCluster(**instance_kwargs)
             cluster.distribute(
                 my_pyrosetta_protocol,
             )
-            instance_kwargs.update({"protocols": my_pyrosetta_protocol})
+            instance_kwargs.update({"protocols": my_pyrosetta_protocol, "security": False})
             produce(**instance_kwargs)
-            run(**instance_kwargs)
+            instance_kwargs.update({"security": True})
+            if has_cryptography:
+                run(**instance_kwargs)
+            else:
+                with self.assertRaises(ImportError):
+                    run(**instance_kwargs)
 
     def test_ignore_errors(self):
         """Test PyRosettaCluster usage with user-provided PyRosetta protocol error."""
