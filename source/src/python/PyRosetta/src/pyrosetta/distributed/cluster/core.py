@@ -241,12 +241,12 @@ Args:
         clusters unless using a firewall). If `None` is provided, then `True` is used by
         default. In order to generate a `dask.distributed.Security()` object with OpenSSL,
         the `pyrosetta.distributed.cluster.generate_dask_tls_security()` function may also
-        be used (see docstring for more information) instead of the 'cryptography' package .
+        be used (see docstring for more information) instead of the 'cryptography' package.
         Default: `True` if `scheduler` is not `None`, otherwise `False`
-    max_nonce: A `int` object greater than or equal to 1 specifying the maximum number of
+    max_nonce: An `int` object greater than or equal to 1 specifying the maximum number of
         nonces to cache per process if nonce caching is enabled, which protects against
-        replay attacks if dask security is disabled while using remote clusters. In this
-        case, each process (including the host process and all dask worker processes)
+        replay attacks if dask security is disabled while using remote clusters. If in
+        use, each process (including the host process and all dask worker processes)
         cache nonces upon communication exchange over the network, which can increase
         memory usage in each process. A rough estimate of additional memory usage would be
         ~0.1-1 KB per task per user-provided PyRosetta protocol per process. For example,
