@@ -136,7 +136,10 @@ class SchedulerManager(Generic[G]):
                         + "PyRosettaCluster uses the `cloudpickle` module to serialize user-provided PyRosetta "
                         + "protocols, which requires unpickling of the data received over the network. If not using "
                         + "a firewall, it is highly recommended to provide a dask `Security()` object (or `True` to "
-                        + "automatically generate one) to the PyRosettaCluster `security` keyword argument parameter. "
+                        + "automatically generate one with the 'cryptography' package) to the PyRosettaCluster "
+                        + "`security` keyword argument parameter. Alternatively, in order to generate a "
+                        + "`Security()` object with OpenSSL, the `pyrosetta.distributed.cluster.generate_dask_tls_security()` "
+                        + "function may also be used (see docstring for more information)."
                     )
                 cluster = cluster_func(**_cluster_kwargs)
         logging.info(f"Dashboard link: {cluster.dashboard_link}")
