@@ -141,7 +141,7 @@ def generate_dask_tls_security(
             optional bookkeeping files) are output to this single directory. Therefore,
             for a distributed dask setup, this directory must be readable by the scheduler,
             workers, and client processes, either via a shared filesystem or via copying and
-            mounting (e.g., if using Docker, Singularity, or other container application).
+            mounting (e.g., if using Docker, Apptainer, or other container applications).
             Default: "."
         common_name: A `str` object representing the "Common Name" placed inside the leaf
             certificate. This is a human-readable identifier that typically names the
@@ -201,10 +201,10 @@ def generate_dask_tls_security(
         PyRosettaCluster(security=security, ...).distribute(...)
         ```
 
-    Additional notes:
-        - A "certificate authority" (CA) is like a trusted parent that confirms
-        whether a certificate is real. In this function, the user generates their
-        own local CA for the dask cluster.
+    Additional Notes:
+        - A "certificate authority" (CA) act as a trusted "parent" identity that
+        confirms whether a certificate is real. In this function, the user generates
+        their own local CA for the dask cluster.
         - A "leaf certificate" is the actual identity used by a running process
         (i.e., the scheduler, a worker, or a client).
         - "Subject Alternative Names" (SANs) are extra hostnames or IP addresses
@@ -217,7 +217,8 @@ def generate_dask_tls_security(
         be accessible from all nodes (i.e., the scheduler, workers, and client).
         Leaf certificates and keys must be accessible by the process using them.
         For example, all files can be placed in a common directory from which all
-        processes can read.
+        processes can read, or the directory can be mounted (e.g., if using Docker,
+        Apptainer, or other container applications).
         - If `cleanup=False` and the same directory is used for multiple function
         calls, then OpenSSL may create additional files in the output directory
         (e.g., `*.pem`, `index.txt.attr`, `index.txt.old`, and `serial.old`).
