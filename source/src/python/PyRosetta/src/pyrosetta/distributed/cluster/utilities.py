@@ -117,9 +117,9 @@ class SchedulerManager(Generic[G]):
                 _cluster_kwargs["job_extra"] = _cluster_kwargs.pop("job_extra_directives", _job_extra_directives)
             if self.security is True:
                 if sys.version_info[:2] <= (3, 7):
-                    raise NotImplementedError(
-                        "Use of `PyRosettaCluster(security=True)` requires Python version 3.8 or higher to use the "
-                        + "`cryptography` package. Please upgrade your python version, or otherwise provide a dask "
+                    logging.warning(
+                        "Use of `PyRosettaCluster(security=True)` may require Python version 3.8 or higher to use the "
+                        + "'cryptography' package. Please upgrade your python version, or otherwise provide a dask "
                         + "`Security()` object (recommended) or `False` (not recommended unless using a firewall) "
                         + "to the PyRosettaCluster `security` keyword argument parameter."
                     )
