@@ -34,6 +34,7 @@ import uuid
 from datetime import datetime
 from pyrosetta.rosetta.core.pose import Pose, add_comment
 from pyrosetta.distributed.packed_pose.core import PackedPose
+from pyrosetta.secure_unpickle import SecureSerializerBase
 from typing import (
     Any,
     Dict,
@@ -354,9 +355,9 @@ class IO(Generic[G]):
                     df = pandas.DataFrame().from_dict(_scorefile_data, orient="index")
                     # Append data to scorefile
                     if os.path.isfile(_scorefile_path):
-                        df_chunk = pandas.read_pickle(_scorefile_path, compression="infer")
+                        df_chunk = secure_read_pickle(_scorefile_path, compression="infer")
                         df = pandas.concat([df_chunk, df])
-                    df.to_pickle(_scorefile_path, compression="infer")
+                    df.to_pickle(_scorefile_path, compression="infer", protocol=SecureSerializerBase._pickle_protocol)
 
     def _write_environment_file(self, filename: str) -> None:
         """Write the YML string to the input filename."""
@@ -368,3 +369,18 @@ class IO(Generic[G]):
         ):
             with open(filename, "w") as f:
                 f.write(self.environment)
+
+
+def secure_read_pickle(
+    filepath_or_buffer: Union[pandas._typing.FilePath, pandas._typing.ReadPickleBuffer],
+    compression: pandas._typing.CompressionOptions = "infer",
+    storage_options: Optional[pandas._typing.StorageOptions] = None,
+) -> pandas.DataFrame:
+    with pandas.io.common.get_handle(
+        filepath_or_buffer,
+        "rb",
+        compression=compression,
+        is_text=False,
+        storage_options=storage_options,
+    ) as handles:
+        return SecureSerializerBase.secure_load(handles.handle)
