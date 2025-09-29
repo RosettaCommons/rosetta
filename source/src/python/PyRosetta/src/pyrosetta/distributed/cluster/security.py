@@ -227,7 +227,7 @@ def generate_dask_tls_security(
         required by dask, so they can be safely deleted after the leaf certificate
         has been issued.
     """
-    def _run(cmd: List[str]) -> None:
+    def _run(cmd: List[str]) -> Optional[NoReturn]:
         try:
             subprocess.run(cmd, check=True, capture_output=True, text=True)
         except subprocess.CalledProcessError as ex:
