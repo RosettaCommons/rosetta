@@ -168,7 +168,9 @@ Args:
         JSON-encoded scorefile, and any filename extensions accepted by
         `pandas.DataFrame().to_pickle(compression="infer")` (including ".gz", ".bz2",
         and ".xz") for pickled `pandas.DataFrame` objects of scorefile data that can later
-        be analyzed using `pandas.read_pickle(compression="infer")`.
+        be analyzed using `pyrosetta.distributed.cluster.io.secure_read_pickle(compression="infer")`.
+        Note that in order to save pickled `pandas.DataFrame` objects, please ensure
+        that `pyrosetta.secure_unpickle.add_secure_package("pandas")` has been first run.
         Default: [".json",]
     scorefile_name: A `str` object specifying the name of the output JSON-formatted
         scorefile, which must end in ".json". The scorefile location is always

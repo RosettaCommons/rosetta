@@ -39,7 +39,7 @@ from pyrosetta.distributed.cluster.exceptions import (
     InputFileError,
     OutputError,
 )
-from pyrosetta.distributed.cluster.io import IO
+from pyrosetta.distributed.cluster.io import IO, secure_read_pickle
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.rosetta.core.pose import Pose
@@ -127,11 +127,11 @@ def get_protocols_list_of_str(
                         raise NotImplementedError(_simulation_records_in_scorefile_msg)
         else:
             try:
-                df = pandas.read_pickle(scorefile, compression="infer")
+                df = secure_read_pickle(scorefile, compression="infer")
             except:
                 raise TypeError(
                     "`get_protocols_list_of_str()` received `scorefile` which does not appear to be "
-                    + "readable by `pandas.read_pickle(compression='infer')`."
+                    + "readable by `pyrosetta.distributed.cluster.io.secure_read_pickle(compression='infer')`."
                 )
             if all(k in df.columns for k in ("metadata", "instance")):
                 for instance, metadata in df[["instance", "metadata"]].values:

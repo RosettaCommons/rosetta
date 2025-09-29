@@ -46,6 +46,7 @@ from pyrosetta.distributed.cluster.converter_tasks import (
     parse_scorefile,
     reserve_scores_in_results,
 )
+from pyrosetta.distributed.cluster.io import secure_read_pickle
 from pyrosetta.distributed.cluster.serialization import (
     Serialization,
     update_scores,
@@ -271,11 +272,11 @@ def get_instance_kwargs(
                         raise NotImplementedError(_simulation_records_in_scorefile_msg)
         else:
             try:
-                df = pandas.read_pickle(scorefile, compression="infer")
+                df = secure_read_pickle(scorefile, compression="infer")
             except:
                 raise TypeError(
                     "`get_instance_kwargs()` received `scorefile` which does not appear to be "
-                    + "readable by `pandas.read_pickle(compression='infer')`."
+                    + "readable by `pyrosetta.distributed.cluster.io.secure_read_pickle(compression='infer')`."
                 )
             if all(k in df.columns for k in ("metadata", "instance")):
                 for instance, metadata in df[["instance", "metadata"]].values:
@@ -521,10 +522,13 @@ def reproduce(
             is provided, then ignore the 'scorefile' and 'decoy_name' argument parameters.
             Default: None
         scorefile: A `str` object specifying the path to the JSON-formatted scorefile
+            (or pickled `pandas.DataFrame` scorefile) from a PyRosettaCluster simulation
             from which to extract PyRosettaCluster instance kwargs. If 'scorefile'
             is provided, 'decoy_name' must also be provided. In order to use a scorefile,
             it must contain full simulation records from the original production
             run; i.e., the attribute 'simulation_records_in_scorefile' was set to True.
+            Note that in order to securely load pickled `pandas.DataFrame` objects, please
+            ensure that `pyrosetta.secure_unpickle.add_secure_package("pandas")` has been run.
             Default: None
         decoy_name: A `str` object specifying the decoy name for which to extract
             PyRosettaCluster instance kwargs. If decoy_name is provided, scorefile
