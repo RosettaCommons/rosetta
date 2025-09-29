@@ -860,16 +860,28 @@ class SerializationTest(unittest.TestCase):
                 output_packed_pose = serializer.decompress_packed_pose(compressed_packed_pose)
 
                 _error_msg = f"Failed on test case {_test_case} with compression {_compression}"
-                self.assertLess(
-                    sys.getsizeof(compressed_packed_pose),
-                    sys.getsizeof(input_packed_pose.pickled_pose),
-                    msg=_error_msg,
-                )
-                self.assertLess(
-                    sys.getsizeof(compressed_packed_pose),
-                    sys.getsizeof(output_packed_pose.pickled_pose),
-                    msg=_error_msg,
-                )
+                if _compression in (False, None):
+                    self.assertEqual(
+                        sys.getsizeof(compressed_packed_pose.pickled_pose),
+                        sys.getsizeof(input_packed_pose.pickled_pose),
+                        msg=_error_msg,
+                    )
+                    self.assertEqual(
+                        sys.getsizeof(compressed_packed_pose.pickled_pose),
+                        sys.getsizeof(output_packed_pose.pickled_pose),
+                        msg=_error_msg,
+                    )
+                else:
+                    self.assertLess(
+                        sys.getsizeof(compressed_packed_pose),
+                        sys.getsizeof(input_packed_pose.pickled_pose),
+                        msg=_error_msg,
+                    )
+                    self.assertLess(
+                        sys.getsizeof(compressed_packed_pose),
+                        sys.getsizeof(output_packed_pose.pickled_pose),
+                        msg=_error_msg,
+                    )
                 if _compression in (False, None):
                     self.assertEqual(id(input_packed_pose), id(output_packed_pose), msg=_error_msg)
                 else:
