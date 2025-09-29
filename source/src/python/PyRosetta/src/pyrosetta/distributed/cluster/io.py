@@ -43,6 +43,7 @@ from typing import (
     List,
     NoReturn,
     Optional,
+    Protocol,
     Tuple,
     TypeVar,
     Union,
@@ -372,9 +373,9 @@ class IO(Generic[G]):
 
 
 def secure_read_pickle(
-    filepath_or_buffer: Union[pandas._typing.FilePath, pandas._typing.ReadPickleBuffer],
-    compression: pandas._typing.CompressionOptions = "infer",
-    storage_options: Optional[pandas._typing.StorageOptions] = None,
+    filepath_or_buffer: Union[str, os.PathLike[str], Any],
+    compression: Optional[Union[str, Dict[str, Any]]] = "infer",
+    storage_options: Optional[Dict[str, Any]] = None,
 ) -> pandas.DataFrame:
     with pandas.io.common.get_handle(
         filepath_or_buffer,
