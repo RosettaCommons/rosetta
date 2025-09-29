@@ -132,6 +132,10 @@ class SmokeTest(unittest.TestCase):
                 output_scorefile_types=[".json", ".gz", ".xz"],
                 filter_results=True,
             )
+            if "pandas" not in pyrosetta.secure_unpickle.get_secure_packages():
+                with self.assertRaises(AssertionError):  # output_scorefile_types=[".gz", ...] requires 'pandas' as a secure package
+                    PyRosettaCluster(**instance_kwargs)
+            pyrosetta.secure_unpickle.add_secure_package("pandas")
             cluster = PyRosettaCluster(**instance_kwargs)
             cluster.distribute(
                 my_pyrosetta_protocol,
