@@ -59,6 +59,7 @@ from pyrosetta.distributed.cluster import (
     update_scores,
 )
 from pyrosetta.distributed.cluster.exceptions import WorkerError
+from pyrosetta.distributed.cluster.io import secure_read_pickle
 
 
 class SmokeTest(unittest.TestCase):
@@ -343,6 +344,10 @@ class IOTest(unittest.TestCase):
                         "output_scorefile_types": output_scorefile_types,
                         "output_path": output_path,
                     }
+                    if "pandas" not in pyrosetta.secure_unpickle.get_secure_packages():
+                        with self.assertRaises(AssertionError):  # output_scorefile_types=[".gz", ...] requires 'pandas' as a secure package
+                            run(**instance_kwargs)
+                    pyrosetta.secure_unpickle.add_secure_package("pandas")
                     run(**instance_kwargs)
                     # Test decoy outputs
                     _n_tasks = len(IOTest.create_tasks())
@@ -386,7 +391,7 @@ class IOTest(unittest.TestCase):
                                     self.assertNotIn("my_pose_score", scores)
                                     self.assertNotIn("my_complex_score", scores)
                         else:
-                            df = pandas.read_pickle(scorefile, compression="infer")
+                            df = secure_read_pickle(scorefile, compression="infer")
                             if simulation_records_in_scorefile:
                                 self.assertIn("instance", df.columns)
                                 self.assertIn("metadata", df.columns)
