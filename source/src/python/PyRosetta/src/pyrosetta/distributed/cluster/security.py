@@ -48,7 +48,7 @@ G = TypeVar("G")
 
 
 class SecurityIO(Generic[G]):
-    def _setup_task_security_plugin(self, clients: Dict[int, Client]) -> bytes:
+    def _setup_task_security_plugin(self, clients: Dict[int, Client]) -> None:
         """Setup tast security worker plugin(s)."""
         prk = MaskedBytes(derive_task_key(os.urandom(32), self.instance_id))
         self._register_task_security_plugin(clients, prk)
@@ -99,6 +99,7 @@ class SecurityIO(Generic[G]):
                     + "PyRosettaCluster input clients that are not instances of `dask.distributed.LocalCluster`."
                 )
             return with_nonce
+
         return not bool(self.security)
 
 
