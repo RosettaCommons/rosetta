@@ -218,6 +218,12 @@ def generate_dask_tls_security(
         Leaf certificates and keys must be accessible by the process using them.
         For example, all files can be placed in a common directory from which all
         processes can read.
+        - If `cleanup=False` and the same directory is used for multiple function
+        calls, then OpenSSL may create additional files in the output directory
+        (e.g., `*.pem`, `index.txt.attr`, `index.txt.old`, and `serial.old`).
+        These are simply bookkeeping files used internally by OpenSSL and are not
+        required by dask, so they can be safely deleted after the leaf certificate
+        has been issued.
     """
     def _run(cmd: List[str]) -> None:
         try:
@@ -432,6 +438,12 @@ def generate_dask_tls_security(
         if cleanup:
             # Clean up OpenSSL bookkeeping files
             for path in (index, serial, ca_config):
+                _maybe_unlink(path)
+            for path in outdir.glob("*.old"):
+                _maybe_unlink(path)
+            for path in outdir.glob("*.attr"):
+                _maybe_unlink(path)
+            for path in outdir.glob("[0-9]*.pem"):
                 _maybe_unlink(path)
 
     # Return dask `Security` object configured to use the CA and the leaf certs
