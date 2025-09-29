@@ -1321,8 +1321,9 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             output_scorefile_types=[".json", ".gz"],
         )
 
-        with self.assertRaises(AssertionError): # output_scorefile_types=[".gz", ...] requires 'pandas' as a secure package
-            _ = PyRosettaCluster(**instance_kwargs)
+        if "pandas" not in pyrosetta.secure_unpickle.get_secure_packages():
+            with self.assertRaises(AssertionError): # output_scorefile_types=[".gz", ...] requires 'pandas' as a secure package
+                _ = PyRosettaCluster(**instance_kwargs)
 
         pyrosetta.secure_unpickle.add_secure_package("pandas")
         prc = PyRosettaCluster(**instance_kwargs)
