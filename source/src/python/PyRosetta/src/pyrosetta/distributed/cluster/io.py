@@ -43,7 +43,6 @@ from typing import (
     List,
     NoReturn,
     Optional,
-    Protocol,
     Tuple,
     TypeVar,
     Union,
