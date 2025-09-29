@@ -149,6 +149,7 @@ class SmokeTest(unittest.TestCase):
             produce(**instance_kwargs)
             instance_kwargs.update({"security": True})
             if has_cryptography:
+                print("Using the installed 'cryptography' package to generate a dask `Security.temporary()` object...")
                 run(**instance_kwargs)
             else:
                 with self.assertRaises(ImportError):
