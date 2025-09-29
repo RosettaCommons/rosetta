@@ -70,6 +70,7 @@ class IO(Generic[G]):
         if isinstance(instance_state, tuple):
             instance_state = dict(zip(self.__slots__, self.__getstate__()))
         assert isinstance(instance_state, dict)
+        instance_state.pop("security", None)
         instance_state.pop("client", None)
         instance_state.pop("clients", None)
         instance_state.pop("logging_address", None)
