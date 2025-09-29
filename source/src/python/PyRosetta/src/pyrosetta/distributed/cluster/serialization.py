@@ -285,8 +285,9 @@ class NonceCache(Generic[G]):
 class Serialization(Generic[G]):
     """PyRosettaCluster serialization base class."""
     instance_id = attr.ib(
-        type=str,
-        validator=attr.validators.instance_of(str),
+        type=Optional[str],
+        default=None,
+        validator=attr.validators.optional(attr.validators.instance_of(str)),
     )
     prk = attr.ib(
         type=Optional[bytes],
@@ -303,8 +304,16 @@ class Serialization(Generic[G]):
     )
     with_nonce = attr.ib(
         type=bool,
+        default=False,
         validator=attr.validators.instance_of(bool),
     )
+    _nonce_size = attr.ib(
+        type=int,
+        default=32, # bytes
+        init=False,
+        validator=attr.validators.instance_of(int),
+    )
+
 
     def __attrs_pre_init__(self) -> None:
         MessagePacking.__init__(self)
@@ -357,12 +366,11 @@ class Serialization(Generic[G]):
         return cast(T, wrapper)
 
     def _seal(self, data: bytes) -> bytes:
-        _nonce_size = 32 # bytes
         if self.instance_id is None or self.prk is None:
             raise ValueError("Sealing requires 'instance_id' (str) and 'prk' (bytes)")
 
         version = 1
-        nonce = os.urandom(_nonce_size) if self.with_nonce else None
+        nonce = os.urandom(self._nonce_size) if self.with_nonce else None
         msg = self.pack([self.instance_id, data, nonce, version])
         mac = hmac_digest(self.prk, msg)
         package = {
@@ -403,6 +411,7 @@ class Serialization(Generic[G]):
 
         return _data
 
+    @requires_compression
     def compress_packed_pose(self, packed_pose: Any) -> Union[NoReturn, None, bytes]:
         """
         Compress a `PackedPose` object with the custom serialization module. If the 'packed_pose' argument parameter
@@ -421,8 +430,7 @@ class Serialization(Generic[G]):
             compressed_packed_pose = None
         elif isinstance(packed_pose, PackedPose):
             packed_pose = update_scores(packed_pose)
-            pickled_pose = io.to_pickle(packed_pose)
-            compressed_packed_pose = self.encoder(pickled_pose) if self.encoder else pickled_pose
+            compressed_packed_pose = self.encoder(io.to_pickle(packed_pose))
         else:
             raise TypeError(
                 "The 'packed_pose' argument parameter must be of type `NoneType` or `PackedPose`."
@@ -430,6 +438,7 @@ class Serialization(Generic[G]):
 
         return compressed_packed_pose
 
+    @requires_compression
     def decompress_packed_pose(self, compressed_packed_pose: Any) -> Union[NoReturn, None, PackedPose]:
         """
         Decompress a `bytes` object with the custom serialization module and secure implementation of the `pickle` module.
@@ -447,8 +456,7 @@ class Serialization(Generic[G]):
         if compressed_packed_pose is None:
             packed_pose = None
         elif isinstance(compressed_packed_pose, bytes):
-            pickled_pose = self.decoder(compressed_packed_pose) if self.decoder else compressed_packed_pose
-            packed_pose = io.to_packed(SecureSerializerBase.secure_loads(pickled_pose))
+            packed_pose = io.to_packed(SecureSerializerBase.secure_loads(self.decoder(compressed_packed_pose)))
         else:
             raise TypeError(
                 "The 'compressed_packed_pose' argument parameter must be of type `NoneType` or `bytes`."
