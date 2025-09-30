@@ -10,18 +10,25 @@ __author__ = "Jason C. Klima"
 
 
 try:
+    import attr
+    import cloudpickle
+    import msgpack
+    import toolz
     from distributed import get_worker
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.serialization' requires the "
-        + "third-party package 'distributed' as a dependency!\n"
-        + "Please install the package into your python environment. "
-        + "For installation instructions, visit:\n"
+        + "third-party packages 'attrs', 'cloudpickle', 'distributed', 'msgpack', "
+        + "and 'toolz' as dependencies!\nPlease install these packages into your "
+        + "python environment. For installation instructions, visit:\n"
+        + "https://pypi.org/project/attrs/\n"
+        + "https://pypi.org/project/cloudpickle/\n"
         + "https://pypi.org/project/distributed/\n"
+        + "https://pypi.org/project/msgpack/\n"
+        + "https://pypi.org/project/toolz/\n"
     )
     raise
 
-import attr
 import bz2
 import logging
 import os
@@ -34,22 +41,6 @@ try:
     import lzma as xz
 except ImportError:
     pass
-
-try:
-    import cloudpickle
-    import msgpack
-    import toolz
-except ImportError:
-    print(
-        "Importing 'pyrosetta.distributed.cluster.serialization' requires the "
-        + "third-party packages 'cloudpickle', 'msgpack', and 'toolz' as dependencies!\n"
-        + "Please install these packages into your python environment. "
-        + "For installation instructions, visit:\n"
-        + "https://pypi.org/project/cloudpickle/\n"
-        + "https://pypi.org/project/msgpack/\n"
-        + "https://pypi.org/project/toolz/\n"
-    )
-    raise
 
 from collections import deque
 from functools import partial, singledispatch, wraps
