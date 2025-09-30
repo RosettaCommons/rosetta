@@ -207,6 +207,15 @@ class NonceCache(Generic[G]):
 
         return state
 
+    @staticmethod
+    def _on_worker() -> bool:
+        """Test if the nonce cache is on a dask worker."""
+        try:
+            _worker = get_worker()
+            return True
+        except BaseException:
+            return False
+
     def _cache_nonce(self, sealed: bytes) -> None:
         """
         Run Hash-based Message Authentication Code (HMAC) verification and cache nonces
@@ -218,10 +227,9 @@ class NonceCache(Generic[G]):
                 "Invalid sealed package or version on {0} nonce cache! "
                 + f"Received: {type(package)!r}"
             )
-            try:
-                _worker = get_worker()
+            if NonceCache._on_worker():
                 raise ValueError(_err_msg.format("worker"))
-            except BaseException:
+            else:
                 raise ValueError(_err_msg.format("host"))
 
         _instance_id = package["a"] # `str`: PyRosettaCluster instance identifier/App
@@ -241,10 +249,9 @@ class NonceCache(Generic[G]):
                 + f"Expected: {_expected_mac!r}\n"
                 + f"Value:    {_mac!r}\n"
             )
-            try:
-                _worker = get_worker()
+            if NonceCache._on_worker():
                 raise SystemExit(_err_msg.format("worker"))
-            except BaseException:
+            else:
                 raise SystemExit(_err_msg.format("host"))
 
         if _nonce is not None:
@@ -256,10 +263,9 @@ class NonceCache(Generic[G]):
                     + "Exiting process for security. Please ensure that `PyRosettaCluster(security=True)` "
                     + f"is enabled in future PyRosettaCluster simulations. Received: '{_nonce}'."
                 )
-                try:
-                    _worker = get_worker()
+                if NonceCache._on_worker():
                     raise SystemExit(_err_msg.format("worker"))
-                except BaseException:
+                else:
                     raise SystemExit(_err_msg.format("host"))
             self._seen.add(_nonce)
             self._order.append(_nonce)
@@ -274,10 +280,9 @@ class NonceCache(Generic[G]):
                     + f"Memory usage: {_memory_usage} KB; "
                     + f"Example: {sorted(self._seen)[0]}"
                 )
-                try:
-                    _worker = get_worker()
-                    print(f"Remote worker ({_worker.contact_address}) nonce cache: {_msg}")
-                except:
+                if NonceCache._on_worker():
+                    print(f"Remote worker ({get_worker().contact_address}) nonce cache: {_msg}")
+                else:
                     print(f"Local host nonce cache: {_msg}")
 
 
