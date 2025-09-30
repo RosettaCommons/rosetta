@@ -372,7 +372,7 @@ class IO(Generic[G]):
 
 
 def secure_read_pickle(
-    filepath_or_buffer: Union[str, os.PathLike[str], Any],
+    filepath_or_buffer: Any,
     compression: Optional[Union[str, Dict[str, Any]]] = "infer",
     storage_options: Optional[Dict[str, Any]] = None,
 ) -> pandas.DataFrame:
