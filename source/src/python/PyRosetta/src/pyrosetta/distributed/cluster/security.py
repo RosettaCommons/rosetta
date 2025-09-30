@@ -93,14 +93,23 @@ class SecurityIO(Generic[G]):
             if with_nonce:
                 logging.warning(
                     "A PyRosettaCluster input client with a remote cluster does not have security enabled, "
-                    + "so PyRosettaCluster is enabling nonce caching for security on the host and all worker "
-                    + "processes. Please set the `PyRosettaCluster(max_nonce=...)` keyword argument parameter "
+                    + "so PyRosettaCluster is enabling nonce caching on the host and all worker processes. "
+                    + "Please consider setting the `PyRosettaCluster(max_nonce=...)` keyword argument parameter "
                     + "to limit nonce cache memory usage. To silence this warning, enable dask security on all "
                     + "PyRosettaCluster input clients that are not instances of `dask.distributed.LocalCluster`."
                 )
         else:
             if bool(self.scheduler):
                 with_nonce = not bool(self.security)
+                if with_nonce:
+                    logging.warning(
+                        "The PyRosettaCluster instance is configured to use a remote cluster that does not have "
+                        + "security enabled, so PyRosettaCluster is enabling nonce caching on the host and all "
+                        + "worker processes. Please consider setting the `PyRosettaCluster(max_nonce=...)` keyword "
+                        + "argument parameter to limit nonce cache memory usage. To silence this warning, please set "
+                        + "the `PyRosettaCluster(security=...)` keyword argument parameter to `True` or provide "
+                        + "a `dask.distributed.Security()` object (see docstring for more information)."
+                    )
             else:
                 with_nonce = False
 
