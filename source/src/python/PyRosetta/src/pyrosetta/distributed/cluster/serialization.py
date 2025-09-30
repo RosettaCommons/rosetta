@@ -147,6 +147,7 @@ def update_scores(packed_pose: PackedPose) -> PackedPose:
 
 @attr.s(kw_only=False, slots=True, frozen=True)
 class MessagePacking(Generic[G]):
+    """PyRosettaCluster MessagePack base class."""
     pack = attr.ib(
         type=partial,
         default=partial(msgpack.packb, use_bin_type=True),
@@ -163,6 +164,7 @@ class MessagePacking(Generic[G]):
 
 @attr.s(kw_only=True, slots=False, frozen=False)
 class NonceCache(Generic[G]):
+    """PyRosettaCluster nonce cache base class."""
     instance_id = attr.ib(
         type=str,
         validator=attr.validators.instance_of(str),
@@ -359,9 +361,13 @@ class Serialization(Generic[G]):
 
     @classmethod
     def zlib_compress(cls, obj: bytes) -> bytes:
+        """Compress an object with `zlib` level 9."""
         return zlib.compress(obj, 9)
 
     def requires_compression(func: T) -> T:
+        """
+        Wrapper testing if compression is enabled, and skips compression if it's disabled.
+        """
         @wraps(func)
         def wrapper(self, obj: Any) -> Any:
             if all(x is not None for x in (self.encoder, self.decoder)):
@@ -373,6 +379,7 @@ class Serialization(Generic[G]):
         return cast(T, wrapper)
 
     def _seal(self, data: bytes) -> bytes:
+        """Seal data with MessagePack."""
         if self.instance_id is None or self.prk is None:
             raise ValueError(
                 "Sealing requires the 'instance_id' and 'prk' instance attributes."
@@ -393,6 +400,10 @@ class Serialization(Generic[G]):
         return self.pack(package)
 
     def _unseal(self, obj: bytes) -> bytes:
+        """
+        Unseal data with MessagePack and perform Hash-based
+        Message Authentication Code (HMAC) verification.
+        """
         if self.instance_id is None or self.prk is None:
             raise ValueError(
                 "Unsealing requires the 'instance_id' and 'prk' instance attributes."
@@ -428,8 +439,8 @@ class Serialization(Generic[G]):
     @requires_compression
     def compress_packed_pose(self, packed_pose: Any) -> Union[NoReturn, None, bytes]:
         """
-        Compress a `PackedPose` object with the custom serialization module. If the 'packed_pose' argument parameter
-        is `None`, then just return `None`.
+        Compress a `PackedPose` object with the custom serialization module. If the 'packed_pose' argument
+        parameter is `None`, then just return `None`.
 
         Args:
             packed_pose: the input `PackedPose` object to compress. If `None`, then just return `None`.
@@ -455,8 +466,8 @@ class Serialization(Generic[G]):
     @requires_compression
     def decompress_packed_pose(self, compressed_packed_pose: Any) -> Union[NoReturn, None, PackedPose]:
         """
-        Decompress a `bytes` object with the custom serialization module and secure implementation of the `pickle` module.
-        If the 'compressed_packed_pose' argument parameter is `None`, then just return `None`.
+        Decompress a `bytes` object with the custom serialization module and secure implementation of the
+        `pickle` module. If the 'compressed_packed_pose' argument parameter is `None`, then just return `None`.
 
         Args:
             compressed_packed_pose: the input `bytes` object to decompress. If `None`, then just return `None`.
@@ -486,7 +497,7 @@ class Serialization(Generic[G]):
         return cloudpickle.loads(buffer)
 
     def dumps_object(self, obj: Any) -> bytes:
-        """Run the `cloudpickle.dumps` method and seal the data."""
+        """Run the `cloudpickle.dumps` method and seal data."""
         pickled = cloudpickle.dumps(obj)
         buffer = self.encoder(pickled) if self.encoder else pickled
 
@@ -553,6 +564,9 @@ class Serialization(Generic[G]):
 
         Returns:
             An object representing the decompressed `bytes` object.
+
+        Raises:
+            `TypeError` if the 'compressed_obj' argument parameter is not of type `bytes`.
         """
         if isinstance(compressed_obj, bytes):
             return self.loads_object(compressed_obj)
