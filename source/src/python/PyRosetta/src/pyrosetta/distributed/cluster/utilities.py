@@ -86,6 +86,8 @@ class SchedulerManager(Generic[G]):
                 )
                 if self.security:
                     _cluster_kwargs["security"] = self.security
+                    if self.security is True:
+                        logging.info("Using the 'cryptography' package to generate a dask `Security.temporary()` object...")
                 if __dask_version__ <= (2, 1, 0):
                     _cluster_kwargs["local_dir"] = _cluster_kwargs.pop("local_directory", self.scratch_dir)
                 cluster = LocalCluster(**_cluster_kwargs)
@@ -111,6 +113,7 @@ class SchedulerManager(Generic[G]):
                 _cluster_kwargs["security"] = self.security
                 if self.security is True:
                     _cluster_kwargs["shared_temp_directory"] = self.output_path
+                    logging.info("Using the 'cryptography' package to generate a dask `Security.temporary()` object...")
             if __dask_version__ <= (2, 1, 0):
                 _cluster_kwargs["local_dir"] = _cluster_kwargs.pop("local_directory", self.scratch_dir)
             if __dask_jobqueue_version__ < (0, 8, 0):
