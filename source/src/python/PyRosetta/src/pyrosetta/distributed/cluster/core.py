@@ -242,20 +242,19 @@ Args:
         default. In order to generate a `dask.distributed.Security()` object with OpenSSL,
         the `pyrosetta.distributed.cluster.generate_dask_tls_security()` function may also
         be used (see docstring for more information) instead of the 'cryptography' package.
-        Default: `True` if `scheduler` is not `None`, otherwise `False`
+        Default: `False` if `scheduler=None`, otherwise `True`
     max_nonce: An `int` object greater than or equal to 1 specifying the maximum number of
-        nonces to cache per process if nonce caching is enabled, which protects against
-        replay attacks if dask security is disabled while using remote clusters. If in
-        use, each process (including the host process and all dask worker processes)
-        cache nonces upon communication exchange over the network, which can increase
-        memory usage in each process. A rough estimate of additional memory usage would be
-        ~0.1-1 KB per task per user-provided PyRosetta protocol per process. For example,
-        submitting 1000 tasks with 10 user-provided PyRosetta protocols would add
-        ~0.1-1 KB/task/protocol * 1000 tasks * 10 protocols = ~1-10 MB of memory per
-        processs. If dask security is disabled while using remote clusters, the maximum
-        nonce cache size per process can be set using this keyword argument parameter
-        (i.e., in estimating the memory usage per process, the number of tasks times the
-        number of protocols has a ceiling at this parameter).
+        nonces to cache per process if dask security is disabled while using remote clusters,
+        which protects against replay attacks. If nonce caching is in use, each process
+        (including the host node process and all dask worker processes) cache nonces upon
+        communication exchange over the network, which can increase memory usage in each
+        process. A rough estimate of additional memory usage is ~0.2 KB per task
+        per user-provided PyRosetta protocol per process. For example, submitting
+        1000 tasks with 2 user-provided PyRosetta protocols adds ~0.2 KB/task/protocol
+        * 1000 tasks * 2 protocols = ~0.4 MB of memory per processs. If memory usage
+        per process permits, it is recommended to set this parameter to at least the
+        number of tasks times the number of protocols submitted, so that every nonce
+        from every communication exchange over the network gets cached.
         Default: 4096
     cooldown_time: A `float` or `int` object specifying how many seconds to sleep after the
         simulation is complete to allow loggers to flush. For very slow network filesystems,
