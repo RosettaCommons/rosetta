@@ -772,6 +772,7 @@ class SaveAllTest(unittest.TestCase):
         )
         _total_tasks = 2
         _total_protocols = 5
+        _nstruct = 2
 
         def create_tasks():
             for i in range(_total_tasks):
@@ -802,7 +803,7 @@ class SaveAllTest(unittest.TestCase):
                 memory=None,
                 min_workers=1,
                 max_workers=1,
-                nstruct=2,
+                nstruct=_nstruct,
                 dashboard_address=None,
                 compressed=True,
                 logging_level="CRITICAL",
