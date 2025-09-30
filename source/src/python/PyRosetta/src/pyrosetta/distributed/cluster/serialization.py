@@ -221,7 +221,10 @@ class NonceCache(Generic[G]):
         """
         package = self.unpack(sealed)
         if not isinstance(package, dict) or package.get("v", None) != 1:
-            _err_msg = "Invalid sealed package or version on {0} nonce cache! " + f"Received: {type(package)!r}"
+            _err_msg = (
+                "Invalid sealed package or version on {0} nonce cache! "
+                + f"Received: {type(package)!r}"
+            )
             try:
                 _worker = get_worker()
                 raise ValueError(_err_msg.format("worker"))
@@ -273,7 +276,11 @@ class NonceCache(Generic[G]):
 
             if self._debug:
                 _memory_usage = round(sum(map(sys.getsizeof, (self._seen, self._order))) / 1e3, 3)  # KB
-                _msg = f"Size={len(self._seen)}; Memory usage: {_memory_usage} KB; Example: {sorted(self._seen)[0]}"
+                _msg = (
+                    f"Size={len(self._seen)}/{self.max_nonce}; "
+                    + f"Memory usage: {_memory_usage} KB; "
+                    + f"Example: {sorted(self._seen)[0]}"
+                )
                 try:
                     _worker = get_worker()
                     print(f"Remote worker ({_worker.contact_address}) nonce cache: {_msg}")
@@ -367,7 +374,9 @@ class Serialization(Generic[G]):
 
     def _seal(self, data: bytes) -> bytes:
         if self.instance_id is None or self.prk is None:
-            raise ValueError("Sealing requires 'instance_id' (str) and 'prk' (bytes)")
+            raise ValueError(
+                "Sealing requires the 'instance_id' and 'prk' instance attributes."
+            )
 
         version = 1
         nonce = os.urandom(self._nonce_size) if self.with_nonce else None
@@ -384,12 +393,14 @@ class Serialization(Generic[G]):
         return self.pack(package)
 
     def _unseal(self, obj: bytes) -> bytes:
-        if self.prk is None:
-            raise ValueError("Unsealing require 'prk' (bytes).")
+        if self.instance_id is None or self.prk is None:
+            raise ValueError(
+                "Unsealing requires the 'instance_id' and 'prk' instance attributes."
+            )
 
         package = self.unpack(obj)
         if not isinstance(package, dict) or package.get("v", None) != 1:
-            raise ValueError(f"Invalid sealed package or version. Received: {type(package)!r}")
+            raise ValueError(f"Invalid sealed package or version. Received: {type(package)}")
 
         _instance_id = package["a"] # `str`: PyRosettaCluster instance identifier/App
         _data = package["d"] # `bytes`: Data bytestring
@@ -398,9 +409,12 @@ class Serialization(Generic[G]):
         _version = package["v"] # `int`: Version
 
         if self.instance_id is not None and _instance_id != self.instance_id:
-            raise ValueError("Instance identifier mismatch in packaged data.")
+            raise ValueError(
+                "Instance identifier mismatch in packaged data!\n"
+                + f"'{_instance_id}' != '{self.instance_id}'"
+            )
 
-        msg = self.pack([self.instance_id, _data, _nonce, _version])
+        msg = self.pack([_instance_id, _data, _nonce, _version])
         _expected_mac = hmac_digest(self.prk, msg)
         if not compare_digest(_expected_mac, _mac):
             raise SystemExit(
