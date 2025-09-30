@@ -372,10 +372,16 @@ class IO(Generic[G]):
 
 
 def secure_read_pickle(
-    filepath_or_buffer: Any,
+    filepath_or_buffer: str,
     compression: Optional[Union[str, Dict[str, Any]]] = "infer",
     storage_options: Optional[Dict[str, Any]] = None,
 ) -> pandas.DataFrame:
+    """
+    Secure replacement for `pandas.read_pickle()` for file-like objects.
+
+    Usage requires adding 'pandas' as a secure package to unpickle in PyRosetta:
+    `pyrosetta.secure_unpickle.add_secure_package('pandas')`
+    """
     with pandas.io.common.get_handle(
         filepath_or_buffer,
         "rb",
