@@ -98,9 +98,13 @@ class SecurityIO(Generic[G]):
                     + "to limit nonce cache memory usage. To silence this warning, enable dask security on all "
                     + "PyRosettaCluster input clients that are not instances of `dask.distributed.LocalCluster`."
                 )
-            return with_nonce
         else:
-            return not bool(self.security)
+            if bool(self.scheduler):
+                with_nonce = not bool(self.security)
+            else:
+                with_nonce = False
+
+        return with_nonce
 
 
 def generate_dask_tls_security(

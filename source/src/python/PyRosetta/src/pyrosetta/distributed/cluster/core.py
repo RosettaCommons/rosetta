@@ -735,9 +735,6 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             instance_id=self.instance_id,
             max_nonce=self.max_nonce,
         ) if self.with_nonce else None
-        print("SECURITY:", self.security)
-        print("INSTANCE ID:", self.instance_id)
-        print("WITH NONCE:", self.with_nonce)
 
     def _create_future(
         self,
