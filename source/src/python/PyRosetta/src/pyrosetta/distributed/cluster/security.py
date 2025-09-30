@@ -99,8 +99,8 @@ class SecurityIO(Generic[G]):
                     + "PyRosettaCluster input clients that are not instances of `dask.distributed.LocalCluster`."
                 )
             return with_nonce
-
-        return not bool(self.security)
+        else:
+            return not bool(self.security)
 
 
 def generate_dask_tls_security(

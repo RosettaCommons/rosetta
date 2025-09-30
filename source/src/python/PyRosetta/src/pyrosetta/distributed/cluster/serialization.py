@@ -228,7 +228,7 @@ class NonceCache(Generic[G]):
             except BaseException:
                 raise ValueError(_err_msg.format("host"))
 
-        _instance_id = package["a"] # `str`: PyRosettaCluster instance ID/App
+        _instance_id = package["a"] # `str`: PyRosettaCluster instance identifier/App
         _data = package["d"] # `bytes`: Data bytestring
         _mac = package["m"] # `bytes`: MAC (HMAC tag)
         _nonce = package["n"] # `bytes`: Nonce
@@ -241,10 +241,10 @@ class NonceCache(Generic[G]):
         _expected_mac = hmac_digest(bytes(self.prk), msg)
         if not compare_digest(_expected_mac, _mac):
             _err_msg = (
-                    "Task HMAC verification failed during nonce cache on {0}!\n"
-                    + f"Expected: {_expected_mac!r}\n"
-                    + f"Value:    {_mac!r}\n"
-                )
+                "Task HMAC verification failed during nonce cache on {0}!\n"
+                + f"Expected: {_expected_mac!r}\n"
+                + f"Value:    {_mac!r}\n"
+            )
             try:
                 _worker = get_worker()
                 raise SystemExit(_err_msg.format("worker"))
@@ -254,11 +254,11 @@ class NonceCache(Generic[G]):
         if _nonce is not None:
             if _nonce in self._seen:
                 # Replay protection
-                _err_msg =  (
+                _err_msg = (
                     "PyRosettaCluster detected a repeat nonce on the {0} for the instance identifier "
-                    + f"{self.instance_id!r}, which might indicate a replay attack is in progress! "
-                    + "Aborting simulation for security. Please ensure that `PyRosettaCluster(security=...)` "
-                    + f"is enabled in future PyRosettaCluster simulations. Received: {_nonce!r}."
+                    + f"'{self.instance_id}', which might indicate a replay attack is in progress! "
+                    + "Exiting process for security. Please ensure that `PyRosettaCluster(security=True)` "
+                    + f"is enabled in future PyRosettaCluster simulations. Received: '{_nonce}'."
                 )
                 try:
                     _worker = get_worker()
@@ -271,14 +271,14 @@ class NonceCache(Generic[G]):
                 _expired = self._order.popleft()
                 self._seen.discard(_expired)
 
-        if self._debug:
-            _memory_usage = round(sum(map(sys.getsizeof, (self._seen, self._order))) / 1e3, 3)  # KB
-            _msg = f"Size={len(self._seen)}; Memory usage: {_memory_usage} KB; Example: {sorted(self._seen)[0]}"
-            try:
-                _worker = get_worker()
-                print(f"Remote worker ({_worker.contact_address}) nonce cache: {_msg}")
-            except:
-                print(f"Local host nonce cache: {_msg}")
+            if self._debug:
+                _memory_usage = round(sum(map(sys.getsizeof, (self._seen, self._order))) / 1e3, 3)  # KB
+                _msg = f"Size={len(self._seen)}; Memory usage: {_memory_usage} KB; Example: {sorted(self._seen)[0]}"
+                try:
+                    _worker = get_worker()
+                    print(f"Remote worker ({_worker.contact_address}) nonce cache: {_msg}")
+                except:
+                    print(f"Local host nonce cache: {_msg}")
 
 
 @attr.s(kw_only=True, slots=False, frozen=False)
@@ -374,7 +374,7 @@ class Serialization(Generic[G]):
         msg = self.pack([self.instance_id, data, nonce, version])
         mac = hmac_digest(self.prk, msg)
         package = {
-            "a": self.instance_id, # `str`: PyRosettaCluster instance ID/App
+            "a": self.instance_id, # `str`: PyRosettaCluster instance identifier/App
             "d": data, # `bytes`: Data bytestring
             "m": mac, # `bytes`: MAC (HMAC tag)
             "n": nonce, # `bytes`: Nonce
@@ -391,14 +391,14 @@ class Serialization(Generic[G]):
         if not isinstance(package, dict) or package.get("v", None) != 1:
             raise ValueError(f"Invalid sealed package or version. Received: {type(package)!r}")
 
-        _instance_id = package["a"] # `str`: PyRosettaCluster instance ID/App
+        _instance_id = package["a"] # `str`: PyRosettaCluster instance identifier/App
         _data = package["d"] # `bytes`: Data bytestring
         _mac = package["m"] # `bytes`: MAC (HMAC tag)
         _nonce = package["n"] # `bytes`: Nonce
         _version = package["v"] # `int`: Version
 
         if self.instance_id is not None and _instance_id != self.instance_id:
-            raise ValueError("Instance ID mismatch in packaged data.")
+            raise ValueError("Instance identifier mismatch in packaged data.")
 
         msg = self.pack([self.instance_id, _data, _nonce, _version])
         _expected_mac = hmac_digest(self.prk, msg)
