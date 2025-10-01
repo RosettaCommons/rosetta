@@ -34,6 +34,6 @@ def main():
         print("Caught AttributeError in cloudpickle version {0} trying to pickle a Pose object: {1}".format(version, ex))
         sys.exit(1)
 
-if __name__ == "__main__":
-    print("Running: {0}".format(__file__))
-    main()
+# if __name__ == "__main__":
+#     print("Running: {0}".format(__file__))
+#     main()
