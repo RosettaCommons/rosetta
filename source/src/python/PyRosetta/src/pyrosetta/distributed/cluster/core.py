@@ -96,7 +96,8 @@ Args:
         user-provided PyRosetta protocol run later.
         Default: 1
     compressed: A `bool` object specifying whether or not to compress the output
-        '.pdb' files with bzip2, resulting in '.pdb.bz2' files.
+        '.pdb' files with `bzip2`, resulting in '.pdb.bz2' output decoy files. Also
+        see the 'output_decoy_types' keyword argument.
         Default: True
     compression: A `str` object of 'xz', 'zlib' or 'bz2', or a `bool` or `NoneType`
         object representing the internal compression library for pickled `PackedPose` 
@@ -118,8 +119,11 @@ Args:
     pyrosetta_build: A `str` or `NoneType` object specifying the PyRosetta build as
         output by `pyrosetta._version_string()`. If `None` is provided, then PyRosettaCluster
         automatically detects the PyRosetta build and sets this attribute as the `str`.
-        If a `str` is provided, then validate that the input PyRosetta build is equal
-        to the active PyRosetta build, and log a warning message if not.
+        If a non-empty `str` is provided, then validate that the input PyRosetta build is
+        equal to the active PyRosetta build, and raise an error if not. This ensures that
+        reproduction simulations use an identical PyRosetta build from the original
+        simulation. To bypass PyRosetta build validation with a warning message, an
+        empty string ('') may be provided (but does not ensure reproducibility).
         Default: None
     sha1: A `str` or `NoneType` object specifying the git SHA1 hash string of the
         particular git commit being simulated. If a non-empty `str` object is provided,
@@ -141,15 +145,38 @@ Args:
     environment: A `NoneType` or `str` object specifying the active conda environment
         YML file string. If a `NoneType` object is provided, then generate a YML file
         string for the active conda environment and save it to the full simulation
-        record. If a `str` object is provided, then validate it against the active
-        conda environment YML file string and save it to the full simulation record.
+        record. If a non-empty `str` object is provided, then validate it against the
+        active conda environment YML file string and save it to the full simulation record.
+        This ensures that reproduction simulations use an identical conda environment from
+        the original simulation. To bypass conda environment validation with a warning
+        message, an empty string ('') may be provided (but does not ensure reproducibility).
         Default: None
     output_path: A `str` object specifying the full path of the output directory
         (to be created if it doesn't exist) where the output results will be saved
         to disk.
         Default: "./outputs"
+    output_decoy_types: An iterable of `str` objects representing the output decoy
+        filetypes to save during the simulation. Available options are: ".pdb" for PDB
+        files, ".pkl_pose" for pickled Pose files, and ".b64_pose" for base64-encoded
+        pickled Pose files. If `compressed=True`, then each output decoy file is further
+        compressed by `bzip2`, and ".bz2" is appended to the filename. Note that pickled
+        files have security issues, you can learn more `here <https://docs.python.org/3/library/pickle.html>`_.
+        Only deserialize these files if you know and trust their source. 
+        Default: [".pdb",]
+    output_scorefile_types: An iterable of `str` objects representing the output scorefile
+        filetypes to save during the simulation. Available options are: ".json" for a
+        JSON-encoded scorefile, and any filename extensions accepted by
+        `pandas.DataFrame().to_pickle(compression="infer")` (including ".gz", ".bz2",
+        and ".xz") for pickled `pandas.DataFrame` objects of scorefile data that can later
+        be analyzed using `pyrosetta.distributed.cluster.io.secure_read_pickle(compression="infer")`.
+        Note that in order to save pickled `pandas.DataFrame` objects, please ensure
+        that `pyrosetta.secure_unpickle.add_secure_package("pandas")` has been first run.
+        Default: [".json",]
     scorefile_name: A `str` object specifying the name of the output JSON-formatted
-        scorefile. The scorefile location is always `output_path`/`scorefile_name`.
+        scorefile, which must end in ".json". The scorefile location is always
+        `output_path`/`scorefile_name`. If ".json" is not in the 'output_scorefile_types'
+        keyword argument parameter, the JSON-formatted scorefile will not be output,
+        but other scorefile types will get the same filename before the ".json" extension.
         Default: "scores.json"
     simulation_records_in_scorefile: A `bool` object specifying whether or not to
         write full simulation records to the scorefile. If `True`, then write
@@ -277,6 +304,8 @@ from pyrosetta.distributed.cluster.converters import (
     _parse_environment,
     _parse_input_packed_pose,
     _parse_logging_address,
+    _parse_output_decoy_types,
+    _parse_output_scorefile_types,
     _parse_pyrosetta_build,
     _parse_scratch_dir,
     _parse_seeds,
@@ -299,6 +328,7 @@ from pyrosetta.distributed.cluster.validators import (
     _validate_int,
     _validate_logging_address,
     _validate_min_len,
+    _validate_scorefile_name,
 )
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
@@ -312,6 +342,7 @@ from typing import (
     TypeVar,
     Union,
 )
+
 
 G = TypeVar("G")
 
@@ -458,10 +489,34 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             default=os.path.abspath(os.path.join(os.getcwd(), "outputs"))
         ),
     )
+    output_decoy_types = attr.ib(
+        type=List[str],
+        default=None,
+        validator=[
+            attr.validators.deep_iterable(
+                member_validator=attr.validators.instance_of(str),
+                iterable_validator=attr.validators.instance_of(list),
+            ),
+            _validate_min_len,
+        ],
+        converter=_parse_output_decoy_types,
+    )
+    output_scorefile_types = attr.ib(
+        type=List[str],
+        default=None,
+        validator=[
+            attr.validators.deep_iterable(
+                member_validator=attr.validators.instance_of(str),
+                iterable_validator=attr.validators.instance_of(list),
+            ),
+            _validate_min_len,
+        ],
+        converter=_parse_output_scorefile_types,
+    )
     scorefile_name = attr.ib(
         type=str,
         default="scores.json",
-        validator=attr.validators.instance_of(str),
+        validator=[attr.validators.instance_of(str), _validate_scorefile_name],
         converter=attr.converters.default_if_none(default="scores.json"),
     )
     scorefile_path = attr.ib(
