@@ -105,7 +105,7 @@ def _print_conda_warnings() -> None:
 
 
 def get_protocols(
-    protocols: Union[List[Union[Callable[..., Any], str]], Callable[..., Any], Optional[str]] = None,
+    protocols: Optional[Union[List[Union[Callable[..., Any], str]], Callable[..., Any], str]] = None,
     input_file: Optional[Union[str, Pose, PackedPose]] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
@@ -166,7 +166,7 @@ def get_protocols(
                 + "from the original production run. Continuing with the reproduction."
             )
         for i in range(len(original_protocols_list_of_str)):
-            if original_protocols_list_of_str[i] not in input_protocols_list_of_str[i]:
+            if original_protocols_list_of_str[i] != input_protocols_list_of_str[i]:
                 logging.warning(
                     f"The original user-defined PyRosetta protocol '{original_protocols_list_of_str[i]}' "
                     + f"appears to have changed names to '{input_protocols_list_of_str[i]}'! "
