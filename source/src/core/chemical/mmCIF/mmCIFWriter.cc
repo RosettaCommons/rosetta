@@ -65,6 +65,8 @@ mmCIFWriter::generate_block( core::chemical::ResidueType const & restype ) {
 	gemmi::cif::Block block;
 	block.name = restype.name();
 
+	////////////// Standard Residue-level data
+
 	block.set_pair( "_chem_comp.id", restype.name() );
 	block.set_pair( "_chem_comp.name", restype.name() );
 	block.set_pair( "_chem_comp.one_letter_code", std::string(1, restype.name1() ) );
@@ -83,6 +85,7 @@ mmCIFWriter::generate_block( core::chemical::ResidueType const & restype ) {
 		block.set_pair( "_chem_comp.type", "NON-POLYMER" );
 	}
 
+	////////////// Standard Atom-level Data
 
 	gemmi::cif::Loop & atom_comp = gemmi_add_table(block, "_chem_comp_atom", {
 		"comp_id",
@@ -93,6 +96,7 @@ mmCIFWriter::generate_block( core::chemical::ResidueType const & restype ) {
 		"model_Cartn_y",
 		"model_Cartn_z",
 		"pdbx_ordinal",
+		"partial_charge"
 		} );
 
 	for ( core::Size ii(1); ii <= restype.natoms(); ++ii ) {
@@ -106,9 +110,28 @@ mmCIFWriter::generate_block( core::chemical::ResidueType const & restype ) {
 		vec.push_back( std::to_string(pos.y()) );
 		vec.push_back( std::to_string(pos.z()) );
 		vec.push_back( std::to_string(ii) );
+		vec.push_back( std::to_string(restype.atom_charge(ii)) );
 
 		gemmi_add_row( atom_comp, vec );
 	}
+
+	//////////////// Rosetta-specific Atom-level Data
+	//
+	//// Note, if there's a standard place to put this data, prefer that
+	//gemmi::cif::Loop & rosetta_atom_comp = gemmi_add_table(block, "_rosetta_chem_comp_atom", {
+	//	"comp_id",
+	//	"atom_id",
+	//	} );
+	//
+	//for ( core::Size ii(1); ii <= restype.natoms(); ++ii ) {
+	//	std::vector< std::string > vec;
+	//	vec.push_back( restype.name() );
+	//	vec.push_back( restype.atom_name(ii) );
+	//
+	//	gemmi_add_row( rosetta_atom_comp, vec );
+	//}
+	//
+	//////////////// Standard Bond-level Data
 
 	gemmi::cif::Loop & bond_comp = gemmi_add_table(block, "_chem_comp_bond", {
 		"comp_id",

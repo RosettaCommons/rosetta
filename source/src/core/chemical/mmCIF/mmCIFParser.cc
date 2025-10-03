@@ -96,12 +96,25 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 
 	sdf::MolFileIOMoleculeOP molecule( new sdf::MolFileIOMolecule() );
 
-	molecule->name( block.name );
 	//only proceed if the tables for bonds and atoms are present
 	if ( !block.has_mmcif_category("_chem_comp_atom") ) {
 		TR.Error << "Cannot parse CIF file. No atom block (chem_comp_atom) found for " << block.name << std::endl;
 		return molecule;
 	}
+
+	/////////////////// Standard Residue-level data
+	molecule->name( block.name );
+
+	std::string const * name3 = block.find_value("_chem_comp.three_letter_code"); // Non-owning raw pointer, null if not found.
+	if ( name3 ) {
+		molecule->name3( as_string(name3) );
+	}
+	std::string const * name1 = block.find_value("_chem_comp.one_letter_code"); // Non-owning raw pointer, null if not found.
+	if ( name1 && name1 ) {
+		molecule->name1( as_string(name1) );
+	}
+
+	//////////////////// Standard Atom-level data
 
 	// There's another possible issue. to pre-pick about. We absolutely NEED N,
 	// because we need to be very specific about adding and deleting atoms.
@@ -126,6 +139,8 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 	int model_Cartn_y = find_gemmi_column(atom_comp,"model_Cartn_y");
 	int model_Cartn_z = find_gemmi_column(atom_comp,"model_Cartn_z");
 	int charge = find_gemmi_column(atom_comp,"charge");
+	int partial_charge = find_gemmi_column(atom_comp,"partial_charge");
+
 
 	int atom_name_id = find_gemmi_column(atom_comp,"atom_id");
 	if ( atom_name_id < 0 ) {
@@ -207,9 +222,9 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 	// Get the chem_comp table first, because this will help us
 	// look out for extraneous atoms common in CIF entries -- extra nitrogen H
 	// and OH terminus on C
-	gemmi::cif::Table chem_comp = block.find( "_chem_comp.", {"type"} );
-	if ( chem_comp.size() > 0 ) {
-		std::string type = as_string(chem_comp[0][0]);
+	gemmi::cif::Table chem_comp_type = block.find( "_chem_comp.", {"type"} );
+	if ( chem_comp_type.size() > 0 ) {
+		std::string type = as_string(chem_comp_type[0][0]);
 		if ( type == "L-PEPTIDE LINKING" && is_peptide_linking ) {
 			TR.Debug << "Found L-peptide RT" << std::endl;// named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "PROTEIN POLYMER L_AA" );
@@ -245,6 +260,8 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 			is_nucleic_linking = false;
 		}
 	}
+
+
 
 	// Sometimes OP3/O3P is used for non-term-deletable phosphate oxygens. (THX)
 	//bool interesting_upper_behavior = false;
@@ -469,6 +486,9 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 			atom->formal_charge( as_int( atom_comp[ii][charge], 0 ) ); // Default zero if present and null
 		} else {
 			atom->formal_charge( 0 );
+		}
+		if ( partial_charge >= 0 ) {
+			atom->partial_charge( as_number( atom_comp[ii][partial_charge], 0 ) ); // Default zero if present and null
 		}
 
 		molecule->add_atom( atom );
