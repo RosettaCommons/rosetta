@@ -133,7 +133,7 @@ class EnvironmentConfig(Generic[G]):
 
 @lru_cache(maxsize=1)
 def get_environment_config() -> EnvironmentConfig:
-    """Return an instance of the `EnvironmentConfig` class on the host node process."""
+    """Return an instance of the `EnvironmentConfig` class on the host process."""
     return EnvironmentConfig()
 
 

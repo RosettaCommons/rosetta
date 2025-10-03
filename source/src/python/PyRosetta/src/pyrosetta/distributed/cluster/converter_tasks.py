@@ -66,7 +66,7 @@ from typing import (
 
 @contextmanager
 def not_on_worker() -> Generator[None, Any, None]:
-    """A context manager for running code on the host node process."""
+    """A context manager for running code on the host process."""
     try:
         distributed.get_worker()
     except BaseException:
@@ -76,7 +76,7 @@ def not_on_worker() -> Generator[None, Any, None]:
 def maybe_issue_environment_warnings() -> None:
     """
     Issue a warning message if an environment manager is not installed and we are
-    not in an active virtual environment on the host node process.
+    not in an active virtual environment on the host process.
     """
 
     with not_on_worker():
