@@ -34,11 +34,11 @@ import tempfile
 
 from datetime import datetime
 from functools import wraps
+from pyrosetta.distributed.cluster.config import get_environment_config
 from pyrosetta.distributed.cluster.converters import _parse_protocols
 from pyrosetta.distributed.cluster.converter_tasks import (
     is_empty,
     get_protocols_list_of_str,
-    get_yml,
     parse_client,
     parse_decoy_name,
     parse_input_file_to_instance_kwargs,
