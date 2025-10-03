@@ -33,8 +33,8 @@ import types
 import warnings
 
 from functools import singledispatch
+from pyrosetta.distributed.cluster.config import get_environment_cmd
 from pyrosetta.distributed.cluster.converter_tasks import (
-    environment_cmd,
     get_yml,
     is_bytes,
     is_dict,
@@ -45,6 +45,7 @@ from pyrosetta.distributed.cluster.converter_tasks import (
     to_iterable,
     to_packed,
     to_str,
+    maybe_issue_environment_warnings as _maybe_issue_environment_warnings,
 )
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.packed_pose.core import PackedPose
@@ -125,6 +126,7 @@ def _parse_environment(obj: Any) -> str:
     def _parse_none(obj: None) -> str:
         yml = get_yml()
         if yml == "":
+            environment_cmd = get_environment_cmd()
             logging.warning(
                 f"`{environment_cmd}` did not run successfully, "
                 + "so the active conda environment YML file string was not saved! "

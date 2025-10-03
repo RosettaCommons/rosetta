@@ -27,7 +27,6 @@ from pyrosetta.distributed.cluster.toolkit import (
     reserve_scores,
     run,
     update_scores,
-    _print_conda_warnings,
 )
 from typing import List
 
@@ -49,9 +48,8 @@ __all__: List[str] = [
     "run",
     "update_scores",
 ]
-__version__: str = "2.2.0"
+__version__: str = "3.2.0"
 
-_print_conda_warnings()
 
 with warnings.catch_warnings() and suppress(NameError):
     warnings.simplefilter("ignore", category=UserWarning)

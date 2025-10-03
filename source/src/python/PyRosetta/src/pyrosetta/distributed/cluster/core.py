@@ -299,6 +299,7 @@ from datetime import datetime
 from pyrosetta.distributed.cluster.base import TaskBase, _get_residue_type_set
 from pyrosetta.distributed.cluster.converters import (
     is_empty as _is_empty,
+    _maybe_issue_environment_warnings,
     _parse_decoy_ids,
     _parse_filter_results,
     _parse_environment,
@@ -721,7 +722,10 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         ),
     )
 
-    def __attrs_post_init__(self):
+    def __attrs_pre_init__(self) -> None:
+        _maybe_issue_environment_warnings()
+
+    def __attrs_post_init__(self) -> None:
         _maybe_init_client()
         self._setup_logger()
         self._write_environment_file(self.environment_file)
