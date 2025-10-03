@@ -66,6 +66,7 @@ from typing import (
 
 @contextmanager
 def not_on_worker() -> Generator[None, Any, None]:
+    """A context manager for running code on the host node process."""
     try:
         distributed.get_worker()
     except BaseException:
@@ -77,6 +78,7 @@ def maybe_issue_environment_warnings() -> None:
     Issue a warning message if an environment manager is not installed and we are
     not in an active virtual environment on the host node process.
     """
+
     with not_on_worker():
         environment_manager = get_environment_manager()
         if shutil.which(environment_manager):  # An environment manager is installed
@@ -140,6 +142,7 @@ def get_protocols_list_of_str(
     Returns:
         A `list` object of `str` objects specifying user-defined PyRosetta protocol names.
     """
+
     _simulation_records_in_scorefile_msg = (
         "The 'scorefile' parameter argument does not contain the full simulation records. "
         + "In order to reproduce a decoy using a 'scorefile', the PyRosettaCluster "
@@ -265,7 +268,7 @@ def get_scores_dict(obj):
 
 def get_yml() -> str:
     """
-    Run environment command to return a YML file string with the current virtual
+    Run environment export command to return a YML file string with the current virtual
     enviroment, excluding certain source domains.
     """
 
