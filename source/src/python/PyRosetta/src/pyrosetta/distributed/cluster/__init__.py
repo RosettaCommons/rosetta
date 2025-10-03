@@ -49,7 +49,7 @@ __all__: List[str] = [
     "run",
     "update_scores",
 ]
-__version__: str = "2.4.0"
+__version__: str = "3.2.0"
 
 _print_environment_warnings()
 

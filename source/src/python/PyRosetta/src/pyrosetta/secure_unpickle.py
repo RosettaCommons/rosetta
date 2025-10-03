@@ -52,6 +52,15 @@ SECURE_PYTHON_BUILTINS: FrozenSet[str] = frozenset({
     "tuple",
 })
 
+# Default secure python collections methods:
+SECURE_PYTHON_COLLECTIONS: FrozenSet[str] = frozenset({
+    "ChainMap",
+    "Counter",
+    "defaultdict",
+    "deque",
+    "OrderedDict",
+})
+
 # Default secure packages, not including PyRosetta:
 SECURE_EXTRA_PACKAGES: Tuple[str, ...] = ("numpy",)
 
@@ -490,6 +499,8 @@ class SecureUnpickler(pickle.Unpickler):
             if name in SECURE_PYTHON_BUILTINS:
                 return ModuleCache._get_allowed_module_attr(module, name)
             raise UnpickleSecurityError(module, name, _secure_packages)
+        if module == "collections" and name in SECURE_PYTHON_COLLECTIONS:
+            return ModuleCache._get_allowed_module_attr(module, name)
         # Maybe include `copyreg` unpickle helper functions, depending on incoming stream protocol:
         if module == "copyreg":
             if (0 <= self._stream_protocol <= 1 and name == "_reconstructor") or (
@@ -554,6 +565,28 @@ class SecureSerializerBase(object):
             ) from ex
 
     @staticmethod
+    def secure_load(file: io.BufferedReader) -> Union[Any, NoReturn]:
+        """Secure replacement for `pickle.load()` for file-like objects."""
+        head = SecureSerializerBase._get_file_head(file)
+        stream_protocol = SecureSerializerBase._get_stream_protocol(head)
+        try:
+            return SecureUnpickler(file, stream_protocol=stream_protocol).load()
+        except (UnpickleSecurityError, UnpickleIntegrityError, UnpickleCompatibilityError):
+            raise
+        except MemoryError:
+            raise
+        except KeyboardInterrupt:
+            raise
+        except pickle.UnpicklingError as ex:
+            raise pickle.UnpicklingError(
+                f"{ex}. PyRosetta secure unpickle failed with stream protocol {stream_protocol}."
+            ) from ex
+        except (TypeError, OverflowError, EOFError) as ex:
+            raise Exception(
+                "%s: %s. Could not deserialize stream from file-like object %r." % (type(ex).__name__, ex, file)
+            ) from ex
+
+    @staticmethod
     def secure_from_base64_pickle(string: str) -> Any:
         raw = SecureSerializerBase.from_base64(string)
         key = get_unpickle_hmac_key()
@@ -592,6 +625,20 @@ class SecureSerializerBase(object):
             )
 
         return data
+
+    @staticmethod
+    def _get_file_head(file: io.BufferedReader) -> bytes:
+        try:  # Peek into the first 2 bytes to infer pickle protocol
+            if hasattr(file, "peek"):
+                head = file.peek(2)
+            else:
+                pos = file.tell()
+                head = file.read(2)
+                file.seek(pos)
+        except Exception:
+            head = b''
+
+        return head
 
     @staticmethod
     def _get_stream_protocol(obj: bytes) -> int:
