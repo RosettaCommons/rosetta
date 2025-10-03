@@ -306,7 +306,7 @@ def recreate_environment(
             from which to extract PyRosettaCluster instance kwargs. If 'scorefile'
             is provided, 'decoy_name' must also be provided. The scorefile must
             contain full simulation records from the original production run
-            (i.e., 'simulation_records_in_scorefile' was set to True).
+            (i.e., 'simulation_records_in_scorefile' was set to `True`).
             Default: None
         decoy_name: A `str` object specifying the decoy name for which to extract
             PyRosettaCluster instance kwargs. Must be provided if 'scorefile'
