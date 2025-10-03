@@ -185,7 +185,7 @@ def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Any], 
                 raise PyRosettaIsNotInitializedError(
                     "To get the PyRosettaCluster scores dictionary from a '.pkl_pose', '.pkl_pose.bz2', "
                     + "'.b64_pose' or '.b64_pose.bz2' file, PyRosetta must be initialized (with the same "
-                    + "residue type set that was used to save the original file)."
+                    + "residue type set that was used to save the original decoy output file)."
                 )
             if obj.endswith(".pkl_pose.bz2"):
                 with open(obj, "rb") as fbz2:
@@ -204,14 +204,12 @@ def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Any], 
                 if obj.endswith(".init.bz2"):
                     raise PyRosettaIsNotInitializedError(
                         "To get the PyRosettaCluster scores dictionary from a '.init.bz2' file, please first initialize "
-                        + "PyRosetta using the `pyrosetta.init_from_file()` function with the decompressed '.init' file. "
-                        + "Alternatively, please first run `io.poses_from_init_file()` with the '.init.bz2' file to "
-                        + f"automatically undergo PyRosetta initialization: '{obj}'"
+                        + f"PyRosetta using the `pyrosetta.distributed.io.init_from_file()` function: '{obj}'"
                     )
                 elif obj.endswith(".init"):
                     raise PyRosettaIsNotInitializedError(
                         "To get the PyRosettaCluster scores dictionary from a '.init' file, please first initialize "
-                        + f"PyRosetta using the `pyrosetta.init_from_file()` function with the '.init' file: '{obj}'"
+                        + f"PyRosetta using the `pyrosetta.init_from_file()` function: '{obj}'"
                     )
             _input_packed_pose, output_packed_pose = get_poses_from_init_file(obj, verify=True)
             if output_packed_pose is None:
