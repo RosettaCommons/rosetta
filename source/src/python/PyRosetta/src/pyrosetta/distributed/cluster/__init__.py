@@ -27,7 +27,6 @@ from pyrosetta.distributed.cluster.toolkit import (
     reserve_scores,
     run,
     update_scores,
-    _print_environment_warnings,
 )
 from typing import List
 
@@ -51,7 +50,6 @@ __all__: List[str] = [
 ]
 __version__: str = "3.2.0"
 
-_print_environment_warnings()
 
 with warnings.catch_warnings() and suppress(NameError):
     warnings.simplefilter("ignore", category=UserWarning)

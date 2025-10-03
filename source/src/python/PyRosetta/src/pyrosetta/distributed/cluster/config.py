@@ -9,29 +9,16 @@
 __author__ = "Jason C. Klima"
 
 
-try:
-    from distributed import get_worker
-except ImportError:
-    print(
-        "Importing 'pyrosetta.distributed.cluster.config' requires the "
-        + "third-party package 'distributed' as a dependency!\n"
-        + "Please install this package into your python environment. "
-        + "For installation instructions, visit:\n"
-        + "https://pypi.org/project/distributed/\n"
-    )
-    raise
-
-
+import logging
 import os
 import shutil
 import sys
+import warnings
 
-from contextlib import contextmanager
+from functools import lru_cache
 from pyrosetta.utility import get_package_version
 from typing import (
-    Any,
     Dict,
-    Generator,
     Generic,
     List,
     NoReturn,
@@ -44,6 +31,7 @@ from typing import (
 
 __dask_version__: Tuple[int, int, int] = get_package_version("dask")
 __dask_jobqueue_version__: Tuple[int, int, int] = get_package_version("dask-jobqueue")
+
 
 G = TypeVar("G")
 
@@ -68,13 +56,13 @@ class EnvironmentConfig(Generic[G]):
         _env_var_manager = os.environ.get(EnvironmentConfig._ENV_VAR, None)
         if _env_var_manager:
             self.environment_manager = _env_var_manager
-            print(
+            logging.debug(
                 "Configuring environment manager for PyRosettaCluster from operating system "
                 + f"environment variable: {EnvironmentConfig._ENV_VAR}={self.environment_manager}"
             )
             if self.environment_manager not in EnvironmentConfig._ENV_MANAGERS:
                 raise ValueError(
-                    "The '{0}' environment variable must be in: '{1}'. Received: '{2}'. ".format(
+                    "The '{0}' environment variable must be in: '{1}'. Received: '{2}'.".format(
                         EnvironmentConfig._ENV_VAR,
                         EnvironmentConfig._ENV_MANAGERS,
                         self.environment_manager,
@@ -84,14 +72,16 @@ class EnvironmentConfig(Generic[G]):
             for _manager in EnvironmentConfig._ENV_MANAGERS:
                 if shutil.which(_manager):
                     self.environment_manager = _manager
-                    print(f"Configuring environment manager for PyRosettaCluster: '{_manager}'")
+                    logging.debug(f"Configuring environment manager for PyRosettaCluster: '{_manager}'")
                     break
             else:
                 self.environment_manager = "conda"
-                print(
+                warnings.warn(
                     f"Warning: could not configure an environment manager for PyRosettaCluster. "
                     + "Please ensure that either of 'pixi', 'uv', 'mamba', or 'conda' is installed. "
-                    + "Using 'conda' as the default environment manager."
+                    + "Using 'conda' as the default environment manager.",
+                    UserWarning,
+                    stacklevel=7,
                 )
 
     @property
@@ -141,17 +131,21 @@ class EnvironmentConfig(Generic[G]):
         raise RuntimeError(f"Unsupported environment manager: '{self.environment_manager}'")
 
 
-@contextmanager
-def not_on_worker() -> Generator[None, Any, None]:
-    try:
-        get_worker()
-    except BaseException:
-        yield
+@lru_cache(maxsize=1)
+def get_environment_config() -> EnvironmentConfig:
+    """Return an instance of the `EnvironmentConfig` class on the host node process."""
+    return EnvironmentConfig()
 
-with not_on_worker():
-    _env_config = EnvironmentConfig()
-    environment_manager: str = _env_config.environment_manager
-    environment_cmd: str = _env_config.env_export_cmd
+
+def get_environment_manager() -> str:
+    """Get the configured environment manager."""
+    return get_environment_config().environment_manager
+
+
+def get_environment_cmd() -> str:
+    """Get the configured environment export command."""
+    return get_environment_config().env_export_cmd
+
 
 source_domains: List[str] = [
     "conda.graylab.jhu.edu",

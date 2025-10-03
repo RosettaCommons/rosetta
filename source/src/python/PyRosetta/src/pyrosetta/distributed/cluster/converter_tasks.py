@@ -30,12 +30,15 @@ import logging
 import json
 import os
 import pyrosetta.distributed.io as io
+import shutil
 import subprocess
+import warnings
 
+from contextlib import contextmanager
 from functools import singledispatch
 from pyrosetta.distributed.cluster.config import (
-    environment_cmd,
-    environment_manager,
+    get_environment_cmd,
+    get_environment_manager,
     source_domains,
 )
 from pyrosetta.distributed.cluster.exceptions import (
@@ -51,6 +54,7 @@ from typing import (
     Any,
     Callable,
     Dict,
+    Generator,
     Iterable,
     List,
     NoReturn,
@@ -58,6 +62,55 @@ from typing import (
     TypeVar,
     Union,
 )
+
+
+@contextmanager
+def not_on_worker() -> Generator[None, Any, None]:
+    try:
+        distributed.get_worker()
+    except BaseException:
+        yield
+
+
+def maybe_issue_environment_warnings() -> None:
+    """
+    Issue a warning message if an environment manager is not installed and we are
+    not in an active virtual environment on the host node process.
+    """
+    with not_on_worker():
+        environment_manager = get_environment_manager()
+        if shutil.which(environment_manager):  # An environment manager is installed
+            if get_yml() == "":
+                warnings.warn(
+                    "To use the `pyrosetta.distributed.cluster` namespace and ensure "
+                    + "reproducibility of PyRosetta simulations, please either:\n"
+                    + "(1) Create and activate a conda or mamba environment (other than 'base'). For instructions, visit:\n"
+                    + "https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html\n"
+                    + "https://conda.io/activation\n"
+                    + "https://mamba.readthedocs.io/en/latest/user_guide/mamba.html\n"
+                    + "(2) Create a uv project. For instructions, visit:\n"
+                    + "https://docs.astral.sh/uv/getting-started/installation\n"
+                    + "https://docs.astral.sh/uv/concepts/projects/init\n"
+                    + "(3) Create a pixi manifest. For instructions, visit:\n"
+                    + "https://pixi.sh/latest/installation\n"
+                    + "https://pixi.sh/latest/getting_started\n",
+                    UserWarning,
+                    stacklevel=4,
+                )  # Warn that we are not in an active virtual environment
+        else:  # An environment manager is not installed
+            warnings.warn(
+                f"The environment manager '{environment_manager}' is not an executable! "
+                + "Use of `pyrosetta.distributed.cluster` namespace requires 'conda', 'mamba', "
+                + "'uv', or 'pixi' to be properly installed for reproducibility of PyRosetta "
+                + "simulations. Please install one of the environment managers onto your system "
+                + f"to enable running `which {environment_manager}`. For installation instructions, visit:\n"
+                + "https://docs.anaconda.com/anaconda/install\n"
+                + "https://github.com/conda-forge/miniforge\n"
+                + "https://docs.astral.sh/uv/getting-started/installation\n"
+                + "https://pixi.sh/latest/installation\n",
+                UserWarning,
+                stacklevel=4,
+            )  # Warn that environment manager is not in $PATH
 
 
 def get_protocols_list_of_str(
@@ -216,6 +269,7 @@ def get_yml() -> str:
     enviroment, excluding certain source domains.
     """
 
+    environment_cmd = get_environment_cmd()
     try:
         raw_yml = subprocess.check_output(
             environment_cmd,
