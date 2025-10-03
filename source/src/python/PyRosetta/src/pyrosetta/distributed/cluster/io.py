@@ -62,8 +62,8 @@ from pyrosetta.distributed.cluster.logging_support import RedirectToLogger
 from pyrosetta.distributed.cluster.serialization import Serialization, update_scores
 
 
-METADATA_INPUT_DECOY_KEY: str = "idx_input"
-METADATA_OUTPUT_DECOY_KEY: str = "idx_output"
+METADATA_INPUT_DECOY_KEY: str = "idx_poses_input"
+METADATA_OUTPUT_DECOY_KEY: str = "idx_poses_output"
 
 G = TypeVar("G")
 
