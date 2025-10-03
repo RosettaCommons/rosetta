@@ -105,9 +105,7 @@ def _print_conda_warnings() -> None:
 
 
 def get_protocols(
-    protocols: Union[
-        List[Union[Callable[..., Any], str]], Callable[..., Any], Optional[str]
-    ] = None,
+    protocols: Union[List[Union[Callable[..., Any], str]], Callable[..., Any], Optional[str]] = None,
     input_file: Optional[Union[str, Pose, PackedPose]] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
@@ -118,18 +116,20 @@ def get_protocols(
     then validate the 'protocols' against those in the 'input_file' or 'scorefile',
     otherwise if 'protocols' is `NoneType` then attempt to return the PyRosettaCluster
     protocols from the current scope matching the protocol names in the 'input_file'
-    or 'scorefile'.
+    or 'scorefile' keyword argument parameters.
 
     Args:
         protocols: An iterable of `str` objects specifying the names of user-provided
             PyRosetta protocols to validate or return.
             Default: None
         input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
-            '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file, or a `Pose`or `PackedPose`
-            object, from which to extract PyRosettaCluster instance kwargs. If 'input_file' is
-            provided, then ignore the 'scorefile' and 'decoy_name' keyword argument parameters.
+            '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init', or '.init.bz2' file,
+            or a `Pose`or `PackedPose` object, from which to extract PyRosettaCluster instance
+            kwargs. If 'input_file' is provided, then ignore the 'scorefile' and 'decoy_name'
+            keyword argument parameters.
             Default: None
         scorefile: A `str` object specifying the path to the JSON-formatted scorefile
+            (or pickled `pandas.DataFrame` scorefile) from a PyRosettaCluster simulation
             from which to extract PyRosettaCluster instance kwargs. If 'scorefile'
             is provided, 'decoy_name' must also be provided. In order to use a scorefile,
             it must contain full simulation records from the original production
@@ -220,9 +220,10 @@ def get_instance_kwargs(
 
     Args:
         input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
-            '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file, or a `Pose`or `PackedPose`
-            object, from which to extract PyRosettaCluster instance kwargs. If 'input_file' is
-            provided, then ignore the 'scorefile' and 'decoy_name' keyword argument parameters.
+            '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init', or '.init.bz2' file, or a
+            `Pose`or `PackedPose` object, from which to extract PyRosettaCluster instance kwargs.
+            If 'input_file' is provided, then ignore the 'scorefile' and 'decoy_name' keyword
+            argument parameters.
             Default: None
         scorefile: A `str` object specifying the path to the JSON-formatted scorefile
             (or pickled `pandas.DataFrame` scorefile) from a PyRosettaCluster simulation

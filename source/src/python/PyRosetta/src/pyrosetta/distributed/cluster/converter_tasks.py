@@ -73,11 +73,13 @@ def get_protocols_list_of_str(
 
     Args:
         input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
-            '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file, or a `Pose`or `PackedPose`
-            object, from which to extract PyRosettaCluster instance kwargs. If 'input_file' is
-            provided, then ignore the 'scorefile' and 'decoy_name' keyword argument parameters.
+            '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init', or '.init.bz2' file,
+            or a `Pose` or `PackedPose` object, from which to extract PyRosettaCluster instance
+            kwargs. If 'input_file' is provided, then ignore the 'scorefile' and 'decoy_name'
+            keyword argument parameters.
             Default: None
         scorefile: A `str` object specifying the path to the JSON-formatted scorefile
+            (or pickled `pandas.DataFrame` scorefile) from a PyRosettaCluster simulation
             from which to extract PyRosettaCluster instance kwargs. If 'scorefile'
             is provided, 'decoy_name' must also be provided. In order to use a scorefile,
             it must contain full simulation records from the original production
@@ -166,7 +168,7 @@ def get_protocols_list_of_str(
 def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Dict[str, Any]], NoReturn]:
     """
     Get the PyRosettaCluster scores dictionary from either a `Pose` or `PackedPose` object, or a '.pdb',
-    '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init' or '.init.bz2' file.
+    '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init', or '.init.bz2' file.
     """
 
     if isinstance(obj, (Pose, PackedPose)):
