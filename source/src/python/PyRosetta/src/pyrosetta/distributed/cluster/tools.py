@@ -284,9 +284,9 @@ def recreate_environment(
     and a decoy name that was written by PyRosettaCluster, recreate the
     environment that was used to generate the decoy with a new environment name.
 
-    The environment manager used (with 'conda', 'mamba', 'uv', or 'pixi') is
+    The environment manager used (i.e., either 'conda', 'mamba', 'uv', or 'pixi') is
     automatically determined from the operating system environment variable
-    'PYROSETTACLUSTER_ENVIRONMENT_MANAGER' if exported, or other automatically
+    'PYROSETTACLUSTER_ENVIRONMENT_MANAGER' if exported, or otherwise it is automatically
     selected based on which manager is available on the system. If no executables
     are explicitly found, then 'conda' is used by default.
 
