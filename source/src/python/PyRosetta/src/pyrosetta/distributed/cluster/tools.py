@@ -360,12 +360,10 @@ def recreate_environment(
         elif environment_manager == "pixi":
             _filenames = ("pixi.toml",)
         cwd = os.getcwd()
-        envs_all = []
-        for d in os.listdir(cwd):
-            if os.path.isdir(d):
-                _maybe_files = [os.path.join(cwd, d, f) for f in _filenames]
-                if any(map(os.path.exists, _maybe_files)):
-                    envs_all.append(d)
+        envs_all = [
+            d for d in os.listdir(cwd)
+            if os.path.isdir(d) and any(os.path.isfile(os.path.join(cwd, d, f)) for f in _filenames)
+        ]
     else:
         raise RuntimeError(f"Unsupported environment manager: '{environment_manager}'")
     if environment_name in envs_all:
