@@ -10,26 +10,23 @@ __author__ = "Jason C. Klima"
 
 try:
     import distributed
-    import pandas
     import toolz
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.converter_tasks' requires the "
-        + "third-party packages 'distributed', 'pandas', and 'toolz' as dependencies!\n"
+        + "third-party packages 'distributed' and 'toolz' as dependencies!\n"
         + "Please install these packages into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/distributed/\n"
-        + "https://pypi.org/project/pandas/\n"
         + "https://pypi.org/project/toolz/\n"
     )
     raise
 
 import bz2
 import collections
-import logging
 import json
+import logging
 import os
-import pyrosetta
 import pyrosetta.distributed.io as io
 import subprocess
 import warnings
@@ -44,17 +41,14 @@ from pyrosetta.distributed.cluster.exceptions import (
 from pyrosetta.distributed.cluster.io import (
     IO,
     get_poses_from_init_file,
+    secure_read_pickle,
     sign_init_file_metadata_and_poses,
 )
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.utility.exceptions import PyRosettaIsNotInitializedError
-from pyrosetta.utility.initialization import (
-    PyRosettaInitDictWriter,
-    PyRosettaInitFileSerializer,
-    PyRosettaInitFileWriter,
-)
+from pyrosetta.utility.initialization import PyRosettaInitDictWriter
 from typing import (
     Any,
     Callable,
@@ -142,11 +136,11 @@ def get_protocols_list_of_str(
                         raise NotImplementedError(_simulation_records_in_scorefile_msg)
         else:
             try:
-                df = pandas.read_pickle(scorefile, compression="infer")
+                df = secure_read_pickle(scorefile, compression="infer")
             except:
                 raise TypeError(
                     "`get_protocols_list_of_str()` received `scorefile` which does not appear to be "
-                    + "readable by `pandas.read_pickle(compression='infer')`."
+                    + "readable by `pyrosetta.distributed.cluster.io.secure_read_pickle(compression='infer')`."
                 )
             if all(k in df.columns for k in ("metadata", "instance")):
                 for instance, metadata in df[["instance", "metadata"]].values:

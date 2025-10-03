@@ -10,16 +10,14 @@ __author__ = "Jason C. Klima"
 
 try:
     import distributed
-    import pandas
     import toolz
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.tools' requires the "
-        + "third-party packages 'distributed', 'pandas', and 'toolz' as dependencies!\n"
+        + "third-party packages 'distributed' and 'toolz' as dependencies!\n"
         + "Please install these packages into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/distributed/\n"
-        + "https://pypi.org/project/pandas/\n"
         + "https://pypi.org/project/toolz/\n"
     )
     raise
@@ -49,6 +47,7 @@ from pyrosetta.distributed.cluster.converter_tasks import (
     parse_scorefile,
     reserve_scores_in_results,
 )
+from pyrosetta.distributed.cluster.io import secure_read_pickle
 from pyrosetta.distributed.cluster.serialization import (
     Serialization,
     update_scores,
@@ -284,11 +283,11 @@ def get_instance_kwargs(
                         raise NotImplementedError(_simulation_records_in_scorefile_msg)
         else:
             try:
-                df = pandas.read_pickle(scorefile, compression="infer")
+                df = secure_read_pickle(scorefile, compression="infer")
             except:
                 raise TypeError(
                     "`get_instance_kwargs()` received `scorefile` which does not appear to be "
-                    + "readable by `pandas.read_pickle(compression='infer')`."
+                    + "readable by `pyrosetta.distributed.cluster.io.secure_read_pickle(compression='infer')`."
                 )
             if all(k in df.columns for k in ("metadata", "instance")):
                 for instance, metadata in df[["instance", "metadata"]].values:
@@ -563,7 +562,11 @@ def reproduce(
             is provided, then ignore the 'scorefile' and 'decoy_name' argument parameters.
             If a '.init' or '.init.bz2' file is provided and PyRosetta is not yet initialized,
             this first initializes PyRosetta with the PyRosetta initialization file (see the
-            'init_from_file_kwargs' keyword argument).
+            'init_from_file_kwargs' keyword argument). Note that '.pkl_pose', '.pkl_pose.bz2',
+            '.b64_pose', '.b64_pose.bz2', '.init' and '.init.bz2' files contain pickled Pose
+            objects that are deserialized using PyRosetta's secure unpickler upon running the
+            `reproduce()` function, but please still only input these file types if you know and
+            trust their source. Learn more `here <https://docs.python.org/3/library/pickle.html>`_.
             Default: None
         scorefile: A `str` object specifying the path to the JSON-formatted scorefile
             (or pickled `pandas.DataFrame` scorefile) from a PyRosettaCluster simulation
@@ -571,6 +574,8 @@ def reproduce(
             is provided, 'decoy_name' must also be provided. In order to use a scorefile,
             it must contain full simulation records from the original production
             run; i.e., the attribute 'simulation_records_in_scorefile' was set to True.
+            Note that in order to securely load pickled `pandas.DataFrame` objects, please
+            ensure that `pyrosetta.secure_unpickle.add_secure_package("pandas")` has been run.
             Default: None
         decoy_name: A `str` object specifying the decoy name for which to extract
             PyRosettaCluster instance kwargs. If decoy_name is provided, scorefile

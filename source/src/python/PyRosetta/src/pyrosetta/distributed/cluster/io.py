@@ -30,7 +30,6 @@ import os
 import pyrosetta
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
-import tempfile
 import uuid
 
 from contextlib import redirect_stdout, redirect_stderr
@@ -38,6 +37,7 @@ from datetime import datetime
 from pyrosetta.rosetta.core.pose import Pose, add_comment, get_all_comments
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.rosetta.basic import was_init_called
+from pyrosetta.secure_unpickle import SecureSerializerBase
 from pyrosetta.utility.exceptions import PyRosettaIsNotInitializedError
 from pyrosetta.utility.initialization import (
     PyRosettaInitDictWriter,
@@ -415,9 +415,9 @@ class IO(Generic[G]):
                     df = pandas.DataFrame().from_dict(_scorefile_data, orient="index")
                     # Append data to scorefile
                     if os.path.isfile(_scorefile_path):
-                        df_chunk = pandas.read_pickle(_scorefile_path, compression="infer")
+                        df_chunk = secure_read_pickle(_scorefile_path, compression="infer")
                         df = pandas.concat([df_chunk, df])
-                    df.to_pickle(_scorefile_path, compression="infer")
+                    df.to_pickle(_scorefile_path, compression="infer", protocol=SecureSerializerBase._pickle_protocol)
 
     def _write_environment_file(self, filename: str) -> None:
         """Write the YML string to the input filename."""
@@ -679,3 +679,24 @@ def get_poses_from_init_file(
         verify_init_file(init_file, input_packed_pose, output_packed_pose, metadata)
 
     return (input_packed_pose, output_packed_pose)
+
+
+def secure_read_pickle(
+    filepath_or_buffer: str,
+    compression: Optional[Union[str, Dict[str, Any]]] = "infer",
+    storage_options: Optional[Dict[str, Any]] = None,
+) -> pandas.DataFrame:
+    """
+    Secure replacement for `pandas.read_pickle()` for file-like objects.
+
+    Usage requires adding 'pandas' as a secure package to unpickle in PyRosetta:
+    `pyrosetta.secure_unpickle.add_secure_package('pandas')`
+    """
+    with pandas.io.common.get_handle(
+        filepath_or_buffer,
+        "rb",
+        compression=compression,
+        is_text=False,
+        storage_options=storage_options,
+    ) as handles:
+        return SecureSerializerBase.secure_load(handles.handle)

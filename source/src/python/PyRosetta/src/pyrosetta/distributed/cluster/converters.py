@@ -690,4 +690,18 @@ def _parse_output_scorefile_types(objs: Any) -> Union[List[str], NoReturn]:
 
         return _types if len(_types) >= 1 else converter(None)
 
-    return converter(objs)
+    result = converter(objs)
+    if result != converter(None) and "pandas" not in pyrosetta.secure_unpickle.get_secure_packages():
+        _compressions = [f"'{t}'" for t in result if t != _output_scorefile_types[0]]
+        if len(_compressions) > 1:
+            _compressions[-1] = f"and {_compressions[-1]}"
+        _compression_msg = ", ".join(_compressions) if len(_compressions) > 2 else " ".join(_compressions)
+        _msg = (
+            f"In order to save PyRosettaCluster scorefiles with {_compression_msg} file type compression, "
+            + "the output `pandas.DataFrame()` objects must be securely unpicklable. In order to securely "
+            + "unpickle `pandas.DataFrame()` objects in PyRosetta, please add 'pandas' as a secure package "
+            + "using `pyrosetta.secure_unpickle.add_secure_package('pandas')`, then try again!"
+        )
+        raise AssertionError(_msg)
+
+    return result

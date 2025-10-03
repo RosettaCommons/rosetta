@@ -12,18 +12,6 @@ PyRosettaCluster reproducibility unit test suite using the `unittest` framework.
 __author__ = "Jason C. Klima"
 
 
-try:
-    import pandas
-except ImportError:
-    print(
-        "Importing 'pyrosetta.tests.distributed.cluster.test_reproducibility' requires the "
-        + "third-party package 'pandas' as a dependency!\n"
-        + "Please install this packages into your python environment. "
-        + "For installation instructions, visit:\n"
-        + "https://pypi.org/project/pandas/\n"
-    )
-    raise
-
 import functools
 import glob
 import json
@@ -45,7 +33,7 @@ from pyrosetta.distributed.cluster import (
     reserve_scores,
     reproduce,
 )
-from pyrosetta.utility.initialization import PyRosettaInitFileReader
+from pyrosetta.distributed.cluster.io import secure_read_pickle
 
 
 class TestReproducibility(unittest.TestCase):
@@ -1468,7 +1456,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             TestReproducibilityPoseDataFrame.my_third_protocol,
         ]
 
-        PyRosettaCluster(
+        instance_kwargs = dict(
             tasks=tasks,
             input_packed_pose=input_pose,
             seeds=None,
@@ -1504,14 +1492,22 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             pyrosetta_build=None,
             output_decoy_types=[".pdb", ".pkl_pose", ".b64_pose"],
             output_scorefile_types=[".json", ".gz"],
-        ).distribute(
+        )
+
+        if "pandas" not in pyrosetta.secure_unpickle.get_secure_packages():
+            with self.assertRaises(AssertionError): # output_scorefile_types=[".gz", ...] requires 'pandas' as a secure package
+                _ = PyRosettaCluster(**instance_kwargs)
+
+        pyrosetta.secure_unpickle.add_secure_package("pandas")
+        prc = PyRosettaCluster(**instance_kwargs)
+        prc.distribute(
             protocols=protocols,
             clients_indices=None,
             resources=None,
         )
 
         scorefile_path = os.path.join(original_output_path, os.path.splitext(scorefile_name)[0] + ".gz")
-        df = pandas.read_pickle(scorefile_path, compression="infer")
+        df = secure_read_pickle(scorefile_path, compression="infer")
         selected_decoy_ids = [0, 1, 2]
         self.assertEqual(len(selected_decoy_ids), len(protocols))
         original_record = None
@@ -1550,7 +1546,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         reproduce_scorefile_path = os.path.join(
             reproduce_output_path, os.path.splitext(reproduce_scorefile_name)[0] + ".xz"
         )
-        df_reproduce = pandas.read_pickle(reproduce_scorefile_path, compression="infer")
+        df_reproduce = secure_read_pickle(reproduce_scorefile_path, compression="infer")
         self.assertEqual(df_reproduce.index.size, 1)
         reproduce_record = df_reproduce.iloc[0]
         self.assertListEqual(original_record["instance"]["seeds"], reproduce_record["instance"]["seeds"])
@@ -1609,7 +1605,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         reproduce2_scorefile_path = os.path.join(
             reproduce2_output_path, os.path.splitext(reproduce2_scorefile_name)[0] + ".tar"
         )
-        df_reproduce2 = pandas.read_pickle(reproduce2_scorefile_path, compression="infer")
+        df_reproduce2 = secure_read_pickle(reproduce2_scorefile_path, compression="infer")
         self.assertEqual(df_reproduce2.index.size, 1)
         reproduce2_record = df_reproduce2.iloc[0]
         self.assertListEqual(reproduce_record["instance"]["decoy_ids"], reproduce2_record["instance"]["decoy_ids"])

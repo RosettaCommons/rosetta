@@ -71,9 +71,11 @@ from pyrosetta.distributed.cluster.io import (
     METADATA_INPUT_DECOY_KEY,
     METADATA_OUTPUT_DECOY_KEY,
     get_poses_from_init_file,
+    secure_read_pickle,
     sign_init_file_metadata_and_poses,
     verify_init_file,
 )
+
 
 class SmokeTest(unittest.TestCase):
     def test_smoke(self):
@@ -147,6 +149,10 @@ class SmokeTest(unittest.TestCase):
                 norm_task_options=False,
                 output_init_file=None,
             )
+            if "pandas" not in pyrosetta.secure_unpickle.get_secure_packages():
+                with self.assertRaises(AssertionError):  # output_scorefile_types=[".gz", ...] requires 'pandas' as a secure package
+                    PyRosettaCluster(**instance_kwargs)
+            pyrosetta.secure_unpickle.add_secure_package("pandas")
             cluster = PyRosettaCluster(**instance_kwargs)
             cluster.distribute(
                 my_pyrosetta_protocol,
@@ -363,6 +369,10 @@ class IOTest(unittest.TestCase):
                         "output_scorefile_types": output_scorefile_types,
                         "output_path": output_path,
                     }
+                    if "pandas" not in pyrosetta.secure_unpickle.get_secure_packages():
+                        with self.assertRaises(AssertionError):  # output_scorefile_types=[".gz", ...] requires 'pandas' as a secure package
+                            run(**instance_kwargs)
+                    pyrosetta.secure_unpickle.add_secure_package("pandas")
                     run(**instance_kwargs)
                     # Test decoy outputs
                     _n_tasks = len(IOTest.create_tasks())
@@ -406,7 +416,7 @@ class IOTest(unittest.TestCase):
                                     self.assertNotIn("my_pose_score", scores)
                                     self.assertNotIn("my_complex_score", scores)
                         else:
-                            df = pandas.read_pickle(scorefile, compression="infer")
+                            df = secure_read_pickle(scorefile, compression="infer")
                             if simulation_records_in_scorefile:
                                 self.assertIn("instance", df.columns)
                                 self.assertIn("metadata", df.columns)

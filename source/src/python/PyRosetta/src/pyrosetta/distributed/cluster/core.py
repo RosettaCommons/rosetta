@@ -96,9 +96,14 @@ Args:
         user-provided PyRosetta protocol run later.
         Default: 1
     compressed: A `bool` object specifying whether or not to compress the output
+<<<<<<< HEAD
         ".pdb", ".pkl_pose", ".b64_pose", and ".init" files with `bzip2`, resulting
         in appending ".bz2" to decoy output files and PyRosetta initialization files.
         Also see the 'output_decoy_types' and 'output_init_file' keyword arguments.
+=======
+        '.pdb' files with `bzip2`, resulting in '.pdb.bz2' output decoy files. Also
+        see the 'output_decoy_types' keyword argument.
+>>>>>>> 818931f3358f985d66017d43b261fa3f7d57150b
         Default: True
     compression: A `str` object of 'xz', 'zlib' or 'bz2', or a `bool` or `NoneType`
         object representing the internal compression library for pickled `PackedPose` 
@@ -185,7 +190,9 @@ Args:
         JSON-encoded scorefile, and any filename extensions accepted by
         `pandas.DataFrame().to_pickle(compression="infer")` (including ".gz", ".bz2",
         and ".xz") for pickled `pandas.DataFrame` objects of scorefile data that can later
-        be analyzed using `pandas.read_pickle(compression="infer")`.
+        be analyzed using `pyrosetta.distributed.cluster.io.secure_read_pickle(compression="infer")`.
+        Note that in order to save pickled `pandas.DataFrame` objects, please ensure
+        that `pyrosetta.secure_unpickle.add_secure_package("pandas")` has been first run.
         Default: [".json",]
     scorefile_name: A `str` object specifying the name of the output JSON-formatted
         scorefile, which must end in ".json". The scorefile location is always
