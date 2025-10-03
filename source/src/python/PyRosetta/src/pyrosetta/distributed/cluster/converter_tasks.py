@@ -45,9 +45,9 @@ from pyrosetta.distributed.cluster.io import (
     sign_init_file_metadata_and_poses,
 )
 from pyrosetta.distributed.packed_pose.core import PackedPose
+from pyrosetta.exceptions import PyRosettaIsNotInitializedError
 from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.rosetta.core.pose import Pose
-from pyrosetta.utility.exceptions import PyRosettaIsNotInitializedError
 from pyrosetta.utility.initialization import PyRosettaInitDictWriter
 from typing import (
     Any,

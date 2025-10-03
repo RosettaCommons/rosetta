@@ -36,9 +36,9 @@ from contextlib import redirect_stdout, redirect_stderr
 from datetime import datetime
 from pyrosetta.rosetta.core.pose import Pose, add_comment, get_all_comments
 from pyrosetta.distributed.packed_pose.core import PackedPose
+from pyrosetta.exceptions import PyRosettaIsNotInitializedError
 from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.secure_unpickle import SecureSerializerBase
-from pyrosetta.utility.exceptions import PyRosettaIsNotInitializedError
 from pyrosetta.utility.initialization import (
     PyRosettaInitDictWriter,
     PyRosettaInitFileReader,

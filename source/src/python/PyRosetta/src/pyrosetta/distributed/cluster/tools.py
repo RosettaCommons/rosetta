@@ -56,7 +56,7 @@ from pyrosetta.distributed.cluster.core import PyRosettaCluster
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.rosetta.core.pose import Pose
-from pyrosetta.utility.exceptions import PyRosettaIsNotInitializedError
+from pyrosetta.exceptions import PyRosettaIsNotInitializedError
 from typing import (
     Any,
     Callable,
