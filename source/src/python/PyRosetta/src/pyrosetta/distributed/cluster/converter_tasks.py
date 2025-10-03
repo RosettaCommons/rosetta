@@ -163,7 +163,7 @@ def get_protocols_list_of_str(
     return protocols_list_of_str
 
 
-def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Any], NoReturn]:
+def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Dict[str, Any]], NoReturn]:
     """
     Get the PyRosettaCluster scores dictionary from either a `Pose` or `PackedPose` object, or a '.pdb',
     '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init' or '.init.bz2' file.
@@ -247,7 +247,7 @@ def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Any], 
             )
             break
     else:
-        _err_msg = f"Could not parse '{IO.REMARK_FORMAT}' comment from input file: '{obj}'"
+        _err_msg = f"Could not parse '{IO.REMARK_FORMAT}' comment from the input object: '{obj}'"
         if isinstance(obj, (Pose, PackedPose)):
             raise ValueError(
                 f"{_err_msg}. If the '{type(obj)}' object was initialized from a '.pdb' or '.pdb.bz2' "
@@ -258,9 +258,9 @@ def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Any], 
             raise IOError(_err_msg)
 
     if scores_dict is None:
-        raise IOError("Could not parse the `input_file` argument parameter!")
-    if not all(d in scores_dict for d in ["instance", "metadata", "scores"]):
-        raise KeyError("Could not parse the `input_file` argument parameter!")
+        raise IOError(f"Could not parse the input argument parameter: '{obj}'")
+    if not all(d in scores_dict for d in ("instance", "metadata", "scores")):
+        raise KeyError(f"Could not parse the input argument parameter: '{obj}'")
 
     return scores_dict
 
