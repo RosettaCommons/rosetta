@@ -51,10 +51,8 @@ public:
 	void
 	write_stream( std::ostream & output_stream, core::chemical::ResidueType const & restype );
 
-protected:
-
-	gemmi::cif::Block
-	generate_block( core::chemical::ResidueType const & restype );
+	void
+	add_data_to_block( gemmi::cif::Block & block, core::chemical::ResidueType const & restype );
 
 private:
 

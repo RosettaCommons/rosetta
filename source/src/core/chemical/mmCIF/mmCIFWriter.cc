@@ -29,6 +29,7 @@
 #include <gemmi/to_cif.hpp>
 #include <gemmi/numb.hpp> // for as_number
 
+
 namespace core {
 namespace chemical {
 namespace mmCIF {
@@ -53,41 +54,57 @@ mmCIFWriter::write_stream(std::ostream & output_stream, core::chemical::ResidueT
 	gemmi::cif::WriteOptions options;
 	options.prefer_pairs = true;
 	options.misuse_hash = true;
-
-	gemmi::cif::write_cif_block_to_stream( output_stream, generate_block(restype), options );
-}
-
-gemmi::cif::Block
-mmCIFWriter::generate_block( core::chemical::ResidueType const & restype ) {
-	using utility::gemmi_add_table;
-	using utility::gemmi_add_row;
+	options.align_pairs = 48; // Matches from-RCSB alignment
+	options.align_loops = 10;
 
 	gemmi::cif::Block block;
 	block.name = restype.name();
+	add_data_to_block( block, restype );
+
+	gemmi::cif::write_cif_block_to_stream( output_stream, block, options );
+}
+
+void
+mmCIFWriter::add_data_to_block( gemmi::cif::Block &block, core::chemical::ResidueType const & restype ) {
+	using utility::gemmi_get_table;
+	using utility::gemmi_append_row;
 
 	////////////// Standard Residue-level data
-
-	block.set_pair( "_chem_comp.id", restype.name() );
-	block.set_pair( "_chem_comp.name", restype.name() );
-	block.set_pair( "_chem_comp.one_letter_code", std::string(1, restype.name1() ) );
-	block.set_pair( "_chem_comp.three_letter_code", restype.name3() );
+	//
+	std::string type;
 	if ( restype.is_polymer() ) {
 		if ( restype.is_l_aa() ) {
-			block.set_pair( "_chem_comp.type", "L-PEPTIDE LINKING" );
+			type = "L-PEPTIDE LINKING";
 		} else if ( restype.is_d_aa() ) {
-			block.set_pair( "_chem_comp.type", "D-PEPTIDE LINKING" );
+			type = "D-PEPTIDE LINKING";
 		} else if ( restype.is_RNA() ) {
-			block.set_pair( "_chem_comp.type", "RNA LINKING" );
+			type = "RNA LINKING";
 		} else if ( restype.is_DNA() ) {
-			block.set_pair( "_chem_comp.type", "DNA LINKING" );
+			type = "DNA LINKING";
 		}
 	} else {
-		block.set_pair( "_chem_comp.type", "NON-POLYMER" );
+		type = "NON-POLYMER";
 	}
+
+	gemmi::cif::Table chem_comp = gemmi_get_table(block, "_chem_comp", {
+		"id",
+		"name",
+		"one_letter_code",
+		"three_letter_code",
+		"type"
+		});
+
+	gemmi_append_row( chem_comp, {
+		restype.name(),
+		restype.name(),
+		std::string(1, restype.name1() ),
+		restype.name3(),
+		type
+		});
 
 	////////////// Standard Atom-level Data
 
-	gemmi::cif::Loop & atom_comp = gemmi_add_table(block, "_chem_comp_atom", {
+	gemmi::cif::Table atom_comp = gemmi_get_table(block, "_chem_comp_atom", {
 		"comp_id",
 		"atom_id",
 		"type_symbol",
@@ -95,7 +112,6 @@ mmCIFWriter::generate_block( core::chemical::ResidueType const & restype ) {
 		"model_Cartn_x",
 		"model_Cartn_y",
 		"model_Cartn_z",
-		"pdbx_ordinal",
 		"partial_charge"
 		} );
 
@@ -109,16 +125,15 @@ mmCIFWriter::generate_block( core::chemical::ResidueType const & restype ) {
 		vec.push_back( std::to_string(pos.x()) );
 		vec.push_back( std::to_string(pos.y()) );
 		vec.push_back( std::to_string(pos.z()) );
-		vec.push_back( std::to_string(ii) );
 		vec.push_back( std::to_string(restype.atom_charge(ii)) );
 
-		gemmi_add_row( atom_comp, vec );
+		gemmi_append_row( atom_comp, vec );
 	}
 
 	//////////////// Rosetta-specific Atom-level Data
 	//
 	//// Note, if there's a standard place to put this data, prefer that
-	//gemmi::cif::Loop & rosetta_atom_comp = gemmi_add_table(block, "_rosetta_chem_comp_atom", {
+	//gemmi::cif::Table rosetta_atom_comp = gemmi_get_table(block, "_rosetta_chem_comp_atom", {
 	//	"comp_id",
 	//	"atom_id",
 	//	} );
@@ -128,18 +143,17 @@ mmCIFWriter::generate_block( core::chemical::ResidueType const & restype ) {
 	//	vec.push_back( restype.name() );
 	//	vec.push_back( restype.atom_name(ii) );
 	//
-	//	gemmi_add_row( rosetta_atom_comp, vec );
+	//	gemmi_append_row( rosetta_atom_comp, vec );
 	//}
 	//
 	//////////////// Standard Bond-level Data
 
-	gemmi::cif::Loop & bond_comp = gemmi_add_table(block, "_chem_comp_bond", {
+	gemmi::cif::Table bond_comp = gemmi_get_table(block, "_chem_comp_bond", {
 		"comp_id",
 		"atom_id_1",
 		"atom_id_2",
 		"value_order",
 		"pdbx_aromatic_flag",
-		"pdbx_ordinal"
 		} );
 
 	utility::vector1< std::pair< core::Size, core::Size > > const & all_bonds = restype.bonds();
@@ -166,12 +180,9 @@ mmCIFWriter::generate_block( core::chemical::ResidueType const & restype ) {
 		}
 		vec.push_back( bond_type );
 		vec.push_back( (restype.bond_type( atm1, atm2 ) == AromaticBond) ? "Y" : "N" );
-		vec.push_back( std::to_string(ii) );
 
-		gemmi_add_row( bond_comp, vec );
+		gemmi_append_row( bond_comp, vec );
 	}
-
-	return block;
 }
 
 
