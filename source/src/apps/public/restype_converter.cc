@@ -24,6 +24,7 @@
 #include <core/chemical/sdf/MolFileIOReader.hh>
 #include <core/chemical/sdf/mol_writer.hh>
 #include <core/chemical/mmCIF/mmCIFParser.hh>
+#include <core/chemical/mmCIF/mmCIFWriter.hh>
 
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -69,6 +70,8 @@ void register_options() {
 	option.add_relevant( out::pdb );
 	option.add_relevant( restype_convert::params_out );
 	option.add_relevant( restype_convert::sdf_out );
+	option.add_relevant( out::mmCIF );
+
 
 }
 
@@ -251,6 +254,12 @@ output_residue_types( utility::vector1< core::chemical::ResidueTypeCOP > const &
 		if ( option[ restype_convert::sdf_out ]() ) {
 			sdf::MolWriter writer;
 			writer.output_residue( determine_output_name( name, "sdf" ), restype );
+			files_outputted = true;
+		}
+
+		if ( option[ out::mmCIF ]() ) {
+			mmCIF::mmCIFWriter writer;
+			writer.write_file( determine_output_name( name, "cif" ), *restype );
 			files_outputted = true;
 		}
 
