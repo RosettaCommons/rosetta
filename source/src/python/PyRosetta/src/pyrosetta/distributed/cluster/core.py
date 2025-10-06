@@ -117,7 +117,7 @@ Args:
         accounting.
         Default: None
     pyrosetta_build: A `str` or `NoneType` object specifying the PyRosetta build as
-        output by `pyrosetta._version_string()`. If `None` is provided, then PyRosettaCluster
+        output by `pyrosetta._build_signature()`. If `None` is provided, then PyRosettaCluster
         automatically detects the PyRosetta build and sets this attribute as the `str`.
         If a non-empty `str` is provided, then validate that the input PyRosetta build is
         equal to the active PyRosetta build, and raise an error if not. This ensures that
