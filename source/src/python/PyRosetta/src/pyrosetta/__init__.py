@@ -191,9 +191,9 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
 
     if not silent:
         print( version() )
-        logger.info( version() )
+        logger.info( "\n" + version() )
     else:
-        logger.debug( version() )
+        logger.debug( "\n" + version() )
     rosetta.protocols.init.init(v)
     pyrosetta.protocols.h5_fragment_store_provider.init_H5FragmentStoreProvider()
     pyrosetta.protocols.h5_structure_store_provider.init_H5StructureStoreProvider()
