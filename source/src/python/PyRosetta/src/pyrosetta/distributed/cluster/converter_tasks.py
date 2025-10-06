@@ -10,27 +10,26 @@ __author__ = "Jason C. Klima"
 
 try:
     import distributed
-    import pandas
     import toolz
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.converter_tasks' requires the "
-        + "third-party packages 'distributed', 'pandas', and 'toolz' as dependencies!\n"
+        + "third-party packages 'distributed' and 'toolz' as dependencies!\n"
         + "Please install these packages into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/distributed/\n"
-        + "https://pypi.org/project/pandas/\n"
         + "https://pypi.org/project/toolz/\n"
     )
     raise
 
 import bz2
 import collections
-import logging
 import json
+import logging
 import os
 import pyrosetta.distributed.io as io
 import subprocess
+import warnings
 
 from functools import singledispatch
 from pyrosetta.distributed.cluster.config import environment_cmd, source_domains
@@ -39,10 +38,17 @@ from pyrosetta.distributed.cluster.exceptions import (
     InputFileError,
     OutputError,
 )
-from pyrosetta.distributed.cluster.io import IO, secure_read_pickle
+from pyrosetta.distributed.cluster.io import (
+    IO,
+    get_poses_from_init_file,
+    secure_read_pickle,
+    sign_init_file_metadata_and_poses,
+)
 from pyrosetta.distributed.packed_pose.core import PackedPose
+from pyrosetta.exceptions import PyRosettaIsNotInitializedError
 from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.rosetta.core.pose import Pose
+from pyrosetta.utility.initialization import PyRosettaInitDictWriter
 from typing import (
     Any,
     Callable,
@@ -51,13 +57,14 @@ from typing import (
     List,
     NoReturn,
     Optional,
+    Tuple,
     TypeVar,
     Union,
 )
 
 
 def get_protocols_list_of_str(
-    input_file: Optional[str] = None,
+    input_file: Optional[Union[str, Pose, PackedPose]] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
 ) -> Union[List[str], NoReturn]:
@@ -65,11 +72,14 @@ def get_protocols_list_of_str(
     Get the user-defined PyRosetta protocols as a `list` object of `str` objects.
 
     Args:
-        input_file: A `str` object specifying the path to the '.pdb' or '.pdb.bz2'
-            file from which to extract PyRosettaCluster instance kwargs. If input_file
-            is provided, then ignore the scorefile and decoy_name argument parameters.
+        input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
+            '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init', or '.init.bz2' file,
+            or a `Pose` or `PackedPose` object, from which to extract PyRosettaCluster instance
+            kwargs. If 'input_file' is provided, then ignore the 'scorefile' and 'decoy_name'
+            keyword argument parameters.
             Default: None
         scorefile: A `str` object specifying the path to the JSON-formatted scorefile
+            (or pickled `pandas.DataFrame` scorefile) from a PyRosettaCluster simulation
             from which to extract PyRosettaCluster instance kwargs. If 'scorefile'
             is provided, 'decoy_name' must also be provided. In order to use a scorefile,
             it must contain full simulation records from the original production
@@ -93,10 +103,11 @@ def get_protocols_list_of_str(
     )
     if input_file:
         if scorefile or decoy_name:
-            logging.warning(
-                "`get_protocols_list_of_str()` received `input_file` and either `scorefile` "
-                + " or `decoy_name` keyword argument parameters. Ignoring `scorefile` or "
-                + "`decoy_name` keyword argument parameters and using `input_file`!"
+            warnings.warn(
+                "Received 'input_file' and either 'scorefile' or 'decoy_name' keyword argument parameters. "
+                + "Ignoring 'scorefile' and 'decoy_name' and using 'input_file' keyword argument parameter!",
+                UserWarning,
+                stacklevel=3,
             )
         protocols_list_of_str = parse_input_file_to_protocols_str(input_file)
     elif scorefile and decoy_name:
@@ -154,14 +165,17 @@ def get_protocols_list_of_str(
     return protocols_list_of_str
 
 
-def get_scores_dict(obj):
-    """Get the PyRosettaCluster scores dictionary from a .pdb or .pdb.bz2 file."""
+def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Dict[str, Any]], NoReturn]:
+    """
+    Get the PyRosettaCluster scores dictionary from either a `Pose` or `PackedPose` object, or a '.pdb',
+    '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init', or '.init.bz2' file.
+    """
 
-    if not os.path.exists(obj):
-        raise IOError(
-            "The `input_file` argument parameter must exist! Received {0}".format(obj)
-        )
-    else:
+    if isinstance(obj, (Pose, PackedPose)):
+        pdbstring = io.to_pdbstring(obj)
+    elif isinstance(obj, str):
+        if not os.path.exists(obj):
+            raise IOError(f"The `input_file` argument parameter must exist on disk! Received: '{obj}'")
         if obj.endswith(".pdb.bz2"):
             with open(obj, "rb") as fbz2:
                 pdbstring = bz2.decompress(fbz2.read()).decode()
@@ -170,10 +184,10 @@ def get_scores_dict(obj):
                 pdbstring = f.read()
         elif obj.endswith((".pkl_pose", ".pkl_pose.bz2", ".b64_pose", ".b64_pose.bz2")):
             if not was_init_called():
-                raise RuntimeError(
+                raise PyRosettaIsNotInitializedError(
                     "To get the PyRosettaCluster scores dictionary from a '.pkl_pose', '.pkl_pose.bz2', "
                     + "'.b64_pose' or '.b64_pose.bz2' file, PyRosetta must be initialized (with the same "
-                    + "residue type set that was used to save the original file)."
+                    + "residue type set that was used to save the original decoy output file)."
                 )
             if obj.endswith(".pkl_pose.bz2"):
                 with open(obj, "rb") as fbz2:
@@ -187,23 +201,209 @@ def get_scores_dict(obj):
             elif obj.endswith(".b64_pose"):
                 with open(obj, "r") as f:
                     pdbstring = io.to_pdbstring(io.to_pose(f.read()))
-        scores_dict = None
-        for line in reversed(pdbstring.split(os.linesep)):
-            if line.startswith(IO.REMARK_FORMAT):
-                scores_dict = json.loads(line.split(IO.REMARK_FORMAT)[-1])
-                break
+        elif obj.endswith((".init", ".init.bz2")):
+            if not was_init_called():
+                if obj.endswith(".init.bz2"):
+                    raise PyRosettaIsNotInitializedError(
+                        "To get the PyRosettaCluster scores dictionary from a '.init.bz2' file, please first initialize "
+                        + f"PyRosetta using the `pyrosetta.distributed.io.init_from_file()` function: '{obj}'"
+                    )
+                elif obj.endswith(".init"):
+                    raise PyRosettaIsNotInitializedError(
+                        "To get the PyRosettaCluster scores dictionary from a '.init' file, please first initialize "
+                        + f"PyRosetta using the `pyrosetta.init_from_file()` function: '{obj}'"
+                    )
+            _input_packed_pose, output_packed_pose = get_poses_from_init_file(obj, verify=True)
+            if output_packed_pose is None:
+                raise ValueError(
+                    "The input '.init' or '.init.bz2' file does not contain an output decoy from a PyRosettaCluster simulation: "
+                    + f"'{obj}'. To get the PyRosettaCluster scores dictionary from a '.init' or '.init.bz2' file, please ensure "
+                    + "that `pyrosetta.distributed.cluster.export_init_file()` was run on the original decoy output file, "
+                    + "or that the `PyRosettaCluster(output_decoy_types=['.init'])` PyRosetta initialization file output "
+                    + "decoy type was enabled in the original PyRosettaCluster simulation."
+                )
+            pdbstring = io.to_pdbstring(output_packed_pose)
         else:
-            raise IOError(
-                "The `input_file` argument parameter must end in "
-                + "'.pdb', '.pdb.bz2', '.b64_pose', or '.b64_pose.bz2'."
+            raise ValueError(
+                "The `input_file` argument parameter must end in '.pdb', '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', "
+                + "'.b64_pose', '.b64_pose.bz2', '.init', or '.init.bz2'. "
+                + f"Received: '{obj}'"
+            )
+    else:
+        raise TypeError(
+            "The `input_file` argument parameter must be a `Pose`, `PackedPose` or `str` object that ends in '.pdb', "
+            + "'.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init', or '.init.bz2'. "
+            + f"Received: '{type(obj)}'"
+        )
+
+    scores_dict = None
+    for line in reversed(pdbstring.split(os.linesep)):
+        if line.startswith(IO.REMARK_FORMAT):
+            scores_dict = json.loads(
+                line.split(IO.REMARK_FORMAT)[-1],
+                cls=None,
+                object_hook=None,
+                object_pairs_hook=None,
+                parse_int=None,
+                parse_constant=None,
+            )
+            break
+    else:
+        _err_msg = f"Could not parse '{IO.REMARK_FORMAT}' comment from the input object: '{obj}'"
+        if isinstance(obj, (Pose, PackedPose)):
+            raise ValueError(
+                f"{_err_msg}. If the '{type(obj)}' object was initialized from a '.pdb' or '.pdb.bz2' "
+                + "file output by PyRosettaCluster, please input the file path directly into the "
+                + f"`get_scores_dict()` function to parse the '{IO.REMARK_FORMAT}' comment."
+            )
+        else:
+            raise IOError(_err_msg)
+
+    if scores_dict is None:
+        raise IOError(f"Could not parse the input argument parameter: '{obj}'")
+    if not all(d in scores_dict for d in ("instance", "metadata", "scores")):
+        raise KeyError(f"Could not parse the input argument parameter: '{obj}'")
+
+    return scores_dict
+
+
+def export_init_file(
+    output_file: str,
+    output_init_file: Optional[str] = None,
+    compressed: Optional[bool] = None,
+) -> None:
+    """
+    Export a PyRosetta initialization file from a decoy output file. The PyRosettaCluster simulation
+    that produced the decoy output file must have had the 'output_init_file' instance attribute enabled,
+    so the 'init_file' key value can be detected in the metadata of the decoy output file. This function
+    can be used to prepend the decoy output file to the detected PyRosetta initialization file for more
+    facile simulation reproduction using the `reproduce()` function.
+
+    Args:
+        output_file: A required `str` object representing the decoy output file. The file must end in
+            either: '.pdb', '.pdb.bz2', '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2'.
+        output_init_file: An optional `str` object specifying the output PyRosetta initialization file
+            path ending with '.init'. If `NoneType` is provided, then the PyRosetta initialization file
+            path is derived from the 'output_file' argument parameter by replacing the file extension
+            with '.init' (or '.init.bz2' when the 'compressed' argument parameter is set to `True`).
+            Default: None
+        compressed: A `bool` object specifying whether or not to compress the output PyRosetta initialization
+            file with `bzip2`, resulting in a '.init.bz2' output PyRosetta initialization file.
+                Default: True
+
+    Returns:
+        None
+    """
+
+    _types = (".pdb", ".pdb.bz2", ".pkl_pose", ".pkl_pose.bz2", ".b64_pose", ".b64_pose.bz2")
+
+    if isinstance(output_file, str) and os.path.isfile(output_file) and output_file.endswith(_types):
+        if output_init_file is None:
+            for _type in _types:
+                if output_file.endswith(_type):
+                    output_init_file = f"{output_file[: -len(_type)]}.init"
+                    break
+        elif isinstance(output_init_file, str):
+            if not output_init_file.endswith(".init"):
+                raise ValueError(
+                    "The 'output_init_file' keyword argument parameter must end with '.init'. "
+                    f"Received: '{output_init_file}'"
+            )
+        else:
+            raise TypeError(
+                "The 'output_init_file' keyword argument parameter must be a `str` or `NoneType` object. "
+                + f"Received: {type(output_init_file)}"
+            )
+        if not isinstance(compressed, (type(None), bool)):
+            raise TypeError(
+                "The 'compressed' keyword argument parameter must be a `bool` or `NoneType` object. "
+                + f"Received: {type(compressed)}"
+            )
+        if compressed:
+            output_init_file += ".bz2"
+        if os.path.isfile(output_init_file):
+            raise FileExistsError(
+                f"The PyRosetta initialization file path already exists: '{output_init_file}'. "
+                + "Please set the 'output_init_file' keyword argument parameter to a different value."
             )
 
-        if scores_dict is None:
-            raise IOError("Could not parse the `input_file` argument parameter!")
-        if not all(d in scores_dict for d in ["instance", "metadata", "scores"]):
-            raise KeyError("Could not parse the `input_file` argument parameter!")
-
-        return scores_dict
+        scores_dict = get_scores_dict(output_file)
+        init_file = scores_dict["metadata"]["init_file"]
+        if init_file:
+            if os.path.isfile(init_file):
+                if not was_init_called():
+                    raise PyRosettaIsNotInitializedError(
+                        "In order to export a PyRosetta initialization file, please ensure that PyRosetta is already "
+                        + "initialized (using the `pyrosetta.distributed.io.init_from_file()` function) with the "
+                        + f"following PyRosetta initialization file, and then run `export_init_file()`: '{init_file}'"
+                    )
+                input_packed_pose, _output_packed_pose = get_poses_from_init_file(init_file, verify=True)
+                if _output_packed_pose is not None:
+                    raise ValueError(
+                        "The 'output_file' argument parameter already contains an output decoy in the "
+                        + f"detected PyRosetta initialization file: '{init_file}'. Aborting export!"
+                    )
+                if output_file.endswith(".bz2"):
+                    with open(output_file, "rb") as fbz2:
+                        string = bz2.decompress(fbz2.read()).decode()
+                    if output_file.endswith(".pdb.bz2"):
+                        output_packed_pose = io.pose_from_pdbstring(string)
+                    else:
+                        output_packed_pose = io.to_packed(io.to_pose(string))
+                else:
+                    output_packed_pose = io.pose_from_file(output_file)
+                # Cache simulation data from '.pdb' and '.pdb.bz2' files
+                # loaded from `io.pose_from_pdbstring` or `io.pose_from_file`
+                if output_file.endswith((".pdb", ".pdb.bz2")):
+                    output_packed_pose = IO._add_pose_comment(
+                        output_packed_pose,
+                        IO._dump_json(get_scores_dict(output_file)),
+                    )
+                # Setup metadata and poses
+                metadata, poses = sign_init_file_metadata_and_poses(
+                    input_packed_pose=input_packed_pose,
+                    output_packed_pose=output_packed_pose,
+                )
+                # Update PyRosetta initialization file
+                init_dict = io.read_init_file(init_file)
+                init_dict["metadata"] = metadata  # Overwrite
+                init_dict["poses"] = poses  # Overwrite
+                init_dict.update(dict(dry_run=False, overwrite=False, verbose=True))
+                writer = PyRosettaInitDictWriter(**init_dict)
+                init_file_json = writer.get_json() # Sign MD5
+                if init_dict["verbose"]:
+                    writer.print_cached_files(output_init_file, init_dict["dry_run"])
+                if compressed:
+                    with open(output_init_file, "wb") as f:
+                        f.write(bz2.compress(str.encode(init_file_json)))
+                else:
+                    with open(output_init_file, "w") as f:
+                        f.write(init_file_json)
+                print(
+                    f"Exported PyRosettaCluster decoy output file '{output_file}' to "
+                    + f"PyRosetta initialization file: '{output_init_file}'"
+                )
+            else:
+                raise ValueError(
+                    "The 'output_file' argument parameter contains an 'init_file' key value in the "
+                    + "cached metadata, but the specified '.init' or '.init.bz2' file cannot be found: "
+                    + f"'{init_file}'. Please ensure the '.init' or '.init.bz2' file exists in the same "
+                    + "path to use the `export_init_file()` function."
+                )
+        else:
+            raise ValueError(
+                "The 'output_file' argument parameter does not contain an 'init_file' key value "
+                + "in the cached metadata, so the original simulation disabled the output of a "
+                + "'.init' file. Exporting a '.init' file containing the 'output_file' argument "
+                + "parameter is not supported without saving the original '.init' file. Please "
+                + "enable the 'output_init_file' instance attribute in future PyRosettaCluster "
+                + "simulations to use the `export_init_file()` function."
+            )
+    else:
+        raise ValueError(
+            "The 'output_file' argument parameter must be a `str` object, must exist on disk, and must "
+            + f"end with one of the following filetype extensions: {_types}. Received: '{output_file}'"
+        )
 
 
 def get_yml() -> str:
@@ -330,6 +530,8 @@ def parse_input_file_to_protocols_str(obj: Any) -> NoReturn:
     raise InputFileError(obj)
 
 
+@parse_input_file_to_protocols_str.register(PackedPose)
+@parse_input_file_to_protocols_str.register(Pose)
 @parse_input_file_to_protocols_str.register(str)
 def _parse_str(obj: str) -> List[str]:
     scores_dict = get_scores_dict(obj)
@@ -341,6 +543,8 @@ def parse_input_file_to_instance_kwargs(obj: Any) -> NoReturn:
     raise InputFileError(obj)
 
 
+@parse_input_file_to_instance_kwargs.register(PackedPose)
+@parse_input_file_to_instance_kwargs.register(Pose)
 @parse_input_file_to_instance_kwargs.register(str)
 def _parse_str(obj: str) -> Dict[str, Any]:
     scores_dict = get_scores_dict(obj)
@@ -487,6 +691,104 @@ def _default_none(obj: None) -> Dict[Any, Any]:
     return {}
 
 
+def parse_init_file(
+    input_file: str,
+    input_packed_pose: Optional[PackedPose],
+    skip_corrections: bool,
+    init_from_file_kwargs: Dict[str, Any],
+) -> Union[Tuple[Optional[PackedPose], PackedPose], NoReturn]:
+    """
+    Return a `tuple` object of the input `PackedPose` object and the output `PackedPose`
+    object from a '.init' or '.init.bz2' file, verifying PyRosettaCluster metadata in the
+    '.init' or '.init.bz2' file.
+    """
+
+    if not was_init_called():
+        if skip_corrections != init_from_file_kwargs["skip_corrections"]:
+            _skip_corrections_warning_msg = (
+                "Please set the 'skip_corrections' keyword argument in the `reproduce()` function and in "
+                "the 'init_from_file_kwargs' keyword arguments to the same value to silence this warning."
+            )
+            if skip_corrections and not init_from_file_kwargs["skip_corrections"]:
+                warnings.warn(
+                    "Skipping ScoreFunction corrections for the PyRosettaCluster task but "
+                    + f"not for the host node PyRosetta initialization from the '.init' file! {_skip_corrections_warning_msg}",
+                    UserWarning,
+                    stacklevel=3,
+                )
+            elif not skip_corrections and init_from_file_kwargs["skip_corrections"]:
+                warnings.warn(
+                    "Skipping ScoreFunction corrections for the host node PyRosetta initialization "
+                    + f"from the '.init' file but not for the PyRosettaCluster task! {_skip_corrections_warning_msg}",
+                    UserWarning,
+                    stacklevel=3,
+                )
+        try:
+            io.init_from_file(input_file, **init_from_file_kwargs)
+        except BufferError as ex:
+            raise BufferError(
+                f"{ex}. Please set a larger 'max_decompressed_bytes' parameter in the 'init_from_file_kwargs' "
+                + "keyword argument of the `reproduce()` function to initialize PyRosetta with the input "
+                + f"PyRosetta initialization file: '{input_file}'"
+            )
+        except Exception as ex:
+            raise Exception(
+                f"{type(ex).__name__}: {ex}. Could not initialize PyRosetta from the input PyRosetta initialization "
+                + f"file '{input_file}' using `pyrosetta.init_from_file()` keyword arguments: '{init_from_file_kwargs}'. "
+                + "Please ensure `pyrosetta.distributed.io.init_from_file()` runs with the '.init' or '.init.bz2' file "
+                + "separately before passing it into `reproduce()`, and update any necessary `pyrosetta.init_from_file()` "
+                + "keyword arguments in the 'init_from_file_kwargs' keyword argument parameter of the `reproduce()` function. "
+                + "The '.init' or '.init.bz2' file may also be passed to `reproduce()` after a separate PyRosetta initialization."
+            )
+    else:
+        _skip_corrections_warning_msg = (
+            "Please ensure that PyRosetta was initialized from the same PyRosetta initialization file using "
+            + f"`pyrosetta.init_from_file(skip_corrections={skip_corrections})` before running the `reproduce()` "
+            + "function. To silence this warning, please ensure that PyRosetta is not already initialized before "
+            + f"running the `reproduce()` function with the input PyRosetta initialization file: '{input_file}'"
+        )
+        if skip_corrections:
+            warnings.warn(
+                "Skipping ScoreFunction corrections for the PyRosettaCluster task but PyRosetta is already "
+                + "initialized on the host node (with or without skipped ScoreFunction corrections)! "
+                + _skip_corrections_warning_msg,
+                UserWarning,
+                stacklevel=3,
+            )
+        else:
+            warnings.warn(
+                "Preserving ScoreFunction corrections for the PyRosettaCluster task but PyRosetta is already "
+                + "initialized on the host node (with or without preserved ScoreFunction corrections)! "
+                + _skip_corrections_warning_msg,
+                UserWarning,
+                stacklevel=3,
+            )
+
+    _input_packed_pose, _output_packed_pose = get_poses_from_init_file(input_file, verify=True)
+    if _output_packed_pose is None:
+        raise ValueError(
+            f"The input '.init' file does not contain an output decoy from a PyRosettaCluster simulation: '{input_file}'. "
+            + "To reproduce from a '.init' file, please ensure that `pyrosetta.distributed.cluster.export_init_file()` "
+            + "was run on the original decoy output file, or that the `PyRosettaCluster(output_decoy_types=['.init'])` "
+            + "PyRosetta initialization file output decoy type was enabled in the original PyRosettaCluster simulation."
+        )
+
+    input_packed_pose = parse_input_packed_pose(input_packed_pose)
+    if input_packed_pose is not None and not identical_b64_poses(input_packed_pose, _input_packed_pose):
+        _input_packed_pose_error_msg = (
+            "the input `PackedPose` object from the original PyRosettaCluster simulation is not identical "
+            "to the provided 'input_packed_pose' keyword argument parameter of the `reproduce()` function"
+        ) if _input_packed_pose is not None else (
+            "the '.init' file does not contain an input `PackedPose` object from the original PyRosettaCluster simulation"
+        )
+        raise TypeError(
+            "Please set the 'input_packed_pose' keyword argument parameter to a `NoneType` object when "
+            + f"reproducing from a '.init' file, because {_input_packed_pose_error_msg}."
+        )
+
+    return (_input_packed_pose, _output_packed_pose)
+
+
 @singledispatch
 def is_empty(obj: Any) -> NoReturn:
     """Test whether a `PackedPose` object is empty."""
@@ -500,6 +802,14 @@ def _from_none(obj: None) -> bool:
 @is_empty.register(PackedPose)
 def _from_packed(obj: PackedPose) -> bool:
     return obj.empty()
+
+
+def identical_b64_poses(
+    packed_pose_1: Union[Pose, PackedPose],
+    packed_pose_2: Union[Pose, PackedPose],
+) -> bool:
+    """Test whether b64-encoded pickled Pose objects are identical."""
+    return io.to_base64(packed_pose_1) == io.to_base64(packed_pose_2)
 
 
 def is_bytes(obj: Any) -> bool:

@@ -96,8 +96,9 @@ Args:
         user-provided PyRosetta protocol run later.
         Default: 1
     compressed: A `bool` object specifying whether or not to compress the output
-        '.pdb' files with `bzip2`, resulting in '.pdb.bz2' output decoy files. Also
-        see the 'output_decoy_types' keyword argument.
+        ".pdb", ".pkl_pose", ".b64_pose", and ".init" files with `bzip2`, resulting
+        in appending ".bz2" to decoy output files and PyRosetta initialization files.
+        Also see the 'output_decoy_types' and 'output_init_file' keyword arguments.
         Default: True
     compression: A `str` object of 'xz', 'zlib' or 'bz2', or a `bool` or `NoneType`
         object representing the internal compression library for pickled `PackedPose` 
@@ -155,13 +156,29 @@ Args:
         (to be created if it doesn't exist) where the output results will be saved
         to disk.
         Default: "./outputs"
+    output_init_file: A `str` object specifying the output ".init" file path that caches
+        the 'input_packed_pose' keyword argument parameter upon PyRosettaCluster instantiation,
+        and not including any output decoys, which is optionally used for exporting PyRosetta
+        initialization files with output decoys by the `pyrosetta.distributed.cluster.export_init_file()`
+        function after the simulation completes (see the 'output_decoy_types' keyword argument).
+        If a `NoneType` object (or an empty `str` object ('')) is provided, or `dry_run=True`,
+        then skip writing an output ".init" file upon PyRosettaCluster instantiation. If skipped,
+        it is recommended to run `pyrosetta.dump_init_file()` before or after the simulation.
+        If `compressed=True`, then the output file is further compressed by `bzip2`, and ".bz2"
+        is appended to the filename.
+        Default: `output_path`/`project_name`_`simulation_name`_pyrosetta.init
     output_decoy_types: An iterable of `str` objects representing the output decoy
         filetypes to save during the simulation. Available options are: ".pdb" for PDB
-        files, ".pkl_pose" for pickled Pose files, and ".b64_pose" for base64-encoded
-        pickled Pose files. If `compressed=True`, then each output decoy file is further
-        compressed by `bzip2`, and ".bz2" is appended to the filename. Note that pickled
-        files have security issues, you can learn more `here <https://docs.python.org/3/library/pickle.html>`_.
-        Only deserialize these files if you know and trust their source. 
+        files; ".pkl_pose" for pickled Pose files; ".b64_pose" for base64-encoded
+        pickled Pose files; and ".init" for PyRosetta initialization files, each caching
+        the host node PyRosetta initialization options (and input files, if any), the
+        'input_packed_pose' keyword argument parameter (if any) and an output decoy.
+        Because each ".init" file contains a copy of the PyRosetta initialization input files
+        and input `PackedPose` object, unless these objects are relatively small in size
+        or there are relatively few expected output decoys, then it is recommended to run
+        `pyrosetta.distributed.cluster.export_init_file()` on only decoys of interest after the
+        simulation completes without specifying ".init". If `compressed=True`, then each decoy
+        output file is further compressed by `bzip2`, and ".bz2" is appended to the filename.
         Default: [".pdb",]
     output_scorefile_types: An iterable of `str` objects representing the output scorefile
         filetypes to save during the simulation. Available options are: ".json" for a
@@ -258,6 +275,24 @@ Args:
         simulation is complete to allow loggers to flush. For very slow network filesystems,
         2.0 or more seconds may be reasonable.
         Default: 0.5
+    norm_task_options: A `bool` object specifying whether or not to normalize the task
+        'options' and 'extra_options' values after PyRosetta initialization on the remote
+        compute cluster. If `True`, then this enables more facile simulation reproduction
+        by the use of the `ProtocolSettingsMetric` SimpleMetric to normalize the PyRosetta
+        initialization options and by relativization of any input files and directory paths
+        to the current working directory from which the task is running.
+        Default: True
+    author: An optional `str` object specifying the author(s) of the simulation that is
+        written to the full simulation records and the PyRosetta initialization '.init' file.
+        Default: ""
+    email: An optional `str` object specifying the email address(es) of the author(s) of
+        the simulation that is written to the full simulation records and the PyRosetta
+        initialization '.init' file.
+        Default: ""
+    license: An optional `str` object specifying the license of the output data of the
+        simulation that is written to the full simulation records and the PyRosetta
+        initialization '.init' file (e.g., "ODC-ODbL", "CC BY-ND", "CDLA Permissive-2.0", etc.).
+        Default: ""
 
 Returns:
     A PyRosettaCluster instance.
@@ -304,6 +339,7 @@ from pyrosetta.distributed.cluster.converters import (
     _parse_environment,
     _parse_input_packed_pose,
     _parse_logging_address,
+    _parse_norm_task_options,
     _parse_output_decoy_types,
     _parse_output_scorefile_types,
     _parse_pyrosetta_build,
@@ -328,6 +364,7 @@ from pyrosetta.distributed.cluster.validators import (
     _validate_int,
     _validate_logging_address,
     _validate_min_len,
+    _validate_output_init_file,
     _validate_scorefile_name,
 )
 from pyrosetta.distributed.packed_pose.core import PackedPose
@@ -656,6 +693,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         validator=attr.validators.instance_of(bool),
         converter=attr.converters.default_if_none(False),
     )
+    norm_task_options = attr.ib(
+        type=bool,
+        default=None,
+        validator=attr.validators.instance_of(bool),
+        converter=_parse_norm_task_options,
+    )
     yield_results = attr.ib(
         type=bool,
         init=False,
@@ -693,6 +736,42 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         validator=attr.validators.instance_of(str),
         converter=_parse_environment,
     )
+    author = attr.ib(
+        type=str,
+        default=None,
+        validator=attr.validators.instance_of(str),
+        converter=attr.converters.default_if_none(""),
+    )
+    email = attr.ib(
+        type=str,
+        default=None,
+        validator=attr.validators.instance_of(str),
+        converter=attr.converters.default_if_none(""),
+    )
+    license = attr.ib(
+        type=str,
+        default=None,
+        validator=attr.validators.instance_of(str),
+        converter=attr.converters.default_if_none(""),
+    )
+    output_init_file = attr.ib(
+        type=str,
+        default=attr.Factory(
+            lambda self: os.path.join(
+                self.output_path,
+                "_".join(
+                    [
+                        self.project_name.replace(" ", "-"),
+                        self.simulation_name.replace(" ", "-"),
+                        "pyrosetta.init",
+                    ]
+                ),
+            ),
+            takes_self=True,
+        ),
+        validator=[attr.validators.instance_of(str), _validate_output_init_file],
+        converter=attr.converters.default_if_none(""),
+    )
     environment_file = attr.ib(
         type=str,
         default=attr.Factory(
@@ -721,10 +800,11 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         ),
     )
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         _maybe_init_client()
         self._setup_logger()
         self._write_environment_file(self.environment_file)
+        self._write_init_file()
         self.serializer = Serialization(compression=self.compression)
         self.clients_dict = self._setup_clients_dict()
 
@@ -857,6 +937,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             timeout=self.timeout,
             ignore_errors=self.ignore_errors,
             datetime_format=self.DATETIME_FORMAT,
+            norm_task_options=self.norm_task_options,
             compression=self.compression,
             max_delay_time=self.max_delay_time,
             logging_level=self.logging_level,

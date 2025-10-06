@@ -65,6 +65,32 @@ L = TypeVar("L", bound=Callable[..., Any])
 Q = TypeVar("Q", bound=billiard.Queue)
 
 
+class RedirectToLogger(Generic[G]):
+    """Redirect stdout and stderr to a logging sink."""
+    def __init__(self, level: int) -> None:
+        """Instantiate buffer for the root logger and a logging level."""
+        self.logger = logging.getLogger()
+        self.level = level
+        self.buffer = ""
+
+    def write(self, msg: str) -> int:
+        """Write logging buffer."""
+        self.buffer += msg
+        while "\n" in self.buffer:
+            line, self.buffer = self.buffer.split("\n", 1)
+            if line.endswith("\r"):
+                line = line[:-1]
+            self.logger.log(self.level, line)
+
+        return len(msg)
+
+    def flush(self) -> None:
+        """Flush logging buffer."""
+        if self.buffer:
+            self.logger.log(self.level, self.buffer)
+            self.buffer = ""
+
+
 class LoggingSupport(Generic[G]):
     """Supporting logging methods for PyRosettaCluster."""
     def __init__(self) -> None:
@@ -254,6 +280,7 @@ def setup_target_logging(func: L) -> L:
         logging_level: str,
         socket_listener_address: Tuple[str, int],
         datetime_format: str,
+        norm_task_options: bool,
         ignore_errors: bool,
         protocols_key: str,
         decoy_ids: List[int],
@@ -287,6 +314,7 @@ def setup_target_logging(func: L) -> L:
                 logging_level,
                 socket_listener_address,
                 datetime_format,
+                norm_task_options,
                 ignore_errors,
                 protocols_key,
                 decoy_ids,
