@@ -230,7 +230,7 @@ def _parse_yield_results(yield_results: Any) -> bool:
 def _parse_pyrosetta_build(obj: Any) -> str:
     """Parse the PyRosetta build string."""
 
-    _pyrosetta_version_string = pyrosetta._pyrosetta_build_signature()
+    _pyrosetta_version_string = pyrosetta._build_signature()
 
     @singledispatch
     def converter(obj: Any) -> NoReturn:
