@@ -244,7 +244,7 @@ def _parse_pyrosetta_build(obj: Any) -> str:
     def _validate_pyrosetta_version_string(obj: str) -> Union[str, NoReturn]:
         if obj == "":
             logging.warning(
-                "The input 'pyrosetta_build' parameter argument is an empty string, "
+                "The input 'pyrosetta_build' keyword argument parameter is an empty string, "
                 + "which is not a valid PyRosetta build string capturing the original PyRosetta "
                 + "version! Reproduction simulations may not necessarily reproduce "
                 + "the original decoy(s)! Please verify that your PyRosetta build "
@@ -261,12 +261,12 @@ def _parse_pyrosetta_build(obj: Any) -> str:
                     + "Therefore, the original decoy may not necessarily be reproduced! "
                     + "Using different PyRosetta builds can lead to different outputs. "
                     + "Please consider running this simulation using the PyRosetta build that "
-                    + "was used with the original simulation run. Please set the 'pyrosetta_build' parameter "
-                    + "argument to an empty string ('') to bypass PyRosetta build validation."
+                    + "was used with the original simulation run. Please set the 'pyrosetta_build' keyword "
+                    + "argument parameter to an empty string ('') to bypass PyRosetta build validation."
                 )
             else:
                 logging.debug(
-                    "The 'pyrosetta_build' parameter argument correctly validated against the original PyRosetta build!"
+                    "The 'pyrosetta_build' keyword argument parameter correctly validated against the original PyRosetta build!"
                 )
                 return obj
 
