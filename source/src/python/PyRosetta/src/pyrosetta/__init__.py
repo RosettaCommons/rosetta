@@ -213,6 +213,14 @@ def _version_string():
     return rosetta.utility.Version.package() + " " + ".".join(version)
 
 
+def _pyrosetta_build_signature():
+    extras = "+".join(sorted(rosetta.utility.Version.extras()))
+    extras_string = f"[extras:{extras}]"
+    version_list = _version_string().split()
+    version_list.insert(1, extras_string)
+    return "".join(version_list)
+
+
 def version():
     return (
         '┌───────────────────────────────────────────────────────────────────────────────┐\n'
