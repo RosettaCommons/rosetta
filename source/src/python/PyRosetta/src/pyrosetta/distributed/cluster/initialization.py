@@ -10,22 +10,27 @@ __author__ = "Jason C. Klima"
 
 try:
     import numpy as np
+    import toolz
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.initialization' requires the "
-        + "third-party package 'numpy' as a dependency!\n"
-        + "Please install this package into your python environment. "
+        + "third-party packages 'numpy' and 'toolz' as dependencies!\n"
+        + "Please install the packages into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/numpy/\n"
+        + "https://pypi.org/project/toolz/\n"
     )
     raise
 
 import inspect
+import logging
+import os
 import pyrosetta
 import pyrosetta.distributed
 
 from typing import (
     AbstractSet,
+    Dict,
     List,
     NoReturn,
     Optional,
@@ -87,3 +92,67 @@ def _maybe_init_client() -> Optional[NoReturn]:
             options="-run:constant_seed 1 -multithreading:total_threads 1",
             extra_options="-mute all",
         )
+
+
+@toolz.functoolz.curry
+def _maybe_relativize(
+    option_name: str, value: str, start: str, ignore_errors: bool
+) -> Union[str, NoReturn]:
+    """Relativize a `str` object if it exists as a path."""
+
+    try:
+        expanded = os.path.expandvars(os.path.expanduser(value))
+        maybe_path = os.path.normpath(
+            expanded if os.path.isabs(expanded) else os.path.join(start, expanded)
+        )
+        return os.path.relpath(maybe_path, start=start) if os.path.lexists(maybe_path) else value
+    except Exception as ex: # May be malformed object or cross-drive path on Windows
+        _msg = (
+            "PyRosettaCluster (with `norm_task_options` enabled) cannot relativize a path in the "
+            f"task's PyRosetta initialization option '-{option_name}' with value: '{value}'"
+        )
+        if ignore_errors:
+            logging.error(
+                (
+                    "{0}: {1}. {2}. Please consider setting a relative path in the task's PyRosetta "
+                    "initialization option value. Ignoring error because `ignore_errors` is enabled!"
+                ).format(type(ex).__name__, ex, _msg)
+            )
+            return value
+        else:
+            raise ValueError(
+                (
+                    "{0}. {1}. Please update the task's PyRosetta initialization option value, "
+                    "disable `norm_task_options`, or enable `ignore_errors` to continue."
+                ).format(ex, _msg)
+            )
+
+
+def _get_norm_task_options(ignore_errors: bool) -> Dict[str, str]:
+    """Get normalized task PyRosetta initialization options."""
+
+    options_dict: Dict[str, List[str]] = toolz.dicttoolz.keyfilter(
+        lambda k: k not in ("in:path:database", "run:constant_seed", "run:jran"),
+        pyrosetta.get_init_options(compressed=False, as_dict=True),
+    )
+    relativize = _maybe_relativize(start=os.getcwd(), ignore_errors=ignore_errors)
+
+    msgs: List[str] = []
+    options: Dict[str, str] = {}
+    for option_name, values in options_dict.items():
+        rel_values = []
+        for value in values:
+            rel_value = relativize(option_name, value)
+            if rel_value != value:
+                msgs.append(f"'{value}' -> '{rel_value}'")
+            rel_values.append(rel_value)
+        options[option_name] = " ".join(rel_values)
+
+    if msgs:
+        logging.info(
+            "PyRosettaCluster (with `norm_task_options` enabled) is normalizing the "
+            + "following values in the task's PyRosetta initialization options:\n"
+            + "\n".join(msgs)
+        )
+
+    return options

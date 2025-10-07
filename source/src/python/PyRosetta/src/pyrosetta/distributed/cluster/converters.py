@@ -109,13 +109,13 @@ def _parse_decoy_ids(objs: Any) -> List[int]:
 def _parse_empty_queue(protocol_name: str, ignore_errors: bool) -> None:
     """Return a `None` object when a protocol results in an error with `ignore_errors=True`."""
     logging.warning(
-        f"User-provided PyRosetta protocol '{protocol_name}' resulted in an empty queue with `ignore_errors={ignore_errors}`!"
+        f"User-provided PyRosetta protocol '{protocol_name}' resulted in an empty queue with `ignore_errors={ignore_errors}`! "
         + "Putting a `None` object into the queue."
     )
     return None
 
 
-def _parse_environment(obj: Any) -> str:
+def _parse_environment(obj: Any) -> Union[str, NoReturn]:
     """Parse the input `environment` attribute of PyRosettaCluster."""
 
     @singledispatch
@@ -166,7 +166,7 @@ def _parse_environment(obj: Any) -> str:
     return converter(obj)
 
 
-def _parse_protocols(objs: Any) -> List[Union[Callable[..., Any], Iterable[Any]]]:
+def _parse_protocols(objs: Any) -> Union[List[Union[Callable[..., Any], Iterable[Any]]], NoReturn]:
     """
     Parse the `protocols` argument parameters from the PyRosettaCluster().distribute() method.
     """
@@ -200,14 +200,15 @@ def _parse_protocols(objs: Any) -> List[Union[Callable[..., Any], Iterable[Any]]
             if not isinstance(obj, (types.FunctionType, types.GeneratorType)):
                 raise TypeError(
                     "Each member of PyRosetta protocols must be of type "
-                    + "`types.FunctionType` or `types.GeneratorType`!"
+                    + "`types.FunctionType` or `types.GeneratorType`! "
+                    + f"Received: {type(obj)}"
                 )
         return list(objs)
 
     return converter(objs)
 
 
-def _parse_yield_results(yield_results: Any) -> bool:
+def _parse_yield_results(yield_results: Any) -> Union[bool, NoReturn]:
     @singledispatch
     def converter(objs: Any) -> NoReturn:
         raise ValueError("'yield_results' parameter must be of type `bool`.")
@@ -229,7 +230,38 @@ def _parse_yield_results(yield_results: Any) -> bool:
     return converter(yield_results)
 
 
-def _parse_pyrosetta_build(obj: Any) -> str:
+def _parse_norm_task_options(obj: Any) -> Union[bool, NoReturn]:
+    """Parse the input `norm_task_options` attribute of PyRosettaCluster."""
+    _issue_future_warning = True
+
+    @singledispatch
+    def converter(obj: Any) -> NoReturn:
+        raise ValueError("'norm_task_options' must be of type `bool` or `NoneType`!")
+
+    @converter.register(type(None))
+    def _parse_none(obj: None) -> bool:
+        if _issue_future_warning:
+            warnings.warn(
+                (
+                    "As of PyRosettaCluster version 2.3.0, the 'norm_task_options' instance attribute is enabled by "
+                    "default, which automatically normalizes the task 'options' and 'extra_options' keyword arguments "
+                    "for facile reproducibility. Please explicitly set either `norm_task_options=True` (the currently "
+                    "enabled, new setting) or `norm_task_options=False` (to revert to legacy behavior before version 2.3.0) "
+                    "to silence this notice. This notice will disappear in a future version of PyRosettaCluster."
+                ),
+                FutureWarning,
+                stacklevel=5,
+            )
+        return True
+
+    @converter.register(bool)
+    def _parse_bool(obj: bool) -> bool:
+        return obj
+
+    return converter(obj)
+
+
+def _parse_pyrosetta_build(obj: Any) -> Union[str, NoReturn]:
     """Parse the PyRosetta build string."""
 
     _pyrosetta_version_string = pyrosetta._version_string()
@@ -275,7 +307,7 @@ def _parse_pyrosetta_build(obj: Any) -> str:
     return converter(obj)
 
 
-def _parse_scratch_dir(obj: Any) -> str:
+def _parse_scratch_dir(obj: Any) -> Union[str, NoReturn]:
     """Parse the input `scratch_dir` attribute of PyRosettaCluster."""
 
     @singledispatch
@@ -308,7 +340,7 @@ def _parse_seeds(objs: Any) -> List[str]:
     return to_iterable(objs, to_str, "seeds")
 
 
-def _parse_sha1(obj: Any) -> str:
+def _parse_sha1(obj: Any) -> Union[str, NoReturn]:
     """Parse the input `sha1` attribute of PyRosettaCluster."""
 
     @singledispatch
@@ -379,7 +411,7 @@ def _parse_sha1(obj: Any) -> str:
     return converter(obj)
 
 
-def _parse_system_info(obj: Any) -> Dict[Any, Any]:
+def _parse_system_info(obj: Any) -> Union[Dict[Any, Any], NoReturn]:
     """Parse the input `system_info` attribute of PyRosettaCluster."""
 
     _sys_platform = {"sys.platform": sys.platform}
@@ -595,7 +627,7 @@ def _parse_tasks(objs: Any) -> Union[List[Dict[Any, Any]], NoReturn]:
 
 def _parse_output_decoy_types(objs: Any) -> Union[List[str], NoReturn]:
     """Parse the input `output_decoy_types` attribute of PyRosettaCluster."""
-    _output_decoy_types = (".pdb", ".pkl_pose", ".b64_pose")
+    _output_decoy_types = (".pdb", ".pkl_pose", ".b64_pose", ".init")
 
     @singledispatch
     def converter(objs: Any) -> NoReturn:

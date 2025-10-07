@@ -14,6 +14,7 @@ from contextlib import suppress
 from pyrosetta.distributed.cluster.core import PyRosettaCluster
 from pyrosetta.distributed.cluster.toolkit import (
     Serialization,
+    export_init_file,
     get_instance_kwargs,
     get_protocols,
     get_protocols_list_of_str,
@@ -34,6 +35,7 @@ from typing import List
 __all__: List[str] = [
     "PyRosettaCluster",
     "Serialization",
+    "export_init_file",
     "get_instance_kwargs",
     "get_protocols",
     "get_protocols_list_of_str",
