@@ -51,7 +51,7 @@ __all__: List[str] = [
     "run",
     "update_scores",
 ]
-__version__: str = "3.0.0"
+__version__: str = "3.0.1"
 
 _print_conda_warnings()
 

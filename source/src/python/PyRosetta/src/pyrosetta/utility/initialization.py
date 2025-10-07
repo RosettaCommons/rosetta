@@ -56,7 +56,7 @@ class PyRosettaInitFileParserBase(object):
     )
 
     def get_pyrosetta_build(self):
-        return pyrosetta._version_string()
+        return pyrosetta._build_signature()
 
     def pyrosetta_build_warning(self, original_pyrosetta_build, current_pyrosetta_build):
         _msg = os.linesep.join(

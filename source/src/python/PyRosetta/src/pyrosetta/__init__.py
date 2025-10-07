@@ -191,9 +191,9 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
 
     if not silent:
         print( version() )
-        logger.info( version() )
+        logger.info( "\n" + version() )
     else:
-        logger.debug( version() )
+        logger.debug( "\n" + version() )
     rosetta.protocols.init.init(v)
     pyrosetta.protocols.h5_fragment_store_provider.init_H5FragmentStoreProvider()
     pyrosetta.protocols.h5_structure_store_provider.init_H5StructureStoreProvider()
@@ -211,6 +211,14 @@ def _version_string():
         version.pop()
     version.append(commit)
     return rosetta.utility.Version.package() + " " + ".".join(version)
+
+
+def _build_signature():
+    extras = "+".join(sorted(rosetta.utility.Version.extras()))
+    extras_string = f"[extras:{extras}]"
+    version_list = _version_string().split()
+    version_list.insert(1, extras_string)
+    return "".join(version_list)
 
 
 def version():
