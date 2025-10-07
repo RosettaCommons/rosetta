@@ -89,6 +89,12 @@ def _validate_scorefile_name(self, attribute: str, value: Any) -> Optional[NoRet
     if not value.endswith(".json"):
         raise ValueError(f"The '{attribute}' keyword argument parameter must end in '.json'.")
 
+
+def _validate_output_init_file(self, attribute: str, value: Any) -> Optional[NoReturn]:
+    if value != "" and not value.endswith(".init"):
+        raise ValueError(f"The '{attribute}' keyword argument parameter must end in '.init'.")
+
+
 def _validate_logging_address(self, attribute: str, value: Any) -> Optional[NoReturn]:
     if not isinstance(value, str):
         raise ValueError(f"`{attribute}` must be of type `str`. Received: '{type(value)}'")
@@ -115,10 +121,10 @@ def _validate_dirs(self, attribute: str, value: Any) -> Optional[NoReturn]:
 
 def _validate_dir(self, attribute: str, value: str) -> Optional[NoReturn]:
     """Validate the scratch directory."""
-
-    os.makedirs(value, exist_ok=True)
-    if not os.path.isdir(value):
-        raise ValueError(f"`scratch_dir` directory {value} could not be created.")
+    if value != "":
+        os.makedirs(value, exist_ok=True)
+        if not os.path.isdir(value):
+            raise ValueError(f"`{attribute}` directory {value} could not be created.")
 
 
 def _validate_int(self, attribute: str, value: int) -> Optional[NoReturn]:

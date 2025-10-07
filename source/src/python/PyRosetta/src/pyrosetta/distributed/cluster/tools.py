@@ -10,16 +10,14 @@ __author__ = "Jason C. Klima"
 
 try:
     import distributed
-    import pandas
     import toolz
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.tools' requires the "
-        + "third-party packages 'distributed', 'pandas', and 'toolz' as dependencies!\n"
+        + "third-party packages 'distributed' and 'toolz' as dependencies!\n"
         + "Please install these packages into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/distributed/\n"
-        + "https://pypi.org/project/pandas/\n"
         + "https://pypi.org/project/toolz/\n"
     )
     raise
@@ -31,16 +29,19 @@ import os
 import shutil
 import subprocess
 import tempfile
+import warnings
 
 from datetime import datetime
 from functools import wraps
-from pyrosetta.distributed.cluster.converters import _parse_protocols, _parse_yield_results
+from pyrosetta.distributed.cluster.converters import _parse_protocols
 from pyrosetta.distributed.cluster.converter_tasks import (
+    is_dict,
     is_empty,
     get_protocols_list_of_str,
     get_yml,
     parse_client,
     parse_decoy_name,
+    parse_init_file,
     parse_input_file_to_instance_kwargs,
     parse_instance_kwargs,
     parse_scorefile,
@@ -53,7 +54,9 @@ from pyrosetta.distributed.cluster.serialization import (
 )
 from pyrosetta.distributed.cluster.core import PyRosettaCluster
 from pyrosetta.distributed.packed_pose.core import PackedPose
+from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.rosetta.core.pose import Pose
+from pyrosetta.exceptions import PyRosettaIsNotInitializedError
 from typing import (
     Any,
     Callable,
@@ -102,10 +105,8 @@ def _print_conda_warnings() -> None:
 
 
 def get_protocols(
-    protocols: Union[
-        List[Union[Callable[..., Any], str]], Callable[..., Any], Optional[str]
-    ] = None,
-    input_file: Optional[str] = None,
+    protocols: Optional[Union[List[Union[Callable[..., Any], str]], Callable[..., Any], str]] = None,
+    input_file: Optional[Union[str, Pose, PackedPose]] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
 ) -> Union[List[Union[Callable[..., Any], str]], NoReturn]:
@@ -115,17 +116,20 @@ def get_protocols(
     then validate the 'protocols' against those in the 'input_file' or 'scorefile',
     otherwise if 'protocols' is `NoneType` then attempt to return the PyRosettaCluster
     protocols from the current scope matching the protocol names in the 'input_file'
-    or 'scorefile'.
+    or 'scorefile' keyword argument parameters.
 
     Args:
         protocols: An iterable of `str` objects specifying the names of user-provided
             PyRosetta protocols to validate or return.
             Default: None
-        input_file: A `str` object specifying the path to the '.pdb' or '.pdb.bz2'
-            file from which to extract PyRosettaCluster instance kwargs. If input_file
-            is provided, then ignore the scorefile and decoy_name argument parameters.
+        input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
+            '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init', or '.init.bz2' file,
+            or a `Pose`or `PackedPose` object, from which to extract PyRosettaCluster instance
+            kwargs. If 'input_file' is provided, then ignore the 'scorefile' and 'decoy_name'
+            keyword argument parameters.
             Default: None
         scorefile: A `str` object specifying the path to the JSON-formatted scorefile
+            (or pickled `pandas.DataFrame` scorefile) from a PyRosettaCluster simulation
             from which to extract PyRosettaCluster instance kwargs. If 'scorefile'
             is provided, 'decoy_name' must also be provided. In order to use a scorefile,
             it must contain full simulation records from the original production
@@ -162,7 +166,7 @@ def get_protocols(
                 + "from the original production run. Continuing with the reproduction."
             )
         for i in range(len(original_protocols_list_of_str)):
-            if original_protocols_list_of_str[i] not in input_protocols_list_of_str[i]:
+            if original_protocols_list_of_str[i] != input_protocols_list_of_str[i]:
                 logging.warning(
                     f"The original user-defined PyRosetta protocol '{original_protocols_list_of_str[i]}' "
                     + f"appears to have changed names to '{input_protocols_list_of_str[i]}'! "
@@ -204,9 +208,10 @@ def get_protocols(
 
 
 def get_instance_kwargs(
-    input_file: Optional[str] = None,
+    input_file: Optional[Union[str, Pose, PackedPose]] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
+    skip_corrections: Optional[bool] = None,
 ) -> Union[Dict[str, Any], NoReturn]:
     """
     Given an input file that was written by PyRosettaCluster, or a scorefile
@@ -215,9 +220,10 @@ def get_instance_kwargs(
 
     Args:
         input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
-            '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file from which to extract
-            PyRosettaCluster instance kwargs. If 'input_file' is provided, then ignore the
-            'scorefile' and 'decoy_name' argument parameters.
+            '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init', or '.init.bz2' file, or a
+            `Pose`or `PackedPose` object, from which to extract PyRosettaCluster instance kwargs.
+            If 'input_file' is provided, then ignore the 'scorefile' and 'decoy_name' keyword
+            argument parameters.
             Default: None
         scorefile: A `str` object specifying the path to the JSON-formatted scorefile
             (or pickled `pandas.DataFrame` scorefile) from a PyRosettaCluster simulation
@@ -229,6 +235,10 @@ def get_instance_kwargs(
         decoy_name: A `str` object specifying the decoy name for which to extract
             PyRosettaCluster instance kwargs. If 'decoy_name' is provided, 'scorefile'
             must also be provided.
+            Default: None
+        skip_corrections: A `bool` object specifying whether or not to skip any ScoreFunction
+            corrections specified in the PyRosettaCluster task initialization options
+            (extracted from the 'input_file' or 'scorefile' keyword argument parameter).
             Default: None
 
     Returns:
@@ -244,9 +254,11 @@ def get_instance_kwargs(
     )
     if input_file:
         if scorefile or decoy_name:
-            logging.warning(
-                "get_instance_kwargs() received `input_file` and `scorefile` or `decoy_name` argument parameters."
-                + " Ignoring `scorefile` or `decoy_name` argument parameters and using `input_file`!"
+            warnings.warn(
+                "Received 'input_file' and either 'scorefile' or 'decoy_name' keyword argument parameters. "
+                + "Ignoring 'scorefile' and 'decoy_name' and using 'input_file' keyword argument parameter!",
+                UserWarning,
+                stacklevel=2,
             )
         instance_kwargs = parse_input_file_to_instance_kwargs(input_file)
     elif scorefile and decoy_name:
@@ -298,12 +310,37 @@ def get_instance_kwargs(
         instance_kwargs, dict
     ), "Returned instance keyword arguments are not of type `dict`."
 
+    if skip_corrections:
+        assert isinstance(
+            instance_kwargs["tasks"], dict
+        ), "PyRosettaCluster 'tasks' keyword argument parameter must be an instance of `dict`."
+        for option in ("extra_options", "options"):
+            if option in instance_kwargs["tasks"]:
+                if isinstance(instance_kwargs["tasks"][option], dict):
+                    instance_kwargs["tasks"][option] = toolz.dicttoolz.keyfilter(
+                        lambda k: not k.startswith(("corrections:", "-corrections:")),
+                        instance_kwargs["tasks"][option],
+                    )
+                elif isinstance(instance_kwargs["tasks"][option], str):
+                    if "corrections:" in instance_kwargs["tasks"][option]:
+                        raise NotImplementedError(
+                            "Cannot skip ScoreFunction corrections because the original simulation did not output "
+                            + "PyRosettaCluster results with normalized PyRosetta initialization options or configure "
+                            + "the task's PyRosetta initialization options as an instance of `dict`. Please disable the "
+                            + "'skip_corrections' keyword argument to continue with the reproduction."
+                        )
+                else:
+                    raise TypeError(
+                        f"PyRosettaCluster task key '{option}' must have a value of type `dict` or `str`. "
+                        + f"Received: {type(instance_kwargs['tasks'][option])}"
+                    )
+
     return instance_kwargs
 
 
 def recreate_environment(
     environment_name: Optional[str] = None,
-    input_file: Optional[str] = None,
+    input_file: Optional[Union[str, Pose, PackedPose]] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
     timeout: Optional[int] = None,
@@ -317,9 +354,10 @@ def recreate_environment(
         environment_name: A `str` object specifying the new name of the conda environment
             to recreate.
             Default: 'PyRosettaCluster_' + datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f")
-        input_file: A `str` object specifying the path to the '.pdb' or '.pdb.bz2'
-            file from which to extract PyRosettaCluster instance kwargs. If input_file
-            is provided, then ignore the 'scorefile' and 'decoy_name' argument parameters.
+        input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
+            '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file, or a `Pose`or `PackedPose`
+            object, from which to extract PyRosettaCluster instance kwargs. If 'input_file' is
+            provided, then ignore the 'scorefile' and 'decoy_name' keyword argument parameters.
             Default: None
         scorefile: A `str` object specifying the path to the JSON-formatted scorefile
             from which to extract PyRosettaCluster instance kwargs. If 'scorefile'
@@ -509,6 +547,8 @@ def reproduce(
     instance_kwargs: Optional[Dict[Any, Any]] = None,
     clients_indices: Optional[List[int]] = None,
     resources: Optional[Dict[Any, Any]] = None,
+    skip_corrections: bool = False,
+    init_from_file_kwargs: Optional[Dict[str, Any]] = None,
 ) -> Optional[NoReturn]:
     """
     Given an input file that was written by PyRosettaCluster (or a full scorefile
@@ -517,9 +557,17 @@ def reproduce(
     given decoy with a new instance of PyRosettaCluster.
 
     Args:
-        input_file: A `str` object specifying the path to the '.pdb' or '.pdb.bz2'
+        input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2',
+            '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init' or '.init.bz2'
             file from which to extract PyRosettaCluster instance kwargs. If 'input_file'
             is provided, then ignore the 'scorefile' and 'decoy_name' argument parameters.
+            If a '.init' or '.init.bz2' file is provided and PyRosetta is not yet initialized,
+            this first initializes PyRosetta with the PyRosetta initialization file (see the
+            'init_from_file_kwargs' keyword argument). Note that '.pkl_pose', '.pkl_pose.bz2',
+            '.b64_pose', '.b64_pose.bz2', '.init' and '.init.bz2' files contain pickled Pose
+            objects that are deserialized using PyRosetta's secure unpickler upon running the
+            `reproduce()` function, but please still only input these file types if you know and
+            trust their source. Learn more `here <https://docs.python.org/3/library/pickle.html>`_.
             Default: None
         scorefile: A `str` object specifying the path to the JSON-formatted scorefile
             (or pickled `pandas.DataFrame` scorefile) from a PyRosettaCluster simulation
@@ -578,10 +626,74 @@ def reproduce(
             applied, the protocols will not run. See https://distributed.dask.org/en/latest/resources.html for more
             information.
             Default: None
+        skip_corrections: A `bool` object specifying whether or not to skip any ScoreFunction corrections specified in
+            the PyRosettaCluster task 'options' or 'extra_options' values (extracted from either the 'input_file' or
+            'scorefile' keyword argument parameter), which are set in-code upon PyRosetta initialization. If the current
+            PyRosetta build and conda environment are identical to those used for the original simulation, this parameter
+            may be set to `True` to enable the reproduced decoy output file to be used for successive reproductions. If
+            reproducing from a '.init' file, it is recommended to also set 'skip_corrections' of the 'init_from_file_kwargs'
+            keyword argument to the same value.
+            Default: False
+        init_from_file_kwargs: An optional `dict` object to override the default `pyrosetta.init_from_file()` keyword
+            arguments if the 'input_file' keyword argument parameter is a path to a '.init' file, otherwise it is not used.
+            See the `pyrosetta.init_from_file` docstring for more information.
+            Default: {
+                'output_dir': os.path.join(tempfile.TemporaryDirectory().name, "pyrosetta_init_input_files"),
+                'skip_corrections': skip_corrections, # Defaults to the 'skip_corrections' value from `reproduce()`
+                'relative_paths': True,
+                'dry_run': False,
+                'max_decompressed_bytes': pow(2, 30), # 1 GiB
+                'database': None,
+                'verbose': True,
+                'set_logging_handler': 'logging',
+                'notebook': None,
+                'silent': False,
+            }
 
     Returns:
         None
     """
+    if not isinstance(skip_corrections, bool):
+        raise TypeError(
+            "The 'skip_corrections' keyword argument parameter must be of type `bool`. "
+            + f"Received: {type(skip_corrections)}"
+        )
+
+    _tmp_dir = None
+    if isinstance(input_file, str):
+        if input_file.endswith((".init", ".init.bz2")):
+            _tmp_dir = tempfile.TemporaryDirectory(prefix="PyRosettaCluster_reproduce_")
+            default_init_from_file_kwargs = dict(
+                output_dir=os.path.join(_tmp_dir.name, "pyrosetta_init_input_files"),
+                skip_corrections=skip_corrections,
+                relative_paths=True,
+                dry_run=False,
+                max_decompressed_bytes=pow(2, 30), # 1 GiB
+                database=None,
+                verbose=True,
+                set_logging_handler="logging",
+                notebook=None,
+                silent=False,
+            )
+            input_packed_pose, input_file = parse_init_file(
+                input_file,
+                input_packed_pose,
+                skip_corrections,
+                toolz.dicttoolz.merge(
+                    default_init_from_file_kwargs,
+                    init_from_file_kwargs if is_dict(init_from_file_kwargs) else {},
+                ),
+            )
+        elif input_file.endswith((".pkl_pose", ".pkl_pose.bz2", ".b64_pose", ".b64_pose.bz2")):
+            if not was_init_called():
+                raise PyRosettaIsNotInitializedError(
+                    "If providing a '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file to the 'input_file' "
+                    + "keyword argument parameter, please ensure `pyrosetta.init()` or `pyrosetta.init_from_file()` has been "
+                    + "properly called (with the same residue type set as that used to generate the original '.pkl_pose', "
+                    + "'.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file) before running the `reproduce()` function. "
+                    + "If an output '.init' file from the original simulation is available, it is recommended to run "
+                    + "`pyrosetta.init_from_file()` with that '.init' file before running the `reproduce()` function."
+                )
 
     PyRosettaCluster(
         **toolz.dicttoolz.keyfilter(
@@ -591,6 +703,7 @@ def reproduce(
                     input_file=input_file,
                     scorefile=scorefile,
                     decoy_name=decoy_name,
+                    skip_corrections=skip_corrections,
                 ),
                 parse_instance_kwargs(instance_kwargs),
             ),
@@ -608,6 +721,8 @@ def reproduce(
         clients_indices=clients_indices,
         resources=resources,
     )
+    if isinstance(_tmp_dir, tempfile.TemporaryDirectory):
+        _tmp_dir.cleanup()
 
 
 def produce(**kwargs: Any) -> Optional[NoReturn]:
