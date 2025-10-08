@@ -995,7 +995,7 @@ class SaveAllTest(unittest.TestCase):
             self.assertEqual(init_data["author"], author)
             self.assertEqual(init_data["email"], email)
             self.assertEqual(init_data["license"], license)
-            self.assertEqual(init_data["pyrosetta_build"], pyrosetta._version_string())
+            self.assertEqual(init_data["pyrosetta_build"], pyrosetta._build_signature())
             self.assertListEqual(init_data["options"]["run:constant_seed"], ["true"])
 
             # Verify metadata in output PyRosetta initialization file
@@ -1044,7 +1044,7 @@ class SaveAllTest(unittest.TestCase):
                 self.assertEqual(decoy_init_data["author"], author)
                 self.assertEqual(decoy_init_data["email"], email)
                 self.assertEqual(decoy_init_data["license"], license)
-                self.assertEqual(decoy_init_data["pyrosetta_build"], pyrosetta._version_string())
+                self.assertEqual(decoy_init_data["pyrosetta_build"], pyrosetta._build_signature())
                 self.assertListEqual(decoy_init_data["options"]["run:constant_seed"], ["true"])
 
                 # Verify metadata in decoy output PyRosetta initialization file
@@ -1131,7 +1131,7 @@ class SaveAllTest(unittest.TestCase):
             self.assertEqual(exported_init_data["author"], author)
             self.assertEqual(exported_init_data["email"], email)
             self.assertEqual(exported_init_data["license"], license)
-            self.assertEqual(exported_init_data["pyrosetta_build"], pyrosetta._version_string())
+            self.assertEqual(exported_init_data["pyrosetta_build"], pyrosetta._build_signature())
             self.assertListEqual(exported_init_data["options"]["run:constant_seed"], ["true"])
 
             # Verify metadata in exported PyRosetta initialization file
