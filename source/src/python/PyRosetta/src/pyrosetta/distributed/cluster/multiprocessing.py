@@ -16,7 +16,7 @@ except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.multiprocessing' requires the "
         + "third-party packages 'billiard' and 'distributed' as dependencies!\n"
-        + "Please install the packages into your python environment. "
+        + "Please install these packages into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/billiard/\n"
         + "https://pypi.org/project/distributed/\n"
