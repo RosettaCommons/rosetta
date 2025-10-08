@@ -14,8 +14,8 @@ from contextlib import suppress
 from pyrosetta.distributed.cluster.core import PyRosettaCluster
 from pyrosetta.distributed.cluster.toolkit import (
     Serialization,
-    generate_dask_tls_security,
     export_init_file,
+    generate_dask_tls_security,
     get_instance_kwargs,
     get_protocols,
     get_protocols_list_of_str,
@@ -37,8 +37,8 @@ from typing import List
 __all__: List[str] = [
     "PyRosettaCluster",
     "Serialization",
-    "generate_dask_tls_security",
     "export_init_file",
+    "generate_dask_tls_security",
     "get_instance_kwargs",
     "get_protocols",
     "get_protocols_list_of_str",
