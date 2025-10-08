@@ -468,7 +468,7 @@ def export_init_file(
 def get_yml() -> str:
     """
     Run environment export command to return a YML file string with the current virtual
-    enviroment, excluding certain source domains.
+    environment, excluding certain source domains.
     """
 
     environment_cmd = get_environment_cmd()
