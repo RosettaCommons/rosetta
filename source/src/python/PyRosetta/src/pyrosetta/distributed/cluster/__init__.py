@@ -14,11 +14,8 @@ from contextlib import suppress
 from pyrosetta.distributed.cluster.core import PyRosettaCluster
 from pyrosetta.distributed.cluster.toolkit import (
     Serialization,
-<<<<<<< HEAD
     generate_dask_tls_security,
-=======
     export_init_file,
->>>>>>> de3cc17d509259e29147a2ed8f2a726d644e7e34
     get_instance_kwargs,
     get_protocols,
     get_protocols_list_of_str,
