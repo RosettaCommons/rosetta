@@ -96,7 +96,9 @@ Args:
         user-provided PyRosetta protocol run later.
         Default: 1
     compressed: A `bool` object specifying whether or not to compress the output
-        '.pdb' files with bzip2, resulting in '.pdb.bz2' files.
+        ".pdb", ".pkl_pose", ".b64_pose", and ".init" files with `bzip2`, resulting
+        in appending ".bz2" to decoy output files and PyRosetta initialization files.
+        Also see the 'output_decoy_types' and 'output_init_file' keyword arguments.
         Default: True
     compression: A `str` object of 'xz', 'zlib' or 'bz2', or a `bool` or `NoneType`
         object representing the internal compression library for pickled `PackedPose` 
@@ -118,8 +120,11 @@ Args:
     pyrosetta_build: A `str` or `NoneType` object specifying the PyRosetta build as
         output by `pyrosetta._version_string()`. If `None` is provided, then PyRosettaCluster
         automatically detects the PyRosetta build and sets this attribute as the `str`.
-        If a `str` is provided, then validate that the input PyRosetta build is equal
-        to the active PyRosetta build, and log a warning message if not.
+        If a non-empty `str` is provided, then validate that the input PyRosetta build is
+        equal to the active PyRosetta build, and raise an error if not. This ensures that
+        reproduction simulations use an identical PyRosetta build from the original
+        simulation. To bypass PyRosetta build validation with a warning message, an
+        empty string ('') may be provided (but does not ensure reproducibility).
         Default: None
     sha1: A `str` or `NoneType` object specifying the git SHA1 hash string of the
         particular git commit being simulated. If a non-empty `str` object is provided,
@@ -141,15 +146,54 @@ Args:
     environment: A `NoneType` or `str` object specifying the active conda environment
         YML file string. If a `NoneType` object is provided, then generate a YML file
         string for the active conda environment and save it to the full simulation
-        record. If a `str` object is provided, then validate it against the active
-        conda environment YML file string and save it to the full simulation record.
+        record. If a non-empty `str` object is provided, then validate it against the
+        active conda environment YML file string and save it to the full simulation record.
+        This ensures that reproduction simulations use an identical conda environment from
+        the original simulation. To bypass conda environment validation with a warning
+        message, an empty string ('') may be provided (but does not ensure reproducibility).
         Default: None
     output_path: A `str` object specifying the full path of the output directory
         (to be created if it doesn't exist) where the output results will be saved
         to disk.
         Default: "./outputs"
+    output_init_file: A `str` object specifying the output ".init" file path that caches
+        the 'input_packed_pose' keyword argument parameter upon PyRosettaCluster instantiation,
+        and not including any output decoys, which is optionally used for exporting PyRosetta
+        initialization files with output decoys by the `pyrosetta.distributed.cluster.export_init_file()`
+        function after the simulation completes (see the 'output_decoy_types' keyword argument).
+        If a `NoneType` object (or an empty `str` object ('')) is provided, or `dry_run=True`,
+        then skip writing an output ".init" file upon PyRosettaCluster instantiation. If skipped,
+        it is recommended to run `pyrosetta.dump_init_file()` before or after the simulation.
+        If `compressed=True`, then the output file is further compressed by `bzip2`, and ".bz2"
+        is appended to the filename.
+        Default: `output_path`/`project_name`_`simulation_name`_pyrosetta.init
+    output_decoy_types: An iterable of `str` objects representing the output decoy
+        filetypes to save during the simulation. Available options are: ".pdb" for PDB
+        files; ".pkl_pose" for pickled Pose files; ".b64_pose" for base64-encoded
+        pickled Pose files; and ".init" for PyRosetta initialization files, each caching
+        the host node PyRosetta initialization options (and input files, if any), the
+        'input_packed_pose' keyword argument parameter (if any) and an output decoy.
+        Because each ".init" file contains a copy of the PyRosetta initialization input files
+        and input `PackedPose` object, unless these objects are relatively small in size
+        or there are relatively few expected output decoys, then it is recommended to run
+        `pyrosetta.distributed.cluster.export_init_file()` on only decoys of interest after the
+        simulation completes without specifying ".init". If `compressed=True`, then each decoy
+        output file is further compressed by `bzip2`, and ".bz2" is appended to the filename.
+        Default: [".pdb",]
+    output_scorefile_types: An iterable of `str` objects representing the output scorefile
+        filetypes to save during the simulation. Available options are: ".json" for a
+        JSON-encoded scorefile, and any filename extensions accepted by
+        `pandas.DataFrame().to_pickle(compression="infer")` (including ".gz", ".bz2",
+        and ".xz") for pickled `pandas.DataFrame` objects of scorefile data that can later
+        be analyzed using `pyrosetta.distributed.cluster.io.secure_read_pickle(compression="infer")`.
+        Note that in order to save pickled `pandas.DataFrame` objects, please ensure
+        that `pyrosetta.secure_unpickle.add_secure_package("pandas")` has been first run.
+        Default: [".json",]
     scorefile_name: A `str` object specifying the name of the output JSON-formatted
-        scorefile. The scorefile location is always `output_path`/`scorefile_name`.
+        scorefile, which must end in ".json". The scorefile location is always
+        `output_path`/`scorefile_name`. If ".json" is not in the 'output_scorefile_types'
+        keyword argument parameter, the JSON-formatted scorefile will not be output,
+        but other scorefile types will get the same filename before the ".json" extension.
         Default: "scores.json"
     simulation_records_in_scorefile: A `bool` object specifying whether or not to
         write full simulation records to the scorefile. If `True`, then write
@@ -260,6 +304,24 @@ Args:
         simulation is complete to allow loggers to flush. For very slow network filesystems,
         2.0 or more seconds may be reasonable.
         Default: 0.5
+    norm_task_options: A `bool` object specifying whether or not to normalize the task
+        'options' and 'extra_options' values after PyRosetta initialization on the remote
+        compute cluster. If `True`, then this enables more facile simulation reproduction
+        by the use of the `ProtocolSettingsMetric` SimpleMetric to normalize the PyRosetta
+        initialization options and by relativization of any input files and directory paths
+        to the current working directory from which the task is running.
+        Default: True
+    author: An optional `str` object specifying the author(s) of the simulation that is
+        written to the full simulation records and the PyRosetta initialization '.init' file.
+        Default: ""
+    email: An optional `str` object specifying the email address(es) of the author(s) of
+        the simulation that is written to the full simulation records and the PyRosetta
+        initialization '.init' file.
+        Default: ""
+    license: An optional `str` object specifying the license of the output data of the
+        simulation that is written to the full simulation records and the PyRosetta
+        initialization '.init' file (e.g., "ODC-ODbL", "CC BY-ND", "CDLA Permissive-2.0", etc.).
+        Default: ""
 
 Returns:
     A PyRosettaCluster instance.
@@ -306,6 +368,9 @@ from pyrosetta.distributed.cluster.converters import (
     _parse_environment,
     _parse_input_packed_pose,
     _parse_logging_address,
+    _parse_norm_task_options,
+    _parse_output_decoy_types,
+    _parse_output_scorefile_types,
     _parse_pyrosetta_build,
     _parse_scratch_dir,
     _parse_seeds,
@@ -329,6 +394,8 @@ from pyrosetta.distributed.cluster.validators import (
     _validate_int,
     _validate_logging_address,
     _validate_min_len,
+    _validate_output_init_file,
+    _validate_scorefile_name,
 )
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
@@ -342,6 +409,7 @@ from typing import (
     TypeVar,
     Union,
 )
+
 
 G = TypeVar("G")
 
@@ -488,10 +556,34 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             default=os.path.abspath(os.path.join(os.getcwd(), "outputs"))
         ),
     )
+    output_decoy_types = attr.ib(
+        type=List[str],
+        default=None,
+        validator=[
+            attr.validators.deep_iterable(
+                member_validator=attr.validators.instance_of(str),
+                iterable_validator=attr.validators.instance_of(list),
+            ),
+            _validate_min_len,
+        ],
+        converter=_parse_output_decoy_types,
+    )
+    output_scorefile_types = attr.ib(
+        type=List[str],
+        default=None,
+        validator=[
+            attr.validators.deep_iterable(
+                member_validator=attr.validators.instance_of(str),
+                iterable_validator=attr.validators.instance_of(list),
+            ),
+            _validate_min_len,
+        ],
+        converter=_parse_output_scorefile_types,
+    )
     scorefile_name = attr.ib(
         type=str,
         default="scores.json",
-        validator=attr.validators.instance_of(str),
+        validator=[attr.validators.instance_of(str), _validate_scorefile_name],
         converter=attr.converters.default_if_none(default="scores.json"),
     )
     scorefile_path = attr.ib(
@@ -631,6 +723,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         validator=attr.validators.instance_of(bool),
         converter=attr.converters.default_if_none(False),
     )
+    norm_task_options = attr.ib(
+        type=bool,
+        default=None,
+        validator=attr.validators.instance_of(bool),
+        converter=_parse_norm_task_options,
+    )
     yield_results = attr.ib(
         type=bool,
         init=False,
@@ -691,6 +789,42 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         validator=attr.validators.instance_of(str),
         converter=_parse_environment,
     )
+    author = attr.ib(
+        type=str,
+        default=None,
+        validator=attr.validators.instance_of(str),
+        converter=attr.converters.default_if_none(""),
+    )
+    email = attr.ib(
+        type=str,
+        default=None,
+        validator=attr.validators.instance_of(str),
+        converter=attr.converters.default_if_none(""),
+    )
+    license = attr.ib(
+        type=str,
+        default=None,
+        validator=attr.validators.instance_of(str),
+        converter=attr.converters.default_if_none(""),
+    )
+    output_init_file = attr.ib(
+        type=str,
+        default=attr.Factory(
+            lambda self: os.path.join(
+                self.output_path,
+                "_".join(
+                    [
+                        self.project_name.replace(" ", "-"),
+                        self.simulation_name.replace(" ", "-"),
+                        "pyrosetta.init",
+                    ]
+                ),
+            ),
+            takes_self=True,
+        ),
+        validator=[attr.validators.instance_of(str), _validate_output_init_file],
+        converter=attr.converters.default_if_none(""),
+    )
     environment_file = attr.ib(
         type=str,
         default=attr.Factory(
@@ -723,6 +857,8 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         _maybe_init_client()
         self._setup_logger()
         self._write_environment_file(self.environment_file)
+        self._write_init_file()
+        self.serializer = Serialization(compression=self.compression)
         self.clients_dict = self._setup_clients_dict()
         self.with_nonce = self._setup_with_nonce()
         self.serializer = Serialization(
@@ -868,6 +1004,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             instance_id=self.instance_id,
             compression=self.compression,
             with_nonce=self.with_nonce,
+            norm_task_options=self.norm_task_options,
             max_delay_time=self.max_delay_time,
             logging_level=self.logging_level,
             socket_listener_address=socket_listener_address,

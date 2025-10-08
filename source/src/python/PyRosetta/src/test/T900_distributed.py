@@ -86,6 +86,8 @@ distributed_cluster_test_cases = [
     "pyrosetta.tests.distributed.cluster.test_smoke.GeneratorTest.test_generate_user_client",
     "pyrosetta.tests.distributed.cluster.test_smoke.RuntimeTest.test_timing_multi_instance",
     "pyrosetta.tests.distributed.cluster.test_smoke.RuntimeTest.test_timing_single_instance",
+    "pyrosetta.tests.distributed.cluster.test_smoke.IOTest.test_io",
+    "pyrosetta.tests.distributed.cluster.test_smoke.TestInitFileSigner.test_init_file_signer",
     "pyrosetta.tests.distributed.cluster.test_logging.LoggingTest.test_logging",
     "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_minimizer_nstruct",
     "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_minimizer_nstruct_filter_results",
@@ -99,6 +101,7 @@ distributed_cluster_test_cases = [
     "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityMulti.test_reproducibility_packer_nstruct_multi_filter_results",
     "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityMulti.test_reproducibility_packer_nstruct_multi_decoy_ids",
     "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityMulti.test_reproducibility_packer_nstruct_multi_decoy_ids_filter_results",
+    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityPoseDataFrame.test_reproducibility_from_reproduce",
 ]
 distributed_test_suites = [
     "pyrosetta.tests.bindings.init.test_init_files",

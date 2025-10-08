@@ -9,6 +9,7 @@
 __author__ = "Jason C. Klima"
 
 from pyrosetta.distributed.cluster.converter_tasks import (
+    export_init_file,
     get_protocols_list_of_str,
     get_scores_dict,
     get_yml,
