@@ -106,11 +106,11 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 	molecule->name( block.name );
 
 	std::string const * name3 = block.find_value("_chem_comp.three_letter_code"); // Non-owning raw pointer, null if not found.
-	if ( name3 ) {
+	if ( name3 && !name3->empty() ) {
 		molecule->name3( as_string(name3) );
 	}
 	std::string const * name1 = block.find_value("_chem_comp.one_letter_code"); // Non-owning raw pointer, null if not found.
-	if ( name1 && name1 ) {
+	if ( name1 && !name1->empty() ) {
 		molecule->name1( as_string(name1) );
 	}
 
