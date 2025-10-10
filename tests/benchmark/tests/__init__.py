@@ -70,6 +70,7 @@ DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED = {
     "billiard": ">=3.6.3.0",
     "blosc": ">=1.8.3",
     "cloudpickle": ">=1.5.0",
+    "cryptography": ">=2.8",
     "dask": ">=2.16.0",
     "dask-jobqueue": ">=0.7.0",
     "distributed": ">=2.16.0",

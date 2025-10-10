@@ -11,13 +11,15 @@ __author__ = "Jason C. Klima"
 
 try:
     import billiard
+    from distributed import get_worker
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.multiprocessing' requires the "
-        + "third-party package 'billiard' as a dependency!\n"
-        + "Please install this package into your python environment. "
+        + "third-party packages 'billiard' and 'distributed' as dependencies!\n"
+        + "Please install these packages into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/billiard/\n"
+        + "https://pypi.org/project/distributed/\n"
     )
     raise
 
@@ -141,7 +143,10 @@ def target(
     ignore_errors: bool,
     protocols_key: str,
     decoy_ids: List[int],
+    instance_id: str,
+    prk: bytes,
     compression: Optional[Union[str, bool]],
+    with_nonce: bool,
     client_residue_type_set: AbstractSet[str],
     client_repr: str,
     masked_key: Optional[bytes],
@@ -149,10 +154,17 @@ def target(
     **pyrosetta_init_kwargs: Dict[str, Any],
 ) -> None:
     """A wrapper function for a user-provided PyRosetta protocol."""
-    serializer = Serialization(compression=compression)
+    serializer = Serialization(
+        instance_id=instance_id,
+        prk=prk,
+        compression=compression,
+        with_nonce=with_nonce,
+    )
+    del prk
     protocol = serializer.decompress_object(compressed_protocol)
     packed_pose = serializer.decompress_packed_pose(compressed_packed_pose)
     kwargs = serializer.decompress_kwargs(compressed_kwargs)
+
     kwargs["PyRosettaCluster_client_repr"] = client_repr
     results = run_protocol(
         protocol_name,
@@ -192,14 +204,27 @@ def user_spawn_thread(
     timeout = extra_args["timeout"]
     ignore_errors = extra_args["ignore_errors"]
     datetime_format = extra_args["datetime_format"]
-    norm_task_options = extra_args["norm_task_options"]
+    instance_id = extra_args["instance_id"]
     compression = extra_args["compression"]
+    with_nonce = extra_args["with_nonce"]
+    norm_task_options = extra_args["norm_task_options"]
     max_delay_time = extra_args["max_delay_time"]
     logging_level = extra_args["logging_level"]
     socket_listener_address = extra_args["socket_listener_address"]
     client_residue_type_set = extra_args["client_residue_type_set"]
 
     logger = get_worker_logger(protocol_name, socket_listener_address, task_id)
+
+    try:
+        worker = get_worker()
+    except BaseException as ex:
+        raise ValueError(f"Cannot get dask worker. {ex}")
+
+    plugin = worker.plugins[instance_id]
+    assert plugin.__getstate__()["prk"] is None, (
+        "Pseudo-random key is not hidden on the worker nonce cache."
+    )
+    plugin._cache_nonce(compressed_kwargs)
 
     # Set the start method to 'spawn' to prevent subprocesses from
     # inheriting PyRosetta's already initialized static singletons
@@ -220,7 +245,10 @@ def user_spawn_thread(
             ignore_errors,
             protocols_key,
             decoy_ids,
+            instance_id,
+            plugin.prk,
             compression,
+            with_nonce,
             client_residue_type_set,
             client_repr,
             masked_key,

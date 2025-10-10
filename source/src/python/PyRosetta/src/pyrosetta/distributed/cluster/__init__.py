@@ -15,6 +15,7 @@ from pyrosetta.distributed.cluster.core import PyRosettaCluster
 from pyrosetta.distributed.cluster.toolkit import (
     Serialization,
     export_init_file,
+    generate_dask_tls_security,
     get_instance_kwargs,
     get_protocols,
     get_protocols_list_of_str,
@@ -37,6 +38,7 @@ __all__: List[str] = [
     "PyRosettaCluster",
     "Serialization",
     "export_init_file",
+    "generate_dask_tls_security",
     "get_instance_kwargs",
     "get_protocols",
     "get_protocols_list_of_str",
@@ -51,7 +53,7 @@ __all__: List[str] = [
     "run",
     "update_scores",
 ]
-__version__: str = "3.0.1"
+__version__: str = "3.1.0"
 
 _print_conda_warnings()
 

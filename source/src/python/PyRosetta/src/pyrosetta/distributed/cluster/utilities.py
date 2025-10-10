@@ -26,6 +26,7 @@ except ImportError:
 
 import logging
 import os
+import sys
 import warnings
 
 from typing import (
@@ -83,6 +84,10 @@ class SchedulerManager(Generic[G]):
                     dashboard_address=self.dashboard_address,
                     local_directory=self.scratch_dir,
                 )
+                if self.security:
+                    _cluster_kwargs["security"] = self.security
+                    if self.security is True:
+                        logging.info("Using the 'cryptography' package to generate a dask `Security.temporary()` object...")
                 if __dask_version__ <= (2, 1, 0):
                     _cluster_kwargs["local_dir"] = _cluster_kwargs.pop("local_directory", self.scratch_dir)
                 cluster = LocalCluster(**_cluster_kwargs)
@@ -104,11 +109,42 @@ class SchedulerManager(Generic[G]):
                 death_timeout=9999,
                 dashboard_address=self.dashboard_address,
             )
+            if self.security:
+                _cluster_kwargs["security"] = self.security
+                if self.security is True:
+                    _cluster_kwargs["shared_temp_directory"] = self.output_path
+                    logging.info("Using the 'cryptography' package to generate a dask `Security.temporary()` object...")
             if __dask_version__ <= (2, 1, 0):
                 _cluster_kwargs["local_dir"] = _cluster_kwargs.pop("local_directory", self.scratch_dir)
             if __dask_jobqueue_version__ < (0, 8, 0):
                 _cluster_kwargs["job_extra"] = _cluster_kwargs.pop("job_extra_directives", _job_extra_directives)
-            cluster = cluster_func(**_cluster_kwargs)
+            if self.security is True:
+                if sys.version_info[:2] <= (3, 7):
+                    logging.warning(
+                        "Use of `PyRosettaCluster(security=True)` may require Python version 3.8 or higher to use the "
+                        + "'cryptography' package. Please upgrade your python version, or otherwise provide a dask "
+                        + "`Security()` object (recommended) or `False` (not recommended unless using a firewall) "
+                        + "to the PyRosettaCluster `security` keyword argument parameter."
+                    )
+                try:  # Uses `cryptography` package: https://distributed.dask.org/en/latest/_modules/distributed/security.html#Security.temporary
+                    cluster = cluster_func(**_cluster_kwargs)
+                except ImportError as ex:
+                    raise ImportError(
+                        f"Use of `PyRosettaCluster(security=True)` implements `Security.temporary` from the 'dask' package. {ex}"
+                    )
+            else:
+                if self.security is False:
+                    logging.warning(
+                        "Warning! Dask TLS/SSL communication is not enabled while using a remote compute cluster! "
+                        + "PyRosettaCluster uses the `cloudpickle` module to serialize user-provided PyRosetta "
+                        + "protocols, which requires unpickling of the data received over the network. If not using "
+                        + "a firewall, it is highly recommended to provide a dask `Security()` object (or `True` to "
+                        + "automatically generate one with the 'cryptography' package) to the PyRosettaCluster "
+                        + "`security` keyword argument parameter. Alternatively, in order to generate a "
+                        + "`Security()` object with OpenSSL, the `pyrosetta.distributed.cluster.generate_dask_tls_security()` "
+                        + "function may also be used (see docstring for more information)."
+                    )
+                cluster = cluster_func(**_cluster_kwargs)
         logging.info(f"Dashboard link: {cluster.dashboard_link}")
 
         return cluster
