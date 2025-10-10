@@ -453,6 +453,10 @@ def get_packages_list_for_python_packages(packages):
 
 def update_packages_for_python_version(packages, python_version):
     ''' Update package versions given the Python version. '''
+    if python_version >= (3, 14):
+        # Allow the latest python version to install the latest compatible third-party dependencies
+        packages = remove_package_versions_for_python_packages(packages, keep=None)
+        packages["numpy"] = ">=2.3"
     if python_version >= (3, 13):
         # Allow the latest python version to install the latest compatible third-party dependencies
         packages = remove_package_versions_for_python_packages(packages, keep=None)
