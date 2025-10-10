@@ -134,16 +134,16 @@ mmCIFWriter::add_data_to_block( gemmi::cif::Block &block, core::chemical::Residu
 	//
 	//// Note, if there's a standard place to put this data, prefer that
 	//gemmi::cif::Table rosetta_atom_comp = gemmi_get_table(block, "_rosetta_chem_comp_atom", {
-	//	"comp_id",
-	//	"atom_id",
-	//	} );
+	// "comp_id",
+	// "atom_id",
+	// } );
 	//
 	//for ( core::Size ii(1); ii <= restype.natoms(); ++ii ) {
-	//	std::vector< std::string > vec;
-	//	vec.push_back( restype.name() );
-	//	vec.push_back( restype.atom_name(ii) );
+	// std::vector< std::string > vec;
+	// vec.push_back( restype.name() );
+	// vec.push_back( restype.atom_name(ii) );
 	//
-	//	gemmi_append_row( rosetta_atom_comp, vec );
+	// gemmi_append_row( rosetta_atom_comp, vec );
 	//}
 	//
 	//////////////// Standard Bond-level Data
@@ -167,16 +167,16 @@ mmCIFWriter::add_data_to_block( gemmi::cif::Block &block, core::chemical::Residu
 		vec.push_back( restype.atom_name( atm2 ) );
 		std::string bond_type = "UNK";
 		switch ( restype.bond_type( atm1, atm2 ) ) {
-			case SingleBond:
-				bond_type = "SING"; break;
-			case DoubleBond:
-				bond_type = "DOUB"; break;
-			case TripleBond:
-				bond_type = "TRIP"; break;
-			case AromaticBond:
-				bond_type = "AROM"; break;
-			default:
-				bond_type = "UNK"; break;
+		case SingleBond :
+			bond_type = "SING"; break;
+		case DoubleBond :
+			bond_type = "DOUB"; break;
+		case TripleBond :
+			bond_type = "TRIP"; break;
+		case AromaticBond :
+			bond_type = "AROM"; break;
+		default :
+			bond_type = "UNK"; break;
 		}
 		vec.push_back( bond_type );
 		vec.push_back( (restype.bond_type( atm1, atm2 ) == AromaticBond) ? "Y" : "N" );
