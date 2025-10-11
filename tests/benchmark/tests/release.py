@@ -42,7 +42,7 @@ download_template = '''\
 
 def get_platform_release_name(platform):
     addon = dict(linux='.CentOS', ubuntu='.Ubuntu', mac='', m1='', aarch64='.aarch64.Ubuntu')
-    return '.'.join([platform['os']]+platform['extras']) + addon[ platform['os'] ]
+    return '.'.join([platform['os']]+platform['extras']) + addon[ platform['os'].partition('-')[0] ]
 
 
 def release(name, package_name, package_dir, working_dir, platform, config, release_as_git_repository=True, file=None, use_rosetta_versioning=True):
