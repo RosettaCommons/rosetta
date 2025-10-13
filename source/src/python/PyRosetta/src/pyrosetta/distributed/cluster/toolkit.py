@@ -14,6 +14,7 @@ from pyrosetta.distributed.cluster.converter_tasks import (
     get_scores_dict,
     get_yml,
 )
+from pyrosetta.distributed.cluster.security import generate_dask_tls_security
 from pyrosetta.distributed.cluster.tools import (
     Serialization,
     get_instance_kwargs,

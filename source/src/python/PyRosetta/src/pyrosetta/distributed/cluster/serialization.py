@@ -9,9 +9,29 @@
 __author__ = "Jason C. Klima"
 
 
-import attr
+try:
+    import attr
+    import cloudpickle
+    import msgpack
+    import toolz
+    from distributed import get_worker
+except ImportError:
+    print(
+        "Importing 'pyrosetta.distributed.cluster.serialization' requires the "
+        + "third-party packages 'attrs', 'cloudpickle', 'distributed', 'msgpack', "
+        + "and 'toolz' as dependencies!\nPlease install these packages into your "
+        + "python environment. For installation instructions, visit:\n"
+        + "https://pypi.org/project/attrs/\n"
+        + "https://pypi.org/project/cloudpickle/\n"
+        + "https://pypi.org/project/distributed/\n"
+        + "https://pypi.org/project/msgpack/\n"
+        + "https://pypi.org/project/toolz/\n"
+    )
+    raise
+
 import bz2
 import logging
+import os
 import pyrosetta.distributed.io as io
 import sys
 import warnings
@@ -22,21 +42,8 @@ try:
 except ImportError:
     pass
 
-try:
-    import cloudpickle
-    import toolz
-except ImportError:
-    print(
-        "Importing 'pyrosetta.distributed.cluster.serialization' requires the "
-        + "third-party packages 'cloudpickle' and 'toolz' as dependencies!\n"
-        + "Please install these packages into your python environment. "
-        + "For installation instructions, visit:\n"
-        + "https://pypi.org/project/cloudpickle/\n"
-        + "https://pypi.org/project/toolz/\n"
-    )
-    raise
-
-from functools import singledispatch, wraps
+from collections import deque
+from functools import partial, singledispatch, wraps
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.secure_unpickle import SecureSerializerBase
 from typing import (
@@ -48,7 +55,11 @@ from typing import (
     Optional,
     TypeVar,
     Union,
+    cast,
 )
+
+from pyrosetta.distributed.cluster.hkdf import MaskedBytes, compare_digest, hmac_digest
+
 
 T = TypeVar("T", bound=Callable[..., Any])
 G = TypeVar("G")
@@ -125,16 +136,194 @@ def update_scores(packed_pose: PackedPose) -> PackedPose:
     return packed_pose
 
 
-@attr.s(kw_only=False, slots=False, frozen=False)
+@attr.s(kw_only=False, slots=True, frozen=True)
+class MessagePacking(Generic[G]):
+    """PyRosettaCluster MessagePack base class."""
+    pack = attr.ib(
+        type=partial,
+        default=partial(msgpack.packb, use_bin_type=True),
+        init=False,
+        validator=attr.validators.instance_of(partial),
+    )
+    unpack = attr.ib(
+        type=partial,
+        default=partial(msgpack.unpackb, raw=False),
+        init=False,
+        validator=attr.validators.instance_of(partial),
+    )
+
+
+@attr.s(kw_only=True, slots=False, frozen=False)
+class NonceCache(Generic[G]):
+    """PyRosettaCluster nonce cache base class."""
+    instance_id = attr.ib(
+        type=str,
+        validator=attr.validators.instance_of(str),
+    )
+    prk = attr.ib(
+        type=Optional[bytes],
+        default=None,
+        repr=False,
+        converter=lambda k: MaskedBytes(k) if isinstance(k, bytes) else k,
+        validator=attr.validators.optional(attr.validators.instance_of(MaskedBytes)),
+    )
+    max_nonce = attr.ib(
+        type=int,
+        validator=attr.validators.instance_of(int),
+    )
+    _seen = attr.ib(
+        type=set,
+        default=attr.Factory(set, takes_self=False),
+        init=False,
+        validator=attr.validators.instance_of(set),
+    )
+    _order = attr.ib(
+        type=deque,
+        default=attr.Factory(
+            lambda self: deque(maxlen=self.max_nonce),
+            takes_self=True,
+        ),
+        init=False,
+        validator=attr.validators.instance_of(deque),
+    )
+    _debug = attr.ib(
+        type=bool,
+        default=False,
+        init=False,
+        validator=attr.validators.instance_of(bool),
+    )
+
+    def __attrs_pre_init__(self) -> None:
+        MessagePacking.__init__(self)
+
+    @staticmethod
+    def _get_state(self) -> Dict[str, Any]:
+        """
+        A method used to override the default `NonceCache.__getstate__()` method
+        that sets the pseudo-random key value to `None` in the returned state.
+        """
+        state = self.__dict__.copy()
+        state["prk"] = None
+
+        return state
+
+    @staticmethod
+    def _on_worker() -> bool:
+        """Test if the nonce cache is on a dask worker."""
+        try:
+            _worker = get_worker()
+            return True
+        except BaseException:
+            return False
+
+    def _cache_nonce(self, sealed: bytes) -> None:
+        """
+        Run Hash-based Message Authentication Code (HMAC) verification and cache nonces
+        for replay protection without data decompression.
+        """
+        package = self.unpack(sealed)
+        if not isinstance(package, dict) or package.get("v", None) != 1:
+            _err_msg = (
+                "Invalid sealed package or version on {0} nonce cache! "
+                + f"Received: {type(package)!r}"
+            )
+            if NonceCache._on_worker():
+                raise ValueError(_err_msg.format("worker"))
+            else:
+                raise ValueError(_err_msg.format("host"))
+
+        _instance_id = package["a"] # `str`: PyRosettaCluster instance identifier/App
+        _data = package["d"] # `bytes`: Data bytestring
+        _mac = package["m"] # `bytes`: MAC (HMAC tag)
+        _nonce = package["n"] # `bytes`: Nonce
+        _version = package["v"] # `int`: Version
+
+        if _instance_id != self.instance_id:
+            raise ValueError("PyRosettaCluster instance identifier mismatch in sealed package.")
+
+        msg = self.pack([_instance_id, _data, _nonce, _version])
+        _expected_mac = hmac_digest(bytes(self.prk), msg)
+        if not compare_digest(_expected_mac, _mac):
+            _err_msg = (
+                "Task HMAC verification failed during nonce cache on {0}!\n"
+                + f"Expected: {_expected_mac!r}\n"
+                + f"Value:    {_mac!r}\n"
+            )
+            if NonceCache._on_worker():
+                raise SystemExit(_err_msg.format("worker"))
+            else:
+                raise SystemExit(_err_msg.format("host"))
+
+        if _nonce is not None:
+            if _nonce in self._seen:
+                # Replay protection
+                _err_msg = (
+                    "PyRosettaCluster detected a repeat nonce on the {0} for the instance identifier "
+                    + f"'{self.instance_id}', which might indicate a replay attack is in progress! "
+                    + "Exiting process for security. Please ensure that `PyRosettaCluster(security=True)` "
+                    + f"is enabled in future PyRosettaCluster simulations. Received: '{_nonce}'."
+                )
+                if NonceCache._on_worker():
+                    raise SystemExit(_err_msg.format("worker"))
+                else:
+                    raise SystemExit(_err_msg.format("host"))
+            self._seen.add(_nonce)
+            self._order.append(_nonce)
+            while len(self._seen) > self._order.maxlen:
+                _expired = self._order.popleft()
+                self._seen.discard(_expired)
+
+            if self._debug:
+                _memory_usage = round(sum(map(sys.getsizeof, (self._seen, self._order))) / 1e3, 3)  # KB
+                _msg = (
+                    f"Size={len(self._seen)}/{self.max_nonce}; "
+                    + f"Memory usage: {_memory_usage} KB; "
+                    + f"Example: {sorted(self._seen)[0]}"
+                )
+                if NonceCache._on_worker():
+                    print(f"Remote worker ({get_worker().contact_address}) nonce cache: {_msg}")
+                else:
+                    print(f"Local host nonce cache: {_msg}")
+
+
+@attr.s(kw_only=True, slots=False, frozen=False)
 class Serialization(Generic[G]):
+    """PyRosettaCluster serialization base class."""
+    instance_id = attr.ib(
+        type=Optional[str],
+        default=None,
+        validator=attr.validators.optional(attr.validators.instance_of(str)),
+    )
+    prk = attr.ib(
+        type=Optional[bytes],
+        default=None,
+        repr=False,
+        converter=lambda k: MaskedBytes(k) if isinstance(k, bytes) else k,
+        validator=attr.validators.optional(attr.validators.instance_of(MaskedBytes)),
+    )
     compression = attr.ib(
         type=Optional[Union[str, bool]],
         default="xz",
         validator=attr.validators.optional(attr.validators.instance_of((str, bool))),
         converter=_parse_compression,
     )
+    with_nonce = attr.ib(
+        type=bool,
+        default=False,
+        validator=attr.validators.instance_of(bool),
+    )
+    _nonce_size = attr.ib(
+        type=int,
+        default=32, # bytes
+        init=False,
+        validator=attr.validators.instance_of(int),
+    )
 
-    def __attrs_post_init__(self):
+
+    def __attrs_pre_init__(self) -> None:
+        MessagePacking.__init__(self)
+
+    def __attrs_post_init__(self) -> None:
         if self.compression == "xz":
             if "lzma" not in sys.modules:
                 raise ImportError(
@@ -156,26 +345,98 @@ class Serialization(Generic[G]):
             self.encoder = None
             self.decoder = None
 
+    def __getstate__(self) -> Dict[str, Any]:
+        """
+        A method used to override the default `Serialization.__getstate__()` method
+        that sets the pseudo-random key value to `None` in the returned state.
+        """
+        state = self.__dict__.copy()
+        state["prk"] = None
+
+        return state
+
     @classmethod
-    def zlib_compress(cls, obj):
+    def zlib_compress(cls, obj: bytes) -> bytes:
+        """Compress an object with `zlib` level 9."""
         return zlib.compress(obj, 9)
 
-    def requires_compression(func):
+    def requires_compression(func: T) -> T:
+        """
+        Wrapper testing if compression is enabled, and skips compression if it's disabled.
+        """
         @wraps(func)
-        def wrapper(self, obj):
+        def wrapper(self, obj: Any) -> Any:
             if all(x is not None for x in (self.encoder, self.decoder)):
                 return func(self, obj)
             else:
                 logging.debug("Compression/decompression is disabled.")
                 return obj
 
-        return wrapper
+        return cast(T, wrapper)
+
+    def _seal(self, data: bytes) -> bytes:
+        """Seal data with MessagePack."""
+        if self.instance_id is None or self.prk is None:
+            raise ValueError(
+                "Sealing requires the 'instance_id' and 'prk' instance attributes."
+            )
+
+        version = 1
+        nonce = os.urandom(self._nonce_size) if self.with_nonce else None
+        msg = self.pack([self.instance_id, data, nonce, version])
+        mac = hmac_digest(self.prk, msg)
+        package = {
+            "a": self.instance_id, # `str`: PyRosettaCluster instance identifier/App
+            "d": data, # `bytes`: Data bytestring
+            "m": mac, # `bytes`: MAC (HMAC tag)
+            "n": nonce, # `bytes`: Nonce
+            "v": version, # `int`: Version
+        }
+
+        return self.pack(package)
+
+    def _unseal(self, obj: bytes) -> bytes:
+        """
+        Unseal data with MessagePack and perform Hash-based
+        Message Authentication Code (HMAC) verification.
+        """
+        if self.instance_id is None or self.prk is None:
+            raise ValueError(
+                "Unsealing requires the 'instance_id' and 'prk' instance attributes."
+            )
+
+        package = self.unpack(obj)
+        if not isinstance(package, dict) or package.get("v", None) != 1:
+            raise ValueError(f"Invalid sealed package or version. Received: {type(package)}")
+
+        _instance_id = package["a"] # `str`: PyRosettaCluster instance identifier/App
+        _data = package["d"] # `bytes`: Data bytestring
+        _mac = package["m"] # `bytes`: MAC (HMAC tag)
+        _nonce = package["n"] # `bytes`: Nonce
+        _version = package["v"] # `int`: Version
+
+        if self.instance_id is not None and _instance_id != self.instance_id:
+            raise ValueError(
+                "Instance identifier mismatch in packaged data!\n"
+                + f"'{_instance_id}' != '{self.instance_id}'"
+            )
+
+        msg = self.pack([_instance_id, _data, _nonce, _version])
+        _expected_mac = hmac_digest(self.prk, msg)
+        if not compare_digest(_expected_mac, _mac):
+            raise SystemExit(
+                "Task HMAC verification failed upon unsealing the data!\n"
+                + f"Expected: {_expected_mac!r}\n"
+                + f"Value:    {_mac!r}\n"
+            )
+
+        return _data
 
     @requires_compression
     def compress_packed_pose(self, packed_pose: Any) -> Union[NoReturn, None, bytes]:
         """
-        Compress a `PackedPose` object with the custom serialization module. If the 'packed_pose' argument parameter
-        is `None`, then just return `None`.
+        Compress a `PackedPose` object with the custom serialization module. If the 'packed_pose' argument
+        parameter is `None`, then just return `None`.
 
         Args:
             packed_pose: the input `PackedPose` object to compress. If `None`, then just return `None`.
@@ -201,8 +462,8 @@ class Serialization(Generic[G]):
     @requires_compression
     def decompress_packed_pose(self, compressed_packed_pose: Any) -> Union[NoReturn, None, PackedPose]:
         """
-        Decompress a `bytes` object with the custom serialization module and secure implementation of the `pickle` module.
-        If the 'compressed_packed_pose' argument parameter is `None`, then just return `None`.
+        Decompress a `bytes` object with the custom serialization module and secure implementation of the
+        `pickle` module. If the 'compressed_packed_pose' argument parameter is `None`, then just return `None`.
 
         Args:
             compressed_packed_pose: the input `bytes` object to decompress. If `None`, then just return `None`.
@@ -216,8 +477,7 @@ class Serialization(Generic[G]):
         if compressed_packed_pose is None:
             packed_pose = None
         elif isinstance(compressed_packed_pose, bytes):
-            pose = SecureSerializerBase.secure_loads(self.decoder(compressed_packed_pose))
-            packed_pose = io.to_packed(pose)
+            packed_pose = io.to_packed(SecureSerializerBase.secure_loads(self.decoder(compressed_packed_pose)))
         else:
             raise TypeError(
                 "The 'compressed_packed_pose' argument parameter must be of type `NoneType` or `bytes`."
@@ -225,7 +485,20 @@ class Serialization(Generic[G]):
 
         return packed_pose
 
-    @requires_compression
+    def loads_object(self, compressed_obj: bytes) -> Any:
+        """Unseal data and run the `cloudpickle.loads` method."""
+        data = self._unseal(compressed_obj)
+        buffer = self.decoder(data) if self.decoder else data
+
+        return cloudpickle.loads(buffer)
+
+    def dumps_object(self, obj: Any) -> bytes:
+        """Run the `cloudpickle.dumps` method and seal data."""
+        pickled = cloudpickle.dumps(obj)
+        buffer = self.encoder(pickled) if self.encoder else pickled
+
+        return self._seal(buffer)
+
     def compress_kwargs(self, kwargs: Any) -> Union[NoReturn, bytes]:
         """
         Compress a `dict` object with the `cloudpickle` and custom serialization modules.
@@ -240,11 +513,10 @@ class Serialization(Generic[G]):
             `TypeError` if the 'kwargs' argument parameter is not of type `dict`.
         """
         if isinstance(kwargs, dict):
-            return self.encoder(cloudpickle.dumps(kwargs))
+            return self.dumps_object(kwargs)
         else:
             raise TypeError("The 'kwargs' argument parameter must be of type `dict`.")
 
-    @requires_compression
     def decompress_kwargs(self, compressed_kwargs: bytes) -> Union[NoReturn, Dict[Any, Any]]:
         """
         Decompress a `bytes` object with the custom serialization and `cloudpickle` modules.
@@ -257,13 +529,16 @@ class Serialization(Generic[G]):
 
         Raises:
             `TypeError` if the 'compressed_packed_pose' argument parameter is not of type `bytes`.
+            `TypeError` if the returned kwargs is not of type `dict`.
         """
         if isinstance(compressed_kwargs, bytes):
-            return cloudpickle.loads(self.decoder(compressed_kwargs))
+            kwargs = self.loads_object(compressed_kwargs)
+            if not isinstance(kwargs, dict):
+                raise TypeError(f"Decoded kwargs must be of type `dict`. Received: {type(kwargs)}")
+            return kwargs
         else:
             raise TypeError("The 'compressed_kwargs' argument parameter must be of type `bytes`.")
 
-    @requires_compression
     def compress_object(self, obj: Any) -> bytes:
         """
         Compress an object with the `cloudpickle` and custom serialization modules.
@@ -274,9 +549,8 @@ class Serialization(Generic[G]):
         Returns:
             A `bytes` object representing the compressed object.
         """
-        return self.encoder(cloudpickle.dumps(obj))
+        return self.dumps_object(obj)
 
-    @requires_compression
     def decompress_object(self, compressed_obj: bytes) -> Any:
         """
         Decompress a `bytes` object with the custom serialization and `cloudpickle` modules.
@@ -286,8 +560,14 @@ class Serialization(Generic[G]):
 
         Returns:
             An object representing the decompressed `bytes` object.
+
+        Raises:
+            `TypeError` if the 'compressed_obj' argument parameter is not of type `bytes`.
         """
-        return cloudpickle.loads(self.decoder(compressed_obj))
+        if isinstance(compressed_obj, bytes):
+            return self.loads_object(compressed_obj)
+        else:
+            raise TypeError("The 'compressed_obj' argument parameter must be of type `bytes`.")
 
     @classmethod
     def deepcopy_kwargs(cls, kwargs: Any) -> Union[NoReturn, Dict[Any, Any]]:

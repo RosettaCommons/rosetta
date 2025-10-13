@@ -271,6 +271,35 @@ Args:
     dry_run: A `bool` object specifying whether or not to save '.pdb' files to
         disk. If `True`, then do not write '.pdb' or '.pdb.bz2' files to disk.
         Default: False
+    security: A `bool` object or instance of `dask.distributed.Security()`, only having
+        effect if `client=None` and `clients=None`, that is passed to 'dask' if using
+        `scheduler=None` or passed to 'dask-jobqueue' if using `scheduler="slurm"` or
+        `scheduler="sge"`. If `True` is provided, then invoke the 'cryptography' package
+        to generate a `Security.temporary()` object through 'dask' or 'dask-jobqueue'. See
+        https://distributed.dask.org/en/latest/tls.html#distributed.security.Security.temporary
+        for more information. If a dask `Security()` object is provided, then pass it to
+        dask with `scheduler=None`, or pass it to 'dask-jobqueue' (where 'shared_temp_directory'
+        is set to the `output_path` keyword argument parameter) with `scheduler="slurm"` or
+        `scheduler="sge"`. If `False` is provided, then security is disabled regardless
+        of the `scheduler` keyword argument parameter (which is not recommended for remote
+        clusters unless using a firewall). If `None` is provided, then `True` is used by
+        default. In order to generate a `dask.distributed.Security()` object with OpenSSL,
+        the `pyrosetta.distributed.cluster.generate_dask_tls_security()` function may also
+        be used (see docstring for more information) instead of the 'cryptography' package.
+        Default: `False` if `scheduler=None`, otherwise `True`
+    max_nonce: An `int` object greater than or equal to 1 specifying the maximum number of
+        nonces to cache per process if dask security is disabled while using remote clusters,
+        which protects against replay attacks. If nonce caching is in use, each process
+        (including the host node process and all dask worker processes) cache nonces upon
+        communication exchange over the network, which can increase memory usage in each
+        process. A rough estimate of additional memory usage is ~0.2 KB per task
+        per user-provided PyRosetta protocol per process. For example, submitting
+        1000 tasks with 2 user-provided PyRosetta protocols adds ~0.2 KB/task/protocol
+        * 1000 tasks * 2 protocols = ~0.4 MB of memory per processs. If memory usage
+        per process permits, it is recommended to set this parameter to at least the
+        number of tasks times the number of protocols submitted, so that every nonce
+        from every communication exchange over the network gets cached.
+        Default: 4096
     cooldown_time: A `float` or `int` object specifying how many seconds to sleep after the
         simulation is complete to allow loggers to flush. For very slow network filesystems,
         2.0 or more seconds may be reasonable.
@@ -311,7 +340,7 @@ try:
     import attr
     import distributed
     import toolz
-    from dask.distributed import Client, Future, as_completed
+    from dask.distributed import Client, Future, Security, as_completed
     from distributed.scheduler import KilledWorker
 except ImportError:
     print(
@@ -356,7 +385,8 @@ from pyrosetta.distributed.cluster.initialization import _get_pyrosetta_init_arg
 from pyrosetta.distributed.cluster.io import IO
 from pyrosetta.distributed.cluster.logging_support import LoggingSupport, MaskedBytes
 from pyrosetta.distributed.cluster.multiprocessing import user_spawn_thread
-from pyrosetta.distributed.cluster.serialization import Serialization
+from pyrosetta.distributed.cluster.security import SecurityIO
+from pyrosetta.distributed.cluster.serialization import NonceCache, Serialization
 from pyrosetta.distributed.cluster.utilities import SchedulerManager
 from pyrosetta.distributed.cluster.validators import (
     _validate_dir,
@@ -386,7 +416,7 @@ G = TypeVar("G")
 
 
 @attr.s(kw_only=True, slots=True, frozen=False)
-class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G]):
+class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO[G], TaskBase[G]):
     tasks = attr.ib(
         type=list,
         default=[{}],
@@ -731,6 +761,29 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         validator=attr.validators.instance_of(str),
         converter=_parse_pyrosetta_build,
     )
+    security = attr.ib(
+        type=Union[bool, Security],
+        default=attr.Factory(
+            lambda self: bool(self.scheduler),
+            takes_self=True,
+        ),
+        validator=attr.validators.instance_of((bool, Security)),
+        converter=attr.converters.default_if_none(default=True),
+    )
+    instance_id = attr.ib(
+        type=str,
+        default=attr.Factory(
+            lambda: f"PyRosettaCluster_instance_id_{uuid.uuid4().hex}",
+            takes_self=False,
+        ),
+        init=False,
+        validator=attr.validators.instance_of(str),
+    )
+    max_nonce = attr.ib(
+        type=int,
+        default=4096,
+        validator=[attr.validators.instance_of(int), _validate_int],
+    )
     environment = attr.ib(
         type=str,
         default=None,
@@ -811,6 +864,16 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         self._write_init_file()
         self.serializer = Serialization(compression=self.compression)
         self.clients_dict = self._setup_clients_dict()
+        self.with_nonce = self._setup_with_nonce()
+        self.serializer = Serialization(
+            instance_id=self.instance_id,
+            compression=self.compression,
+            with_nonce=self.with_nonce,
+        )
+        self.nonce_cache = NonceCache(
+            instance_id=self.instance_id,
+            max_nonce=self.max_nonce,
+        ) if self.with_nonce else None
 
     def _create_future(
         self,
@@ -926,14 +989,15 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                 Default: None
         """
         yield_results = _parse_yield_results(self.yield_results)
+        clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
+        self._setup_task_security_plugin(clients)
+        socket_listener_address, passkey = self._setup_socket_listener(clients)
         compressed_input_packed_pose = self.serializer.compress_packed_pose(self.input_packed_pose)
         protocols, protocol, seed, clients_index, resource = self._setup_protocols_protocol_seed(
             args, protocols, clients_indices, resources
         )
         protocol_name = protocol.__name__
         compressed_protocol = self.serializer.compress_object(protocol)
-        clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
-        socket_listener_address, passkey = self._setup_socket_listener(clients)
         client_residue_type_set = _get_residue_type_set()
         extra_args = dict(
             decoy_ids=self.decoy_ids,
@@ -941,8 +1005,10 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             timeout=self.timeout,
             ignore_errors=self.ignore_errors,
             datetime_format=self.DATETIME_FORMAT,
-            norm_task_options=self.norm_task_options,
+            instance_id=self.instance_id,
             compression=self.compression,
+            with_nonce=self.with_nonce,
+            norm_task_options=self.norm_task_options,
             max_delay_time=self.max_delay_time,
             logging_level=self.logging_level,
             socket_listener_address=socket_listener_address,
@@ -961,10 +1027,10 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                     passkey,
                     resource,
                 )
+                for _ in range(self.nstruct)
                 for compressed_kwargs, pyrosetta_init_kwargs in (
                     self._setup_initial_kwargs(protocols, seed, task_kwargs) for task_kwargs in self.tasks
                 )
-                for _ in range(self.nstruct)
             ]
         )
         for i, future in enumerate(seq, start=1):
@@ -977,6 +1043,8 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                 "Percent Complete = {0:0.5f} %".format((i / self.tasks_size) * 100.0)
             )
             for compressed_packed_pose, compressed_kwargs in results:
+                if self.with_nonce:
+                    self.nonce_cache._cache_nonce(compressed_kwargs)
                 kwargs = self.serializer.decompress_kwargs(compressed_kwargs)
                 if not kwargs[self.protocols_key]:
                     if yield_results:

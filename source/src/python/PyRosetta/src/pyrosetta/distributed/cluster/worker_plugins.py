@@ -30,12 +30,14 @@ import logging
 from contextlib import suppress
 from typing import Optional
 
+from pyrosetta.distributed.cluster.hkdf import MaskedBytes, compare_digest, hmac_digest
 from pyrosetta.distributed.cluster.logging_handlers import MultiSocketHandler
 from pyrosetta.distributed.cluster.logging_filters import (
     DefaultProtocolNameFilter,
     DefaultSocketAddressFilter,
     DefaultTaskIdFilter,
 )
+from pyrosetta.distributed.cluster.serialization import NonceCache
 
 
 SOCKET_LOGGER_PLUGIN_NAME: str = "PyRosettaCluster_socket_logger_plugin"
@@ -73,3 +75,22 @@ class SocketLoggerPlugin(WorkerPlugin):
             with suppress(Exception):
                 self.router.close()
         self.router = None
+
+
+class TaskSecurityPlugin(WorkerPlugin, NonceCache):
+    """Install a secure `NonceCache` instance with replay protection on a dask worker."""
+    def __init__(self, instance_id: str, prk: MaskedBytes, max_nonce: int) -> None:
+        NonceCache.__init__(self, instance_id=instance_id, prk=prk, max_nonce=max_nonce)
+
+    def setup(self, worker: Worker) -> None:
+        # Worker plugin name must be the PyRosettaCluster instance identifier
+        _maybe_existing_plugin = worker.plugins.get(self.instance_id, None)
+        if _maybe_existing_plugin is not None and _maybe_existing_plugin is not self:
+            raise NameError(f"The `TaskSecurityPlugin` worker plugin name already exists: '{self.instance_id}'")
+        # The `self.__getstate__` method must be overridden after instantiating `TaskSecurityPlugin` on worker
+        # since WorkerPlugin registration first pickles `self.prk` with the default `__getstate__` method:
+        self.__getstate__ = NonceCache._get_state.__get__(self, self.__class__)
+        assert self.__getstate__()["prk"] is None, f"Pseudo-random key is not hidden on worker nonce cache."
+
+    def teardown(self, worker: Worker) -> None:
+        self.prk = None

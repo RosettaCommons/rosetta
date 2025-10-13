@@ -33,6 +33,15 @@ DERIVED_KEY_LEN: int = 32
 SALT: bytes = b"PyRosettaCluster_salt"
 
 
+class MaskedBytes(bytes):
+    """A `bytes` subclass to mask its contents if the `repr` method is called."""
+    def __new__(cls, value: bytes) -> bytes:
+        return super().__new__(cls, value)
+
+    def __repr__(self) -> str:
+        return "#"
+
+
 def compare_digest(a: bytes, b: bytes) -> bool:
     """Return `a == b` result."""
     return hmac.compare_digest(a, b)
@@ -79,6 +88,17 @@ def derive_task_key(passkey: bytes, task_id: str) -> bytes:
     """
     info = msgpack.packb(["PyRosettaCluster", task_id], use_bin_type=True)
     prk = hkdf_extract(passkey, salt=SALT)
+
+    return hkdf_expand(prk, info)
+
+
+def derive_instance_key(key: bytes, instance_id: str) -> bytes:
+    """
+    Derive a per-instance secret key using the extract-and-expand hash-based message
+    authentication code (HMAC)-based key derivation function (HKDF).
+    """
+    info = msgpack.packb(["PyRosettaCluster.instance_id", instance_id], use_bin_type=True)
+    prk = hkdf_extract(key, salt=SALT)
 
     return hkdf_expand(prk, info)
 

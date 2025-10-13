@@ -45,6 +45,12 @@ except ImportError:
     )
     raise
 
+try:
+    import cryptography
+    has_cryptography = True
+except ImportError as ex:
+    has_cryptography = False
+
 from pyrosetta import Pose
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.utility import get_package_version
@@ -110,6 +116,13 @@ class SmokeTest(unittest.TestCase):
             return packed_pose
 
         with tempfile.TemporaryDirectory() as workdir:
+            security = pyrosetta.distributed.cluster.generate_dask_tls_security(
+                os.path.join(workdir, "security_test")
+            )
+            print(
+                "Successfully ran `pyrosetta.distributed.cluster.generate_dask_tls_security()` "
+                + f"to generate a dask `Security` object: {security}"
+            )
             instance_kwargs = dict(
                 tasks=create_tasks,
                 input_packed_pose=io.pose_from_sequence("TESTING"),
@@ -146,6 +159,7 @@ class SmokeTest(unittest.TestCase):
                 output_decoy_types=[".pdb", ".b64_pose"],
                 output_scorefile_types=[".json", ".gz", ".xz"],
                 filter_results=True,
+                security=security,
                 norm_task_options=False,
                 output_init_file=None,
             )
@@ -157,9 +171,15 @@ class SmokeTest(unittest.TestCase):
             cluster.distribute(
                 my_pyrosetta_protocol,
             )
-            instance_kwargs.update({"protocols": my_pyrosetta_protocol})
+            instance_kwargs.update({"protocols": my_pyrosetta_protocol, "security": False})
             produce(**instance_kwargs)
-            run(**instance_kwargs)
+            instance_kwargs.update({"security": True})
+            if has_cryptography:
+                print("Using the installed 'cryptography' package to generate a dask `Security.temporary()` object...")
+                run(**instance_kwargs)
+            else:
+                with self.assertRaises(ImportError):
+                    run(**instance_kwargs)
 
     def test_ignore_errors(self):
         """Test PyRosettaCluster usage with user-provided PyRosetta protocol error."""
@@ -1168,6 +1188,7 @@ class SaveAllTest(unittest.TestCase):
         )
         _total_tasks = 2
         _total_protocols = 5
+        _nstruct = 2
 
         def create_tasks():
             for i in range(_total_tasks):
@@ -1199,7 +1220,7 @@ class SaveAllTest(unittest.TestCase):
                 memory=None,
                 min_workers=1,
                 max_workers=1,
-                nstruct=2,
+                nstruct=_nstruct,
                 dashboard_address=None,
                 compressed=True,
                 logging_level="CRITICAL",
@@ -1261,16 +1282,28 @@ class SerializationTest(unittest.TestCase):
                 output_packed_pose = serializer.decompress_packed_pose(compressed_packed_pose)
 
                 _error_msg = f"Failed on test case {_test_case} with compression {_compression}"
-                self.assertLess(
-                    sys.getsizeof(compressed_packed_pose),
-                    sys.getsizeof(input_packed_pose.pickled_pose),
-                    msg=_error_msg,
-                )
-                self.assertLess(
-                    sys.getsizeof(compressed_packed_pose),
-                    sys.getsizeof(output_packed_pose.pickled_pose),
-                    msg=_error_msg,
-                )
+                if _compression in (False, None):
+                    self.assertEqual(
+                        sys.getsizeof(compressed_packed_pose.pickled_pose),
+                        sys.getsizeof(input_packed_pose.pickled_pose),
+                        msg=_error_msg,
+                    )
+                    self.assertEqual(
+                        sys.getsizeof(compressed_packed_pose.pickled_pose),
+                        sys.getsizeof(output_packed_pose.pickled_pose),
+                        msg=_error_msg,
+                    )
+                else:
+                    self.assertLess(
+                        sys.getsizeof(compressed_packed_pose),
+                        sys.getsizeof(input_packed_pose.pickled_pose),
+                        msg=_error_msg,
+                    )
+                    self.assertLess(
+                        sys.getsizeof(compressed_packed_pose),
+                        sys.getsizeof(output_packed_pose.pickled_pose),
+                        msg=_error_msg,
+                    )
                 if _compression in (False, None):
                     self.assertEqual(id(input_packed_pose), id(output_packed_pose), msg=_error_msg)
                 else:
