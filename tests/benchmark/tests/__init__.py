@@ -854,6 +854,7 @@ def local_python_install(platform, config):
         '3.11' : 'https://www.python.org/ftp/python/3.11.12/Python-3.11.12.tgz',
         '3.12' : 'https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz',
         '3.13' : 'https://www.python.org/ftp/python/3.13.0/Python-3.13.0.tgz',
+        '3.14' : 'https://www.python.org/ftp/python/3.14.0/Python-3.14.0.tgz',
     }
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')
