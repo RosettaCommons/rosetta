@@ -37,6 +37,7 @@ from functools import singledispatch
 from pyrosetta.distributed.cluster.config import (
     get_environment_cmd,
     get_environment_manager,
+    get_environment_var,
     source_domains,
 )
 from pyrosetta.distributed.cluster.exceptions import (
@@ -484,7 +485,8 @@ def get_yml() -> str:
     return (
         (
             os.linesep.join(
-                [
+                [f"# {get_environment_var()}={get_environment_manager()}"]
+                + [
                     line
                     for line in raw_yml.split(os.linesep)
                     if all(

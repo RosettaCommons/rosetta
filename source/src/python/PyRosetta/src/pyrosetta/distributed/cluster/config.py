@@ -147,6 +147,11 @@ def get_environment_cmd() -> str:
     return get_environment_config().env_export_cmd
 
 
+def get_environment_var() -> str:
+    """Get the PyRosettaCluster operating system environment variable name."""
+    return get_environment_config()._ENV_VAR
+
+
 source_domains: List[str] = [
     "conda.graylab.jhu.edu",
     "west.rosettacommons.org",

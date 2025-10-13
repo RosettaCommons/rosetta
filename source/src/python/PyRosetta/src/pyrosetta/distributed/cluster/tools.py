@@ -413,6 +413,7 @@ def recreate_environment(
         input_file=input_file,
         scorefile=scorefile,
         decoy_name=decoy_name,
+        skip_corrections=None,
     )
     if "environment" not in _instance_kwargs:
         raise RuntimeError(
@@ -424,6 +425,53 @@ def recreate_environment(
         raise RuntimeError(
             "PyRosettaCluster 'environment' instance attribute is empty. "
             + "`recreate_environment()` cannot create environment!"
+        )
+    # Get original environment manager
+    for line in raw_spec.splitlines():
+        if line.startswith(f"# {_env_config._ENV_VAR}"):
+            original_environment_manager = line.split("=")[-1].strip()
+            break
+    else:
+        original_environment_manager = "conda" # For legacy PyRosettaCluster simulations with a non-empty raw spec
+
+    # Test that current environment manager can recreate original environment
+    if original_environment_manager == "uv" and environment_manager != "uv":
+        raise RuntimeError(
+            f"The original PyRosettaCluster simulation used '{original_environment_manager}' as "
+            + f"an environment manager, but the current environment manager is configured to use "
+            + f"'{environment_manager}' as an environment manager! The environment specification "
+            + f"is saved in a 'requirements.txt' format, and therefore requires '{original_environment_manager}' "
+            + f"to recreate the environment. Please ensure '{original_environment_manager}' is installed "
+            + f"and run `export {_env_config._ENV_VAR}={original_environment_manager}` to properly configure "
+            + f"the '{original_environment_manager}' environment manager, then try again. For installation "
+            + "instructions, please visit:\n"
+            + "https://docs.astral.sh/uv/guides/install-python\n"
+        )
+    elif original_environment_manager != "uv" and environment_manager == "uv":
+        raise RuntimeError(
+            f"The original PyRosettaCluster simulation used '{original_environment_manager}' as "
+            + "an environment manager, but the current environment manager is configured to use "
+            + f"'{environment_manager}' as an environment manager! The environment specification "
+            + "is saved in a YAML file format, and therefore requires 'conda', 'mamba', or 'pixi' to "
+            + "recreate the environment. Please ensure that 'conda', 'mamba', or 'pixi' is installed, then "
+            + "configure the environment manager by running one of the following commands, then try again:\n"
+            + f"To configure 'conda', run: `export {_env_config._ENV_VAR}=conda`\n"
+            + f"To configure 'mamba', run: `export {_env_config._ENV_VAR}=mamba`\n"
+            + f"To configure 'pixi', run:  `export {_env_config._ENV_VAR}=pixi`\n"
+            + "For installation instructions, please visit:\n"
+            + "https://docs.anaconda.com/anaconda/install\n"
+            + "https://github.com/conda-forge/miniforge\n"
+            + "https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html\n"
+            + "https://pixi.sh/latest/installation\n"
+        )
+    elif original_environment_manager != environment_manager:
+        warnings.warn(
+            f"The original PyRosettaCluster simulation used '{original_environment_manager}' as "
+            + "an environment manager, but the current environment manager is configured to use "
+            + f"'{environment_manager}' as an environment manager! Now attempting to recreate the "
+            + "environment with cross-manager compatibility using the universal YAML file string...",
+            RuntimeWarning,
+            stacklevel=2,
         )
 
     # Recreate the environment
