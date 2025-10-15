@@ -53,6 +53,13 @@ else:
         print("Printing pip environment failed with return code: {0}.".format(ex.returncode))
 
 
+for env_manager in ("conda", "mamba", "uv", "pixi"):
+    if shutil.which(env_manager):
+        print(f"The environment manager '{env_manager}' is installed.")
+    else:
+        print(f"The environment manager '{env_manager}' is not installed.")
+
+
 def e(cmd):
     """Run command getting return code and output."""
     print("Executing:\n{0}".format(cmd))
