@@ -511,6 +511,10 @@ def get_required_pyrosetta_python_packages_for_testing(platform, conda=False, st
     if platform['os'] == 'mac' and python_version >= (3, 7):
         packages['python-blosc' if conda else 'blosc'] = '>=1.10.6'
 
+    install_uv = True
+    if install_uv:
+        packages["uv"] = ">=0.9.2"
+
     if static_versions:
         packages = set_static_versions_for_python_packages(packages)
 
