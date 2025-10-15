@@ -15,7 +15,6 @@
 from __future__ import print_function
 from __future__ import annotations
 
-
 import sys
 
 import pyrosetta
@@ -32,7 +31,7 @@ from pyrosetta.rosetta import core, protocols, basic, utility
 from pyrosetta.rosetta.protocols.moves import Mover, MoverCreator, MoverFactory
 from pyrosetta.rosetta.utility.tag import XMLSchemaDefinition, xsct_positive_integer, XMLSchemaComplexTypeGenerator, XMLSchemaAttribute, XMLSchemaType
 from pyrosetta.rosetta.std import list_utility_tag_XMLSchemaAttribute_t
-from pyrosetta.rosetta.core.scoring import ScoreFunction, ScoreFunctionFactory, attributes_for_parse_score_function_w_description, parse_score_function
+from pyrosetta.rosetta.core.scoring import attributes_for_parse_score_function_w_description
 from pyrosetta.rosetta.protocols import moves as protocols_moves
 from typing import Optional, Union
 
@@ -124,7 +123,6 @@ class BootCampMoverCreatorPy(protocols.moves.MoverCreator):
         return BootCampMoverPy.mover_name()
 
     def provide_xml_schema(self, xsd):
-        print("creator provide_xml_schema is called")
         BootCampMoverPy.provide_xml_schema(xsd)
 
 def register():
@@ -133,7 +131,6 @@ def register():
     factory.factory_register(creator)
 
     _py_mover_creators_.append(creator)
-    print("registration is happening")
 
 
 # Main -------------------------------------------------------------------------------------------------------------------------
@@ -159,13 +156,11 @@ EMBEDDED_XML = """<ROSETTASCRIPTS>
 """
 
 
-
 # Register your mover BEFORE parsing XML so schema/type are known
 register()
 init()
 
 pose = pose_from_sequence("ARNDCEQGHILKMFPSTWYV")
-
 
 # Parse XML string and build the overall protocol mover
 xmlobj = XmlObjects.create_from_string(EMBEDDED_XML)
