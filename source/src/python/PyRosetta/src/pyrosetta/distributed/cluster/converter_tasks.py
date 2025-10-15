@@ -89,7 +89,8 @@ def maybe_issue_environment_warnings() -> None:
     with not_on_worker():
         environment_manager = get_environment_manager()
         if shutil.which(environment_manager):  # An environment manager is installed
-            if get_yml() == "":
+            yml = get_yml()
+            if yml == "":
                 warnings.warn(
                     "To use the `pyrosetta.distributed.cluster` namespace and ensure "
                     + "reproducibility of PyRosetta simulations, please either:\n"
@@ -106,6 +107,17 @@ def maybe_issue_environment_warnings() -> None:
                     UserWarning,
                     stacklevel=4,
                 )  # Warn that we are not in an active virtual environment
+            elif "pyrosetta=" not in yml:
+                warnings.warn(
+                    "The currently installed 'pyrosetta' package version is not specified in the exported environment file! "
+                    + "Consequently, the PyRosettaCluster simulation will be difficult to reproduce at a later time. "
+                    + "To use the `pyrosetta.distributed.cluster` namespace and ensure reproducibility of PyRosetta simulations, "
+                    + "please re-install the 'pyrosetta' package using the Rosetta Commons conda channel. For instructions, visit:\n"
+                    + "https://www.pyrosetta.org/downloads\nNote that installing PyRosetta using pip and the 'pyrosetta-installer' "
+                    + "package does not pin the PyRosetta version to the currently activated virtual environment.",
+                    UserWarning,
+                    stacklevel=4,
+                )  # Warn that the PyRosetta package version is not specified in the active virtual environment
         else:  # An environment manager is not installed
             warnings.warn(
                 f"The environment manager '{environment_manager}' is not an executable! "
