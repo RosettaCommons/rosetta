@@ -361,8 +361,10 @@ import uuid
 
 from datetime import datetime
 from pyrosetta.distributed.cluster.base import TaskBase, _get_residue_type_set
+from pyrosetta.distributed.cluster.config import get_environment_manager
 from pyrosetta.distributed.cluster.converters import (
     is_empty as _is_empty,
+    _maybe_issue_environment_warnings,
     _parse_decoy_ids,
     _parse_filter_results,
     _parse_environment,
@@ -843,6 +845,15 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         init=False,
         validator=attr.validators.instance_of(str),
     )
+    environment_manager = attr.ib(
+        type=str,
+        default=attr.Factory(
+            get_environment_manager,
+            takes_self=False,
+        ),
+        init=False,
+        validator=attr.validators.instance_of(str),
+    )
     pyrosetta_init_args = attr.ib(
         type=list,
         default=attr.Factory(_get_pyrosetta_init_args),
@@ -852,6 +863,9 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             iterable_validator=attr.validators.instance_of(list),
         ),
     )
+
+    def __attrs_pre_init__(self) -> None:
+        _maybe_issue_environment_warnings()
 
     def __attrs_post_init__(self) -> None:
         _maybe_init_client()
