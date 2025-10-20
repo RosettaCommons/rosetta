@@ -1265,6 +1265,20 @@ def setup_conda_virtual_environment(working_dir, platform, config, packages=''):
     )
 
 
+def setup_pixi(working_dir):
+    ''' Setup Pixi package manager in working_dir/.pixi-root and return path to pixi executable
+    '''
+    pixi_root = f'{working_dir}/.pixi-root'
+
+    execute('Setting up Pixi...', 'cd {working_dir} && export PIXI_HOME={pixi_root} && curl -fsSL https://pixi.sh/install.sh | sh'
+
+    return f'{pixi_root}/bin/pixi'
+
+
+def setup_pixi_environment(pixi, working_dir, packages):
+    execute('Setting up Pixi environment...', 'cd {working_dir} && {pixi} init {working_dir} && {pixi} add {packages}'
+
+
 
 class FileLock():
     ''' Implementation of file-lock object that could be use with Python `with` statement
