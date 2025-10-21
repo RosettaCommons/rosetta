@@ -54,6 +54,9 @@ void init_beta_july15_correction( utility::options::OptionCollection & options )
 /// @brief Initialize the -beta_nov16 score function
 void init_beta_nov16_correction( utility::options::OptionCollection & options, bool setweight=true );
 
+/// @brief Initialize the -beta_jan25 score function
+void init_beta_jan25_correction( utility::options::OptionCollection & options, bool setweight=true );
+
 /// @brief Initialize the crystal refinement correction
 void init_crystal_refinement_correction( utility::options::OptionCollection & options );
 
