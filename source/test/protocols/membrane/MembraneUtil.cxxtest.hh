@@ -1504,7 +1504,7 @@ public: // test functions
 		addmem->apply(pose);
 
 		// create foldtree
-		std::string partners = "A_BC_D";
+		utility::vector1< utility::vector1< std::string > > partners{ {"A"}, {"B","C"}, {"D"} };
 		utility::vector1< core::Size > interface_jumps = create_membrane_multi_partner_foldtree_anchor_tmcom( pose, partners );
 
 		// test

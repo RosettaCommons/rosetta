@@ -259,7 +259,7 @@ core::Size create_membrane_foldtree_anchor_pose_tmcom( core::pose::Pose & pose )
 /// ^-----^  ^-----------------------^  ^-----^
 /// partner1          partner2          partner3
 ///
-utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmcom( core::pose::Pose & pose, std::string partner );
+utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmcom( core::pose::Pose & pose, utility::vector1< utility::vector1< std::string > > const & partners );
 
 /// @brief Helper function to create membrane foldtrees
 /// @details The anchors vector is a vector of anchor residues in all chains,

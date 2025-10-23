@@ -730,7 +730,7 @@ core::Size create_membrane_foldtree_anchor_pose_tmcom( core::pose::Pose & pose )
 /////////////////////////////////////////
 
 /// @brief Create foldtree for multiple docking partners
-utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmcom( core::pose::Pose & pose, std::string partner ) {
+utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmcom( core::pose::Pose & pose, utility::vector1< utility::vector1< std::string > > const & partners ) {
 
 	// get chains from pose
 	utility::vector1< core::Size > chainids( get_chains( pose ) );
@@ -753,10 +753,6 @@ utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmc
 	core::Size jumpnumber( 1 );
 	utility::vector1< core::Size > jumps;
 
-	// split partners by underscore
-	// By nature of the format this only supports single letter chain designations
-	utility::vector1< std::string > partners( utility::string_split( partner, '_' ) );
-
 	// go through partners (AB / CD)
 	for ( core::Size p = 1; p <= partners.size(); ++p ) {
 
@@ -765,7 +761,7 @@ utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmc
 		core::Size first_chain_anchor( 0 );
 
 		// convert chain from partners (f.ex. B) into chainID (f.ex. 2)
-		chainid = get_chain_id_from_chain( std::string{partners[ p ][ 0 ]}, pose );
+		chainid = get_chain_id_from_chain( partners[ p ][ 1 ], pose );
 
 		// go through chainids (except MEM) to find chain of interest  and first anchor point
 		for ( core::Size i = 1; i <= chainids.size()-1; ++i ) {
@@ -790,13 +786,13 @@ utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmc
 			core::Size chain_anchor( 0 );
 
 			// iterate through rest of chains in the partner (1,2,3), string indexes with 0
-			for ( core::Size c = 1; c < partners[ p ].size(); ++c ) {
+			for ( core::Size c = 2; c <= partners[ p ].size(); ++c ) {
 
 				// go through chainids (except MEM) to find chain of interest and anchor point
 				for ( core::Size i = 1; i <= chainids.size()-1; ++i ) {
 
 					// convert chain from partners (f.ex. B) into chainID (f.ex. 2)
-					chainid = get_chain_id_from_chain( std::string{partners[ p ][ c ]}, pose );
+					chainid = get_chain_id_from_chain( partners[ p ][ c ], pose );
 
 					// get anchor point of current partner
 					if ( chainid == static_cast< core::Size >( chainids[ i ] ) ) {
