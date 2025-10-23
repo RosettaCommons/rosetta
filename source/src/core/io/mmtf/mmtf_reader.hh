@@ -121,7 +121,7 @@ make_atom_information(
 	core::Size const atomSerial,
 	core::Size const groupIndex,
 	core::Size const chainIndex,
-	utility::vector1<char> & known_chainIDs,
+	utility::vector1<std::string> & known_chainIDs,
 	core::io::StructFileReaderOptions const & options );
 
 template < typename T >

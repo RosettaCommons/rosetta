@@ -65,7 +65,7 @@ core::Real calc_prob(core::Real x,core::Real a, core::Real b) {
 }
 
 //read in the complex type: subunits and connectivities (nodes and edges)
-void read_complex_type(core::Size &n_chains, utility::vector1<char> &nodes, utility::vector1<utility::vector1<std::string>> &edges) {
+void read_complex_type(core::Size &n_chains, utility::vector1<std::string> &nodes, utility::vector1<utility::vector1<std::pair<std::string,std::string>>> &edges) {
 	std::string complex_type_filename;
 	complex_type_filename = option[ complex_type ]();
 	utility::io::izstream input(complex_type_filename);
@@ -87,12 +87,7 @@ void read_complex_type(core::Size &n_chains, utility::vector1<char> &nodes, util
 			n_chains = inputs.size();
 			TR << "Complex type file has " << n_chains << " chains." << std::endl;
 			for ( core::Size i=1; i<=n_chains; i++ ) {
-				if ( inputs[i].size() != 1 ) {
-					std::string const msg( "Chain input incorrectly: " + inputs[i]);
-					utility_exit_with_message( msg );
-				}
-				char node_curr;
-				node_curr = inputs[i][0];
+				std::string node_curr = inputs[i];
 				nodes.push_back(node_curr);
 				TR << "Chain " << i << ": " << node_curr << std::endl;
 			}
@@ -102,7 +97,7 @@ void read_complex_type(core::Size &n_chains, utility::vector1<char> &nodes, util
 				std::string const msg( "Interface input incorrectly");
 				utility_exit_with_message( msg );
 			}
-			utility::vector1<std::string> edges_curr;
+			utility::vector1<std::pair<std::string,std::string>> edges_curr;
 			for ( core::Size i=1; i<=n_edges; i++ ) {
 				std::string edge = inputs[i];
 				//check edge format
@@ -111,27 +106,28 @@ void read_complex_type(core::Size &n_chains, utility::vector1<char> &nodes, util
 					utility_exit_with_message( msg );
 				}
 
-				edges_curr.push_back(edge);
+				edges_curr.push_back(std::make_pair( std::string{edge[0]}, std::string{edge[2]} ));
 			}
-			TR << "Interface type " << count << " has " << n_edges << " symmetric interfaces. Interface " << edges_curr[1] << " is used." << std::endl;
+			TR << "Interface type " << count << " has " << n_edges << " symmetric interfaces. Interface "
+				<< edges_curr[1].first << "_" << edges_curr[1].second << " is used." << std::endl;
 			edges.push_back(edges_curr);
 		}
 		count++;
 	}
 	//check to make sure all chains are involved in at least one interface
 	for ( core::Size i=1; i<=nodes.size(); i++ ) {
-		char node_curr = nodes[i];
+		std::string const & node_curr = nodes[i];
 		bool node_found(false);
 		for ( core::Size j=1; j<=edges.size(); j++ ) {
 			for ( core::Size k=1; k<=edges[j].size(); k++ ) {
-				if ( node_curr==edges[j][k][0] || node_curr==edges[j][k][2] ) {
+				if ( node_curr==edges[j][k].first || node_curr==edges[j][k].second ) {
 					node_found = true;
 				}
 			}
 		}
 		if ( !node_found ) {
 			std::string msg( "Complex type file incorrect. Chain ");
-			msg.push_back(node_curr);
+			msg+=node_curr;
 			msg+=" not in an interface. All chains must participate in at least one interface";
 			utility_exit_with_message( msg );
 		}
@@ -243,11 +239,13 @@ void read_B_vals(utility::vector1<core::Real> &B) {
 }
 
 //check to make sure interfaces are symmetric
-void check_interface_symmetry(const core::pose::PoseOP &pose_check, const utility::vector1<std::string> &edges_check, core::Real &dSASA, core::Real &PRE) {
+void check_interface_symmetry(const core::pose::PoseOP &pose_check, const utility::vector1<std::pair<std::string,std::string>> &edges_check, core::Real &dSASA, core::Real &PRE) {
 	core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 
 	//calculate values for first interface
-	std::string interface_1(edges_check[1]);
+	core::pose::DockingPartners interface_1;
+	interface_1.partner1.push_back( edges_check[1].first );
+	interface_1.partner2.push_back( edges_check[1].second );
 	protocols::analysis::InterfaceAnalyzerMoverOP IAM = utility::pointer::make_shared< protocols::analysis::InterfaceAnalyzerMover >(interface_1, true, core::scoring::ScoreFunctionFactory::create_score_function("ref2015")/*scorefxn_*/, false/*compute_packstat_*/, false/*pack_together_*/, false/*pack_separated_*/);
 	IAM->apply(*pose_check);
 	protocols::analysis::InterfaceData int_data = IAM->get_all_data();
@@ -261,7 +259,9 @@ void check_interface_symmetry(const core::pose::PoseOP &pose_check, const utilit
 
 	//calculate size for remaining interfaces and compare to first. Should be within 10%.
 	for ( core::Size j=2; j<=edges_check.size(); j++ ) {
-		std::string interface_curr(edges_check[j]);
+		core::pose::DockingPartners interface_curr;
+		interface_curr.partner1.push_back( edges_check[j].first );
+		interface_curr.partner2.push_back( edges_check[j].second );
 		protocols::analysis::InterfaceAnalyzerMoverOP IAM = utility::pointer::make_shared< protocols::analysis::InterfaceAnalyzerMover >(interface_curr, true, core::scoring::ScoreFunctionFactory::create_score_function("ref2015")/*scorefxn_*/, false/*compute_packstat_*/, false/*pack_together_*/, false/*pack_separated_*/);
 		IAM->apply(*pose_check);
 		protocols::analysis::InterfaceData int_data = IAM->get_all_data();
@@ -277,7 +277,7 @@ void check_interface_symmetry(const core::pose::PoseOP &pose_check, const utilit
 }
 
 //calculate B values from PDB (and check for disulfide bond if dimer to shift steepness)
-void calc_B_values(utility::vector1<core::Real>  &B, const utility::vector1<utility::vector1<std::string>> &edges, core::Real &A, const core::Size n_chains ) {
+void calc_B_values(utility::vector1<core::Real>  &B, const utility::vector1<utility::vector1<std::pair<std::string,std::string>>> &edges, core::Real &A, const core::Size n_chains ) {
 	core::Real w_SA(0.488748);
 	core::Real w_PRE(-457.753);
 	core::Real w_int(-1488.57);
@@ -298,7 +298,7 @@ void calc_B_values(utility::vector1<core::Real>  &B, const utility::vector1<util
 	core::pose::PoseOP pose = core::import_pose::pose_from_file( filenames[1] );
 
 	//read in a vector of chains present in the input PDB. To be used to check against input interfaces
-	utility::vector1< char > chains;
+	utility::vector1< std::string > chains;
 	for ( core::Size i=1; i<=pose->num_chains(); i++ ) {
 		chains.push_back(core::pose::get_chain_from_chain_id(i, *pose));
 	}
@@ -308,16 +308,18 @@ void calc_B_values(utility::vector1<core::Real>  &B, const utility::vector1<util
 
 		//check to make sure both chains in the interface are in the input PDB
 		std::stringstream err_msg;
-		if ( std::find(chains.begin(), chains.end(), edges[i][1][0]) == chains.end() ) { //check first chain
-			err_msg << "Chain " << edges[i][1][0] << " not in PDB." << std::endl;
+		if ( std::find(chains.begin(), chains.end(), edges[i][1].first) == chains.end() ) { //check first chain
+			err_msg << "Chain " << edges[i][1].first << " not in PDB." << std::endl;
 			utility_exit_with_message(err_msg.str());
 		}
-		if ( std::find(chains.begin(), chains.end(), edges[i][1][2]) == chains.end() ) { //check second chain
-			err_msg << "Chain " << edges[i][1][2] << " not in PDB." << std::endl;
+		if ( std::find(chains.begin(), chains.end(), edges[i][1].second) == chains.end() ) { //check second chain
+			err_msg << "Chain " << edges[i][1].second << " not in PDB." << std::endl;
 			utility_exit_with_message(err_msg.str());
 		}
 
-		std::string interface(edges[i][1]);
+		core::pose::DockingPartners interface;
+		interface.partner1.push_back( edges[i][1].first );
+		interface.partner2.push_back( edges[i][1].second );
 
 		//Initialize IA mover
 		protocols::analysis::InterfaceAnalyzerMoverOP IAM = utility::pointer::make_shared< protocols::analysis::InterfaceAnalyzerMover >(interface, true, core::scoring::ScoreFunctionFactory::create_score_function("ref2015")/*scorefxn_*/, false/*compute_packstat_*/, false/*pack_together_*/, false/*pack_separated_*/);
@@ -328,7 +330,7 @@ void calc_B_values(utility::vector1<core::Real>  &B, const utility::vector1<util
 		check_interface_symmetry(pose, edges[i], dSASA, PRE);
 
 		B[i] = w_SA*dSASA + w_PRE*PRE + w_int;
-		TR << "Interface " << edges[i][1] << ": B = " << B[i] << std::endl;
+		TR << "Interface " << edges[i][1].first << "_" << edges[i][1].second << ": B = " << B[i] << std::endl;
 	}
 
 	//if dimer, check for disulfide bonds to use different A
@@ -359,7 +361,7 @@ void calc_B_values(utility::vector1<core::Real>  &B, const utility::vector1<util
 }
 
 //function to simulate ERMS
-void simulate_ERMS( utility::vector1<utility::vector1<core::Real>> &ERMS_prediction, const utility::vector1<core::Real> &ACE, const utility::vector1<core::Real> &B, const core::Size n_chains, const utility::vector1<utility::vector1<std::string>> &edges, const core::Real A, const core::Real breakage_cut, const utility::vector1<char> &nodes) {
+void simulate_ERMS( utility::vector1<utility::vector1<core::Real>> &ERMS_prediction, const utility::vector1<core::Real> &ACE, const utility::vector1<core::Real> &B, const core::Size n_chains, const utility::vector1<utility::vector1<std::pair<std::string,std::string>>> &edges, const core::Real A, const core::Real breakage_cut, const utility::vector1<std::string> &nodes) {
 	typedef boost::adjacency_list < boost::vecS, boost::vecS, boost::undirectedS > Graph;
 	core::Size n_sims = 1000;
 
@@ -384,16 +386,16 @@ void simulate_ERMS( utility::vector1<utility::vector1<core::Real>> &ERMS_predict
 				for ( core::Size l=1; l<=edges[k].size(); l++ ) {
 					core::Real random_num = numeric::random::uniform();
 					if ( random_num > PB[k] ) {
-						int node_0(nodes.index(edges[k][l][0])-1);
+						int node_0(nodes.index(edges[k][l].first)-1);
 						if ( node_0==-1 ) {
 							std::stringstream err_msg;
-							err_msg << "Chain " << edges[k][l][0] << " does not match input chains." << std::endl;
+							err_msg << "Chain " << edges[k][l].first << " does not match input chains." << std::endl;
 							utility_exit_with_message(err_msg.str());
 						}
-						int node_1(nodes.index(edges[k][l][2])-1);
+						int node_1(nodes.index(edges[k][l].second)-1);
 						if ( node_1==-1 ) {
 							std::stringstream err_msg;
-							err_msg << "Chain " << edges[k][l][2] << " does not match input chains." << std::endl;
+							err_msg << "Chain " << edges[k][l].second << " does not match input chains." << std::endl;
 							utility_exit_with_message(err_msg.str());
 						}
 						add_edge(node_0, node_1, G);
@@ -515,8 +517,8 @@ main( int argc, char * argv [] )
 
 		//read in complex type (nodes and edges)
 		core::Size n_chains_;
-		utility::vector1<char> nodes_;
-		utility::vector1<utility::vector1<std::string>> edges_;
+		utility::vector1<std::string> nodes_;
+		utility::vector1<utility::vector1<std::pair<std::string,std::string>>> edges_;
 		if ( option[ complex_type ].user() ) {
 			read_complex_type(n_chains_, nodes_, edges_);
 		} else {

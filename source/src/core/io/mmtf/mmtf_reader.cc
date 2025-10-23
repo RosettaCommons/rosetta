@@ -222,7 +222,7 @@ make_all_atom_information(::mmtf::StructureData const & sd,
 	core::Size groupIndex = 0;
 	core::Size atomIndex = 0;
 	core::Size atomSerial = 0;
-	utility::vector1<char> known_chainIDs;
+	utility::vector1<std::string> known_chainIDs;
 
 	// Just make the bare-bones atom information
 	std::vector< core::io::AtomInformation > all_AIs;

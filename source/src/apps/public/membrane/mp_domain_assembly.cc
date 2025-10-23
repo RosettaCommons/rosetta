@@ -640,7 +640,7 @@ void MPDomainAssembly::apply( Pose & pose ) {
 
 	// set chains in PDBInfo
 	PDBInfoOP new_info( new PDBInfo( full_pose ) );
-	new_info->set_chains( 'A' );
+	new_info->set_chains( "A" );
 	full_pose.pdb_info( new_info );
 
 	// full_pose.dump_pdb( "full_pose2.pdb" );

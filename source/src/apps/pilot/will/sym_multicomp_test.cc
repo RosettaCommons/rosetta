@@ -56,9 +56,9 @@ bool check_coords_match(
 
 
 vector1<Vec>
-chain_coords(Pose const & pose, char chain, core::Size nres) {
+chain_coords(Pose const & pose, std::string const & chain, core::Size nres) {
 	vector1<Vec> result;
-	std::map<core::Size,char> conf2chain = core::pose::conf2pdb_chain(pose);
+	std::map<core::Size,std::string> conf2chain = core::pose::conf2pdb_chain(pose);
 	for ( core::Size i = 1; i <= nres; ++i ) {
 		if ( conf2chain[pose.chain(i)] == chain ) {
 			result.push_back(pose.xyz(AtomID(2,i)));
@@ -67,9 +67,9 @@ chain_coords(Pose const & pose, char chain, core::Size nres) {
 	return result;
 }
 vector1<Vec>
-non_chain_coords(Pose const & pose, char chain, core::Size nres) {
+non_chain_coords(Pose const & pose, std::string const & chain, core::Size nres) {
 	vector1<Vec> result;
-	std::map<core::Size,char> conf2chain = core::pose::conf2pdb_chain(pose);
+	std::map<core::Size,std::string> conf2chain = core::pose::conf2pdb_chain(pose);
 	for ( core::Size i = 1; i <= nres; ++i ) {
 		if ( conf2chain[pose.chain(i)] != chain ) {
 			result.push_back(pose.xyz(AtomID(2,i)));
@@ -109,7 +109,7 @@ int main (int argc, char *argv[]) {
 			std::map<core::Size,core::conformation::symmetry::SymDof> dofs( syminfo->get_dofs() );
 			for ( std::map<core::Size,core::conformation::symmetry::SymDof>::const_iterator i = dofs.begin(); i != dofs.end(); ++i ) {
 				std::string jname = syminfo->get_jump_name(i->first);
-				char chain = jname[jname.size()-1];
+				std::string chain{ jname[jname.size()-1] };
 				vector1<Vec> preC   =     chain_coords(pose,chain,nres);
 				vector1<Vec> preNoC = non_chain_coords(pose,chain,nres);
 				move_jump(pose,i->first);

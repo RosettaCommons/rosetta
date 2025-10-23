@@ -222,10 +222,10 @@ public:
 		using namespace core::scoring::constraints;
 		core::pose::Pose pose( create_twores_1ubq_pose() );
 		pose.pdb_info()->number(1,393);
-		pose.pdb_info()->chain(1,'B');
+		pose.pdb_info()->chain(1,"B");
 		// Yup - inverted chain order.
 		pose.pdb_info()->number(2,345);
-		pose.pdb_info()->chain(2,'A');
+		pose.pdb_info()->chain(2,"A");
 
 		std::stringstream infile(" CA 345A CA 393B HARMONIC 4.3 0.25 1 ");
 

@@ -78,7 +78,7 @@ identify_targeted_positions( utility::vector1< core::Size > & pos_vec, core::pos
 	}
 
 	core::Size pos;
-	char chain;
+	std::string chain;
 
 	pos_file >> pos;
 	while ( !pos_file.eof() ) {
@@ -115,7 +115,7 @@ read_in_flexible_regions( protocols::loops::LoopsOP & flex_regions, core::pose::
 
 		core::Size start_pos;
 		core::Size end_pos;
-		char flex_chain;
+		std::string flex_chain;
 
 		regions_file >> start_pos;
 		regions_file >> end_pos;

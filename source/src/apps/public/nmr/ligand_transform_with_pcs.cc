@@ -148,9 +148,9 @@ main( int argc, char * argv [] )
 		pltm->set_resolution_damping(damping);
 
 		// Create docking mover
-		core::Size lig_resid = core::pose::get_resnums_for_chain(*pose, 'X')[1];
+		core::Size lig_resid = core::pose::get_resnums_for_chain(*pose, "X")[1];
 		LigandAreaOP sc( new LigandArea );
-		sc->chain_ = 'X';
+		sc->chain_ = "X";
 		sc->cutoff_ = 6.0;
 		sc->Calpha_restraints_ = 0.0;
 		sc->minimize_ligand_ = 10.0;
@@ -162,7 +162,7 @@ main( int argc, char * argv [] )
 		utility::vector1<LigandAreaOP> sc_areas(1,sc);
 
 		LigandAreaOP bb( new LigandArea );
-		bb->chain_ = 'X';
+		bb->chain_ = "X";
 		bb->cutoff_ = 7.0;
 		bb->Calpha_restraints_ = 0.3;
 		bb->minimize_ligand_ = 10.0;

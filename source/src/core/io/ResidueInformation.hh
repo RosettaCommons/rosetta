@@ -110,7 +110,13 @@ private:
 
 struct ResID
 {
-	ResID( int seq=1, char icode=' ', std::string const & chain=" "):
+	ResID( int seq=1, std::string const & chain=" ", char icode=' '):
+		seq_(seq),
+		icode_(icode),
+		chain_(chain)
+	{}
+
+	ResID( int seq, char icode, std::string const & chain):
 		seq_(seq),
 		icode_(icode),
 		chain_(chain)

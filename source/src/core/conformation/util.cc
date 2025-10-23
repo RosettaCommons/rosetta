@@ -96,7 +96,7 @@ canonical_chain_letter_for_chain_number(core::Size chain_num, bool extended) {
 }
 
 bool
-is_valid_chain(std::string const & chain) {
+is_chain_valid(std::string const & chain) {
 	return (! chain.empty() ) &&
 		chain != " " &&
 		chain != "^" &&

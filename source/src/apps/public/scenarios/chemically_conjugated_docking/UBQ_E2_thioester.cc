@@ -185,7 +185,7 @@ public:
 
 		//determine cysteine target
 		runtime_assert(E2.conformation().num_chains() == 1);
-		char const E2chain(E2.pdb_info()->chain(1));
+		std::string const E2chain(E2.pdb_info()->chain(1));
 		core::Size const E2_cys(E2.pdb_info()->pdb2pose(E2chain, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::E2_residue].value()));
 		runtime_assert(E2.residue_type(E2_cys).aa() == core::chemical::aa_cys);
 

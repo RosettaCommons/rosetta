@@ -401,15 +401,8 @@ bool is_false_string( std::string const & value_str );
 
 /// @brief Compactifies vectors of ints:  1 2 3 9 10 11 to "1-3 9-11"
 std::string
-make_tag_with_dashes( utility::vector1< int > res_vector,
+make_tag_with_dashes( utility::vector1< int > const & res_vector,
 	char const delimiter = ' ' );
-
-///// @brief Compactifies vectors of ints and chars (resnum and chain):  1A 2A 3A 9B 10B 11B to "A:1-3 B:9-11"
-//std::string
-//make_tag_with_dashes( utility::vector1< int > const & res_vector,
-//	utility::vector1< char > const & chain_vector,
-//	utility::vector1< std::string > const & segid_vector,
-//	char const delimiter = ' ' );
 
 /// @brief Compactifies vectors of ints and strings (resnum and chain):  1A 2A 3A 9B 10B 11B to "A:1-3 B:9-11"
 std::string

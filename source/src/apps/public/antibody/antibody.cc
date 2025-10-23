@@ -363,7 +363,7 @@ int antibody_main()
                 }
 				if( option[ OptionKeys::vhh_only] ) {
 					// delete light chain
-					core::pose::PoseOP temp_pose = model->split_by_chain( core::pose::get_chain_id_from_chain( 'H', *model ) );
+					core::pose::PoseOP temp_pose = model->split_by_chain( core::pose::get_chain_id_from_chain( "H", *model ) );
 					// over-write graft output with just heavy model
 					model = temp_pose;
 					model->dump_pdb(prefix + "model" + suffix + ".pdb");

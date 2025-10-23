@@ -50,7 +50,7 @@ public:
 	void offset_resis( core::Size const offset_resis );
 
 	// getters
-	char quasi_symm_comp() const;
+	std::string const & quasi_symm_comp() const;
 	core::Size num_quasi_repeats() const;
 	core::Size offset_resis() const;
 

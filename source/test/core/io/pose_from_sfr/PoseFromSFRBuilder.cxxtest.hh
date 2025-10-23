@@ -176,18 +176,18 @@ public:
 		pose::PDBInfoCOP info( pose.pdb_info() );
 
 		TS_ASSERT_EQUALS( pose.residue( 1 ).name3(), "GLY" );
-		TS_ASSERT_EQUALS( info->chain( 1 ), 'A' );
+		TS_ASSERT_EQUALS( info->chain( 1 ), "A" );
 		TS_ASSERT_EQUALS( info->number( 1 ), 5 );
 		TS_ASSERT_EQUALS( pose.residue( 2 ).name3(), "Glc" );
-		TS_ASSERT_EQUALS( info->chain( 2 ), 'B' );
+		TS_ASSERT_EQUALS( info->chain( 2 ), "B" );
 		TS_ASSERT_EQUALS( info->number( 2 ), 401 );
 		TS_ASSERT_EQUALS( info->icode( 2 ), 'A' );
 		TS_ASSERT_EQUALS( pose.residue( 3 ).name3(), "Glc" );
-		TS_ASSERT_EQUALS( info->chain( 3 ), 'B' );
+		TS_ASSERT_EQUALS( info->chain( 3 ), "B" );
 		TS_ASSERT_EQUALS( info->number( 3 ), 401 );
 		TS_ASSERT_EQUALS( info->icode( 3 ), 'B' );
 		TS_ASSERT_EQUALS( pose.residue( 4 ).name3(), "GLY" );
-		TS_ASSERT_EQUALS( info->chain( 4 ), 'C' );
+		TS_ASSERT_EQUALS( info->chain( 4 ), "C" );
 		TS_ASSERT_EQUALS( info->number( 4 ), 11 );
 	}
 
@@ -242,12 +242,12 @@ public:
 		options2.set_pack_missing_sidechains(false);
 		options3.set_pack_missing_sidechains(false);
 		options4.set_pack_missing_sidechains(false);
-		options2.set_check_if_residues_are_Ntermini( "" );
-		options2.set_check_if_residues_are_Ctermini( "" );
-		options3.set_check_if_residues_are_Ntermini( "B" );
-		options3.set_check_if_residues_are_Ctermini( "B" );
-		options4.set_check_if_residues_are_Ntermini( "AC" );
-		options4.set_check_if_residues_are_Ctermini( "AC" );
+		options2.set_check_if_residues_are_Ntermini( utility::vector1<std::string>{} );
+		options2.set_check_if_residues_are_Ctermini( utility::vector1<std::string>{} );
+		options3.set_check_if_residues_are_Ntermini( {"B"} );
+		options3.set_check_if_residues_are_Ctermini( {"B"} );
+		options4.set_check_if_residues_are_Ntermini( {"A","C"} );
+		options4.set_check_if_residues_are_Ctermini( {"A","C"} );
 
 		core::pose::PoseOP pose1( core::import_pose::pose_from_file( "core/io/pose_from_sfr/1IJ3_cleaned.pdb" , options1, false, core::import_pose::PDB_file  ) );
 		core::pose::PoseOP pose2( core::import_pose::pose_from_file( "core/io/pose_from_sfr/1IJ3_cleaned.pdb" , options2, false, core::import_pose::PDB_file  ) );
