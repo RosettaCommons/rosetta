@@ -223,7 +223,8 @@ void SnugDockProtocol::apply( Pose & pose ) {
 	if ( antibody_info_->antigen_present() ) {
 		TR << "Running Interface AnalyzerMover" << std::endl;
 		// use the first jump (should always be true with universal set up
-		InterfaceAnalyzerMover analyzer = InterfaceAnalyzerMover( option[ OptionKeys::docking::partners ]() /* get jump from partners flag */, false /* tracer */, nullptr /* let it construct sf*/, false /* compute_packstat */ , false /* pack_input */,  true /* pack_separated */) ;
+		core::pose::DockingPartners partners = core::pose::DockingPartners::docking_partners_from_string( option[ OptionKeys::docking::partners ]() );
+		InterfaceAnalyzerMover analyzer = InterfaceAnalyzerMover( partners /* get jump from partners flag */, false /* tracer */, nullptr /* let it construct sf*/, false /* compute_packstat */ , false /* pack_input */,  true /* pack_separated */) ;
 
 		analyzer.apply(pose); //Adds PoseExtraScore_Float to be output into scorefile.
 	}

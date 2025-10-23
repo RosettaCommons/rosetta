@@ -13,6 +13,7 @@
 #include <core/conformation/Conformation.hh>
 
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -85,29 +86,15 @@ IndelOptimizationMover::apply(
 
 	bool there_is_a_jump = ( pose.conformation().num_chains() > 1 );
 
-	std::string partners( pose.pdb_info()->chain( loop_start ) );
+	core::pose::DockingPartners partners;
 	if ( there_is_a_jump ) {
 		using namespace basic::options;
 		if ( option[ OptionKeys::docking::partners ].user() ) {
-			partners = option[ OptionKeys::docking::partners ].value();
+			partners = core::pose::DockingPartners::docking_partners_from_string( option[ OptionKeys::docking::partners ].value() );
 		}
-		/*.append( "_" );
-		std::set< char > other_chains;
-		//utility::vector1< core::Size > chain_endings = pose.conformation().chain_endings();
-		for ( core::Size i = 1; i <= pose.size(); ++i ) {
-
-		TR << "Residue " << i << " chain " << pose.pdb_info()->chain( i ) << std::endl;
-		if ( pose.pdb_info()->chain( i ) != pose.pdb_info()->chain( loop_start ) ) {
-		other_chains.insert( pose.pdb_info()->chain( i ) );
-		TR << "Residue " << i << " chain " << pose.pdb_info()->chain( i ) << std::endl;
-		}
-		}
-		for ( std::set< char >::iterator it = other_chains.begin(),
-		end = other_chains.end(); it != end; ++it ) {
-		partners.append( &(*it) );
-		}
-		*/
 		TR << "Partners will be " << partners << std::endl;
+	} else {
+		partners.partner1.push_back( pose.pdb_info()->chain( loop_start ) );
 	}
 
 	auto cutpoint = core::Size( ( loop_start + loop_end ) / 2 );

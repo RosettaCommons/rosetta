@@ -38,6 +38,7 @@
 
 //Utility Headers
 #include <utility/string_util.hh>
+#include <utility/stream_util.hh>
 #include <utility/tag/Tag.hh>
 
 #include <cppdb/frontend.h>
@@ -111,7 +112,10 @@ InterfaceFeatures::set_compute_packstat(const bool compute_packstat) {
 
 void
 InterfaceFeatures::set_interface_chains(vector1<std::string> const & interfaces){
-	interfaces_ = interfaces;
+	interfaces_.clear();
+	for ( std::string const & interface: interfaces ) {
+		interfaces_.push_back( core::pose::DockingPartners::docking_partners_from_string(interface) );
+	}
 }
 
 InterfaceFeatures::~InterfaceFeatures()= default;
@@ -140,12 +144,15 @@ InterfaceFeatures::parse_my_tag(
 	if ( tag->hasOption("interface") ) {
 		std::string interface = tag->getOption<std::string>("interface");
 		if ( interface.find(",") != std::string::npos ) { utility_exit_with_message("Only one interface should be specified using the interface option");}
-		interfaces_.push_back(interface);
+		interfaces_.push_back(core::pose::DockingPartners::docking_partners_from_string(interface));
 	}
 
 	if ( tag->hasOption("interfaces") ) {
 		std::string interfaces = tag->getOption<std::string>("interfaces");
-		interfaces_ = utility::string_split_multi_delim(interfaces, ":,'`~+*&|;.");//Why not?
+		utility::vector1< std::string > interface_designations = utility::string_split_multi_delim(interfaces, ":,'`~+*&|;.");//Why not?
+		for ( std::string const & interface: interface_designations ) {
+			interfaces_.push_back(core::pose::DockingPartners::docking_partners_from_string(interface));
+		}
 	}
 
 
@@ -180,7 +187,7 @@ InterfaceFeatures::report_features(
 
 	for ( core::Size i = 1; i <= interfaces_.size(); ++i ) {
 
-		std::string interface = interfaces_[i];
+		core::pose::DockingPartners interface = interfaces_[i];
 		report_all_interface_features(pose, relevant_residues, struct_id, db_session, interface, interface);
 	}
 	return 0;
@@ -192,23 +199,16 @@ InterfaceFeatures::report_all_interface_features(
 	utility::vector1<bool> const & relevant_residues,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	std::string const & interface,
-	std::string const & db_interface)
+	core::pose::DockingPartners const & interface,
+	core::pose::DockingPartners const & db_interface)
 {
 	TR << "reporting features for: "<< interface << std::endl;
-	//Check to make sure interface/chain definition is solid.
-	if ( ! interface.find('_') || !db_interface.find('_') ) {
-		utility_exit_with_message("Unrecognized interface: "+interface+" must have side1 and side2, ex: LH_A or L_H to calculate interface data");
-	}
 
 	if ( !chains_exist_in_pose(pose, interface) ) {
 		TR <<"All chains do not exist in the given pose.  Skipping interface: " << interface << std::endl;
 		return;
 	}
 
-	vector1<std::string> interface_sides = utility::string_split(db_interface, '_');
-	std::string interface_side1 = interface_sides[1];
-	std::string interface_side2 = interface_sides[2];
 	interface_analyzer_ = utility::pointer::make_shared< protocols::analysis::InterfaceAnalyzerMover >(interface, true, scorefxn_, compute_packstat_, pack_together_, pack_separated_);
 	interface_analyzer_->set_use_centroid_dG(false); //Uses score3 by default without rg - used in zinc homodimer design .  Used for clash detection
 	interface_analyzer_->apply_const(pose);
@@ -217,28 +217,28 @@ InterfaceFeatures::report_all_interface_features(
 		TR << "Interface dSASA lower than set cutoff value of "<< dSASA_cutoff_ << " : not including data in database..." << std::endl;
 		return;
 	}
-	report_interface_features(pose, struct_id, db_session, interface_side1, interface_side2);
-	report_interface_residue_features(pose, relevant_residues, struct_id, db_session, interface_side1, interface_side2);
+	report_interface_features(pose, struct_id, db_session, db_interface);
+	report_interface_residue_features(pose, relevant_residues, struct_id, db_session, db_interface);
 
-	report_interface_side_features(pose, struct_id, db_session, interface_side1, interface_side2, total, "total");
-	report_interface_side_features(pose, struct_id, db_session, interface_side1, interface_side2, side1, "side1");
-	report_interface_side_features(pose, struct_id, db_session, interface_side1, interface_side2, side2,  "side2");
+	report_interface_side_features(pose, struct_id, db_session, db_interface, total, "total");
+	report_interface_side_features(pose, struct_id, db_session, db_interface, side1, "side1");
+	report_interface_side_features(pose, struct_id, db_session, db_interface, side2,  "side2");
 }
 
 
 void
-InterfaceFeatures::make_interface_combos(const core::pose::Pose& pose, vector1< std::string > & interfaces) {
+InterfaceFeatures::make_interface_combos(const core::pose::Pose& pose, vector1< core::pose::DockingPartners > & interfaces) {
 
 
 	TR << "making interface combos"<<std::endl;
-	vector1< std::string > chain_combos;
-	vector1< std::string > size_combos;
+	vector1< vector1<std::string> > chain_combos;
+	vector1< vector1<std::string> > size_combos;
 
-	std::string chains = get_all_pose_chains(pose);
+	utility::vector1< std::string > chains = get_all_pose_chains(pose);
 	get_length_combos(chains, size_combos);
 
 	for ( core::Size i = 1; i <= size_combos.size(); ++i ) {
-		get_all_string_combos(size_combos[i], "", chain_combos);
+		get_all_order_combos(size_combos[i], utility::vector1<std::string>{}, chain_combos);
 	}
 
 	//Remove duplicates
@@ -246,9 +246,12 @@ InterfaceFeatures::make_interface_combos(const core::pose::Pose& pose, vector1< 
 	chain_combos.erase(std::unique(chain_combos.begin(), chain_combos.end()), chain_combos.end());
 
 	TR << std::endl;
-	for ( core::Size i = 1; i<= chain_combos.size(); ++i ) {
-		for ( core::Size s = 1; s <= chain_combos[i].length()-1; ++s ) {
-			std::string dock_chains = chain_combos[i].substr(0, s)+"_"+chain_combos[i].substr(s);
+	for ( utility::vector1<std::string> const & combo: chain_combos ) {
+		// We want to split the combo into partners, with at least entry on each.
+		for ( auto iter = combo.begin()+1; iter != combo.end(); ++iter ) {
+			core::pose::DockingPartners dock_chains;
+			dock_chains.partner1 = utility::vector1<std::string>( combo.begin(), iter );
+			dock_chains.partner2 = utility::vector1<std::string>( iter, combo.end() );
 			if ( ! interface_exists(interfaces, dock_chains) ) {
 				interfaces.push_back(dock_chains);
 			}
@@ -256,57 +259,57 @@ InterfaceFeatures::make_interface_combos(const core::pose::Pose& pose, vector1< 
 	}
 	std::sort(interfaces.begin(), interfaces.end());
 	for ( core::Size i = 1; i<= interfaces.size(); ++i ) {
-		TR << "added interface:  " + interfaces[i] << std::endl;
+		TR << "added interface:  " + interfaces[i].str() << std::endl;
 	}
 
 }
 
 void
-InterfaceFeatures::get_length_combos(std::string current, vector1<std::string> & sizes) const {
-	if ( current.length() >=2 ) {
+InterfaceFeatures::get_length_combos(utility::vector1< std::string > const & current, vector1< vector1<std::string> > & sizes) const {
+	if ( current.size() >=2 ) {
 		sizes.push_back(current);
-		if ( current.length() == 2 ) {
+		if ( current.size() == 2 ) {
 			return;
 		}
 	}
 
-	for ( std::size_t k = 1; k <= current.length(); ++k ) {
-		std::string new_string(current);
-		//char chain = current.at(k-1);
-		new_string.erase(k-1, 1); //Remove the chain from the interface
-		get_length_combos(new_string, sizes);
+	for ( std::size_t k = 1; k <= current.size(); ++k ) {
+		utility::vector1< std::string > new_vector(current);
+		new_vector.erase(new_vector.begin() + (k-1)); //Remove the chain from the interface
+		get_length_combos(new_vector, sizes);
 	}
 }
 
 
 void
-InterfaceFeatures::get_all_string_combos(std::string& interface, std::string current, vector1<std::string>& chains) const {
+InterfaceFeatures::get_all_order_combos(utility::vector1<std::string> const & all, utility::vector1<std::string> const & current, utility::vector1<utility::vector1<std::string>> & orders_out
+) const {
 
-	if ( interface.length() == current.length() ) {
-		chains.push_back(current);
+	if ( all.size() == current.size() ) {
+		orders_out.push_back(current);
 		//TR << "Chain added: "<<current << std::endl;
 		return;
 	}
-	for ( core::Size i = 1; i<=interface.length(); ++i ) {
+	for ( core::Size i = 1; i<=all.size(); ++i ) {
 
-		std::string letter = interface.substr(i-1, 1);
-		if ( current.find(letter) != std::string::npos ) {
+		std::string chain = all[i];
+		if ( current.contains(chain) ) {
 			continue;
 		}
 
-		std::string new_current = current + letter;
-		get_all_string_combos(interface, new_current, chains);
+		utility::vector1<std::string> new_current = current;
+		new_current.push_back( chain );
+		get_all_order_combos(all, new_current, orders_out);
 	}
 }
 
 bool
-InterfaceFeatures::chains_exist_in_pose(core::pose::Pose const & pose, std::string const & interface) const {
-	utility::vector1<std::string> interfaceSP = utility::string_split(interface, '_');
-	std::string chains = interfaceSP[1]+interfaceSP[2];
+InterfaceFeatures::chains_exist_in_pose(core::pose::Pose const & pose, core::pose::DockingPartners const & interface) const {
 
 	bool has_all_chains = true;
-	for ( core::Size i = 1; i<=chains.length(); ++i ) {
-		char chain = chains.at(i-1);
+	utility::vector1<std::string> all_chains = interface.partner1;
+	all_chains.append( interface.partner2 );
+	for ( std::string const & chain: all_chains ) {
 		if ( ! core::pose::has_chain(chain, pose) ) {
 			has_all_chains = false;
 			break;
@@ -315,13 +318,13 @@ InterfaceFeatures::chains_exist_in_pose(core::pose::Pose const & pose, std::stri
 	return has_all_chains;
 }
 
-std::string
+utility::vector1< std::string >
 InterfaceFeatures::get_all_pose_chains(core::pose::Pose const & pose){
 
-	std::string chains = "";
+	utility::vector1< std::string > chains;
 	for ( core::Size i = 1; i <= pose.conformation().num_chains(); ++i ) {
 		std::string chain = core::pose::get_chain_from_chain_id(i, pose);
-		chains = chains+chain;
+		chains.push_back(chain);
 	}
 	TR <<"Pose chains: "<<chains << std::endl;
 	return chains;
@@ -329,27 +332,28 @@ InterfaceFeatures::get_all_pose_chains(core::pose::Pose const & pose){
 
 
 bool
-InterfaceFeatures::interface_exists(vector1<std::string> & interfaces, std::string & dock_chains) const {
-	utility::vector1<std::string> newSP = utility::string_split(dock_chains, '_');
+InterfaceFeatures::interface_exists(vector1< core::pose::DockingPartners> & interfaces, core::pose::DockingPartners const & dock_chains) const {
 
+	vector1<std::string> newSP1 = dock_chains.partner1;
+	vector1<std::string> newSP2 = dock_chains.partner2;
 	//Sort so order of chains doesn't matter (LH_AB = HL_BA)
-	std::sort(newSP[1].begin(), newSP[1].end());
-	std::sort(newSP[2].begin(), newSP[2].end());
+	std::sort(newSP1.begin(), newSP1.end());
+	std::sort(newSP2.begin(), newSP2.end());
 
-	for ( core::Size i = 1; i <= interfaces.size(); ++i ) {
-		utility::vector1<std::string> oldSP = utility::string_split(interfaces[i], '_');
-		std::sort(oldSP[1].begin(), oldSP[1].end());
-		std::sort(oldSP[2].begin(), oldSP[2].end());
+	for ( core::pose::DockingPartners const & interface: interfaces ) {
+		// order of chains doesn't matter (LH_AB = HL_BA)
+		vector1<std::string> oldSP1 = interface.partner1;
+		vector1<std::string> oldSP2 = interface.partner2;
+		std::sort(oldSP1.begin(), oldSP1.end());
+		std::sort(oldSP2.begin(), oldSP2.end());
 
-
-		if ( oldSP[1] == newSP[2] && oldSP[2] == newSP[1] ) {
+		if ( oldSP1 == newSP2 && oldSP2 == newSP1 ) {
 			return true; //LH_AB == AB_LH
-		} else if ( oldSP[1] == newSP[1] && oldSP[2] == newSP[2] ) {
+		} else if ( oldSP1 == newSP1 && oldSP2 == newSP2 ) {
 			return true; // LH_AB == LH_AB
 		} else {
 			continue;
 		}
-
 	}
 	return false;
 }
@@ -360,8 +364,7 @@ InterfaceFeatures::report_interface_residue_features(
 	const utility::vector1<bool>& relevant_residues,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	std::string const & chains_side1,
-	std::string const & chains_side2) const
+	core::pose::DockingPartners const & interface) const
 {
 	std::map<protocols::analysis::InterfaceRegion, std::string> regions;
 	regions[side1] = "side1";
@@ -379,7 +382,7 @@ InterfaceFeatures::report_interface_residue_features(
 			} else {
 				side = side2;
 			}
-			write_interface_residue_data_row_to_db(struct_id, db_session, chains_side1, chains_side2, regions[side],i, interface_data);
+			write_interface_residue_data_row_to_db(struct_id, db_session, interface, regions[side],i, interface_data);
 		}
 	}
 }
@@ -451,8 +454,7 @@ InterfaceFeatures::report_interface_features(
 	const core::pose::Pose& pose,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	std::string const & chains_side1,
-	std::string const & chains_side2) const
+	core::pose::DockingPartners const & interface ) const
 {
 	using namespace protocols::analysis;
 
@@ -486,7 +488,9 @@ InterfaceFeatures::report_interface_features(
 
 	// strings are passed to bind by reference
 	// we need the lifetime of the combined string to exist at least until safely_write_to_database()
-	std::string partners( chains_side1+"_"+chains_side2 );
+	std::string partners = interface.str();
+	std::string chains_side1 = interface.partner1_str();
+	std::string chains_side2 = interface.partner2_str();
 
 	core::Size i = 0;
 	stmt.bind(i+=1, struct_id);
@@ -596,8 +600,7 @@ InterfaceFeatures::report_interface_side_features(
 	core::pose::Pose const &,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	std::string const & chains_side1,
-	std::string const & chains_side2,
+	core::pose::DockingPartners const & interface,
 	protocols::analysis::InterfaceRegion region,
 	std::string const & region_string) const
 {
@@ -638,7 +641,9 @@ InterfaceFeatures::report_interface_side_features(
 
 	// strings are passed to bind by reference
 	// we need the lifetime of the combined string to exist at least until safely_write_to_database()
-	std::string partners( chains_side1+"_"+chains_side2 );
+	std::string partners = interface.str();
+	std::string chains_side1 = interface.partner1_str();
+	std::string chains_side2 = interface.partner2_str();
 
 	core::Size i = 0;
 	stmt.bind(i+=1, struct_id);
@@ -744,8 +749,7 @@ void
 InterfaceFeatures::write_interface_residue_data_row_to_db(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	std::string const & chains_side1,
-	std::string const & chains_side2,
+	core::pose::DockingPartners const & interface,
 	std::string const & side,
 	core::Size const resnum,
 	protocols::analysis::PerResidueInterfaceData const & interface_data) const
@@ -775,7 +779,9 @@ InterfaceFeatures::write_interface_residue_data_row_to_db(
 
 	// strings are passed to bind by reference
 	// we need the lifetime of the combined string to exist at least until safely_write_to_database()
-	std::string partners( chains_side1+"_"+chains_side2 );
+	std::string partners = interface.str();
+	std::string chains_side1 = interface.partner1_str();
+	std::string chains_side2 = interface.partner2_str();
 
 	core::Size i = 0;
 	stmnt.bind(i+=1, struct_id);

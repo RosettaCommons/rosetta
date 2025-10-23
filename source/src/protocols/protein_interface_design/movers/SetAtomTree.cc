@@ -69,7 +69,6 @@ SetAtomTree::SetAtomTree() :
 	simple_ft_( false ),
 	two_parts_chain1_( false ),
 	jump_( 1 ),
-	partners_( "_" ),
 	resnum_( "" ),
 	connect_to_( "" ),
 	anchor_res_( "" ),
@@ -121,7 +120,7 @@ SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & )
 		return;
 	}
 	docking_ft_ = tag->getOption< bool >("docking_ft", false );
-	partners_ = tag->getOption< std::string >("partners", "_" );
+	partners_ = core::pose::DockingPartners::docking_partners_from_string( tag->getOption< std::string >("partners", "_" ) );
 	simple_ft( tag->getOption< bool >( "simple_ft", false ) );
 	jump_ = tag->getOption< core::Size >( "jump", 1);
 	if ( docking_ft_ ) return;

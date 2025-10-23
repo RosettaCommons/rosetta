@@ -23,6 +23,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/chains_util.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -366,29 +367,36 @@ seq_design_strategy_to_string(SeqDesignStrategyEnum strategy){
 	}
 }
 
-std::string
-get_dock_chains_from_ab_dock_chains(AntibodyInfoCOP ab_info, std::string const & ab_dock_chains){
-	vector1<std::string> chains;
-	for ( core::Size i = 0; i <= ab_dock_chains.length()-1; ++i ) {
-		char ab_chain = ab_dock_chains[i];
-		if ( ab_chain == 'A' ) {
-			vector1<std::string> antigen = ab_info->get_antigen_chains();
-			if ( antigen.size() == 0 ) {
-				TR <<" Antigen not present to dock. skipping addition of Antigen. - setting L_H dock instead" << std::endl;
-				return "L_H";
+core::pose::DockingPartners
+get_dock_chains_from_ab_dock_chains(AntibodyInfoCOP ab_info, core::pose::DockingPartners const & ab_dock_chains){
+	core::pose::DockingPartners dock_chains;
 
-			}
+	if ( ab_info->get_antigen_chains().size() == 0 && ( ab_dock_chains.partner1.contains("A") || ab_dock_chains.partner2.contains("A") ) ) {
+		TR <<" Antigen not present to dock. skipping addition of Antigen. - setting L_H dock instead" << std::endl;
+		dock_chains.partner1.push_back("L");
+		dock_chains.partner2.push_back("H");
+		return dock_chains;
+	}
 
-			for ( core::Size x = 1; x <= antigen.size(); ++x ) {
-				chains.push_back(antigen[x]);
-			}
-		} else if ( ab_chain == 'L' || ab_chain == 'H' || ab_chain == '_' ) {
-			chains.push_back(ab_chain);
+	for ( std::string const & chain: ab_dock_chains.partner1 ) {
+		if ( chain == "L" || chain == "H" ) {
+			dock_chains.partner1.push_back( chain );
+		} else if ( chain == "A" ) {
+			dock_chains.partner1.append( ab_info->get_antigen_chains() );
 		} else {
-			utility_exit_with_message("ab_dock_chains must be L H or A: " + ab_dock_chains);
+			utility_exit_with_message("ab_dock_chains must be L H or A: " + ab_dock_chains.str());
 		}
 	}
-	std::string dock_chains(chains.begin(), chains.end());
+	for ( std::string const & chain: ab_dock_chains.partner2 ) {
+		if ( chain == "L" || chain == "H" ) {
+			dock_chains.partner1.push_back( chain );
+		} else if ( chain == "A" ) {
+			dock_chains.partner1.append( ab_info->get_antigen_chains() );
+		} else {
+			utility_exit_with_message("ab_dock_chains must be L H or A: " + ab_dock_chains.str());
+		}
+	}
+
 	return dock_chains;
 }
 

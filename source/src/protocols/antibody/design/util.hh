@@ -23,6 +23,7 @@
 #include <protocols/loops/Loops.hh>
 
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/DockingPartners.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/operation/TaskOperations.fwd.hh>
 
@@ -182,9 +183,9 @@ seq_design_strategy_to_enum(std::string const & strategy);
 std::string
 seq_design_strategy_to_string(SeqDesignStrategyEnum strategy);
 
-/// @brief Convert an ab_dock_chain (L_H/ LH_A, etc. to the full dock chain string)
-std::string
-get_dock_chains_from_ab_dock_chains(AntibodyInfoCOP ab_info, std::string const & ab_dock_chains);
+/// @brief Convert an ab_dock_chain (with "A" for antigen to the full dock chain string)
+core::pose::DockingPartners
+get_dock_chains_from_ab_dock_chains(AntibodyInfoCOP ab_info, core::pose::DockingPartners const & ab_dock_chains);
 
 
 /// Move this somewhere in pose or pose_selection.  PDBInfo's ResidueKey should be public and passed around in the first place.

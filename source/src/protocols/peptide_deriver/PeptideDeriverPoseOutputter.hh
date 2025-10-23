@@ -79,8 +79,8 @@ private:
 	bool is_dump_prepared_pose_;
 	bool is_dump_cyclic_poses_;
 
-	char current_receptor_chain_letter_;
-	char current_partner_chain_letter_;
+	std::string current_receptor_chain_letter_;
+	std::string current_partner_chain_letter_;
 	core::Size current_peptide_length_;
 	core::pose::PoseOP current_chain_pair_pose_;
 	bool is_chain_pair_new_;

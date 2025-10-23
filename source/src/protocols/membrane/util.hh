@@ -44,6 +44,7 @@
 
 
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/DockingPartners.fwd.hh>
 #include <core/types.hh>
 
 // Utility Headers
@@ -188,7 +189,7 @@ void reorder_membrane_foldtree( core::pose::Pose & pose );
 ///
 ///  iJ = interface jump, will be returned from the function
 ///
-core::Size create_membrane_docking_foldtree_from_partners( core::pose::Pose & pose, std::string const & partners );
+core::Size create_membrane_docking_foldtree_from_partners( core::pose::Pose & pose, core::pose::DockingPartners const & partners );
 
 /// @brief Create membrane foldtree from scratch
 /// @details The foldtree is setup such that the membrane is at the root and

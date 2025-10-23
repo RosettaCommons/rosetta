@@ -48,6 +48,9 @@ public:
 	///
 	ChainSelector( ChainSelector const & src);
 
+	// takes a vector of chain strings
+	ChainSelector( utility::vector1< std::string > const & chains );
+
 	// takes a comma-separated list of chains (e.g. "A,B")
 	ChainSelector( std::string const & chains );
 

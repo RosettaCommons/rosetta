@@ -218,7 +218,7 @@ DockingProtocol::set_default()
 	dock_min_ = false;
 	rt_min_ = false;
 	sc_min_ = false;
-	partners_ = "_";
+	partners_ = core::pose::DockingPartners();
 	cst_weight_ = 0.0;
 	cst_fa_weight_ = 0.0;
 	use_csts_ = false;
@@ -388,7 +388,7 @@ DockingProtocol::init_from_options()
 
 	// This defaults to "_"
 	if ( option[ OptionKeys::docking::partners ].user() ) {
-		set_partners(option[ OptionKeys::docking::partners ]());
+		set_partners( core::pose::DockingPartners::docking_partners_from_string(option[ OptionKeys::docking::partners ]()));
 	}
 
 	// Defaults to 0
@@ -524,21 +524,13 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		set_input_pose( input_pose );
 	}
 
-	// assuming partners chains are continuous in pose numbering,
-	// some magic to extract partner size (start/end) without relying on the FoldTree
-	// use partners flag and PDBInfo to parse out start/end residues for each partner
-	utility::vector1< std::string > partner_split = utility::string_split( partners_, '_' );
-
 	// necessary for loading ensembles later
 	// instatiate as 0 and possibly check later if values have been altered
 	core::Size p1_start = 0, p1_end = 0, p2_start = 0, p2_end = 0;
 	std::string p1_seq, p2_seq;
 
-
 	// only do this if partners_ is given ...
-	if ( not (partners_ == "_") ) {
-		std::string partner1_chains = partner_split[ 1 ]; // chains comprising partner 1
-		std::string partner2_chains = partner_split[ 2 ]; // chains comprising partner 2
+	if ( not partners_.is_empty() ) {
 
 		// map to store chain : pose number relationship
 		std::map< std::string, utility::vector1< core::Size >> chain_residue_map;
@@ -547,10 +539,10 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			chain_residue_map[ pose.pdb_info()->chain(i) ].push_back(i);
 			// also store sequences, to later ensure chain order within a partner e.g. HL_A vs. LH_A
-			if ( partner1_chains.find(pose.pdb_info()->chain(i)) != std::string::npos ) {
+			if ( partners_.partner1.has_value( pose.pdb_info()->chain(i) ) ) {
 				p1_seq += pose.sequence()[i-1];
 			}
-			if ( partner2_chains.find(pose.pdb_info()->chain(i)) != std::string::npos ) {
+			if ( partners_.partner2.has_value( pose.pdb_info()->chain(i) ) ) {
 				p2_seq += pose.sequence()[i-1];
 			}
 		}
@@ -560,15 +552,15 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		utility::vector1< core::Size > all_partner1_residues;
 		utility::vector1< core::Size > all_partner2_residues;
 
-		for ( char& c : partner1_chains ) {
+		for ( std::string const & chn : partners_.partner1 ) {
 			all_partner1_residues.insert( all_partner1_residues.end(),
-				chain_residue_map[std::string{c}].begin(),
-				chain_residue_map[std::string{c}].end() );
+				chain_residue_map[chn].begin(),
+				chain_residue_map[chn].end() );
 		}
-		for ( char& c : partner2_chains ) {
+		for ( std::string const & chn : partners_.partner2 ) {
 			all_partner2_residues.insert( all_partner2_residues.end(),
-				chain_residue_map[std::string{c}].begin(),
-				chain_residue_map[std::string{c}].end() );
+				chain_residue_map[chn].begin(),
+				chain_residue_map[chn].end() );
 		}
 
 		p1_start = *std::min_element(all_partner1_residues.begin(), all_partner1_residues.end());
@@ -601,7 +593,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		core::Size cutpoint(pose.fold_tree().cutpoint_by_jump( rb_jump ));
 
 		// if partners_ were not given, define by jump here
-		if ( partners_ == "_" ) {
+		if ( partners_.is_empty() ) {
 			p1_start = 1;
 			p1_end = cutpoint;
 
@@ -1316,7 +1308,7 @@ DockingProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 	//get through partners
 	if ( tag->hasOption( "partners" ) ) {
 		std::string const partners( tag->getOption<std::string>( "partners") );
-		set_partners(partners);
+		set_partners( core::pose::DockingPartners::docking_partners_from_string(partners));
 	}
 	//initialize other flags to control behavior
 	//do high res step or not

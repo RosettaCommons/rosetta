@@ -23,6 +23,7 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/operation/TaskOperations.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
 #include <protocols/simple_task_operations/RestrictToLoopsAndNeighbors.fwd.hh>
@@ -88,9 +89,13 @@ public:
 	cdr_overhang(CDRNameEnum const cdr, core::Size const overhang);
 
 	/// @brief Set the ab_dock chains, which will be used for any docking or minimization on the jump.  (LH_A, L_H, etc. - A for antigen)
-	void
-	ab_dock_chains(std::string ab_dock_chains);
+	//	This is a backward compatibility shim - prefer the DockingPartners version for the most flexibility
+//	void
+//	ab_dock_chains(std::string const & ab_dock_chains);
 
+	/// @brief Set the ab_dock chains (docking partners, but with chain 'A' standing in for all antigens)
+	void
+	ab_dock_chains(core::pose::DockingPartners const & ab_dock_chains);
 
 	/// @brief Set a value for interface detection across the class.
 	void
@@ -234,7 +239,7 @@ public:
 	//
 
 	//Get the dock chains for LH and Interface.
-	std::string
+	core::pose::DockingPartners
 	get_dock_chains() const;
 
 
@@ -272,7 +277,7 @@ private:
 	core::Real interface_dis_;
 	core::Real neighbor_dis_;
 
-	std::string ab_dock_chains_; //L_H, LH_A, etc.  Antigen as A, not full antigen chain strings
+	core::pose::DockingPartners ab_dock_chains_; // Antigen as A, not full antigen chain strings
 	utility::vector1 <bool> model_cdrs_; //These cdrs are cdr's to work on.  Whether copying, refining, designing, etc.etc.
 	utility::vector1 <core::Size> overhangs_;
 

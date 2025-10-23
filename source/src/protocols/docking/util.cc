@@ -26,9 +26,9 @@
 #include <core/select/residue_selector/ChainSelector.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/types.hh>
-
 // Basic headers
 #include <basic/Tracer.hh>
 
@@ -46,33 +46,6 @@ static basic::Tracer TR( "protocols.docking.util" );
 
 namespace protocols {
 namespace docking {
-
-/// @details Converts a string representation of the partner from the dock_partners flag to a comma-separated list of
-/// chains that can be passed into a ChainSeletor.
-/// For example, the dock_partners flags "ABC_D" will split into two partners: "ABC" and "D".
-/// This function will convert "ABC" to "A,B,C".
-/// @return A comma-separated list of chains (e.g. "A,B,C")
-std::string comma_separated_partner_chains( std::string const & chains )
-{
-	using std::endl;
-	using std::string;
-
-	// abort if chains is an empty string
-	if ( ! chains.size() ) { return chains; }
-	if ( TR.Debug.visible() ) { TR.Debug << "Chain group: " << chains << endl; }
-
-	string r;
-	r.reserve( ( chains.size() * 2 ) );
-	for ( char chain : chains ) {
-		r.push_back( chain );
-		r.push_back( ',' );
-	}
-
-	// remove the last comma
-	r.resize( r.size() - 1 );
-	if ( TR.Debug.visible() ) { TR.Debug << "Chains to pass to ChainResidueSelector ctor: " << r << endl; }
-	return r;
-}
 
 /// @details Creates Edges for each of the continuous stretches of residues belonging to a particular partner.
 /// If one partner spans multiple chains, the chains will be connected by a Jump.
@@ -170,18 +143,27 @@ core::Size setup_dock_jump(
 	return dock_jump_number;
 }
 
-/// @details If partner_chainID is "_", the first chain will be docked to the rest of the complex.
-/// If partner_chainID is of the form (pdb_chain_id)+_(pdb_chain_id)+, a jump will be created between the residue
-/// nearest to the center of mass of the first partner and the residue nearest to the center of mass of the second
-/// partner.
-/// For example, "ABC_DEF" has chains "ABC" as the first partner and "DEF" as the second partner.
+
+//void
+//setup_foldtree(
+//	core::pose::Pose & pose,
+//	std::string const & partner_chainID,
+//	DockJumps & movable_jumps,
+//	bool rand_jump_res_partner2 ) // default = false
+//{
+//	setup_foldtree(pose, core::pose::docking_partners_from_string(partner_chainID), movable_jumps, rand_jump_res_partner2);
+//}
+
+/// @details If partners is empty, the first chain will be docked to the rest of the complex.
+/// Otherwise, a jump will be created between the residue
+/// nearest to the center of mass of the first partner and the residue nearest to the center of mass of everything else
 /// Chains can be listed in any order.
 /// @return The constructed FoldTree is set to the pose.
 /// @return The movable_jumps vector contains the number of the jump across the interface.
 void
 setup_foldtree(
 	core::pose::Pose & pose,
-	std::string const & partner_chainID,
+	core::pose::DockingPartners const & partners,
 	DockJumps & movable_jumps,
 	bool rand_jump_res_partner2 ) // default = false
 {
@@ -195,31 +177,20 @@ setup_foldtree(
 
 	FoldTree f;
 	vector1< bool > partner1( pose.size(), false );
-	if ( partner_chainID == "_" ) {
+	if ( partners.partner1.empty() && partners.partner2.empty() ) {
 		debug_assert( pose.chain( pose.size() ) > 1 );
 
 		core::Size const last_res_of_first_chain( pose.conformation().chain_end( 1 ) );
 		for ( core::Size i = partner1.l(); i <= last_res_of_first_chain; ++i ) { partner1[ i ] = true; }
 	} else {
-		vector1< string > const partners = string_split( partner_chainID, '_' );
-
-		if ( partners.size() != 2 ) {
+		if ( partners.partner1.empty() ) {
 			stringstream error_msg;
-			error_msg << "Automatic FoldTree setup only works for two-body docking. The value of the partners flag \"";
-			error_msg << partner_chainID << "\" implies there are " << partners.size() << " independently movable chains.";
+			error_msg << "Cannot create FoldTree using the provided partners option: `" << partners << "`. ";
+			error_msg << "The first partner specification is empty.";
 			utility_exit_with_message( error_msg.str() );
 		}
 
-		for ( auto const & partner : partners ) {
-			if ( partner == "" ) {
-				stringstream error_msg;
-				error_msg << "Cannot create FoldTree using the provided partners flag \"" << partner_chainID;
-				error_msg << "\". At least one of the partner chains is empty.";
-				utility_exit_with_message( error_msg.str() );
-			}
-		}
-
-		ChainSelector const partner1_selector( comma_separated_partner_chains( partners[ 1 ] ) );
+		ChainSelector const partner1_selector( partners.partner1 );
 		partner1 = partner1_selector.apply( pose );
 	}
 

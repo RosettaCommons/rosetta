@@ -132,7 +132,7 @@ DockSetupMover::show( std::ostream & out ) const {
 	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
 	out << line_marker << A( 47, "Rosetta 3 DockSetupMover" ) << space( 27 ) << line_marker << std::endl;
 	out << line_marker << space( 74 ) << line_marker << std::endl;
-	out << line_marker << A( 47, "partners: ") << A(10, partners_ ) << space(14) << line_marker << std::endl;
+	out << line_marker << A( 47, "partners: ") << A(10, partners_.str() ) << space(14) << line_marker << std::endl;
 	if ( movable_jumps_.size() ) {
 		out << line_marker << A( 47, "movable jumps: " ) << movable_jumps_.front() << space( 26 ) << line_marker<< std::endl;
 	}
@@ -152,7 +152,7 @@ void
 DockSetupMover::set_defaults()
 {
 	using namespace basic::options;
-	partners_ = option[ OptionKeys::docking::partners ]();
+	partners_ = core::pose::DockingPartners::docking_partners_from_string(option[ OptionKeys::docking::partners ]());
 }
 
 void
@@ -164,7 +164,7 @@ DockSetupMover::parse_my_tag(
 	//get through partners
 	if ( tag->hasOption( "partners" ) ) {
 		std::string const partners( tag->getOption<std::string>( "partners") );
-		set_partners(partners);
+		set_partners( core::pose::DockingPartners::docking_partners_from_string(partners) );
 	}
 	moves::MoverOP mover = rosetta_scripts::parse_mover( tag->getOption< std::string >( "rb_mover", "null" ), data_map );
 	rb_mover_ = utility::pointer::dynamic_pointer_cast< rigid::RigidBodyPerturbNoCenterMover > ( mover );
@@ -175,7 +175,7 @@ DockSetupMover::parse_my_tag(
 	if ( tag->hasOption( "moveable_jump" ) ) {
 		movable_jumps_.push_back( tag->getOption< core::Size >( "moveable_jump" ));
 	}
-	if ( partners_ == "_" && movable_jumps_.size()<1 ) {
+	if ( partners_.is_empty() && movable_jumps_.size()<1 ) {
 		movable_jumps_.push_back( 1 );
 	}
 	// using RigidBodyInfo to store movable_jumps, then rb_mover is free from DockSetupMover

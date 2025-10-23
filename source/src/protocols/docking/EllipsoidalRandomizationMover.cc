@@ -17,6 +17,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/Stub.hh>
@@ -94,7 +95,7 @@ EllipsoidalRandomizationMover::set_default()
 
 	ellipsoid_is_first_partner_ = true;
 	autofoldtree_ = true;
-	partners_ = "_";
+	partners_ = core::pose::DockingPartners();
 	return;
 }
 
@@ -255,8 +256,13 @@ EllipsoidalRandomizationMover::get_name() const
 void
 EllipsoidalRandomizationMover::set_partners( std::string const & partners )
 {
+	partners_ = core::pose::DockingPartners::docking_partners_from_string(partners);
+}
+
+void
+EllipsoidalRandomizationMover::set_partners( core::pose::DockingPartners const & partners )
+{
 	partners_ = partners;
-	return;
 }
 
 numeric::xyzMatrix< Real >
@@ -311,19 +317,14 @@ EllipsoidalRandomizationMover::get_partner_residue_start_stop( core::pose::Pose 
 	core::Size first_residue_second_partner = 0;
 	core::Size last_residue_first_partner = 0;
 
-	if ( partners_ == "_" ) {
+	if ( partners_.partner1.empty() && partners_.partner2.empty() ) {
 
 		utility_exit_with_message("Attempting to identify docking partners, however, no partners are defined. Please use the -partners option flag");
 
 	} else {
-		char first_chain_second_partner = char();
-		for ( core::Size i=1; i<=partners_.length()-1; ++i ) {
-			if ( partners_[i-1] == '_' ) {
-				first_chain_second_partner = partners_[i];
-			}
-		}
+		std::string const & first_chain_second_partner = partners_.partner2[1];
 		for ( core::Size i=2; i<= pose_in.size(); ++i ) {
-			if ( pdb_info->chain( i ) == std::string{first_chain_second_partner} ) {
+			if ( pdb_info->chain( i ) == first_chain_second_partner ) {
 				first_residue_second_partner = i;
 				last_residue_first_partner = i-1;
 				break;

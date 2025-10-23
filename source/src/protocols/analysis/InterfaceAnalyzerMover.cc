@@ -37,6 +37,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -182,8 +183,29 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 	set_defaults();
 }
 
+//InterfaceAnalyzerMover::InterfaceAnalyzerMover(
+//	std::string dock_chains,
+//	const bool tracer,
+//	core::scoring::ScoreFunctionCOP sf,
+//	bool compute_packstat,
+//	bool pack_input,
+//	bool pack_separated,
+//	bool use_jobname,
+//	bool detect_disulfide_in_separated_pose
+//
+//): InterfaceAnalyzerMover(
+//		core::pose::DockingPartners::docking_partners_from_string(dock_chains),
+//		tracer,
+//		sf,
+//		compute_packstat,
+//		pack_input,
+//		pack_separated,
+//		use_jobname,
+//		detect_disulfide_in_separated_pose
+//) {}
+
 InterfaceAnalyzerMover::InterfaceAnalyzerMover(
-	std::string dock_chains,
+	core::pose::DockingPartners const & dock_chains,
 	const bool tracer,
 	core::scoring::ScoreFunctionCOP sf,
 	bool compute_packstat,
@@ -383,7 +405,7 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 		//fix the foldtree to reflect the fixed chains we want
 		TR << "Using explicit constructor" << std::endl;
 
-		if ( dock_chains_.size() != 0 ) {
+		if ( !dock_chains_.partner1.empty() || !dock_chains_.partner2.empty() ) {
 			setup_for_dock_chains( complexed_pose, dock_chains_ );
 		}
 
@@ -483,24 +505,20 @@ void InterfaceAnalyzerMover::set_pose_info( core::pose::Pose const & pose ) {
 }
 
 void
-InterfaceAnalyzerMover::setup_for_dock_chains( core::pose::Pose & pose, std::string dock_chains){
+InterfaceAnalyzerMover::setup_for_dock_chains( core::pose::Pose & pose, core::pose::DockingPartners const & partners){
 	TR << "Using interface constructor" <<std::endl;
-	if ( ! dock_chains.find('_') ) {
-		utility_exit_with_message("Unrecognized interface: "+dock_chains+" must have side1 and side2, ex: LH_A or L_H to calculate interface data");
-	}
 
 	fixed_chains_.clear();
 	fixed_chain_strings_.clear();
-	vector1< std::string > chainsSP = utility::string_split( dock_chains_, '_' );
-	if ( pose.conformation().num_chains() == ( chainsSP[ 1 ].length() + chainsSP[ 2 ].length() ) ) {
-		for ( core::Size i = 1; i <= chainsSP[ 1 ].length(); ++i ) {
+	if ( pose.conformation().num_chains() == ( partners.partner1.size() + partners.partner2.size() ) ) {
+		for ( core::Size i = 1; i <= partners.partner1.size(); ++i ) {
 			// Setup fixed chains - and let Bens multichain code do its thing
 			// Branched carbohydrate ligands or protein-conjugated glycans
 			// generally have the same chain (ex. A), but
 			// will have different chain ids in Rosetta (ex. 1,2)
 			// Using all chain ids associated with a single chain will
 			// avoid problems with branching molecules
-			for ( core::Size chain_id : core::pose::get_chain_ids_from_chain( std::string{chainsSP[ 1 ].at( i - 1 )}, pose ) ) {
+			for ( core::Size chain_id : core::pose::get_chain_ids_from_chain( partners.partner1[i], pose ) ) {
 				fixed_chains_.insert( chain_id );
 			}
 		}
@@ -511,7 +529,7 @@ InterfaceAnalyzerMover::setup_for_dock_chains( core::pose::Pose & pose, std::str
 		std::set< int > temp_fixed_chains;
 		for ( core::Size i = 1; i <= pose.conformation().num_chains(); ++i ) {
 			std::string chain = core::pose::get_chain_from_chain_id( i, pose );
-			if ( chain.size() == 1 && dock_chains.find(chain) !=  std::string::npos ) {
+			if ( partners.partner1.contains(chain) || partners.partner2.contains(chain) ) {
 				temp_fixed_chains.insert( i );
 			} else {
 				fixed_chains_.insert( i );
@@ -536,12 +554,12 @@ InterfaceAnalyzerMover::setup_for_dock_chains( core::pose::Pose & pose, std::str
 		pose = sep_pose;
 
 		//Setup fixedchains, keeping the ignored chains as fixed.
-		for ( core::Size i = 1; i <= chainsSP[ 1 ].length(); ++i ) {
+		for ( core::Size i = 1; i <= partners.partner1.size(); ++i ) {
 			// Branched carbohydrate ligands or protein-conjugated glycans generally
 			// have the same chain (ex. A), but will have different chain ids in Rosetta (ex. 1,2)
 			// Using all chain ids associated with a single chain will
 			// avoid problems with branching molecules
-			for ( core::Size chain_id : core::pose::get_chain_ids_from_chain( std::string{chainsSP[ 1 ].at( i - 1 )}, pose ) ) {
+			for ( core::Size chain_id : core::pose::get_chain_ids_from_chain( partners.partner1[i], pose ) ) {
 				fixed_chains_.insert( chain_id );
 			}
 			return;
@@ -1574,7 +1592,7 @@ InterfaceAnalyzerMover::parse_my_tag(
 	} else if ( tag->hasOption( "interface" ) ) {
 		set_interface_jump( 0 );
 		explicit_constructor_ = true;
-		dock_chains_ = tag->getOption< std::string >( "interface" );
+		dock_chains_ = core::pose::DockingPartners::docking_partners_from_string( tag->getOption< std::string >( "interface" ) );
 	} else if ( tag->hasOption( "ligandchain" ) ) {
 		ligand_chain_ = tag->getOption< std::string >( "ligandchain" );
 		explicit_constructor_ = true;
@@ -1925,7 +1943,12 @@ void InterfaceAnalyzerMover::set_interface_jump( core::Size const interface_jump
 	explicit_constructor_ = false;
 }
 
-void InterfaceAnalyzerMover::set_interface( std::string const & interface ){
+//void InterfaceAnalyzerMover::set_interface( std::string const & interface ){
+//	dock_chains_ = core::pose::DockingPartners::docking_partners_from_string( interface );
+//	explicit_constructor_ = true;
+//}
+
+void InterfaceAnalyzerMover::set_interface( core::pose::DockingPartners const & interface ){
 	dock_chains_ = interface;
 	explicit_constructor_ = true;
 }

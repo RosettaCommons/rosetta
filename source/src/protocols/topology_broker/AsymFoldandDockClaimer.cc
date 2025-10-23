@@ -174,7 +174,6 @@ void AsymFoldandDockClaimer::initialize_dofs(
 
 	protocols::docking::DockingProtocol dock;
 	protocols::docking::DockingInitialPerturbation dock_init(slide);
-	std::string chainID("A_B");
 	// If we don't have a docking jump we have to create it before calling setup_foldtree (strangely enough)
 	if ( pose.fold_tree().num_jump() == 0 ) {
 		FoldTree f(pose.fold_tree());
@@ -183,7 +182,8 @@ void AsymFoldandDockClaimer::initialize_dofs(
 		f.new_jump( 1, pose.size() , chain_break_res_ );
 		pose.fold_tree( f );
 	}
-	protocols::docking::setup_foldtree( pose, chainID, dock.movable_jumps() );
+	core::pose::DockingPartners partners = core::pose::DockingPartners::docking_partners_from_string("A_B");
+	protocols::docking::setup_foldtree( pose, partners, dock.movable_jumps() );
 	docking_jump_ = docking_jump( pose, chain_break_res_ );
 	dock_init.apply( pose );
 	// Setup the movemap

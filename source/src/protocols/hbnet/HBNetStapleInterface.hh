@@ -108,7 +108,7 @@ public:
 protected://Monte Carlo Protocol
 
 	inline bool edge_can_yield_monte_carlo_seed( core::Size resid1, core::Size resid2 ) const override{
-		if ( !symmetric() && !all_helices_ && chain_for_resid( resid1 ) == chain_for_resid( resid2 ) ) return false;
+		if ( !symmetric() && !all_helices_ && chain_num_for_resid( resid1 ) == chain_num_for_resid( resid2 ) ) return false;
 		else return HBNet::edge_can_yield_monte_carlo_seed( resid1, resid2 );
 	}
 

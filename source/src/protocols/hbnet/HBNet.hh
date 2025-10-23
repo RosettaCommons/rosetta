@@ -740,6 +740,11 @@ protected:
 
 protected://Monte Carlo Protocol Protected Methods
 
+	inline
+	core::Size chain_num_for_resid( core::Size resid ) const {
+		return orig_pose_->chain( resid );
+	}
+
 	std::string chain_for_moltenres( core::Size mres ) const;
 
 	inline void set_monte_carlo_data_to_default();

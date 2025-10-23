@@ -91,7 +91,9 @@ GeneralAntibodyModeler::GeneralAntibodyModeler(AntibodyInfoOP ab_info) :
 	setup_scorefxns();
 	setup_task_operations();
 
-	std::string dock_chains = "A_" +ab_info_->get_antibody_chain_string();
+	core::pose::DockingPartners dock_chains;
+	dock_chains.partner1.push_back("A");
+	dock_chains.partner2 = ab_info_->get_antibody_chains();
 	ab_dock_chains(dock_chains);
 
 }
@@ -237,10 +239,14 @@ GeneralAntibodyModeler::cdr_overhang(const CDRNameEnum cdr, const core::Size ove
 	overhangs_[cdr] = overhang;
 }
 
-void
-GeneralAntibodyModeler::ab_dock_chains(std::string ab_dock_chains) {
-	ab_dock_chains_ = ab_dock_chains;
+//void
+//GeneralAntibodyModeler::ab_dock_chains(std::string const & ab_dock_chains) {
+//	ab_dock_chains_ = core::pose::docking_partners_from_string(ab_dock_chains);
+//}
 
+void
+GeneralAntibodyModeler::ab_dock_chains(core::pose::DockingPartners const & ab_dock_chains) {
+	ab_dock_chains_ = ab_dock_chains;
 }
 
 void
@@ -328,10 +334,9 @@ GeneralAntibodyModeler::get_cdr_loop_with_overhang(Pose const & pose, CDRNameEnu
 
 void
 GeneralAntibodyModeler::apply_A_LH_foldtree(core::pose::Pose & pose) const {
-	vector1< char > antigen_chains = ab_info_->get_antigen_chains();
-
-	std::string antigen(antigen_chains.begin(), antigen_chains.end());
-	std::string dock_chains = antigen + "_LH";
+	core::pose::DockingPartners dock_chains;
+	dock_chains.partner1 = ab_info_->get_antigen_chains();
+	dock_chains.partner2 = utility::vector1<std::string>{"L", "H"};
 
 	vector1< int > movable_jumps(1, 1);
 	protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
@@ -377,7 +382,7 @@ GeneralAntibodyModeler::get_movemap_from_task(core::pose::Pose const & pose, cor
 	return mm;
 }
 
-std::string
+core::pose::DockingPartners
 GeneralAntibodyModeler::get_dock_chains() const {
 	return get_dock_chains_from_ab_dock_chains(ab_info_, ab_dock_chains_);
 }
@@ -612,7 +617,7 @@ GeneralAntibodyModeler::minimize_interface(Pose& pose, bool min_interface_sc /* 
 
 	vector1< int > movable_jumps(1, 1);
 	core::kinematics::FoldTree original_ft = pose.fold_tree();
-	std::string dock_chains = get_dock_chains_from_ab_dock_chains(ab_info_, ab_dock_chains_);
+	core::pose::DockingPartners dock_chains = get_dock_chains_from_ab_dock_chains(ab_info_, ab_dock_chains_);
 	TR << "Minimizing Interface: " << dock_chains << std::endl;
 	protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
 	core::pack::task::PackerTaskOP task = interface_tf_->create_task_and_apply_taskoperations(pose);
@@ -707,7 +712,7 @@ GeneralAntibodyModeler::backrub_cdrs( core::pose::Pose & pose, bool min_sc, bool
 
 void
 GeneralAntibodyModeler::repack_antigen_ab_interface(Pose& pose) const {
-	vector1< char > antigen_chains = ab_info_->get_antigen_chains();
+	vector1< std::string > antigen_chains = ab_info_->get_antigen_chains();
 	if ( antigen_chains.size() == 0 ) {
 		TR <<" Antigen not present to repack interface" << std::endl;
 		return;
@@ -733,7 +738,7 @@ GeneralAntibodyModeler::repack_antigen_ab_interface(Pose& pose) const {
 
 void
 GeneralAntibodyModeler::repack_antigen_interface(Pose & pose) const {
-	vector1< char > antigen_chains = ab_info_->get_antigen_chains();
+	vector1< std::string > antigen_chains = ab_info_->get_antigen_chains();
 	if ( antigen_chains.size() == 0 ) {
 		TR <<" Antigen not present to repack interface" << std::endl;
 		return;
@@ -790,7 +795,7 @@ GeneralAntibodyModeler::repack_antibody_interface(Pose & pose) const {
 
 void
 GeneralAntibodyModeler::dock_low_res(Pose& pose, bool pack_interface ) const {
-	std::string dock_chains = get_dock_chains_from_ab_dock_chains(ab_info_, ab_dock_chains_);
+	core::pose::DockingPartners dock_chains = get_dock_chains_from_ab_dock_chains(ab_info_, ab_dock_chains_);
 	TR << "Docking " <<dock_chains << " low res " << std::endl;
 	vector1< int > movable_jumps(1, 1);
 	core::kinematics::FoldTree original_ft = pose.fold_tree();
@@ -827,7 +832,7 @@ GeneralAntibodyModeler::dock_low_res(Pose& pose, bool pack_interface ) const {
 void
 GeneralAntibodyModeler::dock_high_res(Pose& pose, core::Size first_cycle, core::Size second_cycle) const {
 
-	std::string dock_chains = get_dock_chains_from_ab_dock_chains(ab_info_, ab_dock_chains_);
+	core::pose::DockingPartners dock_chains = get_dock_chains_from_ab_dock_chains(ab_info_, ab_dock_chains_);
 	TR << "Docking " <<dock_chains << " high res " << std::endl;
 	vector1< int > movable_jumps(1, 1);
 	core::kinematics::FoldTree original_ft = pose.fold_tree();

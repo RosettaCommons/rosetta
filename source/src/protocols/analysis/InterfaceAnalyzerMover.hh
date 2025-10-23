@@ -23,6 +23,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh> //This non-obviously needs to be the full header because the constructors have NULL default values for their ScoreFunctionCOP arguments.  If you try to use the default ctor with no arguments, it looks like you don't need ScoreFunction.hh, but gcc insists on it anyway.  Putting it here is the cleanest and most documentable solution.
 #include <protocols/moves/Mover.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pose/DockingPartners.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -220,11 +221,25 @@ public:
 		bool detect_disulfide_in_separated_pose = true
 	);
 
+//	/// @brief Constructor for any interface in a pose.  Uses string designation (ex LH_A) to keep the left chain/chains fixed ALA docking.
+//	/// @details Can be used for subsets of interfaces, for example L_H in a LHA pose.
+//	/// pack_separated and pack_input only pack the detected interface residues.
+//	InterfaceAnalyzerMover(
+//		std::string dock_chains,
+//		bool const tracer = false,
+//		core::scoring::ScoreFunctionCOP sf = nullptr,
+//		bool compute_packstat = false,
+//		bool pack_input = false,
+//		bool pack_separated = false,
+//		bool use_jobname = true,
+//		bool detect_disulfide_in_separated_pose = true
+//	);
+
 	/// @brief Constructor for any interface in a pose.  Uses string designation (ex LH_A) to keep the left chain/chains fixed ALA docking.
 	/// @details Can be used for subsets of interfaces, for example L_H in a LHA pose.
 	/// pack_separated and pack_input only pack the detected interface residues.
 	InterfaceAnalyzerMover(
-		std::string dock_chains,
+		core::pose::DockingPartners const & dock_chains,
 		bool const tracer = false,
 		core::scoring::ScoreFunctionCOP sf = nullptr,
 		bool compute_packstat = false,
@@ -333,16 +348,14 @@ public:
 	void
 	set_pack_rounds( core::Size pack_rounds ){ pack_rounds_ = pack_rounds; }
 
-	/// @brief Repack any interface between ignored chains and others.  Used by dock_chains constructor if the dock_chains interface is less than the total number of pose chains.
-	/// @details Ex:  LHA pose, pass L_H dock_chains to get the interface between L and H.  A will be translated away from the L H interface to do the calculation.
-	/// If this option is set - it will repack any SC that would make an LH_A interface after separation
-	// Undefined, commenting out to fix PyRosetta build  void set_pack_intermediate_separated(bool const pack_separated);
-
 	void
 	set_interface_jump(core::Size const interface_jump);
 
+//	void
+//	set_interface( std::string const & interface );
+
 	void
-	set_interface( std::string const & interface );
+	set_interface( core::pose::DockingPartners const & interface );
 
 	void
 	set_skip_reporting(bool const skip_reporting) {skip_reporting_ = skip_reporting;}
@@ -618,7 +631,7 @@ private:
 
 	/// @brief Setup for the dock_chains constructor
 	void
-	setup_for_dock_chains(core::pose::Pose & pose, std::string dock_chains);
+	setup_for_dock_chains(core::pose::Pose & pose, core::pose::DockingPartners const & partners);
 
 	std::string
 	scorefile_column_name(std::string const & base_name) const;
@@ -647,7 +660,7 @@ private:
 
 	core::Size chain1_ = 1;
 	core::Size chain2_ = 2;
-	std::string dock_chains_;
+	core::pose::DockingPartners dock_chains_;
 	std::set<core::Size> upstream_chains_; //fixed chains
 	std::set<core::Size> downstream_chains_; //other chains
 	std::set<core::Size> ignored_chains_; //Ignored chains from the dock_chains constructor.  These will be a part of fixed chains.

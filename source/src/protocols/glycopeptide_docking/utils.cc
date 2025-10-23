@@ -15,6 +15,7 @@
 #include <protocols/glycopeptide_docking/utils.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/DockingPartners.hh>
 #include <numeric/xyzVector.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
@@ -191,7 +192,9 @@ setup_glycosylation_foldtree( core::pose::Pose & pose, protocols::glycopeptide_d
 	} else if ( flags->substrate_type() == "peptide" and flags->tree_type() == "docking" ) {
 		using namespace docking;
 		//do nothing because the chemical bonds will take care of the foldtree
-		std::string const partners(flags->get_upstream_chain() + "_" + flags->get_downstream_chain());
+		core::pose::DockingPartners partners;
+		partners.partner1.push_back( flags->get_upstream_chain() );
+		partners.partner2.push_back( flags->get_downstream_chain() );
 		utility::vector1<int> movable_jumps(1, 1);
 		protocols::docking::setup_foldtree(pose, partners, movable_jumps);
 		*ft_docking = pose.fold_tree();
