@@ -87,10 +87,10 @@ canonical_chain_letter_for_chain_number(core::Size chain_num, bool extended) {
 		return std::string{chr_chains[chain_num-1]};
 	}
 	std::string chain_string;
-	while ( chain_num > chr_chains.size() ) {
+	while ( chain_num > 0 ) {
 		char val = chr_chains[ (chain_num-1)%chr_chains.size() ];
 		chain_string = std::string{val} + chain_string;
-		chain_num = chain_num/chr_chains.size(); // Truncation intended
+		chain_num = (chain_num-1)/chr_chains.size(); // Truncation intended
 	}
 	return chain_string;
 }

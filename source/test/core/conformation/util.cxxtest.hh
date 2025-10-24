@@ -61,12 +61,16 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( core::conformation::canonical_chain_letter_for_chain_number(1), "A" );
 		TS_ASSERT_EQUALS( core::conformation::canonical_chain_letter_for_chain_number(26), "Z" );
 		// Currently capitals, then numbers, then letters -- feel free to change if you change this
-		TS_ASSERT_EQUALS( core::conformation::canonical_chain_letter_for_chain_number(26+10+26), "z" );
+		core::Size nsym = 26+10+26;
+		TS_ASSERT_EQUALS( core::conformation::canonical_chain_letter_for_chain_number(nsym), "z" );
 		// Feel free to change the below if the multi-chain logic changes
-		TS_ASSERT_EQUALS( core::conformation::canonical_chain_letter_for_chain_number(26+10+26+1), "AA" );
-		TS_ASSERT_EQUALS( core::conformation::canonical_chain_letter_for_chain_number(26+10+26+2), "AB" );
-		TS_ASSERT_EQUALS( core::conformation::canonical_chain_letter_for_chain_number((26+10+26)*(26+10+26)), "zz" );
-		TS_ASSERT_EQUALS( core::conformation::canonical_chain_letter_for_chain_number((26+10+26)*(26+10+26)+2), "AAB" );
+		TS_ASSERT_EQUALS( core::conformation::canonical_chain_letter_for_chain_number(nsym+1), "AA" );
+		TS_ASSERT_EQUALS( core::conformation::canonical_chain_letter_for_chain_number(nsym+2), "AB" );
+		// nsym one letter codes, nsym*nsym two letter, nsym*nsym*nsym three letter, etc.
+		TS_ASSERT_EQUALS( core::conformation::canonical_chain_letter_for_chain_number(nsym*nsym+nsym), "zz" );
+		TS_ASSERT_EQUALS( core::conformation::canonical_chain_letter_for_chain_number(nsym*nsym+nsym+2), "AAB" );
+		TS_ASSERT_EQUALS( core::conformation::canonical_chain_letter_for_chain_number(nsym*nsym*nsym+nsym*nsym+nsym), "zzz" );
+		TS_ASSERT_EQUALS( core::conformation::canonical_chain_letter_for_chain_number(nsym*nsym*nsym+nsym*nsym+nsym+3), "AAAC" );
 	}
 
 	void test_find_bond_torsion_with_nearest_orientation()
