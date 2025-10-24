@@ -281,7 +281,7 @@ public:
 
 	void test_pdb_info_persistence() {
 		core::pose::PDBInfoOP info( new core::pose::PDBInfo( pose.size() ) );
-		info->set_chains( "A" );
+		info->set_all_chains( "A" );
 		pose.pdb_info( info );
 
 		EnvironmentOP env_op( new Environment( "env" ) );

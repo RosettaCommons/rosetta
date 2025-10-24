@@ -1128,7 +1128,7 @@ void design_excluding_swap_loops (
 	// PDBInfo setup to set the chains
 	core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo( fold_pose ) );
 
-	pdb_info->set_chains("A");
+	pdb_info->set_all_chains("A");
 
 	fold_pose.pdb_info( pdb_info );
 

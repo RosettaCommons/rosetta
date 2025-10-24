@@ -159,12 +159,12 @@ void ConnectChainsMover::assemble_missing_chain(map<std::string, Chain> & connec
 					chainA_plus->pdb_info()->add_reslabel(ii+labels_chainA.size(), tmp_labels[jj]);
 				}
 			}
-			utility::vector1< char > pdb_chains;
+			utility::vector1< std::string > pdb_chains;
 			for ( core::Size ii=1; ii<=chainA->total_residue(); ++ii ) {
-				pdb_chains.push_back('A');
+				pdb_chains.push_back("A");
 			}
 			for ( core::Size ii=1; ii<=chainB->total_residue(); ++ii ) {
-				pdb_chains.push_back('B');
+				pdb_chains.push_back("B");
 			}
 			chainA_plus->pdb_info()->set_chains(pdb_chains);
 			if ( chainA_rmsd > rmsThreshold_ || chainB_rmsd > rmsThreshold_ ) { //no closure needed if rmsd is > threshold. But fill in the DB so this is not re-tried

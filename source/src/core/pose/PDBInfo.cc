@@ -755,17 +755,12 @@ PDBInfo::write_pdbinfo_labels( utility::vector1 < std::string > & remark_lines )
 
 /// @brief set all residue chain IDs to a single character
 void
-PDBInfo::set_chains( std::string const & id ) {
+PDBInfo::set_all_chains( std::string const & id ) {
 	for ( auto i = residue_rec_.begin(), ie = residue_rec_.end(); i < ie; ++i ) {
 		i->chainID = id;
 	}
 
 	rebuild_pdb2pose();
-}
-
-void
-PDBInfo::set_chains( char const * const id ) {
-	set_chains( std::string{id} );
 }
 
 /// @brief copy a section from another PDBInfo

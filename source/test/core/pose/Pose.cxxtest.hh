@@ -295,7 +295,7 @@ public: // tests
 		pose2.pdb_info(utility::pointer::make_shared< PDBInfo >(pose2));
 
 		std::string pose2_chain = "B";
-		pose2.pdb_info()->set_chains(pose2_chain);
+		pose2.pdb_info()->set_all_chains(pose2_chain);
 
 		Pose work_pose(pose);
 		work_pose.append_pose_by_jump(pose2, 1);

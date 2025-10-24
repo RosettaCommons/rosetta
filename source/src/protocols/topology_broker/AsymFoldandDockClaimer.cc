@@ -157,12 +157,12 @@ void AsymFoldandDockClaimer::initialize_dofs(
 	// make a PDBInfo for the pose...
 	pose::PDBInfoOP pdb_info( new pose::PDBInfo( pose, true ) );
 
-	utility::vector1< char > chain;
+	utility::vector1< std::string > chain;
 	for ( core::Size i=1; i<= pdb_info->nres(); ++i ) {
 		if ( i <= chain_break_res_ ) {
-			chain.push_back( 'A' );
+			chain.push_back( "A" );
 		} else {
-			chain.push_back( 'B' );
+			chain.push_back( "B" );
 		}
 	}
 

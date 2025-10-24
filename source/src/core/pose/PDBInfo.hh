@@ -1122,8 +1122,7 @@ public: // residue mutators en masse
 	///
 	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 	///
-	void set_chains( std::string const & id );
-	void set_chains( char const * const id );
+	void set_all_chains( std::string const & id );
 
 	/// @brief Sets the residue chain letters from some string container, iterator version
 	/// @warning This function does not check if number of elements within span
