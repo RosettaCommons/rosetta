@@ -34,6 +34,7 @@ from pyrosetta.distributed.cluster import (
     reproduce,
 )
 from pyrosetta.distributed.cluster.io import secure_read_pickle
+from pyrosetta.tests.distributed.cluster.setup_inputs import get_test_params_file, get_test_pdb_file
 
 
 class TestReproducibility(unittest.TestCase):
@@ -785,8 +786,8 @@ class TestReproducibilityMulti(unittest.TestCase):
 
     def test_reproducibility_from_reproduce(self, filter_results=False, verbose=False):
         """Test for PyRosettaCluster decoy reproducibility from instance kwargs."""
-        params_file = os.path.join(os.path.dirname(__file__), "data", "ZZZ.params")
-        self.assertTrue(os.path.isfile(params_file), msg=f"File does not exist: {params_file}")
+        params_dir = tempfile.TemporaryDirectory(prefix="tmp_params_")
+        params_file = get_test_params_file(params_dir.name)
         pyrosetta.distributed.init(
             options=f"-run:constant_seed 1 -multithreading:total_threads 1 -extra_res_fa {params_file}",
             extra_options="-out:level 300",
@@ -1234,6 +1235,7 @@ class TestReproducibilityMulti(unittest.TestCase):
                             _record["instance"][key],
                             reproduce3_record["instance"][key],
                         )
+        params_dir.cleanup()
 
     def test_reproducibility_packer_nstruct_multi_filter_results(self):
         return self.test_reproducibility_packer_nstruct_multi(filter_results=True)
@@ -1254,7 +1256,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
             set_logging_handler="logging",
         )
         cls.workdir = tempfile.TemporaryDirectory()
-        cls.input_pdb_file = os.path.join(os.path.dirname(__file__), "data", "1crn.pdb")
+        cls.input_pdb_file = get_test_pdb_file(cls.workdir.name)
 
     @classmethod
     def tearDownClass(cls):
