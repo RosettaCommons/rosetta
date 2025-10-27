@@ -762,6 +762,7 @@ StructFileRepOptions::split_chain_string(std::string const & input) {
 	utility::vector1< std::string > chains;
 	// Special casing -- ALL is an empty vector
 	if ( input == "ALL" ) {
+		chains.push_back("ALL");
 		return chains;
 	}
 	for ( char c: input ) {

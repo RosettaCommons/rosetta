@@ -120,6 +120,10 @@ bool renumber_pdbinfo_based_on_conf_chains(
 bool
 has_chain(std::string const & chain, core::pose::Pose const & pose);
 
+// To disambiguate with the core::Size variant
+bool
+has_chain(char const & chain, core::pose::Pose const & pose) = delete;
+
 /// @brief Does the pose have a residue with the given chain number
 ///
 /// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.

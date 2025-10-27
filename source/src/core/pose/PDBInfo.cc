@@ -126,7 +126,8 @@ PDBInfo::PDBInfo(
 		// do this manually to save on method calls
 		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			ResidueRecord & rr = residue_rec_[ i ];
-			rr.chainID = core::conformation::canonical_chain_letter_for_chain_number(i);
+			Size chain = pose.residue( i ).chain();
+			rr.chainID = core::conformation::canonical_chain_letter_for_chain_number(chain);
 			// TODO: Should add segmentID fix here maybe
 			rr.resSeq = static_cast< int >( i );
 		}

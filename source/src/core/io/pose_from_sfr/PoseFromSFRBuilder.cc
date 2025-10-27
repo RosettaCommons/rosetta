@@ -2119,14 +2119,14 @@ bool PoseFromSFRBuilder::determine_same_chain_next( Size resid, bool separate_ch
 bool PoseFromSFRBuilder::determine_check_Ntermini_for_this_chain( std::string const & chainID ) const
 {
 	utility::vector1<std::string> const & nterm_chains = options_.check_if_residues_are_Ntermini();
-	return nterm_chains.empty() ||
+	return (nterm_chains.size()==1 && nterm_chains[1] == "ALL") ||
 		std::find( nterm_chains.begin(), nterm_chains.end(), chainID ) != nterm_chains.end();
 }
 
 bool PoseFromSFRBuilder::determine_check_Ctermini_for_this_chain( std::string const & chainID ) const
 {
 	 utility::vector1<std::string>const & cterm_chains = options_.check_if_residues_are_Ctermini();
-	return cterm_chains.empty() ||
+	return (cterm_chains.size()==1 && cterm_chains[1] == "ALL") ||
 		std::find( cterm_chains.begin(), cterm_chains.end(), chainID ) != cterm_chains.end();
 }
 

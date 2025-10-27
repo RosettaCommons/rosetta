@@ -153,7 +153,7 @@ AntibodyNumberingConverterMover::apply( core::pose::Pose & pose)
 		return;
 	}
 
-	if ( ! ( has_chain( 'L', pose) || has_chain('H', pose) ) ) {
+	if ( ! ( has_chain("L", pose) || has_chain("H", pose) ) ) {
 		utility_exit_with_message("AntibodyNumberingConverterMover only works with L and H chains. ");
 	}
 

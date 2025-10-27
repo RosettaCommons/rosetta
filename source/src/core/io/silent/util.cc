@@ -91,8 +91,17 @@ figure_out_residue_numbers_from_line( std::istream & line_stream,
 	std::string resnum_string;
 	line_stream >> resnum_string; // the tag (RES_NUM)
 	runtime_assert( resnum_string == "RES_NUM" );
+
+	utility::vector1< std::string > resnum_strings;
 	line_stream >> resnum_string;
 	while ( !line_stream.fail() ) {
+		resnum_strings.push_back( resnum_string );
+		line_stream >> resnum_string;
+	}
+	if ( ! resnum_strings.empty() ) {
+		resnum_strings.pop_back(); // This is the structure tag
+	}
+	for ( std::string const & resnum_string: resnum_strings ) {
 		bool string_ok( false );
 		std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > resnum_and_chain = utility::get_resnum_and_chain_and_segid( resnum_string, string_ok );
 		utility::vector1< int >  const & resnums      = std::get< 0 >( resnum_and_chain );
@@ -102,8 +111,7 @@ figure_out_residue_numbers_from_line( std::istream & line_stream,
 			for ( int resnum : resnums ) residue_numbers.push_back( resnum );
 			for ( std::string const & chainchar : chainchars ) chains.push_back( chainchar );
 			for ( auto const & segidstr : segidstrs ) segids.push_back( segidstr );
-		} else break;
-		line_stream >> resnum_string;
+		}
 	}
 }
 

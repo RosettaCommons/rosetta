@@ -208,8 +208,8 @@ private:
 	split_chain_string(std::string const & input);
 
 private:
-	utility::vector1< std::string > check_if_residues_are_Ntermini_; // DEFAULT ALL chains (empty)
-	utility::vector1< std::string > check_if_residues_are_Ctermini_; // DEFAULT ALL chains (empty)
+	utility::vector1< std::string > check_if_residues_are_Ntermini_; // DEFAULT ALL chains
+	utility::vector1< std::string > check_if_residues_are_Ctermini_; // DEFAULT ALL chains
 	bool skip_connect_info_;
 	core::Real connect_info_cutoff_;
 	bool do_not_autoassign_SS_;
