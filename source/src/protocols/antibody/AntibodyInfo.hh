@@ -237,9 +237,9 @@ public:
 	utility::vector1<core::Size>
 	get_antigen_chain_ids(const core::pose::Pose & pose ) const;
 
-//	/// @brief Return the antigen chains as a string
-//	std::string
-//	get_antigen_chain_string() const;
+	// /// @brief Return the antigen chains as a string
+	// std::string
+	// get_antigen_chain_string() const;
 
 
 	utility::vector1< std::string >
@@ -248,9 +248,9 @@ public:
 	utility::vector1<core::Size>
 	get_antibody_chain_ids(const core::pose::Pose & pose ) const;
 
-//	/// @brief Returns H or LH depeding on camelid.
-//	std::string
-//	get_antibody_chain_string() const;
+	// /// @brief Returns H or LH depeding on camelid.
+	// std::string
+	// get_antibody_chain_string() const;
 
 
 	/// @brief return pose residue number of the first residue of the H3 kink

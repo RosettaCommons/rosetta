@@ -239,15 +239,15 @@ public: // Tests //////////////////////////////////////////////////////////////
 		// former, giving us 8 records instead of 9.
 		TS_ASSERT_EQUALS( base_names.size(), 8 );
 
-//		// Each key here is a 6-character "resID" used internally by Rosetta during Pose building/unbuilding.
-//		TS_ASSERT( base_names.count( "-ACETN" ) );  // a meaningless code, since this record was a PDB-format record
-//		TS_ASSERT( base_names.count( "  13ZX" ) );  // residue 13Z of chain X
-//
-//		TS_ASSERT_EQUALS( base_names[ "-ACETN" ].first, "NAG" );
-//		TS_ASSERT_EQUALS( base_names[ "-ACETN" ].second, "L-D-GLUCOSAMINE" );  // meaningless junk
-//
-//		TS_ASSERT_EQUALS( base_names[ "  13ZX" ].first, "Krp" );
-//		TS_ASSERT_EQUALS( base_names[ "  13ZX" ].second, "Kryptonite" );  // Any word after a comma is ignored.
+		//  // Each key here is a 6-character "resID" used internally by Rosetta during Pose building/unbuilding.
+		//  TS_ASSERT( base_names.count( "-ACETN" ) );  // a meaningless code, since this record was a PDB-format record
+		//  TS_ASSERT( base_names.count( "  13ZX" ) );  // residue 13Z of chain X
+		//
+		//  TS_ASSERT_EQUALS( base_names[ "-ACETN" ].first, "NAG" );
+		//  TS_ASSERT_EQUALS( base_names[ "-ACETN" ].second, "L-D-GLUCOSAMINE" );  // meaningless junk
+		//
+		//  TS_ASSERT_EQUALS( base_names[ "  13ZX" ].first, "Krp" );
+		//  TS_ASSERT_EQUALS( base_names[ "  13ZX" ].second, "Kryptonite" );  // Any word after a comma is ignored.
 	}
 
 	// Confirm that HETSYM records are stored properly.

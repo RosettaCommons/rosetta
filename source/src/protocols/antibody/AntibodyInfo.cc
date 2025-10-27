@@ -2441,17 +2441,17 @@ AntibodyInfo::get_antigen_chain_ids(const core::pose::Pose & pose) const {
 
 //std::string
 //AntibodyInfo::get_antibody_chain_string() const {
-//	if ( is_camelid_ ) {
-//		return "H";
-//	} else {
-//		return "LH";
-//	}
+// if ( is_camelid_ ) {
+//  return "H";
+// } else {
+//  return "LH";
+// }
 //}
 
 //std::string
 //AntibodyInfo::get_antigen_chain_string() const {
-//	std::string antigen(chains_for_antigen_.begin(), chains_for_antigen_.end());
-//	return antigen;
+// std::string antigen(chains_for_antigen_.begin(), chains_for_antigen_.end());
+// return antigen;
 //}
 
 vector1<std::string>

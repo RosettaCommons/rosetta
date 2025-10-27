@@ -2125,7 +2125,7 @@ bool PoseFromSFRBuilder::determine_check_Ntermini_for_this_chain( std::string co
 
 bool PoseFromSFRBuilder::determine_check_Ctermini_for_this_chain( std::string const & chainID ) const
 {
-	 utility::vector1<std::string>const & cterm_chains = options_.check_if_residues_are_Ctermini();
+	utility::vector1<std::string>const & cterm_chains = options_.check_if_residues_are_Ctermini();
 	return (cterm_chains.size()==1 && cterm_chains[1] == "ALL") ||
 		std::find( cterm_chains.begin(), cterm_chains.end(), chainID ) != cterm_chains.end();
 }

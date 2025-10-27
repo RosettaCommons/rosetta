@@ -2611,7 +2611,7 @@ figure_out_rna_chains(
 		if ( colon_pos != std::string::npos ) {
 			segid = chain.substr(colon_pos+1);
 			chain = chain.substr(0,colon_pos);
-		} else if (chain.size() > 3) { // segid is typically 4 characters
+		} else if ( chain.size() > 3 ) { // segid is typically 4 characters
 			// Historical compatibility
 			segid = chain.substr(1);
 			chain = std::string{ chain[0] };

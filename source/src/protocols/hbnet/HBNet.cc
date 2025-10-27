@@ -3924,8 +3924,8 @@ bool HBNet::monte_carlo_seed_is_dead_end( HBondEdge const * monte_carlo_seed ){
 }
 
 std::string HBNet::chain_for_moltenres( core::Size mres ) const {
-		core::Size resid = rotamer_sets_->moltenres_2_resid( mres );
-		return orig_pose_->pdb_info()->chain(resid);
+	core::Size resid = rotamer_sets_->moltenres_2_resid( mres );
+	return orig_pose_->pdb_info()->chain(resid);
 }
 
 void HBNet::append_to_network_vector( utility::vector1< DecoratedNetworkState > const & designed_networks ){

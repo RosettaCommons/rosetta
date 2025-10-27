@@ -79,13 +79,13 @@ ResID
 resid_from_tag(std::string const & input) {
 	if ( input.find('|') != std::string::npos ) {
 		utility::vector1< std::string > split = utility::string_split(input, '|');
-		if (split.size() != 3) {
+		if ( split.size() != 3 ) {
 			utility_exit_with_message("Issue reading MMTF file - can't understand `"+input+"` as resid");
 		}
 		return ResID( atof(split[1].c_str()), split[2][0], split[3] );
 	} else {
 		// Older, smashed together version
-		if (input.size() != 6) {
+		if ( input.size() != 6 ) {
 			utility_exit_with_message("Issue reading MMTF file - can't understand `"+input+"` as resid");
 		}
 		return ResID( atof( input.substr(1,4).c_str() ), input[4], input.substr(5,1) );

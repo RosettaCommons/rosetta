@@ -455,7 +455,7 @@ read_extra_data(
 	std::map< std::string, std::pair< std::string, std::string > > base_names;
 	map_decode_from_model(modelProperties_MD, "rosetta::residue_type_base_names", false,
 		model_index, base_names);
-	for (auto const & pairing: base_names ) {
+	for ( auto const & pairing: base_names ) {
 		sfr->residue_type_base_names()[ resid_from_tag(pairing.first) ] = pairing.second;
 	}
 

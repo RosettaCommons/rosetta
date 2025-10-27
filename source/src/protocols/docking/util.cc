@@ -146,12 +146,12 @@ core::Size setup_dock_jump(
 
 //void
 //setup_foldtree(
-//	core::pose::Pose & pose,
-//	std::string const & partner_chainID,
-//	DockJumps & movable_jumps,
-//	bool rand_jump_res_partner2 ) // default = false
+// core::pose::Pose & pose,
+// std::string const & partner_chainID,
+// DockJumps & movable_jumps,
+// bool rand_jump_res_partner2 ) // default = false
 //{
-//	setup_foldtree(pose, core::pose::docking_partners_from_string(partner_chainID), movable_jumps, rand_jump_res_partner2);
+// setup_foldtree(pose, core::pose::docking_partners_from_string(partner_chainID), movable_jumps, rand_jump_res_partner2);
 //}
 
 /// @details If partners is empty, the first chain will be docked to the rest of the complex.

@@ -254,28 +254,28 @@ utility::vector1< std::string > DockingEnsemblePrepackProtocol::get_pose_chains(
 
 void DockingEnsemblePrepackProtocol::check_ensemble_member_compatibility() {
 
-//	// use the -partners flag to get vectors of chains
-//	// compare to chains of each ensemble
-//	utility::vector1< std::string > partner1_chains;
-//	utility::vector1< std::string > partner2_chains;
-//	utility::vector1< std::string > * current_partner = &partner1_chains;
-//
-//	// get the string from the -partners flag
-//	std::string partners( get_partners() );
-//
-//	// loop over the string, character by character and split it on the underscore
-//	// assume here that ensemble1 is reported first (in my experience this is always the case)
-//	// (Note that due to input format limitations, only single letter chains are supported)
-//	for ( char & partner : partners ) {
-//
-//		if ( partner == '_' ) {
-//			current_partner = &partner2_chains;
-//			continue;
-//		}
-//
-//		current_partner->push_back(std::string{partner});
-//
-//	}
+	// // use the -partners flag to get vectors of chains
+	// // compare to chains of each ensemble
+	// utility::vector1< std::string > partner1_chains;
+	// utility::vector1< std::string > partner2_chains;
+	// utility::vector1< std::string > * current_partner = &partner1_chains;
+	//
+	// // get the string from the -partners flag
+	// std::string partners( get_partners() );
+	//
+	// // loop over the string, character by character and split it on the underscore
+	// // assume here that ensemble1 is reported first (in my experience this is always the case)
+	// // (Note that due to input format limitations, only single letter chains are supported)
+	// for ( char & partner : partners ) {
+	//
+	//  if ( partner == '_' ) {
+	//   current_partner = &partner2_chains;
+	//   continue;
+	//  }
+	//
+	//  current_partner->push_back(std::string{partner});
+	//
+	// }
 
 	// ensemble1_/ensemble2_ must be present i.e. not NULL
 	// note ensembles index at 1

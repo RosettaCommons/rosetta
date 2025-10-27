@@ -221,19 +221,19 @@ public:
 		bool detect_disulfide_in_separated_pose = true
 	);
 
-//	/// @brief Constructor for any interface in a pose.  Uses string designation (ex LH_A) to keep the left chain/chains fixed ALA docking.
-//	/// @details Can be used for subsets of interfaces, for example L_H in a LHA pose.
-//	/// pack_separated and pack_input only pack the detected interface residues.
-//	InterfaceAnalyzerMover(
-//		std::string dock_chains,
-//		bool const tracer = false,
-//		core::scoring::ScoreFunctionCOP sf = nullptr,
-//		bool compute_packstat = false,
-//		bool pack_input = false,
-//		bool pack_separated = false,
-//		bool use_jobname = true,
-//		bool detect_disulfide_in_separated_pose = true
-//	);
+	// /// @brief Constructor for any interface in a pose.  Uses string designation (ex LH_A) to keep the left chain/chains fixed ALA docking.
+	// /// @details Can be used for subsets of interfaces, for example L_H in a LHA pose.
+	// /// pack_separated and pack_input only pack the detected interface residues.
+	// InterfaceAnalyzerMover(
+	//  std::string dock_chains,
+	//  bool const tracer = false,
+	//  core::scoring::ScoreFunctionCOP sf = nullptr,
+	//  bool compute_packstat = false,
+	//  bool pack_input = false,
+	//  bool pack_separated = false,
+	//  bool use_jobname = true,
+	//  bool detect_disulfide_in_separated_pose = true
+	// );
 
 	/// @brief Constructor for any interface in a pose.  Uses string designation (ex LH_A) to keep the left chain/chains fixed ALA docking.
 	/// @details Can be used for subsets of interfaces, for example L_H in a LHA pose.
@@ -351,8 +351,8 @@ public:
 	void
 	set_interface_jump(core::Size const interface_jump);
 
-//	void
-//	set_interface( std::string const & interface );
+	// void
+	// set_interface( std::string const & interface );
 
 	void
 	set_interface( core::pose::DockingPartners const & interface );

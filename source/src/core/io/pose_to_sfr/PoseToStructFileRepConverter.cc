@@ -1066,7 +1066,7 @@ PoseToStructFileRepConverter::grab_membrane_info(
 		// Get rescount, chain count
 		core::Size const chaincount( sfr_->chains().size() - 1 );
 		core::Size const rescount( sfr_->chains()[chaincount][ sfr_->chains()[chaincount].size() - 1 ].serial );
-		std::string const newchain = core::conformation::canonical_chain_letter_for_chain_number( chaincount + 1 ); // Assume it's one past the end
+		std::string const newchain = core::conformation::canonical_chain_letter_for_chain_number( chaincount + 2 ); // Assume it's one past the end
 
 		AtomInformation ai1, ai2, ai3;
 		ai1.isHet = true;

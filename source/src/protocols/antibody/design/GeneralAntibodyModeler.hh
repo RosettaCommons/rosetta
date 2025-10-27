@@ -89,9 +89,9 @@ public:
 	cdr_overhang(CDRNameEnum const cdr, core::Size const overhang);
 
 	/// @brief Set the ab_dock chains, which will be used for any docking or minimization on the jump.  (LH_A, L_H, etc. - A for antigen)
-	//	This is a backward compatibility shim - prefer the DockingPartners version for the most flexibility
-//	void
-//	ab_dock_chains(std::string const & ab_dock_chains);
+	// This is a backward compatibility shim - prefer the DockingPartners version for the most flexibility
+	// void
+	// ab_dock_chains(std::string const & ab_dock_chains);
 
 	/// @brief Set the ab_dock chains (docking partners, but with chain 'A' standing in for all antigens)
 	void

@@ -241,7 +241,7 @@ GeneralAntibodyModeler::cdr_overhang(const CDRNameEnum cdr, const core::Size ove
 
 //void
 //GeneralAntibodyModeler::ab_dock_chains(std::string const & ab_dock_chains) {
-//	ab_dock_chains_ = core::pose::docking_partners_from_string(ab_dock_chains);
+// ab_dock_chains_ = core::pose::docking_partners_from_string(ab_dock_chains);
 //}
 
 void

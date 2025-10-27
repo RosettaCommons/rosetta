@@ -100,7 +100,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		core::io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr;
 		pose_to_sfr.init_from_pose( *pose );
-		pose_to_sfr.grab_membrane_info( *pose, true );
+		pose_to_sfr.grab_membrane_info( *pose, true ); // Re-adds an additional Membrane residue, in addtion to the current in-pose one.
 
 		core::Size const maxchain( pose_to_sfr.sfr()->chains().size() - 1 );
 		TS_ASSERT_EQUALS( maxchain, 2 );
@@ -115,7 +115,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT(pose_to_sfr.sfr()->chains()[maxchain][0].isHet);
 		TS_ASSERT(pose_to_sfr.sfr()->chains()[maxchain][1].isHet);
 		TS_ASSERT(pose_to_sfr.sfr()->chains()[maxchain][2].isHet);
-		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].serial, 3507); // NOTE -- 2 copies of the membrane HETATMs are dumped, apparently.
+		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].serial, 3507);
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][1].serial, 3508);
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][2].serial, 3509);
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].name, "THKN");
@@ -124,7 +124,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].resName, "MEM");
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][1].resName, "MEM");
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][2].resName, "MEM");
-		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].chainID, "C"); // NOTE -- 2 copies of the membrane HETATMs are dumped, apparently.
+		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].chainID, "C");
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][1].chainID, "C");
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][2].chainID, "C");
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].x, 15.3510);

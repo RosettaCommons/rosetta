@@ -727,15 +727,15 @@ make_tag_with_dashes( utility::vector1< int > const & res_vector,
 
 //std::string
 //make_tag_with_dashes( utility::vector1< int > const & res_vector,
-//	utility::vector1< char > const & chain_vector,
-//	utility::vector1< std::string > const & segid_vector,
-//	char const delimiter
+// utility::vector1< char > const & chain_vector,
+// utility::vector1< std::string > const & segid_vector,
+// char const delimiter
 //) {
-//	utility::vector1< std::string > chain_str;
-//	for ( char chain: chain_vector ) {
-//		chain_str.push_back( std::string{chain} );
-//	}
-//	return make_tag_with_dashes(res_vector, chain_vector, segid_vector, delimiter);
+// utility::vector1< std::string > chain_str;
+// for ( char chain: chain_vector ) {
+//  chain_str.push_back( std::string{chain} );
+// }
+// return make_tag_with_dashes(res_vector, chain_vector, segid_vector, delimiter);
 //}
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -910,7 +910,7 @@ get_resnum_and_chain_from_one_tag( std::string const & tag,
 		size_t found_colon = tag.find( ":" );
 		if ( found_colon == std::string::npos ) {
 			size_t first_number = tag.find_first_of(numerical);
-			if (first_number == 0) {
+			if ( first_number == 0 ) {
 				resnum_from_tag = ObjexxFCL::ints_of( tag, string_is_ok );
 			} else if ( first_number != std::string::npos ) {
 				chain = tag.substr(0,first_number);
@@ -919,8 +919,8 @@ get_resnum_and_chain_from_one_tag( std::string const & tag,
 				return false;
 			}
 		} else if ( found_colon == 0 ) {
-				chain = " ";
-				resnum_from_tag = ObjexxFCL::ints_of( tag.substr(1), string_is_ok );
+			chain = " ";
+			resnum_from_tag = ObjexxFCL::ints_of( tag.substr(1), string_is_ok );
 		} else {
 			chain = tag.substr(0,found_colon);
 			resnum_from_tag = ObjexxFCL::ints_of( tag.substr(found_colon+1), string_is_ok );

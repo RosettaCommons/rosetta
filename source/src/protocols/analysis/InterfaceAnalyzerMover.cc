@@ -184,24 +184,24 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 }
 
 //InterfaceAnalyzerMover::InterfaceAnalyzerMover(
-//	std::string dock_chains,
-//	const bool tracer,
-//	core::scoring::ScoreFunctionCOP sf,
-//	bool compute_packstat,
-//	bool pack_input,
-//	bool pack_separated,
-//	bool use_jobname,
-//	bool detect_disulfide_in_separated_pose
+// std::string dock_chains,
+// const bool tracer,
+// core::scoring::ScoreFunctionCOP sf,
+// bool compute_packstat,
+// bool pack_input,
+// bool pack_separated,
+// bool use_jobname,
+// bool detect_disulfide_in_separated_pose
 //
 //): InterfaceAnalyzerMover(
-//		core::pose::DockingPartners::docking_partners_from_string(dock_chains),
-//		tracer,
-//		sf,
-//		compute_packstat,
-//		pack_input,
-//		pack_separated,
-//		use_jobname,
-//		detect_disulfide_in_separated_pose
+//  core::pose::DockingPartners::docking_partners_from_string(dock_chains),
+//  tracer,
+//  sf,
+//  compute_packstat,
+//  pack_input,
+//  pack_separated,
+//  use_jobname,
+//  detect_disulfide_in_separated_pose
 //) {}
 
 InterfaceAnalyzerMover::InterfaceAnalyzerMover(
@@ -1944,8 +1944,8 @@ void InterfaceAnalyzerMover::set_interface_jump( core::Size const interface_jump
 }
 
 //void InterfaceAnalyzerMover::set_interface( std::string const & interface ){
-//	dock_chains_ = core::pose::DockingPartners::docking_partners_from_string( interface );
-//	explicit_constructor_ = true;
+// dock_chains_ = core::pose::DockingPartners::docking_partners_from_string( interface );
+// explicit_constructor_ = true;
 //}
 
 void InterfaceAnalyzerMover::set_interface( core::pose::DockingPartners const & interface ){

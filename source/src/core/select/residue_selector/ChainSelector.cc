@@ -182,7 +182,7 @@ void ChainSelector::select_chain_by_pdb_chain_char(
 		}
 	}
 
-	if ( !found && ch.size() != 1) {
+	if ( !found && ch.size() != 1 ) {
 		TR.Warning << "ChainSelector was unable to interpret `" << ch << "` as a valid chain letter specifier. " << std::endl;
 	}
 }

@@ -34,10 +34,10 @@ namespace docking {
 ///// The foldtree is set up such that the jump points are at the center of masses of the two partners.
 //void
 //setup_foldtree(
-//	core::pose::Pose & pose,
-//	std::string const & partner_chainID,
-//	DockJumps & movable_jumps,
-//	bool rand_jump_res_partner2 = false ); // default = false
+// core::pose::Pose & pose,
+// std::string const & partner_chainID,
+// DockJumps & movable_jumps,
+// bool rand_jump_res_partner2 = false ); // default = false
 
 /// @brief Setup FoldTree for docking across an interface.
 /// The foldtree is set up such that the jump points are at the center of masses of the two partners.
