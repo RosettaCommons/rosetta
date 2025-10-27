@@ -67,6 +67,7 @@
 #ifdef USEMPI
 /// MPI
 #include <mpi.h>
+#include <utility/mpi_util.hh>
 #endif
 
 // option key includes
@@ -625,11 +626,10 @@ void PointMutScanDriver::send_mutant_data_to_node( int destination, const protoc
 		MPI_Send( & pdb_resnum, 1, MPI_UNSIGNED_LONG, destination, tag, MPI_COMM_WORLD );
 
 		char icode = iter->icode_;
-		char chain = iter->chain_;
+		std::string chain = iter->chain_;
 		//TR << "sending icode: '" << icode << "' and chain: '" << chain << "' to node " << destination << "." << std::endl;
 		MPI_Send( & icode, 1, MPI_CHAR, destination, tag, MPI_COMM_WORLD );
-		MPI_Send( & chain, 1, MPI_CHAR, destination, tag, MPI_COMM_WORLD );
-
+		utility::send_string_to_node(destination, chain);
 	}
 
 }
@@ -660,9 +660,9 @@ Mutant PointMutScanDriver::receive_mutant_data_from_node( int source ) {
 		MPI_Recv( & pose_resnum, 1, MPI_UNSIGNED_LONG, source, tag, MPI_COMM_WORLD, & stat );
 		MPI_Recv( & pdb_resnum, 1, MPI_UNSIGNED_LONG, source, tag, MPI_COMM_WORLD, & stat );
 
-		char icode, chain;
+		char icode;
 		MPI_Recv( & icode, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, & stat );
-		MPI_Recv( & chain, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, & stat );
+		std::string chain = utility::receive_string_from_node(source);
 		//TR << "received icode: '" << icode << "' and chain: '" << chain << "' from node " << source << "." << std::endl;
 
 		MutationData md( wt_residue, mut_residue, pose_resnum, pdb_resnum, icode, chain );
