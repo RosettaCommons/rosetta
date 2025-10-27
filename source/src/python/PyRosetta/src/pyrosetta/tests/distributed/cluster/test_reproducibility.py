@@ -20,19 +20,25 @@ import pyrosetta
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
 import shlex
+import shutil
 import subprocess
 import sys
 import tempfile
 import time
 import unittest
 
+from contextlib import contextmanager
+from pathlib import Path
+
 from pyrosetta.distributed.cluster import (
     PyRosettaCluster,
     export_init_file,
+    recreate_environment,
     requires_packed_pose,
     reserve_scores,
     reproduce,
 )
+from pyrosetta.distributed.cluster.config import EnvironmentConfig
 from pyrosetta.distributed.cluster.io import secure_read_pickle
 
 
@@ -1636,6 +1642,205 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         reproduce2_pose = io.pose_from_base64(reproduce2_output_file).pose
         self.assert_atom_coordinates(reproduce_pose, reproduce2_pose)
         self.assert_atom_coordinates(original_pose, reproduce2_pose)
+
+
+class TestEnvironmentReproducibility(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        pyrosetta.distributed.init(
+            options="-run:constant_seed 1 -multithreading:total_threads 1",
+            extra_options="-out:level 300 -ignore_unrecognized_res 1 -load_PDB_components 0",
+            set_logging_handler="logging",
+        )
+        cls.workdir = tempfile.TemporaryDirectory()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.workdir.cleanup()
+
+    def assert_atom_coordinates(self, pose1, pose2):
+        self.assertEqual(pose1.size(), pose2.size())
+        for res in range(1, pose1.size() + 1):
+            res1 = pose1.residue(res)
+            res2 = pose2.residue(res)
+            self.assertEqual(res1.name(), res2.name())
+            self.assertEqual(res1.natoms(), res2.natoms())
+            for atom in range(1, res1.natoms() + 1):
+                self.assertEqual(res1.atom_name(atom), res2.atom_name(atom))
+                for axis in "xyz":
+                    self.assertEqual(
+                        float(getattr(res1.atom(atom).xyz(), axis)),
+                        float(getattr(res2.atom(atom).xyz(), axis)),
+                    )
+
+    @staticmethod
+    def run_subprocess(cmd, module_dir=None, cwd=None):
+        print("Running command:", cmd)
+        if module_dir:
+            env = os.environ.copy()
+            env["PYTHONPATH"] = f"{module_dir}{os.pathsep}{os.environ.get('PYTHONPATH', '')}"
+        else:
+            env = None
+        p = subprocess.run(shlex.split(cmd), cwd=cwd, env=env, check=True, shell=False, stderr=subprocess.PIPE)
+        print("Return code: {0}".format(p.returncode))
+
+        return p.returncode
+
+    @contextmanager
+    def working_directory(self, path):
+        """Temporarily switch to the provided path within a context."""
+        path = Path(path).expanduser().resolve()
+        prev_cwd = Path.cwd()
+        try:
+            os.chdir(path)
+            yield path
+        finally:
+            os.chdir(prev_cwd)
+
+    def recreate_environment_test(self, environment_manager="conda"):
+        """Test for PyRosettaCluster decoy reproducibility in a recreated virtual environment."""
+
+        test_script = os.path.join(os.path.dirname(__file__), "recreate_environment_test_runs.py")
+
+        if environment_manager == "pixi":
+            # Create pixi environment
+            original_env_name = f"{environment_manager}_env"
+            original_env_dir = os.path.join(self.workdir.name, original_env_name)
+            setup_env_script = os.path.join(os.path.dirname(__file__), "setup_pixi_env.py")
+            module = os.path.splitext(os.path.basename(setup_env_script))[0]
+            cmd = "{0} -m {1} --env_dir '{2}'".format(
+                sys.executable,
+                module,
+                original_env_dir,
+            )
+            returncode = TestEnvironmentReproducibility.run_subprocess(
+                cmd,
+                module_dir=os.path.dirname(setup_env_script),
+                cwd=None,
+            )
+            self.assertEqual(returncode, 0, msg=f"Subprocess command failed: {cmd}")
+
+            # Run original simulation inside pixi environment
+            original_output_path = os.path.join(original_env_dir, "original_outputs")
+            original_scorefile_name = "test_scores.json"
+            cmd = "pixi run python {0} --env_manager '{1}' --output_path '{2}' --scorefile_name '{3}'".format(
+                test_script,
+                environment_manager,
+                original_output_path,
+                original_scorefile_name,
+            )
+            returncode = TestEnvironmentReproducibility.run_subprocess(
+                cmd,
+                module_dir=None,
+                cwd=original_env_dir, # Activate the original pixi environment context
+            )
+            self.assertEqual(returncode, 0, msg=f"Subprocess command failed: {cmd}")
+
+            # Recreate pixi environment from output scorefile
+            original_scorefile_path = os.path.join(original_output_path, original_scorefile_name)
+            with open(original_scorefile_path, "r") as f:
+                original_data = [json.loads(line) for line in f]
+            self.assertEqual(len(original_data), 1)
+            original_record = original_data[0]
+            self.assertIn("environment_manager", original_record["metadata"])
+            self.assertEqual(original_record["metadata"]["environment_manager"], environment_manager)
+            self.assertIn("decoy_name", original_record["metadata"])
+            original_decoy_name = original_record["metadata"]["decoy_name"]
+            # Set environment manager
+            os.environ[EnvironmentConfig._ENV_VAR] = environment_manager
+            # Recreate environment
+            reproduce_env_name = f"{original_env_name}_reproduce",
+            with self.working_directory(self.workdir.name):
+                recreate_environment(
+                    environment_name=reproduce_env_name,
+                    input_file=None,
+                    scorefile=original_scorefile_path,
+                    decoy_name=original_decoy_name,
+                    timeout=999,
+                )
+            reproduce_env_dir = os.path.join(self.workdir.name, reproduce_env_name)
+            self.assertTrue(
+                os.path.isdir(reproduce_env_dir),
+                f"Reproduced '{environment_manager}' environment directory was not created: '{reproduce_env_dir}'",
+            )
+
+            # Run reproduction simulation inside recreated pixi environment
+            reproduce_output_path = os.path.join(reproduce_env_dir, "reproduce_outputs")
+            reproduce_scorefile_name = "test_scores.json"
+            cmd = "pixi run python {0} --env_manager '{1}' --output_path '{2}' --scorefile_name '{3}' --original_scorefile '{4}' --original_decoy_name '{5}' --reproduce".format(
+                test_script,
+                environment_manager,
+                reproduce_output_path,
+                reproduce_scorefile_name,
+                original_scorefile_path,
+                original_decoy_name,
+            )
+            returncode = TestEnvironmentReproducibility.run_subprocess(
+                cmd,
+                module_dir=None,
+                cwd=reproduce_env_dir, # Activate the recreated pixi environment context
+            )
+            self.assertEqual(returncode, 0, msg=f"Subprocess command failed: {cmd}")
+
+            # Validate reproduced decoy is identical to original decoy
+            reproduce_scorefile_path = os.path.join(reproduce_output_path, reproduce_scorefile_name)
+            with open(reproduce_scorefile_path, "r") as f:
+                reproduce_data = [json.loads(line) for line in f]
+            self.assertEqual(len(reproduce_data), 1)
+            reproduce_record = reproduce_data[0]
+            self.assertIn("environment_manager", reproduce_record["metadata"])
+            self.assertEqual(reproduce_record["metadata"]["environment_manager"], environment_manager)
+
+            self.assertEqual(
+                original_record["scores"]["SEQUENCE"],
+                reproduce_record["scores"]["SEQUENCE"],
+            )
+            self.assertEqual(
+                original_record["scores"]["VALUE"],
+                reproduce_record["scores"]["VALUE"],
+            )
+            self.assertEqual(
+                original_record["scores"]["total_score"],
+                reproduce_record["scores"]["total_score"],
+            )
+            self.assertListEqual(
+                original_record["instance"]["seeds"],
+                reproduce_record["instance"]["seeds"],
+            )
+            self.assertListEqual(
+                original_record["instance"]["decoy_ids"],
+                reproduce_record["instance"]["decoy_ids"],
+            )
+            self.assertNotEqual(
+                original_record["metadata"]["author"],
+                reproduce_record["metadata"]["author"],
+            )
+            self.assertNotEqual(
+                original_record["metadata"]["decoy_name"],
+                reproduce_record["metadata"]["decoy_name"],
+            )
+            original_pose = io.pose_from_file(original_record["metadata"]["output_file"])
+            reproduce_pose = io.pose_from_file(reproduce_record["metadata"]["output_file"])
+            self.assert_atom_coordinates(original_pose, reproduce_pose)
+
+        else:
+            raise NotImplementedError(f"Unit test not implemented for '{environment_manager}' environment manager!")
+
+    @unittest.skipIf(shutil.which("conda") is None, "The executable 'conda' is not available.")
+    def test_recreate_environment_conda(self):
+        return self.recreate_environment_test(environment_manager="conda")
+
+    @unittest.skipIf(shutil.which("mamba") is None, "The executable 'mamba' is not available.")
+    def test_recreate_environment_mamba(self):
+        return self.recreate_environment_test(environment_manager="mamba")
+
+    @unittest.skipIf(shutil.which("uv") is None, "The executable 'uv' is not available.")
+    def test_recreate_environment_uv(self):
+        return self.recreate_environment_test(environment_manager="uv")
+
+    @unittest.skipIf(shutil.which("pixi") is None, "The executable 'pixi' is not available.")
+    def test_recreate_environment_pixi(self):
+        return self.recreate_environment_test(environment_manager="pixi")
 
 
 # if __name__ == "__main__":

@@ -26,19 +26,19 @@ import inspect
 import json
 import logging
 import os
-import shutil
 import subprocess
+import sys
 import tempfile
 import warnings
 
 from datetime import datetime
 from functools import wraps
+from pyrosetta.distributed.cluster.config import get_environment_config
 from pyrosetta.distributed.cluster.converters import _parse_protocols
 from pyrosetta.distributed.cluster.converter_tasks import (
     is_dict,
     is_empty,
     get_protocols_list_of_str,
-    get_yml,
     parse_client,
     parse_decoy_name,
     parse_init_file,
@@ -73,35 +73,6 @@ from typing import (
 
 
 P = TypeVar("P", bound=Callable[..., Any])
-
-
-def _print_conda_warnings() -> None:
-    """
-    Print warning message if Anaconda or Miniconda are not installed and we are
-    not in an active conda environment on the client.
-    """
-    try:
-        _worker = distributed.get_worker()
-    except ValueError:
-        _worker = None
-    if not _worker:
-        if shutil.which("conda"):  # Anaconda or Miniconda is installed
-            if get_yml() == "":
-                print(
-                    "Warning: To use the `pyrosetta.distributed.cluster` namespace, please "
-                    + "create and activate a conda environment (other than 'base') to ensure "
-                    + "reproducibility of PyRosetta simulations. For instructions, visit:\n"
-                    + "https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html\n"
-                    + "https://conda.io/activation\n"
-                )  # Warn that we are not in an active conda environment
-        else:  # Anaconda or Miniconda is not installed
-            print(
-                "Warning: Use of `pyrosetta.distributed.cluster` namespace requires Anaconda "
-                + "(or Miniconda) to be properly installed for reproducibility of PyRosetta "
-                + "simulations. Please install Anaconda (or Miniconda) onto your system "
-                + "to enable running `which conda`. For installation instructions, visit:\n"
-                + "https://docs.anaconda.com/anaconda/install\n"
-            )  # Warn that `conda` is not in $PATH
 
 
 def get_protocols(
@@ -347,98 +318,169 @@ def recreate_environment(
 ) -> Optional[NoReturn]:
     """
     Given an input file that was written by PyRosettaCluster, or a scorefile
-    and a decoy name that was written by PyRosettaCluster, recreate the conda
+    and a decoy name that was written by PyRosettaCluster, recreate the
     environment that was used to generate the decoy with a new environment name.
 
+    The environment manager used (i.e., either 'conda', 'mamba', 'uv', or 'pixi') is
+    automatically determined from the operating system environment variable
+    'PYROSETTACLUSTER_ENVIRONMENT_MANAGER' if exported, or otherwise it is automatically
+    selected based on which manager is available on the system. If no executables
+    are explicitly found, then 'conda' is used by default.
+
     Args:
-        environment_name: A `str` object specifying the new name of the conda environment
-            to recreate.
+        environment_name: A `str` object specifying the new name of the environment
+            to recreate. If using 'conda' and 'mamba', this is the environment name.
+            If using 'uv' or 'pixi', this is the local project directory name that will
+            be created in the current working directory.
             Default: 'PyRosettaCluster_' + datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f")
         input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
-            '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file, or a `Pose`or `PackedPose`
+            '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file, or a `Pose` or `PackedPose`
             object, from which to extract PyRosettaCluster instance kwargs. If 'input_file' is
             provided, then ignore the 'scorefile' and 'decoy_name' keyword argument parameters.
             Default: None
         scorefile: A `str` object specifying the path to the JSON-formatted scorefile
+            (or pickled `pandas.DataFrame` scorefile) from a PyRosettaCluster simulation
             from which to extract PyRosettaCluster instance kwargs. If 'scorefile'
-            is provided, 'decoy_name' must also be provided. In order to use a scorefile,
-            it must contain full simulation records from the original production
-            run; i.e., the attribute 'simulation_records_in_scorefile' was set to True.
+            is provided, 'decoy_name' must also be provided. The scorefile must
+            contain full simulation records from the original production run
+            (i.e., 'simulation_records_in_scorefile' was set to `True`).
             Default: None
         decoy_name: A `str` object specifying the decoy name for which to extract
-            PyRosettaCluster instance kwargs. If 'decoy_name' is provided, 'scorefile'
-            must also be provided.
+            PyRosettaCluster instance kwargs. Must be provided if 'scorefile'
+            is used.
             Default: None
-        timeout: An `int` object specifying the timeout in seconds before exiting the subprocess.
+        timeout: An `int` object specifying the timeout in seconds before any
+            subprocesses are terminated.
             Default: None
 
     Returns:
         None
     """
+    def _run_subprocess(cmd) -> str:
+        try:
+            return subprocess.check_output(
+                cmd,
+                shell=True,
+                stderr=subprocess.STDOUT,
+                timeout=timeout,
+                text=True,
+            )
+        except subprocess.CalledProcessError as ex:
+            raise RuntimeError(
+                f"Command failed: `{cmd}`\n"
+                f"Return code: {ex.returncode}\n"
+                f"Output:\n{ex.output}"
+            ) from ex
 
     if not environment_name:
         environment_name = "PyRosettaCluster_" + datetime.now().strftime(
             "%Y.%m.%d.%H.%M.%S.%f"
         )
 
-    _conda_env_list_cmd = "conda env list"
-    try:
-        envs = subprocess.check_output(
-            _conda_env_list_cmd,
-            shell=True,
-            stderr=subprocess.DEVNULL,
-            timeout=timeout,
-        ).decode()
-    except subprocess.CalledProcessError:
-        logging.error(f"Could not run `{_conda_env_list_cmd}`!")
-        raise
+    _env_config = get_environment_config()
+    environment_manager = _env_config.environment_manager
+    env_list_cmd = _env_config.env_list_cmd
 
-    for line in envs.split(os.linesep):
-        if not line.startswith("#"):
-            assert (
-                line.split()[0] != environment_name
-            ), f"The 'environment_name' parameter '{environment_name}' already exists!"
+    # Test if environment name already exists
+    if environment_manager in ("conda", "mamba"):
+        env_list_cmd = _env_config.env_list_cmd
+        envs_out = _run_subprocess(env_list_cmd)
+        envs_all = [
+            line.split()[0]
+            for line in envs_out.splitlines()
+            if line and not line.startswith("#")
+        ]
+    elif environment_manager in ("uv", "pixi"):
+        # Only consider local uv or pixi projects created in the current working directory
+        if environment_manager == "uv":
+            _filenames = ("uv.lock", "pyproject.toml",)
+        elif environment_manager == "pixi":
+            _filenames = ("pixi.toml",)
+        cwd = os.getcwd()
+        envs_all = [
+            d for d in os.listdir(cwd)
+            if os.path.isdir(d) and any(os.path.isfile(os.path.join(cwd, d, f)) for f in _filenames)
+        ]
+    else:
+        raise RuntimeError(f"Unsupported environment manager: '{environment_manager}'")
+    if environment_name in envs_all:
+        raise RuntimeError(
+            f"The environment name '{environment_name}' already exists under {environment_manager}."
+        )
 
+    # Extract environment spec from record
     _instance_kwargs = get_instance_kwargs(
         input_file=input_file,
         scorefile=scorefile,
         decoy_name=decoy_name,
+        skip_corrections=None,
     )
-    if "environment" in _instance_kwargs:
-        raw_yml = _instance_kwargs["environment"]
+    if "environment" not in _instance_kwargs:
+        raise RuntimeError(
+            "PyRosettaCluster 'environment' instance attribute does not exist. "
+            + "`recreate_environment()` cannot create environment!"
+        )
+    raw_spec = _instance_kwargs.get("environment", None)
+    if not raw_spec:
+        raise RuntimeError(
+            "PyRosettaCluster 'environment' instance attribute is empty. "
+            + "`recreate_environment()` cannot create environment!"
+        )
+    # Get original environment manager
+    for line in raw_spec.splitlines():
+        if line.startswith(f"# {_env_config._ENV_VAR}"):
+            original_environment_manager = line.split("=")[-1].strip()
+            break
     else:
-        raise NotImplementedError(
-            "PyRosettaCluster 'environment' instance attribute doesn't exist. "
-            + "recreate_environment() cannot create conda environment!"
+        original_environment_manager = "conda" # For legacy PyRosettaCluster simulations with a non-empty raw spec
+
+    # Test that current environment manager can recreate original environment
+    if original_environment_manager == "uv" and environment_manager != "uv":
+        raise RuntimeError(
+            f"The original PyRosettaCluster simulation used '{original_environment_manager}' as "
+            + f"an environment manager, but the current environment manager is configured to use "
+            + f"'{environment_manager}' as an environment manager! The environment specification "
+            + f"is saved in a 'requirements.txt' format, and therefore requires '{original_environment_manager}' "
+            + f"to recreate the environment. Please ensure '{original_environment_manager}' is installed "
+            + f"and run `export {_env_config._ENV_VAR}={original_environment_manager}` to properly configure "
+            + f"the '{original_environment_manager}' environment manager, then try again. For installation "
+            + "instructions, please visit:\n"
+            + "https://docs.astral.sh/uv/guides/install-python\n"
+        )
+    elif original_environment_manager != "uv" and environment_manager == "uv":
+        raise RuntimeError(
+            f"The original PyRosettaCluster simulation used '{original_environment_manager}' as "
+            + "an environment manager, but the current environment manager is configured to use "
+            + f"'{environment_manager}' as an environment manager! The environment specification "
+            + "is saved in a YAML file format, and therefore requires 'conda', 'mamba', or 'pixi' to "
+            + "recreate the environment. Please ensure that 'conda', 'mamba', or 'pixi' is installed, then "
+            + "configure the environment manager by running one of the following commands, then try again:\n"
+            + f"To configure 'conda', run: `export {_env_config._ENV_VAR}=conda`\n"
+            + f"To configure 'mamba', run: `export {_env_config._ENV_VAR}=mamba`\n"
+            + f"To configure 'pixi', run:  `export {_env_config._ENV_VAR}=pixi`\n"
+            + "For installation instructions, please visit:\n"
+            + "https://docs.anaconda.com/anaconda/install\n"
+            + "https://github.com/conda-forge/miniforge\n"
+            + "https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html\n"
+            + "https://pixi.sh/latest/installation\n"
+        )
+    elif original_environment_manager != environment_manager:
+        warnings.warn(
+            f"The original PyRosettaCluster simulation used '{original_environment_manager}' as "
+            + "an environment manager, but the current environment manager is configured to use "
+            + f"'{environment_manager}' as an environment manager! Now attempting to recreate the "
+            + "environment with cross-manager compatibility using the universal YAML file string...",
+            RuntimeWarning,
+            stacklevel=2,
         )
 
-    if raw_yml:
-        with tempfile.TemporaryDirectory() as workdir:
-            yml_file = os.path.join(workdir, f"{environment_name}.yml")
-            with open(yml_file, "w") as f:
-                f.write(raw_yml)
-
-            _conda_env_create_cmd = (
-                f"conda env create --file {yml_file} --name {environment_name}"
-            )
-            try:
-                result = subprocess.check_output(
-                    _conda_env_create_cmd,
-                    shell=True,
-                    stderr=subprocess.DEVNULL,
-                    timeout=timeout,
-                ).decode()
-                logging.info(
-                    f"recreate_environment() successfully created conda environment: {environment_name}"
-                )
-                logging.info(result)
-            except subprocess.CalledProcessError:
-                logging.error(f"Could not run `{_conda_env_create_cmd}`!")
-                raise
-    else:
-        raise NotImplementedError(
-            "PyRosettaCluster 'environment' instance attribute is empty. "
-            + "recreate_environment() cannot create conda environment!"
+    # Recreate the environment
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        env_create_cmd = _env_config.env_create_cmd(environment_name, raw_spec, tmp_dir)
+        output = _run_subprocess(env_create_cmd)
+        sys.stdout.write(
+            f"\nEnvironment successfully created using {environment_manager}: '{environment_name}'\n"
+            f"Output:\n{output}\n"
         )
 
 
