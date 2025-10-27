@@ -122,7 +122,7 @@ has_chain(std::string const & chain, core::pose::Pose const & pose);
 
 // To disambiguate with the core::Size variant
 bool
-has_chain(char const & chain, core::pose::Pose const & pose) = delete;
+has_chain(char const & /*chain*/, core::pose::Pose const & /*pose*/) = delete;
 
 /// @brief Does the pose have a residue with the given chain number
 ///
