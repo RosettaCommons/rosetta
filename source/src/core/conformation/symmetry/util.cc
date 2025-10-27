@@ -24,8 +24,6 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/util.hh>
 
-#include <core/pose/chains_util.hh>
-
 #include <core/kinematics/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>

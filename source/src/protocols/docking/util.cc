@@ -144,16 +144,6 @@ core::Size setup_dock_jump(
 }
 
 
-//void
-//setup_foldtree(
-// core::pose::Pose & pose,
-// std::string const & partner_chainID,
-// DockJumps & movable_jumps,
-// bool rand_jump_res_partner2 ) // default = false
-//{
-// setup_foldtree(pose, core::pose::docking_partners_from_string(partner_chainID), movable_jumps, rand_jump_res_partner2);
-//}
-
 /// @details If partners is empty, the first chain will be docked to the rest of the complex.
 /// Otherwise, a jump will be created between the residue
 /// nearest to the center of mass of the first partner and the residue nearest to the center of mass of everything else
@@ -177,7 +167,7 @@ setup_foldtree(
 
 	FoldTree f;
 	vector1< bool > partner1( pose.size(), false );
-	if ( partners.partner1.empty() && partners.partner2.empty() ) {
+	if ( partners.is_empty() ) {
 		debug_assert( pose.chain( pose.size() ) > 1 );
 
 		core::Size const last_res_of_first_chain( pose.conformation().chain_end( 1 ) );
