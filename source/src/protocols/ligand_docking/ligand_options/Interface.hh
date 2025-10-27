@@ -56,7 +56,7 @@ struct InterfaceInfo{
 class Interface: public utility::vector1<InterfaceInfo>{
 
 public:
-	Interface(core::Size num, InterfaceInfo info);
+	Interface(core::Size num, InterfaceInfo const & info);
 
 	core::Size find_first_interface_residue(core::Size chain_begin, core::Size const chain_end) const;
 

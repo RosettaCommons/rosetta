@@ -145,7 +145,7 @@ public:
 	get_string() const;
 
 private:
-	AntibodyNumberingSchemeEnum numbering_scheme_;
+	AntibodyNumberingSchemeEnum numbering_scheme_ = AHO_Scheme; // Default arbitrary, mainly to avoid uninitialized variable.
 
 	core::Size resnum_; //PDB residue number
 	std::string chain_;

@@ -18,6 +18,7 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.fwd.hh>
 #include <map>
+#include <string>
 
 namespace protocols {
 namespace ligand_docking {

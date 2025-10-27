@@ -327,20 +327,18 @@ AntibodyNumberingParser::read_cdr_definition_numbering_line(vector1<std::string>
 
 
 /////PDBLandmark/////////
-PDBLandmark::PDBLandmark(std::string const & chain, core::Size resnum, char insertion_code, AntibodyNumberingSchemeEnum scheme) {
-	numbering_scheme_  =  scheme;
-	resnum_ = resnum;
-	chain_ = chain;
-	insertion_code_ = insertion_code;
-	//PDBLandmark(chain, resnum, insertion_code); This makes a temporary PDBLandmark that does nothing.  Blargh!
+PDBLandmark::PDBLandmark(std::string const & chain, core::Size resnum, char insertion_code, AntibodyNumberingSchemeEnum scheme):
+	numbering_scheme_( scheme ),
+	resnum_( resnum ),
+	chain_( chain ),
+	insertion_code_( insertion_code )
+{}
 
-}
-
-PDBLandmark::PDBLandmark(std::string const & chain, core::Size resnum, char insertion_code) {
-	resnum_ = resnum;
-	chain_ = chain;
-	insertion_code_ = insertion_code;
-}
+PDBLandmark::PDBLandmark(std::string const & chain, core::Size resnum, char insertion_code):
+	resnum_( resnum ),
+	chain_( chain ),
+	insertion_code_( insertion_code )
+{}
 
 bool
 PDBLandmark::operator ==(const PDBLandmark& compare) const {
