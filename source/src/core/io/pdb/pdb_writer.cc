@@ -31,6 +31,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/util.hh>
 
 // Numeric headers
 
@@ -701,7 +702,8 @@ create_pdb_info_for_single_residue_pose(
 	core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo( 1 ) );
 
 	utility::vector1< int > pdb_numbering( 1, rsd.seqpos() );
-	utility::vector1< char > pdb_chains( 1, char( ( rsd.chain() - 1 ) % 26 ) + 'A' );
+	utility::vector1< std::string > pdb_chains;
+	pdb_chains.push_back( core::conformation::canonical_chain_letter_for_chain_number(rsd.chain()) );
 	utility::vector1< char > insertion_codes( 1, ' ' );
 
 	pdb_info->set_numbering( pdb_numbering );

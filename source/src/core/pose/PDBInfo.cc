@@ -764,6 +764,19 @@ PDBInfo::set_all_chains( std::string const & id ) {
 	rebuild_pdb2pose();
 }
 
+void
+PDBInfo::set_chains( utility::vector1< std::string > const & c )
+{
+	debug_assert( residue_rec_.size() == c.size() );
+	check_residue_records_size( c.size() ); // run-time check
+
+	for ( core::Size ii(1); ii <= c.size(); ++ii ) {
+		residue_rec_[ii].chainID = c[ii];
+	}
+
+	rebuild_pdb2pose();
+}
+
 /// @brief copy a section from another PDBInfo
 /// @param[in] input_info the PDBInfo to copy from
 /// @param[in] copy_from the first residue position in input_info to copy

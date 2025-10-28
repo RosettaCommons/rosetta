@@ -208,8 +208,8 @@ ConstraintIO::read_cst_coordinates(
 		name1 = utility::replace_in( name1, "*", "'" );
 		name2 = utility::replace_in( name2, "*", "'" );
 
-		res1 = parse_residue( pose, res1, 0/*chain*/, force_pdb_info_mapping );
-		res2 = parse_residue( pose, res2, 0/*chain*/, force_pdb_info_mapping );
+		res1 = parse_residue( pose, res1, ""/*chain*/, force_pdb_info_mapping );
+		res2 = parse_residue( pose, res2, ""/*chain*/, force_pdb_info_mapping );
 
 		tr.Debug  << "read: " << name1 << " " << name2 << " "
 			<< res1 << " " << res2 << " func: " << func_type
@@ -623,7 +623,7 @@ ConstraintIO::parse_residue( pose::Pose const& pose, std::string const & residue
 
 
 Size
-ConstraintIO::parse_residue( pose::Pose const& pose, int const resnum, std::string const & chain /* = i"" */, bool const force_pdb_info_mapping_in )
+ConstraintIO::parse_residue( pose::Pose const& pose, int const resnum, std::string const & chain /* = "" */, bool const force_pdb_info_mapping_in )
 {
 	// this option is a vector1< bool > for pretty arcane reasons -- rosetta does not provide a set default option for bool, but does so for vector< bool>.
 	using namespace basic::options;

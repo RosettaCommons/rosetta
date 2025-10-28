@@ -470,7 +470,7 @@ public: // Utility methods
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 		if ( ! pose->pdb_info() ) { pose->pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( *pose ) ); }
-		pose->pdb_info()->set_chains( std::string( "XAAAMBBBBCBMMAAAXM" ) );
+		pose->pdb_info()->set_chains( {"X","A","A","A","M","B","B","B","B","C","B","M","M","A","A","A","X","M"} );
 		// Strap in: pos 1 is a virtual root, which has jumps to chain A, B, and the virtual root for the metals
 		// Chain A is discontinous, and is connected by a jump in the middle
 		// Chain B is contingous, but has a jump in the middle (note that this doesn't reset the chain id)

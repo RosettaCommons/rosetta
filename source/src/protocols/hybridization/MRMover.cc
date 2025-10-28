@@ -190,7 +190,7 @@ void MRMover::apply( Pose &pose ) {
 		// setup & call single-template hybridize
 		// 1 - remove loops from the input pose, add as template
 		utility::vector1< int > pdb_numbering;
-		utility::vector1< char > pdb_chains;
+		utility::vector1< std::string > pdb_chains;
 		core::pose::PoseOP template_pose( new core::pose::Pose );
 		bool add_by_jump = true;
 		for ( core::Size i=1; i<=pose.size(); ++i ) {
@@ -222,7 +222,7 @@ void MRMover::apply( Pose &pose ) {
 				}
 
 				pdb_numbering.push_back( i );
-				pdb_chains.push_back( 'A' );
+				pdb_chains.push_back( "A" );
 			} else {
 				add_by_jump = true;
 			}
@@ -448,12 +448,12 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 	core::pose::PDBInfoOP pdb_info( query_pose.pdb_info() );
 	core::pose::PDBInfoOP new_pdb_info( new core::pose::PDBInfo(new_nres) );
 	utility::vector1< int > pdb_numbering;
-	utility::vector1< char > pdb_chains;
+	utility::vector1< std::string > pdb_chains;
 
 	for ( core::Size i(1); i <= query_pose.size(); ++i ) {
 		if ( new_invmapping[i] != 0 ) {
 			pdb_numbering.push_back( i );
-			pdb_chains.push_back( 'A' );
+			pdb_chains.push_back( "A" );
 		}
 	}
 

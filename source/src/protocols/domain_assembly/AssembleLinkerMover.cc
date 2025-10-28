@@ -62,7 +62,7 @@ void AssembleLinkerMover::apply( core::pose::Pose & pose ) {
 		pose.pdb_info()->number(ii,ii);
 	}
 	// make a single-chain pdb
-	pose.pdb_info()->set_chains(first_chain);
+	pose.pdb_info()->set_all_chains(first_chain);
 	pose.conformation().reset_chain_endings();
 
 	// new fold tree

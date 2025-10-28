@@ -131,7 +131,7 @@ dump_RefinementDB_to_silent(
 				tmp_pose.pdb_info(utility::pointer::make_shared< core::pose::PDBInfo >(tmp_pose.size()));
 			}
 			// Temporary until chains are strings i guess
-			if ( final_chain != "^" ) tmp_pose.pdb_info()->set_chains( final_chain );
+			if ( final_chain != "^" ) tmp_pose.pdb_info()->set_all_chains( final_chain );
 
 			return tmp_pose;
 		}();
