@@ -2,11 +2,13 @@
 -name3 TRP Glc 
 -extra_res_fa input/7cpa.params input/000.params
 -extra_res_mol input/XST.sdf
+-extra_res_mmCIF input/TTN.cif
 
 -include_sugars
 -include_lipids
 -load_PDB_components  # Needed for include lipids (when this test is written)
 -out:path:all output_fa
 -out:pdb
+-out:mmCIF
 -params_out
 -sdf_out
