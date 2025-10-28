@@ -33,6 +33,8 @@ class PackedPose:
     for serialization as text.
 
     It should be noted that all pickled representations are *highly* compressible.
+
+    **The pickle module is not secure.** Learn more `here <https://docs.python.org/3/library/pickle.html>`_. For the purposes of the PackedPose object, the serialized object only exists in memory (not as a file) so there is no security risk unless the object is sent to a user over a network (e.g., socket, queue, shared cache, etc.).
     """
 
     __slots__ = ("scores", "pickled_pose")
