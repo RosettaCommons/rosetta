@@ -891,9 +891,12 @@ get_resnum_and_chain_from_one_tag( std::string const & tag,
 
 	// There can be one or two colons.
 	size_t colon_count = std::count( tag.begin(), tag.end(), ':' );
-	if ( colon_count == 2 ) {
+	if ( colon_count > 2 ) {
+		// Probably not a well-formed designation
+		return false;
+	} else if ( colon_count == 2 ) {
 		// OK: first part is chain; second part is segid; final part is resnum.
-		// second part may be 1-4.
+		// second part may be 1-4 characters
 		size_t first = tag.find(':');
 		size_t second = tag.find(':',first+1);
 		chain = tag.substr(0,first);
@@ -906,24 +909,28 @@ get_resnum_and_chain_from_one_tag( std::string const & tag,
 			segid = segid + " ";
 		}
 		resnum_from_tag = ObjexxFCL::ints_of( tag.substr(second+1), string_is_ok );
-	} else {
+	} else if ( colon_count == 1 ) {
+		// OK: first part is chain; final part is resnum.
 		size_t found_colon = tag.find( ":" );
-		if ( found_colon == std::string::npos ) {
-			size_t first_number = tag.find_first_of(numerical);
-			if ( first_number == 0 ) {
-				resnum_from_tag = ObjexxFCL::ints_of( tag, string_is_ok );
-			} else if ( first_number != std::string::npos ) {
-				chain = tag.substr(0,first_number);
-				resnum_from_tag = ObjexxFCL::ints_of( tag.substr(first_number), string_is_ok );
-			} else {
-				return false;
-			}
-		} else if ( found_colon == 0 ) {
+		if ( found_colon == 0 ) { // blank chain designation
 			chain = " ";
 			resnum_from_tag = ObjexxFCL::ints_of( tag.substr(1), string_is_ok );
 		} else {
 			chain = tag.substr(0,found_colon);
 			resnum_from_tag = ObjexxFCL::ints_of( tag.substr(found_colon+1), string_is_ok );
+		}
+	} else {
+		// No colon. Either fully numeric, or we assume we have a special case single letter chain code
+		// (For backwards compatibility, multiletter chain designations need to use colons)
+		size_t first_number = tag.find_first_of(numerical);
+		if ( first_number == 0 ) {
+			resnum_from_tag = ObjexxFCL::ints_of( tag, string_is_ok );
+		} else if ( first_number == 1 ) {
+			chain = tag.substr(0,1);
+			resnum_from_tag = ObjexxFCL::ints_of( tag.substr(1), string_is_ok );
+		} else {
+			// Probably not actually a chain/number designation.
+			return false;
 		}
 	}
 
