@@ -75,7 +75,7 @@ void init_score_function_corrections( utility::options::OptionCollection & optio
 
 /// @brief Initialize new atom types for Rosetta generic potential
 void
-init_gen_potential_settings(utility::options::OptionCollection & options );
+init_gen_potential_settings(utility::options::OptionCollection & options, bool setweight=true );
 
 /// @brief  Apply some DNA-specific mods that are still in testing phase; only
 /// if -corrections::newdna present

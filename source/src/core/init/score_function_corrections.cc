@@ -742,18 +742,19 @@ void
 init_beta_correction( utility::options::OptionCollection & options ) {
 	// -beta activates most recent changes
 	if ( options[corrections::beta]() ) {
-		options[ corrections::gen_potential ].value(true);
+		options[ corrections::beta_jan25 ].value(true);
 	}
 	if ( options[corrections::beta_cart]() ) {
-		options[ corrections::gen_potential ].value(true);
+		options[ corrections::beta_jan25_cart ].value(true);
 	}
 
 	// if multiple flags specified use the most recent
-	if ( options[ corrections::gen_potential ]() ) {
-		init_beta_jan25_correction( options, false );  // genpot is "on top" of beta_jan25
-		init_gen_potential_settings( options );
-	} else if ( options[corrections::beta_jan25]() || options[corrections::beta_jan25_cart]() ) {
+	if ( options[corrections::beta_jan25]() || options[corrections::beta_jan25_cart]() ) {
 		init_beta_jan25_correction( options );
+		init_gen_potential_settings( options, false );
+	} else if ( options[ corrections::gen_potential ]() ) {
+		init_beta_nov16_correction( options, false );  // genpot is "on top" of beta_nov16
+		init_gen_potential_settings( options );
 	} else if ( options[corrections::beta_nov16]() || options[corrections::beta_nov16_cart]() ) {
 		init_beta_nov16_correction( options );
 	} else if ( options[corrections::beta_july15]() || options[corrections::beta_july15_cart]() ) {
@@ -3068,7 +3069,7 @@ void init_spades_score_function_correction( utility::options::OptionCollection &
 
 
 void
-init_gen_potential_settings( utility::options::OptionCollection & options ) {
+init_gen_potential_settings( utility::options::OptionCollection & options, bool setweight ) {
 	if ( ! options[ corrections::gen_potential]() ) return;
 
 	if ( ! options[ basic::options::OptionKeys::score::fa_Hatr ].user() ) {
@@ -3151,7 +3152,7 @@ init_gen_potential_settings( utility::options::OptionCollection & options ) {
 		}
 	}
 
-	if ( ! options[ score::weights ].user() ) {
+	if ( setweight && !options[ score::weights ].user() ) {
 		if ( options[corrections::beta_cart]() || options[optimization::nonideal]() ) {
 			options[ score::weights ].value( "beta_genpot_cart.wts" );
 		} else {
