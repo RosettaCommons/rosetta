@@ -164,7 +164,7 @@ PCSLigandTransformMover::PCSLigandTransformMover() :
 	rot_step_(20.0),
 	rsol_damping_(0.0),
 	optimize_transform_(false),
-	chain_('X')
+	chain_("X")
 {}
 
 PCSLigandTransformMover::PCSLigandTransformMover(
@@ -180,7 +180,7 @@ PCSLigandTransformMover::PCSLigandTransformMover(
 	rot_step_(20.0),
 	rsol_damping_(0.0),
 	optimize_transform_(false),
-	chain_('X')
+	chain_("X")
 {}
 
 PCSLigandTransformMover::PCSLigandTransformMover(PCSLigandTransformMover const & ) = default;
@@ -734,12 +734,7 @@ PCSLigandTransformMover::parse_my_tag(
 		}
 		// Chain
 		if ( tag->hasOption("chain") ) {
-			std::string chain = tag->getOption< std::string >("chain", "X");
-			if ( chain == "" ) {
-				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'PCSLigandTransformMover' requires 'chain' tag.");
-			} else {
-				chain_ = char(chain[0]);
-			}
+			chain_ = tag->getOption< std::string >("chain", "X");
 		}
 	} catch ( utility::excn::RosettaScriptsOptionError & excn ) {
 		TR << "caught exception " << excn.msg() << std::endl;
@@ -756,7 +751,7 @@ PCSLigandTransformMover::provide_xml_schema(utility::tag::XMLSchemaDefinition & 
 	attlist
 		+ XMLSchemaAttribute::required_attribute( "pcs_input_file", xs_string, "PCS data input file" )
 		+ XMLSchemaAttribute::required_attribute( "scorefxn", xs_string, "Scorefunction to be used by PCSLigandTransformMover" )
-		+ XMLSchemaAttribute::attribute_w_default( "chain", xsct_char, "Ligand chain", "X" );
+		+ XMLSchemaAttribute::attribute_w_default( "chain", xs_string, "Ligand chain", "X" );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
 		"This Mover performs a PCS data driven grid search of the ligand position and orientation", attlist);

@@ -28,6 +28,7 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/DockingPartners.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -106,8 +107,8 @@ public:
 
 	void set_sc_min( bool sc_min ){ sc_min_ = sc_min; }
 	void set_rt_min( bool rt_min ){ rt_min_ = rt_min; }
-	void set_partners( std::string partners ) { partners_ = partners; }
-	std::string get_partners( ) const { return partners_; }
+	void set_partners( core::pose::DockingPartners const & partners ) { partners_ = partners; }
+	core::pose::DockingPartners get_partners() const { return partners_; }
 	void set_interface_definition_task_operation( protocols::simple_task_operations::InterfaceTaskOperationOP interface_definition );
 	void set_additional_task_operarations( utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations );
 	void add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation );
@@ -116,7 +117,6 @@ public:
 
 	bool sc_min() { return sc_min_; }
 	bool rt_min() { return rt_min_; }
-	std::string partners() { return partners_; }
 
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	core::scoring::ScoreFunctionOP scorefxn_pack() const;
@@ -127,7 +127,7 @@ protected:
 private:
 	bool sc_min_;
 	bool rt_min_;
-	std::string partners_;
+	core::pose::DockingPartners partners_;
 
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::scoring::ScoreFunctionOP scorefxn_pack_;

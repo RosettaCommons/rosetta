@@ -87,7 +87,7 @@ void RenderGridsToKinemage::apply(core::pose::Pose & pose)
 	debug_assert( grid_name_ != "" );
 	debug_assert( filename_ != "" );
 
-	char chain( grid_set_prototype_->chain() );
+	std::string chain( grid_set_prototype_->chain() );
 	utility::vector1< core::Size > chain_residues( core::pose::get_resnums_for_chain( pose, chain ) );
 	core::Vector center( core::pose::all_atom_center(pose, chain_residues) );
 

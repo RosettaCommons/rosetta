@@ -128,8 +128,8 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 		core::Size j0stop = SSEs[j-1].stop();
 		core::Size j1start = SSEs[j].start();
 
-		char chain0 = pose.pdb_info()->chain(j0stop);
-		char chain1 = pose.pdb_info()->chain(j1start);
+		std::string chain0 = pose.pdb_info()->chain(j0stop);
+		std::string chain1 = pose.pdb_info()->chain(j1start);
 
 		if ( chains_.size()>0 && std::find(chains_.begin(), chains_.end(), chain0) == chains_.end() ) continue;
 		if ( chains_.size()>0 && std::find(chains_.begin(), chains_.end(), chain1) == chains_.end() ) continue;
@@ -495,7 +495,7 @@ void OptimizeThreadingMover::parse_my_tag(
 	if ( tag->hasOption( "chains" ) ) {
 		std::string chain_str = tag->getOption<std::string>( "chains" );
 		utility::vector1< std::string > chns = utility::string_split(chain_str, ',');
-		for ( int i=1; i<=(int)chns.size(); ++i ) chains_.push_back( chns[i][0] );
+		for ( int i=1; i<=(int)chns.size(); ++i ) chains_.push_back( chns[i] );
 	}
 
 	nsteps_ = tag->getOption<core::Size>( "nsteps", 5000 );

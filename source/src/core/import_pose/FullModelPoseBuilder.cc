@@ -145,7 +145,7 @@ FullModelPoseBuilder::initialize_further_from_options() {
 	using namespace core::pose;
 	using namespace utility;
 
-	std::tuple< vector1< Size >, vector1< char >, vector1< std::string > > const & input_resnum_and_chain_and_segid = (*options_)[ in::file::input_res ].resnum_and_chain();
+	std::tuple< vector1< Size >, vector1< std::string >, vector1< std::string > > const & input_resnum_and_chain_and_segid = (*options_)[ in::file::input_res ].resnum_and_chain();
 
 	set_input_resnum_and_chain_and_segid( input_resnum_and_chain_and_segid );
 	set_cutpoint_open_in_full_model( (*options_)[ full_model::cutpoint_open ]() );
@@ -196,14 +196,14 @@ PoseOP FullModelPoseBuilder::build() { // can't be const because it can change i
 
 	vector1< Size > const & input_res_list = std::get< 0 >( input_resnum_and_chain_and_segid_ );
 	if ( input_res_list.size() ) {
-		vector1< char > const & input_chain_list = std::get< 1 >( input_resnum_and_chain_and_segid_ );
+		vector1< std::string > const & input_chain_list = std::get< 1 >( input_resnum_and_chain_and_segid_ );
 		vector1< std::string > const & input_segid_list = std::get< 2 >( input_resnum_and_chain_and_segid_ );
 		Size input_res_count = 0;
 		for ( Size n = 1; n <= input_poses_.size(); n++ ) {
 			Pose & pose = *input_poses_[ n ];
 			PDBInfoOP pdb_info( new PDBInfo( pose ) );
 			vector1< Size > input_res_for_pose;
-			vector1< char > input_chain_for_pose;
+			vector1< std::string > input_chain_for_pose;
 			vector1< std::string> input_segid_for_pose;
 			for ( Size k = 1; k <= pose.size(); k++ ) {
 				input_res_count++;
@@ -293,7 +293,7 @@ FullModelPoseBuilder::fill_full_model_info( vector1< Pose * > & pose_pointers ) 
 		preferred_root_res_ = full_model_parameters_->conventional_to_full(
 			std::make_tuple(
 			utility::tools::make_vector1< int >(1),
-			utility::tools::make_vector1< char >('z'),
+			utility::tools::make_vector1< std::string >("z"),
 			utility::tools::make_vector1< std::string >("    ")
 			)
 		);

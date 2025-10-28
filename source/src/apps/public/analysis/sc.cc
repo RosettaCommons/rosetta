@@ -42,7 +42,7 @@ basic::options::RealOptionKey const weight("sc:weight");
 
 using namespace std;
 
-int process_pose(core::pose::Pose &pose, core::scoring::sc::ShapeComplementarityCalculator &sc, std::string &molecule_1, std::string &molecule_2, int verbose);
+int process_pose(core::pose::Pose &pose, core::scoring::sc::ShapeComplementarityCalculator &sc, utility::vector1< std::string > &molecule_1, utility::vector1< std::string > &molecule_2, int verbose);
 
 ///////////////////////////////////////////////////////////////////////////////
 int
@@ -121,8 +121,14 @@ main( int argc, char * argv [] )
 		}
 
 		core::chemical::ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
-		std::string molecule_1 = option[ basic::options::OptionKeys::sc::molecule_1 ];
-		std::string molecule_2 = option[ basic::options::OptionKeys::sc::molecule_2 ];
+		utility::vector1< std::string > molecule_1;
+		utility::vector1< std::string > molecule_2;
+		for ( char c: option[ basic::options::OptionKeys::sc::molecule_1 ].value() ) {
+			molecule_1.push_back( std::string{c} );
+		}
+		for ( char c: option[ basic::options::OptionKeys::sc::molecule_2 ].value() ) {
+			molecule_2.push_back( std::string{c} );
+		}
 
 		while ( input.has_another_pose() ) {
 
@@ -154,8 +160,8 @@ main( int argc, char * argv [] )
 int process_pose(
 	core::pose::Pose &pose,
 	core::scoring::sc::ShapeComplementarityCalculator &sc,
-	std::string &molecule_1,
-	std::string &molecule_2,
+	utility::vector1< std::string > &molecule_1,
+	utility::vector1< std::string > &molecule_2,
 	int verbose
 )
 {
@@ -164,10 +170,10 @@ int process_pose(
 
 	// Split PDB into two surfaces
 	for ( core::Size i = 1; i <= pose.size(); i++ ) {
-		char chain = pdb_info->chain(i);
-		if ( molecule_1.find(chain) != string::npos ) {
+		std::string chain = pdb_info->chain(i);
+		if ( molecule_1.has_value(chain) ) {
 			sc.AddResidue(0, pose.residue(i));
-		} else if ( molecule_2.find(chain) != string::npos ) {
+		} else if ( molecule_2.has_value(chain) ) {
 			sc.AddResidue(1, pose.residue(i));
 		}
 	}

@@ -127,7 +127,7 @@ DockingHighRes::DockingHighRes( DockingHighRes const & old_instance ) :
 void DockingHighRes::init( DockJumps const movable_jumps )
 {
 	moves::Mover::type( "DockingHighRes" );
-	partners_ = "_";
+	partners_ = core::pose::DockingPartners();
 	sc_min_ = false;
 	rt_min_ = false;
 	ignore_default_task_ = false; //needs to be false by default

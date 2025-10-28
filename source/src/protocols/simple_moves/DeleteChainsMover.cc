@@ -42,7 +42,7 @@ DeleteChainsMover::DeleteChainsMover()
 	set_defaults();
 }
 
-DeleteChainsMover::DeleteChainsMover( std::string const & chains )
+DeleteChainsMover::DeleteChainsMover( utility::vector1< std::string > const & chains )
 : moves::Mover("DeleteChainsMover")
 {
 	set_chains( chains );
@@ -68,11 +68,11 @@ DeleteChainsMover::provide_citation_info(basic::citation_manager::CitationCollec
 }
 
 void
-DeleteChainsMover::set_chains( std::string const & chains ){
+DeleteChainsMover::set_chains( utility::vector1< std::string > const & chains ){
 	chains_ = chains;
 }
 
-std::string
+utility::vector1< std::string > const &
 DeleteChainsMover::chains() const {
 	return chains_;
 }
@@ -107,7 +107,13 @@ DeleteChainsMover::parse_my_tag(
 		utility_exit_with_message("Must pass chains tag to DeleteChainsMover...");
 	}
 
-	set_chains( tag->getOption< std::string >( "chains"));
+	std::string chain_string = tag->getOption< std::string >( "chains");
+	// Because of the input format, we're somewhat stuck with single letter chains
+	utility::vector1< std::string > chain_vector;
+	for ( char c: chain_string ) {
+		chain_vector.push_back( std::string{c} );
+	}
+	set_chains( chain_vector );
 
 	set_detect_bonds( tag->getOption< bool >( "detect_bonds", detect_bonds_) );
 	set_detect_pseudobonds( tag->getOption< bool >( "detect_pseudobonds", detect_pseudobonds_ ) );
@@ -120,7 +126,7 @@ DeleteChainsMover::apply( Pose & pose )
 		utility_exit_with_message("DeleteChainsMover requires chains to be set...");
 	}
 
-	for ( char chain : chains_ ) {
+	for ( std::string const & chain : chains_ ) {
 		core::Size chain_id = core::pose::get_chain_id_from_chain( chain, pose );
 
 		pose.conformation().delete_residue_range_slow( pose.conformation().chain_begin( chain_id ), pose.conformation().chain_end( chain_id ) );

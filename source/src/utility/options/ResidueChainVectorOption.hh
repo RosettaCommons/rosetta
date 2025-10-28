@@ -118,7 +118,7 @@ public: // Properties
 	}
 
 	// @brief Specialized function that converts tags like A:1-4 B:1-3 into a pair of  [1 2 3 4 1 2 3], [A A A A B B B]
-	std::tuple< utility::vector1<int>, utility::vector1<char>, utility::vector1< std::string > >
+	std::tuple< utility::vector1<int>, utility::vector1<std::string>, utility::vector1< std::string > >
 	resnum_and_chain() const;
 
 	// @brief specialized cl_value operator that saves value_string.

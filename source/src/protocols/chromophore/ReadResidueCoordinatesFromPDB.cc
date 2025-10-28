@@ -51,7 +51,7 @@ ReadResidueCoordinatesFromPDB::clone() const {
 void
 ReadResidueCoordinatesFromPDB::read_coordinates_from_file (
 	std::string const & filename,
-	utility::vector1 <std::tuple <int, char> > const & residues_to_read) {
+	utility::vector1 <std::tuple <int, std::string> > const & residues_to_read) {
 
 	utility::io::izstream infile(filename);
 	if ( !infile ) {
@@ -65,16 +65,16 @@ ReadResidueCoordinatesFromPDB::read_coordinates_from_file (
 void
 ReadResidueCoordinatesFromPDB::read_coordinates (
 	std::istream & instream,
-	utility::vector1 <std::tuple <int, char> > const & residues_to_read) {
+	utility::vector1 <std::tuple <int, std::string> > const & residues_to_read) {
 
 	core::io::StructFileRep sfr;
 	parse_pdb (instream, sfr);
 
 	// Reorganize information about the residues for which we need coordinates
-	std::map <char, utility::vector1 <int> > residues_to_read_map;
+	std::map <std::string, utility::vector1 <int> > residues_to_read_map;
 	for ( core::Size i(1); i <= residues_to_read.size(); i++ ) {
 		int resnum = std::get<0>(residues_to_read[i]);
-		char chain_name = std::get<1>(residues_to_read[i]);
+		std::string chain_name = std::get<1>(residues_to_read[i]);
 		residues_to_read_map[chain_name].push_back(resnum);
 	}
 
@@ -135,11 +135,11 @@ void
 ReadResidueCoordinatesFromPDB::save_residue_coordinates (
 	core::io::ResidueInformation const & residue,
 	int const resnum,
-	char const chain_name) {
+	std::string const & chain_name) {
 
 	// I guess we don't want to accidentally add coordinates of the residue twice
 	if ( !coordinates_exist(resnum, chain_name) ) {
-		std::tuple < int, char > const key (resnum, chain_name);
+		std::tuple < int, std::string > const key (resnum, chain_name);
 		for ( core::Size i(1); i <= residue.atoms().size(); ++i ) {
 			core::io::AtomInformation const & atom( residue.atoms()[i] );
 			std::string const name( utility::stripped_whitespace( atom.name ) );
@@ -155,10 +155,10 @@ ReadResidueCoordinatesFromPDB::save_residue_coordinates (
 utility::vector1 <std::tuple <std::string, core::Vector> >
 ReadResidueCoordinatesFromPDB::get_residue_coordinates(
 	int const resnum,
-	char const chain_name) const {
+	std::string const & chain_name) const {
 
 	if ( coordinates_exist(resnum, chain_name) ) {
-		std::tuple < int, char > const key (resnum, chain_name);
+		std::tuple < int, std::string > const key (resnum, chain_name);
 		return coordinates_.at(key);
 	} else {
 		// Throw an error if empty
@@ -170,9 +170,9 @@ ReadResidueCoordinatesFromPDB::get_residue_coordinates(
 bool
 ReadResidueCoordinatesFromPDB::coordinates_exist(
 	int const resnum,
-	char const chain_name) const {
+	std::string const & chain_name) const {
 
-	std::tuple < int, char > key (resnum, chain_name);
+	std::tuple < int, std::string > key (resnum, chain_name);
 	return (coordinates_.find(key) != coordinates_.end() );
 }
 

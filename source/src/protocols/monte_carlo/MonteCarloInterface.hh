@@ -18,7 +18,7 @@
 #include <protocols/monte_carlo/MonteCarloInterface.fwd.hh>
 #include <protocols/analysis/InterfaceAnalyzerMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.hh>
-
+#include <core/pose/DockingPartners.hh>
 
 // Utility headers
 
@@ -41,7 +41,7 @@ public:
 		Pose const & init_pose, // PoseCOP init_pose,
 		ScoreFunction const & scorefxn, // ScoreFunctionCOP scorefxn,
 		Real const temperature,
-		std::string interface,
+		core::pose::DockingPartners const & interface,
 		bool detect_disulfide_in_separated_pose = false
 	);
 
@@ -49,7 +49,7 @@ public:
 	MonteCarloInterface(
 		ScoreFunction const & scorefxn, // ScoreFunctionCOP scorefxn,
 		Real const temperature,
-		std::string interface
+		core::pose::DockingPartners const & interface
 	);
 
 	MonteCarloInterface(MonteCarloInterface const & src);
@@ -101,7 +101,7 @@ public:
 
 	///Set the interface that we will be using to calculate interface energy.
 	void
-	set_interface( std::string const & interface );
+	set_interface( core::pose::DockingPartners const & interface );
 
 	///@brief Should we pack the interface while separated?  Default TRUE.
 	void
@@ -137,7 +137,7 @@ private:
 
 private:
 
-	std::string interface_definition_ = "";
+	core::pose::DockingPartners interface_definition_;
 	protocols::analysis::InterfaceAnalyzerMoverOP analyzer_;
 
 	core::Real dG_weight_ = 1.0;

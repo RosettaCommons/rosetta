@@ -191,7 +191,7 @@ HighResDocker::parse_my_tag(
 MinimizeLigandOPs
 HighResDocker::setup_ligands_to_minimize(
 	core::pose::Pose & pose,
-	char chain // =0 This is for dealing with multiple ligand docking
+	std::string const & chain // ="" This is for dealing with multiple ligand docking
 ){
 	MinimizeLigandOPs minimize_ligands;
 
@@ -203,10 +203,10 @@ HighResDocker::setup_ligands_to_minimize(
 	//TODO Use BOOST_FOREACH
 
 
-	//if chain is 0, then loop proceeds normally. If chain is given, then minimize ligand only runs for the matching chain.
+	//if chain is empty, then loop proceeds normally. If chain is given, then minimize ligand only runs for the matching chain.
 	for ( ; ligand_area_itr != ligand_area_end; ++ligand_area_itr ) {
-		if ( ligand_area_itr->first == chain || chain == 0 ) {
-			char const & input_chain= ligand_area_itr->first;
+		if ( ligand_area_itr->first == chain || chain.empty() ) {
+			std::string const & input_chain= ligand_area_itr->first;
 			LigandAreaOP const ligand_area( ligand_area_itr->second );
 			core::Real const & degrees( ligand_area->minimize_ligand_ );
 			if ( degrees > 0 ) {
@@ -229,7 +229,7 @@ HighResDocker::remove_ligand_dihedral_restraints(core::pose::Pose & pose, Minimi
 TetherLigandOPs
 HighResDocker::tether_ligands(
 	core::pose::Pose & pose,
-	char chain // =0 This is for dealing with multiple ligand docking
+	std::string const & chain // ="" This is for dealing with multiple ligand docking
 ){
 	TetherLigandOPs ligand_tethers;
 
@@ -238,12 +238,12 @@ HighResDocker::tether_ligands(
 	auto ligand_area_itr= ligand_areas.begin();
 	LigandAreas::const_iterator const ligand_area_end= ligand_areas.end();
 
-	//if chain is 0, then loop proceeds normally. If chain is given, then minimize ligand only runs for the matching chain.
+	//if chain is empty, then loop proceeds normally. If chain is given, then minimize ligand only runs for the matching chain.
 
 	for ( ; ligand_area_itr != ligand_area_end; ++ligand_area_itr ) {
-		if ( ligand_area_itr->first == chain || chain == 0 ) {
+		if ( ligand_area_itr->first == chain || chain.empty() ) {
 
-			char const & input_chain= ligand_area_itr->first;
+			std::string const & input_chain= ligand_area_itr->first;
 			LigandAreaOP const ligand_area( ligand_area_itr->second );
 			core::Real const & tether_size( ligand_area->tether_ligand_ );
 			if ( tether_size > 0 ) {
@@ -333,7 +333,7 @@ HighResDocker::apply(core::pose::Pose & pose) {
 }
 
 void
-HighResDocker::apply(utility::vector1<core::pose::Pose> & poses, utility::vector1<core::Real> & current_scores, utility::vector1<char> qsar_chars, core::Size cycle) {
+HighResDocker::apply(utility::vector1<core::pose::Pose> & poses, utility::vector1<core::Real> & current_scores, utility::vector1<std::string> const & qsar_chains, core::Size cycle) {
 
 	debug_assert(num_cycles_ > 0);
 
@@ -341,9 +341,9 @@ HighResDocker::apply(utility::vector1<core::pose::Pose> & poses, utility::vector
 
 	for ( core::pose::Pose pose : poses ) {
 
-		MinimizeLigandOPs minimized_ligands( setup_ligands_to_minimize(pose, qsar_chars[pose_counter]) );
+		MinimizeLigandOPs minimized_ligands( setup_ligands_to_minimize(pose, qsar_chains[pose_counter]) );
 
-		TetherLigandOPs ligand_tethers= tether_ligands(pose, qsar_chars[pose_counter]);
+		TetherLigandOPs ligand_tethers= tether_ligands(pose, qsar_chains[pose_counter]);
 
 		debug_assert(movemap_builder_ && score_fxn_ ); // make sure the pointers point
 		core::kinematics::MoveMapOP movemap( movemap_builder_->build(pose) );
@@ -394,11 +394,11 @@ HighResDocker::apply(utility::vector1<core::pose::Pose> & poses, utility::vector
 }
 
 void
-HighResDocker::apply(core::pose::Pose & pose, core::Real & current_score, char qsar_char, core::Size cycle) {
+HighResDocker::apply(core::pose::Pose & pose, core::Real & current_score, std::string const & qsar_chain, core::Size cycle) {
 
-	MinimizeLigandOPs minimized_ligands( setup_ligands_to_minimize(pose, qsar_char) );
+	MinimizeLigandOPs minimized_ligands( setup_ligands_to_minimize(pose, qsar_chain) );
 
-	TetherLigandOPs ligand_tethers= tether_ligands(pose, qsar_char);
+	TetherLigandOPs ligand_tethers= tether_ligands(pose, qsar_chain);
 
 	debug_assert(movemap_builder_ && score_fxn_ ); // make sure the pointers point
 	core::kinematics::MoveMapOP movemap( movemap_builder_->build(pose) );
@@ -586,7 +586,7 @@ HighResDocker::create_rigid_body_movers(core::pose::Pose const & pose) const{
 		movemap_builder_->get_sc_interface_builder()->get_ligand_areas();
 
 	for ( LigandAreas::value_type const & ligand_area_pair : ligand_areas ) {
-		char const & chain= ligand_area_pair.first;
+		std::string const & chain= ligand_area_pair.first;
 		utility::vector1<core::Size> jump_ids= core::pose::get_jump_ids_from_chain(chain, pose);
 		for ( core::Size const jump_id : jump_ids ) {
 			LigandAreaOP const ligand_area = ligand_area_pair.second;

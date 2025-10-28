@@ -57,7 +57,7 @@ update_disulfides_from_full_model_info( pose::Pose & pose );
 utility::vector1< std::string >
 figure_out_conventional_segids_from_full_model_info( pose::Pose const & pose );
 
-utility::vector1< char >
+utility::vector1< std::string >
 figure_out_conventional_chains_from_full_model_info( pose::Pose const & pose );
 
 utility::vector1< Size >
@@ -139,7 +139,7 @@ get_residue( Size const seqpos_in_full_model,
 utility::vector1< int >
 get_res_num_from_pdb_info( pose::Pose const & pose );
 
-utility::vector1< char >
+utility::vector1< std::string >
 get_chains_from_pdb_info( pose::Pose const & pose );
 
 utility::vector1< std::string >

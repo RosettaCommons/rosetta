@@ -44,6 +44,7 @@
 
 
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/DockingPartners.fwd.hh>
 #include <core/types.hh>
 
 // Utility Headers
@@ -188,7 +189,7 @@ void reorder_membrane_foldtree( core::pose::Pose & pose );
 ///
 ///  iJ = interface jump, will be returned from the function
 ///
-core::Size create_membrane_docking_foldtree_from_partners( core::pose::Pose & pose, std::string const & partners );
+core::Size create_membrane_docking_foldtree_from_partners( core::pose::Pose & pose, core::pose::DockingPartners const & partners );
 
 /// @brief Create membrane foldtree from scratch
 /// @details The foldtree is setup such that the membrane is at the root and
@@ -258,7 +259,7 @@ core::Size create_membrane_foldtree_anchor_pose_tmcom( core::pose::Pose & pose )
 /// ^-----^  ^-----------------------^  ^-----^
 /// partner1          partner2          partner3
 ///
-utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmcom( core::pose::Pose & pose, std::string partner );
+utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmcom( core::pose::Pose & pose, utility::vector1< utility::vector1< std::string > > const & partners );
 
 /// @brief Helper function to create membrane foldtrees
 /// @details The anchors vector is a vector of anchor residues in all chains,

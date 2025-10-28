@@ -92,7 +92,7 @@ HighResEnsemble::HighResEnsemble():
 	rosetta_old_poses_(),
 	rosetta_lowest_poses_(),
 	rosetta_names_(),
-	rosetta_chars_()
+	ligand_chains_()
 {
 	resfile_.clear();
 	// Now use cycles and repack_every_Nth to replicate these options...
@@ -171,10 +171,7 @@ HighResEnsemble::parse_my_tag(
 
 	//Get chain ID of ligands/jumps in order
 	for ( std::string ligand : ligands_strs ) {
-		if ( ligand.size() != 1 ) {
-			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "In HighResEnsemble, chain designation '"+ligand+"' needs to be a single character.");
-		}
-		rosetta_chars_.push_back( ligand[0] );
+		ligand_chains_.push_back( ligand );
 	}
 
 }
@@ -224,7 +221,7 @@ HighResEnsemble::apply(core::pose::Pose & pose) {
 	rosetta_lowest_scores_.clear();
 
 	// Figure out exp ranks:
-	for ( char chain: rosetta_chars_ ) {
+	for ( std::string const & chain: ligand_chains_ ) {
 		core::Size chain_id = core::pose::get_chain_id_from_chain(chain, pose);
 		core::conformation::ResidueCOP current_residue = core::pose::get_chain_residues(pose, chain_id)[1];
 		if ( use_rosetta_ranks_ ) {
@@ -263,7 +260,7 @@ HighResEnsemble::apply(core::pose::Pose & pose) {
 			monte_carlo->set_lowest(rosetta_lowest_scores_[i].second);
 
 			//Call multiple ligand version of HighResDocker apply....The pose and score for that ligand is now updated in current
-			high_res_docker->apply(rosetta_current_poses_[i], rosetta_current_scores_[i].second, rosetta_chars_[i], cycle);
+			high_res_docker->apply(rosetta_current_poses_[i], rosetta_current_scores_[i].second, ligand_chains_[i], cycle);
 
 			//Store the existing low score aside in case we need it later
 			low_score_so_far = rosetta_lowest_scores_[i].second;
@@ -346,13 +343,12 @@ HighResEnsemble::apply(core::pose::Pose & pose) {
 
 	for ( core::Size i=1; i<=rosetta_lowest_poses_.size(); ++i ) {
 
-		char chain = rosetta_chars_[i];
-		std::string name_of_chain( utility::to_string( chain ) );
+		std::string chain = ligand_chains_[i];
 
 		// core::Size jump = core::pose::get_jump_id_from_chain(chain, rosetta_lowest_poses_[i]);
 
 		core::Size nstruct = protocols::jd2::current_nstruct_index();
-		std::string tag( name_of_chain + "_" + utility::to_string(nstruct) + ".pdb" );
+		std::string tag( chain + "_" + utility::to_string(nstruct) + ".pdb" );
 
 		//output individual poses
 		rosetta_lowest_poses_[i].dump_scored_pdb(tag, *final_score_fxn_);
@@ -363,7 +359,7 @@ HighResEnsemble::apply(core::pose::Pose & pose) {
 
 		//Add interface delta scores, hopefully to overall pose output
 		std::map< std::string, core::Real > ligand_scores( get_interface_deltas( chain, rosetta_lowest_poses_[i], final_score_fxn_, "" ) );
-		ligand_scores[ name_of_chain ] = rosetta_lowest_scores_[i].second;
+		ligand_scores[ chain ] = rosetta_lowest_scores_[i].second;
 
 		for ( auto const & entry : ligand_scores ) {
 			protocols::jd2::add_string_real_pair_to_current_job( entry.first, entry.second );
@@ -374,10 +370,10 @@ HighResEnsemble::apply(core::pose::Pose & pose) {
 	core::Real mean_interface_score = 0;
 
 	//Calculate average interface energy from job output
-	for ( core::Size i=1; i<=rosetta_chars_.size(); ++i ) {
+	for ( core::Size i=1; i<=ligand_chains_.size(); ++i ) {
 		std::stringstream ss;
 		std::string name_of_term;
-		char chain = rosetta_chars_[i];
+		std::string chain = ligand_chains_[i];
 
 		ss << "interface_delta_" << chain;
 		ss >> name_of_term;
@@ -385,7 +381,7 @@ HighResEnsemble::apply(core::pose::Pose & pose) {
 		mean_interface_score = mean_interface_score + job_outputs[name_of_term];
 	}
 
-	mean_interface_score = (mean_interface_score / (core::Real)(rosetta_chars_.size()));
+	mean_interface_score = (mean_interface_score / (core::Real)(ligand_chains_.size()));
 
 	protocols::jd2::add_string_real_pair_to_current_job("mean_interface", mean_interface_score);
 
