@@ -66,7 +66,7 @@ public:
 	//////////////////////////////////
 
 	/// @brief default constructor
-	MathVector< T>() :
+	MathVector() :
 	size_( 0),
 	data_( nullptr )
 	{
@@ -91,7 +91,7 @@ public:
 	}
 
 	/// @brief construct from length and pointer to data
-	MathVector< T>( const Size SIZE, const T *DATA) :
+	MathVector( const Size SIZE, const T *DATA) :
 	size_( SIZE),
 	data_( new T[ SIZE])
 	{
@@ -110,7 +110,7 @@ public:
 
 	/// @brief Clone function
 	/// @return pointer to new Vector< T>
-	MathVector< T> *clone() const
+	MathVector *clone() const
 	{
 		return new MathVector< T>( *this);
 	}
