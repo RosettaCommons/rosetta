@@ -448,6 +448,7 @@ settings = {
             "flags" : {
                 "warn" : [
                     "Wno-error=dangling-pointer=", # Boost spirit issue
+                    "Wno-error=stringop-overflow=", # Internal mis-prediction with small_vector1 
                 ],
             },
         },
