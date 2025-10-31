@@ -51,7 +51,8 @@ public:
 	void setUp() {
 		// hpark Aug 2019: Updated options for "-beta_genpot"
 		// because count_pair_hybrid as a default option -beta treats cut_point differently b/w NCAA and CAA, turn it off so that permutation works properly
-		core_init_with_additional_options( "-symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0 -beta -score:weights beta.wts -count_pair_hybrid false -output_virtual true" );
+		// HH and FD, Oct 2025: Updated test to use beta_nov16
+		core_init_with_additional_options( "-symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0 -beta_nov16 -score:weights beta_nov16.wts -count_pair_hybrid false -output_virtual true" );
 
 		// Pull in the cyclic peptide pose (9 residues):
 		core::pose::PoseOP initial_pose( new core::pose::Pose );
@@ -401,8 +402,8 @@ public:
 	void test_cyclic_permutation_beta() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
-		scorefxn->add_weights_from_file("beta.wts");
-		TR << "Testing full beta score function." << std::endl;
+		scorefxn->add_weights_from_file("beta_nov16.wts");
+		TR << "Testing full beta_nov16 score function." << std::endl;
 		CyclicGeometryTestHelper helper;
 		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;

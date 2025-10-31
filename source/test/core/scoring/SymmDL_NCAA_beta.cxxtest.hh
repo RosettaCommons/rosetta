@@ -49,7 +49,7 @@ public:
 
 	void setUp() {
 		//core_init();
-		core_init_with_additional_options( "-beta -symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0" );
+		core_init_with_additional_options( "-beta_nov16 -symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0" );
 	}
 
 	void tearDown() {
@@ -299,8 +299,8 @@ public:
 	void test_symm_DL_beta() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( utility::pointer::make_shared< core::scoring::ScoreFunction >() );
-		scorefxn->add_weights_from_file("beta.wts");
-		TR << "Testing full beta score function." << std::endl;
+		scorefxn->add_weights_from_file("beta_nov16.wts");
+		TR << "Testing full beta_nov16 score function." << std::endl;
 		mirror_pose_test(scorefxn);
 		return;
 	}
@@ -310,7 +310,7 @@ public:
 	void test_symm_DL_default_beta_scorefxn() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
-		TR << "Testing full default (beta) score function." << std::endl;
+		TR << "Testing full beta_nov16 score function." << std::endl;
 		mirror_pose_test(scorefxn);
 		return;
 	}
