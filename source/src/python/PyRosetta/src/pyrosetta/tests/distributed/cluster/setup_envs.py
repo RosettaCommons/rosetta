@@ -91,6 +91,63 @@ def setup_pixi_environment(env_dir):
     print(f"Pixi environment setup complete in directory: '{env_path}'.")
 
 
+def setup_uv_environment(env_dir):
+    """
+    Create a fresh uv environment using the 'pyrosetta-installer' package.
+
+    Note: this requires that `uv` is an executable installed and on `${PATH}`. This function:
+    - detects the current Python version
+    - adds 'pyrosetta-installer' via `uv add ...`
+    - runs the PyRosetta installer using `uv run python -c ...`
+    """
+    env_path = Path(env_dir)
+    if env_path.exists():
+        raise FileExistsError(f"The specified uv environment path already exists: '{env_path}'.")
+
+    # Detect Python version
+    py_version = f"{sys.version_info.major}.{sys.version_info.minor}"
+
+    # Create uv environment using the current Python
+    print(f"Creating uv environment at '{env_path}'...")
+    subprocess.run(
+        ["uv", "venv", str(env_path), "--python", py_version],
+        check=True,
+    )
+
+    # Install pyrosetta-installer
+    print("Adding 'pyrosetta-installer' to uv environment...")
+    subprocess.run(
+        ["uv", "add", "-p", str(env_path), "pyrosetta-installer"],
+        check=True,
+    )
+
+    # Run PyRosetta installer with mirror fallback
+    print("Running PyRosetta installer in uv environment...")
+    install_script = textwrap.dedent("""
+        import pyrosetta_installer
+        try:
+            pyrosetta_installer.install_pyrosetta(
+                distributed=True,
+                serialization=True,
+                skip_if_installed=True,
+                mirror=0
+            )
+        except Exception as e:
+            print(f"PyRosetta installation with 'mirror=0' failed: {e}. Retrying with 'mirror=1'.")
+            pyrosetta_installer.install_pyrosetta(
+                distributed=True,
+                serialization=True,
+                skip_if_installed=True,
+                mirror=1
+            )
+    """)
+    subprocess.run(
+        ["uv", "run", "-p", str(env_path), "python", "-c", install_script],
+        check=True,
+    )
+
+    print(f"Uv environment setup complete in directory: '{env_path}'.")
+
 
 def setup_conda_environment(env_dir, env_manager="conda"):
     """
@@ -154,6 +211,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.env_manager == "pixi":
         setup_pixi_environment(args.env_dir)
+    elif args.env_manager == "uv":
+        setup_uv_environment(args.env_dir)
     elif args.env_manager in ("conda", "mamba"):
         setup_conda_environment(args.env_dir, env_manager=args.env_manager)
     else:
