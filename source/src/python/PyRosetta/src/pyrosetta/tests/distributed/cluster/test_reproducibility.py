@@ -24,6 +24,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import textwrap
 import time
 import unittest
 
@@ -1733,6 +1734,14 @@ class TestEnvironmentReproducibility(unittest.TestCase):
                 original_output_path,
                 original_scorefile_name,
             )
+        elif environment_manager == "uv":
+            cmd = "uv run -p {0} python {1} --env_manager '{2}' --output_path '{3}' --scorefile_name '{4}'".format(
+                original_env_dir,
+                test_script,
+                environment_manager,
+                original_output_path,
+                original_scorefile_name,
+            )
         elif environment_manager in ("conda", "mamba"):
             cmd = "conda run -p {0} python {1} --env_manager '{2}' --output_path '{3}' --scorefile_name '{4}'".format(
                 original_env_dir,
@@ -1745,7 +1754,7 @@ class TestEnvironmentReproducibility(unittest.TestCase):
             cmd,
             module_dir=None,
             # For pixi, activate the original pixi environment context
-            # For conda/mamba, run from environment directory for consistency with pixi workflow
+            # For conda/mamba/uv, run from environment directory for consistency with pixi workflow
             cwd=original_env_dir,
         )
         self.assertEqual(returncode, 0, msg=f"Subprocess command failed: {cmd}")
@@ -1778,6 +1787,34 @@ class TestEnvironmentReproducibility(unittest.TestCase):
             os.path.isdir(reproduce_env_dir),
             f"Reproduced '{environment_manager}' environment directory was not created: '{reproduce_env_dir}'",
         )
+        if environment_manager == "uv":
+            # The recreated uv environment uses the PyPI 'pyrosetta-installer' package, which does not allow specifying PyRosetta version.
+            # Therefore, installing the correct PyRosetta version in the recreated uv environment depends fortuitously on a prompt
+            # uv environment recreation after the original uv environment creation.
+            print("Running PyRosetta installer in recreated uv environment...")
+            # Run PyRosetta installer with mirror fallback
+            install_script = textwrap.dedent("""
+                import pyrosetta_installer
+                try:
+                    pyrosetta_installer.install_pyrosetta(
+                        distributed=False,
+                        serialization=True,
+                        skip_if_installed=True,
+                        mirror=0
+                    )
+                except Exception as e:
+                    print(f"Recreated PyRosetta installation with 'mirror=0' failed: {e}. Retrying with 'mirror=1'.")
+                    pyrosetta_installer.install_pyrosetta(
+                        distributed=False,
+                        serialization=True,
+                        skip_if_installed=True,
+                        mirror=1
+                    )
+            """)
+            subprocess.run(
+                ["uv", "run", "-p", str(reproduce_env_dir), "python", "-c", install_script],
+                check=True,
+            )
 
         # Run reproduction simulation inside recreated environment
         reproduce_output_path = os.path.join(reproduce_env_dir, f"{environment_manager}_reproduce_outputs")
@@ -1785,6 +1822,16 @@ class TestEnvironmentReproducibility(unittest.TestCase):
         if environment_manager == "pixi":
             cmd = (
                 f"pixi run python {test_script} "
+                f"--env_manager '{environment_manager}' "
+                f"--output_path '{reproduce_output_path}' "
+                f"--scorefile_name '{reproduce_scorefile_name}' "
+                f"--original_scorefile '{original_scorefile_path}' "
+                f"--original_decoy_name '{original_decoy_name}' "
+                "--reproduce"
+            )
+        elif environment_manager == "uv":
+            cmd = (
+                f"uv run -p {reproduce_env_dir} python {test_script} "
                 f"--env_manager '{environment_manager}' "
                 f"--output_path '{reproduce_output_path}' "
                 f"--scorefile_name '{reproduce_scorefile_name}' "
@@ -1806,7 +1853,7 @@ class TestEnvironmentReproducibility(unittest.TestCase):
             cmd,
             module_dir=None,
             # For pixi, activate the recreated pixi environment context
-            # For conda/mamba, run from recreated environment directory for consistency with pixi workflow
+            # For conda/mamba/uv, run from recreated environment directory for consistency with pixi workflow
             cwd=reproduce_env_dir,
         )
         self.assertEqual(returncode, 0, msg=f"Subprocess command failed: {cmd}")
