@@ -1708,11 +1708,12 @@ class TestEnvironmentReproducibility(unittest.TestCase):
             # Create pixi environment
             original_env_name = f"{environment_manager}_env"
             original_env_dir = os.path.join(self.workdir.name, original_env_name)
-            setup_env_script = os.path.join(os.path.dirname(__file__), "setup_pixi_env.py")
+            setup_env_script = os.path.join(os.path.dirname(__file__), "setup_envs.py")
             module = os.path.splitext(os.path.basename(setup_env_script))[0]
-            cmd = "{0} -m {1} --env_dir '{2}'".format(
+            cmd = "{0} -m {1} --env_manager '{2}' --env_dir '{3}'".format(
                 sys.executable,
                 module,
+                environment_manager,
                 original_env_dir,
             )
             returncode = TestEnvironmentReproducibility.run_subprocess(
