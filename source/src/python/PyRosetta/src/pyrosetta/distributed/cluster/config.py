@@ -122,7 +122,7 @@ class EnvironmentConfig(Generic[G]):
             with open(req_file, "w") as f:
                 f.write(raw_spec)
             return (
-                f"uv venv create {project_dir} && "
+                f"uv venv {project_dir} && "
                 f"uv pip sync -r {req_file} --venv {project_dir}"
             )
 
