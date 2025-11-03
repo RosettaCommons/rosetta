@@ -1682,7 +1682,8 @@ class TestEnvironmentReproducibility(unittest.TestCase):
         print("Running command:", cmd)
         if module_dir:
             env = os.environ.copy()
-            env["PYTHONPATH"] = f"{module_dir}{os.pathsep}{os.environ.get('PYTHONPATH', '')}"
+            pythonpath = os.environ.get("PYTHONPATH")
+            env["PYTHONPATH"] = f"{module_dir}{os.pathsep + pythonpath if pythonpath else ''}"
         else:
             env = None
         try:
