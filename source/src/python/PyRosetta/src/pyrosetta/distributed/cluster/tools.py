@@ -364,6 +364,7 @@ def recreate_environment(
                 stderr=subprocess.STDOUT,
                 timeout=timeout,
                 text=True,
+                executable="/bin/bash", # Ensure `&&` works properly
             )
         except subprocess.CalledProcessError as ex:
             raise RuntimeError(
