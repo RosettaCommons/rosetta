@@ -45,12 +45,6 @@ class EnvironmentConfig(Generic[G]):
         "mamba": "mamba env export --prefix {0}".format(sys.prefix),
         "conda": "conda env export --prefix {0}".format(sys.prefix),
     }
-    _ENV_LIST_CMDS: Dict[str, Optional[str]] = {
-        "pixi": None,
-        "uv": None,
-        "mamba": "mamba env list",
-        "conda": "conda env list",
-    }
 
     def __init__(self) -> None:
         _env_var_manager = os.environ.get(EnvironmentConfig._ENV_VAR, None)
@@ -88,16 +82,21 @@ class EnvironmentConfig(Generic[G]):
     def env_export_cmd(self) -> str:
         return self._ENV_EXPORT_CMDS[self.environment_manager]
 
-    @property
-    def env_list_cmd(self) -> Optional[str]:
-        return self._ENV_LIST_CMDS[self.environment_manager]
-
     def env_create_cmd(
         self, environment_name: str, raw_spec: str, tmp_dir: str
     ) -> Union[str, NoReturn]:
         # Create a project directory for uv/pixi, or prefix directory for conda/mamba
         project_dir = os.path.join(os.getcwd(), environment_name)
-        os.makedirs(project_dir, exist_ok=False)  # Raise exception if the project directory exists
+        # Raise exception if the project directory exists
+        if os.path.isdir(project_dir):
+            if self.environment_manager in ("conda", "mamba"):
+                _err_msg = f"The {self.environment_manager} environment prefix directory already exists: '{project_dir}'"
+            elif self.environment_manager in ("uv", "pixi"):
+                _err_msg = f"The {self.environment_manager} project directory already exists: '{project_dir}'"
+            else:
+                raise RuntimeError(f"Unsupported environment manager: '{self.environment_manager}'")
+            raise IsADirectoryError(_err_msg)
+        os.makedirs(project_dir, exist_ok=False)
 
         if self.environment_manager in ("conda", "mamba", "pixi"):
             yml_file = os.path.join(tmp_dir, f"{environment_name}.yml")

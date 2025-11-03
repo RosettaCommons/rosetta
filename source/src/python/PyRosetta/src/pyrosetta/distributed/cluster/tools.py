@@ -379,34 +379,6 @@ def recreate_environment(
 
     _env_config = get_environment_config()
     environment_manager = _env_config.environment_manager
-    env_list_cmd = _env_config.env_list_cmd
-
-    # Test if environment name already exists
-    if environment_manager in ("conda", "mamba"):
-        env_list_cmd = _env_config.env_list_cmd
-        envs_out = _run_subprocess(env_list_cmd)
-        envs_all = [
-            line.split()[0]
-            for line in envs_out.splitlines()
-            if line and not line.startswith("#")
-        ]
-    elif environment_manager in ("uv", "pixi"):
-        # Only consider local uv or pixi projects created in the current working directory
-        if environment_manager == "uv":
-            _filenames = ("uv.lock", "pyproject.toml",)
-        elif environment_manager == "pixi":
-            _filenames = ("pixi.toml",)
-        cwd = os.getcwd()
-        envs_all = [
-            d for d in os.listdir(cwd)
-            if os.path.isdir(d) and any(os.path.isfile(os.path.join(cwd, d, f)) for f in _filenames)
-        ]
-    else:
-        raise RuntimeError(f"Unsupported environment manager: '{environment_manager}'")
-    if environment_name in envs_all:
-        raise RuntimeError(
-            f"The environment name '{environment_name}' already exists under {environment_manager}."
-        )
 
     # Extract environment spec from record
     _instance_kwargs = get_instance_kwargs(
