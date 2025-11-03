@@ -267,11 +267,11 @@ void FragmentConstantLengthTest::test_frag_iterator() {
 			FrameList frames;
 			if ( fragset.region( movemap, pos, pos, len, len, frames ) ) {
 				Frame const& frame ( * ( frames[ 1 ] ) );
-				Size val;
+				Size val = 0;
 				TS_ASSERT( silly_cache.retrieve(frame, 1, val) ); //there should be a value ( return true )
 				TS_ASSERT_EQUALS( val , pos );
 
-				Size val2;
+				Size val2 = 999555; // Something non-zero;
 				TS_ASSERT( it != eit );
 				TS_ASSERT( silly_cache.retrieve( **it , 1, val2) ); //there should be a value ( return true )
 				TS_ASSERT_EQUALS( val2 , val );
@@ -285,7 +285,7 @@ void FragmentConstantLengthTest::test_frag_iterator() {
 			ConstFrameIterator it = bfragset.begin();
 			ConstFrameIterator eit= bfragset.end();
 			for ( Size pos=1 ; it!=eit; ++it ) {
-				Size val;
+				Size val = 0;
 				silly_cache.retrieve( **it, 1, val);
 				TS_ASSERT_EQUALS( val, pos );
 				++pos;
