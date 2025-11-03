@@ -1686,7 +1686,16 @@ class TestEnvironmentReproducibility(unittest.TestCase):
         else:
             env = None
         try:
-            p = subprocess.run(shlex.split(cmd), cwd=cwd, env=env, check=True, shell=False, stderr=subprocess.PIPE)
+            p = subprocess.run(
+                shlex.split(cmd),
+                cwd=cwd,
+                env=env,
+                check=True,
+                shell=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
         except subprocess.CalledProcessError as ex:
             print(f"Subprocess command failed (return code: {ex.returncode}): {cmd}\nStdout:\n{ex.stdout}\nStderr:\n{ex.stderr}")
             raise
