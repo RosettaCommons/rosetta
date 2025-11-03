@@ -329,9 +329,9 @@ def recreate_environment(
 
     Args:
         environment_name: A `str` object specifying the new name of the environment
-            to recreate. If using 'conda' and 'mamba', this is the environment name.
-            If using 'uv' or 'pixi', this is the local project directory name that will
-            be created in the current working directory.
+            to recreate. If using 'conda' and 'mamba', this is the prefix directory that will
+            be created in the current working directory. If using 'uv' or 'pixi', this is the
+            local project directory name that will be created in the current working directory.
             Default: 'PyRosettaCluster_' + datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f")
         input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
             '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file, or a `Pose` or `PackedPose`

@@ -95,21 +95,22 @@ class EnvironmentConfig(Generic[G]):
     def env_create_cmd(
         self, environment_name: str, raw_spec: str, tmp_dir: str
     ) -> Union[str, NoReturn]:
+        # Create a project directory for uv/pixi, or prefix directory for conda/mamba
+        project_dir = os.path.join(os.getcwd(), environment_name)
+        os.makedirs(project_dir, exist_ok=False)  # Raise exception if the project directory exists
+
         if self.environment_manager in ("conda", "mamba", "pixi"):
             yml_file = os.path.join(tmp_dir, f"{environment_name}.yml")
             with open(yml_file, "w") as f:
                 f.write(raw_spec)
 
             if self.environment_manager == "conda":
-                return f"conda env create -f {yml_file} -n {environment_name}"
+                return f"conda env create -f {yml_file} -p {project_dir}"
 
             elif self.environment_manager == "mamba":
-                return f"mamba env create -f {yml_file} -n {environment_name}"
+                return f"mamba env create -f {yml_file} -p {project_dir}"
 
             elif self.environment_manager == "pixi":
-                # Create a pixi project in the current working directory
-                project_dir = os.path.join(os.getcwd(), environment_name)
-                os.makedirs(project_dir, exist_ok=False)  # Raise exception if the project directory exists
                 return (
                     f"pixi init --import {yml_file} {project_dir} && "
                     f"pixi install --manifest-path {project_dir}"
@@ -120,12 +121,9 @@ class EnvironmentConfig(Generic[G]):
             req_file = os.path.join(tmp_dir, f"{environment_name}.txt")
             with open(req_file, "w") as f:
                 f.write(raw_spec)
-            # Create a uv project in the current working directory
-            env_dir = os.path.join(os.getcwd(), environment_name)
-            os.makedirs(env_dir, exist_ok=False)  # Raise exception if the project directory exists
             return (
-                f"uv venv create {env_dir} && "
-                f"uv pip sync -r {req_file} --venv {env_dir}"
+                f"uv venv create {project_dir} && "
+                f"uv pip sync -r {req_file} --venv {project_dir}"
             )
 
         raise RuntimeError(f"Unsupported environment manager: '{self.environment_manager}'")

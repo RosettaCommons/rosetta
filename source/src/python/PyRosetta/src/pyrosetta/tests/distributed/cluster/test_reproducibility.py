@@ -1847,7 +1847,7 @@ class TestEnvironmentReproducibility(unittest.TestCase):
             )
         elif environment_manager in ("conda", "mamba"):
             cmd = (
-                f"conda run -n {reproduce_env_name} python {test_script} "
+                f"conda run -p {reproduce_env_dir} python {test_script} "
                 f"--env_manager '{environment_manager}' "
                 f"--output_path '{reproduce_output_path}' "
                 f"--scorefile_name '{reproduce_scorefile_name}' "
