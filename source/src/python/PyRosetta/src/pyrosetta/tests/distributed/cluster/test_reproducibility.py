@@ -1704,17 +1704,6 @@ class TestEnvironmentReproducibility(unittest.TestCase):
 
         return p.returncode
 
-    @contextmanager
-    def working_directory(self, path):
-        """Temporarily switch to the provided path within a context."""
-        path = Path(path).expanduser().resolve()
-        prev_cwd = Path.cwd()
-        try:
-            os.chdir(path)
-            yield path
-        finally:
-            os.chdir(prev_cwd)
-
     def recreate_environment_test(self, environment_manager="conda"):
         """Test for PyRosettaCluster decoy reproducibility in a recreated virtual environment."""
         self.assertIn(environment_manager, ("conda", "mamba", "uv", "pixi"))
@@ -1789,14 +1778,14 @@ class TestEnvironmentReproducibility(unittest.TestCase):
         os.environ[get_environment_var()] = environment_manager
         # Recreate environment
         reproduce_env_name = f"{original_env_name}_reproduce"
-        with self.working_directory(self.workdir.name):
-            recreate_environment(
-                environment_name=reproduce_env_name,
-                input_file=None,
-                scorefile=original_scorefile_path,
-                decoy_name=original_decoy_name,
-                timeout=999,
-            )
+        recreate_environment(
+            environment_name=reproduce_env_name,
+            input_file=None,
+            scorefile=original_scorefile_path,
+            decoy_name=original_decoy_name,
+            timeout=999,
+            base_dir=self.workdir.name,
+        )
         reproduce_env_dir = os.path.join(self.workdir.name, reproduce_env_name)
         self.assertTrue(
             os.path.isdir(reproduce_env_dir),

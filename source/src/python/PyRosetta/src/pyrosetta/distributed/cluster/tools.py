@@ -315,6 +315,7 @@ def recreate_environment(
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
     timeout: Optional[int] = None,
+    base_dir: Optional[str] = None,
 ) -> Optional[NoReturn]:
     """
     Given an input file that was written by PyRosettaCluster, or a scorefile
@@ -330,8 +331,8 @@ def recreate_environment(
     Args:
         environment_name: A `str` object specifying the new name of the environment
             to recreate. If using 'conda' and 'mamba', this is the prefix directory that will
-            be created in the current working directory. If using 'uv' or 'pixi', this is the
-            local project directory name that will be created in the current working directory.
+            be created in the 'base_dir' directory. If using 'uv' or 'pixi', this is the
+            local project directory name that will be created in the 'base_dir' directory.
             Default: 'PyRosettaCluster_' + datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f")
         input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
             '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file, or a `Pose` or `PackedPose`
@@ -352,6 +353,9 @@ def recreate_environment(
         timeout: An `int` object specifying the timeout in seconds before any
             subprocesses are terminated.
             Default: None
+        base_dir: A `str` object specifying the base directory in which to create
+            the environment.
+            Default: `.`
 
     Returns:
         None
@@ -374,8 +378,21 @@ def recreate_environment(
             ) from ex
 
     if not environment_name:
-        environment_name = "PyRosettaCluster_" + datetime.now().strftime(
-            "%Y.%m.%d.%H.%M.%S.%f"
+        environment_name = "PyRosettaCluster_" + datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f")
+    elif not isinstance(environment_name, str):
+        raise TypeError(
+            f"The 'environment_name' keyword argument parameter must be of type `str`. Received: {type(environment_name)}"
+        )
+
+    if not base_dir:
+        base_dir = os.path.abspath(os.curdir)
+    elif not isinstance(base_dir, str):
+        raise TypeError(f"The 'base_dir' keyword argument parameter must be of type `str`. Received: {type(base_dir)}")
+    else:
+        base_dir = os.path.abspath(os.path.expanduser(base_dir))
+    if not os.path.isdir(base_dir):
+        raise NotADirectoryError(
+            f"The 'base_dir' keyword argument parameter must be an existing directory. Received: '{base_dir}'"
         )
 
     _env_config = get_environment_config()
@@ -450,7 +467,7 @@ def recreate_environment(
 
     # Recreate the environment
     with tempfile.TemporaryDirectory() as tmp_dir:
-        env_create_cmd = _env_config.env_create_cmd(environment_name, raw_spec, tmp_dir)
+        env_create_cmd = _env_config.env_create_cmd(environment_name, raw_spec, tmp_dir, base_dir)
         output = _run_subprocess(env_create_cmd)
         sys.stdout.write(
             f"\nEnvironment successfully created using {environment_manager}: '{environment_name}'\n"

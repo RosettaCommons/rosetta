@@ -83,10 +83,10 @@ class EnvironmentConfig(Generic[G]):
         return self._ENV_EXPORT_CMDS[self.environment_manager]
 
     def env_create_cmd(
-        self, environment_name: str, raw_spec: str, tmp_dir: str
+        self, environment_name: str, raw_spec: str, tmp_dir: str, base_dir: str
     ) -> Union[str, NoReturn]:
         # Create a project directory for uv/pixi, or prefix directory for conda/mamba
-        project_dir = os.path.join(os.getcwd(), environment_name)
+        project_dir = os.path.join(base_dir, environment_name)
         # Raise exception if the project directory exists
         if os.path.isdir(project_dir):
             if self.environment_manager in ("conda", "mamba"):
