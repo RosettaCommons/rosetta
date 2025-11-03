@@ -482,6 +482,7 @@ def recreate_environment(
             f"\nEnvironment successfully created using {environment_manager}: '{environment_name}'\n"
             f"Output:\n{output}\n"
         )
+        sys.stdout.flush()
 
 
 def reserve_scores(func: P) -> Union[P, NoReturn]:
