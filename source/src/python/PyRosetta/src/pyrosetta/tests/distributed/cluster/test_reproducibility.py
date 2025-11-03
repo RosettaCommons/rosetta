@@ -39,7 +39,7 @@ from pyrosetta.distributed.cluster import (
     reserve_scores,
     reproduce,
 )
-from pyrosetta.distributed.cluster.config import EnvironmentConfig
+from pyrosetta.distributed.cluster.config import get_environment_var
 from pyrosetta.distributed.cluster.io import secure_read_pickle
 from pyrosetta.tests.distributed.cluster.setup_inputs import get_test_params_file, get_test_pdb_file
 
@@ -1660,7 +1660,7 @@ class TestEnvironmentReproducibility(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.workdir.cleanup()
-        os.environ.pop(EnvironmentConfig._ENV_VAR, None)
+        os.environ.pop(get_environment_var(), None)
 
     def assert_atom_coordinates(self, pose1, pose2):
         self.assertEqual(pose1.size(), pose2.size())
@@ -1786,7 +1786,7 @@ class TestEnvironmentReproducibility(unittest.TestCase):
         self.assertIn("decoy_name", original_record["metadata"])
         original_decoy_name = original_record["metadata"]["decoy_name"]
         # Set environment manager
-        os.environ[EnvironmentConfig._ENV_VAR] = environment_manager
+        os.environ[get_environment_var()] = environment_manager
         # Recreate environment
         reproduce_env_name = f"{original_env_name}_reproduce"
         with self.working_directory(self.workdir.name):

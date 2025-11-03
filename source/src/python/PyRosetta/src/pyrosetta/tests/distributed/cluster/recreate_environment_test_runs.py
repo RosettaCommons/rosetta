@@ -14,7 +14,7 @@ import os
 import tempfile
 
 from pyrosetta.distributed.cluster import reproduce, run
-from pyrosetta.distributed.cluster.config import EnvironmentConfig
+from pyrosetta.distributed.cluster.config import get_environment_var
 
 
 def create_tasks():
@@ -55,7 +55,7 @@ def run_original_simulation(
     scorefile_name,
 ):
     # Set environment manager
-    os.environ[EnvironmentConfig._ENV_VAR] = env_manager
+    os.environ[get_environment_var()] = env_manager
     with tempfile.TemporaryDirectory() as tmp_dir:
         # Setup simulation
         scratch_dir = os.path.join(tmp_dir, "scratch")
@@ -119,7 +119,7 @@ def run_reproduce_simulation(
     original_decoy_name,
 ):
     # Set environment manager
-    os.environ[EnvironmentConfig._ENV_VAR] = env_manager
+    os.environ[get_environment_var()] = env_manager
     with tempfile.TemporaryDirectory() as tmp_dir:
         # Setup simulation
         scratch_dir = os.path.join(tmp_dir, "scratch")

@@ -33,7 +33,7 @@ import warnings
 
 from datetime import datetime
 from functools import wraps
-from pyrosetta.distributed.cluster.config import get_environment_config
+from pyrosetta.distributed.cluster.config import get_environment_config, get_environment_var
 from pyrosetta.distributed.cluster.converters import _parse_protocols
 from pyrosetta.distributed.cluster.converter_tasks import (
     is_dict,
@@ -380,6 +380,7 @@ def recreate_environment(
 
     _env_config = get_environment_config()
     environment_manager = _env_config.environment_manager
+    environment_var = get_environment_var()
 
     # Extract environment spec from record
     _instance_kwargs = get_instance_kwargs(
@@ -401,7 +402,7 @@ def recreate_environment(
         )
     # Get original environment manager
     for line in raw_spec.splitlines():
-        if line.startswith(f"# {_env_config._ENV_VAR}"):
+        if line.startswith(f"# {environment_var}"):
             original_environment_manager = line.split("=")[-1].strip()
             break
     else:
@@ -415,7 +416,7 @@ def recreate_environment(
             + f"'{environment_manager}' as an environment manager! The environment specification "
             + f"is saved in a 'requirements.txt' format, and therefore requires '{original_environment_manager}' "
             + f"to recreate the environment. Please ensure '{original_environment_manager}' is installed "
-            + f"and run `export {_env_config._ENV_VAR}={original_environment_manager}` to properly configure "
+            + f"and run `export {environment_var}={original_environment_manager}` to properly configure "
             + f"the '{original_environment_manager}' environment manager, then try again. For installation "
             + "instructions, please visit:\n"
             + "https://docs.astral.sh/uv/guides/install-python\n"
@@ -428,9 +429,9 @@ def recreate_environment(
             + "is saved in a YAML file format, and therefore requires 'conda', 'mamba', or 'pixi' to "
             + "recreate the environment. Please ensure that 'conda', 'mamba', or 'pixi' is installed, then "
             + "configure the environment manager by running one of the following commands, then try again:\n"
-            + f"To configure 'conda', run: `export {_env_config._ENV_VAR}=conda`\n"
-            + f"To configure 'mamba', run: `export {_env_config._ENV_VAR}=mamba`\n"
-            + f"To configure 'pixi', run:  `export {_env_config._ENV_VAR}=pixi`\n"
+            + f"To configure 'conda', run: `export {environment_var}=conda`\n"
+            + f"To configure 'mamba', run: `export {environment_var}=mamba`\n"
+            + f"To configure 'pixi', run:  `export {environment_var}=pixi`\n"
             + "For installation instructions, please visit:\n"
             + "https://docs.anaconda.com/anaconda/install\n"
             + "https://github.com/conda-forge/miniforge\n"

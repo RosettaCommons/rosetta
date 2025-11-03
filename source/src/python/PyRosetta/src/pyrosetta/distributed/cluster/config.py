@@ -146,7 +146,7 @@ def get_environment_cmd() -> str:
 
 def get_environment_var() -> str:
     """Get the PyRosettaCluster operating system environment variable name."""
-    return get_environment_config()._ENV_VAR
+    return EnvironmentConfig._ENV_VAR
 
 
 source_domains: List[str] = [
