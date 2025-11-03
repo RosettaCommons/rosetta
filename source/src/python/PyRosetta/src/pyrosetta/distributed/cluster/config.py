@@ -42,8 +42,8 @@ class EnvironmentConfig(Generic[G]):
     _ENV_EXPORT_CMDS: Dict[str, str] = {
         "pixi": "pixi workspace export conda-environment",
         "uv": "uv export --format requirements-txt --frozen",
-        "mamba": "mamba env export --prefix {0}".format(sys.prefix),
-        "conda": "conda env export --prefix {0}".format(sys.prefix),
+        "mamba": f"mamba env export --prefix '{sys.prefix}'",
+        "conda": f"conda env export --prefix '{sys.prefix}'",
     }
 
     def __init__(self) -> None:
@@ -104,15 +104,15 @@ class EnvironmentConfig(Generic[G]):
                 f.write(raw_spec)
 
             if self.environment_manager == "conda":
-                return f"conda env create -f {yml_file} -p {project_dir}"
+                return f"conda env create -f '{yml_file}' -p '{project_dir}'"
 
             elif self.environment_manager == "mamba":
-                return f"mamba env create -f {yml_file} -p {project_dir}"
+                return f"mamba env create -f '{yml_file}' -p '{project_dir}'"
 
             elif self.environment_manager == "pixi":
                 return (
-                    f"pixi init --import {yml_file} {project_dir} && "
-                    f"pixi install --manifest-path {project_dir}"
+                    f"pixi init --import '{yml_file}' '{project_dir}' && "
+                    f"pixi install --manifest-path '{project_dir}'"
                 )
 
         elif self.environment_manager == "uv":
@@ -121,8 +121,8 @@ class EnvironmentConfig(Generic[G]):
             with open(req_file, "w") as f:
                 f.write(raw_spec)
             return (
-                f"uv venv {project_dir} && "
-                f"uv pip sync -r {req_file} --venv {project_dir}"
+                f"uv venv '{project_dir}' && "
+                f"uv pip sync -r '{req_file}' --venv '{project_dir}'"
             )
 
         raise RuntimeError(f"Unsupported environment manager: '{self.environment_manager}'")
