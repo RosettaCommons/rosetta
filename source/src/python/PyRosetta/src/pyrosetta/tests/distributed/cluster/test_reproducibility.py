@@ -1660,6 +1660,7 @@ class TestEnvironmentReproducibility(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.workdir.cleanup()
+        os.environ.pop(EnvironmentConfig._ENV_VAR, None)
 
     def assert_atom_coordinates(self, pose1, pose2):
         self.assertEqual(pose1.size(), pose2.size())
@@ -1684,7 +1685,12 @@ class TestEnvironmentReproducibility(unittest.TestCase):
             env["PYTHONPATH"] = f"{module_dir}{os.pathsep}{os.environ.get('PYTHONPATH', '')}"
         else:
             env = None
-        p = subprocess.run(shlex.split(cmd), cwd=cwd, env=env, check=True, shell=False, stderr=subprocess.PIPE)
+        try:
+            p = subprocess.run(shlex.split(cmd), cwd=cwd, env=env, check=True, shell=False, stderr=subprocess.PIPE)
+        except subprocess.CalledProcessError as ex:
+            print(f"Subprocess command failed (return code: {ex.returncode}): {cmd}\nStdout:\n{ex.stdout}\nStderr:\n{ex.stderr}")
+            raise
+
         print("Return code: {0}".format(p.returncode))
 
         return p.returncode
@@ -1773,7 +1779,7 @@ class TestEnvironmentReproducibility(unittest.TestCase):
         # Set environment manager
         os.environ[EnvironmentConfig._ENV_VAR] = environment_manager
         # Recreate environment
-        reproduce_env_name = f"{original_env_name}_reproduce",
+        reproduce_env_name = f"{original_env_name}_reproduce"
         with self.working_directory(self.workdir.name):
             recreate_environment(
                 environment_name=reproduce_env_name,
