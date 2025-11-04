@@ -27,6 +27,7 @@ import tempfile
 import textwrap
 import time
 import unittest
+import uuid
 
 from contextlib import contextmanager
 from pathlib import Path
@@ -1656,6 +1657,7 @@ class TestEnvironmentReproducibility(unittest.TestCase):
             set_logging_handler="logging",
         )
         cls.workdir = tempfile.TemporaryDirectory()
+        cls.run_tag = uuid.uuid4().hex[:12]
 
     @classmethod
     def tearDownClass(cls):
@@ -1712,7 +1714,7 @@ class TestEnvironmentReproducibility(unittest.TestCase):
         test_script = os.path.join(os.path.dirname(__file__), "recreate_environment_test_runs.py")
 
         # Create new environment
-        original_env_name = f"{environment_manager}_env"
+        original_env_name = f"{environment_manager}_env_{self.run_tag}"
         original_env_dir = os.path.join(self.workdir.name, original_env_name)
         setup_env_script = os.path.join(os.path.dirname(__file__), "setup_envs.py")
         module = os.path.splitext(os.path.basename(setup_env_script))[0]
