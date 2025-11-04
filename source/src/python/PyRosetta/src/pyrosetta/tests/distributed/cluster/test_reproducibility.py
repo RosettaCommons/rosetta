@@ -1661,7 +1661,10 @@ class TestEnvironmentReproducibility(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.workdir.cleanup()
+        try:
+            cls.workdir.cleanup()
+        except Exception as ex:
+            print(f"Warning: failed to cleanup temporary directory: {ex}... Continuing.")
         os.environ.pop(get_environment_var(), None)
 
     def assert_atom_coordinates(self, pose1, pose2):
