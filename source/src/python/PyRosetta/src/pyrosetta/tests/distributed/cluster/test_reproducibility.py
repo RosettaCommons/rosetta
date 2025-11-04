@@ -1692,23 +1692,29 @@ class TestEnvironmentReproducibility(unittest.TestCase):
         else:
             env = None
         try:
-            p = subprocess.run(
+            # Use live output streaming for GitHub Actions visibility
+            process = subprocess.Popen(
                 shlex.split(cmd),
                 cwd=cwd,
                 env=env,
-                check=True,
                 shell=False,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                stdout=sys.stdout,
+                stderr=sys.stderr,
                 text=True,
             )
+            returncode = process.wait()
+            if returncode != 0:
+                raise subprocess.CalledProcessError(returncode, cmd)
         except subprocess.CalledProcessError as ex:
-            print(f"Subprocess command failed (return code: {ex.returncode}): {cmd}\nStdout:\n{ex.stdout}\nStderr:\n{ex.stderr}")
+            print(f"Subprocess command failed (return code: {ex.returncode}): {cmd}", flush=True)
             raise
+        except Exception as ex:
+            print(f"Unexpected error in subprocess: {ex}", flush=True)
+            raise
+        else:
+            print(f"Return code: {returncode}", flush=True)
 
-        print("Return code: {0}".format(p.returncode))
-
-        return p.returncode
+        return returncode
 
     def recreate_environment_test(self, environment_manager="conda"):
         """Test for PyRosettaCluster decoy reproducibility in a recreated virtual environment."""
