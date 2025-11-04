@@ -469,11 +469,10 @@ def recreate_environment(
     with tempfile.TemporaryDirectory() as tmp_dir:
         env_create_cmd = _env_config.env_create_cmd(environment_name, raw_spec, tmp_dir, base_dir)
         output = _run_subprocess(env_create_cmd)
-        sys.stdout.write(
-            f"\nEnvironment successfully created using {environment_manager}: '{environment_name}'\n"
-            f"Output:\n{output}\n"
+        print(
+            f"\nEnvironment successfully created using {environment_manager}: '{environment_name}'\nOutput:\n{output}\n",
+            flush=True,
         )
-        sys.stdout.flush()
 
 
 def reserve_scores(func: P) -> Union[P, NoReturn]:
