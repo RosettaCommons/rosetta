@@ -42,14 +42,8 @@ class EnvironmentConfig(Generic[G]):
     _ENV_EXPORT_CMDS: Dict[str, str] = {
         "pixi": "pixi workspace export conda-environment",
         "uv": "uv export --format requirements-txt --frozen",
-        "mamba": "mamba env export --prefix {0}".format(sys.prefix),
-        "conda": "conda env export --prefix {0}".format(sys.prefix),
-    }
-    _ENV_LIST_CMDS: Dict[str, Optional[str]] = {
-        "pixi": None,
-        "uv": None,
-        "mamba": "mamba env list",
-        "conda": "conda env list",
+        "mamba": f"mamba env export --prefix '{sys.prefix}'",
+        "conda": f"conda env export --prefix '{sys.prefix}'",
     }
 
     def __init__(self) -> None:
@@ -88,31 +82,37 @@ class EnvironmentConfig(Generic[G]):
     def env_export_cmd(self) -> str:
         return self._ENV_EXPORT_CMDS[self.environment_manager]
 
-    @property
-    def env_list_cmd(self) -> Optional[str]:
-        return self._ENV_LIST_CMDS[self.environment_manager]
-
     def env_create_cmd(
-        self, environment_name: str, raw_spec: str, tmp_dir: str
+        self, environment_name: str, raw_spec: str, tmp_dir: str, base_dir: str
     ) -> Union[str, NoReturn]:
+        # Create a project directory for uv/pixi, or prefix directory for conda/mamba
+        project_dir = os.path.join(base_dir, environment_name)
+        # Raise exception if the project directory exists
+        if os.path.isdir(project_dir):
+            if self.environment_manager in ("conda", "mamba"):
+                _err_msg = f"The {self.environment_manager} environment prefix directory already exists: '{project_dir}'"
+            elif self.environment_manager in ("uv", "pixi"):
+                _err_msg = f"The {self.environment_manager} project directory already exists: '{project_dir}'"
+            else:
+                raise RuntimeError(f"Unsupported environment manager: '{self.environment_manager}'")
+            raise IsADirectoryError(_err_msg)
+        os.makedirs(project_dir, exist_ok=False)
+
         if self.environment_manager in ("conda", "mamba", "pixi"):
             yml_file = os.path.join(tmp_dir, f"{environment_name}.yml")
             with open(yml_file, "w") as f:
                 f.write(raw_spec)
 
             if self.environment_manager == "conda":
-                return f"conda env create -f {yml_file} -n {environment_name}"
+                return f"conda env create -f '{yml_file}' -p '{project_dir}'"
 
             elif self.environment_manager == "mamba":
-                return f"mamba env create -f {yml_file} -n {environment_name}"
+                return f"mamba env create -f '{yml_file}' -p '{project_dir}'"
 
             elif self.environment_manager == "pixi":
-                # Create a pixi project in the current working directory
-                project_dir = os.path.join(os.getcwd(), environment_name)
-                os.makedirs(project_dir, exist_ok=False)  # Raise exception if the project directory exists
                 return (
-                    f"pixi init --import {yml_file} {project_dir} && "
-                    f"pixi install --manifest-path {project_dir}"
+                    f"pixi init --import '{yml_file}' '{project_dir}' && "
+                    f"pixi install --manifest-path '{project_dir}'"
                 )
 
         elif self.environment_manager == "uv":
@@ -120,12 +120,9 @@ class EnvironmentConfig(Generic[G]):
             req_file = os.path.join(tmp_dir, f"{environment_name}.txt")
             with open(req_file, "w") as f:
                 f.write(raw_spec)
-            # Create a uv project in the current working directory
-            env_dir = os.path.join(os.getcwd(), environment_name)
-            os.makedirs(env_dir, exist_ok=False)  # Raise exception if the project directory exists
             return (
-                f"uv venv create {env_dir} && "
-                f"uv pip sync -r {req_file} --venv {env_dir}"
+                f"uv venv '{project_dir}' && "
+                f"uv pip sync -r '{req_file}' --venv '{project_dir}'"
             )
 
         raise RuntimeError(f"Unsupported environment manager: '{self.environment_manager}'")
@@ -149,7 +146,7 @@ def get_environment_cmd() -> str:
 
 def get_environment_var() -> str:
     """Get the PyRosettaCluster operating system environment variable name."""
-    return get_environment_config()._ENV_VAR
+    return EnvironmentConfig._ENV_VAR
 
 
 source_domains: List[str] = [

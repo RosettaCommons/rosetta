@@ -49,7 +49,7 @@ G = TypeVar("G")
 
 class SecurityIO(Generic[G]):
     def _setup_task_security_plugin(self, clients: Dict[int, Client]) -> None:
-        """Setup tast security worker plugin(s)."""
+        """Setup task security worker plugin(s)."""
         prk = MaskedBytes(derive_task_key(os.urandom(32), self.instance_id))
         self._register_task_security_plugin(clients, prk)
         self.serializer.prk = prk

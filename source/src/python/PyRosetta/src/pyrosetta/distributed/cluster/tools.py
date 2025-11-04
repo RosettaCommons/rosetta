@@ -33,7 +33,7 @@ import warnings
 
 from datetime import datetime
 from functools import wraps
-from pyrosetta.distributed.cluster.config import get_environment_config
+from pyrosetta.distributed.cluster.config import get_environment_config, get_environment_var
 from pyrosetta.distributed.cluster.converters import _parse_protocols
 from pyrosetta.distributed.cluster.converter_tasks import (
     is_dict,
@@ -315,6 +315,7 @@ def recreate_environment(
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
     timeout: Optional[int] = None,
+    base_dir: Optional[str] = None,
 ) -> Optional[NoReturn]:
     """
     Given an input file that was written by PyRosettaCluster, or a scorefile
@@ -329,9 +330,9 @@ def recreate_environment(
 
     Args:
         environment_name: A `str` object specifying the new name of the environment
-            to recreate. If using 'conda' and 'mamba', this is the environment name.
-            If using 'uv' or 'pixi', this is the local project directory name that will
-            be created in the current working directory.
+            to recreate. If using 'conda' and 'mamba', this is the prefix directory that will
+            be created in the 'base_dir' directory. If using 'uv' or 'pixi', this is the
+            local project directory name that will be created in the 'base_dir' directory.
             Default: 'PyRosettaCluster_' + datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f")
         input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
             '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file, or a `Pose` or `PackedPose`
@@ -352,6 +353,9 @@ def recreate_environment(
         timeout: An `int` object specifying the timeout in seconds before any
             subprocesses are terminated.
             Default: None
+        base_dir: A `str` object specifying the base directory in which to create
+            the environment.
+            Default: `.`
 
     Returns:
         None
@@ -364,6 +368,7 @@ def recreate_environment(
                 stderr=subprocess.STDOUT,
                 timeout=timeout,
                 text=True,
+                executable="/bin/bash", # Ensure `&&` works properly
             )
         except subprocess.CalledProcessError as ex:
             raise RuntimeError(
@@ -373,40 +378,26 @@ def recreate_environment(
             ) from ex
 
     if not environment_name:
-        environment_name = "PyRosettaCluster_" + datetime.now().strftime(
-            "%Y.%m.%d.%H.%M.%S.%f"
+        environment_name = "PyRosettaCluster_" + datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f")
+    elif not isinstance(environment_name, str):
+        raise TypeError(
+            f"The 'environment_name' keyword argument parameter must be of type `str`. Received: {type(environment_name)}"
+        )
+
+    if not base_dir:
+        base_dir = os.path.abspath(os.curdir)
+    elif not isinstance(base_dir, str):
+        raise TypeError(f"The 'base_dir' keyword argument parameter must be of type `str`. Received: {type(base_dir)}")
+    else:
+        base_dir = os.path.abspath(os.path.expanduser(base_dir))
+    if not os.path.isdir(base_dir):
+        raise NotADirectoryError(
+            f"The 'base_dir' keyword argument parameter must be an existing directory. Received: '{base_dir}'"
         )
 
     _env_config = get_environment_config()
     environment_manager = _env_config.environment_manager
-    env_list_cmd = _env_config.env_list_cmd
-
-    # Test if environment name already exists
-    if environment_manager in ("conda", "mamba"):
-        env_list_cmd = _env_config.env_list_cmd
-        envs_out = _run_subprocess(env_list_cmd)
-        envs_all = [
-            line.split()[0]
-            for line in envs_out.splitlines()
-            if line and not line.startswith("#")
-        ]
-    elif environment_manager in ("uv", "pixi"):
-        # Only consider local uv or pixi projects created in the current working directory
-        if environment_manager == "uv":
-            _filenames = ("uv.lock", "pyproject.toml",)
-        elif environment_manager == "pixi":
-            _filenames = ("pixi.toml",)
-        cwd = os.getcwd()
-        envs_all = [
-            d for d in os.listdir(cwd)
-            if os.path.isdir(d) and any(os.path.isfile(os.path.join(cwd, d, f)) for f in _filenames)
-        ]
-    else:
-        raise RuntimeError(f"Unsupported environment manager: '{environment_manager}'")
-    if environment_name in envs_all:
-        raise RuntimeError(
-            f"The environment name '{environment_name}' already exists under {environment_manager}."
-        )
+    environment_var = get_environment_var()
 
     # Extract environment spec from record
     _instance_kwargs = get_instance_kwargs(
@@ -428,7 +419,7 @@ def recreate_environment(
         )
     # Get original environment manager
     for line in raw_spec.splitlines():
-        if line.startswith(f"# {_env_config._ENV_VAR}"):
+        if line.startswith(f"# {environment_var}"):
             original_environment_manager = line.split("=")[-1].strip()
             break
     else:
@@ -442,7 +433,7 @@ def recreate_environment(
             + f"'{environment_manager}' as an environment manager! The environment specification "
             + f"is saved in a 'requirements.txt' format, and therefore requires '{original_environment_manager}' "
             + f"to recreate the environment. Please ensure '{original_environment_manager}' is installed "
-            + f"and run `export {_env_config._ENV_VAR}={original_environment_manager}` to properly configure "
+            + f"and run `export {environment_var}={original_environment_manager}` to properly configure "
             + f"the '{original_environment_manager}' environment manager, then try again. For installation "
             + "instructions, please visit:\n"
             + "https://docs.astral.sh/uv/guides/install-python\n"
@@ -455,9 +446,9 @@ def recreate_environment(
             + "is saved in a YAML file format, and therefore requires 'conda', 'mamba', or 'pixi' to "
             + "recreate the environment. Please ensure that 'conda', 'mamba', or 'pixi' is installed, then "
             + "configure the environment manager by running one of the following commands, then try again:\n"
-            + f"To configure 'conda', run: `export {_env_config._ENV_VAR}=conda`\n"
-            + f"To configure 'mamba', run: `export {_env_config._ENV_VAR}=mamba`\n"
-            + f"To configure 'pixi', run:  `export {_env_config._ENV_VAR}=pixi`\n"
+            + f"To configure 'conda', run: `export {environment_var}=conda`\n"
+            + f"To configure 'mamba', run: `export {environment_var}=mamba`\n"
+            + f"To configure 'pixi', run:  `export {environment_var}=pixi`\n"
             + "For installation instructions, please visit:\n"
             + "https://docs.anaconda.com/anaconda/install\n"
             + "https://github.com/conda-forge/miniforge\n"
@@ -476,11 +467,11 @@ def recreate_environment(
 
     # Recreate the environment
     with tempfile.TemporaryDirectory() as tmp_dir:
-        env_create_cmd = _env_config.env_create_cmd(environment_name, raw_spec, tmp_dir)
+        env_create_cmd = _env_config.env_create_cmd(environment_name, raw_spec, tmp_dir, base_dir)
         output = _run_subprocess(env_create_cmd)
-        sys.stdout.write(
-            f"\nEnvironment successfully created using {environment_manager}: '{environment_name}'\n"
-            f"Output:\n{output}\n"
+        print(
+            f"\nEnvironment successfully created using {environment_manager}: '{environment_name}'\nOutput:\n{output}\n",
+            flush=True,
         )
 
 
