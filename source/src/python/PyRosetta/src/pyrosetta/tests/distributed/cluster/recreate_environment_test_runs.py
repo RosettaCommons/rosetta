@@ -79,7 +79,7 @@ def run_original_simulation(
             dashboard_address=None,
             compressed=False,
             compression=True,
-            logging_level="DEBUG",
+            logging_level="INFO",
             scorefile_name=scorefile_name,
             project_name="Original_Environment_Simulation",
             simulation_name=None,
