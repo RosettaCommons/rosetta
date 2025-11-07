@@ -162,6 +162,8 @@ ScoreFunctionFactory::validate_beta(
 	//not sure why create_score_function is like that.
 	using namespace basic::options::OptionKeys;
 	bool const genpot_active(options[corrections::gen_potential].value());
+	bool const betajan25_active(options[corrections::beta_jan25].value()
+		|| options[corrections::beta_jan25_cart].value() );
 	bool const betanov16_active(options[corrections::beta_nov16].value()
 		|| options[corrections::beta_nov16_cart].value() );
 	bool const betajuly15_active(options[corrections::beta_july15].value()
@@ -169,13 +171,17 @@ ScoreFunctionFactory::validate_beta(
 	if ( (weights_tag_no_extension == (BETA_GENPOT)) && !genpot_active ) {
 		utility_exit_with_message(BETA_GENPOT + "(.wts) requested, but -corrections::gen_potential not set to true. This leads to a garbage scorefunction.  Exiting.");
 		return false; //can't get here
+	}
+	else if ( (weights_tag_no_extension == (BETA_JAN25)) && !betajan25_active ) {
+		utility_exit_with_message(BETA_JAN25 + "(.wts) requested, but -corrections::beta_jan25 not set to true. This leads to a garbage scorefunction.  Exiting.");
+		return false; //can't get here
 	} else if ( (weights_tag_no_extension == (BETA_NOV16)) && !betanov16_active ) {
 		utility_exit_with_message(BETA_NOV16 + "(.wts) requested, but -corrections::beta_nov16 not set to true. This leads to a garbage scorefunction.  Exiting.");
 		return false; //can't get here
 	} else if ( (weights_tag_no_extension == (BETA_JULY15)) && !betajuly15_active ) {
 		utility_exit_with_message(BETA_JULY15 + "(.wts) requested, but -corrections::beta_july15 not set to true. This leads to a garbage scorefunction.  Exiting.");
 		return false; //can't get here
-	} else if ( sf_maybe_beta && !betanov16_active && !genpot_active ) {
+	} else if ( sf_maybe_beta && !betajan25_active && !betanov16_active && !genpot_active ) {
 		TR.Warning << "**************************************************************************\n"
 			<< "*****************************************************\n"
 			<< "****************************************************\n"
@@ -337,6 +343,8 @@ ScoreFunctionFactory::list_read_options( utility::options::OptionKeyList & opts 
 		+ basic::options::OptionKeys::corrections::beta_july15
 		+ basic::options::OptionKeys::corrections::beta_july15_cart
 		+ basic::options::OptionKeys::corrections::gen_potential
+		+ basic::options::OptionKeys::corrections::beta_jan25
+		+ basic::options::OptionKeys::corrections::beta_jan25_cart
 		+ basic::options::OptionKeys::corrections::beta_nov16
 		+ basic::options::OptionKeys::corrections::beta_nov16_cart;
 
@@ -435,6 +443,7 @@ std::string const DOCK_LOW_PATCH( "docking_cen" );
 std::string const SCORE4_SMOOTH_CART( "score4_smooth_cart" );
 
 std::string const BETA_GENPOT( "beta_genpot" );
+std::string const BETA_JAN25( "beta_jan25" );
 std::string const BETA_NOV16( "beta_nov16" );
 std::string const BETA_NOV15( "beta_nov15" );
 std::string const BETA_JULY15( "beta_july15" );
@@ -693,6 +702,7 @@ basename_for_score_function( std::string const & sfxn_name ){
 	if ( startswith( sfxn_name, BETA_JULY15 ) ) return BETA_JULY15;
 	if ( startswith( sfxn_name, BETA_NOV15 ) ) return BETA_NOV15;
 	if ( startswith( sfxn_name, BETA_NOV16 ) ) return BETA_NOV16;
+	if ( startswith( sfxn_name, BETA_JAN25 ) ) return BETA_JAN25;
 	if ( startswith( sfxn_name, CENTROID_WTS ) ) return CENTROID_WTS;
 	if ( startswith( sfxn_name, DNA_INT_WTS ) ) return DNA_INT_WTS;
 	if ( startswith( sfxn_name, DNA_INT_WTS_GB ) ) return DNA_INT_WTS_GB;

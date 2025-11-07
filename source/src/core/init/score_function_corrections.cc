@@ -3070,7 +3070,6 @@ void init_spades_score_function_correction( utility::options::OptionCollection &
 
 void
 init_gen_potential_settings( utility::options::OptionCollection & options, bool setweight ) {
-	if ( ! options[ corrections::gen_potential]() ) return;
 
 	if ( ! options[ basic::options::OptionKeys::score::fa_Hatr ].user() ) {
 		options[ basic::options::OptionKeys::score::fa_Hatr ].value(true);
