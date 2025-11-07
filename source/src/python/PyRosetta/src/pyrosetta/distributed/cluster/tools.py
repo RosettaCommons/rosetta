@@ -318,6 +318,14 @@ def recreate_environment(
     base_dir: Optional[str] = None,
 ) -> Optional[NoReturn]:
     """
+    *Warning*: This function runs a subprocess with one of the following commands:
+      - `conda env create ...`: when 'conda' is an executable
+      - `mamba env create ...`: when 'mamba' is an executable
+      - `uv pip ...`: when 'uv' is an executable
+      - `pixi install ...`: when 'pixi' is an executable
+    Installing certain packages may not be secure, so please only run with input files you trust.
+    Learn more about PyPI security `here <https://pypi.org/security>`_ and conda security `here <https://www.anaconda.com/docs/reference/security>`_.
+
     Given an input file that was written by PyRosettaCluster, or a scorefile
     and a decoy name that was written by PyRosettaCluster, recreate the
     environment that was used to generate the decoy with a new environment name.

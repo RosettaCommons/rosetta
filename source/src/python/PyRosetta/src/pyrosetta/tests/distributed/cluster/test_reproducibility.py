@@ -1692,23 +1692,29 @@ class TestEnvironmentReproducibility(unittest.TestCase):
         else:
             env = None
         try:
-            p = subprocess.run(
+            # Use live output streaming for GitHub Actions visibility
+            process = subprocess.Popen(
                 shlex.split(cmd),
                 cwd=cwd,
                 env=env,
-                check=True,
                 shell=False,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                stdout=sys.stdout,
+                stderr=sys.stderr,
                 text=True,
             )
+            returncode = process.wait()
+            if returncode != 0:
+                raise subprocess.CalledProcessError(returncode, cmd)
         except subprocess.CalledProcessError as ex:
-            print(f"Subprocess command failed (return code: {ex.returncode}): {cmd}\nStdout:\n{ex.stdout}\nStderr:\n{ex.stderr}")
+            print(f"Subprocess command failed (return code: {ex.returncode}): {cmd}", flush=True)
             raise
+        except Exception as ex:
+            print(f"Unexpected error in subprocess: {ex}", flush=True)
+            raise
+        else:
+            print(f"Return code: {returncode}", flush=True)
 
-        print("Return code: {0}".format(p.returncode))
-
-        return p.returncode
+        return returncode
 
     def recreate_environment_test(self, environment_manager="conda"):
         """Test for PyRosettaCluster decoy reproducibility in a recreated virtual environment."""
@@ -1738,14 +1744,14 @@ class TestEnvironmentReproducibility(unittest.TestCase):
         original_output_path = os.path.join(original_env_dir, f"{environment_manager}_original_outputs")
         original_scorefile_name = "test_scores.json"
         if environment_manager == "pixi":
-            cmd = "pixi run python {0} --env_manager '{1}' --output_path '{2}' --scorefile_name '{3}'".format(
+            cmd = "pixi run python -u {0} --env_manager '{1}' --output_path '{2}' --scorefile_name '{3}'".format(
                 test_script,
                 environment_manager,
                 original_output_path,
                 original_scorefile_name,
             )
         elif environment_manager == "uv":
-            cmd = "uv run -p {0} python {1} --env_manager '{2}' --output_path '{3}' --scorefile_name '{4}'".format(
+            cmd = "uv run -p {0} python -u {1} --env_manager '{2}' --output_path '{3}' --scorefile_name '{4}'".format(
                 original_env_dir,
                 test_script,
                 environment_manager,
@@ -1753,7 +1759,7 @@ class TestEnvironmentReproducibility(unittest.TestCase):
                 original_scorefile_name,
             )
         elif environment_manager in ("conda", "mamba"):
-            cmd = "conda run -p {0} python {1} --env_manager '{2}' --output_path '{3}' --scorefile_name '{4}'".format(
+            cmd = "conda run -p {0} python -u {1} --env_manager '{2}' --output_path '{3}' --scorefile_name '{4}'".format(
                 original_env_dir,
                 test_script,
                 environment_manager,
@@ -1831,7 +1837,7 @@ class TestEnvironmentReproducibility(unittest.TestCase):
         reproduce_scorefile_name = "test_scores.json"
         if environment_manager == "pixi":
             cmd = (
-                f"pixi run python {test_script} "
+                f"pixi run python -u {test_script} "
                 f"--env_manager '{environment_manager}' "
                 f"--output_path '{reproduce_output_path}' "
                 f"--scorefile_name '{reproduce_scorefile_name}' "
@@ -1841,7 +1847,7 @@ class TestEnvironmentReproducibility(unittest.TestCase):
             )
         elif environment_manager == "uv":
             cmd = (
-                f"uv run -p {reproduce_env_dir} python {test_script} "
+                f"uv run -p {reproduce_env_dir} python -u {test_script} "
                 f"--env_manager '{environment_manager}' "
                 f"--output_path '{reproduce_output_path}' "
                 f"--scorefile_name '{reproduce_scorefile_name}' "
@@ -1851,7 +1857,7 @@ class TestEnvironmentReproducibility(unittest.TestCase):
             )
         elif environment_manager in ("conda", "mamba"):
             cmd = (
-                f"conda run -p {reproduce_env_dir} python {test_script} "
+                f"conda run -p {reproduce_env_dir} python -u {test_script} "
                 f"--env_manager '{environment_manager}' "
                 f"--output_path '{reproduce_output_path}' "
                 f"--scorefile_name '{reproduce_scorefile_name}' "
