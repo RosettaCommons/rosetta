@@ -58,6 +58,7 @@ from pyrosetta.io import (
     poses_from_silent,
     poses_from_multimodel_pdb,
     poses_to_silent,
+    poses_to_scorefile,
     dump_file,
     dump_scored_pdb,
     dump_pdb,
