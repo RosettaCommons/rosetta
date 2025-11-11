@@ -68,6 +68,7 @@ from pyrosetta.io import (
     create_score_function,
     get_fa_scorefxn,
     get_score_function,
+    get_scorefile_info,
     Pose,
 )
 

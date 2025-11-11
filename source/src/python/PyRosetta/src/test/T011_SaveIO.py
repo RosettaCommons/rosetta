@@ -135,5 +135,16 @@ class SavePDBTest(unittest.TestCase):
         self.assertEqual(has_extra_real,1)
         self.assertEqual(has_extra_string,1)
 
+    def test_get_scorefile_info(self):
+        pose_clone = self.pose1.clone()
+        pyrosetta.rosetta.core.pose.setPoseExraScore(pose_clone, "extra_real", 3.14159 )
+        pyrosetta.rosetta.core.pose.setPoseExraScore(pose_clone, "extra_string", "TAG_VALUE" )
+
+        info = pyrosetta.io.get_scorefile_info(pose_clone)
+
+        self.assertTrue( info.has("total_score") )
+        self.assertAlmoseEqual( info["extra_real"], 3.14159 )
+        self.assertEqual( info["extra_string"], "TAG_VALUE" )
+
 if __name__ == "__main__":
     unittest.main()
