@@ -40,7 +40,7 @@ class EnvironmentConfig(Generic[G]):
     _ENV_VAR: str = "PYROSETTACLUSTER_ENVIRONMENT_MANAGER"
     _ENV_MANAGERS: Tuple[str, ...] = ("pixi", "uv", "mamba", "conda")
     _ENV_EXPORT_CMDS: Dict[str, str] = {
-        "pixi": "pixi workspace export conda-environment",
+        "pixi": "pixi lock --check || pixi lock --no-install",
         "uv": "uv export --format requirements-txt --frozen",
         "mamba": f"mamba env export --prefix '{sys.prefix}'",
         "conda": f"conda env export --prefix '{sys.prefix}'",
@@ -80,6 +80,38 @@ class EnvironmentConfig(Generic[G]):
 
     @property
     def env_export_cmd(self) -> str:
+        """
+        Return the appropriate environment export command for the given environment manager.
+        Automatically adjusts for Pixi and uv when a project/manifest path is set via
+        environment variables or custom run paths.
+
+        Args:
+            env_manager: A `str` object of either "pixi", "uv", "mamba", "conda".
+
+        Returns:
+            A shell command string for subprocess execution.
+        """
+        # Update pixi environment command if `$PIXI_PROJECT_MANIFEST` is set
+        if self.environment_manager == "pixi":
+            # https://pixi.sh/dev/reference/environment_variables/#environment-variables-set-by-pixi
+            manifest_path = os.environ.get("PIXI_PROJECT_MANIFEST")
+            if manifest_path:
+                # Append --manifest-path flag to both commands in the OR clause
+                return (
+                    f"pixi lock --check --manifest-path '{manifest_path}' || "
+                    f"pixi lock --no-install --manifest-path '{manifest_path}'"
+                )
+
+        # Update uv environment command if `$UV_PROJECT` is set
+        elif self.environment_manager == "uv":
+            project_dir = os.environ.get("UV_PROJECT")
+            if project_dir:
+                # Append --project flag
+                return (
+                    f"uv export --format requirements-txt --frozen --project '{project_dir}'"
+                )
+
+        # Use default environment export command
         return self._ENV_EXPORT_CMDS[self.environment_manager]
 
     def env_create_cmd(
