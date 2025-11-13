@@ -21,11 +21,8 @@ from typing import (
     Dict,
     Generic,
     List,
-    NoReturn,
-    Optional,
     Tuple,
     TypeVar,
-    Union,
 )
 
 
