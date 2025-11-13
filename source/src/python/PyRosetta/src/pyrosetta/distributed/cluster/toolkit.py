@@ -21,7 +21,6 @@ from pyrosetta.distributed.cluster.tools import (
     get_protocols,
     iterate,
     produce,
-    recreate_environment,
     reproduce,
     requires_packed_pose,
     reserve_scores,

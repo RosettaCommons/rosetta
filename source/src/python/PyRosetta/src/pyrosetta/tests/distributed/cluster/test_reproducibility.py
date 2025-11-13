@@ -20,27 +20,20 @@ import pyrosetta
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
 import shlex
-import shutil
 import subprocess
 import sys
 import tempfile
-import textwrap
 import time
 import unittest
-import uuid
 
-from contextlib import contextmanager
-from pathlib import Path
 
 from pyrosetta.distributed.cluster import (
     PyRosettaCluster,
     export_init_file,
-    recreate_environment,
     requires_packed_pose,
     reserve_scores,
     reproduce,
 )
-from pyrosetta.distributed.cluster.config import get_environment_var
 from pyrosetta.distributed.cluster.io import secure_read_pickle
 from pyrosetta.tests.distributed.cluster.setup_inputs import get_test_params_file, get_test_pdb_file
 
