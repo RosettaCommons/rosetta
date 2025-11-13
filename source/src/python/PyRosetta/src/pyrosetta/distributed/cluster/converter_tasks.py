@@ -37,8 +37,6 @@ from functools import singledispatch
 from pyrosetta.distributed.cluster.config import (
     get_environment_cmd,
     get_environment_manager,
-    get_environment_var,
-    source_domains,
 )
 from pyrosetta.distributed.cluster.exceptions import (
     InputError,
@@ -480,39 +478,71 @@ def export_init_file(
 
 def get_yml() -> str:
     """
-    Run environment export command to return a YML file string with the current virtual
-    environment, excluding certain source domains.
+    Export the current environment to a string depending on the environment manager.
     """
 
-    environment_cmd = get_environment_cmd()
+    def remove_comments(text: str) -> str:
+        """Remove lines starting with '#'."""
+        return "\n".join(
+            line for line in text.splitlines() if not line.strip().startswith("#")
+        )
+
+    def remove_metadata(text: str) -> str:
+        """Remove 'name:' and 'prefix:' lines."""
+        filtered_lines = [
+            line
+            for line in text.splitlines()
+            if not line.startswith(("name:", "prefix:")) and line.strip()
+        ]
+        return "\n".join(filtered_lines) + "\n"
+
+
+    env_manager = get_environment_manager()
+    environment_cmd = get_environment_cmd(env_manager)
+
+    # Handle pixi separately since it writes a `pixi.lock` file
+    if env_manager == "pixi":
+        try:
+            subprocess.run(
+                environment_cmd,
+                shell=True,
+                check=True,
+                stderr=subprocess.DEVNULL,
+            )
+            # https://pixi.sh/dev/reference/environment_variables/#environment-variables-set-by-pixi
+            manifest_path = os.environ.get("PIXI_PROJECT_MANIFEST")
+            lock_path = os.path.join(
+                os.path.dirname(manifest_path) if manifest_path else os.getcwd(),
+                "pixi.lock",
+            )
+            with open(lock_path, encoding="utf-8") as f:
+                return f.read()
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            return ""
+
+    # For uv/conda/mamba environment managers, run the export command and process the output
     try:
-        raw_yml = subprocess.check_output(
+        result = subprocess.run(
             environment_cmd,
             shell=True,
+            check=True,
             stderr=subprocess.DEVNULL,
-        ).decode()
-    except subprocess.CalledProcessError:
-        raw_yml = ""
-
-    return (
-        (
-            os.linesep.join(
-                [f"# {get_environment_var()}={get_environment_manager()}"]
-                + [
-                    line
-                    for line in raw_yml.split(os.linesep)
-                    if all(
-                        source_domain not in line for source_domain in source_domains
-                    )
-                    and all(not line.startswith(s) for s in ["name:", "prefix:"])
-                    and line
-                ]
-            )
-            + os.linesep
+            stdout=subprocess.PIPE,
+            text=True,
         )
-        if raw_yml
-        else raw_yml
-    )
+    except subprocess.CalledProcessError:
+        return ""
+
+    raw_yml = result.stdout.strip()
+    if not raw_yml:
+        return ""
+
+    if env_manager == "uv":
+        return remove_comments(raw_yml)
+    elif env_manager in ("conda", "mamba"):
+        return remove_metadata(raw_yml)
+
+    raise NotImplementedError(env_manager)
 
 
 @singledispatch
