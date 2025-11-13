@@ -542,7 +542,7 @@ def get_yml() -> str:
     elif env_manager in ("conda", "mamba"):
         return remove_metadata(raw_yml)
 
-    raise NotImplementedError(env_manager)
+    raise RuntimeError(f"Unsupported environment manager: '{env_manager}'")
 
 
 @singledispatch
