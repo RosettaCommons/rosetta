@@ -114,51 +114,6 @@ class EnvironmentConfig(Generic[G]):
         # Use default environment export command
         return self._ENV_EXPORT_CMDS[self.environment_manager]
 
-    def env_create_cmd(
-        self, environment_name: str, raw_spec: str, tmp_dir: str, base_dir: str
-    ) -> Union[str, NoReturn]:
-        # Create a project directory for uv/pixi, or prefix directory for conda/mamba
-        project_dir = os.path.join(base_dir, environment_name)
-        # Raise exception if the project directory exists
-        if os.path.isdir(project_dir):
-            if self.environment_manager in ("conda", "mamba"):
-                _err_msg = f"The {self.environment_manager} environment prefix directory already exists: '{project_dir}'"
-            elif self.environment_manager in ("uv", "pixi"):
-                _err_msg = f"The {self.environment_manager} project directory already exists: '{project_dir}'"
-            else:
-                raise RuntimeError(f"Unsupported environment manager: '{self.environment_manager}'")
-            raise IsADirectoryError(_err_msg)
-        os.makedirs(project_dir, exist_ok=False)
-
-        if self.environment_manager in ("conda", "mamba", "pixi"):
-            yml_file = os.path.join(tmp_dir, f"{environment_name}.yml")
-            with open(yml_file, "w") as f:
-                f.write(raw_spec)
-
-            if self.environment_manager == "conda":
-                return f"conda env create -f '{yml_file}' -p '{project_dir}'"
-
-            elif self.environment_manager == "mamba":
-                return f"mamba env create -f '{yml_file}' -p '{project_dir}'"
-
-            elif self.environment_manager == "pixi":
-                return (
-                    f"pixi init --import '{yml_file}' '{project_dir}' && "
-                    f"pixi install --manifest-path '{project_dir}'"
-                )
-
-        elif self.environment_manager == "uv":
-            # Write the requirements.txt file
-            req_file = os.path.join(tmp_dir, f"{environment_name}.txt")
-            with open(req_file, "w") as f:
-                f.write(raw_spec)
-            return (
-                f"uv venv '{project_dir}' && "
-                f"uv pip sync -r '{req_file}' --venv '{project_dir}'"
-            )
-
-        raise RuntimeError(f"Unsupported environment manager: '{self.environment_manager}'")
-
 
 @lru_cache(maxsize=1)
 def get_environment_config() -> EnvironmentConfig:
@@ -178,7 +133,7 @@ def get_environment_cmd() -> str:
 
 def get_environment_var() -> str:
     """Get the PyRosettaCluster operating system environment variable name."""
-    return EnvironmentConfig._ENV_VAR
+    return get_environment_config()._ENV_VAR
 
 
 source_domains: List[str] = [
