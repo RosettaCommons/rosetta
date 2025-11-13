@@ -93,7 +93,7 @@ class EnvironmentConfig(Generic[G]):
             # https://pixi.sh/dev/reference/environment_variables/#environment-variables-set-by-pixi
             manifest_path = os.environ.get("PIXI_PROJECT_MANIFEST")
             if manifest_path:
-                # Append --manifest-path flag to both commands in the OR clause
+                # Append `--manifest-path` flag to both commands in the OR clause
                 return (
                     f"pixi lock --check --manifest-path '{manifest_path}' || "
                     f"pixi lock --no-install --manifest-path '{manifest_path}'"
@@ -104,7 +104,7 @@ class EnvironmentConfig(Generic[G]):
             # https://docs.astral.sh/uv/reference/environment/#uv_project
             project_dir = os.environ.get("UV_PROJECT")
             if project_dir:
-                # Append --project flag
+                # Append `--project` flag
                 return (
                     f"uv export --format requirements-txt --frozen --project '{project_dir}'"
                 )
