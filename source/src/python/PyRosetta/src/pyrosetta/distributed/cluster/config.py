@@ -79,8 +79,8 @@ class EnvironmentConfig(Generic[G]):
     def env_export_cmd(self) -> str:
         """
         Return the appropriate environment export command for the given environment manager.
-        Automatically adjusts for Pixi and uv when a project/manifest path is set via
-        environment variables or custom run paths.
+        This method automatically adjusts for pixi and uv when a manifest path or project path
+        is set via environment variables.
 
         Args:
             env_manager: A `str` object of either "pixi", "uv", "mamba", "conda".
@@ -101,6 +101,7 @@ class EnvironmentConfig(Generic[G]):
 
         # Update uv environment command if `$UV_PROJECT` is set
         elif self.environment_manager == "uv":
+            # https://docs.astral.sh/uv/reference/environment/#uv_project
             project_dir = os.environ.get("UV_PROJECT")
             if project_dir:
                 # Append --project flag
