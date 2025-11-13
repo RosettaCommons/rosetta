@@ -30,7 +30,6 @@ import tempfile
 import warnings
 
 from functools import wraps
-from pyrosetta.distributed.cluster.config import get_environment_config, get_environment_var
 from pyrosetta.distributed.cluster.converters import _parse_protocols
 from pyrosetta.distributed.cluster.converter_tasks import (
     is_dict,
