@@ -827,6 +827,15 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         validator=[attr.validators.instance_of(str), _validate_output_init_file],
         converter=attr.converters.default_if_none(""),
     )
+    environment_manager = attr.ib(
+        type=str,
+        default=attr.Factory(
+            get_environment_manager,
+            takes_self=False,
+        ),
+        init=False,
+        validator=attr.validators.instance_of(str),
+    )
     environment_file = attr.ib(
         type=str,
         default=attr.Factory(
@@ -836,20 +845,17 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                     [
                         self.project_name.replace(" ", "-"),
                         self.simulation_name.replace(" ", "-"),
-                        "environment.yml",
+                        (
+                            "pixi.lock"
+                            if self.environment_manager == "pixi"
+                            else "requirements.txt"
+                            if self.environment_manager == "uv"
+                            else "environment.yml"
+                        )
                     ]
                 ),
             ),
             takes_self=True,
-        ),
-        init=False,
-        validator=attr.validators.instance_of(str),
-    )
-    environment_manager = attr.ib(
-        type=str,
-        default=attr.Factory(
-            get_environment_manager,
-            takes_self=False,
         ),
         init=False,
         validator=attr.validators.instance_of(str),
