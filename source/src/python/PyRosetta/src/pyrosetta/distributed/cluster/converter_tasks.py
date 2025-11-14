@@ -512,7 +512,7 @@ def get_yml() -> str:
         _credentials, host = parsed.netloc.split("@", 1)
         host_domain = host.split(":", 1)[0]  # Remove port if present
 
-        # Only sanitize if domain matches sensitive domains
+        # Only sanitize if the domain is a source domain
         if host_domain not in source_domains:
             return url
 
