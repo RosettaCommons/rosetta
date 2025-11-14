@@ -498,7 +498,7 @@ def get_yml() -> str:
 
 
     env_manager = get_environment_manager()
-    environment_cmd = get_environment_cmd(env_manager)
+    environment_cmd = get_environment_cmd()
 
     # Handle pixi separately since it writes a `pixi.lock` file
     if env_manager == "pixi":
