@@ -94,6 +94,10 @@ class EnvironmentConfig(Generic[G]):
             manifest_path = os.environ.get("PIXI_PROJECT_MANIFEST")
             if manifest_path:
                 # Append `--manifest-path` flag to both commands in the OR clause
+                logging.info(
+                    "PyRosettaCluster detected the set $PIXI_PROJECT_MANIFEST environment variable, and is "
+                    + f"setting the flag `--manifest-path '{manifest_path}'` in the `pixi lock` command."
+                )
                 return (
                     f"pixi lock --check --manifest-path '{manifest_path}' || "
                     f"pixi lock --no-install --manifest-path '{manifest_path}'"
@@ -105,6 +109,10 @@ class EnvironmentConfig(Generic[G]):
             project_dir = os.environ.get("UV_PROJECT")
             if project_dir:
                 # Append `--project` flag
+                logging.info(
+                    "PyRosettaCluster detected the set $UV_PROJECT environment variable, and is "
+                    + f"setting the flag `--project '{project_dir}'` in the `uv export` command."
+                )
                 return (
                     f"uv export --format requirements-txt --frozen --project '{project_dir}'"
                 )
