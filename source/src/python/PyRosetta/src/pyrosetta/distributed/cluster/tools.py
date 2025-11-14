@@ -188,7 +188,7 @@ def get_instance_kwargs(
     Args:
         input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
             '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init', or '.init.bz2' file, or a
-            `Pose`or `PackedPose` object, from which to extract PyRosettaCluster instance kwargs.
+            `Pose` or `PackedPose` object, from which to extract PyRosettaCluster instance kwargs.
             If 'input_file' is provided, then ignore the 'scorefile' and 'decoy_name' keyword
             argument parameters.
             Default: None
