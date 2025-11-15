@@ -306,8 +306,8 @@ class IO(Generic[G]):
             extra_kwargs["PyRosettaCluster_environment_manager"] = self.environment_manager
             if self.manifest:
                 extra_kwargs["PyRosettaCluster_manifest"] = self.manifest
-            if self.manifest_filename:
-                extra_kwargs["PyRosettaCluster_manifest_filename"] = self.manifest_filename
+            if self.manifest_format:
+                extra_kwargs["PyRosettaCluster_manifest_format"] = self.manifest_format
             if os.path.isfile(self.environment_file):
                 extra_kwargs["PyRosettaCluster_environment_file"] = self.environment_file
             if os.path.isfile(self.output_init_file):
@@ -451,7 +451,7 @@ class IO(Generic[G]):
 
             # Cache TOML filename as manifest format
             if self.manifest:
-                self.manifest_filename = os.path.basename(manifest_path)
+                self.manifest_format = os.path.basename(manifest_path)
             else:
                 logging.warning(
                     (
@@ -464,7 +464,7 @@ class IO(Generic[G]):
                 )
         else:
             self.manifest = ""
-            self.manifest_filename = ""
+            self.manifest_format = ""
 
     def _write_environment_file(self, filename: str) -> None:
         """
@@ -480,8 +480,8 @@ class IO(Generic[G]):
             with open(filename, "w") as f:
                 f.write(self.environment)
 
-            if self.environment_manager == "pixi" and self.manifest and self.manifest_filename:
-                toml_file = "_".join(filename.split("_")[:-1] + [self.manifest_filename])
+            if self.environment_manager == "pixi" and self.manifest and self.manifest_format:
+                toml_file = "_".join(filename.split("_")[:-1] + [self.manifest_format])
                 with open(toml_file, "w") as f:
                     f.write(self.manifest)
 
