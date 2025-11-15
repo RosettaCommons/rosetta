@@ -589,6 +589,7 @@ def reproduce(
                     scorefile=scorefile,
                     decoy_name=decoy_name,
                     skip_corrections=skip_corrections,
+                    with_metadata_kwargs=False,
                 ),
                 parse_instance_kwargs(instance_kwargs),
             ),
