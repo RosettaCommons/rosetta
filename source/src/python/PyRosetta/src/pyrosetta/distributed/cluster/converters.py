@@ -33,21 +33,6 @@ import types
 import warnings
 
 from functools import singledispatch
-from pyrosetta.distributed.cluster.config import get_environment_cmd
-from pyrosetta.distributed.cluster.converter_tasks import (
-    get_yml,
-    is_bytes,
-    is_dict,
-    is_empty,
-    is_packed,
-    parse_input_packed_pose as _parse_input_packed_pose,
-    to_int,
-    to_iterable,
-    to_packed,
-    to_str,
-    maybe_issue_environment_warnings as _maybe_issue_environment_warnings,
-)
-from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
     Any,
@@ -62,6 +47,26 @@ from typing import (
     TypeVar,
     Union,
 )
+
+from pyrosetta.distributed.cluster.config import (
+    get_environment_cmd,
+    get_environment_manager,
+)
+from pyrosetta.distributed.cluster.converter_tasks import (
+    get_yml,
+    is_bytes,
+    is_dict,
+    is_empty,
+    is_packed,
+    parse_input_packed_pose as _parse_input_packed_pose,
+    to_int,
+    to_iterable,
+    to_packed,
+    to_str,
+    maybe_issue_environment_warnings as _maybe_issue_environment_warnings,
+)
+from pyrosetta.distributed.cluster.serialization import Serialization
+
 
 S = TypeVar("S", bound=Serialization)
 
@@ -127,40 +132,97 @@ def _parse_environment(obj: Any) -> Union[str, NoReturn]:
         yml = get_yml()
         if yml == "":
             environment_cmd = get_environment_cmd()
-            logging.warning(
-                f"`{environment_cmd}` did not run successfully, "
-                + "so the active conda environment YML file string was not saved! "
-                + "It is recommended to run: "
-                + f"\n`{environment_cmd} > environment.yml`\n"
-                + "to reproduce this simulation later."
+            environment_manager = get_environment_manager()
+            _warning_msg = (
+                "`{0}` did not run successfully, "
+                "so the active {1} file string was not saved! "
+                "It is recommended to run:\n`{2}`\n"
+                "to reproduce this simulation later."
             )
+            if environment_manager == "pixi":
+                logging.warning(
+                    _warning_msg.format(
+                        environment_cmd,
+                        "pixi project lock",
+                        environment_cmd,
+                    )
+                )
+            elif environment_manager == "uv":
+                logging.warning(
+                    _warning_msg.format(
+                        environment_cmd,
+                        "uv project requirements",
+                        f"{environment_cmd} > requirements.txt",
+                    )
+                )
+            elif environment_manager == "mamba":
+                logging.warning(
+                    _warning_msg.format(
+                        environment_cmd,
+                        "mamba environment YML",
+                        f"{environment_cmd} > environment.yml",
+                    )
+                )
+            elif environment_manager == "conda":
+                logging.warning(
+                    _warning_msg.format(
+                        environment_cmd,
+                        "conda environment YML",
+                        f"{environment_cmd} > environment.yml",
+                    )
+                )
+            else:
+                raise RuntimeError(f"Unsupported environment manager: {environment_manager}")
         return yml
 
     @converter.register(str)
     def _parse_str(obj: str) -> Union[str, NoReturn]:
+        environment_manager = get_environment_manager()
         if obj == "":
-            logging.warning(
+            _warning_msg = (
                 "The input 'environment' parameter argument is an empty string, "
-                + "which is not a valid YML file string capturing the active conda "
-                + "environment! Reproduction simulations may not necessarily reproduce "
-                + "the original decoy(s)! Please verify that your active conda "
-                + "environment is identical to the original conda environment that "
-                + "generated the decoy(s) you wish to reproduce!"
-                + "\nBypassing conda environment validation...\n"
+                "which is not a valid {0} file string capturing the active {1}! "
+                "Reproduction simulations may not necessarily reproduce "
+                "the original decoy(s)! Please verify that your active "
+                "{1} is identical to the original {1} that "
+                "generated the decoy(s) you wish to reproduce!"
+                "\nBypassing {1} validation...\n"
             )
+            if environment_manager == "pixi":
+                logging.warning(_warning_msg.format("pixi lock", "pixi project"))
+            elif environment_manager == "uv":
+                logging.warning(_warning_msg.format("uv requirements", "uv project"))
+            elif environment_manager == "mamba":
+                logging.warning(_warning_msg.format("YML", "mamba environment"))
+            elif environment_manager == "conda":
+                logging.warning(_warning_msg.format("YML", "conda environment"))
+            else:
+                raise RuntimeError(f"Unsupported environment manager: {environment_manager}")
             return obj
         else:
             if obj != get_yml():
-                raise AssertionError(
-                    "The 'environment' parameter argument is not equivalent to the YML file string "
-                    + "generated by the active conda environment, and therefore the original "
-                    + "decoy may not necessarily be reproduced. Please set the 'environment' parameter "
-                    + "argument to an empty string ('') to bypass conda environment validation and run the simulation."
+                _err_msg = (
+                    "The 'environment' parameter argument is not equivalent to the {0} file string "
+                    "generated by the active {1}, and therefore the original "
+                    "decoy may not necessarily be reproduced. Please set the 'environment' parameter "
+                    "argument to an empty string ('') to bypass {1} validation and run the simulation."
                 )
+                if environment_manager == "pixi":
+                    raise AssertionError(_err_msg.format("pixi lock", "pixi project"))
+                elif environment_manager == "uv":
+                    raise AssertionError(_err_msg.format("uv requirements", "uv project"))
+                elif environment_manager == "mamba":
+                   raise AssertionError(_err_msg.format("YML", "mamba environment"))
+                elif environment_manager == "conda":
+                    raise AssertionError(_err_msg.format("YML", "conda environment"))
+                else:
+                    raise RuntimeError(f"Unsupported environment manager: {environment_manager}")
             else:
-                logging.debug(
-                    "The 'environment' parameter argument correctly validated against the active conda environment!"
-                )
+                _debug_msg = "The 'environment' parameter argument correctly validated against the active {0}!"
+                if environment_manager in ("pixi", "uv"):
+                    logging.debug(_debug_msg.format("project"))
+                else:
+                    logging.debug(_debug_msg.format("environment"))
                 return obj
 
     return converter(obj)
