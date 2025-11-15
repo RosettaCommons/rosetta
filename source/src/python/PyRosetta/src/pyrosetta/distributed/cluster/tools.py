@@ -39,6 +39,7 @@ from pyrosetta.distributed.cluster.converter_tasks import (
     parse_decoy_name,
     parse_init_file,
     parse_input_file_to_instance_kwargs,
+    parse_input_file_to_instance_metadata_kwargs,
     parse_instance_kwargs,
     parse_scorefile,
     reserve_scores_in_results,
@@ -179,7 +180,8 @@ def get_instance_kwargs(
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
     skip_corrections: Optional[bool] = None,
-) -> Union[Dict[str, Any], NoReturn]:
+    with_metadata_kwargs: Optional[bool] = None,
+) -> Union[Dict[str, Any], Tuple[Dict[str, Any], Dict[str, Any]], NoReturn]:
     """
     Given an input file that was written by PyRosettaCluster, or a scorefile
     and a decoy name that was written by PyRosettaCluster, return the PyRosettaCluster
@@ -207,9 +209,15 @@ def get_instance_kwargs(
             corrections specified in the PyRosettaCluster task initialization options
             (extracted from the 'input_file' or 'scorefile' keyword argument parameter).
             Default: None
+        with_metadata_kwargs: A `bool` object specifying whether or not to return a `tuple`
+            object with the instance kwargs as the first element and the metadata kwargs as
+            the second element.
+            Default: None
 
     Returns:
-        A `dict` object of PyRosettaCluster instance kwargs.
+        A `dict` object of PyRosettaCluster instance kwargs, or a `tuple` object of `dict`
+        objects with the PyRosettaCluster instance kwargs as the first element and the
+        PyRosettaCluster metadata kwargs as the second element when `with_metadata_kwargs=True`.
     """
     _simulation_records_in_scorefile_msg = (
         "The 'scorefile' argument parameter does not contain the full simulation records. "
@@ -227,7 +235,10 @@ def get_instance_kwargs(
                 UserWarning,
                 stacklevel=2,
             )
-        instance_kwargs = parse_input_file_to_instance_kwargs(input_file)
+        if with_metadata_kwargs:
+            instance_kwargs, metadata_kwargs = parse_input_file_to_instance_metadata_kwargs(input_file)
+        else:
+            instance_kwargs = parse_input_file_to_instance_kwargs(input_file)
     elif scorefile and decoy_name:
         scorefile = parse_scorefile(scorefile)
         decoy_name = parse_decoy_name(decoy_name)
@@ -246,6 +257,8 @@ def get_instance_kwargs(
                         if "decoy_name" in scorefile_entry["metadata"]:
                             if scorefile_entry["metadata"]["decoy_name"] == decoy_name:
                                 instance_kwargs = scorefile_entry["instance"]
+                                if with_metadata_kwargs:
+                                    metadata_kwargs = scorefile_entry["metadata"]
                                 break
                     else:
                         raise NotImplementedError(_simulation_records_in_scorefile_msg)
@@ -262,6 +275,8 @@ def get_instance_kwargs(
                     if "decoy_name" in metadata:
                         if metadata["decoy_name"] == decoy_name:
                             instance_kwargs = dict(instance)
+                            if with_metadata_kwargs:
+                                metadata_kwargs = dict(metadata)
                             break
             else:
                 raise NotImplementedError(_simulation_records_in_scorefile_msg)
@@ -276,6 +291,10 @@ def get_instance_kwargs(
     assert isinstance(
         instance_kwargs, dict
     ), "Returned instance keyword arguments are not of type `dict`."
+    if with_metadata_kwargs:
+        assert isinstance(
+            metadata_kwargs, dict
+        ), "Returned metadata keyword arguments are not of type `dict`."
 
     if skip_corrections:
         assert isinstance(
@@ -302,7 +321,10 @@ def get_instance_kwargs(
                         + f"Received: {type(instance_kwargs['tasks'][option])}"
                     )
 
-    return instance_kwargs
+    if with_metadata_kwargs:
+        return instance_kwargs, metadata_kwargs
+    else:
+        return instance_kwargs
 
 
 def reserve_scores(func: P) -> Union[P, NoReturn]:

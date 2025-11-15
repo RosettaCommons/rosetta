@@ -709,6 +709,19 @@ def _parse_str(obj: str) -> Dict[str, Any]:
 
 
 @singledispatch
+def parse_input_file_to_instance_metadata_kwargs(obj: Any) -> NoReturn:
+    raise InputFileError(obj)
+
+
+@parse_input_file_to_instance_metadata_kwargs.register(PackedPose)
+@parse_input_file_to_instance_metadata_kwargs.register(Pose)
+@parse_input_file_to_instance_metadata_kwargs.register(str)
+def _parse_str(obj: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    scores_dict = get_scores_dict(obj)
+    return scores_dict["instance"], scores_dict["metadata"]
+
+
+@singledispatch
 def parse_scorefile(obj: Any) -> NoReturn:
     raise TypeError(
         "The `scorefile` argument parameter must be of type `str`, "
