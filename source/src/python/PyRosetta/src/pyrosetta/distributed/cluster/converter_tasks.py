@@ -107,7 +107,7 @@ def maybe_issue_environment_warnings() -> None:
                     UserWarning,
                     stacklevel=4,
                 )  # Warn that we are not in an active virtual environment
-            elif "pyrosetta=" not in yml:
+            elif ("name: pyrosetta\n" if environment_manager == "pixi" else "pyrosetta=") not in yml:
                 warnings.warn(
                     "The currently installed 'pyrosetta' package version is not specified in the exported environment file! "
                     + "Consequently, the PyRosettaCluster simulation will be difficult to reproduce at a later time. "
