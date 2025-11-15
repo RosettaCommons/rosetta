@@ -462,6 +462,9 @@ class IO(Generic[G]):
                     UserWarning,
                     stacklevel=3,
                 )
+        else:
+            self.manifest = ""
+            self.manifest_filename = ""
 
     def _write_environment_file(self, filename: str) -> None:
         """
