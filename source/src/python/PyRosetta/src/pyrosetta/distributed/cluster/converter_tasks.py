@@ -112,10 +112,10 @@ def maybe_issue_environment_warnings() -> None:
                     "The currently installed 'pyrosetta' package version is not specified in the exported environment file! "
                     + "Consequently, the PyRosettaCluster simulation will be difficult to reproduce at a later time. "
                     + "Note that installing PyRosetta using pip and the 'pyrosetta-installer' "
-                    + "package does not pin the PyRosetta version to the currently activated virtual environment. ",
+                    + "package does not pin the PyRosetta version to the currently activated virtual environment. "
                     + "To use the `pyrosetta.distributed.cluster` namespace and ensure reproducibility of PyRosetta simulations, "
                     + "please re-install the 'pyrosetta' package using the Rosetta Commons conda channel. For instructions, visit:\n"
-                    + "https://www.pyrosetta.org/downloads"
+                    + "https://www.pyrosetta.org/downloads",
                     UserWarning,
                     stacklevel=4,
                 )  # Warn that the PyRosetta package version is not specified in the active virtual environment
