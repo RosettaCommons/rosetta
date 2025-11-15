@@ -90,7 +90,15 @@ class SchedulerManager(Generic[G]):
                         logging.info("Using the 'cryptography' package to generate a dask `Security.temporary()` object...")
                 if __dask_version__ <= (2, 1, 0):
                     _cluster_kwargs["local_dir"] = _cluster_kwargs.pop("local_directory", self.scratch_dir)
-                cluster = LocalCluster(**_cluster_kwargs)
+                if self.security is True:
+                    try:  # Uses `cryptography` package: https://distributed.dask.org/en/latest/_modules/distributed/security.html#Security.temporary
+                        cluster = LocalCluster(**_cluster_kwargs)
+                    except ImportError as ex:
+                        raise ImportError(
+                            f"Use of `PyRosettaCluster(security=True)` implements `Security.temporary` from the 'dask' package. {ex}"
+                        )
+                else:
+                    cluster = LocalCluster(**_cluster_kwargs)
         else:
             if self.scheduler == "sge":
                 cluster_func = SGECluster
