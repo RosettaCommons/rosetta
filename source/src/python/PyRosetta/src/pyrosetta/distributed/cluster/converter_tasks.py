@@ -28,7 +28,6 @@ import json
 import logging
 import os
 import pyrosetta.distributed.io as io
-import re
 import shutil
 import subprocess
 import warnings
@@ -53,12 +52,10 @@ from typing import (
     TypeVar,
     Union,
 )
-from urllib.parse import urlparse, urlunparse
 
 from pyrosetta.distributed.cluster.config import (
     get_environment_cmd,
     get_environment_manager,
-    source_domains,
 )
 from pyrosetta.distributed.cluster.exceptions import (
     InputError,
@@ -68,6 +65,7 @@ from pyrosetta.distributed.cluster.exceptions import (
 from pyrosetta.distributed.cluster.io import (
     IO,
     get_poses_from_init_file,
+    sanitize_urls,
     secure_read_pickle,
     sign_init_file_metadata_and_poses,
 )
@@ -500,56 +498,6 @@ def get_yml() -> str:
         ]
         return "\n".join(filtered_lines) + "\n"
 
-    def sanitize_url(url: str) -> str:
-        """Remove username and password from URLs pointing to source domains."""
-        parsed = urlparse(url)
-
-        # No credentials present
-        if "@" not in parsed.netloc:
-            return url
-
-        # Split credentials from host
-        _credentials, host = parsed.netloc.split("@", 1)
-        host_domain = host.split(":", 1)[0]  # Remove port if present
-
-        # Only sanitize if the domain is a source domain
-        if host_domain not in source_domains:
-            return url
-
-        # Build sanitized URL
-        sanitized = parsed._replace(netloc=host)
-        sanitized_url = urlunparse(sanitized)
-
-        # Warn without leaking credentials
-        warnings.warn(
-            (
-                "PyRosettaCluster automatically removed embedded credentials from the "
-                f"conda channel '{host_domain}' while processing the environment file. "
-                "These credentials are no longer required by this conda channel. "
-                "Please remove them from your configuration to silence this warning."
-            ),
-            UserWarning,
-            stacklevel=2,
-        )
-
-        return sanitized_url
-
-    def sanitize(yml_str: str) -> str:
-        """
-        Scan the input string and sanitize any URLs that include
-        credentials for source domains, returning the updated string.
-        """
-        # Match all URLs (i.e., `http://` and `https://` with or without credentials)
-        url_regex = re.compile(r'https?://[^\s\'"]+')
-
-        def replacer(match: re.Match) -> str:
-            url = match.group(0)
-            return sanitize_url(url)
-
-        yml_sanitized_str = url_regex.sub(replacer, yml_str)
-
-        return yml_sanitized_str
-
     env_manager = get_environment_manager()
     environment_cmd = get_environment_cmd()
 
@@ -569,7 +517,7 @@ def get_yml() -> str:
                 "pixi.lock",
             )
             with open(lock_path, encoding="utf-8") as f:
-                return sanitize(f.read())
+                return sanitize_urls(f.read())
         except Exception:
             return ""
 
@@ -593,7 +541,7 @@ def get_yml() -> str:
     if env_manager == "uv":
         return remove_comments(raw_yml) # Not sanitized, since uv doesn't use conda channels
     elif env_manager in ("conda", "mamba"):
-        return sanitize(remove_metadata(raw_yml))
+        return sanitize_urls(remove_metadata(raw_yml))
 
     raise RuntimeError(f"Unsupported environment manager: '{env_manager}'")
 

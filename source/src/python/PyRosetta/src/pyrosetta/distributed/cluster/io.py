@@ -30,7 +30,9 @@ import os
 import pyrosetta
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
+import re
 import uuid
+import warnings
 
 from contextlib import redirect_stdout, redirect_stderr
 from datetime import datetime
@@ -55,7 +57,9 @@ from typing import (
     TypeVar,
     Union,
 )
+from urllib.parse import urlparse, urlunparse
 
+from pyrosetta.distributed.cluster.config import source_domains
 from pyrosetta.distributed.cluster.exceptions import OutputError
 from pyrosetta.distributed.cluster.init_files import InitFileSigner
 from pyrosetta.distributed.cluster.logging_support import RedirectToLogger
@@ -433,14 +437,14 @@ class IO(Generic[G]):
             manifest_path = os.environ.get("PIXI_PROJECT_MANIFEST", "")
             if manifest_path:
                 with open(manifest_path, "r") as f:
-                    self.manifest = f.read()
+                    self.manifest = sanitize_urls(f.read())
             else:
                 # https://pixi.sh/dev/python/tutorial/#pixitoml-and-pyprojecttoml
                 for filename in ("pixi.toml", "pyproject.toml"):
                     manifest_path = os.path.join(os.getcwd(), filename)
                     if os.path.isfile(manifest_path):
                         with open(manifest_path, "r") as f:
-                            self.manifest = f.read()
+                            self.manifest = sanitize_urls(f.read())
                         break
                 else:
                     self.manifest = ""
@@ -748,3 +752,55 @@ def secure_read_pickle(
         storage_options=storage_options,
     ) as handles:
         return SecureSerializerBase.secure_load(handles.handle)
+
+
+def sanitize_urls(yml_str: str) -> str:
+    """
+    Scan the input string and sanitize any URLs that include
+    credentials for source domains, returning the updated string.
+    """
+
+    def sanitize_url(url: str) -> str:
+        """Remove username and password from URLs pointing to source domains."""
+        parsed = urlparse(url)
+
+        # No credentials present
+        if "@" not in parsed.netloc:
+            return url
+
+        # Split credentials from host
+        _credentials, host = parsed.netloc.split("@", 1)
+        host_domain = host.split(":", 1)[0]  # Remove port if present
+
+        # Only sanitize if the domain is a source domain
+        if host_domain not in source_domains:
+            return url
+
+        # Build sanitized URL
+        sanitized = parsed._replace(netloc=host)
+        sanitized_url = urlunparse(sanitized)
+
+        # Warn without leaking credentials
+        warnings.warn(
+            (
+                "PyRosettaCluster automatically removed embedded credentials from the "
+                f"conda channel '{host_domain}' while processing the environment file. "
+                "These credentials are no longer required by this conda channel. "
+                "Please remove them from your configuration to silence this warning."
+            ),
+            UserWarning,
+            stacklevel=2,
+        )
+
+        return sanitized_url
+
+    # Match all URLs (i.e., `http://` and `https://` with or without credentials)
+    url_regex = re.compile(r'https?://[^\s\'"]+')
+
+    def replacer(match: re.Match) -> str:
+        url = match.group(0)
+        return sanitize_url(url)
+
+    yml_sanitized_str = url_regex.sub(replacer, yml_str)
+
+    return yml_sanitized_str
