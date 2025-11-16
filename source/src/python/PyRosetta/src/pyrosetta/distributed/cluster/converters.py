@@ -125,7 +125,7 @@ def _parse_environment(obj: Any) -> Union[str, NoReturn]:
 
     @singledispatch
     def converter(obj: Any) -> NoReturn:
-        raise ValueError("'environment' must be of type `str` or `NoneType`!")
+        raise ValueError("The 'environment' instance attribute must be of type `str` or `NoneType`!")
 
     @converter.register(type(None))
     def _parse_none(obj: None) -> str:
@@ -212,7 +212,7 @@ def _parse_environment(obj: Any) -> Union[str, NoReturn]:
                 elif environment_manager == "uv":
                     raise AssertionError(_err_msg.format("uv requirements", "uv project"))
                 elif environment_manager == "mamba":
-                   raise AssertionError(_err_msg.format("YML", "mamba environment"))
+                    raise AssertionError(_err_msg.format("YML", "mamba environment"))
                 elif environment_manager == "conda":
                     raise AssertionError(_err_msg.format("YML", "conda environment"))
                 else:
@@ -220,9 +220,9 @@ def _parse_environment(obj: Any) -> Union[str, NoReturn]:
             else:
                 _debug_msg = "The 'environment' parameter argument correctly validated against the active {0}!"
                 if environment_manager in ("pixi", "uv"):
-                    logging.debug(_debug_msg.format("project"))
+                    logging.debug(_debug_msg.format(f"{environment_manager} project"))
                 else:
-                    logging.debug(_debug_msg.format("environment"))
+                    logging.debug(_debug_msg.format(f"{environment_manager} environment"))
                 return obj
 
     return converter(obj)
