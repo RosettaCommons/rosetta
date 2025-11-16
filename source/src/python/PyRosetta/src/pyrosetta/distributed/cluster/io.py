@@ -436,8 +436,19 @@ class IO(Generic[G]):
             # https://pixi.sh/dev/reference/environment_variables/#environment-variables-set-by-pixi
             manifest_path = os.environ.get("PIXI_PROJECT_MANIFEST", "")
             if manifest_path:
-                with open(manifest_path, "r") as f:
-                    self.manifest = sanitize_urls(f.read())
+                if os.path.isfile(manifest_path):
+                    with open(manifest_path, "r") as f:
+                        self.manifest = sanitize_urls(f.read())
+                else:
+                    logging.warning(
+                        (
+                            "PyRosettaCluster detected the set $PIXI_PROJECT_MANIFEST "
+                            "environment variable, but the pixi manifest file does not exist! "
+                            "It is recommended to commit the pixi manifest file to the "
+                            "git repository to reproduce the pixi project later."
+                        )
+                    )
+                    self.manifest = ""
             else:
                 # https://pixi.sh/dev/python/tutorial/#pixitoml-and-pyprojecttoml
                 for filename in ("pixi.toml", "pyproject.toml"):
