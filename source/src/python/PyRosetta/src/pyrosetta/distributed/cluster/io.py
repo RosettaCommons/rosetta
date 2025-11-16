@@ -442,7 +442,7 @@ class IO(Generic[G]):
                 else:
                     logging.warning(
                         (
-                            "PyRosettaCluster detected the set $PIXI_PROJECT_MANIFEST "
+                            "PyRosettaCluster detected the set 'PIXI_PROJECT_MANIFEST' "
                             "environment variable, but the pixi manifest file does not exist! "
                             "It is recommended to commit the pixi manifest file to the "
                             "git repository to reproduce the pixi project later."
