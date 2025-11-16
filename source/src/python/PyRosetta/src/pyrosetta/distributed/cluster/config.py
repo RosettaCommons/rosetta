@@ -81,12 +81,6 @@ class EnvironmentConfig(Generic[G]):
         Return the appropriate environment export command for the given environment manager.
         This method automatically adjusts for pixi and uv when a manifest path or project path
         is set via environment variables.
-
-        Args:
-            env_manager: A `str` object of either "pixi", "uv", "mamba", "conda".
-
-        Returns:
-            A shell command string for subprocess execution.
         """
         # Update pixi environment command if `$PIXI_PROJECT_MANIFEST` is set
         if self.environment_manager == "pixi":
