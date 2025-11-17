@@ -432,7 +432,7 @@ class IO(Generic[G]):
     def _cache_toml(self) -> None:
         """Cache the pixi/uv TOML file string and TOML file format."""
 
-        toml_file = ""
+        toml_file = "" # Empty as fallback
         if self.environment_manager == "pixi":
             # https://pixi.sh/dev/reference/environment_variables/#environment-variables-set-by-pixi
             toml_file = os.environ.get("PIXI_PROJECT_MANIFEST", "")
