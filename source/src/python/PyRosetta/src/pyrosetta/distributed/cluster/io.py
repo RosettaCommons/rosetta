@@ -304,10 +304,10 @@ class IO(Generic[G]):
                 "PyRosettaCluster_output_file": output_file,
             }
             extra_kwargs["PyRosettaCluster_environment_manager"] = self.environment_manager
-            if self.manifest:
-                extra_kwargs["PyRosettaCluster_manifest"] = self.manifest
-            if self.manifest_format:
-                extra_kwargs["PyRosettaCluster_manifest_format"] = self.manifest_format
+            if self.toml:
+                extra_kwargs["PyRosettaCluster_toml"] = self.toml
+            if self.toml_format:
+                extra_kwargs["PyRosettaCluster_toml_format"] = self.toml_format
             if os.path.isfile(self.environment_file):
                 extra_kwargs["PyRosettaCluster_environment_file"] = self.environment_file
             if os.path.isfile(self.output_init_file):
@@ -429,16 +429,17 @@ class IO(Generic[G]):
                         df = pandas.concat([df_chunk, df])
                     df.to_pickle(_scorefile_path, compression="infer", protocol=SecureSerializerBase._pickle_protocol)
 
-    def _cache_manifest(self) -> None:
-        """Cache the pixi manifest 'pixi.toml' or 'pyproject.toml' file string and manifest format."""
+    def _cache_toml(self) -> None:
+        """Cache the pixi/uv TOML file string and TOML file format."""
 
+        toml_file = ""
         if self.environment_manager == "pixi":
             # https://pixi.sh/dev/reference/environment_variables/#environment-variables-set-by-pixi
-            manifest_path = os.environ.get("PIXI_PROJECT_MANIFEST", "")
-            if manifest_path:
-                if os.path.isfile(manifest_path):
-                    with open(manifest_path, "r") as f:
-                        self.manifest = sanitize_urls(f.read())
+            toml_file = os.environ.get("PIXI_PROJECT_MANIFEST", "")
+            if toml_file:
+                if os.path.isfile(toml_file):
+                    with open(toml_file, "r") as f:
+                        self.toml = sanitize_urls(f.read())
                 else:
                     logging.warning(
                         (
@@ -448,39 +449,68 @@ class IO(Generic[G]):
                             "git repository to reproduce the pixi project later."
                         )
                     )
-                    self.manifest = ""
+                    self.toml = ""
             else:
                 # https://pixi.sh/dev/python/tutorial/#pixitoml-and-pyprojecttoml
                 for filename in ("pixi.toml", "pyproject.toml"):
-                    manifest_path = os.path.join(os.getcwd(), filename)
-                    if os.path.isfile(manifest_path):
-                        with open(manifest_path, "r") as f:
-                            self.manifest = sanitize_urls(f.read())
+                    toml_file = os.path.join(os.getcwd(), filename)
+                    if os.path.isfile(toml_file):
+                        with open(toml_file, "r") as f:
+                            self.toml = sanitize_urls(f.read())
                         break
                 else:
-                    self.manifest = ""
-
-            # Cache TOML filename as manifest format
-            if self.manifest:
-                self.manifest_format = os.path.basename(manifest_path)
+                    logging.warning(
+                        (
+                            "PyRosettaCluster could not detect the pixi manifest file! "
+                            "It is recommended to commit the pixi manifest file to the "
+                            "git repository to reproduce the pixi project later."
+                        )
+                    )
+                    self.toml = ""
+        elif self.environment_manager == "uv":
+            # https://docs.astral.sh/uv/reference/environment/#uv_project
+            project_dir = os.environ.get("UV_PROJECT", None)
+            if project_dir:
+                toml_file = os.path.join(project_dir, "pyproject.toml")
+                if os.path.isfile(toml_file):
+                    with open(toml_file, "r") as f:
+                        self.toml = sanitize_urls(f.read())
+                else:
+                    logging.warning(
+                        (
+                            "PyRosettaCluster detected the set 'UV_PROJECT' "
+                            "environment variable, but the uv `pyproject.toml` file does not exist! "
+                            "It is recommended to commit the uv `pyproject.toml` file to the "
+                            "git repository to reproduce the uv project later."
+                        )
+                    )
+                    self.toml = ""
             else:
-                logging.warning(
-                    (
-                        "PyRosettaCluster could not detect the pixi manifest file! "
-                        "It is recommended to commit the pixi manifest file to the "
-                        "git repository to reproduce the pixi project later."
-                    ),
-                    UserWarning,
-                    stacklevel=3,
-                )
+                toml_file = os.path.join(os.getcwd(), "pyproject.toml")
+                if os.path.isfile(toml_file):
+                    with open(toml_file, "r") as f:
+                        self.toml = sanitize_urls(f.read())
+                else:
+                    logging.warning(
+                        (
+                            "PyRosettaCluster could not detect the uv `pyproject.toml` file! "
+                            "It is recommended to commit the uv `pyproject.toml` file to the "
+                            "git repository to reproduce the uv project later."
+                        )
+                    )
+                    self.toml = ""
         else:
-            self.manifest = ""
-            self.manifest_format = ""
+            self.toml = ""
+            self.toml_format = ""
+
+        # Cache TOML filename as file format
+        if self.toml:
+            self.toml_format = os.path.basename(toml_file)
 
     def _write_environment_file(self, filename: str) -> None:
         """
         Write the conda/mamba YML, uv requirements, or pixi lock file string to the input filename.
-        If pixi is used as the environment manager, also write the manifest file string to a separate filename.
+        If pixi/uv is used as the environment manager, also write the TOML file string to a separate filename.
         """
 
         if (
@@ -491,10 +521,10 @@ class IO(Generic[G]):
             with open(filename, "w") as f:
                 f.write(self.environment)
 
-            if self.environment_manager == "pixi" and self.manifest and self.manifest_format:
-                toml_file = "_".join(filename.split("_")[:-1] + [self.manifest_format])
+            if self.environment_manager in ("pixi", "uv") and self.toml and self.toml_format:
+                toml_file = "_".join(filename.split("_")[:-1] + [self.toml_format])
                 with open(toml_file, "w") as f:
-                    f.write(self.manifest)
+                    f.write(self.toml)
 
     def _write_init_file(self) -> None:
         """Maybe write PyRosetta initialization file to the input filename."""

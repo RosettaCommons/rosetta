@@ -880,7 +880,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
     def __attrs_post_init__(self) -> None:
         _maybe_init_client()
         self._setup_logger()
-        self._cache_manifest()
+        self._cache_toml()
         self._write_environment_file(self.environment_file)
         self._write_init_file()
         self.serializer = Serialization(compression=self.compression)
