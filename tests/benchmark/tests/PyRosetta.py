@@ -120,6 +120,111 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
     return results
 
 
+def run_unit_tests_in_pixi(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    memory = config['memory'];  jobs = config['cpu_count']
+    if platform['os'] != 'windows': jobs = jobs if memory/jobs >= PyRosetta_unix_memory_requirement_per_cpu else max(1, int(memory/PyRosetta_unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
+
+    TR = Tracer(verbose)
+
+    TR('Running PyRosetta unit tests: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
+
+    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', skip_compile=config.get('skip_compile') )
+
+    for f in os.listdir(result.pyrosetta_path + '/source'):
+        if os.path.islink(result.pyrosetta_path + '/source/' + f): os.remove(result.pyrosetta_path + '/source/' + f)
+    dir_util_module.copy_tree(result.pyrosetta_path + '/source', working_dir + '/source', update=False)
+
+    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='backslashreplace').write(result.output)
+
+    if result.exitcode:
+        res_code = _S_build_failed_
+        results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : result.output }
+        with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
+
+    else:
+
+        distr_file_list = os.listdir(result.pyrosetta_path+'/build')
+
+        packages: str = get_required_pyrosetta_python_packages_for_testing(platform, static_versions=False)
+
+        pixi_python_version = platform.get('python', DEFAULT_PYTHON_VERSION)
+        pixi = setup_pixi(working_dir)
+        setup_pixi_environment(pixi, working_dir, f'python={pixi_python_version} setuptools {packages}')
+
+        additional_flags = ' --timeout 4096' if platform['os'].startswith('aarch64') else ''
+
+        #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
+        gui_flag, res, output = '', result.exitcode, result.output
+
+        # execute('running PyRosetta unit tests inside Pixi...', f'cd {working_dir} && {pixi} run bash -c "cd {build.pyrosetta_path} && {rosetta_dir}/source/test/timelimit.py 128 && python self-test.py -j{jobs} --timeout 4096"')
+        # command_line = f'{python_virtual_environment.activate} && cd {result.pyrosetta_path}/build && {python_virtual_environment.python} {rosetta_dir}/source/test/timelimit.py 128 {python_virtual_environment.python} self-test.py {gui_flag} -j{jobs}{additional_flags}'
+        command_line = f'cd {working_dir} && {pixi} run bash -c "cd {result.pyrosetta_path}/build && python {rosetta_dir}/source/test/timelimit.py 128 python self-test.py {gui_flag} -j{jobs}{additional_flags}"'
+
+        output += '\nRunning PyRosetta tests: ' + command_line + '\n'
+
+        res, o = execute('Running PyRosetta tests...', command_line, return_='tuple')
+        output += o
+
+        if res:
+            results = {_StateKey_ : _S_script_failed_,  _ResultsKey_ : {},  _LogKey_ : f'{output}\n\nPyRosetta self-test.py script terminated with non-zero exit code, terminating with script failure!\n' }
+
+        else:
+            json_file = result.pyrosetta_path + '/build/.test.output/.test.results.json'
+            with open(json_file) as f: results = json.load(f)
+
+            execute('Deleting PyRosetta tests output...', 'cd {pyrosetta_path}/build && unset PYTHONPATH && unset __PYVENV_LAUNCHER__ && {python} self-test.py --delete-tests-output'.format(pyrosetta_path=result.pyrosetta_path, python=result.python), return_='tuple')
+            extra_files = [f for f in os.listdir(result.pyrosetta_path+'/build') if f not in distr_file_list]  # not f.startswith('.test.')  and
+            if extra_files:
+                results['results']['tests']['self-test'] = dict(state='failed', log='self-test.py scripts failed to delete files: ' + ' '.join(extra_files))
+                results[_StateKey_] = 'failed'
+
+            if results[_StateKey_] == _S_passed_: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
+            output = 'Running: {}\n'.format(result.command_line) + output  # Making sure that exact command line used is stored
+
+            #r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+            results[_LogKey_] = output
+
+            # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+            with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
+
+
+    if not debug:
+        for dir_to_remove in f'{working_dir}/.pixi {working_dir}/.pixi-root'.split():
+            if os.path.isdir(dir_to_remove): shutil.rmtree(dir_to_remove)
+
+    return results
+
+
+    # memory = config['memory'];  jobs = config['cpu_count']
+    # if platform['os'] != 'windows': jobs = jobs if memory/jobs >= PyRosetta_unix_memory_requirement_per_cpu else max(1, int(memory/PyRosetta_unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
+    #
+    # python_version = platform.get('python', DEFAULT_PYTHON_VERSION)
+
+    # pixi = setup_pixi(working_dir)
+    #
+    # setup_pixi_environment(pixi, working_dir, f'python={python_version} setuptools')
+
+    # extra = ''
+    # if 'cxx11thread'   in platform['extras']: extra += ' --multi-threaded'
+    # if 'serialization' in platform['extras']: extra += ' --serialization'
+    # if 'torch' in platform['extras']: extra += ' --torch'
+    # if 'tensorflow' in platform['extras']: extra += ' --tensorflow'
+    #
+    # build_command_line = f'cd {working_dir} && {pixi} run bash -c "cd {rosetta_dir}/source/src/python/PyRosetta && python build.py -j{jobs}{extra}"'
+    # pyrosetta_build_root = execute('getting PyRosetta build path...', f'{build_command_line[:-1]} --print-build-root"', return_='output').split()[-1].partition('/')[2]+'/build'
+    # print(f'pyrosetta_build_root: {pyrosetta_build_root!r}\n')
+    #
+    # execute('building PyRosetta...', build_command_line)
+
+
+    # build = build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', skip_compile=config.get('skip_compile') )
+
+    # execute('running PyRosetta unit tests inside Pixi...', f'cd {working_dir} && {pixi} run bash -c "cd {build.pyrosetta_path} && {rosetta_dir}/source/test/timelimit.py 128 && python self-test.py -j{jobs} --timeout 4096"')
+
+    # results = {_StateKey_ : _S_script_failed_,  _ResultsKey_ : {},  _LogKey_ : f'...\n' }
+    # return results
+
+
 
 def run_notebook_tests(rosetta_dir, working_dir, platform, config, hpc_driver, verbose, debug):
     memory = config['memory'];  jobs = config['cpu_count'];  skip_compile = config.get('skip_compile', False)
@@ -185,5 +290,6 @@ def run(test, repository_root, working_dir, platform, config, hpc_driver=None, v
     '''
     if   test =='build': return run_build_test(repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='unit':  return run_unit_tests(repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='unit.pixi':  return run_unit_tests_in_pixi(repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='notebook':  return run_notebook_tests(repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: raise BenchmarkError('Unknow PyRosetta test: {}!'.format(test))

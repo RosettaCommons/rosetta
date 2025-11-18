@@ -22,6 +22,7 @@ import tempfile
 import unittest
 
 from pyrosetta.distributed.cluster import PyRosettaCluster
+from pyrosetta.tests.distributed.cluster.setup_inputs import get_test_params_file
 
 
 class LoggingTest(unittest.TestCase):
@@ -29,8 +30,8 @@ class LoggingTest(unittest.TestCase):
 
     def test_logging(self, verbose=True):
         """A test for capturing logging information in the distributed protocol."""
-        params_file = os.path.join(os.path.dirname(__file__), "data", "ZZZ.params")
-        self.assertTrue(os.path.isfile(params_file), msg=f"File does not exist: {params_file}")
+        params_dir = tempfile.TemporaryDirectory(prefix="tmp_params_")
+        params_file = get_test_params_file(params_dir.name)
         pyrosetta.distributed.init(
             options=f"-run:constant_seed 1 -multithreading:total_threads 1 -extra_res_fa {params_file}",
             extra_options="-out:level 300",
@@ -200,6 +201,7 @@ class LoggingTest(unittest.TestCase):
                         "dictionary to remove this warning message."
                     )
                     self.assertIn(expected_msg, warning_msgs)
+        params_dir.cleanup()
 
 
 # if __name__ == "__main__":

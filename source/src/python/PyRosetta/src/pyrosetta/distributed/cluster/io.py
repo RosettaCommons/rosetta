@@ -299,6 +299,7 @@ class IO(Generic[G]):
                 "PyRosettaCluster_decoy_name": decoy_name,
                 "PyRosettaCluster_output_file": output_file,
             }
+            extra_kwargs["PyRosettaCluster_environment_manager"] = self.environment_manager
             if os.path.isfile(self.environment_file):
                 extra_kwargs["PyRosettaCluster_environment_file"] = self.environment_file
             if os.path.isfile(self.output_init_file):
