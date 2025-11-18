@@ -28,6 +28,7 @@ import json
 import logging
 import os
 import pyrosetta.distributed.io as io
+import re
 import shutil
 import subprocess
 import warnings
@@ -56,6 +57,7 @@ from typing import (
 from pyrosetta.distributed.cluster.config import (
     get_environment_cmd,
     get_environment_manager,
+    source_domains,
 )
 from pyrosetta.distributed.cluster.exceptions import (
     InputError,
@@ -107,18 +109,33 @@ def maybe_issue_environment_warnings() -> None:
                     UserWarning,
                     stacklevel=4,
                 )  # Warn that we are not in an active virtual environment
-            elif ("name: pyrosetta\n" if environment_manager == "pixi" else "pyrosetta=") not in yml:
-                warnings.warn(
-                    "The currently installed 'pyrosetta' package version is not specified in the exported environment file! "
-                    + "Consequently, the PyRosettaCluster simulation will be difficult to reproduce at a later time. "
-                    + "Note that installing PyRosetta using the PyPI 'pyrosetta-installer' package does not pin the PyRosetta "
-                    + "version to the currently activated virtual environment. To use the `pyrosetta.distributed.cluster` "
-                    + "namespace and ensure reproducibility of PyRosetta simulations, please re-install the 'pyrosetta' "
-                    + "package using the Rosetta Commons conda channel. For instructions, visit:\n"
-                    + "https://www.pyrosetta.org/downloads",
-                    UserWarning,
-                    stacklevel=4,
-                )  # Warn that the PyRosetta package version is not specified in the active virtual environment
+            else:
+                if environment_manager == "pixi": # Match `pixi.lock` format
+                    platforms = ("linux-64", "linux-aarch64", "noarch", "osx-64", "osx-arm64")
+                    conda_pyrosetta_pattern = (
+                        rf"conda: https?://({'|'.join(map(re.escape, source_domains))})/"
+                        rf"({'|'.join(platforms)})/pyrosetta-"
+                    )
+                    has_pinned_pyrosetta = (
+                        bool(re.search(conda_pyrosetta_pattern, yml)) or
+                        ("name: pyrosetta\n" in yml) # Fallback
+                    )
+                elif environment_manager == "uv": # Match uv `requirements.txt` format
+                    has_pinned_pyrosetta = bool(re.search(r"^pyrosetta==", yml, flags=re.MULTILINE))
+                else: # Match conda/mamba `environment.yml` format
+                    has_pinned_pyrosetta = "- pyrosetta=" in yml
+                if not has_pinned_pyrosetta:
+                    warnings.warn(
+                        "The currently installed 'pyrosetta' package version is not specified in the exported environment file! "
+                        + "Consequently, the PyRosettaCluster simulation will be difficult to reproduce at a later time. "
+                        + "Note that installing PyRosetta using the PyPI 'pyrosetta-installer' package does not pin the PyRosetta "
+                        + "version to the currently activated virtual environment. To use the `pyrosetta.distributed.cluster` "
+                        + "namespace and ensure reproducibility of PyRosetta simulations, please re-install the 'pyrosetta' "
+                        + "package using the Rosetta Commons conda channel. For instructions, visit:\n"
+                        + "https://www.pyrosetta.org/downloads",
+                        UserWarning,
+                        stacklevel=4,
+                    )  # Warn that the PyRosetta package version is not specified in the active virtual environment
         else:  # An environment manager is not installed
             warnings.warn(
                 f"The environment manager '{environment_manager}' is not an executable! "
