@@ -30,7 +30,9 @@ import os
 import pyrosetta
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
+import re
 import uuid
+import warnings
 
 from contextlib import redirect_stdout, redirect_stderr
 from datetime import datetime
@@ -55,7 +57,9 @@ from typing import (
     TypeVar,
     Union,
 )
+from urllib.parse import urlparse, urlunparse
 
+from pyrosetta.distributed.cluster.config import source_domains
 from pyrosetta.distributed.cluster.exceptions import OutputError
 from pyrosetta.distributed.cluster.init_files import InitFileSigner
 from pyrosetta.distributed.cluster.logging_support import RedirectToLogger
@@ -300,6 +304,10 @@ class IO(Generic[G]):
                 "PyRosettaCluster_output_file": output_file,
             }
             extra_kwargs["PyRosettaCluster_environment_manager"] = self.environment_manager
+            if self.toml:
+                extra_kwargs["PyRosettaCluster_toml"] = self.toml
+            if self.toml_format:
+                extra_kwargs["PyRosettaCluster_toml_format"] = self.toml_format
             if os.path.isfile(self.environment_file):
                 extra_kwargs["PyRosettaCluster_environment_file"] = self.environment_file
             if os.path.isfile(self.output_init_file):
@@ -421,8 +429,89 @@ class IO(Generic[G]):
                         df = pandas.concat([df_chunk, df])
                     df.to_pickle(_scorefile_path, compression="infer", protocol=SecureSerializerBase._pickle_protocol)
 
+    def _cache_toml(self) -> None:
+        """Cache the pixi/uv TOML file string and TOML file format."""
+
+        toml_file = "" # Empty as fallback
+        if self.environment_manager == "pixi":
+            # https://pixi.sh/dev/reference/environment_variables/#environment-variables-set-by-pixi
+            toml_file = os.environ.get("PIXI_PROJECT_MANIFEST", "")
+            if toml_file:
+                if os.path.isfile(toml_file):
+                    with open(toml_file, "r") as f:
+                        self.toml = sanitize_urls(f.read())
+                else:
+                    logging.warning(
+                        (
+                            "PyRosettaCluster detected the set 'PIXI_PROJECT_MANIFEST' "
+                            "environment variable, but the pixi manifest file does not exist! "
+                            "It is recommended to commit the pixi manifest file to the "
+                            "git repository to reproduce the pixi project later."
+                        )
+                    )
+                    self.toml = ""
+            else:
+                # https://pixi.sh/dev/python/tutorial/#pixitoml-and-pyprojecttoml
+                for filename in ("pixi.toml", "pyproject.toml"):
+                    toml_file = os.path.join(os.getcwd(), filename)
+                    if os.path.isfile(toml_file):
+                        with open(toml_file, "r") as f:
+                            self.toml = sanitize_urls(f.read())
+                        break
+                else:
+                    logging.warning(
+                        (
+                            "PyRosettaCluster could not detect the pixi manifest file! "
+                            "It is recommended to commit the pixi manifest file to the "
+                            "git repository to reproduce the pixi project later."
+                        )
+                    )
+                    self.toml = ""
+        elif self.environment_manager == "uv":
+            # https://docs.astral.sh/uv/reference/environment/#uv_project
+            project_dir = os.environ.get("UV_PROJECT", None)
+            if project_dir:
+                toml_file = os.path.join(project_dir, "pyproject.toml")
+                if os.path.isfile(toml_file):
+                    with open(toml_file, "r") as f:
+                        self.toml = sanitize_urls(f.read())
+                else:
+                    logging.warning(
+                        (
+                            "PyRosettaCluster detected the set 'UV_PROJECT' "
+                            "environment variable, but the uv `pyproject.toml` file does not exist! "
+                            "It is recommended to commit the uv `pyproject.toml` file to the "
+                            "git repository to reproduce the uv project later."
+                        )
+                    )
+                    self.toml = ""
+            else:
+                toml_file = os.path.join(os.getcwd(), "pyproject.toml")
+                if os.path.isfile(toml_file):
+                    with open(toml_file, "r") as f:
+                        self.toml = sanitize_urls(f.read())
+                else:
+                    logging.warning(
+                        (
+                            "PyRosettaCluster could not detect the uv `pyproject.toml` file! "
+                            "It is recommended to commit the uv `pyproject.toml` file to the "
+                            "git repository to reproduce the uv project later."
+                        )
+                    )
+                    self.toml = ""
+        else:
+            self.toml = ""
+            self.toml_format = ""
+
+        # Cache TOML filename as file format
+        if self.toml:
+            self.toml_format = os.path.basename(toml_file)
+
     def _write_environment_file(self, filename: str) -> None:
-        """Write the YML string to the input filename."""
+        """
+        Write the conda/mamba YML, uv requirements, or pixi lock file string to the input filename.
+        If pixi/uv is used as the environment manager, also write the TOML file string to a separate filename.
+        """
 
         if (
             (not self.simulation_records_in_scorefile)
@@ -431,6 +520,11 @@ class IO(Generic[G]):
         ):
             with open(filename, "w") as f:
                 f.write(self.environment)
+
+            if self.environment_manager in ("pixi", "uv") and self.toml and self.toml_format:
+                toml_file = "_".join(filename.split("_")[:-1] + [self.toml_format])
+                with open(toml_file, "w") as f:
+                    f.write(self.toml)
 
     def _write_init_file(self) -> None:
         """Maybe write PyRosetta initialization file to the input filename."""
@@ -702,3 +796,55 @@ def secure_read_pickle(
         storage_options=storage_options,
     ) as handles:
         return SecureSerializerBase.secure_load(handles.handle)
+
+
+def sanitize_urls(yml_str: str) -> str:
+    """
+    Scan the input string and sanitize any URLs that include
+    credentials for source domains, returning the updated string.
+    """
+
+    def sanitize_url(url: str) -> str:
+        """Remove username and password from URLs pointing to source domains."""
+        parsed = urlparse(url)
+
+        # No credentials present
+        if "@" not in parsed.netloc:
+            return url
+
+        # Split credentials from host
+        _credentials, host = parsed.netloc.split("@", 1)
+        host_domain = host.split(":", 1)[0]  # Remove port if present
+
+        # Only sanitize if the domain is a source domain
+        if host_domain not in source_domains:
+            return url
+
+        # Build sanitized URL
+        sanitized = parsed._replace(netloc=host)
+        sanitized_url = urlunparse(sanitized)
+
+        # Warn without leaking credentials
+        warnings.warn(
+            (
+                "PyRosettaCluster automatically removed embedded credentials from the "
+                f"conda channel '{host_domain}' while processing the environment file. "
+                "These credentials are no longer required by this conda channel. "
+                "Please remove them from your configuration to silence this warning."
+            ),
+            UserWarning,
+            stacklevel=2,
+        )
+
+        return sanitized_url
+
+    # Match all URLs (i.e., `http://` and `https://` with or without credentials)
+    url_regex = re.compile(r'https?://[^\s\'"]+')
+
+    def replacer(match: re.Match) -> str:
+        url = match.group(0)
+        return sanitize_url(url)
+
+    yml_sanitized_str = url_regex.sub(replacer, yml_str)
+
+    return yml_sanitized_str

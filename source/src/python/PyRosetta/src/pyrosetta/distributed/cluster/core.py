@@ -143,14 +143,16 @@ Args:
         This option just adds the user-provided `simulation_name` to the scorefile
         for accounting.
         Default: `project_name` if not specified, else "PyRosettaCluster" if None
-    environment: A `NoneType` or `str` object specifying the active conda environment
-        YML file string. If a `NoneType` object is provided, then generate a YML file
-        string for the active conda environment and save it to the full simulation
-        record. If a non-empty `str` object is provided, then validate it against the
-        active conda environment YML file string and save it to the full simulation record.
-        This ensures that reproduction simulations use an identical conda environment from
-        the original simulation. To bypass conda environment validation with a warning
-        message, an empty string ('') may be provided (but does not ensure reproducibility).
+    environment: A `NoneType` or `str` object specifying either the active conda/mamba environment
+        YML file string, active uv project `requirements.txt` file string, or active pixi project
+        `pixi.lock` file string. If a `NoneType` object is provided, then generate an environment file
+        string for the active conda/mamba/uv/pixi environment and save it to the full simulation
+        record. If a non-empty `str` object is provided, then validate it against the active
+        conda/mamba/uv/pixi environment YML/requirements/lock file string and save it to the
+        full simulation record. This ensures that reproduction simulations use an identical
+        conda/mamba/uv/pixi environment to the original simulation. To bypass conda/mamba/uv/pixi
+        environment validation with a warning message, an empty string ('') may be provided (but
+        does not ensure reproducibility).
         Default: None
     output_path: A `str` object specifying the full path of the output directory
         (to be created if it doesn't exist) where the output results will be saved
@@ -203,9 +205,11 @@ Args:
         curtailed simulation records to the scorefile. This results in minimally
         redundant information on each line, disallowing downstream reproduction
         of a decoy from the scorefile, but a smaller scorefile. If `False`, also
-        write the active conda environment to a YML file in 'output_path'. Full
-        simulation records are always written to the output '.pdb' or '.pdb.bz2'
-        file(s), which can be used to reproduce any decoy without the scorefile.
+        write the active conda/mamba/uv/pixi environment to a file in the `output_path`
+        keyword argument parameter. Full simulation records are always written to the
+        output decoy files (the types of which are specified by the `output_decoy_types`
+        keyword argument parameter), which can be used to reproduce any decoy without
+        the scorefile.
         Default: False
     decoy_dir_name: A `str` object specifying the directory name where the
         output decoys will be saved. The directory location is always
@@ -827,6 +831,15 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         validator=[attr.validators.instance_of(str), _validate_output_init_file],
         converter=attr.converters.default_if_none(""),
     )
+    environment_manager = attr.ib(
+        type=str,
+        default=attr.Factory(
+            get_environment_manager,
+            takes_self=False,
+        ),
+        init=False,
+        validator=attr.validators.instance_of(str),
+    )
     environment_file = attr.ib(
         type=str,
         default=attr.Factory(
@@ -836,20 +849,17 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                     [
                         self.project_name.replace(" ", "-"),
                         self.simulation_name.replace(" ", "-"),
-                        "environment.yml",
+                        (
+                            "pixi.lock"
+                            if self.environment_manager == "pixi"
+                            else "requirements.txt"
+                            if self.environment_manager == "uv"
+                            else "environment.yml"
+                        )
                     ]
                 ),
             ),
             takes_self=True,
-        ),
-        init=False,
-        validator=attr.validators.instance_of(str),
-    )
-    environment_manager = attr.ib(
-        type=str,
-        default=attr.Factory(
-            get_environment_manager,
-            takes_self=False,
         ),
         init=False,
         validator=attr.validators.instance_of(str),
@@ -870,6 +880,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
     def __attrs_post_init__(self) -> None:
         _maybe_init_client()
         self._setup_logger()
+        self._cache_toml()
         self._write_environment_file(self.environment_file)
         self._write_init_file()
         self.serializer = Serialization(compression=self.compression)

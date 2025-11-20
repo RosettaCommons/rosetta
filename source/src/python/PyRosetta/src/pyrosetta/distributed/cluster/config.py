@@ -21,11 +21,8 @@ from typing import (
     Dict,
     Generic,
     List,
-    NoReturn,
-    Optional,
     Tuple,
     TypeVar,
-    Union,
 )
 
 
@@ -40,7 +37,7 @@ class EnvironmentConfig(Generic[G]):
     _ENV_VAR: str = "PYROSETTACLUSTER_ENVIRONMENT_MANAGER"
     _ENV_MANAGERS: Tuple[str, ...] = ("pixi", "uv", "mamba", "conda")
     _ENV_EXPORT_CMDS: Dict[str, str] = {
-        "pixi": "pixi workspace export conda-environment",
+        "pixi": "pixi lock --check || pixi lock --no-install",
         "uv": "uv export --format requirements-txt --frozen",
         "mamba": f"mamba env export --prefix '{sys.prefix}'",
         "conda": f"conda env export --prefix '{sys.prefix}'",
@@ -80,52 +77,42 @@ class EnvironmentConfig(Generic[G]):
 
     @property
     def env_export_cmd(self) -> str:
-        return self._ENV_EXPORT_CMDS[self.environment_manager]
-
-    def env_create_cmd(
-        self, environment_name: str, raw_spec: str, tmp_dir: str, base_dir: str
-    ) -> Union[str, NoReturn]:
-        # Create a project directory for uv/pixi, or prefix directory for conda/mamba
-        project_dir = os.path.join(base_dir, environment_name)
-        # Raise exception if the project directory exists
-        if os.path.isdir(project_dir):
-            if self.environment_manager in ("conda", "mamba"):
-                _err_msg = f"The {self.environment_manager} environment prefix directory already exists: '{project_dir}'"
-            elif self.environment_manager in ("uv", "pixi"):
-                _err_msg = f"The {self.environment_manager} project directory already exists: '{project_dir}'"
-            else:
-                raise RuntimeError(f"Unsupported environment manager: '{self.environment_manager}'")
-            raise IsADirectoryError(_err_msg)
-        os.makedirs(project_dir, exist_ok=False)
-
-        if self.environment_manager in ("conda", "mamba", "pixi"):
-            yml_file = os.path.join(tmp_dir, f"{environment_name}.yml")
-            with open(yml_file, "w") as f:
-                f.write(raw_spec)
-
-            if self.environment_manager == "conda":
-                return f"conda env create -f '{yml_file}' -p '{project_dir}'"
-
-            elif self.environment_manager == "mamba":
-                return f"mamba env create -f '{yml_file}' -p '{project_dir}'"
-
-            elif self.environment_manager == "pixi":
+        """
+        Return the appropriate environment export command for the given environment manager.
+        This method automatically adjusts for pixi and uv when a manifest path or project path
+        is set via environment variables.
+        """
+        # Update pixi environment command if `$PIXI_PROJECT_MANIFEST` is set
+        if self.environment_manager == "pixi":
+            # https://pixi.sh/dev/reference/environment_variables/#environment-variables-set-by-pixi
+            manifest_path = os.environ.get("PIXI_PROJECT_MANIFEST")
+            if manifest_path:
+                # Append `--manifest-path` flag to both commands in the OR clause
+                logging.info(
+                    "PyRosettaCluster detected the set 'PIXI_PROJECT_MANIFEST' environment variable, and is "
+                    + f"setting the flag `--manifest-path '{manifest_path}'` in the `pixi lock` command."
+                )
                 return (
-                    f"pixi init --import '{yml_file}' '{project_dir}' && "
-                    f"pixi install --manifest-path '{project_dir}'"
+                    f"pixi lock --check --manifest-path '{manifest_path}' || "
+                    f"pixi lock --no-install --manifest-path '{manifest_path}'"
                 )
 
+        # Update uv environment command if `$UV_PROJECT` is set
         elif self.environment_manager == "uv":
-            # Write the requirements.txt file
-            req_file = os.path.join(tmp_dir, f"{environment_name}.txt")
-            with open(req_file, "w") as f:
-                f.write(raw_spec)
-            return (
-                f"uv venv '{project_dir}' && "
-                f"uv pip sync -r '{req_file}' --venv '{project_dir}'"
-            )
+            # https://docs.astral.sh/uv/reference/environment/#uv_project
+            project_dir = os.environ.get("UV_PROJECT")
+            if project_dir:
+                # Append `--project` flag
+                logging.info(
+                    "PyRosettaCluster detected the set 'UV_PROJECT' environment variable, and is "
+                    + f"setting the flag `--project '{project_dir}'` in the `uv export` command."
+                )
+                return (
+                    f"uv export --format requirements-txt --frozen --project '{project_dir}'"
+                )
 
-        raise RuntimeError(f"Unsupported environment manager: '{self.environment_manager}'")
+        # Use default environment export command
+        return self._ENV_EXPORT_CMDS[self.environment_manager]
 
 
 @lru_cache(maxsize=1)
@@ -153,4 +140,4 @@ source_domains: List[str] = [
     "conda.graylab.jhu.edu",
     "west.rosettacommons.org",
     "conda.rosettacommons.org",
-]  # Conda channels and/or source domains (containing PyRosetta usernames/passwords) to be stripped from YML file strings.
+]  # Conda channels and/or source domains (potentially containing PyRosetta usernames/passwords) to be sanitized from environment file strings.

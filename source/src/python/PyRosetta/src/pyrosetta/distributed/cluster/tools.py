@@ -26,14 +26,10 @@ import inspect
 import json
 import logging
 import os
-import subprocess
-import sys
 import tempfile
 import warnings
 
-from datetime import datetime
 from functools import wraps
-from pyrosetta.distributed.cluster.config import get_environment_config, get_environment_var
 from pyrosetta.distributed.cluster.converters import _parse_protocols
 from pyrosetta.distributed.cluster.converter_tasks import (
     is_dict,
@@ -43,6 +39,7 @@ from pyrosetta.distributed.cluster.converter_tasks import (
     parse_decoy_name,
     parse_init_file,
     parse_input_file_to_instance_kwargs,
+    parse_input_file_to_instance_metadata_kwargs,
     parse_instance_kwargs,
     parse_scorefile,
     reserve_scores_in_results,
@@ -183,7 +180,8 @@ def get_instance_kwargs(
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
     skip_corrections: Optional[bool] = None,
-) -> Union[Dict[str, Any], NoReturn]:
+    with_metadata_kwargs: Optional[bool] = None,
+) -> Union[Dict[str, Any], Tuple[Dict[str, Any], Dict[str, Any]], NoReturn]:
     """
     Given an input file that was written by PyRosettaCluster, or a scorefile
     and a decoy name that was written by PyRosettaCluster, return the PyRosettaCluster
@@ -192,7 +190,7 @@ def get_instance_kwargs(
     Args:
         input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
             '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init', or '.init.bz2' file, or a
-            `Pose`or `PackedPose` object, from which to extract PyRosettaCluster instance kwargs.
+            `Pose` or `PackedPose` object, from which to extract PyRosettaCluster instance kwargs.
             If 'input_file' is provided, then ignore the 'scorefile' and 'decoy_name' keyword
             argument parameters.
             Default: None
@@ -211,9 +209,15 @@ def get_instance_kwargs(
             corrections specified in the PyRosettaCluster task initialization options
             (extracted from the 'input_file' or 'scorefile' keyword argument parameter).
             Default: None
+        with_metadata_kwargs: A `bool` object specifying whether or not to return a `tuple`
+            object with the instance kwargs as the first element and the metadata kwargs as
+            the second element.
+            Default: None
 
     Returns:
-        A `dict` object of PyRosettaCluster instance kwargs.
+        A `dict` object of PyRosettaCluster instance kwargs, or a `tuple` object of `dict`
+        objects with the PyRosettaCluster instance kwargs as the first element and the
+        PyRosettaCluster metadata kwargs as the second element when `with_metadata_kwargs=True`.
     """
     _simulation_records_in_scorefile_msg = (
         "The 'scorefile' argument parameter does not contain the full simulation records. "
@@ -231,7 +235,10 @@ def get_instance_kwargs(
                 UserWarning,
                 stacklevel=2,
             )
-        instance_kwargs = parse_input_file_to_instance_kwargs(input_file)
+        if with_metadata_kwargs:
+            instance_kwargs, metadata_kwargs = parse_input_file_to_instance_metadata_kwargs(input_file)
+        else:
+            instance_kwargs = parse_input_file_to_instance_kwargs(input_file)
     elif scorefile and decoy_name:
         scorefile = parse_scorefile(scorefile)
         decoy_name = parse_decoy_name(decoy_name)
@@ -250,6 +257,8 @@ def get_instance_kwargs(
                         if "decoy_name" in scorefile_entry["metadata"]:
                             if scorefile_entry["metadata"]["decoy_name"] == decoy_name:
                                 instance_kwargs = scorefile_entry["instance"]
+                                if with_metadata_kwargs:
+                                    metadata_kwargs = scorefile_entry["metadata"]
                                 break
                     else:
                         raise NotImplementedError(_simulation_records_in_scorefile_msg)
@@ -266,6 +275,8 @@ def get_instance_kwargs(
                     if "decoy_name" in metadata:
                         if metadata["decoy_name"] == decoy_name:
                             instance_kwargs = dict(instance)
+                            if with_metadata_kwargs:
+                                metadata_kwargs = dict(metadata)
                             break
             else:
                 raise NotImplementedError(_simulation_records_in_scorefile_msg)
@@ -280,6 +291,10 @@ def get_instance_kwargs(
     assert isinstance(
         instance_kwargs, dict
     ), "Returned instance keyword arguments are not of type `dict`."
+    if with_metadata_kwargs:
+        assert isinstance(
+            metadata_kwargs, dict
+        ), "Returned metadata keyword arguments are not of type `dict`."
 
     if skip_corrections:
         assert isinstance(
@@ -306,181 +321,10 @@ def get_instance_kwargs(
                         + f"Received: {type(instance_kwargs['tasks'][option])}"
                     )
 
-    return instance_kwargs
-
-
-def recreate_environment(
-    environment_name: Optional[str] = None,
-    input_file: Optional[Union[str, Pose, PackedPose]] = None,
-    scorefile: Optional[str] = None,
-    decoy_name: Optional[str] = None,
-    timeout: Optional[int] = None,
-    base_dir: Optional[str] = None,
-) -> Optional[NoReturn]:
-    """
-    *Warning*: This function runs a subprocess with one of the following commands:
-      - `conda env create ...`: when 'conda' is an executable
-      - `mamba env create ...`: when 'mamba' is an executable
-      - `uv pip ...`: when 'uv' is an executable
-      - `pixi install ...`: when 'pixi' is an executable
-    Installing certain packages may not be secure, so please only run with input files you trust.
-    Learn more about PyPI security `here <https://pypi.org/security>`_ and conda security `here <https://www.anaconda.com/docs/reference/security>`_.
-
-    Given an input file that was written by PyRosettaCluster, or a scorefile
-    and a decoy name that was written by PyRosettaCluster, recreate the
-    environment that was used to generate the decoy with a new environment name.
-
-    The environment manager used (i.e., either 'conda', 'mamba', 'uv', or 'pixi') is
-    automatically determined from the operating system environment variable
-    'PYROSETTACLUSTER_ENVIRONMENT_MANAGER' if exported, or otherwise it is automatically
-    selected based on which manager is available on the system. If no executables
-    are explicitly found, then 'conda' is used by default.
-
-    Args:
-        environment_name: A `str` object specifying the new name of the environment
-            to recreate. If using 'conda' and 'mamba', this is the prefix directory that will
-            be created in the 'base_dir' directory. If using 'uv' or 'pixi', this is the
-            local project directory name that will be created in the 'base_dir' directory.
-            Default: 'PyRosettaCluster_' + datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f")
-        input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
-            '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file, or a `Pose` or `PackedPose`
-            object, from which to extract PyRosettaCluster instance kwargs. If 'input_file' is
-            provided, then ignore the 'scorefile' and 'decoy_name' keyword argument parameters.
-            Default: None
-        scorefile: A `str` object specifying the path to the JSON-formatted scorefile
-            (or pickled `pandas.DataFrame` scorefile) from a PyRosettaCluster simulation
-            from which to extract PyRosettaCluster instance kwargs. If 'scorefile'
-            is provided, 'decoy_name' must also be provided. The scorefile must
-            contain full simulation records from the original production run
-            (i.e., 'simulation_records_in_scorefile' was set to `True`).
-            Default: None
-        decoy_name: A `str` object specifying the decoy name for which to extract
-            PyRosettaCluster instance kwargs. Must be provided if 'scorefile'
-            is used.
-            Default: None
-        timeout: An `int` object specifying the timeout in seconds before any
-            subprocesses are terminated.
-            Default: None
-        base_dir: A `str` object specifying the base directory in which to create
-            the environment.
-            Default: `.`
-
-    Returns:
-        None
-    """
-    def _run_subprocess(cmd) -> str:
-        try:
-            return subprocess.check_output(
-                cmd,
-                shell=True,
-                stderr=subprocess.STDOUT,
-                timeout=timeout,
-                text=True,
-                executable="/bin/bash", # Ensure `&&` works properly
-            )
-        except subprocess.CalledProcessError as ex:
-            raise RuntimeError(
-                f"Command failed: `{cmd}`\n"
-                f"Return code: {ex.returncode}\n"
-                f"Output:\n{ex.output}"
-            ) from ex
-
-    if not environment_name:
-        environment_name = "PyRosettaCluster_" + datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f")
-    elif not isinstance(environment_name, str):
-        raise TypeError(
-            f"The 'environment_name' keyword argument parameter must be of type `str`. Received: {type(environment_name)}"
-        )
-
-    if not base_dir:
-        base_dir = os.path.abspath(os.curdir)
-    elif not isinstance(base_dir, str):
-        raise TypeError(f"The 'base_dir' keyword argument parameter must be of type `str`. Received: {type(base_dir)}")
+    if with_metadata_kwargs:
+        return instance_kwargs, metadata_kwargs
     else:
-        base_dir = os.path.abspath(os.path.expanduser(base_dir))
-    if not os.path.isdir(base_dir):
-        raise NotADirectoryError(
-            f"The 'base_dir' keyword argument parameter must be an existing directory. Received: '{base_dir}'"
-        )
-
-    _env_config = get_environment_config()
-    environment_manager = _env_config.environment_manager
-    environment_var = get_environment_var()
-
-    # Extract environment spec from record
-    _instance_kwargs = get_instance_kwargs(
-        input_file=input_file,
-        scorefile=scorefile,
-        decoy_name=decoy_name,
-        skip_corrections=None,
-    )
-    if "environment" not in _instance_kwargs:
-        raise RuntimeError(
-            "PyRosettaCluster 'environment' instance attribute does not exist. "
-            + "`recreate_environment()` cannot create environment!"
-        )
-    raw_spec = _instance_kwargs.get("environment", None)
-    if not raw_spec:
-        raise RuntimeError(
-            "PyRosettaCluster 'environment' instance attribute is empty. "
-            + "`recreate_environment()` cannot create environment!"
-        )
-    # Get original environment manager
-    for line in raw_spec.splitlines():
-        if line.startswith(f"# {environment_var}"):
-            original_environment_manager = line.split("=")[-1].strip()
-            break
-    else:
-        original_environment_manager = "conda" # For legacy PyRosettaCluster simulations with a non-empty raw spec
-
-    # Test that current environment manager can recreate original environment
-    if original_environment_manager == "uv" and environment_manager != "uv":
-        raise RuntimeError(
-            f"The original PyRosettaCluster simulation used '{original_environment_manager}' as "
-            + f"an environment manager, but the current environment manager is configured to use "
-            + f"'{environment_manager}' as an environment manager! The environment specification "
-            + f"is saved in a 'requirements.txt' format, and therefore requires '{original_environment_manager}' "
-            + f"to recreate the environment. Please ensure '{original_environment_manager}' is installed "
-            + f"and run `export {environment_var}={original_environment_manager}` to properly configure "
-            + f"the '{original_environment_manager}' environment manager, then try again. For installation "
-            + "instructions, please visit:\n"
-            + "https://docs.astral.sh/uv/guides/install-python\n"
-        )
-    elif original_environment_manager != "uv" and environment_manager == "uv":
-        raise RuntimeError(
-            f"The original PyRosettaCluster simulation used '{original_environment_manager}' as "
-            + "an environment manager, but the current environment manager is configured to use "
-            + f"'{environment_manager}' as an environment manager! The environment specification "
-            + "is saved in a YAML file format, and therefore requires 'conda', 'mamba', or 'pixi' to "
-            + "recreate the environment. Please ensure that 'conda', 'mamba', or 'pixi' is installed, then "
-            + "configure the environment manager by running one of the following commands, then try again:\n"
-            + f"To configure 'conda', run: `export {environment_var}=conda`\n"
-            + f"To configure 'mamba', run: `export {environment_var}=mamba`\n"
-            + f"To configure 'pixi', run:  `export {environment_var}=pixi`\n"
-            + "For installation instructions, please visit:\n"
-            + "https://docs.anaconda.com/anaconda/install\n"
-            + "https://github.com/conda-forge/miniforge\n"
-            + "https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html\n"
-            + "https://pixi.sh/latest/installation\n"
-        )
-    elif original_environment_manager != environment_manager:
-        warnings.warn(
-            f"The original PyRosettaCluster simulation used '{original_environment_manager}' as "
-            + "an environment manager, but the current environment manager is configured to use "
-            + f"'{environment_manager}' as an environment manager! Now attempting to recreate the "
-            + "environment with cross-manager compatibility using the universal YAML file string...",
-            RuntimeWarning,
-            stacklevel=2,
-        )
-
-    # Recreate the environment
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        env_create_cmd = _env_config.env_create_cmd(environment_name, raw_spec, tmp_dir, base_dir)
-        output = _run_subprocess(env_create_cmd)
-        print(
-            f"\nEnvironment successfully created using {environment_manager}: '{environment_name}'\nOutput:\n{output}\n",
-            flush=True,
-        )
+        return instance_kwargs
 
 
 def reserve_scores(func: P) -> Union[P, NoReturn]:
@@ -745,6 +589,7 @@ def reproduce(
                     scorefile=scorefile,
                     decoy_name=decoy_name,
                     skip_corrections=skip_corrections,
+                    with_metadata_kwargs=False,
                 ),
                 parse_instance_kwargs(instance_kwargs),
             ),

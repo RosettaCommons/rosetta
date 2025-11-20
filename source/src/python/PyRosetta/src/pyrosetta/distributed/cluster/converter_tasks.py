@@ -28,29 +28,13 @@ import json
 import logging
 import os
 import pyrosetta.distributed.io as io
+import re
 import shutil
 import subprocess
 import warnings
 
 from contextlib import contextmanager
 from functools import singledispatch
-from pyrosetta.distributed.cluster.config import (
-    get_environment_cmd,
-    get_environment_manager,
-    get_environment_var,
-    source_domains,
-)
-from pyrosetta.distributed.cluster.exceptions import (
-    InputError,
-    InputFileError,
-    OutputError,
-)
-from pyrosetta.distributed.cluster.io import (
-    IO,
-    get_poses_from_init_file,
-    secure_read_pickle,
-    sign_init_file_metadata_and_poses,
-)
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.exceptions import PyRosettaIsNotInitializedError
 from pyrosetta.rosetta.basic import was_init_called
@@ -68,6 +52,24 @@ from typing import (
     Tuple,
     TypeVar,
     Union,
+)
+
+from pyrosetta.distributed.cluster.config import (
+    get_environment_cmd,
+    get_environment_manager,
+    source_domains,
+)
+from pyrosetta.distributed.cluster.exceptions import (
+    InputError,
+    InputFileError,
+    OutputError,
+)
+from pyrosetta.distributed.cluster.io import (
+    IO,
+    get_poses_from_init_file,
+    sanitize_urls,
+    secure_read_pickle,
+    sign_init_file_metadata_and_poses,
 )
 
 
@@ -107,17 +109,33 @@ def maybe_issue_environment_warnings() -> None:
                     UserWarning,
                     stacklevel=4,
                 )  # Warn that we are not in an active virtual environment
-            elif "pyrosetta=" not in yml:
-                warnings.warn(
-                    "The currently installed 'pyrosetta' package version is not specified in the exported environment file! "
-                    + "Consequently, the PyRosettaCluster simulation will be difficult to reproduce at a later time. "
-                    + "To use the `pyrosetta.distributed.cluster` namespace and ensure reproducibility of PyRosetta simulations, "
-                    + "please re-install the 'pyrosetta' package using the Rosetta Commons conda channel. For instructions, visit:\n"
-                    + "https://www.pyrosetta.org/downloads\nNote that installing PyRosetta using pip and the 'pyrosetta-installer' "
-                    + "package does not pin the PyRosetta version to the currently activated virtual environment.",
-                    UserWarning,
-                    stacklevel=4,
-                )  # Warn that the PyRosetta package version is not specified in the active virtual environment
+            else:
+                if environment_manager == "pixi": # Match `pixi.lock` format
+                    platforms = ("linux-64", "linux-aarch64", "noarch", "osx-64", "osx-arm64")
+                    conda_pyrosetta_pattern = (
+                        rf"conda: https?://({'|'.join(map(re.escape, source_domains))})/"
+                        rf"({'|'.join(platforms)})/pyrosetta-"
+                    )
+                    has_pinned_pyrosetta = (
+                        bool(re.search(conda_pyrosetta_pattern, yml)) or
+                        ("name: pyrosetta\n" in yml) # Fallback
+                    )
+                elif environment_manager == "uv": # Match uv `requirements.txt` format
+                    has_pinned_pyrosetta = bool(re.search(r"^pyrosetta==", yml, flags=re.MULTILINE))
+                else: # Match conda/mamba `environment.yml` format
+                    has_pinned_pyrosetta = "- pyrosetta=" in yml
+                if not has_pinned_pyrosetta:
+                    warnings.warn(
+                        "The currently installed 'pyrosetta' package version is not specified in the exported environment file! "
+                        + "Consequently, the PyRosettaCluster simulation will be difficult to reproduce at a later time. "
+                        + "Note that installing PyRosetta using the PyPI 'pyrosetta-installer' package does not pin the PyRosetta "
+                        + "version to the currently activated virtual environment. To use the `pyrosetta.distributed.cluster` "
+                        + "namespace and ensure reproducibility of PyRosetta simulations, please re-install the 'pyrosetta' "
+                        + "package using the Rosetta Commons conda channel. For instructions, visit:\n"
+                        + "https://www.pyrosetta.org/downloads",
+                        UserWarning,
+                        stacklevel=4,
+                    )  # Warn that the PyRosetta package version is not specified in the active virtual environment
         else:  # An environment manager is not installed
             warnings.warn(
                 f"The environment manager '{environment_manager}' is not an executable! "
@@ -480,39 +498,70 @@ def export_init_file(
 
 def get_yml() -> str:
     """
-    Run environment export command to return a YML file string with the current virtual
-    environment, excluding certain source domains.
+    Export the current environment to a string depending on the environment manager.
     """
 
+    def remove_comments(text: str) -> str:
+        """Remove lines starting with '#'."""
+        return "\n".join(
+            line for line in text.splitlines() if not line.strip().startswith("#")
+        )
+
+    def remove_metadata(text: str) -> str:
+        """Remove 'name:' and 'prefix:' lines."""
+        filtered_lines = [
+            line
+            for line in text.splitlines()
+            if not line.startswith(("name:", "prefix:")) and line.strip()
+        ]
+        return "\n".join(filtered_lines) + "\n"
+
+    env_manager = get_environment_manager()
     environment_cmd = get_environment_cmd()
+
+    # Handle pixi separately since it writes a `pixi.lock` file
+    if env_manager == "pixi":
+        try:
+            subprocess.run(
+                environment_cmd,
+                shell=True,
+                check=True,
+                stderr=subprocess.DEVNULL,
+            )
+            # https://pixi.sh/dev/reference/environment_variables/#environment-variables-set-by-pixi
+            manifest_path = os.environ.get("PIXI_PROJECT_MANIFEST")
+            lock_path = os.path.join(
+                os.path.dirname(manifest_path) if manifest_path else os.getcwd(),
+                "pixi.lock",
+            )
+            with open(lock_path, encoding="utf-8") as f:
+                return sanitize_urls(f.read())
+        except Exception:
+            return ""
+
+    # For uv/conda/mamba environment managers, run the export command and process the output
     try:
-        raw_yml = subprocess.check_output(
+        result = subprocess.run(
             environment_cmd,
             shell=True,
+            check=True,
             stderr=subprocess.DEVNULL,
-        ).decode()
-    except subprocess.CalledProcessError:
-        raw_yml = ""
-
-    return (
-        (
-            os.linesep.join(
-                [f"# {get_environment_var()}={get_environment_manager()}"]
-                + [
-                    line
-                    for line in raw_yml.split(os.linesep)
-                    if all(
-                        source_domain not in line for source_domain in source_domains
-                    )
-                    and all(not line.startswith(s) for s in ["name:", "prefix:"])
-                    and line
-                ]
-            )
-            + os.linesep
+            stdout=subprocess.PIPE,
+            text=True,
         )
-        if raw_yml
-        else raw_yml
-    )
+    except subprocess.CalledProcessError:
+        return ""
+
+    raw_yml = result.stdout.strip()
+    if not raw_yml:
+        return ""
+
+    if env_manager == "uv":
+        return remove_comments(raw_yml) # Not sanitized, since uv doesn't use conda channels
+    elif env_manager in ("conda", "mamba"):
+        return sanitize_urls(remove_metadata(raw_yml))
+
+    raise RuntimeError(f"Unsupported environment manager: '{env_manager}'")
 
 
 @singledispatch
@@ -623,6 +672,19 @@ def parse_input_file_to_instance_kwargs(obj: Any) -> NoReturn:
 def _parse_str(obj: str) -> Dict[str, Any]:
     scores_dict = get_scores_dict(obj)
     return scores_dict["instance"]
+
+
+@singledispatch
+def parse_input_file_to_instance_metadata_kwargs(obj: Any) -> NoReturn:
+    raise InputFileError(obj)
+
+
+@parse_input_file_to_instance_metadata_kwargs.register(PackedPose)
+@parse_input_file_to_instance_metadata_kwargs.register(Pose)
+@parse_input_file_to_instance_metadata_kwargs.register(str)
+def _parse_str(obj: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    scores_dict = get_scores_dict(obj)
+    return scores_dict["instance"], scores_dict["metadata"]
 
 
 @singledispatch
