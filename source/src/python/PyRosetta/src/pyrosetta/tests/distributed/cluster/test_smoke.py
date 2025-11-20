@@ -178,8 +178,9 @@ class SmokeTest(unittest.TestCase):
                 print("Using the installed 'cryptography' package to generate a dask `Security.temporary()` object...")
                 run(**instance_kwargs)
             else:
-                with self.assertRaises(ImportError):
+                with self.assertRaises(ImportError) as ex:
                     run(**instance_kwargs)
+                print(f"Successfully caught exception: {ex.exception}")
 
     def test_ignore_errors(self):
         """Test PyRosettaCluster usage with user-provided PyRosetta protocol error."""
