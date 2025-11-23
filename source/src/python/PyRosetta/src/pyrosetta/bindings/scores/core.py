@@ -42,6 +42,11 @@ class PoseCacheAccessor(PoseCacheAccessorBase, MutableMapping):
     arbitrary python objects to/from base64-encoded pickled byte streams, and stores/retrieves `float` and `str`
     objects without serialization.
 
+    **Warning**: ONLY LOAD DATA YOU TRUST. The pose.cache dictionary uses the pickle module to serialze and deserialize arbitrary scores in the Pose object. 
+    When depickling (deserializing) is performed arbitrary code can be executed, learn more `here <https://docs.python.org/3/library/pickle.html>`_.
+    The pose.cache object is only stored in memory, so this is only a risk if these objects are sent to a user in memory over a network
+    such as a socket, queue, shared cache, etc. If you need to retrieve a pose.cache dictionary this way please make sure it is from a trusted source.
+
     Examples:
 
     Get score dictionaries:
