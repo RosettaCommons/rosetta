@@ -985,7 +985,13 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                 clients_indices=[0, 1],
                 resources=[{"GPU": 2}, {"MEMORY": 100e9}],
             )
-            
+
+            # Run protocols with depth-first task execution
+            PyRosettaCluster().distribute(
+                protocols=[protocol_1, protocol_2, protocol_3, protocol_4],
+                priorities=[0, 10, 20, 30],
+            )
+
         Args:
             *args: Optional instances of type `types.GeneratorType` or `types.FunctionType`,
                 in the order of protocols to be executed.
@@ -996,7 +1002,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                 Default: None
             clients_indices: An optional `list` or `tuple` object of `int` objects, where each `int` object represents
                 a zero-based index corresponding to the initialized dask `distributed.client.Client` object(s) passed 
-                to the `PyRosettaCluster(clients=...)` class attribute. If not `None`, then the length of the 
+                to the `PyRosettaCluster(clients=...)` keyword argument parameter. If not `None`, then the length of the
                 `clients_indices` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
                 method.
                 Default: None
@@ -1012,6 +1018,28 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                 constraints so that it can schedule these protocols. Unless workers were created with these resource tags
                 applied, the protocols will not run. See https://distributed.dask.org/en/stable/resources.html for more
                 information.
+                Default: None
+            priorities: An optional `list` or `tuple` of `int` objects, where each `int` object sets the dask scheduler
+                priority for the corresponding user-defined PyRosetta protocol (i.e., indexed the same as `client_indices`).
+                If `None`, then no explicit priorities are set. If not `None`, then the length of the `priorities` object
+                must equal the number of protocols passed to the `PyRosettaCluster().distribute` method, and each `int`
+                value determines the dask scheduler priority for that protocol's received tasks.
+                Breadth-first task execution (default):
+                    When all user-defined PyRosetta protocols have an identical priority (e.g., `[0] * len(protocols)` or
+                    `None`), then all tasks enter the dask scheduler's queue with equal priority. Under equal priority, dask
+                    mainly schedules tasks in a first-in, first-out manner. When dask worker resources are saturated, this
+                    causes all tasks submitted to upstream protocols to run to completion before tasks are scheduled to run
+                    downstream protocols, producing a breadth-first task execution behavior across user-defined PyRosetta
+                    protocols.
+                Depth-first task execution:
+                    To allow tasks to run through all user-defined PyRosetta protocols before all tasks submitted to
+                    upstream protocols complete, assign increasing priorities to downstream protocols (e.g.,
+                    `list(range(0, len(protocols) * 10, 10))`). Once a task completes an upstream protocol, it is submitted
+                    to the next downstream protocol with a higher priority than tasks still queued for upstream protocols,
+                    so tasks may run through all user-defined PyRosetta protocols to completion as dask worker resources
+                    become available. This produces a depth-first task execution behavior across user-defined PyRosetta
+                    protocols when dask worker resources are saturated.
+                See https://distributed.dask.org/en/stable/priority.html for more information.
                 Default: None
         """
         yield_results = _parse_yield_results(self.yield_results)

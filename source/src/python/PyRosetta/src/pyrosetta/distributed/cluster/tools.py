@@ -615,7 +615,8 @@ def produce(**kwargs: Any) -> Optional[NoReturn]:
     """
     `PyRosettaCluster().distribute()` shim requiring the 'protocols' keyword argument, and optionally
     any PyRosettaCluster keyword arguments or the 'clients_indices' keyword argument (when using
-    the `PyRosettaCluster(clients=...)` keyword argument), or the 'resources' keyword argument.
+    the `PyRosettaCluster(clients=...)` keyword argument), or the 'resources' keyword argument, or
+    the 'priorities' keyword argument.
 
     Args:
         **kwargs: See `PyRosettaCluster` docstring. The keyword arguments must also include
