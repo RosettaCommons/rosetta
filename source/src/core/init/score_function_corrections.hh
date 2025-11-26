@@ -54,6 +54,9 @@ void init_beta_july15_correction( utility::options::OptionCollection & options )
 /// @brief Initialize the -beta_nov16 score function
 void init_beta_nov16_correction( utility::options::OptionCollection & options, bool setweight=true );
 
+/// @brief Initialize the -beta_jan25 score function
+void init_beta_jan25_correction( utility::options::OptionCollection & options, bool setweight=true );
+
 /// @brief Initialize the crystal refinement correction
 void init_crystal_refinement_correction( utility::options::OptionCollection & options );
 
@@ -72,7 +75,7 @@ void init_score_function_corrections( utility::options::OptionCollection & optio
 
 /// @brief Initialize new atom types for Rosetta generic potential
 void
-init_gen_potential_settings(utility::options::OptionCollection & options );
+init_gen_potential_settings(utility::options::OptionCollection & options, bool setweight=true );
 
 /// @brief  Apply some DNA-specific mods that are still in testing phase; only
 /// if -corrections::newdna present
