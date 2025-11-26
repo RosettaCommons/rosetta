@@ -2658,11 +2658,31 @@ class PrioritiesTest(unittest.TestCase):
             scorefile_name = "test_priorities.json"
             decoy_dir_name = "decoys"
             sequence = "TASK/CHAIN"
-            priorities_test_cases = {
-                0: [10 * i for i in range(_n_protocols)], # Depth-first task chain (increases priority per recursion, so task chains run to completion)
-                1: [0] * _n_protocols, # Breadth-first task chain (first-in, first-out)
-            }
-            # transition_rate_threshold = get_transition_threshold(_n_tasks, _n_protocols)
+            # Depth-first task chains (increases priority per recursion, so task chains run to completion)
+            depth_first_priorities = [
+                list(range(0, _n_protocols * 10, 10)),
+                list(range(-_n_protocols * 2, 0, 2)),
+            ]
+            # Breadth-first task chains (first-in, first-out)
+            breadth_first_priorities = [
+                [0] * _n_protocols,
+                [25] * _n_protocols,
+            ]
+            priorities_test_cases = {}
+            depth_first_test_cases = []
+            breadth_first_test_cases = []
+            test_case = 0
+            # Register depth-first tests explicitly
+            for priorities in depth_first_priorities:
+                priorities_test_cases[test_case] = priorities
+                depth_first_test_cases.append(test_case)
+                test_case += 1
+            # Register breadth-first tests explicitly
+            for priorities in breadth_first_priorities:
+                priorities_test_cases[test_case] = priorities
+                breadth_first_test_cases.append(test_case)
+                test_case += 1
+            # Run test cases
             for test_case, priorities in priorities_test_cases.items():
                 output_path = os.path.join(workdir, "outputs" + "_".join(map(str, priorities)))
                 instance_kwargs = dict(
@@ -2743,17 +2763,19 @@ class PrioritiesTest(unittest.TestCase):
                         f"num_protocols={_n_protocols}",
                         f"num_tasks={_n_tasks}",
                         f"priorities={priorities}",
-                        f"task_positions={task_positions}",
+                        f"task_positions={dict(task_positions)}",
                         f"spread_metric={spread_metric}",
                         f"max_var={max_var}",
                         f"norm_variance={norm_variance}",
                         f"norm_variance_threshold={norm_variance_threshold}",
                     ]
                 )
-                if test_case == 0:  # Depth-first task chaining
+                if test_case in depth_first_test_cases:
                     self.assertLess(norm_variance, norm_variance_threshold, msg=_msg)
-                elif test_case == 1:  # Breadth-first task chaining
+                elif test_case in breadth_first_test_cases:
                     self.assertGreater(norm_variance, norm_variance_threshold, msg=_msg)
+                else:
+                    raise NotImplementedError(test_case)
                 print(f"Successfully tested `priorities` keyword argument: {_msg}")
 
             client_1.close()
