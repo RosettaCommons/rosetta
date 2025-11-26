@@ -171,8 +171,7 @@ ScoreFunctionFactory::validate_beta(
 	if ( (weights_tag_no_extension == (BETA_GENPOT)) && !genpot_active ) {
 		utility_exit_with_message(BETA_GENPOT + "(.wts) requested, but -corrections::gen_potential not set to true. This leads to a garbage scorefunction.  Exiting.");
 		return false; //can't get here
-	}
-	else if ( (weights_tag_no_extension == (BETA_JAN25)) && !betajan25_active ) {
+	} else if ( (weights_tag_no_extension == (BETA_JAN25)) && !betajan25_active ) {
 		utility_exit_with_message(BETA_JAN25 + "(.wts) requested, but -corrections::beta_jan25 not set to true. This leads to a garbage scorefunction.  Exiting.");
 		return false; //can't get here
 	} else if ( (weights_tag_no_extension == (BETA_NOV16)) && !betanov16_active ) {
