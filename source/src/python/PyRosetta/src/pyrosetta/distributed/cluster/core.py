@@ -907,6 +907,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         extra_args: Dict[str, Any],
         passkey: bytes,
         resource: Optional[Dict[Any, Any]],
+        priority: Optional[int],
     ) -> Future:
         """Scatter data and return submitted 'user_spawn_thread' future."""
         task_id = uuid.uuid4().hex
@@ -926,7 +927,10 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             broadcast=False,
             hash=False,
         )
-        return client.submit(user_spawn_thread, *scatter, pure=False, resources=resource)
+        if priority is None: # Use default priority in distributed versions >= 1.21.0
+            return client.submit(user_spawn_thread, *scatter, pure=False, resources=resource)
+        else:
+            return client.submit(user_spawn_thread, *scatter, pure=False, resources=resource, priority=priority)
 
     def _run(
         self,
@@ -934,6 +938,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         protocols: Any = None,
         clients_indices: Any = None,
         resources: Any = None,
+        priorities: Any = None,
     ) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[Any, Any]], None, None]]:
         """
         Run user-provided PyRosetta protocols on a local or remote compute cluster using
@@ -1014,8 +1019,9 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         self._setup_task_security_plugin(clients)
         socket_listener_address, passkey = self._setup_socket_listener(clients)
         compressed_input_packed_pose = self.serializer.compress_packed_pose(self.input_packed_pose)
-        protocols, protocol, seed, clients_index, resource = self._setup_protocols_protocol_seed(
-            args, protocols, clients_indices, resources
+        priorities = self._parse_priorities(priorities)
+        protocols, protocol, seed, clients_index, resource, priority = self._setup_protocols_protocol_seed(
+            args, protocols, clients_indices, resources, priorities
         )
         protocol_name = protocol.__name__
         compressed_protocol = self.serializer.compress_object(protocol)
@@ -1047,6 +1053,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                     extra_args,
                     passkey,
                     resource,
+                    priority,
                 )
                 for _ in range(self.nstruct)
                 for compressed_kwargs, pyrosetta_init_kwargs in (
@@ -1081,8 +1088,8 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                         )
                     if self.filter_results and _is_empty(self.serializer.decompress_packed_pose(compressed_packed_pose)):
                         continue
-                    compressed_kwargs, pyrosetta_init_kwargs, protocol, clients_index, resource = self._setup_kwargs(
-                        kwargs, clients_indices, resources
+                    compressed_kwargs, pyrosetta_init_kwargs, protocol, clients_index, resource, priority = self._setup_kwargs(
+                        kwargs, clients_indices, resources, priorities
                     )
                     protocol_name = protocol.__name__
                     compressed_protocol = self.serializer.compress_object(protocol)
@@ -1097,6 +1104,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                             extra_args,
                             passkey,
                             resource,
+                            priority,
                         )
                     )
                     self.tasks_size += 1
@@ -1112,6 +1120,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         protocols: Any = None,
         clients_indices: Any = None,
         resources: Any = None,
+        priorities: Any = None,
     ) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[Any, Any]], None, None]]:
         if self.sha1 != "":
             logging.warning(
@@ -1127,6 +1136,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             protocols=protocols,
             clients_indices=clients_indices,
             resources=resources,
+            priorities=priorities,
         ):
             yield result
 
@@ -1136,6 +1146,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         protocols: Any = None,
         clients_indices: Any = None,
         resources: Any = None,
+        priorities: Any = None,
     ) -> Optional[NoReturn]:
         self.yield_results = False
         for _ in self._run(
@@ -1143,6 +1154,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             protocols=protocols,
             clients_indices=clients_indices,
             resources=resources,
+            priorities=priorities,
         ):
             pass
 

@@ -20,11 +20,13 @@ except ImportError:
     )
     raise
 
+import logging
 import pyrosetta
 import pyrosetta.distributed
 
 from datetime import datetime
 from functools import wraps
+from pyrosetta.distributed.cluster.config import __dask_version__
 from pyrosetta.distributed.cluster.converters import _parse_protocols
 from pyrosetta.distributed.cluster.initialization import (
     _get_norm_task_options,
@@ -33,6 +35,7 @@ from pyrosetta.distributed.cluster.initialization import (
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.validators import (
     _validate_clients_indices,
+    _validate_priorities,
     _validate_protocols_seeds_decoy_ids,
     _validate_resources,
 )
@@ -47,6 +50,7 @@ from typing import (
     Sized,
     Tuple,
     TypeVar,
+    Union,
     cast,
 )
 
@@ -122,7 +126,9 @@ class TaskBase(Generic[G]):
             return clients_indices[_protocols_index]
     
     def _get_resource(
-            self, resources: List[Dict[Any, Any]], protocols: List[Callable[..., Any]]
+            self,
+            resources: Optional[Union[List[Dict[Any, Any]], Tuple[Dict[Any, Any], ...]]],
+            protocols: List[Callable[..., Any]],
         ) -> Optional[Dict[Any, Any]]:
         """Return the resource for the current protocol."""
         if resources is None:
@@ -131,19 +137,48 @@ class TaskBase(Generic[G]):
             _protocols_index = len(resources) - len(protocols)
             return resources[_protocols_index]
 
+    def _get_priority(
+            self, priorities: Optional[Union[List[int], Tuple[int, ...]]], protocols: List[Callable[..., Any]]
+        ) -> Optional[int]:
+        """Return the priority for the current protocol."""
+        if priorities is None:
+            return None
+        else:
+            _protocols_index = len(priorities) - len(protocols)
+            return priorities[_protocols_index]
+
+    def _parse_priorities(self, priorities: Any) -> Any:
+        """Parse the priorities keyword argument."""
+        if __dask_version__ < (1, 21, 0):
+            _dask_version_str = ".".join(map(str, __dask_version__))
+            logging.warning(
+                "Use of the `priorities` keyword argument is not supported for 'dask' and 'distributed' "
+                f"package versions < 1.21.0\nCurrent dask version: {_dask_version_str}\n"
+                "Please set `PyRosettaCluster().distribute(priority=None)`, or upgrade the 'dask' and 'distributed' "
+                "package versions to >=1.21.0 to silence this warning. Automatically disabling task priorities..."
+            )
+            return None
+        else:
+            return priorities
+
     def _setup_kwargs(
-        self, kwargs: Dict[Any, Any], clients_indices: List[int], resources: Optional[Dict[Any, Any]],
-    ) -> Tuple[bytes, Dict[str, Any], Callable[..., Any], int, Optional[Dict[Any, Any]]]:
+        self,
+        kwargs: Dict[Any, Any],
+        clients_indices: List[int],
+        resources: Optional[Union[List[Dict[Any, Any]], Tuple[Dict[Any, Any], ...]]],
+        priorities: Optional[Union[List[int], Tuple[int, ...]]],
+    ) -> Tuple[bytes, Dict[str, Any], Callable[..., Any], int, Optional[Dict[Any, Any]], Optional[int]]:
         """Setup the kwargs for the subsequent tasks."""
         clients_index = self._get_clients_index(clients_indices, kwargs[self.protocols_key])
         resource = self._get_resource(resources, kwargs[self.protocols_key])
+        priority = self._get_priority(priorities, kwargs[self.protocols_key])
         _protocols, protocol, seed = self._get_task_state(kwargs[self.protocols_key])
         kwargs[self.protocols_key] = _protocols
         kwargs = self._setup_seed(kwargs, seed)
         pyrosetta_init_kwargs = self._setup_pyrosetta_init_kwargs(kwargs)
         compressed_kwargs = self.serializer.compress_kwargs(kwargs)
 
-        return compressed_kwargs, pyrosetta_init_kwargs, protocol, clients_index, resource
+        return compressed_kwargs, pyrosetta_init_kwargs, protocol, clients_index, resource, priority
 
     def _setup_seed(self, kwargs: Dict[Any, Any], seed: Optional[str]) -> Dict[Any, Any]:
         """
@@ -172,22 +207,23 @@ class TaskBase(Generic[G]):
         return kwargs
 
     def _setup_protocols_protocol_seed(
-        self, args: Tuple[Any, ...], protocols: Any, clients_indices: Any, resources: Any,
-    ) -> Tuple[List[Callable[..., Any]], Callable[..., Any], Optional[str], int, Optional[Dict[Any, Any]]]:
+        self, args: Tuple[Any, ...], protocols: Any, clients_indices: Any, resources: Any, priorities: Any
+    ) -> Tuple[List[Callable[..., Any]], Callable[..., Any], Optional[str], int, Optional[Dict[Any, Any]], Optional[int]]:
         """Parse, validate, and setup the user-provided PyRosetta protocol(s)."""
 
         _protocols = _parse_protocols(args) + _parse_protocols(protocols)
         _clients_dict_keys = list(self.clients_dict.keys())
         _validate_clients_indices(clients_indices, _protocols, _clients_dict_keys)
         _validate_resources(resources, _protocols)
+        _validate_priorities(priorities, _protocols)
         _clients_index = self._get_clients_index(clients_indices, _protocols)
         _resource = self._get_resource(resources, _protocols)
-
+        _priority = self._get_priority(priorities, _protocols)
         _protocols, _protocol, _seed = self._get_task_state(
             _validate_protocols_seeds_decoy_ids(_protocols, self.seeds, self.decoy_ids)
         )
 
-        return _protocols, _protocol, _seed, _clients_index, _resource
+        return _protocols, _protocol, _seed, _clients_index, _resource, _priority
 
 
 def capture_task_metadata(func: M) -> M:
