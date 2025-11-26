@@ -153,9 +153,9 @@ class TaskBase(Generic[G]):
             _dask_version_str = ".".join(map(str, __dask_version__))
             logging.warning(
                 "Use of the `priorities` keyword argument is not supported for 'dask' and 'distributed' "
-                f"package versions < 1.21.0\nCurrent dask version: {_dask_version_str}\n"
+                f"package versions <1.21.0\nCurrent dask version: {_dask_version_str}\n"
                 "Please set `PyRosettaCluster().distribute(priority=None)`, or upgrade the 'dask' and 'distributed' "
-                "package versions to >=1.21.0 to silence this warning. Automatically disabling task priorities..."
+                "package versions to >=1.21.0 to silence this warning. Automatically disabling priorities..."
             )
             return None
         else:

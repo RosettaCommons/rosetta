@@ -927,7 +927,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             broadcast=False,
             hash=False,
         )
-        if priority is None: # Use default priority in distributed versions >= 1.21.0
+        if priority is None: # Use default priority in distributed versions >=1.21.0
             return client.submit(user_spawn_thread, *scatter, pure=False, resources=resource)
         else:
             return client.submit(user_spawn_thread, *scatter, pure=False, resources=resource, priority=priority)
