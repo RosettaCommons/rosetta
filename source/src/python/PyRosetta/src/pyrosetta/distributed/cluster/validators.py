@@ -15,7 +15,6 @@ from typing import (
     AbstractSet,
     Any,
     Callable,
-    Dict,
     Iterable,
     List,
     NoReturn,
@@ -82,6 +81,28 @@ def _validate_resources(resources: Any, _protocols: List[Callable[..., Any]]) ->
                 "The `resources` keyword argument parameter must have the same length as the number of user-defined PyRosetta protocols!\n"
                 + f"Received `PyRosettaCluster().distribute(protocols=...)`: {_protocols}\n"
                 + f"Received `PyRosettaCluster().distribute(resources=...)`: {resources}\n"
+            )
+
+
+def _validate_priorities(priorities: Any, _protocols: List[Callable[..., Any]]) -> Optional[NoReturn]:
+    """Validate the `priorities` keyword argument parameter."""
+    if priorities is not None:
+        if not isinstance(priorities, (tuple, list)):
+            raise ValueError(
+                "The `priorities` keyword argument parameter must be of type `list` or `tuple`.\n"
+                + f"Received: {type(priorities)}\n"
+            )
+        for obj in priorities:
+            if not isinstance(obj, int):
+                raise ValueError(
+                    "Each item of the `priorities` keyword argument parameter must be of type `int`.\n"
+                    + f"Received: {type(obj)}\n"
+                )
+        if len(priorities) != len(_protocols):
+            raise ValueError(
+                "The `priorities` keyword argument parameter must have the same length as the number of user-defined PyRosetta protocols!\n"
+                + f"Received `PyRosettaCluster().distribute(protocols=...)`: {_protocols}\n"
+                + f"Received `PyRosettaCluster().distribute(priorities=...)`: {priorities}\n"
             )
 
 

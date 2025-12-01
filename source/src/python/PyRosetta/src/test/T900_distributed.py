@@ -88,6 +88,7 @@ distributed_cluster_test_cases = [
     "pyrosetta.tests.distributed.cluster.test_smoke.RuntimeTest.test_timing_single_instance",
     "pyrosetta.tests.distributed.cluster.test_smoke.IOTest.test_io",
     "pyrosetta.tests.distributed.cluster.test_smoke.TestInitFileSigner.test_init_file_signer",
+    "pyrosetta.tests.distributed.cluster.test_smoke.PrioritiesTest.test_priorities",
     "pyrosetta.tests.distributed.cluster.test_logging.LoggingTest.test_logging",
     "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_minimizer_nstruct",
     "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_minimizer_nstruct_filter_results",
