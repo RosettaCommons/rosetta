@@ -90,20 +90,36 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
 
             with open(release_path+'/'+_latest_html_, 'w') as h: h.write(download_template.format(distr=name, link=package_file))
 
+
             htaccess_file_path = f'{release_path}/.htaccess'
 
-            if os.path.isfile(htaccess_file_path):
-                with open(htaccess_file_path) as f: htaccess = f.read()
+            # # OLD version with substitution, deprecated for now
+            # if os.path.isfile(htaccess_file_path):
+            #     with open(htaccess_file_path) as f: htaccess = f.read()
+            # else:
+            #     htaccess = ''
+            #
+            # redirect_start = 'RedirectMatch 302 (.*).latest$'
+            # redirect_line = redirect_start + ' $1' + package_file
+            # htaccess = re_module.sub(re_module.escape(redirect_start) + '(.*)', redirect_line, htaccess)
+            # if redirect_line not in htaccess: htaccess += '\n' + redirect_line + '\n'
+
+            htaccess = f'RedirectMatch 302 (.*).latest$ $1 {package_file}\n'
+
+            if package_file.endswith('.tar.bz2'):
+                # replace PyRosetta4.Release.python39.m1.cxx11thread.serialization.release-410.tar.bz2 with PyRosetta4.Release.python39.m1.cxx11thread.serialization.release-latest.tar.bz2
+                redirect_handle = package_file.partition('-')[0] + '-latest.tar.bz2'
+            elif package_file.endswith('.whl'):
+                # replacing exact version from `pyrosetta-2025.41+release.de3cc17d50-cp39-cp39-macosx_12_0_arm64.whl` with simple `latest` --> `pyrosetta-latest-cp39-cp39-macosx_12_0_arm64.whl`
+                frst_parition = package_file.partition('-')
+                redirect_handle = frst_parition[0] + '-latest-cp' + frst_parition[2].partition('-cp')[2]
             else:
-                htaccess = ''
+                redirect_handle = None
 
-            redirect_start = 'RedirectMatch 302 (.*).latest$'
-            redirect_line = redirect_start + ' $1' + package_file
-            htaccess = re_module.sub(re_module.escape(redirect_start) + '(.*)', redirect_line, htaccess)
+            if redirect_handle:
+                htaccess = f'RedirectMatch 302 (.*){redirect_handle}$ $1 {package_file}\n'
+
             print(f'htaccess: {htaccess}')
-
-            if redirect_line not in htaccess: htaccess += '\n' + redirect_line + '\n'
-
             with open(htaccess_file_path, 'w') as f: f.write(htaccess)
 
 
