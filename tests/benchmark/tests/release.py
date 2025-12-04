@@ -117,7 +117,7 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
                 redirect_handle = None
 
             if redirect_handle:
-                htaccess = f'RedirectMatch 302 (.*){redirect_handle}$ $1 {package_file}\n'
+                htaccess += f'RedirectMatch 302 (.*){redirect_handle}$ $1 {package_file}\n'
 
             print(f'htaccess: {htaccess}')
             with open(htaccess_file_path, 'w') as f: f.write(htaccess)
