@@ -104,7 +104,7 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
             # htaccess = re_module.sub(re_module.escape(redirect_start) + '(.*)', redirect_line, htaccess)
             # if redirect_line not in htaccess: htaccess += '\n' + redirect_line + '\n'
 
-            htaccess = f'RedirectMatch 302 (.*).latest$ $1 {package_file}\n'
+            htaccess = f'RedirectMatch 302 (.*)\\.latest$ $1{package_file}\n'
 
             if package_file.endswith('.tar.bz2'):
                 # replace PyRosetta4.Release.python39.m1.cxx11thread.serialization.release-410.tar.bz2 with PyRosetta4.Release.python39.m1.cxx11thread.serialization.release-latest.tar.bz2
@@ -117,7 +117,7 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
                 redirect_handle = None
 
             if redirect_handle:
-                htaccess += f'RedirectMatch 302 (.*){redirect_handle}$ $1 {package_file}\n'
+                htaccess += f'RedirectMatch 302 (.*){redirect_handle}$ $1{package_file}\n'
 
             print(f'htaccess: {htaccess}')
             with open(htaccess_file_path, 'w') as f: f.write(htaccess)
