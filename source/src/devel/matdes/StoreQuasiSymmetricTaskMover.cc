@@ -59,7 +59,7 @@ StoreQuasiSymmetricTaskMover::StoreQuasiSymmetricTaskMover() = default;
 StoreQuasiSymmetricTaskMover::~StoreQuasiSymmetricTaskMover() = default;
 
 // @brief getters
-char StoreQuasiSymmetricTaskMover::quasi_symm_comp() const { return quasi_symm_comp_[0]; }
+std::string const & StoreQuasiSymmetricTaskMover::quasi_symm_comp() const { return quasi_symm_comp_; }
 core::Size StoreQuasiSymmetricTaskMover::num_quasi_repeats() const { return num_quasi_repeats_; }
 core::Size StoreQuasiSymmetricTaskMover::offset_resis() const { return offset_resis_; }
 
@@ -186,9 +186,9 @@ StoreQuasiSymmetricTaskMover::apply( core::pose::Pose & pose )
 
 	//figure out what the residue number of the last residue in the first quasi repeat is
 	core::Size first_quasi_repeat_last_resi = 0;
-	if ( quasi_symm_comp() ==  'A' ) {
+	if ( quasi_symm_comp() == "A" ) {
 		first_quasi_repeat_last_resi = core::Size( offset_resis() + ( num_resis_quasi_subunits/num_quasi_repeats() ) );
-	} else if ( quasi_symm_comp() == 'B' ) {
+	} else if ( quasi_symm_comp() == "B" ) {
 		first_quasi_repeat_last_resi = core::Size( ( num_resis_quasi_subunits/num_quasi_repeats() ) + ( num_indy_resis - num_resis_quasi_subunits ) );
 	} else {
 		TR << "WARNING!! " << quasi_symm_comp() << " is in an incompatible component! (not A or B)." << std::endl;

@@ -24,6 +24,8 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/util.hh>
 
+#include <core/pose/chains_util.hh>
+
 #include <core/kinematics/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
@@ -48,18 +50,7 @@ namespace core {
 namespace conformation {
 namespace symmetry {
 
-
-
-//This string is duplicated in utility/tag/XMLSchemaGeneration.cc; DO NOT MODIFY!
-static std::string const chr_chains("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcba");
-
-std::string
-get_chain_id_string(){
-	return chr_chains;
-}
-
 static basic::Tracer TR( "core.conformation.symmetry.util" );
-
 
 /// @details A very specific helper function that counts the number of mirror ops from root->each subunit
 /// returns:
@@ -153,8 +144,8 @@ Size process_residue_request(conformation::Conformation const & src_conf, std::s
 	return resi;
 }
 
-bool is_jump_intracomponent(std::map<char,std::pair<Size,Size> > chain2range, Size up, Size dn) {
-	for ( std::map<char,std::pair<Size,Size> >::const_iterator it = chain2range.begin(); it != chain2range.end(); ++it ) {
+bool is_jump_intracomponent(std::map<std::string,std::pair<Size,Size> > chain2range, Size up, Size dn) {
+	for ( std::map<std::string,std::pair<Size,Size> >::const_iterator it = chain2range.begin(); it != chain2range.end(); ++it ) {
 		Size const lb = it->second.first, ub = it->second.second;
 		if ( lb <= up && up <= ub && lb <= dn && dn <= ub ) return true;
 	}
@@ -173,7 +164,7 @@ char which_component(std::map<char,std::pair<Size,Size> > chain2range, Size resi
 core::kinematics::FoldTree
 get_component_contiguous_foldtree(
 	core::kinematics::FoldTree const & f_orig,
-	std::map<char,std::pair<Size,Size> > const & /*chain2range*/ // maybe use later
+	std::map<std::string,std::pair<Size,Size> > const & /*chain2range*/ // maybe use later
 ) {
 	if ( f_orig.num_cutpoint() != f_orig.num_jump() ) utility_exit_with_message("FoldTree ISANITY!!!!!!!");
 	ObjexxFCL::FArray1D< Size > cuts( f_orig.num_cutpoint() );
@@ -209,8 +200,8 @@ get_component_contiguous_foldtree(
 
 // sheffler
 /// @details get a mapping of chain chars to resi ranges
-std::map<char,std::pair<Size,Size> >
-get_chain2range( Conformation const & src_conf, std::map< core::Size, char > src_conf2pdb_chain ) {
+std::map<std::string,std::pair<Size,Size> >
+get_chain2range( Conformation const & src_conf, std::map< core::Size, std::string > src_conf2pdb_chain ) {
 	// TR << src_conf.num_chains() << endl;
 	// for(Size i = 1; i <= src_conf.num_chains(); ++i){
 	//  TR << "src_conf chain " << i << " " << src_conf.chain_begin(i) << "-" << src_conf.chain_end  (i) << endl;
@@ -220,18 +211,18 @@ get_chain2range( Conformation const & src_conf, std::map< core::Size, char > src
 	//  TR << i->first << " " << i->second << endl;
 	// }
 	// TR << "END PDBINFO CHAIN MAP" << endl;
-	std::map<char,std::pair<Size,Size> > crange;
+	std::map<std::string,std::pair<Size,Size> > crange;
 	for ( Size i = 1; i <= src_conf.num_chains(); ++i ) {
-		char chain = src_conf2pdb_chain.count(i)==0 ? chr_chains[(i-1)%chr_chains.size()] : src_conf2pdb_chain[i];
+		std::string chain = src_conf2pdb_chain.count(i)==0 ? canonical_chain_letter_for_chain_number(i, /*extended*/true) : src_conf2pdb_chain[i];
 		if ( crange.count(chain)==0 ) crange[chain] = std::make_pair(99999999,0);
 		crange[chain].first  = std::min( src_conf.chain_begin(i), crange[chain].first  );
 		crange[chain].second = std::max( src_conf.chain_end  (i), crange[chain].second );
 	}
 	// sanity check
-	for ( std::map<char,std::pair<Size,Size> >::const_iterator i = crange.begin(); i != crange.end(); ++i ) {
+	for ( std::map<std::string,std::pair<Size,Size> >::const_iterator i = crange.begin(); i != crange.end(); ++i ) {
 		// TR << "get_chain2range " << i->first << " " << i->second.first << "-" << i->second.second << std::endl;
 		if ( i->second.first > i->second.second ) utility_exit_with_message("THIS SHOULD NEVER HAPPEN!");
-		for ( std::map<char,std::pair<Size,Size> >::const_iterator j = crange.begin(); j != crange.end(); ++j ) {
+		for ( std::map<std::string,std::pair<Size,Size> >::const_iterator j = crange.begin(); j != crange.end(); ++j ) {
 			if ( i->second.first==j->second.first && i->second.second==j->second.second ) continue; // same
 			if ( i->second.first > j->second.first && i->second.first > j->second.second ) continue; // disjoint, i < j
 			if ( j->second.first > i->second.first && j->second.first > i->second.second ) continue; // disjoint, j > i
@@ -268,11 +259,11 @@ conformation::symmetry::SymmetricConformationOP
 setup_symmetric_conformation(
 	conformation::Conformation & src_conformation,
 	conformation::symmetry::SymmData & symmdata,
-	std::map< core::Size, char > src_conf2pdb_chain
+	std::map< core::Size, std::string > src_conf2pdb_chain
 )
 {
 	if ( symmdata.get_num_components() > 1 ) {
-		std::map<char,std::pair<Size,Size> > const chain2range = get_chain2range(src_conformation,src_conf2pdb_chain);
+		std::map<std::string,std::pair<Size,Size> > const chain2range = get_chain2range(src_conformation,src_conf2pdb_chain);
 		core::kinematics::FoldTree newft = get_component_contiguous_foldtree(src_conformation.fold_tree(),chain2range);
 		src_conformation.fold_tree( newft );
 	}
@@ -356,9 +347,9 @@ setup_symmetric_conformation(
 
 	// now build the symmetry info object
 	conformation::symmetry::SymmetryInfo symm_info_raw( symmdata, nres_monomer, njump_monomer+1-symmdata.get_num_components() );
-	std::map<char,std::pair<Size,Size> > component_bounds;
+	std::map<std::string,std::pair<Size,Size> > component_bounds;
 	for ( Size ic = 1; ic <= src_conformation.num_chains(); ++ic ) {
-		char chain = src_conf2pdb_chain[ic];
+		std::string chain = src_conf2pdb_chain[ic];
 		component_bounds[chain].first = src_conformation.chain_begin(ic);
 		component_bounds[chain].second = src_conformation.chain_end(ic);
 	}
@@ -375,11 +366,11 @@ setup_symmetric_conformation(
 	if ( symmdata.get_num_components() > 1 ) {
 		for ( std::map< Size, SymDof >::const_iterator j = symm_info.get_dofs().begin(); j != symm_info.get_dofs().end(); ++j ) {
 			std::string const & dofname( symm_info.get_jump_name(j->first) );
-			utility::vector1<char> compchild = symmdata.components_moved_by_jump(dofname);
+			utility::vector1<std::string> compchild = symmdata.components_moved_by_jump(dofname);
 			utility::vector1<Size> subchild = symmdata.subunits_moved_by_jump(dofname);
 			TR << "MULTICOMPONENT " << "DOF " << dofname << std::endl;
 			TR << "MULTICOMPONENT " << " moves these components:";
-			for ( utility::vector1<char>::const_iterator i = compchild.begin(); i != compchild.end(); ++i ) {
+			for ( utility::vector1<std::string>::const_iterator i = compchild.begin(); i != compchild.end(); ++i ) {
 				TR << " " << *i;
 			}
 			TR << std::endl;
@@ -389,12 +380,12 @@ setup_symmetric_conformation(
 			}
 			TR << std::endl;
 		}
-		for ( utility::vector1<char>::const_iterator i = symm_info.get_components().begin(); i != symm_info.get_components().end(); ++i ) {
+		for ( utility::vector1<std::string>::const_iterator i = symm_info.get_components().begin(); i != symm_info.get_components().end(); ++i ) {
 			TR << "MULTICOMPONENT " << *i << " " << symm_info.get_component_bounds().find(*i)->second.first << "-" << symm_info.get_component_bounds().find(*i)->second.second << std::endl;
 			TR << "MULTICOMPONENT " << " moved by dofs:";
 			for ( std::map< Size, SymDof >::const_iterator j = symm_info.get_dofs().begin(); j != symm_info.get_dofs().end(); ++j ) {
 				std::string const & dofname( symm_info.get_jump_name(j->first) );
-				utility::vector1<char> compchild = symmdata.components_moved_by_jump(dofname);
+				utility::vector1<std::string> compchild = symmdata.components_moved_by_jump(dofname);
 				if ( std::find(compchild.begin(),compchild.end(),*i) == compchild.end() ) continue;
 				TR << " " << dofname;
 			}
@@ -448,10 +439,10 @@ kinematics::FoldTree
 set_fold_tree_from_symm_data(
 	conformation::Conformation & src_conformation,
 	conformation::symmetry::SymmData & symmdata,
-	std::map< core::Size, char > src_conf2pdb_chain
+	std::map< core::Size, std::string > src_conf2pdb_chain
 )
 {
-	std::map<char,std::pair<Size,Size> > const chain2range = get_chain2range(src_conformation,src_conf2pdb_chain);
+	std::map<std::string,std::pair<Size,Size> > const chain2range = get_chain2range(src_conformation,src_conf2pdb_chain);
 
 	using namespace kinematics;
 	FoldTree f, f_orig = src_conformation.fold_tree();
@@ -673,7 +664,7 @@ set_fold_tree_from_symm_data(
 		// for(map<string,Size>::const_iterator it = virtual_id_to_subunit.begin(); it != virtual_id_to_subunit.end(); ++it) {
 		//  TR << "virtual_id_to_subunit " << it->first << " " << it->second << endl;
 		// }
-		map< string, char > const & virtual_id_to_subunit_chain(symmdata.get_virt_id_to_subunit_chain() );
+		map< string, string > const & virtual_id_to_subunit_chain(symmdata.get_virt_id_to_subunit_chain() );
 		map< string, string > const & virtual_id_to_subunit_residue(symmdata.get_virt_id_to_subunit_residue() );
 		// sanity check for SUBUNIT chain / residue
 		// for(map<char,pair<Size,Size> >::const_iterator i = chain2range.begin(); i != chain2range.end(); ++i) {
@@ -681,8 +672,8 @@ set_fold_tree_from_symm_data(
 		// }
 		for ( auto const & elem : virtual_id_to_subunit_chain ) {
 			string const & virt = elem.first;
-			char chain = elem.second;
-			if ( chain == (char)0 ) chain = src_conf2pdb_chain.count(1) ? src_conf2pdb_chain[1] : 'A';
+			std::string chain = elem.second;
+			if ( !is_chain_valid(chain) ) chain = src_conf2pdb_chain.count(1) ? src_conf2pdb_chain[1] : "A";
 			if ( chain2range.find(chain)==chain2range.end() ) {
 				std::cerr << "missing chain in pdb: " << chain << std::endl;
 				utility_exit_with_message("missing chain in symfile/pdb");
@@ -702,8 +693,8 @@ set_fold_tree_from_symm_data(
 			std::string pos_id1( connect.first );
 			std::string pos_id2( connect.second );
 			if ( pos_id2 == "SUBUNIT" ) {
-				char chain = virtual_id_to_subunit_chain.find(pos_id1)->second;
-				if ( chain == (char)0 ) chain = src_conf2pdb_chain.count(1) ? src_conf2pdb_chain[1] : 'A';
+				std::string chain = virtual_id_to_subunit_chain.find(pos_id1)->second;
+				if ( !is_chain_valid(chain) ) chain = src_conf2pdb_chain.count(1) ? src_conf2pdb_chain[1] : "A";
 				Size beg = chain2range.find(chain)->second.first;
 				Size end = chain2range.find(chain)->second.second;
 				Size resi = process_residue_request( src_conformation, virtual_id_to_subunit_residue.find(pos_id1)->second, beg, end );
@@ -1084,7 +1075,7 @@ std::string
 show_foldtree(
 	core::conformation::symmetry::SymmetricConformation const & symm_conf,
 	SymmData const & symmdata,
-	std::map<char,std::pair<Size,Size> > const & chain2range
+	std::map<std::string,std::pair<Size,Size> > const & chain2range
 ){
 	Size nsub = symm_conf.Symmetry_Info()->subunits();
 	Size nres_monomer = symm_conf.Symmetry_Info()->num_independent_residues();

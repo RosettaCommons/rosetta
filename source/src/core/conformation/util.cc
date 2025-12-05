@@ -73,6 +73,36 @@ static basic::Tracer TR( "core.conformation.util" );
 namespace core {
 namespace conformation {
 
+
+static std::string const chr_chains_reg("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz" );
+static std::string const chr_chains_ext("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]|-_\\~=%zyxwvutsrqponmlkjihgfedcba" );
+//fd removing '{' and '}' since they mess with pymol selection
+//static std::string const pymol_chains("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz!@#$&.<>?]|-_\\~=%" );
+
+std::string
+canonical_chain_letter_for_chain_number(core::Size chain_num, bool extended) {
+	std::string const & chr_chains = extended ? chr_chains_ext : chr_chains_reg;
+
+	if ( chain_num <= chr_chains.size() ) {
+		return std::string{chr_chains[chain_num-1]};
+	}
+	std::string chain_string;
+	while ( chain_num > 0 ) {
+		char val = chr_chains[ (chain_num-1)%chr_chains.size() ];
+		chain_string = std::string{val} + chain_string;
+		chain_num = (chain_num-1)/chr_chains.size(); // Truncation intended
+	}
+	return chain_string;
+}
+
+bool
+is_chain_valid(std::string const & chain) {
+	return (! chain.empty() ) &&
+		chain != " " &&
+		chain != "^" &&
+		chain != std::string{ '\0' }; // String constructed from a single null character
+}
+
 void
 orient_residue_for_ideal_bond(
 	Residue & moving_rsd,

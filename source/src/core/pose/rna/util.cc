@@ -1129,15 +1129,15 @@ get_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose,
 			// chains might be unspecified for single-chain.
 			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				if ( native_pose.pdb_info()->chain( i ) == pose.pdb_info()->chain( ii )
-						|| pose.pdb_info()->chain( ii ) == ' '
-						|| pose.pdb_info()->chain( ii ) == '^' ) {
+						|| pose.pdb_info()->chain( ii ) == " "
+						|| pose.pdb_info()->chain( ii ) == "^" ) {
 					if ( native_pose.pdb_info()->number( i ) == pose.pdb_info()->number( ii ) ) {
 						i_decoy = ii;
 					}
 				}
 				if ( native_pose.pdb_info()->chain( j ) == pose.pdb_info()->chain( ii )
-						|| pose.pdb_info()->chain( ii ) == ' '
-						|| pose.pdb_info()->chain( ii ) == '^' ) {
+						|| pose.pdb_info()->chain( ii ) == " "
+						|| pose.pdb_info()->chain( ii ) == "^" ) {
 					if ( native_pose.pdb_info()->number( j ) == pose.pdb_info()->number( ii ) ) {
 						j_decoy = ii;
 					}
@@ -1234,15 +1234,15 @@ get_inf_base_pairs(pose::Pose & pose, pose::Pose const & native_pose) {
 			// chains might be unspecified for single-chain.
 			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				if ( native_pose.pdb_info()->chain( i ) == pose.pdb_info()->chain( ii )
-						|| pose.pdb_info()->chain( ii ) == ' '
-						|| pose.pdb_info()->chain( ii ) == '^' ) {
+						|| pose.pdb_info()->chain( ii ) == " "
+						|| pose.pdb_info()->chain( ii ) == "^" ) {
 					if ( native_pose.pdb_info()->number( i ) == pose.pdb_info()->number( ii ) ) {
 						i_decoy = ii;
 					}
 				}
 				if ( native_pose.pdb_info()->chain( j ) == pose.pdb_info()->chain( ii )
-						|| pose.pdb_info()->chain( ii ) == ' '
-						|| pose.pdb_info()->chain( ii ) == '^' ) {
+						|| pose.pdb_info()->chain( ii ) == " "
+						|| pose.pdb_info()->chain( ii ) == "^" ) {
 					if ( native_pose.pdb_info()->number( j ) == pose.pdb_info()->number( ii ) ) {
 						j_decoy = ii;
 					}
@@ -2574,7 +2574,7 @@ output_stems( std::ostream & out, RNA_Motifs const & rna_motifs, pose::Pose cons
 		vector1< std::string > tags;
 		for ( auto const & strand : strand_set ) {
 			vector1< int > res;
-			vector1< char > chain;
+			vector1< std::string > chain;
 			vector1< std::string > segid;
 			for ( auto const & m : strand ) {
 				res.push_back( pose.pdb_info()->number( m ) );
@@ -2588,13 +2588,13 @@ output_stems( std::ostream & out, RNA_Motifs const & rna_motifs, pose::Pose cons
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-utility::vector1< std::pair< char, std::string > >
+utility::vector1< ChainSegID >
 figure_out_rna_chains(
 	pose::Pose const & pose,
 	utility::vector1< std::string > const & chains /* = utility::vector1< std::string >*/
 )
 {
-	utility::vector1< std::pair< char, std::string > > all_rna_chain_segids;
+	utility::vector1< ChainSegID > all_rna_chain_segids;
 	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.residue_type( n ).is_RNA() ) {
 			ChainSegID chain_segid( std::make_pair( pose.pdb_info()->chain( n ), strip( pose.pdb_info()->segmentID( n ) ) ) );
@@ -2605,19 +2605,24 @@ figure_out_rna_chains(
 	if ( chains.size() == 0 ) return all_rna_chain_segids;
 
 	utility::vector1< ChainSegID > chain_segids;
-	for ( auto const & chain_string : chains ) {
-		char const chain( chain_string[ 0 ] );
+	for ( std::string chain : chains ) {
 		std::string segid;
-		if ( chain_string.size() > 1 ) {
-			if ( chain_string[1] == ':' ) segid = chain_string.substr( 2 );
-			else segid = chain_string.substr(1);
-		}
+		size_t colon_pos = chain.find(':');
+		if ( colon_pos != std::string::npos ) {
+			segid = chain.substr(colon_pos+1);
+			chain = chain.substr(0,colon_pos);
+		} else if ( chain.size() > 3 ) { // segid is typically 4 characters
+			// Historical compatibility
+			segid = chain.substr(1);
+			chain = std::string{ chain[0] };
+		} // else keep as-is
+
 		ChainSegID chain_segid( chain, segid );
 		if ( ! all_rna_chain_segids.has_value( chain_segid ) ) {
 			std::cout << "all_rna_chain_segids: " << all_rna_chain_segids << std::endl;
-			utility_exit_with_message( "Did not find desired chain "+std::string(1,chain)+" segid "+segid+" in all_rna_chain_segids above." );
+			utility_exit_with_message( "Did not find desired chain "+chain+" segid "+segid+" in all_rna_chain_segids above." );
 		}
-		chain_segids.push_back( std::make_pair( chain, segid ) );
+		chain_segids.push_back( chain_segid );
 	}
 
 	return chain_segids;
@@ -2733,7 +2738,7 @@ output_ligands( std::ostream & out, pose::Pose const & pose,  utility::vector1< 
 		out << "     ";
 
 		utility::vector1< int > resnum;
-		utility::vector1< char > chain;
+		utility::vector1< std::string > chain;
 		utility::vector1< std::string > segid;
 		for ( auto const & pos: it.second ) {
 			resnum.push_back( pose.pdb_info()->number( pos ) );

@@ -1023,14 +1023,14 @@ SilentStruct::fill_struct_with_residue_numbers( pose::Pose const & pose ){
 	if ( !pdb_info ) return;
 
 	utility::vector1< int > residue_numbers;
-	utility::vector1< char > chains;
+	utility::vector1< std::string > chains;
 	bool residue_numbering_is_interesting( false );
 	for ( core::uint i = 1; i <= pose.size(); ++i ) {
 		residue_numbers.push_back( pdb_info->number( i ) );
 		chains.push_back( pdb_info->chain( i ) );
 		if ( pdb_info->number( i ) != static_cast<int>(i) ||
-				( pdb_info->chain( i ) != ' ' &&
-				pdb_info->chain( i ) != 'A' ) ) {
+				( pdb_info->chain( i ) != " " &&
+				pdb_info->chain( i ) != "A" ) ) {
 			residue_numbering_is_interesting = true;
 		}
 	}
@@ -1169,7 +1169,7 @@ SilentStruct::print_submotif_info( std::ostream & out ) const {
 void
 SilentStruct::figure_out_residue_numbers_from_line( std::istream & line_stream ) {
 	utility::vector1< int > residue_numbers;
-	utility::vector1< char > chains;
+	utility::vector1< std::string > chains;
 	utility::vector1< std::string > segids;
 	core::io::silent::figure_out_residue_numbers_from_line( line_stream, residue_numbers, chains, segids );
 	set_residue_numbers( residue_numbers );

@@ -54,14 +54,14 @@ ResidueChainVectorOption::cl_value( std::string const & value_str ){
 }
 
 // @brief Specialized function that converts tags like A:1-4 B:1-3 into a pair of  [1 2 3 4 1 2 3], [A A A A B B B]
-std::tuple< utility::vector1<int>, utility::vector1<char>, utility::vector1< std::string > >
+std::tuple< utility::vector1<int>, utility::vector1<std::string>, utility::vector1< std::string > >
 ResidueChainVectorOption::resnum_and_chain() const {
 	bool string_is_ok;
 	utility::vector1<int> resnum;
-	utility::vector1<char> chains;
+	utility::vector1<std::string> chains;
 	utility::vector1<std::string> segids;
 	for ( Size n = 1; n <= value_strings_.size(); n++ ) {
-		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const resnum_and_chain = get_resnum_and_chain_and_segid( value_strings_[n], string_is_ok );
+		std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const resnum_and_chain = get_resnum_and_chain_and_segid( value_strings_[n], string_is_ok );
 		runtime_assert( string_is_ok );
 		for ( Size n2 = 1; n2 <= std::get< 0 >( resnum_and_chain ).size(); n2++ ) {
 			resnum.push_back( std::get<0>(resnum_and_chain)[n2] );
@@ -77,7 +77,7 @@ int
 ResidueChainVectorOption::value_of( std::string const & value_str ) const
 {
 	utility::vector1< int >  resnum;
-	utility::vector1< char > chains;
+	utility::vector1< std::string > chains;
 	utility::vector1< std::string > segids;
 	bool string_is_ok = get_resnum_and_chain_from_one_tag( value_str, resnum, chains, segids );
 	if ( ( value_str.empty() ) || ( ! string_is_ok ) || resnum.size() == 0 ) {
@@ -94,7 +94,7 @@ utility::vector1< int >
 ResidueChainVectorOption::values_of( std::string const & value_str ) const
 {
 	bool string_is_ok( false );
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const resnum_and_chain_info = get_resnum_and_chain_and_segid( value_str, string_is_ok );
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const resnum_and_chain_info = get_resnum_and_chain_and_segid( value_str, string_is_ok );
 	if ( !string_is_ok ) {
 		std::cerr << "ERROR: Illegal value for resnum/chain option -" << id()
 			<< " specified: {";

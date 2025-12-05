@@ -401,37 +401,37 @@ bool is_false_string( std::string const & value_str );
 
 /// @brief Compactifies vectors of ints:  1 2 3 9 10 11 to "1-3 9-11"
 std::string
-make_tag_with_dashes( utility::vector1< int > res_vector,
+make_tag_with_dashes( utility::vector1< int > const & res_vector,
 	char const delimiter = ' ' );
 
-// Compactifies vectors of ints and chars (resnum and chain):  1A 2A 3A 9B 10B 11B to "A:1-3 B:9-11"
+/// @brief Compactifies vectors of ints and strings (resnum and chain):  1A 2A 3A 9B 10B 11B to "A:1-3 B:9-11"
 std::string
-make_tag_with_dashes( utility::vector1< int > res_vector,
-	utility::vector1< char > chain_vector,
-	utility::vector1< std::string > segid_vector,
+make_tag_with_dashes( utility::vector1< int > const & res_vector,
+	utility::vector1< std::string > const & chain_vector,
+	utility::vector1< std::string > const & segid_vector,
 	char const delimiter = ' ' );
 
 std::string
-make_segtag_with_dashes( utility::vector1< int > res_vector,
-	utility::vector1< std::string > segid_vector,
+make_segtag_with_dashes( utility::vector1< int > const & res_vector,
+	utility::vector1< std::string > const & segid_vector,
 	char const delimiter = ' ');
 
 std::string
-make_tag( utility::vector1< int > res_vector );
+make_tag( utility::vector1< int > const & res_vector );
 
 /// @brief  converts string like "1-3 20-22" or "A:1-5 B:20-22" to vectors containing resnums and chains.
-std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > >
+std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > >
 get_resnum_and_chain_and_segid( std::string const & s, bool & string_is_ok );
 
 /// @brief  converts string like "1-3 20-22" or "A:1-5 B:20-22" to vectors containing resnums and chains.
-std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string >  >
+std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string >  >
 get_resnum_and_chain( std::string const & s );
 
 /// @brief helper function for get_resnum_and_chain
 bool
 get_resnum_and_chain_from_one_tag( std::string const & tag,
 	utility::vector1< int > & resnum,
-	utility::vector1< char > & chains ,
+	utility::vector1< std::string > & chains ,
 	utility::vector1< std::string > & segids );
 
 /// @brief  converts string like "1-3 20-22" or "A:1-5 B:20-22" to vectors containing resnums and chains.

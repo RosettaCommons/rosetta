@@ -204,7 +204,7 @@ DdGScan::calculate( std::ostream & out, core::pose::Pose const & const_pose ) co
 
 			std::string const res_type( const_pose.residue( resi ).name3() );
 			core::pose::PDBInfoCOP pose_info( const_pose.pdb_info() );
-			char const chain( pose_info->chain( resi ) );
+			std::string chain( pose_info->chain( resi ) );
 			core::Size output_resi = resi;
 			if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
 				output_resi = pose.pdb_info()->number( resi );

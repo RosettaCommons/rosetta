@@ -35,7 +35,7 @@ namespace scoring_grid {
 static basic::Tracer TR( "protocols.qsar.scoring_grid.SingleGrid" );
 
 
-SingleGrid::SingleGrid(std::string const & type) : type_(type),chain_('A')
+SingleGrid::SingleGrid(std::string const & type) : type_(type),chain_("A")
 {}
 
 SingleGrid::~SingleGrid() = default;
@@ -83,12 +83,12 @@ void SingleGrid::deserialize(utility::json_spirit::mObject data)
 
 }
 
-void SingleGrid::set_chain(char chain)
+void SingleGrid::set_chain(std::string const & chain)
 {
 	chain_ = chain;
 }
 
-char SingleGrid::get_chain()
+std::string const & SingleGrid::get_chain()
 {
 	return chain_;
 }
