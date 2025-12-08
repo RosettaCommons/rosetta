@@ -27,10 +27,7 @@ def create_rg_state(init_file, json_file):
         json.dump(value, f)
 
 
-def restore_rg_state(init_file, json_file, restore_rg_state=None):
-    assert isinstance(
-        restore_rg_state, bool
-    ), f"The 'restore_rg_state' keyword argument parameters must be of type `bool`. Received: {type(restore_rg_state)}"
+def maybe_restore_rg_state(init_file, json_file, restore_rg_state):
     pyrosetta.init_from_file(
         init_file,
         restore_rg_state=restore_rg_state,
@@ -44,17 +41,18 @@ def restore_rg_state(init_file, json_file, restore_rg_state=None):
     if restore_rg_state:
         if value == expected_value:
             print(f"Successfully tested that RandomGenerator state was restored: {value} == {expected_value}")
-            sys.exit(0) # Success
+            success = True
         else:
             print(f"Failed test: RandomGenerator state should be restored: {value} != {expected_value}")
-            sys.exit(1) # Failure
+            success = False
     else:
         if value != expected_value:
             print(f"Successfully tested that RandomGenerator state was not restored: {value} != {expected_value}")
-            sys.exit(0) # Success
+            success = True
         else:
             print(f"Failed test: RandomGenerator state should not be restored: {value} == {expected_value}")
-            sys.exit(1) # Failure  
+            success = False
+    sys.exit(0) if success else sys.exit(1)
 
 
 if __name__ == "__main__":
@@ -74,4 +72,4 @@ if __name__ == "__main__":
     if args.create:
         create_rg_state(init_file, json_file)
     else:
-        restore_rg_state(init_file, json_file, restore_rg_state=args.restore)
+        maybe_restore_rg_state(init_file, json_file, args.restore)
