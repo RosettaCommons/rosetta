@@ -887,10 +887,11 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             rg.restoreState(stream)
         else:
             warnings.warn(
-                "The 'rg_state' key is missing from the PyRosetta initialization file! "
-                "Skipping restoration of the RandomGenerator state. Please disable the "
-                "'restore_rg_state' keyword argument to silence this warning while using "
-                "this PyRosetta initialization file.",
+                "The 'rg_state' key is missing from the PyRosetta '{0}' file! ".format(
+                    PyRosettaInitFileParserBase._init_file_extension
+                ) + "Skipping restoration of the RandomGenerator state. Please disable the "
+                + "'restore_rg_state' keyword argument to silence this warning while using "
+                + "this PyRosetta '{0}' file.".format(PyRosettaInitFileParserBase._init_file_extension),
                 UserWarning,
                 stacklevel=5,
             )
