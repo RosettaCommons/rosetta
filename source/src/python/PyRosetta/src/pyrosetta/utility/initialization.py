@@ -53,7 +53,7 @@ class PyRosettaInitFileParserBase(object):
         "options",
         "poses",
         "pyrosetta_build",
-        # "rg_state" is not strictly required to maintain forward compatibility
+        # "rg_state" is not strictly required for backward compatibility
     )
 
     def get_pyrosetta_build(self):
@@ -1045,7 +1045,7 @@ class PyRosettaInitFileParser(object):
                 Default: 200_000_000
             restore_rg_state: An optional `bool` object specifying whether or not to restore the RandomGenerator state if cached in
                 the input '.init' file. This enables continuity of the PyRosetta session's MT19937 internal state from the
-                point at which the original input '.init' file was written, even if the RandomGenerator seed was not explicitly
+                point at which the original input '.init' file was written, whether or not the RandomGenerator seed was explicitly
                 configured by the author(s).
                 Default: True
             database: An optional `str` object representing the path to the Rosetta database. By default, the Rosetta database
