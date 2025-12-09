@@ -31,6 +31,7 @@ _number_of_rosetta_binary_revisions_to_keep_in_git_ = 1
 _number_of_py_rosetta_revisions_to_keep_in_git_ = 1
 _number_of_archive_files_to_keep_ = 8
 _latest_html_ = 'latest.html'
+_release_branches_with_limited_retention_ = 'main commits benchmark release'.split()
 
 download_template = '''\
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
@@ -57,8 +58,9 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
 
     branch = config['branch']
     release_root = config['release_root']
+    release_revision = config['revision']
 
-    package_versioning_name = '{package_name}.{branch}-{revision}'.format(package_name=package_name, branch=config['branch'], revision=config['revision'])
+    package_versioning_name = f'{package_name}.{branch}-{release_revision}'
 
     if package_dir:
         TR('Creating tar.bz2 for {name} as {package_versioning_name}...'.format( **vars() ) )
@@ -84,7 +86,11 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
         # removing old archives and adjusting _latest_html_
         files = [f for f in os.listdir(release_path) if f != _latest_html_  and  f[0] != '.' ]
         files.sort(key=lambda f: os.path.getmtime(release_path+'/'+f))
-        for f in files[:-_number_of_archive_files_to_keep_]: os.remove(release_path+'/'+f)
+
+        if branch in _release_branches_with_limited_retention_:
+            for f in files[:-_number_of_archive_files_to_keep_]:
+                os.remove(release_path+'/'+f)
+
         if files:
             package_file = files[-1]
 
