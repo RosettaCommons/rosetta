@@ -907,6 +907,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         extra_args: Dict[str, Any],
         passkey: bytes,
         resource: Optional[Dict[Any, Any]],
+        priority: Optional[int],
     ) -> Future:
         """Scatter data and return submitted 'user_spawn_thread' future."""
         task_id = uuid.uuid4().hex
@@ -926,7 +927,10 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             broadcast=False,
             hash=False,
         )
-        return client.submit(user_spawn_thread, *scatter, pure=False, resources=resource)
+        if priority is None: # Use default priority in distributed versions >=1.21.0
+            return client.submit(user_spawn_thread, *scatter, pure=False, resources=resource)
+        else:
+            return client.submit(user_spawn_thread, *scatter, pure=False, resources=resource, priority=priority)
 
     def _run(
         self,
@@ -934,6 +938,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         protocols: Any = None,
         clients_indices: Any = None,
         resources: Any = None,
+        priorities: Any = None,
     ) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[Any, Any]], None, None]]:
         """
         Run user-provided PyRosetta protocols on a local or remote compute cluster using
@@ -980,7 +985,13 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                 clients_indices=[0, 1],
                 resources=[{"GPU": 2}, {"MEMORY": 100e9}],
             )
-            
+
+            # Run protocols with depth-first task execution
+            PyRosettaCluster().distribute(
+                protocols=[protocol_1, protocol_2, protocol_3, protocol_4],
+                priorities=[0, 10, 20, 30],
+            )
+
         Args:
             *args: Optional instances of type `types.GeneratorType` or `types.FunctionType`,
                 in the order of protocols to be executed.
@@ -991,7 +1002,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                 Default: None
             clients_indices: An optional `list` or `tuple` object of `int` objects, where each `int` object represents
                 a zero-based index corresponding to the initialized dask `distributed.client.Client` object(s) passed 
-                to the `PyRosettaCluster(clients=...)` class attribute. If not `None`, then the length of the 
+                to the `PyRosettaCluster(clients=...)` keyword argument parameter. If not `None`, then the length of the
                 `clients_indices` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
                 method.
                 Default: None
@@ -1008,14 +1019,37 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                 applied, the protocols will not run. See https://distributed.dask.org/en/stable/resources.html for more
                 information.
                 Default: None
+            priorities: An optional `list` or `tuple` of `int` objects, where each `int` object sets the dask scheduler
+                priority for the corresponding user-defined PyRosetta protocol (i.e., indexed the same as `client_indices`).
+                If `None`, then no explicit priorities are set. If not `None`, then the length of the `priorities` object
+                must equal the number of protocols passed to the `PyRosettaCluster().distribute` method, and each `int`
+                value determines the dask scheduler priority for that protocol's received tasks.
+                Breadth-first task execution (default):
+                    When all user-defined PyRosetta protocols have an identical priority (e.g., `[0] * len(protocols)` or
+                    `None`), then all tasks enter the dask scheduler's queue with equal priority. Under equal priority, dask
+                    mainly schedules tasks in a first-in, first-out manner. When dask worker resources are saturated, this
+                    causes all tasks submitted to upstream protocols to run to completion before tasks are scheduled to run
+                    downstream protocols, producing a breadth-first task execution behavior across user-defined PyRosetta
+                    protocols.
+                Depth-first task execution:
+                    To allow tasks to run through all user-defined PyRosetta protocols before all tasks submitted to
+                    upstream protocols complete, assign increasing priorities to downstream protocols (e.g.,
+                    `list(range(0, len(protocols) * 10, 10))`). Once a task completes an upstream protocol, it is submitted
+                    to the next downstream protocol with a higher priority than tasks still queued for upstream protocols,
+                    so tasks may run through all user-defined PyRosetta protocols to completion as dask worker resources
+                    become available. This produces a depth-first task execution behavior across user-defined PyRosetta
+                    protocols when dask worker resources are saturated.
+                See https://distributed.dask.org/en/stable/priority.html for more information.
+                Default: None
         """
         yield_results = _parse_yield_results(self.yield_results)
         clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
         self._setup_task_security_plugin(clients)
         socket_listener_address, passkey = self._setup_socket_listener(clients)
         compressed_input_packed_pose = self.serializer.compress_packed_pose(self.input_packed_pose)
-        protocols, protocol, seed, clients_index, resource = self._setup_protocols_protocol_seed(
-            args, protocols, clients_indices, resources
+        priorities = self._parse_priorities(priorities)
+        protocols, protocol, seed, clients_index, resource, priority = self._setup_protocols_protocol_seed(
+            args, protocols, clients_indices, resources, priorities
         )
         protocol_name = protocol.__name__
         compressed_protocol = self.serializer.compress_object(protocol)
@@ -1047,6 +1081,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                     extra_args,
                     passkey,
                     resource,
+                    priority,
                 )
                 for _ in range(self.nstruct)
                 for compressed_kwargs, pyrosetta_init_kwargs in (
@@ -1081,8 +1116,8 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                         )
                     if self.filter_results and _is_empty(self.serializer.decompress_packed_pose(compressed_packed_pose)):
                         continue
-                    compressed_kwargs, pyrosetta_init_kwargs, protocol, clients_index, resource = self._setup_kwargs(
-                        kwargs, clients_indices, resources
+                    compressed_kwargs, pyrosetta_init_kwargs, protocol, clients_index, resource, priority = self._setup_kwargs(
+                        kwargs, clients_indices, resources, priorities
                     )
                     protocol_name = protocol.__name__
                     compressed_protocol = self.serializer.compress_object(protocol)
@@ -1097,6 +1132,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                             extra_args,
                             passkey,
                             resource,
+                            priority,
                         )
                     )
                     self.tasks_size += 1
@@ -1112,6 +1148,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         protocols: Any = None,
         clients_indices: Any = None,
         resources: Any = None,
+        priorities: Any = None,
     ) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[Any, Any]], None, None]]:
         if self.sha1 != "":
             logging.warning(
@@ -1127,6 +1164,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             protocols=protocols,
             clients_indices=clients_indices,
             resources=resources,
+            priorities=priorities,
         ):
             yield result
 
@@ -1136,6 +1174,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         protocols: Any = None,
         clients_indices: Any = None,
         resources: Any = None,
+        priorities: Any = None,
     ) -> Optional[NoReturn]:
         self.yield_results = False
         for _ in self._run(
@@ -1143,6 +1182,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             protocols=protocols,
             clients_indices=clients_indices,
             resources=resources,
+            priorities=priorities,
         ):
             pass
 

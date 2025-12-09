@@ -31,6 +31,7 @@ _number_of_rosetta_binary_revisions_to_keep_in_git_ = 1
 _number_of_py_rosetta_revisions_to_keep_in_git_ = 1
 _number_of_archive_files_to_keep_ = 8
 _latest_html_ = 'latest.html'
+_release_branches_with_limited_retention_ = 'main commits benchmark release'.split()
 
 download_template = '''\
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
@@ -57,8 +58,9 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
 
     branch = config['branch']
     release_root = config['release_root']
+    release_revision = config['revision']
 
-    package_versioning_name = '{package_name}.{branch}-{revision}'.format(package_name=package_name, branch=config['branch'], revision=config['revision'])
+    package_versioning_name = f'{package_name}.{branch}-{release_revision}'
 
     if package_dir:
         TR('Creating tar.bz2 for {name} as {package_versioning_name}...'.format( **vars() ) )
@@ -84,26 +86,46 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
         # removing old archives and adjusting _latest_html_
         files = [f for f in os.listdir(release_path) if f != _latest_html_  and  f[0] != '.' ]
         files.sort(key=lambda f: os.path.getmtime(release_path+'/'+f))
-        for f in files[:-_number_of_archive_files_to_keep_]: os.remove(release_path+'/'+f)
+
+        if branch in _release_branches_with_limited_retention_:
+            for f in files[:-_number_of_archive_files_to_keep_]:
+                os.remove(release_path+'/'+f)
+
         if files:
             package_file = files[-1]
 
             with open(release_path+'/'+_latest_html_, 'w') as h: h.write(download_template.format(distr=name, link=package_file))
 
+
             htaccess_file_path = f'{release_path}/.htaccess'
 
-            if os.path.isfile(htaccess_file_path):
-                with open(htaccess_file_path) as f: htaccess = f.read()
+            # # OLD version with substitution, deprecated for now
+            # if os.path.isfile(htaccess_file_path):
+            #     with open(htaccess_file_path) as f: htaccess = f.read()
+            # else:
+            #     htaccess = ''
+            #
+            # redirect_start = 'RedirectMatch 302 (.*).latest$'
+            # redirect_line = redirect_start + ' $1' + package_file
+            # htaccess = re_module.sub(re_module.escape(redirect_start) + '(.*)', redirect_line, htaccess)
+            # if redirect_line not in htaccess: htaccess += '\n' + redirect_line + '\n'
+
+            htaccess = f'RedirectMatch 302 (.*)\\.latest$ $1{package_file}\n'
+
+            if package_file.endswith('.tar.bz2'):
+                # replace PyRosetta4.Release.python39.m1.cxx11thread.serialization.release-410.tar.bz2 with PyRosetta4.Release.python39.m1.cxx11thread.serialization.release-latest.tar.bz2
+                redirect_handle = package_file.partition('-')[0] + '-latest.tar.bz2'
+            elif package_file.endswith('.whl'):
+                # replacing exact version from `pyrosetta-2025.41+release.de3cc17d50-cp39-cp39-macosx_12_0_arm64.whl` with simple `latest` --> `pyrosetta-latest-cp39-cp39-macosx_12_0_arm64.whl`
+                frst_parition = package_file.partition('-')
+                redirect_handle = frst_parition[0] + '-latest-cp' + frst_parition[2].partition('-cp')[2]
             else:
-                htaccess = ''
+                redirect_handle = None
 
-            redirect_start = 'RedirectMatch 302 (.*).latest$'
-            redirect_line = redirect_start + ' $1' + package_file
-            htaccess = re_module.sub(re_module.escape(redirect_start) + '(.*)', redirect_line, htaccess)
+            if redirect_handle:
+                htaccess += f'RedirectMatch 302 (.*){redirect_handle}$ $1{package_file}\n'
+
             print(f'htaccess: {htaccess}')
-
-            if redirect_line not in htaccess: htaccess += '\n' + redirect_line + '\n'
-
             with open(htaccess_file_path, 'w') as f: f.write(htaccess)
 
 

@@ -615,23 +615,26 @@ def produce(**kwargs: Any) -> Optional[NoReturn]:
     """
     `PyRosettaCluster().distribute()` shim requiring the 'protocols' keyword argument, and optionally
     any PyRosettaCluster keyword arguments or the 'clients_indices' keyword argument (when using
-    the `PyRosettaCluster(clients=...)` keyword argument), or the 'resources' keyword argument.
+    the `PyRosettaCluster(clients=...)` keyword argument), or the 'resources' keyword argument, or
+    the 'priorities' keyword argument.
 
     Args:
         **kwargs: See `PyRosettaCluster` docstring. The keyword arguments must also include
             'protocols', an iterable object of function or generator objects specifying
             an ordered sequence of user-defined PyRosetta protocols to execute for
             the simulation (see `PyRosettaCluster().distribute` docstring). The keyword arguments
-            may also optionally include 'clients_indices' or 'resources' (see
+            may also optionally include 'clients_indices', 'resources', and 'priorities' (see
             `PyRosettaCluster().distribute` docstring).
     """
     protocols = kwargs.pop("protocols", None)
     clients_indices = kwargs.pop("clients_indices", None)
     resources = kwargs.pop("resources", None)
+    priorities = kwargs.pop("priorities", None)
     PyRosettaCluster(**kwargs).distribute(
         protocols=protocols,
         clients_indices=clients_indices,
         resources=resources,
+        priorities=priorities,
     )
 
 run: Callable[..., Optional[NoReturn]] = produce
@@ -641,10 +644,12 @@ def iterate(**kwargs: Any) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[A
     protocols = kwargs.pop("protocols", None)
     clients_indices = kwargs.pop("clients_indices", None)
     resources = kwargs.pop("resources", None)
+    priorities = kwargs.pop("priorities", None)
     for result in PyRosettaCluster(**kwargs).generate(
         protocols=protocols,
         clients_indices=clients_indices,
         resources=resources,
+        priorities=priorities,
     ):
         yield result
 
