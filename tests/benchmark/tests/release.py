@@ -32,6 +32,7 @@ _number_of_py_rosetta_revisions_to_keep_in_git_ = 1
 _number_of_archive_files_to_keep_ = 8
 _latest_html_ = 'latest.html'
 _release_branches_with_limited_retention_ = 'main commits benchmark release'.split()
+_release_branches_with_persistent_wheel_archives_ = 'release-quarterly'.split()
 
 download_template = '''\
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
@@ -46,7 +47,7 @@ def get_platform_release_name(platform):
     return '.'.join([platform['os']]+platform['extras']) + addon[ platform['os'].partition('-')[0] ]
 
 
-def release(name, package_name, package_dir, working_dir, platform, config, release_as_git_repository=True, file=None, use_rosetta_versioning=True):
+def release(name, package_name, package_dir, working_dir, platform, config, release_as_git_repository=True, file=None, use_rosetta_versioning=True, package_build_kind='unknown'):
     ''' Create a release packge: tar.bz2 + git repository
         name - must be a name of what is released without any suffices: rosetta, PyRosetta etc
         package_name - base name for archive (without tar.bz2) that should include name, os, revision, branch + other relevant platform info
@@ -79,7 +80,14 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
     release_path = f'{release_root}/{name}/archive/{branch}/{package_name}'
     if not os.path.isdir(release_path): os.makedirs(release_path)
 
+    wheel_archives_release_path = f'{release_root}/{name}/archive/{branch}/wheels/{package_build_kind}'
+
     with FileLock( f'{release_path}/.release.lock' ):
+
+        if archive.endswith('.whl') and branch in _release_branches_with_persistent_wheel_archives_:
+            if not os.path.isdir(wheel_archives_release_path): os.makedirs(wheel_archives_release_path)
+            shutil.copy(archive, wheel_archives_release_path + '/' + os.path.basename(archive) )
+
         if use_rosetta_versioning: shutil.move(archive, release_path + '/' + package_versioning_name + '.tar.bz2')
         else: shutil.move(archive, release_path + '/' + os.path.basename(archive) )
 
@@ -87,7 +95,7 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
         files = [f for f in os.listdir(release_path) if f != _latest_html_  and  f[0] != '.' ]
         files.sort(key=lambda f: os.path.getmtime(release_path+'/'+f))
 
-        if branch in _release_branches_with_limited_retention_:
+        if True or branch in _release_branches_with_limited_retention_:
             for f in files[:-_number_of_archive_files_to_keep_]:
                 os.remove(release_path+'/'+f)
 
@@ -543,7 +551,16 @@ def pyrosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_driv
 
                 execute('Creating PyRosetta distribution Wheel package...', f'{whell_environment.activate} && cd {package_dir}/setup && python setup.py sdist bdist_wheel')
                 wheel_file_name = [ f for f in os.listdir( f'{package_dir}/setup/dist' ) if f.endswith('.whl') ][0]
-                release('PyRosetta4', release_name+'.wheel', package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=f'{package_dir}/setup/dist/{wheel_file_name}', use_rosetta_versioning=False)
+                release('PyRosetta4',
+                        release_name+'.wheel',
+                        package_dir=None, working_dir=working_dir,
+                        platform=platform,
+                        config=config,
+                        release_as_git_repository=False,
+                        file=f'{package_dir}/setup/dist/{wheel_file_name}',
+                        use_rosetta_versioning=False,
+                        package_build_kind = '.'.join( [kind] + platform['extras'] ).lower()
+                        )
 
             if os.path.isdir(package_dir): shutil.rmtree(package_dir)  # removing package to keep size of database small
 
