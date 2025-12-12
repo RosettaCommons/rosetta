@@ -53,6 +53,7 @@ class PyRosettaInitFileParserBase(object):
         "options",
         "poses",
         "pyrosetta_build",
+        # "rg_state" is not strictly required for backward compatibility
     )
 
     def get_pyrosetta_build(self):
@@ -259,6 +260,19 @@ class PyRosettaInitFileSerializer(object):
         return hashlib.md5(
             PyRosettaInitFileSerializer.to_json(init_dict).encode(PyRosettaInitFileSerializer._encoding)
         ).hexdigest()
+
+    def encode_rg_state(self, rg_state_str):
+        rg_state_bytes = zlib.compress(
+            rg_state_str.encode(PyRosettaInitFileSerializer._encoding),
+            PyRosettaInitFileSerializer._compression_level,
+        )
+        return self.encode_bytestring(rg_state_bytes)
+
+    def decode_rg_state(self, rg_state):
+        rg_state_bytes = self.decode_binary(rg_state)
+        return zlib.decompress(rg_state_bytes).decode(
+            PyRosettaInitFileSerializer._encoding, errors=PyRosettaInitFileSerializer._decode_errors
+        )
 
 
 class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSerializer):
@@ -502,6 +516,13 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
 
         return results
 
+    def get_rg_state(self):
+        rg = pyrosetta.rosetta.numeric.random.rg()
+        stream = pyrosetta.rosetta.std.ostringstream()
+        rg.saveState(stream)
+        rg_state_str = stream.str()
+        return self.encode_rg_state(rg_state_str)
+
     def print_cached_files(self, output_filename, dry_run):
         if dry_run:
             print("Dry run dump PyRosetta '{0}' file:".format(self._init_file_extension))
@@ -543,6 +564,7 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
         encoded_options_dict.pop(self._database_option_name, None)
         init_data["num_files"] = len(self.cached_files)
         init_data["num_poses"] = len(init_data["poses"])
+        init_data["rg_state"] = self.get_rg_state()
         data_dict = {
             **init_data,
             "options": encoded_options_dict,
@@ -668,6 +690,14 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             raise ValueError(
                 "The 'max_decompressed_bytes' keyword argument parameter must be greater than 0 bytes. Received: {0}".format(
                     kwargs["max_decompressed_bytes"]
+                )
+            )
+        if kwargs["restore_rg_state"] is None:
+            kwargs["restore_rg_state"] = True
+        if not isinstance(kwargs["restore_rg_state"], bool):
+            raise TypeError(
+                "The 'restore_rg_state' keyword argument parameter must be a `bool` object. Received: {0}".format(
+                    type(kwargs["restore_rg_state"])
                 )
             )
         if kwargs["database"] is None:
@@ -849,6 +879,23 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
             ]
         )
 
+    def restore_rg_state(self):
+        if "rg_state" in self.init_dict:
+            rng_state_str = self.decode_rg_state(self.init_dict["rg_state"])
+            stream = pyrosetta.rosetta.std.istringstream(rng_state_str)
+            rg = pyrosetta.rosetta.numeric.random.rg()
+            rg.restoreState(stream)
+        else:
+            warnings.warn(
+                "The 'rg_state' key is missing from the PyRosetta '{0}' file! ".format(
+                    PyRosettaInitFileParserBase._init_file_extension
+                ) + "Skipping restoration of the RandomGenerator state. Please disable the "
+                + "'restore_rg_state' keyword argument to silence this warning while using "
+                + "this PyRosetta '{0}' file.".format(PyRosettaInitFileParserBase._init_file_extension),
+                UserWarning,
+                stacklevel=5,
+            )
+
     def print_results(self):
         if self.kwargs["dry_run"]:
             print("Dry run PyRosetta initialization from file: {0}".format(self.init_file))
@@ -917,6 +964,8 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
                 notebook=self.kwargs["notebook"],
                 silent=self.kwargs["silent"],
             )
+            if self.kwargs["restore_rg_state"]:
+                self.restore_rg_state()
 
 
 class PyRosettaInitDictReader(PyRosettaInitFileReader):
@@ -958,6 +1007,7 @@ class PyRosettaInitFileParser(object):
         skip_corrections=None,
         relative_paths=None,
         max_decompressed_bytes=None,
+        restore_rg_state=None,
         database=None,
         verbose=None,
         set_logging_handler=None,
@@ -993,6 +1043,11 @@ class PyRosettaInitFileParser(object):
                 input file (with a default of 200 MB). If a PyRosetta input file in the input '.init' file exceeds this buffer size
                 upon decompression, then a `BufferError` is intentionally raised as a precaution.
                 Default: 200_000_000
+            restore_rg_state: An optional `bool` object specifying whether or not to restore the RandomGenerator state if cached in
+                the input '.init' file. This enables continuity of the PyRosetta session's MT19937 internal state from the
+                point at which the original input '.init' file was written, whether or not the RandomGenerator seed was explicitly
+                configured by the author(s).
+                Default: True
             database: An optional `str` object representing the path to the Rosetta database. By default, the Rosetta database
                 is found using `pyrosetta._rosetta_database_from_env()`, but if the search fails then the Rosetta database path
                 may be manually input here.
@@ -1019,6 +1074,7 @@ class PyRosettaInitFileParser(object):
             skip_corrections=skip_corrections,
             relative_paths=relative_paths,
             max_decompressed_bytes=max_decompressed_bytes,
+            restore_rg_state=restore_rg_state,
             database=database,
             verbose=verbose,
             set_logging_handler=set_logging_handler,
@@ -1085,6 +1141,7 @@ class PyRosettaInitFileParser(object):
             skip_corrections=False,
             relative_paths=relative_paths,
             max_decompressed_bytes=max_decompressed_bytes,
+            restore_rg_state=None,
             database=database,
             verbose=False,
             set_logging_handler=None,
