@@ -528,6 +528,7 @@ def reproduce(
                 'relative_paths': True,
                 'dry_run': False,
                 'max_decompressed_bytes': pow(2, 30), # 1 GiB
+                'restore_rg_state': True,
                 'database': None,
                 'verbose': True,
                 'set_logging_handler': 'logging',
@@ -554,6 +555,7 @@ def reproduce(
                 relative_paths=True,
                 dry_run=False,
                 max_decompressed_bytes=pow(2, 30), # 1 GiB
+                restore_rg_state=True,
                 database=None,
                 verbose=True,
                 set_logging_handler="logging",
