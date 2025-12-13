@@ -60,14 +60,14 @@ public:
 	/// @brief set resolution (must be done before initialization)
 	void resolution(core::Real resolution) { resolution_ = resolution; }
 	/// @brief set ligand chain (must be done before initialization)
-	void chain(char chain) { chain_ = chain; }
+	void chain(std::string const & chain) { chain_ = chain; }
 
 	/// @brief get grid width
 	core::Real width() const { return width_; }
 	/// @brief get grid resoultion
 	core::Real resolution() const { return resolution_; }
 	/// @brief get ligand chain
-	char chain() const { return chain_; }
+	std::string const & chain() const { return chain_; }
 
 	/// @brief set normalization function
 	void set_normalization_function(std::string norm_function_name);
@@ -176,7 +176,7 @@ private:
 
 	core::Real width_ = 40;
 	core::Real resolution_ = 0.25;
-	char chain_ = 'X';
+	std::string chain_ = "X";
 
 	qsar::qsarMapCOP qsar_map_;
 	ScoreNormalizationCOP norm_function_;

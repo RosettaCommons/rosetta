@@ -105,63 +105,63 @@ public:
 
 		// Standard method.
 
-		rmsds = protocols::ligand_docking::get_ligand_RMSDs('X', *pose1_, *pose2_ );
+		rmsds = protocols::ligand_docking::get_ligand_RMSDs("X", *pose1_, *pose2_ );
 		TS_ASSERT_DELTA( rmsds["ligand_rms_no_super_X"], 10.0 , delta_);
-		rmsds = protocols::ligand_docking::get_ligand_RMSDs('X', *pose1_, *pose3_ );
+		rmsds = protocols::ligand_docking::get_ligand_RMSDs("X", *pose1_, *pose3_ );
 		TS_ASSERT_DELTA( rmsds["ligand_rms_no_super_X"], 20.0 , delta_);
-		rmsds = protocols::ligand_docking::get_ligand_RMSDs('X', *pose1_, *pose4_ );
+		rmsds = protocols::ligand_docking::get_ligand_RMSDs("X", *pose1_, *pose4_ );
 		TS_ASSERT_DELTA( rmsds["ligand_rms_no_super_X"], 0.1 , delta_);
 
 		// Ensemble methods
 		core::pose::Pose refpose( *pose3_ );
 
-		rmsds = protocols::ligand_docking::get_ligand_RMSDs('X', *pose1_, refpose, "", true );
+		rmsds = protocols::ligand_docking::get_ligand_RMSDs("X", *pose1_, refpose, "", true );
 		TS_ASSERT_DELTA( rmsds["ligand_rms_no_super_X"], 20.0 , delta_);
 
 		refpose.append_pose_by_jump( *pose2_, 1 );
-		rmsds = protocols::ligand_docking::get_ligand_RMSDs('X', *pose1_, refpose, "", true );
+		rmsds = protocols::ligand_docking::get_ligand_RMSDs("X", *pose1_, refpose, "", true );
 		TS_ASSERT_DELTA( rmsds["ligand_rms_no_super_X"], 10.0 , delta_);
 
 		refpose.append_pose_by_jump( *pose4_, 1 );
-		rmsds = protocols::ligand_docking::get_ligand_RMSDs('X', *pose1_, refpose, "", true );
+		rmsds = protocols::ligand_docking::get_ligand_RMSDs("X", *pose1_, refpose, "", true );
 		TS_ASSERT_DELTA( rmsds["ligand_rms_no_super_X"], 0.1 , delta_);
 
 		refpose.append_pose_by_jump( *pose1_, 1 );
-		rmsds = protocols::ligand_docking::get_ligand_RMSDs('X', *pose1_, refpose, "", true );
+		rmsds = protocols::ligand_docking::get_ligand_RMSDs("X", *pose1_, refpose, "", true );
 		TS_ASSERT_DELTA( rmsds["ligand_rms_no_super_X"], 0.0 , delta_);
 
 		// We still error out if we have mis-matched entries and aren't using the ensemble method
 		set_throw_on_next_assertion_failure();
-		TS_ASSERT_THROWS_ANYTHING( protocols::ligand_docking::get_ligand_RMSDs('X', *pose1_, refpose, "", false ) );
+		TS_ASSERT_THROWS_ANYTHING( protocols::ligand_docking::get_ligand_RMSDs("X", *pose1_, refpose, "", false ) );
 	}
 
 	void test_ligand_travel() {
 		std::map< std::string, core::Real > travel;
 
 		// Standard method.
-		travel = protocols::ligand_docking::get_ligand_travel('X', *pose1_, *pose2_ );
+		travel = protocols::ligand_docking::get_ligand_travel("X", *pose1_, *pose2_ );
 		TS_ASSERT_DELTA( travel["ligand_centroid_travel_X"], 10.0 , delta_);
-		travel = protocols::ligand_docking::get_ligand_travel('X', *pose1_, *pose3_ );
+		travel = protocols::ligand_docking::get_ligand_travel("X", *pose1_, *pose3_ );
 		TS_ASSERT_DELTA( travel["ligand_centroid_travel_X"], 20.0 , delta_);
-		travel = protocols::ligand_docking::get_ligand_travel('X', *pose1_, *pose4_ );
+		travel = protocols::ligand_docking::get_ligand_travel("X", *pose1_, *pose4_ );
 		TS_ASSERT_DELTA( travel["ligand_centroid_travel_X"], 0.1 , delta_);
 
 		// Ensemble methods
 		core::pose::Pose refpose( *pose3_ );
 
-		travel = protocols::ligand_docking::get_ligand_travel('X', *pose1_, refpose, "", true );
+		travel = protocols::ligand_docking::get_ligand_travel("X", *pose1_, refpose, "", true );
 		TS_ASSERT_DELTA( travel["ligand_centroid_travel_X"], 20.0 , delta_);
 
 		refpose.append_pose_by_jump( *pose2_, 1 );
-		travel = protocols::ligand_docking::get_ligand_travel('X', *pose1_, refpose, "", true );
+		travel = protocols::ligand_docking::get_ligand_travel("X", *pose1_, refpose, "", true );
 		TS_ASSERT_DELTA( travel["ligand_centroid_travel_X"], 10.0 , delta_);
 
 		refpose.append_pose_by_jump( *pose4_, 1 );
-		travel = protocols::ligand_docking::get_ligand_travel('X', *pose1_, refpose, "", true );
+		travel = protocols::ligand_docking::get_ligand_travel("X", *pose1_, refpose, "", true );
 		TS_ASSERT_DELTA( travel["ligand_centroid_travel_X"], 0.1 , delta_);
 
 		refpose.append_pose_by_jump( *pose1_, 1 );
-		travel = protocols::ligand_docking::get_ligand_travel('X', *pose1_, refpose, "", true );
+		travel = protocols::ligand_docking::get_ligand_travel("X", *pose1_, refpose, "", true );
 		TS_ASSERT_DELTA( travel["ligand_centroid_travel_X"], 0.0 , delta_);
 	}
 

@@ -32,18 +32,18 @@ namespace inv_kin_lig_loop_design {
 
 const char* chain_chars = " ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890"; // this is kind of dumb
 
-ResID::ResID() : chain_id('_'), res_num(0) {}
+ResID::ResID() : chain_id("_"), res_num(0) {}
 
-ResID::ResID( char chain_id, int res_num ) : chain_id(chain_id), res_num(res_num) {
-	if ( this->chain_id == ' ' ) {
-		this->chain_id = '_';
+ResID::ResID( std::string const & chain_id, int res_num ) : chain_id(chain_id), res_num(res_num) {
+	if ( this->chain_id == " " ) {
+		this->chain_id = "_";
 	}
 }
 
-ResID::ResID( core::conformation::Residue const& r ) : chain_id( chain_chars[ r.chain() ] ), res_num(r.seqpos()) {
+ResID::ResID( core::conformation::Residue const& r ) : chain_id( std::string{chain_chars[ r.chain() ]} ), res_num(r.seqpos()) {
 	// !!! don't assume that this will match the resid obtained directly from the pdb
-	if ( chain_id == ' ' ) {
-		chain_id = '_';
+	if ( chain_id == " " ) {
+		chain_id = "_";
 	}
 }
 
@@ -55,27 +55,22 @@ bool ResID::operator<(ResID const& other ) const {
 	return chain_id < other.chain_id || (chain_id == other.chain_id && res_num < other.res_num );
 }
 
-//   bool operator<(ResID const& a, ResID const& b ) {
-//     return a::operator<( b );
-//   }
-
 istream& operator>>(istream& in, ResID& res_id ) {
 
 	std::string s;
 	in >> s;
 
 	size_t p0 = s.find(':');
-	//size_t p1 = s.find(':',p0+1);
-	debug_assert( p0 == 1 );
+	debug_assert( p0 != std::string::npos );
 	debug_assert( s.size() >= 2 );
 
+	if ( p0 == 0 ) {
+		res_id.chain_id = "_";
+	} else {
+		res_id.chain_id = s.substr(0,p0); // NB: this will never be " "
+	}
 
-	res_id.chain_id = s[0]; // NB: this will never be " "
-	//res_id.res_num  = atoi( s.substr(p0+1,p1).c_str() );
-	res_id.res_num  = atoi( s.substr(p0+1,s.size()).c_str() );
-	//     if( p1 < s.size() ) {
-	//       name = AtomType( s.substr(p1) );
-	//     }
+	res_id.res_num  = std::stoi( s.substr(p0+1,s.size()) );
 
 	return in;
 }

@@ -1595,12 +1595,12 @@ void NonPlaidFingerprint::set_origin_from_residue(core::pose::Pose const & prote
 	using namespace basic::options;
 	std::string const resid(option[ OptionKeys::fingerprint::origin_res_num ]);
 	int pdb_number;
-	char chain = ' ';
+	std::string chain = " ";
 	std::size_t fpos( resid.find(':') );
 	if ( fpos != std::string::npos ) {
 		pdb_number = ObjexxFCL::int_of( resid.substr(0,fpos) );
 		if ( fpos != resid.size()-1 ) {
-			chain = resid[ fpos+1 ];
+			chain = resid.substr( fpos+1 );
 		}
 	} else {
 		pdb_number = ObjexxFCL::int_of( resid );
@@ -1622,7 +1622,7 @@ void NonPlaidFingerprint::set_origin_from_residue(core::pose::Pose const & prote
 	return;
 }
 
-core::Size NonPlaidFingerprint::get_pose_resnum(int const pdbnum, char const pdbchn, core::pose::Pose const & ps) {
+core::Size NonPlaidFingerprint::get_pose_resnum(int const pdbnum, std::string const & pdbchn, core::pose::Pose const & ps) {
 
 	for ( core::Size j = 1; j <= ps.size(); ++j ) {
 		if ( ( ps.pdb_info()->chain(j) == pdbchn ) && (ps.pdb_info()->number(j) == pdbnum) ) {

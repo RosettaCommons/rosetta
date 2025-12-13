@@ -294,8 +294,8 @@ public: // tests
 		make_pose_from_sequence(pose2, "ST", "fa_standard");
 		pose2.pdb_info(utility::pointer::make_shared< PDBInfo >(pose2));
 
-		char pose2_chain = 'B';
-		pose2.pdb_info()->set_chains(pose2_chain);
+		std::string pose2_chain = "B";
+		pose2.pdb_info()->set_all_chains(pose2_chain);
 
 		Pose work_pose(pose);
 		work_pose.append_pose_by_jump(pose2, 1);

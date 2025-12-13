@@ -221,7 +221,7 @@ set_basic_dock_options( protocols::electron_density::DockPDBIntoDensityMoverOP c
 				for ( core::Size j = cut_nativeOP->size(); j > 0 ; --j ) {
 					if ( cut_nativeOP->residue(j).aa() == core::chemical::aa_vrt || cut_nativeOP->size() == 1 ) continue;
 					int nat_resnum = cut_nativeOP->pdb_info()->number(j);
-					char nat_chain = cut_nativeOP->pdb_info()->chain(j);
+					std::string nat_chain = cut_nativeOP->pdb_info()->chain(j);
 					core::Size model_posenum = modelOP->pdb_info()->pdb2pose( nat_chain, nat_resnum );
 					//int r2_resnum = r2->pdb_info()->number(r2_posenum);
 					// cut if no alignment

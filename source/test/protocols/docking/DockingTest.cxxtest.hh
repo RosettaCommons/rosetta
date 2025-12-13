@@ -128,7 +128,8 @@ public:
 		UT << "Testing DockingProtocol.setup_foldtree()for multichain..."<< std::endl;
 		core::import_pose::pose_from_file( multichain_pose, "protocols/docking/DockingMultiChain.pdb" , core::import_pose::PDB_file);
 		DockingProtocolOP docking_protocol2( new DockingProtocol() );
-		protocols::docking::setup_foldtree( multichain_pose, "AB_E", docking_protocol2->movable_jumps() );
+		core::pose::DockingPartners interface = core::pose::DockingPartners::docking_partners_from_string("AB_E");
+		protocols::docking::setup_foldtree( multichain_pose, interface, docking_protocol2->movable_jumps() );
 		UT << multichain_pose.fold_tree() << std::endl;
 
 		UT << "Testing interface-dependant scoring for multichain docking..."<<std::endl;
