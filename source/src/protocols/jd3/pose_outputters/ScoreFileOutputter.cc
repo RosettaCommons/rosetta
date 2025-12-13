@@ -131,7 +131,7 @@ ScoreFileOutputter::write_output(
 	// buffer the score file output and then write out the contents
 	// in "flush," which is called only sporadically
 
-	sfd.write_pose( pose, score_map, sfspec.pose_tag(), string_map );
+	sfd.write_scorefile( sfspec.pose_tag(), score_map, string_map );
 }
 
 void

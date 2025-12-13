@@ -17,7 +17,6 @@
 
 // mini headers
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/io/raw_data/Raw.fwd.hh>
 #include <core/io/raw_data/RawFileData.hh>
 
@@ -42,11 +41,19 @@ public:
 		std::map < std::string, std::string > const & string_map = ( std::map < std::string, std::string > () )
 	);
 
-	bool write_pose(
-		const core::pose::Pose & pose,
-		std::map < std::string, core::Real > const & score_map,
+	/// @brief write the given data to a scorefile
+	bool write_scorefile(
 		std::string tag,
-		std::map < std::string, std::string > const & string_map = ( std::map < std::string, std::string > () )
+		std::map < std::string, core::Real > const & score_map,
+		std::map < std::string, std::string > const & string_map,
+		bool use_json
+	);
+
+	/// @brief write the given data to a scorefile, autodetecting the format.
+	bool write_scorefile(
+		std::string tag,
+		std::map < std::string, core::Real > const & score_map,
+		std::map < std::string, std::string > const & string_map
 	);
 
 private:
