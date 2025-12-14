@@ -80,30 +80,35 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
     release_path = f'{release_root}/{name}/archive/{branch}/{package_name}'
     if not os.path.isdir(release_path): os.makedirs(release_path)
 
-    wheel_archives_release_path = f'{release_root}/{name}/archive/{branch}/wheels/{package_build_kind}'
-
-    wheel_archives_latest_path = f'{release_root}/{name}/archive/{branch}/wheels/latest.{package_build_kind}'
 
     with FileLock( f'{release_path}/.release.lock' ):
 
-        if archive.endswith('.whl'):
-            if not os.path.isdir(wheel_archives_latest_path): os.makedirs(wheel_archives_latest_path)
+        if use_rosetta_versioning:
+            shutil.move(archive, release_path + '/' + package_versioning_name + '.tar.bz2')
 
-            dst = wheel_archives_latest_path + '/' + os.path.basename(archive)
-            src = f'../{package_build_kind}/' + os.path.basename(archive)
+        else:
 
-            if os.path.lexists(dst):
-                    os.unlink(dst)
-            os.symlink(src, dst)
+            if archive.endswith('.whl'):
 
+                if branch in _release_branches_with_persistent_wheel_archives_:
+                    wheel_archives_release_path = f'{release_root}/{name}/archive/{branch}/wheels/{package_build_kind}'
 
-            if branch in _release_branches_with_persistent_wheel_archives_:
-                if not os.path.isdir(wheel_archives_release_path): os.makedirs(wheel_archives_release_path)
-                shutil.copy(archive, wheel_archives_release_path + '/' + os.path.basename(archive) )
+                    if not os.path.isdir(wheel_archives_release_path): os.makedirs(wheel_archives_release_path)
+                    shutil.move(archive, wheel_archives_release_path + '/' + os.path.basename(archive) )
 
+                else:
+                    wheel_archives_latest_path = f'{release_root}/{name}/archive/{branch}/latest.{package_build_kind}'
 
-        if use_rosetta_versioning: shutil.move(archive, release_path + '/' + package_versioning_name + '.tar.bz2')
-        else: shutil.move(archive, release_path + '/' + os.path.basename(archive) )
+                    if not os.path.isdir(wheel_archives_latest_path): os.makedirs(wheel_archives_latest_path)
+
+                    dst = wheel_archives_latest_path + '/' + os.path.basename(archive)
+                    src = f'../{package_name}/' + os.path.basename(archive)
+
+                    if os.path.lexists(dst):
+                            os.unlink(dst)
+                    os.symlink(src, dst)
+
+                    shutil.move(archive, release_path + '/' + os.path.basename(archive) )
 
 
         # removing old archives and adjusting _latest_html_
