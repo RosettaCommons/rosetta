@@ -93,23 +93,23 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
 
             if archive.endswith('.whl'):
 
-                if branch in _release_branches_with_persistent_wheel_archives_:
-                    pass
-                    # wheel_archives_release_path = f'{release_root}/{name}/archive/{branch}/wheels/{package_build_kind}'
-                    # if not os.path.isdir(wheel_archives_release_path): os.makedirs(wheel_archives_release_path)
-                    # shutil.move(archive, wheel_archives_release_path + '/' + os.path.basename(archive) )
-
-                else:
-                    wheel_archives_latest_path = f'{release_root}/{name}/archive/{branch}/latest.{package_build_kind}'
-
-                    if not os.path.isdir(wheel_archives_latest_path): os.makedirs(wheel_archives_latest_path)
-
-                    dst = wheel_archives_latest_path + '/' + os.path.basename(archive)
-                    src = f'../{package_name}/' + os.path.basename(archive)
-
-                    if os.path.lexists(dst):
-                            os.unlink(dst)
-                    os.symlink(src, dst)
+                # if branch in _release_branches_with_persistent_wheel_archives_:
+                #     pass
+                #     # wheel_archives_release_path = f'{release_root}/{name}/archive/{branch}/wheels/{package_build_kind}'
+                #     # if not os.path.isdir(wheel_archives_release_path): os.makedirs(wheel_archives_release_path)
+                #     # shutil.move(archive, wheel_archives_release_path + '/' + os.path.basename(archive) )
+                #
+                # else:
+                #     wheel_archives_latest_path = f'{release_root}/{name}/archive/{branch}/latest.{package_build_kind}'
+                #
+                #     if not os.path.isdir(wheel_archives_latest_path): os.makedirs(wheel_archives_latest_path)
+                #
+                #     dst = wheel_archives_latest_path + '/' + os.path.basename(archive)
+                #     src = f'../{package_name}/' + os.path.basename(archive)
+                #
+                #     if os.path.lexists(dst):
+                #             os.unlink(dst)
+                #     os.symlink(src, dst)
 
                 shutil.move(archive, release_path + '/' + os.path.basename(archive) )
 
