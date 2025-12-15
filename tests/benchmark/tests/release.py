@@ -77,9 +77,12 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
         assert archive.endswith('.tar.bz2')
 
 
-    release_path = f'{release_root}/{name}/archive/{branch}/{package_name}'
-    if not os.path.isdir(release_path): os.makedirs(release_path)
+    if archive.endswith('.whl') and branch in _release_branches_with_persistent_wheel_archives_:
+        release_path = f'{release_root}/{name}/archive/{branch}/{package_build_kind}'
+    else:
+        release_path = f'{release_root}/{name}/archive/{branch}/{package_name}'
 
+    if not os.path.isdir(release_path): os.makedirs(release_path)
 
     with FileLock( f'{release_path}/.release.lock' ):
 
@@ -91,10 +94,10 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
             if archive.endswith('.whl'):
 
                 if branch in _release_branches_with_persistent_wheel_archives_:
-                    wheel_archives_release_path = f'{release_root}/{name}/archive/{branch}/wheels/{package_build_kind}'
-
-                    if not os.path.isdir(wheel_archives_release_path): os.makedirs(wheel_archives_release_path)
-                    shutil.move(archive, wheel_archives_release_path + '/' + os.path.basename(archive) )
+                    pass
+                    # wheel_archives_release_path = f'{release_root}/{name}/archive/{branch}/wheels/{package_build_kind}'
+                    # if not os.path.isdir(wheel_archives_release_path): os.makedirs(wheel_archives_release_path)
+                    # shutil.move(archive, wheel_archives_release_path + '/' + os.path.basename(archive) )
 
                 else:
                     wheel_archives_latest_path = f'{release_root}/{name}/archive/{branch}/latest.{package_build_kind}'
@@ -108,7 +111,7 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
                             os.unlink(dst)
                     os.symlink(src, dst)
 
-                    shutil.move(archive, release_path + '/' + os.path.basename(archive) )
+                shutil.move(archive, release_path + '/' + os.path.basename(archive) )
 
 
         # removing old archives and adjusting _latest_html_
@@ -116,7 +119,7 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
         files.sort(key=lambda f: os.path.getmtime(release_path+'/'+f))
 
 
-        if True or branch in _release_branches_with_limited_retention_:
+        if branch in _release_branches_with_limited_retention_:
             for f in files[:-_number_of_archive_files_to_keep_]:
                 os.remove(release_path+'/'+f)
 
@@ -556,7 +559,8 @@ def pyrosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_driv
 
             execute('Creating PyRosetta distribution package...', '{build_command_line} -sd --create-package {package_dir}'.format(**vars()))
 
-            release('PyRosetta4', release_name, package_dir, working_dir, platform, config, release_as_git_repository = True if kind in [] else False )
+            if config['branch'] not in _release_branches_with_persistent_wheel_archives_:
+                release('PyRosetta4', release_name, package_dir, working_dir, platform, config, release_as_git_repository = True if kind in [] else False )
 
             # releasing PyMOL-RosettaServer scripts
             release('PyMOL-RosettaServer', 'PyMOL-RosettaServer.python2',        package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=f'{package_dir}/PyMOL-RosettaServer.py',                use_rosetta_versioning=False)
