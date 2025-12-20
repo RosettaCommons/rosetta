@@ -6,6 +6,7 @@
 *.pydevproject
 .DS_Store
 *.pyc
+*.pyi
 *.o
 *.so
 *.dylib

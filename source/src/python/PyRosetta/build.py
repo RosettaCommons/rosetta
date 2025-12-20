@@ -754,6 +754,20 @@ def generate_version_file(rosetta_source_path, file_name):
         #                    week    = 'unknown',
         #     ), f, sort_keys=True, indent=2)
 
+def generate_stubs(rosetta_source_path):
+    try: 
+        from pybind11_stubgen import main
+    except ImportError:
+        print("Error: Type stub generation requires pybind11-stubgen installed!")
+        sys.exit(1) #TODO: install pybind11-stubgen if not present? Include as submodule?
+    build_dir = (get_binding_build_root(rosetta_source_path, build=True))
+    try:
+        sys.path.append(build_dir)
+        main(['pyrosetta','-o','stubs']) #generate stubs
+        dir_util_module.copy_tree('stubs/pyrosetta/rosetta',build_dir+'/pyrosetta/rosetta') #only copy the stubs for the core rosetta features, since all other files are pure python
+    finally:
+        sys.path.pop(-1) #remove build dir from sys.path
+
 
 _documentation_version_template_ = '''
 
@@ -883,6 +897,8 @@ def main(args):
 
     parser.add_argument('-p', '--create-package', default='', help='Create PyRosetta Python package at specified path (default is to skip creating package)')
     parser.add_argument('--create-wheel', default='', help='Create python wheel in the specified directory. (default is to skip creating wheel)')
+    
+    parser.add_argument('--stubs',action="store_true",help='Generate python type stub (*.pyi) files in build directory using pybind11-stubgen')
 
     parser.add_argument('--python-include-dir', default=None, help='Path to python C headers. Use this if CMake fails to autodetect it')
     parser.add_argument('--python-lib', default=None, help='Path to python library. Use this if CMake fails to autodetect it')
@@ -956,6 +972,7 @@ def main(args):
     if Options.skip_building_phase: print('Option --skip-building-phase is supplied, skipping building phase...')
     else: build_generated_bindings(rosetta_source_path)
 
+    if Options.stubs: generate_stubs(rosetta_source_path)
     if Options.documentation: generate_documentation(rosetta_source_path, Options.documentation, Options.version)
     if Options.create_package: create_package(rosetta_source_path, Options.create_package)
     if Options.create_wheel: create_wheel(rosetta_source_path, Options.create_wheel)
