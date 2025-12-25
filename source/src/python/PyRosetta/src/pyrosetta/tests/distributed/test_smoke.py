@@ -14,6 +14,7 @@ import pyrosetta.distributed.io as io
 import pyrosetta.distributed.packed_pose as packed_pose
 import pyrosetta.distributed.tasks.score as score
 import pyrosetta.distributed.tasks.rosetta_scripts as rosetta_scripts
+import sys
 import tempfile
 import unittest 
 
@@ -214,6 +215,8 @@ class SmokeTestDistributed(unittest.TestCase):
             func(input_packed_pose.pose, out_file, "score12")
             func(input_packed_pose, out_file, score.ScorePoseTask(weights="ref2015_cart"))
             func(input_packed_pose, out_file, scorefxn)
+        elif ext == "init":
+            func(out_file, poses=input_packed_pose, verbose=False)
         else:
             func(input_packed_pose, out_file)
         # Load PackedPose from disk
@@ -224,6 +227,8 @@ class SmokeTestDistributed(unittest.TestCase):
                 io.pose_from_pdb(os.path.join(workdir, f"nonexistent_file.{ext}"))
             self.assertIsNone(io.pose_from_pdb(None))
             output_packed_pose = io.pose_from_pdb(out_file)
+        elif ext == "init":
+            output_packed_pose = io.pose_from_init_file(out_file)
         else:
             output_packed_pose = io.pose_from_file(out_file)
         # Test annotated sequence recovery
@@ -232,8 +237,8 @@ class SmokeTestDistributed(unittest.TestCase):
             output_packed_pose.pose.annotated_sequence(),
             msg=f"Sequence recovery failed for extension '{ext}'."
         )
-        # Test coordiante recovery
-        places = 32 if ext in ("b64", "base64", "B64", "pose", "pickle", "pickled_pose") else 2
+        # Test coordinate recovery
+        places = sys.float_info.dig if ext in ("pkl_pose", "b64_pose", "init") else 2
         for res in range(1, input_packed_pose.pose.size() + 1):
             for atom in range(1, input_packed_pose.pose.residue(res).natoms() + 1):
                 atom_input = input_packed_pose.pose.residue(res).xyz(atom)
@@ -254,13 +259,13 @@ class SmokeTestDistributed(unittest.TestCase):
                 output_packed_pose.scores,
                 msg=f"PackedPose scores dictionaries differ for extension '{ext}'."
             )
-        else: # base64-encoded and pickle-encoded files save the `pose.scores` dictionary
+        else: # base64-encoded and pickle-encoded files save the `Pose.cache` dictionary
             self.assertTrue(output_packed_pose.scores, msg=f"PackedPose scores dictionary is empty for extension '{ext}'.")
             self.assertTrue(dict(output_packed_pose.pose.scores), msg=f"Pose scores dictionary is empty for extension '{ext}'.")
             self.assertDictEqual(
                 input_packed_pose.scores,
                 output_packed_pose.scores,
-                msg=f"Pose scores dictionaries differ for extension '{ext}'."
+                msg=f"PackedPose scores dictionaries differ for extension '{ext}'."
             )
             self.assertDictEqual(
                 dict(input_packed_pose.pose.scores),
@@ -284,6 +289,7 @@ class SmokeTestDistributed(unittest.TestCase):
             "xz": io.dump_pdb,
             "b64_pose": io.dump_base64,
             "pkl_pose": io.dump_pickle,
+            "init": pyrosetta.dump_init_file,
         }
         input_packed_pose = io.pose_from_sequence("CATALYST/X[ATP]")
         scorefxn = pyrosetta.create_score_function("ref2015")
