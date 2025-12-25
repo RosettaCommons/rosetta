@@ -95,6 +95,10 @@ public:
 
 	void set_all_residues(bool input);
 
+    void set_rmsd_limit(core::Real rmsd_limit);
+
+    void disable_rmsd_limit();
+
 public: //For CitationManager:
 
 	/// @brief Provide the citation.
@@ -152,6 +156,9 @@ private:
 	bool allow_minimization_ = true;
 	bool allow_repacking_ = true;
 	bool all_residues_ = false;
+
+    core::Real rmsd_max_ = 99999.999;
+    bool check_rmsd_ = false;
 
 };
 
