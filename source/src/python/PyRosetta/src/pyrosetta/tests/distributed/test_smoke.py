@@ -294,6 +294,32 @@ class SmokeTestDistributed(unittest.TestCase):
             for ext, func in ext_func_dict.items():
                 self.roundtrip(func, ext, input_packed_pose.clone(), workdir, scorefxn)
 
+    def test_to_packed_determinism(self):
+        if not pyrosetta.rosetta.basic.was_init_called():
+            pyrosetta.init(options="-run:constant_seed 1 -mute all", extra_options="", silent=True)
+        pose = pyrosetta.io.pose_from_sequence("TEST/DETERMINISM")
+        # Get reference bytes
+        bytes_ref = pyrosetta.secure_unpickle.SecureSerializerBase.to_pickle(pose)
+        # Get test bytes through `io.to_packed` interface, which sets up `PackedPose.scores`
+        # that accesses `Pose.cache` that should not call `get_sm_data()` which alters bytes
+        bytes_src = io.to_packed(pose).pickled_pose
+        self.assertEqual(
+            bytes_ref,
+            bytes_src,
+            msg="Pickled pose is not bitwise identical after setting up `PackedPose.scores` attribute without SimpleMetrics data.",
+        )
+        # Update `Pose.cache` dictionary
+        pose.cache.metrics["testing"] = dict(foo="String", bar=1.2, baz=complex(3, 4))
+        # Get reference bytes
+        bytes_ref = pyrosetta.secure_unpickle.SecureSerializerBase.to_pickle(pose)
+        # Get test bytes
+        bytes_src = io.to_packed(pose).pickled_pose
+        self.assertEqual(
+            bytes_ref,
+            bytes_src,
+            msg="Pickled pose is not bitwise identical after setting up `PackedPose.scores` attribute with SimpleMetrics data.",
+        )
+
     def test_poses_from_sequences_io(self):
         # Test `io.poses_from_sequences`
         seqs = ["DESIGN" * i for i in range(3, 8)]
