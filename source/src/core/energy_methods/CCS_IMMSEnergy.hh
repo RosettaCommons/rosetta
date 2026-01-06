@@ -22,6 +22,8 @@
 #include <core/scoring/ScoreType.hh>
 
 #include <core/energy_methods/CCS_IMMSEnergyCreator.hh>
+#include <core/energy_methods/CCS_IMMSComplexEnergyCreator.hh>
+#include <core/energy_methods/CCS_IMMS_with_CryoEMEnergyCreator.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 
 
@@ -39,7 +41,7 @@ namespace energy_methods {
 /////////////////////////////////////////////////////////////////////////////
 
 core::Real
-parcs_ccs(core::pose::Pose &mypose, core::Size const nrot, core::Real const prad);
+parcs_ccs(core::pose::Pose &mypose, core::Size const nrot, core::Real const prad, bool use_multimer = false);
 
 class CCS_IMMSEnergy : public core::scoring::methods::WholeStructureEnergy {
 public:
@@ -68,14 +70,85 @@ public:
 	core::Size version() const override;
 
 
-private:
+protected:
 	core::Real ccs_exp_;
 	core::Size nrot_=300;
 	core::Real prad_=1.0;
-
 };
 
-} // scoring
+class CCS_IMMSComplexEnergy : public core::scoring::methods::WholeStructureEnergy {
+public:
+	typedef core::scoring::methods::WholeStructureEnergy parent;
+
+public:
+	CCS_IMMSComplexEnergy();
+
+	/// clone
+	core::scoring::methods::EnergyMethodOP
+	clone() const override;
+
+	/////////////////////////////////////////////////////////////////////////////
+	// scoring
+	/////////////////////////////////////////////////////////////////////////////
+
+	core::Real
+	calc_IMMS_score(const core::Real &CCS_pred, const core::Real &CCS_exp) const;
+
+
+	void
+	finalize_total_energy(core::pose::Pose &mypose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & emap) const override;
+
+
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
+	core::Size version() const override;
+
+
+protected:
+	core::Real ccs_exp_;
+	core::Size nrot_=300;
+	core::Real prad_=1.0;
+	bool use_multimer_=true;
+	core::Real lb_=10;
+	core::Real ub_=100;
+};
+
+class CCS_IMMS_with_CryoEMEnergy : public core::scoring::methods::WholeStructureEnergy {
+public:
+	typedef core::scoring::methods::WholeStructureEnergy parent;
+
+public:
+	CCS_IMMS_with_CryoEMEnergy();
+
+	/// clone
+	core::scoring::methods::EnergyMethodOP
+	clone() const override;
+
+	/////////////////////////////////////////////////////////////////////////////
+	// scoring
+	/////////////////////////////////////////////////////////////////////////////
+
+	core::Real
+	calc_IMMS_score(const core::Real &CCS_pred, const core::Real &CCS_exp) const;
+
+
+	void
+	finalize_total_energy(core::pose::Pose &mypose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & emap) const override;
+
+
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
+	core::Size version() const override;
+
+
+protected:
+	core::Real ccs_exp_;
+	core::Size nrot_=300;
+	core::Real prad_=1.0;
+	bool use_multimer_=false;
+	core::Real lb_=25;
+	core::Real ub_=125;
+};
+
+} // energy_methods
 } // core
 
-#endif // INCLUDED_core_energy_methods_CCS_IMMSEnergy_HH
+#endif // INCLUDED_core_energy_methods_CCS_IMMSEnergy_hh 

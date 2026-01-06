@@ -338,6 +338,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "hrf_ms_labeling" ] = hrf_ms_labeling;
 	name2score_type_[ "hrf_dynamics" ] = hrf_dynamics;
 	name2score_type_[ "ccs_imms" ] = ccs_imms;
+	name2score_type_[ "ccs_imms_complex" ] = ccs_imms_complex;
+	name2score_type_[ "ccs_imms_with_cryoem" ] = ccs_imms_cryoem;
 	name2score_type_[ "depc_ms" ] = depc_ms;
 	name2score_type_[ "abego" ]  = abego;
 	name2score_type_[ "pair" ]   = pair;

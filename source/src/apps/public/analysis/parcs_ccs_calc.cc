@@ -44,7 +44,7 @@ using namespace core::pose::datacache;
 // Local Options
 basic::options::IntegerOptionKey const n_rots( "ccs_nrots" ); // Options to give the number of rotations for PARCS
 basic::options::RealOptionKey const p_rad( "ccs_prad" ); // Options to give the size of Probe radius
-
+basic::options::BooleanOptionKey const multimer_flag("ccs_multimer");
 static basic::Tracer TR( "apps.public.analysis.parcs_ccs_calc" );
 
 int main(int argc, char * argv[])
@@ -52,21 +52,27 @@ int main(int argc, char * argv[])
 	try{
 		option.add( n_rots, "Number of Rotations" ).def(300); // Def rotations fixed at 25
 		option.add( p_rad, "Probe Radius in Angstroms" ).def(1.0); // Def probe radius size 1.0 Angstroms for He buffer gas
+		option.add(multimer_flag, "Use power law reparameterization for multimeric proteins(0.8 * CCS^1.04)").def(false);
 		devel::init (argc,argv);
 		core::Size nrot( option[ n_rots ].value() ); // Gets value from user input for number of rotations
 		core::Real prad( option[ p_rad ].value() ); // Gets value from user input for the size of probe radius in Angstroms
+		bool use_multimer(option[multimer_flag].value());
 		if ( nrot <=0 ) utility_exit_with_message("Number of rotations cannot be less than or equal to 0");
 		if ( prad <=0 ) utility_exit_with_message("Probe cannot be less than or equal to 0");
 		core::import_pose::pose_stream::MetaPoseInputStream input = core::import_pose::pose_stream::streams_from_cmd_line();
 		core::Size pose_counter(0);
 		std::ostringstream out;
-		out <<"File_Name\tCCS_PARCS" << std::endl;
+		if ( use_multimer ) {
+			out <<"File_Name\tCS_PARCS_complex" << std::endl;
+		} else {
+			out <<"File_Name\tCCS_PARCS" << std::endl;
+		}
 		while ( input.has_another_pose() ) {
 			core::pose::PoseOP mypose( utility::pointer::make_shared < core::pose::Pose >() );
 			input.fill_pose ( *mypose );
 			pose_counter +=1;
 			//TR << "Pose Number from list: " << pose_counter << std::endl;
-			core::Real parcs_ccs( core::energy_methods::parcs_ccs( *mypose, nrot, prad) );
+			core::Real parcs_ccs( core::energy_methods::parcs_ccs( *mypose, nrot, prad, use_multimer) );
 			std::string decoy_name("Empty_Tag");
 			if ( (*mypose).data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ) {
 				decoy_name = static_cast< basic::datacache::CacheableString const & >
