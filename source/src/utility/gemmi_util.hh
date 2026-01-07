@@ -26,50 +26,56 @@
 
 namespace utility {
 
+///////////////  READING UTILS
+
 /// As the default as_char() is not robust to empty strings
-inline
 char
-as_char(std::string const & value, char null) {
-	if ( value.size() == 0 ) {
-		return null;
-	}
-	if ( value.size() == 2 && (value == "''"  || value == "\"\"" ) ) {
-		return null;
-	}
-	return gemmi::cif::as_char(value, null);
-}
+as_char(std::string const & value, char null);
 
 /// @brief find the index for the given column name in the table.
 /// If it can't be found, return a negative number
-inline int find_gemmi_column(gemmi::cif::Table & table, std::string const & name) {
-	if ( table.width() == 0 ) { return -1; } // No columns
-	gemmi::cif::Table::Row const & tags = table.tags();
-	for ( int ii = 0; ii < int(tags.size()); ++ii ) {
-		std::string const & tag = tags[ii];
-		if ( name == tag || name == tag.substr( table.prefix_length ) ) {
-			return ii;
+int find_gemmi_column(gemmi::cif::Table & table, std::string const & name);
+
+///////////////  WRITING UTILS
+
+void
+normalize_table_name(std::string & table_name);
+
+/// @brief Gets a table with the given name (cif category) and column names for writing
+/// If the table does not exist, create it.
+/// If it does already exist, make sure that all the provided column names are present.
+///
+/// (The returned table is simply a view to the underlying Block.)
+///
+/// Rows can be added with gemmi_append_row() below
+gemmi::cif::Table
+gemmi_get_table(gemmi::cif::Block & block, std::string table_name, std::vector<std::string> const & columns );
+
+template < class Iterable >
+void
+gemmi_append_row(gemmi::cif::Table & table, Iterable const & values ) {
+	std::vector< std::string > quoted;
+	for ( auto iter(values.begin()); iter != values.end(); ++iter ) {
+		if ( *iter == "?" || *iter == "." ) {
+			// Assume we actually want it as a null, rather than a quoted question mark
+			quoted.push_back( *iter );
+		} else {
+			quoted.push_back( gemmi::cif::quote( *iter ) );
 		}
 	}
-	return -1;
+	table.append_row(quoted);
+}
+
+inline
+void
+gemmi_append_row(gemmi::cif::Table & table, std::initializer_list<std::string> const & init_list ) {
+	gemmi_append_row< std::initializer_list<std::string> >(table, init_list);
 }
 
 /// @brief Adds a new table (actually a 'Loop' object) to the given block, with the given column names
 /// Returns a reference to the newly added loop object (which can be augmented with the `gemmi_add_row()` function)
-inline
 gemmi::cif::Loop &
-gemmi_add_table(gemmi::cif::Block & block, std::string table_name, std::vector<std::string> const & columns) {
-	if ( table_name.size() == 0 ) {
-		table_name = "_TABLE.";
-	}
-	if ( table_name[0] != '_' ) {
-		table_name = '_' + table_name;
-	}
-	if ( table_name[ table_name.size()-1 ] != '.' ) {
-		table_name = table_name + '.';
-	}
-
-	return block.init_loop(table_name, columns);
-}
+gemmi_add_table(gemmi::cif::Block & block, std::string table_name, std::vector<std::string> const & columns);
 
 /// @brief Adds a row to the table. Takes care of quoting the entries properly
 template< class Iterable >
