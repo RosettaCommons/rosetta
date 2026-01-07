@@ -59,7 +59,7 @@ public:
 	//////////////////////////////////
 
 	/// @brief default constructor
-	MathMatrix< T>() :
+	MathMatrix() :
 	NumberRows_( 0),
 	NumberCols_( 0),
 	size_( 0 ),
@@ -79,7 +79,7 @@ public:
 	/// @param NUMBER_ROWS number of rows in matrix
 	/// @param NUMBER_COLS number of cols in matrix
 	/// @param FILL_VALUE assign every element to that value
-	explicit MathMatrix< T>
+	explicit MathMatrix
 	(
 		const Size NUMBER_ROWS,
 		const Size NUMBER_COLS,
@@ -98,7 +98,7 @@ public:
 	/// @param NUMBER_ROWS number of rows in matrix
 	/// @param NUMBER_COLS number of cols in matrix
 	/// @param DATA pointer to field of data
-	MathMatrix< T>
+	MathMatrix
 	(
 		const Size NUMBER_ROWS,
 		const Size NUMBER_COLS,
@@ -133,7 +133,7 @@ public:
 	}
 
 	/// @brief destructor
-	~MathMatrix< T>()
+	~MathMatrix()
 	{
 		delete[] data_;
 	}

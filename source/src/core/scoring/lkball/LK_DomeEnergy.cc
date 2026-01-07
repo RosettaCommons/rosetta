@@ -1034,15 +1034,14 @@ cubed_root( Real val ) {
 
 
 DerivativeFinderWadj::DerivativeFinderWadj( Vector const & base, Vector const & water, Real w_dist, Real water_adjust )
-: x(14)
+: B( base ),
+W( water ),
+B_to_W( water - base ),
+wadj( water_adjust ),
+w_dist_( w_dist ),
+x(14)
 {
 
-	w_dist_ = w_dist;
-	wadj = water_adjust;
-
-	B = base;
-	W = water;
-	B_to_W = W - B;
 	B_to_W_norm = B_to_W.norm();
 	B_to_W_norm2 = B_to_W_norm*B_to_W_norm;
 	B_to_W_norm3 = B_to_W_norm2*B_to_W_norm;
@@ -1098,21 +1097,19 @@ DerivativeFinderWadj::dWadj_dWater() {
 
 DerivativeFinder::DerivativeFinder( Vector const & base, Vector const & water, Vector const & other,
 	Real min_cose, Real min_sine, Real max_cose, Real max_sine, Real w_dist, Real water_adjust ) :
+	B(base),
+	W(water),
+	Ot(other),
+	W_to_Ot(Ot - W),
+	B_to_W(W - B),
+	w_dist_( w_dist ),
+	wadj( water_adjust ),
 	x(175)
 {
-	w_dist_ = w_dist;
-	wadj = water_adjust;
-
-	B = base;
-	W = water;
-	Ot = other;
-
-	W_to_Ot = Ot - W;
 	W_to_Ot_norm = W_to_Ot.norm();
 	W_to_Ot_norm2 = W_to_Ot_norm*W_to_Ot_norm;
 	W_to_Ot_norm3 = W_to_Ot_norm*W_to_Ot_norm2;
 
-	B_to_W = W - B;
 	B_to_W_norm = B_to_W.norm();
 	B_to_W_norm2 = B_to_W_norm*B_to_W_norm;
 	B_to_W_norm3 = B_to_W_norm2*B_to_W_norm;
