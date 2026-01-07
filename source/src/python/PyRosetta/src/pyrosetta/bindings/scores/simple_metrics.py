@@ -18,6 +18,7 @@ except ImportError:
     # For python < 3.3
     from collections import MutableMapping
 
+from pyrosetta.rosetta.core.pose.datacache import CacheableDataType
 from pyrosetta.rosetta.core.simple_metrics import clear_sm_data, get_sm_data
 
 from pyrosetta.bindings.scores.base import PoseCacheAccessorBase
@@ -50,6 +51,9 @@ class SimpleMetricDataAccessorBase(PoseCacheAccessorBase, MutableMapping):
             self._maybe_delete_keys_from_sm_data(keys=(key,), attributes=("string", "real"))
         else:
             raise KeyError(key)
+
+    def _has_sm_data(self, pose):
+        return pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA)
 
     def _format_metric(self, raw_data, as_dict=False):
         out_data = {} 
@@ -106,7 +110,7 @@ class SimpleMetricStringDataAccessor(SimpleMetricDataAccessorBase):
     @property
     def all(self):
         return types.MappingProxyType(
-            dict(get_sm_data(self.pose).get_string_metric_data())
+            dict(get_sm_data(self.pose).get_string_metric_data()) if self._has_sm_data(self.pose) else {}
         )
 
     def __setitem__(self, key, value):
@@ -142,7 +146,7 @@ class SimpleMetricRealDataAccessor(SimpleMetricDataAccessorBase):
     @property
     def all(self):
         return types.MappingProxyType(
-            dict(get_sm_data(self.pose).get_real_metric_data())
+            dict(get_sm_data(self.pose).get_real_metric_data()) if self._has_sm_data(self.pose) else {}
         )
 
     def __setitem__(self, key, value):
@@ -180,7 +184,7 @@ class SimpleMetricCompositeStringDataAccessor(SimpleMetricDataAccessorBase):
         return types.MappingProxyType(
             self.format_composite_string(
                 get_sm_data(self.pose).get_composite_string_metric_data()
-            )
+            ) if self._has_sm_data(self.pose) else {}
         )
 
     def __setitem__(self, key, value):
@@ -199,7 +203,7 @@ class SimpleMetricCompositeRealDataAccessor(SimpleMetricDataAccessorBase):
         return types.MappingProxyType(
             self.format_composite_real(
                 get_sm_data(self.pose).get_composite_real_metric_data()
-            )
+            ) if self._has_sm_data(self.pose) else {}
         )
 
     def __setitem__(self, key, value):
@@ -218,7 +222,7 @@ class SimpleMetricPerResidueStringDataAccessor(SimpleMetricDataAccessorBase):
         return types.MappingProxyType(
             self.format_per_residue_string(
                 get_sm_data(self.pose).get_per_residue_string_metric_output()
-            )
+            ) if self._has_sm_data(self.pose) else {}
         )
 
     def __setitem__(self, key, value):
@@ -237,7 +241,7 @@ class SimpleMetricPerResidueRealDataAccessor(SimpleMetricDataAccessorBase):
         return types.MappingProxyType(
             self.format_per_residue_real(
                 get_sm_data(self.pose).get_per_residue_real_metric_output()
-            )
+            ) if self._has_sm_data(self.pose) else {}
         )
 
     def __setitem__(self, key, value):
@@ -256,7 +260,7 @@ class SimpleMetricPerResidueProbabilitiesDataAccessor(SimpleMetricDataAccessorBa
         return types.MappingProxyType(
             self.format_per_residue_probabilities(
                 get_sm_data(self.pose).get_per_residue_probabilities_metric_output()
-            )
+            ) if self._has_sm_data(self.pose) else {}
         )
 
     def __setitem__(self, key, value):
