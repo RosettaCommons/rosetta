@@ -173,7 +173,7 @@ SET_ICOOR  OCP -180.00  61.19  1.230  CP   N    CQ
 
 # Need to prevent these from repacking
 SET_BACKBONE_HEAVYATOM CP
-ADD_ATOM  CQ  VIRT CT3   0.00 ## This is the methyl carbon of the acetyl group...
+#ADD_ATOM  CQ  VIRT CT3   0.00 ## This is the methyl carbon of the acetyl group... # Already added above
 #SET_BACKBONE_HEAVYATOM CQ
 SET_BACKBONE_HEAVYATOM OCP
 
