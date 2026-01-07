@@ -26,8 +26,6 @@
 #include <core/io/raw_data/ScoreStructText.hh>
 #include <core/io/raw_data/ScoreStructJSON.hh>
 
-#include <core/pose/Pose.hh>
-
 #include <utility/file/file_sys_util.hh>
 
 ///Basic headers
@@ -66,36 +64,51 @@ bool ScoreFileData::write_struct(
 }
 
 
-/// @brief write the given pose to the supplied filename.
-bool ScoreFileData::write_pose(
-	core::pose::Pose const &,
+bool ScoreFileData::write_scorefile(
+	std::string tag,
 	std::map < std::string, core::Real > const & score_map,
-	std::string tag = "empty_tag",
-	std::map < std::string, std::string > const & string_map
+	std::map < std::string, std::string > const & string_map,
+	bool use_json
 ) {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
 	RawStructOP outputter(nullptr);
-	std::string format = option[ out::file::scorefile_format ].value();
 
-	if ( format == "text" ) {
-		// Old plain-text format
-		outputter = utility::pointer::make_shared< ScoreStructText >( tag );
-	} else if ( format == "json" || format == "JSON" ) {
+	if ( use_json ) {
 		// JSON
 		outputter = utility::pointer::make_shared< ScoreStructJSON >( tag );
+	} else {
+		// Old plain-text format
+		outputter = utility::pointer::make_shared< ScoreStructText >( tag );
 	}
 
 	if ( !outputter ) {
-		TR << "Invalid score file format specified: \"" << format << "\". No output generated!" << std::endl;
 		return false;
 	}
 
 	return write_struct( outputter, score_map, string_map );
 }
 
+bool
+ScoreFileData::write_scorefile(
+	std::string tag,
+	std::map < std::string, core::Real > const & score_map,
+	std::map < std::string, std::string > const & string_map
+) {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	bool use_json = false;
+	std::string format = option[ out::file::scorefile_format ].value();
+	if ( format == "text" ) {
+	} else if ( format == "json" || format == "JSON" ) {
+		use_json = true;
+	} else {
+		TR << "Invalid score file format specified: \"" << format << "\". No output generated!" << std::endl;
+		return false;
+	}
+
+	return write_scorefile(tag, score_map, string_map, use_json);
+}
 
 } // namespace silent
 } // namespace io

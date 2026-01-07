@@ -244,6 +244,89 @@ def poses_to_silent(poses, output_filename):
     else:
         output_silent(pose=poses)
 
+def _score_and_string_maps_from_pose(pose, use_job=False):
+    """Utility function"""
+    # Most of this is cribbed from FileJobOutputter::scorefile() in src/protocols/jd2/FileJobOutputter.cc
+    score_map = rosetta.std.map_std_string_double()
+    string_map = rosetta.std.map_std_string_std_string()
+
+    rosetta.core.io.raw_data.ScoreMap.add_energies_data_from_scored_pose( pose, score_map )
+
+    if use_job:
+        # We do this first, in case the pose-specific data will overwrite it.
+        job_string_real = rosetta.protocols.jd2.get_string_real_pairs_from_current_job()
+        job_string_string = rosetta.protocols.jd2.get_string_string_pairs_from_current_job()
+        for key in job_string_real:
+            score_map[ key ] = job_string_real[ key ]
+        for key in job_string_string:
+            string_map[ key ] = job_string_string[ key ]
+
+    rosetta.core.io.raw_data.ScoreMap.add_arbitrary_score_data_from_pose( pose, score_map )
+    rosetta.core.io.raw_data.ScoreMap.add_arbitrary_string_data_from_pose( pose, string_map )
+
+    return score_map, string_map
+
+def get_scorefile_info(poses, use_job=False):
+    """Takes a Pose or list of poses and returns the information which would be output as a scorefile.
+
+    This method requires a Pose object.
+
+    Inputs:
+    poses: Pose or list of poses. This function automatically detects which one.
+    use_job: If true, also include information in the JD2 Job object (normally not relevant for PyRosetta)
+    """
+
+    def scorefile_info(pose):
+        score_map, string_map = _score_and_string_maps_from_pose(pose, use_job)
+
+        outdata = {}
+        for key in string_map:
+            outdata[ key ] = string_map[ key ]
+        for key in score_map:
+            outdata[ key ] = score_map[ key ]
+
+        return outdata
+
+    if isinstance(poses, (list, tuple, set)):
+        return [ scorefile_info(pose) for pose in poses ]
+    else:
+        return scorefile_info(pose)
+
+def poses_to_scorefile(poses, scorefile_name, use_json=False, use_job=False):
+    """Takes a Pose or list of poses and outputs the scoring information
+    as a standard Rosetta score file.
+
+    This method requires a Pose object.
+
+    Inputs:
+    poses: Pose or list of poses. This function automatically detects which one.
+    scorefile_name: The desired name of the output score file
+    use_json: If true, use the json-formatting of output.
+        Note this is a concatenation of JSON objects for each pose (one per line), rather than a full JSON object
+    use_job: If true, also include information in the JD2 Job object (normally not relevant for PyRosetta)
+
+    Example:
+    poses_to_scorefile(poses, "mydesigns.sc")
+
+    The decoy name written to your score file is take from pose.pdb_info().name()
+    To set a different decoy name, change it in your pose before calling this function.
+    Example:
+    pose.pdb_info().name("my_tag.pdb")
+    """
+
+    # Most of this is cribbed from FileJobOutputter::scorefile() in src/protocols/jd2/FileJobOutputter.cc
+    sfd = rosetta.core.io.raw_data.ScoreFileData(scorefile_name)
+
+    def output_scorefile(pose):
+        decoy_tag = pose.pdb_info().name()
+        score_map, string_map = _score_and_string_maps_from_pose(pose, use_job)
+        sfd.write_scorefile( decoy_tab, score_map, string_map, use_json )
+
+    if isinstance(poses, (list, tuple, set)):
+        for pose in poses:
+            output_scorefile(pose=pose)
+    else:
+        output_scorefile(pose=poses)
 
 def to_pdbstring(pose):
     """Convert to pdb-formatted string with score and energy data.
