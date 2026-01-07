@@ -1182,6 +1182,9 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 
 			residues.push_back( ii_rsd );
 			jump_connections.push_back( root_index );
+			if ( residues.size() > 1 ) {
+				chain_endings.push_back( residues.size() - 1 );
+			}
 
 		} else { // Append residue to current chain dependent on bond length.
 			if ( ! options_.missing_dens_as_jump() ) {
@@ -1231,6 +1234,7 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 
 					residues.push_back( ii_rsd );
 					jump_connections.push_back( old_nres );
+					// Keep this in the same chain -- no chain ending.
 
 
 				} else {
@@ -1263,10 +1267,6 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 		pose_to_rinfo_.push_back( ii );
 		pose_temps_.push_back( rinfos_[ ii ].temps() );
 
-		// Update the pose-internal chain label if necessary.
-		if ( ( is_lower_terminus_[ ii ] || ! determine_check_Ntermini_for_this_chain( rinfos_[ ii ].chainID() ) ) && residues.size() > 1 ) {
-			chain_endings.push_back( residues.size() - 1 );
-		}
 	}
 
 	// Now actually append all the residues
