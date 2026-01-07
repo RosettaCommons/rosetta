@@ -44,7 +44,7 @@
 #include <core/pose/PDBInfo.hh>
 
 #include <core/conformation/Conformation.hh>
-
+#include <core/conformation/util.hh>
 
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/ImplicitLipidInfo.hh>
@@ -496,8 +496,7 @@ AddMembraneMover::add_membrane_virtual( core::pose::Pose & pose ) {
 
 	// Updating Chain Record in PDB Info
 	if ( pose.pdb_info() != nullptr ) {
-		char curr_chain = pose.pdb_info()->chain( pose.size()-1 );
-		char new_chain = (char)((int) curr_chain + 1);
+		std::string new_chain = core::conformation::canonical_chain_letter_for_chain_number( pose.num_chains() ); // Num chains includes the new residue
 		pose.pdb_info()->number( pose.size(), (int) pose.size() );
 		pose.pdb_info()->chain( pose.size(), new_chain );
 		pose.pdb_info()->obsolete(false);

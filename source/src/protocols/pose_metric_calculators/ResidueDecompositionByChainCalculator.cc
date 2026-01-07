@@ -105,7 +105,7 @@ ResidueDecompositionByChainCalculator::recompute(
 	} else {
 		runtime_assert(this_pose.pdb_info() != nullptr);
 		// create a map from chain letter to set number
-		std::map<char, core::Size> chain_map;
+		std::map<std::string, core::Size> chain_map;
 		if ( chain_letters_.size() ) {
 			set_names_.assign(chain_letters_.size(), "");
 			for ( core::Size i = 1; i <= chain_letters_.size(); ++i ) {

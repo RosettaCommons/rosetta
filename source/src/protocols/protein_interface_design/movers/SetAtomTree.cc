@@ -69,7 +69,6 @@ SetAtomTree::SetAtomTree() :
 	simple_ft_( false ),
 	two_parts_chain1_( false ),
 	jump_( 1 ),
-	partners_( "_" ),
 	resnum_( "" ),
 	connect_to_( "" ),
 	anchor_res_( "" ),
@@ -100,7 +99,7 @@ SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & )
 	}
 
 	if ( tag->hasOption( "start_tree_at_chain" ) ) {
-		start_tree_at_chain( tag->getOption< char >( "start_tree_at_chain", '\0' ) );
+		start_tree_at_chain( tag->getOption< std::string >( "start_tree_at_chain", "" ) );
 		return;
 	}
 	if ( tag->hasOption( "ab_fold_tree" ) ) {
@@ -121,7 +120,7 @@ SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & )
 		return;
 	}
 	docking_ft_ = tag->getOption< bool >("docking_ft", false );
-	partners_ = tag->getOption< std::string >("partners", "_" );
+	partners_ = core::pose::DockingPartners::docking_partners_from_string( tag->getOption< std::string >("partners", "_" ) );
 	simple_ft( tag->getOption< bool >( "simple_ft", false ) );
 	jump_ = tag->getOption< core::Size >( "jump", 1);
 	if ( docking_ft_ ) return;
@@ -397,7 +396,7 @@ SetAtomTree::apply( core::pose::Pose & pose )
 			return;
 		}
 	}
-	if ( start_tree_at_chain() != '\0' ) {
+	if ( ! start_tree_at_chain().empty() ) {
 		core::Size chain_num( 1 );
 		core::pose::PDBInfoCOP pdb_info( pose.pdb_info() );
 		core::conformation::Conformation const & conf( pose.conformation() );
@@ -440,21 +439,13 @@ SetAtomTree::apply( core::pose::Pose & pose )
 		TR<<"connect_to not defined by user. Defaulting to "<<connect_to<<std::endl;
 	}
 
-	core::Size anchor_num( 0 );
-	std::string connect_from( connect_from_ );
 	if ( anchor_res_ != "" ) {
 		TR<<"anchor_res_"<<anchor_res_<<std::endl;
-		core::pose::PDBPoseMap const pose_map( pose.pdb_info()->pdb2pose() );
-		char const chain( anchor_res_[ anchor_res_.length() - 1 ] );
-		std::stringstream ss( anchor_res_.substr( 0, anchor_res_.length() - 1 ) );
-		core::Size number;
-		ss >> number;
-		TR<<"anchor_res_"<<number<<std::endl;
-
-		anchor_num  = pose_map.find( chain, number );
+		core::Size anchor_num = core::pose::parse_resnum( anchor_res_, pose );
 		TR<<"anchor_num::: " << anchor_num << "and pdbnum:::" << resnum_ <<std::endl;
 
 		core::conformation::Residue const res_anchor( pose.residue( anchor_num ) );;
+		std::string connect_from( connect_from_ );
 		if ( connect_from_ == "" ) {
 			connect_from = optimal_connection_point( res_anchor.name3() );
 		}
@@ -487,7 +478,7 @@ void SetAtomTree::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	using namespace utility::tag;
 	AttributeList attlist;
 
-	attlist + XMLSchemaAttribute( "start_tree_at_chain", xsct_char, "Chain from which the atom tree ought to begin" )
+	attlist + XMLSchemaAttribute( "start_tree_at_chain", xs_string, "Chain from which the atom tree ought to begin" )
 		+ XMLSchemaAttribute::attribute_w_default( "ab_fold_tree", xsct_rosetta_bool, "Antibody-based foldtree?", "false" )
 		// Since this has two defaults depending on ab_fold_tree, we give it no default.
 		+ XMLSchemaAttribute( "host_chain", xsct_non_negative_integer, "Chain that isn't part of the antibody, which only matters if ab_fold_tree is true -- nonetheless, typically 2 if ab_fold_tree is false" )
@@ -505,7 +496,7 @@ void SetAtomTree::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		+ XMLSchemaAttribute( "connect_to", xs_string, "Atom to be connected to" )
 
 		// This isn't passed through parse_resnum ANYWHERE. That's a shame. Have to keep a string.
-		+ XMLSchemaAttribute( "anchor_res", xs_string, "Anchor residue for the foldtree" )
+		+ XMLSchemaAttribute( "anchor_res", xsct_refpose_enabled_residue_number, "Anchor residue for the foldtree" )
 		+ XMLSchemaAttribute( "connect_from", xs_string, "Corresponding atom on the anchor residue" )
 		+ XMLSchemaAttribute::attribute_w_default( "two_parts_chain1", xsct_rosetta_bool, "Is the aim actually to cut chain 1 in two parts?", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "update_residue_variants", xsct_rosetta_bool, "Add CUTPOINT variant types according to the FoldTree", "0" )

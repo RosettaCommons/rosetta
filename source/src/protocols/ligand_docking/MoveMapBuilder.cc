@@ -55,7 +55,7 @@ set_jumps(
 	LigandAreas ligand_areas
 ){
 	for ( LigandAreas::value_type const & ligand_area_pair : ligand_areas ) {
-		char const & chain= ligand_area_pair.first;
+		std::string const & chain= ligand_area_pair.first;
 		utility::vector1<core::Size> jump_ids= core::pose::get_jump_ids_from_chain(chain, pose);
 		for ( core::Size const jump_id : jump_ids ) {
 			movemap->set_jump(jump_id, true);
@@ -164,7 +164,7 @@ MoveMapBuilder::set_all_chi(
 	}
 	// remove ligands with a minimize_ligand value of zero
 	for ( core::Size chain_id = 1; chain_id <= pose.conformation().num_chains(); ++chain_id ) {
-		char const chain= core::pose::get_chain_from_chain_id(chain_id, pose);
+		std::string const chain= core::pose::get_chain_from_chain_id(chain_id, pose);
 		LigandAreas const & ligand_areas= sc_interface_builder_->get_ligand_areas();
 		auto ligand_area= ligand_areas.find(chain);
 		if ( ligand_area == ligand_areas.end() ) continue;

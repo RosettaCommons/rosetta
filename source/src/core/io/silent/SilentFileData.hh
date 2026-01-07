@@ -233,7 +233,7 @@ public:
 	std::string
 	get_sequence( std::string const & filename );
 
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > >
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > >
 	get_resnum( std::string const & filename );
 
 	/// @brief quickly read a list of tags from a silent-input file. Only checks

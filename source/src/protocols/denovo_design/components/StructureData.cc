@@ -27,6 +27,7 @@
 //Core Headers
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
@@ -255,23 +256,23 @@ StructureData::specific_enzdes_header(
 	// compute chains/resids
 	std::stringstream resid1_stream( fields[5] );
 	auto const resid1 = boost::lexical_cast< core::Size >( substitute_variables( resid1_stream ) );
-	char chain1 = 'A';
+	std::string chain1 = "A";
 	if ( resid1 ) {
-		chain1 += pose.chain( resid1 ) - 1;
+		chain1 = core::conformation::canonical_chain_letter_for_chain_number( resid1 );
 		if ( pose.pdb_info() ) {
-			char const pdbchain = pose.pdb_info()->chain( resid1 );
-			if ( pdbchain != '^' ) chain1 = pdbchain;
+			std::string pdbchain = pose.pdb_info()->chain( resid1 );
+			if ( pdbchain != "^" ) chain1 = pdbchain;
 		}
 	}
 
 	std::stringstream resid2_stream( fields[10] );
 	auto const resid2 = boost::lexical_cast< core::Size >( substitute_variables( resid2_stream ) );
-	char chain2 = 'A';
+	std::string chain2 = "A";
 	if ( resid2 ) {
-		chain2 += pose.chain( resid2 ) - 1;
+		chain2 = core::conformation::canonical_chain_letter_for_chain_number( resid2 );
 		if ( pose.pdb_info() ) {
-			char const pdbchain = pose.pdb_info()->chain( resid2 );
-			if ( pdbchain != '^' ) chain2 = pdbchain;
+			std::string pdbchain = pose.pdb_info()->chain( resid2 );
+			if ( pdbchain != "^" ) chain2 = pdbchain;
 		}
 	}
 

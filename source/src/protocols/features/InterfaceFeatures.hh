@@ -18,6 +18,7 @@
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/pose/DockingPartners.fwd.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -125,8 +126,8 @@ public:
 		utility::vector1< bool > const & relevant_residues,
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
-		std::string const & interface,
-		std::string const & db_interface);
+		core::pose::DockingPartners const & interface,
+		core::pose::DockingPartners const & db_interface);
 
 	/// @brief Add interfaces table data to table
 	virtual void
@@ -134,8 +135,7 @@ public:
 		core::pose::Pose const & pose,
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
-		std::string const & chains_side1,
-		std::string const & chains_side2) const;
+		core::pose::DockingPartners const & interface ) const;
 
 	/// @brief Add interface_sides table data to table
 	virtual void
@@ -143,8 +143,7 @@ public:
 		core::pose::Pose const & pose,
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
-		std::string const & chains_side1,
-		std::string const & chains_side2,
+		core::pose::DockingPartners const & interface,
 		protocols::analysis::InterfaceRegion region,
 		std::string const & region_string) const;
 
@@ -155,12 +154,11 @@ public:
 		utility::vector1< bool > const & relevant_residues,
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
-		std::string const & chains_side1,
-		std::string const & chains_side2) const;
+		core::pose::DockingPartners const & interface ) const;
 
 	/// @brief Gets all possible interface combinations of a given pose.
 	void
-	make_interface_combos(core::pose::Pose const & pose, utility::vector1<std::string> & interfaces);
+	make_interface_combos(core::pose::Pose const & pose, utility::vector1<core::pose::DockingPartners> & interfaces);
 
 	std::string
 	type_name() const override;
@@ -180,8 +178,7 @@ private:
 	write_interface_residue_data_row_to_db(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
-		std::string const & chains_side1,
-		std::string const & chains_side2,
+		core::pose::DockingPartners const & interface,
 		std::string const & side,
 		core::Size const resnum,
 		protocols::analysis::PerResidueInterfaceData const & interface_data) const;
@@ -192,25 +189,25 @@ private:
 
 	/// @brief Recursive function. Get all orders of ex ABCD.
 	void
-	get_all_string_combos(std::string & interface, std::string current, utility::vector1<std::string> & chains) const;
+	get_all_order_combos(utility::vector1<std::string> const & all, utility::vector1<std::string> const & current, utility::vector1<utility::vector1<std::string>> & orders_out) const;
 
 	void
-	get_length_combos(std::string current, utility::vector1<std::string> & sizes) const;
+	get_length_combos(utility::vector1< std::string > const & current, utility::vector1< utility::vector1<std::string> > & sizes) const;
 
-	std::string
+	utility::vector1< std::string >
 	get_all_pose_chains(core::pose::Pose const & pose);
 
 protected:
 
 	bool
-	interface_exists(utility::vector1<std::string> & interfaces, std::string & dock_chains) const;
+	interface_exists(utility::vector1< core::pose::DockingPartners > & interfaces, core::pose::DockingPartners const & dock_chains) const;
 
 	bool
-	chains_exist_in_pose(core::pose::Pose const & pose, std::string const & interface) const;
+	chains_exist_in_pose(core::pose::Pose const & pose, core::pose::DockingPartners const & interface) const;
 
 	protocols::analysis::InterfaceAnalyzerMoverOP interface_analyzer_;
 	core::scoring::ScoreFunctionCOP scorefxn_;
-	utility::vector1< std::string > interfaces_;
+	utility::vector1< core::pose::DockingPartners > interfaces_;
 
 	bool pack_together_;
 	bool pack_separated_;

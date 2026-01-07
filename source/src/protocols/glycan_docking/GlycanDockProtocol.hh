@@ -26,6 +26,7 @@
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/types.hh>
@@ -144,7 +145,7 @@ public:
 	/// @brief Set the chain IDs identifying the protein-glycoligand complex
 	/// @brief protein is chain A, glycoligand is chain X --> partners = A_X
 	void
-	set_partners( std::string const & p ) { partners_ = p; }
+	set_partners( core::pose::DockingPartners const & p ) { partners_ = p; }
 
 	/// @brief Set whether the Stage 1 conformation initialization portion
 	/// @brief of the GlycanDockProtocol is performed
@@ -251,7 +252,7 @@ public:
 
 	/// @brief Get the chain IDs identifying the protein-glycoligand complex
 	/// @brief protein is chain A, glycoligand is chain X --> partners = A_X
-	std::string
+	core::pose::DockingPartners
 	get_partners() const { return partners_; }
 
 	/// @brief Get whether the Stage 1 conformation initialization portion
@@ -465,7 +466,7 @@ private: // data
 
 	core::Size n_cycles_ = 10; // from benchmark, set by -run:ncycles
 	core::Size n_repeats_ = 3; // cmd line; benchmark used = 3
-	std::string partners_ = "_"; // req
+	core::pose::DockingPartners partners_;
 	bool partners_provided_ = false;
 	core::Real intf_pack_dist_ = 16; // cmd line
 

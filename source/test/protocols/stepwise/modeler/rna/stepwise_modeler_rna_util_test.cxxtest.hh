@@ -66,8 +66,8 @@ public:
 		TS_ASSERT_EQUALS( pose.sequence(), "FANGVAEWKVTCSVRQSSAQNRKYTIKVEYLNMELTIPIFANGVAEWRSKVTCSVRQSSANRKYTIKVEVPAAWRSYLNMELTacugaggaucacccagu" );
 		TS_ASSERT_EQUALS( pose.annotated_sequence(), "F[PHE:NtermProteinFull]ANGVAEWKVTCSVRQSSAQNRKYTIKVEYLNMELTIPI[ILE:CtermProteinFull]F[PHE:NtermProteinFull]ANGVAEWRSKVTCSVRQSSANRKYTIKVEVPAAWRSYLNMELT[THR:CtermProteinFull]a[RAD:LowerRNA:Virtual_Phosphate]cu[URA:Virtual_Phosphate]gaggaucacccag[RGU:Virtual_Phosphate]u[URA:UpperRNA]" );
 
-		Size U_bulge = const_full_model_info( pose ).full_model_parameters()->conventional_to_full( 10, 'R' );
-		Size A_bulge = const_full_model_info( pose ).full_model_parameters()->conventional_to_full(  6, 'R' );
+		Size U_bulge = const_full_model_info( pose ).full_model_parameters()->conventional_to_full( 10, "R" );
+		Size A_bulge = const_full_model_info( pose ).full_model_parameters()->conventional_to_full(  6, "R" );
 		TS_ASSERT( !pose.residue_type( const_full_model_info( pose ).full_to_sub( U_bulge ) ).has_variant_type( VIRTUAL_RNA_RESIDUE ) );
 		TS_ASSERT( !pose.residue_type( const_full_model_info( pose ).full_to_sub( A_bulge ) ).has_variant_type( VIRTUAL_RNA_RESIDUE ) );
 

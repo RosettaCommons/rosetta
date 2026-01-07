@@ -282,7 +282,7 @@ IdentifyLigandMotifs::output_single_motif_to_pdb(
 {
 
 	core::Size prot_pos_pdb( src_pose.pdb_info()->number( prot_pos ) );
-	char prot_pos_chain( src_pose.pdb_info()->chain( prot_pos ) );
+	std::string prot_pos_chain( src_pose.pdb_info()->chain( prot_pos ) );
 
 	//need to figure out how to change the output path to something customizable in the flags
 	//std::string output_path( "Ligand_motif_dir/" );
@@ -293,7 +293,7 @@ IdentifyLigandMotifs::output_single_motif_to_pdb(
 	std::string extension( ".pdb" );
 	std::string motif_file_name(
 		output_path +
-		src_pose.residue_type( prot_pos ).name3() + string_of( prot_pos_pdb ) + string_of( prot_pos_chain ) + delimiter );
+		src_pose.residue_type( prot_pos ).name3() + string_of( prot_pos_pdb ) + prot_pos_chain + delimiter );
 
 
 	conformation::Residue protres( src_pose.residue( prot_pos ) );
@@ -314,9 +314,9 @@ IdentifyLigandMotifs::output_single_motif_to_pdb(
 	pose.conformation().insert_chain_ending( 1 );
 
 	core::Size lig_pos_pdb( src_pose.pdb_info()->number( lig_pos ) );
-	char lig_pos_chain( src_pose.pdb_info()->chain( lig_pos ) );
+	std::string lig_pos_chain( src_pose.pdb_info()->chain( lig_pos ) );
 	std::string lig_talk = "Ligatoms" + delimiter + string_of( lig_atoms[1] )  + delimiter + string_of( lig_atoms[2] )  + delimiter + string_of( lig_atoms[3]) ;
-	std::string motif_file_name_2 = motif_file_name + src_pose.residue_type( lig_pos ).name1() + string_of( lig_pos_pdb ) +  delimiter + lig_talk + delimiter +  string_of( lig_pos_chain ) + delimiter;
+	std::string motif_file_name_2 = motif_file_name + src_pose.residue_type( lig_pos ).name1() + string_of( lig_pos_pdb ) +  delimiter + lig_talk + delimiter + lig_pos_chain + delimiter;
 
 	std::string motif_file_name_3 = motif_file_name_2 + pdb_name;
 	//only add extension if not already ending in ".pdb" + extension;

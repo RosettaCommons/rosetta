@@ -74,6 +74,25 @@ using utility::fmt_real;
 
 using basic::Error;
 
+/// @brief Checks chain setting, to make sure it's a single character
+/// Yes, it returns a string, rather than a char, but that's because that's what the PDB writter machinery needs.
+std::string
+check_chain(std::string const & chain) {
+	static std::set< std::string > warned; // Shared between invocations -- only warn once per run.
+
+	if ( chain.empty() ) {
+		return " "; // Single space
+	}
+	if ( chain.size() == 1 ) {
+		return chain;
+	}
+	if ( warned.count(chain) == 0 ) {
+		TR.Warning << "Pose contains a multi-letter chain: `" << chain << "` -- truncating for PDB output." << std::endl;
+		warned.insert( chain );
+	}
+	return std::string{ chain[chain.size()-1] }; // Just the last character (the one that's likely changing fastest)
+}
+
 
 /// @brief Writes  <pose>  to a PDB file, returns false if an error occurs
 ///  Use default StructFileRepOptions
@@ -380,11 +399,11 @@ create_records_from_sfr(
 			R["serNum"].value = pad_left(it.helixID, 3);
 			R["helixID"].value = it.helix_name;
 			R["initResName"].value = it.name3_1;
-			R["initChainID"].value = std::string( 1, it.chainID1 );
+			R["initChainID"].value = check_chain(it.chainID1);
 			R["initSeqNum"].value = pad_left( it.seqNum1, 4 );
 			R["initICode"].value = std::string( 1, it.icode1 );
 			R["endResName"].value = it.name3_2;
-			R["endChainID"].value = std::string( 1, it.chainID2 );
+			R["endChainID"].value = check_chain(it.chainID2);
 			R["endSeqNum"].value = pad_left( it.seqNum2, 4 );
 			R["endICode"].value = std::string( 1, it.icode2 );
 			R["helixClass"].value = pad_left(it.helixClass, 2 );
@@ -402,11 +421,11 @@ create_records_from_sfr(
 			R["sheetID"].value = it.sheetID;
 			R["numStrands"].value = pad_left( it.num_strands, 2);
 			R["initResName"].value = it.name3_1;
-			R["initChainID"].value = std::string( 1, it.chainID1 );
+			R["initChainID"].value = check_chain(it.chainID1);
 			R["initSeqNum"].value = pad_left( it.seqNum1, 4 );
 			R["initICode"].value = std::string( 1, it.icode1 );
 			R["endResName"].value = it.name3_2;
-			R["endChainID"].value = std::string( 1, it.chainID2 );
+			R["endChainID"].value = check_chain(it.chainID2);
 			R["endSeqNum"].value = pad_left( it.seqNum2, 4 );
 			R["endICode"].value = std::string( 1, it.icode2 );
 			R["sense"].value = pad_left(it.strandClass, 2);
@@ -431,10 +450,9 @@ create_records_from_sfr(
 		}
 	} else if ( !options->write_glycan_pdb_codes() ) {  // Use the Rosetta HETNAM format, which specifies base ResidueTypes.
 		for ( auto const & elem : sfr.residue_type_base_names() ) {
-			// The 6-character resID key for the map has a fixed format.
-			std::string const & chainID( elem.first.substr( 5, 1 ) );  // 6th character
-			std::string const & resSeq( elem.first.substr( 0, 4 ) );  // 1st through 4th characters
-			std::string const & iCode( elem.first.substr( 4, 1 ) );  // 5th character
+			std::string const & chainID( check_chain( elem.first.chain() ) );
+			std::string const & resSeq( elem.first.pad_seq() );  // 1st through 4th characters
+			std::string const & iCode( std::string{elem.first.icode()} );
 			std::string const & base_name( elem.second.second );
 
 			R[ "type" ].value = "HETNAM";
@@ -454,12 +472,12 @@ create_records_from_sfr(
 			R["type"].value = "SSBOND  ";
 			R["name1"].value = ssbond.name1;
 			R["resName1"].value = ssbond.resName1;
-			R["chainID1"].value = std::string( 1, ssbond.chainID1 );
+			R["chainID1"].value = check_chain(ssbond.chainID1);
 			R["resSeq1"].value = pad_left( ssbond.resSeq1, 4 ); //("%4d", link.resSeq1);
 			R["iCode1"].value = std::string( 1, ssbond.iCode1 );
 			R["name2"].value = ssbond.name2;
 			R["resName2"].value = ssbond.resName2;
-			R["chainID2"].value = std::string( 1, ssbond.chainID2 );
+			R["chainID2"].value = check_chain(ssbond.chainID2);
 			R["resSeq2"].value = pad_left( ssbond.resSeq2, 4 ); //("%4d", link.resSeq2);
 			R["iCode2"].value = std::string( 1, ssbond.iCode2 );
 			R["length"].value = fmt_real( ssbond.length, 2 , 2 ); //("%5.2f", link.length);
@@ -474,12 +492,12 @@ create_records_from_sfr(
 			R["type"].value = "LINK  ";
 			R["name1"].value = link.name1;
 			R["resName1"].value = link.resName1;
-			R["chainID1"].value = std::string( 1, link.chainID1 );
+			R["chainID1"].value = check_chain(link.chainID1);
 			R["resSeq1"].value = pad_left( link.resSeq1, 4 ); //("%4d", link.resSeq1);
 			R["iCode1"].value = std::string( 1, link.iCode1 );
 			R["name2"].value = link.name2;
 			R["resName2"].value = link.resName2;
-			R["chainID2"].value = std::string( 1, link.chainID2 );
+			R["chainID2"].value = check_chain(link.chainID2);
 			R["resSeq2"].value = pad_left( link.resSeq2, 4 ); //("%4d", link.resSeq2);
 			R["iCode2"].value = std::string( 1, link.iCode2 );
 			R["length"].value = fmt_real( link.length, 2 , 2 ); //("%5.2f", link.length);
@@ -527,8 +545,7 @@ create_records_from_sfr(
 			R["serial"].value = pad_left( serial_to_serial_with_ter.at(ai.serial), 5 ); //)("%5d", ai.serial);
 			R["name"].value = ai.name;
 			R["resName"].value = ai.resName;
-			std::string cid(" ");
-			cid[0] = ai.chainID;
+			std::string cid = check_chain(ai.chainID);
 			R["chainID"].value = cid;
 			R["resSeq"].value = pad_left( ai.resSeq, 4 ); //("%4d", ai.resSeq);
 			R["iCode"].value = ai.iCode;

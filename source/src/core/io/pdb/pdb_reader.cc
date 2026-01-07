@@ -26,6 +26,8 @@
 #include <core/io/HeaderInformation.hh>
 #include <core/io/Remarks.hh>
 
+#include <core/pose/PDBInfo.hh>
+
 // Utility headers
 #include <utility/string_constants.hh>
 #include <utility/string_util.hh>
@@ -100,9 +102,9 @@ create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileRea
 	using namespace std;
 	StructFileRep sfr;
 
-	map< char, ChainAtoms > chain_atoms_map;  // A map of chain ID to every atom in the chain.
+	map< std::string, ChainAtoms > chain_atoms_map;  // A map of chain ID to every atom in the chain.
 	Size ter_record_count = 0;
-	utility::vector1< char > chain_list;
+	utility::vector1< std::string > chain_list;
 	std::map< char, Size > chain_to_idx;
 
 	// Prepare for multi-model .pdbs.
@@ -256,7 +258,7 @@ create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileRea
 			}
 
 			ai.resName = R[ "resName" ].value;
-			ai.chainID = 0;
+			ai.chainID = core::pose::PDBInfo::empty_record();
 			if ( R[ "chainID" ].value.size() > 0 ) {
 				ai.chainID = R[ "chainID" ].value[ 0 ];
 			}
@@ -425,8 +427,7 @@ store_mod_res_record_in_sfr( Record modres_record, StructFileRep & sfr )
 	string const comment_w_spaces( modres_record[ "comment" ].value );
 	modres_info.comment = utility::trim( comment_w_spaces );
 
-	string const resID(
-		modres_record[ "seqNum" ].value + modres_record[ "iCode" ].value + modres_record[ "chainID" ].value );
+	ResID const resID( modres_info.seqNum, modres_info.iCode, modres_info.chainID );
 	sfr.modres_map()[ resID ] = modres_info;
 
 	TR.Debug << "MODRES record information stored successfully." << endl;
@@ -445,7 +446,7 @@ store_base_residue_type_name_in_sfr( std::string const & hetID, std::string cons
 	string const chainID( string( text_field, 0, 1 ) );  // 1 character for chainID
 	string const resSeq( string( text_field, 1, 4 ) );  // 4 characters for resSeq
 	string const iCode( string( text_field, 5, 1 ) );  // 1 character for iCode
-	string const key( resSeq + iCode + chainID );  // a resID, as defined elsewhere in StructFileRep
+	ResID key( atof(resSeq.c_str()), iCode[0], chainID );
 
 	// The name starts after 7th character; any word after a comma is ignored.
 	uint const comma_location( text_field.find( ", " ) );  // if not found, will be set as string::npos
@@ -551,16 +552,14 @@ store_ssbond_record_in_sfr( Record ssbond_record, StructFileRep & sfr )
 	ssbond.resSeq1 = atof( ssbond_record[ "resSeq1" ].value.c_str() );
 	ssbond.iCode1 = ssbond_record[ "iCode1" ].value[ 0 ];
 
-	//ssbond.resID1 = stripped( ssbond_record[ "resSeq1" ].value + ssbond_record[ "iCode1" ].value + ssbond_record[ "chainID1" ].value );
-	ssbond.resID1 = ssbond_record[ "resSeq1" ].value + ssbond_record[ "iCode1" ].value + ssbond_record[ "chainID1" ].value;
+	ssbond.resID1 = ResID( ssbond.resSeq1, ssbond.iCode1, ssbond.chainID1 );
 
 	ssbond.resName2 = ssbond_record[ "resName2" ].value;
 	ssbond.chainID2 = ssbond_record[ "chainID2" ].value[ 0 ];
 	ssbond.resSeq2 = atof( ssbond_record[ "resSeq2" ].value.c_str() );
 	ssbond.iCode2 = ssbond_record[ "iCode2" ].value[ 0 ];
 
-	//ssbond.resID2 = stripped( ssbond_record[ "resSeq2" ].value + ssbond_record[ "iCode2" ].value + ssbond_record[ "chainID2" ].value );
-	ssbond.resID2 = ssbond_record[ "resSeq2" ].value + ssbond_record[ "iCode2" ].value + ssbond_record[ "chainID2" ].value;
+	ssbond.resID2 = ResID( ssbond.resSeq2, ssbond.iCode2, ssbond.chainID2 );
 
 	// An old PDB standard would put two symmetry operations here;
 	// we do not support this (yet?)
@@ -606,8 +605,7 @@ store_link_record_in_sfr( Record link_record, StructFileRep & sfr )
 	link.resSeq1 = atof( link_record[ "resSeq1" ].value.c_str() );
 	link.iCode1 = link_record[ "iCode1" ].value[ 0 ];
 
-	//link.resID1 = stripped( link_record[ "resSeq1" ].value + link_record[ "iCode1" ].value + link_record[ "chainID1" ].value );
-	link.resID1 = ( link_record[ "resSeq1" ].value + link_record[ "iCode1" ].value + link_record[ "chainID1" ].value );
+	link.resID1 = ResID( link.resSeq1, link.iCode1, link.chainID1 );
 
 	link.name2 = link_record[ "name2" ].value;  // 2nd atom name
 	link.resName2 = link_record[ "resName2" ].value;
@@ -615,8 +613,7 @@ store_link_record_in_sfr( Record link_record, StructFileRep & sfr )
 	link.resSeq2 = atof( link_record[ "resSeq2" ].value.c_str() );
 	link.iCode2 = link_record[ "iCode2" ].value[ 0 ];
 
-	//link.resID2 = stripped( link_record[ "resSeq2" ].value + link_record[ "iCode2" ].value + link_record[ "chainID2" ].value );
-	link.resID2 = ( link_record[ "resSeq2" ].value + link_record[ "iCode2" ].value + link_record[ "chainID2" ].value );
+	link.resID2 = ResID( link.resSeq2, link.iCode2, link.chainID2 );
 
 	link.length = atof( link_record[ "length" ].value.c_str() );  // bond length
 
@@ -659,8 +656,7 @@ store_cis_peptide_record_in_sfr( Record cispep_record, StructFileRep & sfr )
 
 	cis_pep.measure = atof( cispep_record[ "measure" ].value.c_str() );
 
-	string const resID(
-		cispep_record[ "seqNum1" ].value + cispep_record[ "icode1" ].value + cispep_record[ "chainID1" ].value );
+	ResID const resID( cis_pep.seqNum1, cis_pep.icode1, cis_pep.chainID1 );
 
 	sfr.cispep_map()[ resID ] = cis_pep;
 	TR.Debug << "CISPEP record information stored successfully." << endl;

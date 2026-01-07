@@ -208,8 +208,8 @@ Size get_symm_ind_res(
 	if ( resid > symm_info->num_independent_residues() ) {
 		char resi_chain = pose.chain( resid );
 		if ( symm_info->get_num_components() > 1 ) {
-			std::map< char, std::pair< Size, Size > > const & component_bounds = symm_info->get_component_bounds();
-			char resi_comp = symm_info->get_component_of_residue( resid );
+			std::map< std::string, std::pair< Size, Size > > const & component_bounds = symm_info->get_component_bounds();
+			std::string resi_comp = symm_info->get_component_of_residue( resid );
 			resi_ind = resid - chain_bounds[ resi_chain ].first + component_bounds.at( resi_comp ).first;
 		} else {
 			resi_ind = resid - chain_bounds[ resi_chain ].first + 1;

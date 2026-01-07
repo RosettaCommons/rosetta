@@ -19,6 +19,7 @@
 
 // Package headers
 #include <core/io/AtomInformation.hh>
+#include <core/io/ResidueInformation.hh>
 #include <utility/vector0.hh>
 #include <core/types.hh>
 
@@ -78,6 +79,14 @@ struct ai_cmp {
 		return std::tie(A.chainID, A.resSeq) < std::tie(B.chainID, B.resSeq);
 	}
 };
+
+/// @brief Convert a ResID to a form which can be easily stored by mmtf
+std::string
+resid_to_tag(ResID const & resid);
+
+/// @brief Convert an mmtf-read tag into the internal ResID structure
+ResID
+resid_from_tag(std::string const & input);
 
 
 }  // namespace mmtf

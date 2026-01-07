@@ -236,8 +236,8 @@ InterfaceScoreCalculator::get_ligand_docking_scores(
 			}
 		}
 
-		utility::map_merge( retval, get_interface_deltas( chain[0], after, score_fxn_, prefix_, normalization_function_, score_in_mem_ ) );
-		utility::map_merge( retval, get_ligand_docking_scores( chain[0], after ) );
+		utility::map_merge( retval, get_interface_deltas( chain, after, score_fxn_, prefix_, normalization_function_, score_in_mem_ ) );
+		utility::map_merge( retval, get_ligand_docking_scores( chain, after ) );
 	}
 
 	return retval;
@@ -246,19 +246,19 @@ InterfaceScoreCalculator::get_ligand_docking_scores(
 /// @brief Scores to be output that aren't normal scorefunction terms.
 InterfaceScoreCalculator::StringRealMap
 InterfaceScoreCalculator::get_ligand_docking_scores(
-	char chain,
+	std::string const & chain,
 	core::pose::Pose const & after
 ) const {
 
 	StringRealMap retval;
 
 	if ( ! core::pose::has_chain( chain, after ) ) {
-		utility_exit_with_message("The pose does not have chain " + utility::to_string( chain ) );
+		utility_exit_with_message("The pose does not have chain " + chain );
 	}
 
 	if ( native_ ) {
 		if ( ! core::pose::has_chain( chain, *native_ ) ) {
-			utility_exit_with_message("The native pose does not have chain " + utility::to_string( chain ) );
+			utility_exit_with_message("The native pose does not have chain " + chain );
 		}
 
 		utility::map_merge( retval, get_ligand_travel( chain, after, *native_, prefix_, native_ensemble_best_ ) );

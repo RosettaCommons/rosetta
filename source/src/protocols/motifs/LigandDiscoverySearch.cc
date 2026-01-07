@@ -572,7 +572,7 @@ void LigandDiscoverySearch::add_constraints_to_working_pose(const core::Size tri
 core::Real LigandDiscoverySearch::get_pose_ddg(core::scoring::ScoreFunctionOP score_fxn, core::pose::PoseOP & my_pose)
 {
 	//use the passed score function to get interface deltas on the working_pose
-	std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *my_pose, score_fxn, "");
+	std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas("2", *my_pose, score_fxn, "");
 
 	//return the ddg, which is interface_delta_2 in the interface map
 	return interface_mapX_postdock["interface_delta_2"];

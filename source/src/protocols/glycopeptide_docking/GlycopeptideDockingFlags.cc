@@ -23,6 +23,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/chains_util.hh>
+#include <core/pose/selection.hh>
 
 // Basic/Utility headers
 
@@ -165,33 +166,18 @@ GlycopeptideDockingFlags::set_enzyme_chain( core::pose::Pose const &pose )
 }
 
 
-///@Get residue from pose
-core::Size
-GlycopeptideDockingFlags::get_resnum(core::pose::Pose const &pose,std::string const &special_residue)
-{
-	pose::PDBInfoCOP pdb_info( pose.pdb_info() );
-
-	char chain = special_residue[ special_residue.size() - 1 ];
-	string res_num_str = "";
-	for ( core::Size pos = 0; pos < special_residue.size() - 1; pos++ ) {
-		res_num_str += special_residue[ pos ];
-	}
-	core::Size res_num = stoi( res_num_str );
-	return pdb_info->pdb2pose( chain, res_num );
-}
-
 ///@Set anchor or residue_to_glycosylate residue/s from command line or script options.
 void
 GlycopeptideDockingFlags::set_anchor_residue(core::pose::Pose const &pose,std::string const &special_residue)
 {
-	anchor_residue_substrate_ = get_resnum(pose,special_residue);
+	anchor_residue_substrate_ = core::pose::parse_resnum(special_residue,pose);
 }
 
 ///@Set anchor or residue_to_glycosylate residue/s from command line or script options.
 void
 GlycopeptideDockingFlags::set_glycosylation_residue(core::pose::Pose const &pose,std::string const &special_residue)
 {
-	residue_to_glycosylate_ = get_resnum(pose,special_residue);
+	residue_to_glycosylate_ = core::pose::parse_resnum(special_residue,pose);
 }
 
 

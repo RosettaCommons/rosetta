@@ -217,7 +217,7 @@ utility::vector1< core::Size >
 fix_glycan_order( utility::vector1< core::io::ResidueInformation > & rinfos,
 	utility::vector1< core::Size > const & glycan_positions,
 	StructFileRepOptions const & options,
-	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > const & known_links )
+	std::map< ResID, std::map< std::string, std::pair< ResID, std::string > > > const & known_links )
 
 {
 	utility::vector1< core::Size > chain_ends;
@@ -239,7 +239,7 @@ find_carbohydrate_order( utility::vector1< core::io::ResidueInformation > const 
 	utility::vector1< core::Size > & chain_ends, // return-by-reference for (non-reducing) end sugars
 	// map of anomeric positions to where they are connected to
 	std::map< std::pair< core::Size, std::string >, std::pair< core::Size, std::string > > const & link_map,
-	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > const & known_links )
+	std::map< ResID, std::map< std::string, std::pair< ResID, std::string > > > const & known_links )
 {
 	std::set< core::Size > roots; // Sorted!
 	for ( core::Size resi: glycan_positions ) {
@@ -254,7 +254,7 @@ find_carbohydrate_order( utility::vector1< core::io::ResidueInformation > const 
 			}
 		}
 		//Add all the known link records
-		std::string rinfo1 = rinfos[resi].resid();
+		ResID rinfo1 = rinfos[resi].resid();
 		for ( auto const & link1: known_links ) {
 			for ( auto const & link2: link1.second ) {
 				if ( (link1.first == rinfo1 && link2.first == " C1 " ) || (link2.second.first == rinfo1 && link2.second.second == " C1 ") ) {
@@ -393,7 +393,7 @@ determine_glycan_links( utility::vector1< core::io::ResidueInformation > const &
 		anomeric_name += anomeric;
 		anomeric_name += " ";
 		if ( ! rinfos[ ii ].xyz().count( anomeric_name ) ) {
-			TR << "Carbohydrate residue " << rinfos[ii].resid() <<
+			TR << "Carbohydrate residue " << rinfos[ii].resid().str() <<
 				" doesn't have coordinates for the anomeric carbon '" << anomeric_name <<
 				"'. Does the anomeric carbon have a different atom name? "
 				"Cannot determine glycan linkages with this residue. " << std::endl;
@@ -425,20 +425,20 @@ determine_glycan_links( utility::vector1< core::io::ResidueInformation > const &
 	return linkage_map;
 }
 
-std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > >
-explicit_links_from_sfr_linkage( std::map< std::string, utility::vector1< LinkInformation > > const & link_map,
+std::map< ResID, std::map< std::string, std::pair< ResID, std::string > > >
+explicit_links_from_sfr_linkage( std::map< ResID, utility::vector1< LinkInformation > > const & link_map,
 	utility::vector1< core::io::ResidueInformation > const & rinfos )
 {
-	std::set< std::string > known_resid;
+	std::set< ResID > known_resid;
 	for ( core::io::ResidueInformation const & resinfo : rinfos ) {
 		known_resid.insert( resinfo.resid() );
 	}
 
-	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > bi_map;
+	std::map< ResID, std::map< std::string, std::pair< ResID, std::string > > > bi_map;
 	for ( auto const & lm_pair : link_map ) {
 		for ( LinkInformation const & link_info : lm_pair.second ) {
 			if ( known_resid.count( link_info.resID1 ) == 0 || known_resid.count( link_info.resID2 ) == 0 ) {
-				TR << "Link between " << link_info.resID1 << " and " << link_info.resID2 << " is ill-formed - one/both residues don't exist!." << std::endl;
+				TR << "Link between " << link_info.resID1.str() << " and " << link_info.resID2.str() << " is ill-formed - one/both residues don't exist!." << std::endl;
 				continue;
 			}
 			bi_map[ link_info.resID1 ][ link_info.name1 ] = make_pair( link_info.resID2, link_info.name2 );
@@ -450,7 +450,7 @@ explicit_links_from_sfr_linkage( std::map< std::string, utility::vector1< LinkIn
 
 void
 add_glycan_links_to_map(
-	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > & known_links,
+	std::map< ResID, std::map< std::string, std::pair< ResID, std::string > > > & known_links,
 	std::map< std::pair< core::Size, std::string >, std::pair< core::Size, std::string > > const & link_map,
 	utility::vector1< core::io::ResidueInformation > const & rinfos )
 {
@@ -459,15 +459,15 @@ add_glycan_links_to_map(
 		known_links.clear(); // Ignore existing links, as they may be garbage -- we may want to reconsider this
 	}
 
-	std::map< std::string, core::Size > resid_to_pos;
+	std::map< ResID, core::Size > resid_to_pos;
 	for ( core::Size ii(1); ii <= rinfos.size(); ++ii ) {
 		resid_to_pos[ rinfos[ii].resid() ] = ii;
 	}
 
 	for ( auto const & pair: link_map ) {
-		std::string rinfo1 = rinfos[pair.first.first].resid();
+		ResID rinfo1 = rinfos[pair.first.first].resid();
 		std::string atom1 = pair.first.second;
-		std::string rinfo2 = rinfos[pair.second.first].resid();
+		ResID rinfo2 = rinfos[pair.second.first].resid();
 		std::string atom2 = pair.second.second;
 
 		// Don't overwrite explicit links

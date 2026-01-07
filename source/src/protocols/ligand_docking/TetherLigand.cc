@@ -41,7 +41,7 @@ static basic::Tracer tether_ligand_tracer( "protocols.ligand_docking.ligand_opti
 
 TetherLigand::TetherLigand()= default;
 
-TetherLigand::TetherLigand(const char & chain, const core::Real & angstroms):
+TetherLigand::TetherLigand(std::string const & chain, const core::Real & angstroms):
 	protocols::moves::Mover(),
 	chain_(chain),
 	angstroms_(angstroms)

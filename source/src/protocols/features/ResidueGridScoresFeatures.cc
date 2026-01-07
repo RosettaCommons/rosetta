@@ -45,7 +45,7 @@ namespace features {
 
 
 
-ResidueGridScoresFeatures::ResidueGridScoresFeatures() : chain_(' ')
+ResidueGridScoresFeatures::ResidueGridScoresFeatures() : chain_(" ")
 {
 
 }
@@ -162,7 +162,7 @@ void ResidueGridScoresFeatures::parse_my_tag(
 
 	}
 
-	chain_ = tag->getOption<char>("chain");
+	chain_ = tag->getOption<std::string>("chain");
 }
 
 std::string ResidueGridScoresFeatures::type_name() const {
@@ -178,8 +178,8 @@ void ResidueGridScoresFeatures::provide_xml_schema( utility::tag::XMLSchemaDefin
 	using namespace utility::tag;
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute::required_attribute(
-		"chain", xsct_char,
-		"required chain name tag (single character)");
+		"chain", xs_string,
+		"required chain name tag");
 
 	protocols::qsar::scoring_grid::attributes_for_parse_grid_set_from_tag( attlist, "The Grid Set from which to get the scoring features" );
 

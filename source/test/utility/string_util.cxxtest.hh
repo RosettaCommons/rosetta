@@ -82,7 +82,7 @@ public:
 
 	void test_reschain_to_string() {
 		utility::vector1< int >  res_vector = utility::tools::make_vector1( -5, -4, -3, 1, 2, 3, 1, 2);
-		utility::vector1< char > chain_vector = utility::tools::make_vector1( 'A','A','A','A','A','A',' ','B' );
+		utility::vector1< std::string > chain_vector = utility::tools::make_vector1( "A","A","A","A","A","A"," ","B" );
 		utility::vector1< std::string > segid_vector = utility::tools::make_vector1( "    ", "    ", "    ", "    ", "    ", "    ", "    ", "    " );
 		std::string tag = make_tag_with_dashes( res_vector, chain_vector, segid_vector );
 		TS_ASSERT_EQUALS( tag, "A:-5--3 A:1-3 1 B:2" );
@@ -90,7 +90,7 @@ public:
 
 	void test_reschainseg_to_string() {
 		utility::vector1< int >  res_vector = utility::tools::make_vector1( -5, -4, -3, 1, 2, 3, 1, 2);
-		utility::vector1< char > chain_vector = utility::tools::make_vector1( 'A','A','A','A','A','A',' ','B' );
+		utility::vector1< std::string > chain_vector = utility::tools::make_vector1( "A","A","A","A","A","A"," ","B" );
 		utility::vector1< std::string > segid_vector = utility::tools::make_vector1( " CA ", " CA ", " CA ", " CB ", " CB ", " CB ", "    ", "    " );
 		std::string tag = make_tag_with_dashes( res_vector, chain_vector, segid_vector );
 		TS_ASSERT_EQUALS( tag, "A:CA:-5--3 A:CB:1-3 1 B:2" );
@@ -98,11 +98,11 @@ public:
 
 	void run_test_of_get_resnum_and_chain( std::string const & tag ) {
 		bool ok;
-		std::tuple< utility::vector1<int>, utility::vector1<char>, utility::vector1<std::string> > resnum_chain = utility::get_resnum_and_chain_and_segid( tag, ok );
+		std::tuple< utility::vector1<int>, utility::vector1<std::string>, utility::vector1<std::string> > resnum_chain = utility::get_resnum_and_chain_and_segid( tag, ok );
 
 		TS_ASSERT( ok );
 		utility::vector1<int>         resnum( std::get<0>(resnum_chain) );
-		utility::vector1<char>        chains( std::get<1>(resnum_chain) );
+		utility::vector1<std::string> chains( std::get<1>(resnum_chain) );
 		utility::vector1<std::string> segids( std::get<2>(resnum_chain) );
 		TS_ASSERT_EQUALS( resnum.size(), 8 );
 		TS_ASSERT_EQUALS( resnum[1], -5 );
@@ -115,14 +115,14 @@ public:
 		TS_ASSERT_EQUALS( resnum[8],  2 );
 
 		TS_ASSERT_EQUALS( chains.size(), 8 );
-		TS_ASSERT_EQUALS( chains[1], 'A' );
-		TS_ASSERT_EQUALS( chains[2], 'A' );
-		TS_ASSERT_EQUALS( chains[3], 'A' );
-		TS_ASSERT_EQUALS( chains[4], 'A' );
-		TS_ASSERT_EQUALS( chains[5], 'A' );
-		TS_ASSERT_EQUALS( chains[6], 'A' );
-		TS_ASSERT_EQUALS( chains[7], ' ' );
-		TS_ASSERT_EQUALS( chains[8], 'B' );
+		TS_ASSERT_EQUALS( chains[1], "A" );
+		TS_ASSERT_EQUALS( chains[2], "A" );
+		TS_ASSERT_EQUALS( chains[3], "A" );
+		TS_ASSERT_EQUALS( chains[4], "A" );
+		TS_ASSERT_EQUALS( chains[5], "A" );
+		TS_ASSERT_EQUALS( chains[6], "A" );
+		TS_ASSERT_EQUALS( chains[7], " " );
+		TS_ASSERT_EQUALS( chains[8], "B" );
 
 		TS_ASSERT_EQUALS( segids.size(), 8 );
 		for ( auto const & segid : segids ) {
@@ -144,6 +144,75 @@ public:
 		tag = "  A-5--3,A1-3 :1 B2-2";
 		run_test_of_get_resnum_and_chain( tag );
 	}
+
+	void test_resnum_and_chain_from_one_tag() {
+		utility::vector1< int > resnum;
+		utility::vector1< std::string > chains;
+		utility::vector1< std::string > segids;
+
+		resnum.clear(); chains.clear(); segids.clear();
+		utility::get_resnum_and_chain_from_one_tag( "C32-34", resnum, chains, segids);
+		TS_ASSERT_EQUALS( resnum.size(), 3 );
+		TS_ASSERT_EQUALS( chains.size(), 3 );
+		TS_ASSERT_EQUALS( segids.size(), 3 );
+		TS_ASSERT_EQUALS( resnum[1], 32 );
+		TS_ASSERT_EQUALS( chains[1], "C" );
+
+		resnum.clear(); chains.clear(); segids.clear();
+		utility::get_resnum_and_chain_from_one_tag( "CD156-159", resnum, chains, segids);
+		TS_ASSERT_EQUALS( resnum.size(), 4 );
+		TS_ASSERT_EQUALS( chains.size(), 4 );
+		TS_ASSERT_EQUALS( segids.size(), 4 );
+		TS_ASSERT_EQUALS( resnum[1], 156 );
+		TS_ASSERT_EQUALS( chains[1], "CD" );
+
+		resnum.clear(); chains.clear(); segids.clear();
+		utility::get_resnum_and_chain_from_one_tag( "F:3", resnum, chains, segids);
+		TS_ASSERT_EQUALS( resnum.size(), 1 );
+		TS_ASSERT_EQUALS( chains.size(), 1 );
+		TS_ASSERT_EQUALS( segids.size(), 1 );
+		TS_ASSERT_EQUALS( resnum[1], 3 );
+		TS_ASSERT_EQUALS( chains[1], "F" );
+
+		resnum.clear(); chains.clear(); segids.clear();
+		utility::get_resnum_and_chain_from_one_tag( "AAA:5-14", resnum, chains, segids);
+		TS_ASSERT_EQUALS( resnum.size(), 10 );
+		TS_ASSERT_EQUALS( chains.size(), 10 );
+		TS_ASSERT_EQUALS( segids.size(), 10 );
+		TS_ASSERT_EQUALS( resnum[1], 5 );
+		TS_ASSERT_EQUALS( chains[1], "AAA" );
+		TS_ASSERT_EQUALS( resnum[10], 14 );
+		TS_ASSERT_EQUALS( chains[10], "AAA" );
+
+		resnum.clear(); chains.clear(); segids.clear();
+		utility::get_resnum_and_chain_from_one_tag( ":12", resnum, chains, segids);
+		TS_ASSERT_EQUALS( resnum.size(), 1 );
+		TS_ASSERT_EQUALS( chains.size(), 1 );
+		TS_ASSERT_EQUALS( segids.size(), 1 );
+		TS_ASSERT_EQUALS( resnum[1], 12 );
+		TS_ASSERT_EQUALS( chains[1], " " );
+
+		resnum.clear(); chains.clear(); segids.clear();
+		utility::get_resnum_and_chain_from_one_tag( "A:xyz:124", resnum, chains, segids);
+		TS_ASSERT_EQUALS( resnum.size(), 1 );
+		TS_ASSERT_EQUALS( chains.size(), 1 );
+		TS_ASSERT_EQUALS( segids.size(), 1 );
+		TS_ASSERT_EQUALS( resnum[1], 124 );
+		TS_ASSERT_EQUALS( chains[1], "A" );
+		TS_ASSERT_EQUALS( segids[1], "xyz " );
+
+		resnum.clear(); chains.clear(); segids.clear();
+		utility::get_resnum_and_chain_from_one_tag( "D1:f:10-13", resnum, chains, segids);
+		TS_ASSERT_EQUALS( resnum.size(), 4 );
+		TS_ASSERT_EQUALS( chains.size(), 4 );
+		TS_ASSERT_EQUALS( segids.size(), 4 );
+		TS_ASSERT_EQUALS( resnum[1], 10 );
+		TS_ASSERT_EQUALS( chains[1], "D1" );
+		TS_ASSERT_EQUALS( segids[1], "f   " );
+		TS_ASSERT_EQUALS( resnum[4], 13 );
+		TS_ASSERT_EQUALS( chains[4], "D1" );
+	}
+
 
 	void test_make_segtag() {
 		utility::vector1< int >  res_vector = utility::tools::make_vector1( -5, -4, 2, 3, 0, 0, 1, 2);

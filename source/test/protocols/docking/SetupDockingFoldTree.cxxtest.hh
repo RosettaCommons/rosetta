@@ -20,6 +20,7 @@
 // project headers
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Edge.hh>
@@ -75,12 +76,12 @@ public:
 		std::stringstream default_foldtree, specified_foldtree;
 
 		//autodetect first jump:
-		protocols::docking::setup_foldtree(pose, "_", movable_jumps);
+		protocols::docking::setup_foldtree(pose, core::pose::DockingPartners(), movable_jumps);
 		default_foldtree << pose.fold_tree();
 		pose.fold_tree(fold_tree);
 
 		//specify first jump via string:
-		protocols::docking::setup_foldtree(pose, "E_I", movable_jumps);
+		protocols::docking::setup_foldtree(pose, core::pose::DockingPartners::docking_partners_from_string("E_I"), movable_jumps);
 		specified_foldtree << pose.fold_tree();
 		pose.fold_tree(fold_tree);
 
@@ -104,7 +105,7 @@ public:
 		target_foldtree << "EDGE 488 433 -1  ";
 		target_foldtree << "EDGE 488 561 -1 ";
 
-		protocols::docking::setup_foldtree( pose, "AB_E", movable_jumps );
+		protocols::docking::setup_foldtree( pose, core::pose::DockingPartners::docking_partners_from_string("AB_E"), movable_jumps );
 
 		std::stringstream computed_foldtree;
 		computed_foldtree << pose.fold_tree();
@@ -121,7 +122,7 @@ public:
 		out_of_order_foldtree << "EDGE 325 432 -1  ";
 		out_of_order_foldtree << "EDGE 433 561 -1 ";
 
-		protocols::docking::setup_foldtree( pose, "AE_B", movable_jumps );
+		protocols::docking::setup_foldtree( pose, core::pose::DockingPartners::docking_partners_from_string("AE_B"), movable_jumps );
 
 		std::stringstream computed_out_of_order_foldtree;
 		computed_out_of_order_foldtree << pose.fold_tree();

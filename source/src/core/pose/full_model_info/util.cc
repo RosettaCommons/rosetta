@@ -18,6 +18,7 @@
 #include <core/chemical/types.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/util.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -271,16 +272,16 @@ figure_out_conventional_segids_from_full_model_info( pose::Pose const & pose ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-utility::vector1< char >
+utility::vector1< std::string >
 figure_out_conventional_chains_from_full_model_info( pose::Pose const & pose ) {
-	utility::vector1< char > chains;
-	utility::vector1< char > const & conventional_chains = const_full_model_info( pose ).conventional_chains();
+	utility::vector1< std::string > chains;
+	utility::vector1< std::string > const & conventional_chains = const_full_model_info( pose ).conventional_chains();
 	if ( conventional_chains.size() > 0 ) {
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 		for ( Size n = 1; n <= pose.size(); n++ ) chains.push_back( conventional_chains[ res_list[n] ] );
 	} else {
 		utility::vector1< Size > chain_numbers = figure_out_chain_numbers_from_full_model_info_const( pose );
-		for ( Size n = 1; n <= pose.size(); n++ ) chains.push_back( core::chemical::chr_chains[ chain_numbers[n]-1 ] );
+		for ( Size n = 1; n <= pose.size(); n++ ) chains.push_back( core::conformation::canonical_chain_letter_for_chain_number(chain_numbers[n]) );
 	}
 	return chains;
 }
@@ -738,17 +739,17 @@ get_res_num_from_pdb_info( pose::Pose const & pose ) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-utility::vector1< char >
+utility::vector1< std::string >
 get_chains_from_pdb_info( pose::Pose const & pose ) {
 
-	utility::vector1< char > chains;
+	utility::vector1< std::string > chains;
 
 	PDBInfoCOP pdb_info = pose.pdb_info();
 
 	if ( ( pdb_info != nullptr ) && !pdb_info->obsolete() ) {
 		for ( Size n = 1; n <= pose.size(); n++ ) chains.push_back( pdb_info->chain( n ) );
 	} else {
-		for ( Size n = 1; n <= pose.size(); n++ ) chains.push_back( ' ' );
+		for ( Size n = 1; n <= pose.size(); n++ ) chains.push_back( " " );
 	}
 	return chains;
 }
@@ -1029,8 +1030,8 @@ append_virtual_residue_to_full_model_info( pose::Pose & pose )
 	vector1< int > new_conventional_numbering( full_model_parameters->conventional_numbering() );
 	new_conventional_numbering.push_back( 0 );
 
-	vector1< char > new_conventional_chains( full_model_parameters->conventional_chains() );
-	new_conventional_chains.push_back( ' ' );
+	vector1< std::string > new_conventional_chains( full_model_parameters->conventional_chains() );
+	new_conventional_chains.push_back( " " );
 
 	vector1< std::string > new_conventional_segids( full_model_parameters->conventional_segids() );
 	new_conventional_segids.push_back( "    " );

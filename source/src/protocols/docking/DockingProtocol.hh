@@ -32,6 +32,7 @@
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <protocols/simple_task_operations/InterfaceTaskOperation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>  // Needs to be the full header so the scorefxn can default to NULL
 #include <core/kinematics/FoldTree.hh>
 
@@ -167,7 +168,7 @@ public:
 
 	// inline getters
 	/// @brief returns the docking partners chain identifiers
-	std::string partners() const { return partners_;}
+	core::pose::DockingPartners const & partners() const { return partners_;}
 
 	/// @brief returns ref to the jumps vector for docking
 	DockJumps & movable_jumps(){ return movable_jumps_;}
@@ -193,7 +194,7 @@ public:
 
 	// inline setters
 	void set_autofoldtree( bool const autofoldtree ){ autofoldtree_ = autofoldtree; }
-	void set_partners( std::string const& partners ){ partners_=partners; }
+	void set_partners( core::pose::DockingPartners const& partners ){ partners_=partners; }
 	void set_inner_cycles( core::Size inner_cycles ) { lowres_inner_cycles_=inner_cycles; }
 	void set_outer_cycles( core::Size outer_cycles ) { lowres_outer_cycles_=outer_cycles; }
 
@@ -254,7 +255,7 @@ private:
 
 	core::Real score_cutoff_;
 	core::kinematics::FoldTree fold_tree_;
-	std::string partners_;
+	core::pose::DockingPartners partners_;
 
 	std::string previous_sequence_;
 

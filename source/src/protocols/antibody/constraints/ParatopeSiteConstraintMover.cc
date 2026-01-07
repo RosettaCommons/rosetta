@@ -186,7 +186,7 @@ ParatopeSiteConstraintMover::remove(core::pose::Pose& pose, bool reset_paratope_
 		paratope_residues = this->paratope_residues_from_cdrs(pose);
 	}
 
-	if ( antigen_chains_.size() == 0 ) antigen_chains_ = utility::string_vector_from_char_vector( ab_info_->get_antigen_chains() );
+	if ( antigen_chains_.size() == 0 ) antigen_chains_ = ab_info_->get_antigen_chains();
 
 	vector1<ConstraintOP> csts_to_be_removed;
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
@@ -239,7 +239,7 @@ ParatopeSiteConstraintMover::apply(core::pose::Pose& pose){
 	}
 
 	//Check any settings, set defaults from our antibody info.
-	if ( antigen_chains_.size() == 0 ) antigen_chains_ = utility::string_vector_from_char_vector( ab_info_->get_antigen_chains() );
+	if ( antigen_chains_.size() == 0 ) antigen_chains_ = ab_info_->get_antigen_chains();
 	utility::vector1< bool > paratope_residues;
 	if ( paratope_residues_ == nullptr ) {
 		paratope_residues = paratope_residues_from_cdrs(pose);

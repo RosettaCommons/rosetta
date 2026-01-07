@@ -70,7 +70,7 @@ void ExtendedPoseMover::apply(core::pose::Pose& pose) {
 
 	if ( chain() != "" ) {
 		core::pose::PDBInfoOP info( new core::pose::PDBInfo( pose, true ) );
-		info->set_chains( (char) chain()[0] );
+		info->set_chains( chain() );
 		pose.pdb_info( info );
 	}
 }

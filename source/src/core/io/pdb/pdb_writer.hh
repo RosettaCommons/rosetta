@@ -279,6 +279,12 @@ dump_pdb(
 	std::string & out,
 	std::string const &filename=""
 );
+
+
+/// @brief A utility function to convert multi-letter chains into single letter ones.
+std::string
+check_chain(std::string const & chain);
+
 } //pdb
 } //io
 } //core

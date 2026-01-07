@@ -342,7 +342,7 @@ DockPDBIntoDensityMover::compare_and_align_poses( core::pose::Pose & query, core
 	core::Size N = 0;
 	for ( core::Size i = 1; i <= query.size(); ++i ) {
 		int const query_resnum = query.pdb_info()->number(i);
-		char const query_chain = query.pdb_info()->chain(i);
+		std::string const query_chain = query.pdb_info()->chain(i);
 		core::Size const native_posenum = native.pdb_info()->pdb2pose( query_chain, query_resnum );
 		//int r2_resnum = r2->pdb_info()->number(r2_posenum);
 		if ( native_posenum == 0 ) continue;

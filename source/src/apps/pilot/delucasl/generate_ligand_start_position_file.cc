@@ -38,7 +38,7 @@ int main(int argc, char*argv[])
 		devel::init(argc,argv);
 
 
-		char ligand_id = basic::options::option[basic::options::OptionKeys::ligand_chain]()[0];
+		std::string ligand_id = basic::options::option[basic::options::OptionKeys::ligand_chain]();
 		std::string outfile_path =  basic::options::option[basic::options::OptionKeys::start_position_file]();
 
 		utility::vector1<std::string> file_names = basic::options::start_files();

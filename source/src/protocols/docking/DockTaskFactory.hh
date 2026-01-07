@@ -69,7 +69,7 @@ public:
 
 	void set_norepack1( bool norepack1 ) { norepack1_=norepack1; }
 	void set_norepack2( bool norepack2 ) { norepack2_=norepack2; }
-	void set_design_chains( utility::vector1< char > design_chains ) { design_chains_ = design_chains; }
+	void set_design_chains( utility::vector1< std::string > design_chains ) { design_chains_ = design_chains; }
 	void set_additional_task_operarations( utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations );
 	void add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation );
 	utility::vector1< core::pack::task::operation::TaskOperationOP > get_additional_task_operarations();
@@ -84,7 +84,7 @@ private:
 	bool resfile_;
 	bool norepack1_;
 	bool norepack2_;
-	utility::vector1< char > design_chains_;
+	utility::vector1< std::string > design_chains_;
 	utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations_;
 	bool prepack_only_;  //JQX
 

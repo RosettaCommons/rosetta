@@ -46,7 +46,7 @@ struct InterfaceInfo{
 	Type type=non_interface;
 	// Are the following defaults reasonable? I have no clue - this interfaces is rather confusing.
 	core::Size chain_id=0; // chains that are causing this to be part of the interface
-	char chain='X';
+	std::string chain="X";
 
 	InterfaceInfo(): type(non_interface){}
 	InterfaceInfo(Type t): type(t){};

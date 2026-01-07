@@ -161,7 +161,7 @@ private:
 	Size num_satisfied_;
 	core::Real maxE_;
 	core::Real maxRMSD_;
-	char chain_char_;
+	std::string chain_;
 	std::string struct_filename_;
 	vector1<core::Real> best_rmsd_values_;
 	utility::vector1< core::Size > res_to_loose_;
@@ -176,23 +176,22 @@ ExposedStrandMover::ExposedStrandMover() {
 	check_rmsd_ = option[ check_rmsd ];
 	//strand_def_vector_ = option[ strand_span ];
 	scorefxn_ = core::scoring::get_score_function();
-	// AMW: cppcheck wanted this to be initialized in the ctor
-	chain_char_ = 'A';
+	chain_ = "A";
 	//struct_filename_ = option[ struct_file ];
 }
 
 void ExposedStrandMover::parse_strand_ids(core::pose::Pose & pose, utility::vector1<std::string> & strand_id ){
-	chain_char_ = strand_id[chain_index][0] ;
+	chain_ = strand_id[chain_index] ;
 
 	int start_num, end_num;
 	std::istringstream ss_start( strand_id[ start_index ] );
 	std::istringstream ss_end( strand_id[ end_index ] );
 	ss_start >> start_num;
 	ss_end >> end_num;
-	strand_pose_nums_.push_back( pose.pdb_info()->pdb2pose(chain_char_, start_num ) );
-	strand_pose_nums_.push_back( pose.pdb_info()->pdb2pose(chain_char_, end_num ) );
+	strand_pose_nums_.push_back( pose.pdb_info()->pdb2pose(chain_, start_num ) );
+	strand_pose_nums_.push_back( pose.pdb_info()->pdb2pose(chain_, end_num ) );
 
-	TR << "Strand to match against is chain: " << chain_char_ << " poseid start: "
+	TR << "Strand to match against is chain: " << chain_ << " poseid start: "
 		<< strand_pose_nums_[1] << " poseid end: "<< strand_pose_nums_[2] <<std::endl;
 
 }//end parse_strand_ids
@@ -551,7 +550,7 @@ void ExposedStrandMover::apply (core::pose::Pose & pose ) {
 		//find chain to cut out of master_pose later
 		//utility::vector1< core::Size >  res_to_loose;
 		for ( core::Size ii =1; ii <= native_pose_.size(); ++ii ) {
-			if ( native_pose_.pdb_info()->chain(ii) == chain_char_ ) {
+			if ( native_pose_.pdb_info()->chain(ii) == chain_ ) {
 				res_to_loose_.push_back(ii);
 			}
 		}

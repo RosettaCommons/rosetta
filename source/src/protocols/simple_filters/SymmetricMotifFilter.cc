@@ -490,7 +490,7 @@ SymmetricMotifFilter::process_motifs() {
 		motif_cuts[i].push_back( 0 );
 		core::pose::PoseOP motif_i = ref_motifs_[i];
 		for ( core::Size j=1; j<=motif_i->size(); ++j ) {
-			if ( motif_i->pdb_info()->chain(j) == 'A' ) {
+			if ( motif_i->pdb_info()->chain(j) == "A" ) {
 				cas_chainA[i].push_back( motif_i->residue(j).atom(" CA ").xyz() );
 				cas_chainA[i].push_back( motif_i->residue(j).atom(" C  ").xyz() );
 				cas_chainA[i].push_back( motif_i->residue(j).atom(" N  ").xyz() );

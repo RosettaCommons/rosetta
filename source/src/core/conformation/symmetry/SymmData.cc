@@ -15,6 +15,7 @@
 #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/VirtualCoordinate.hh>
 #include <core/conformation/symmetry/SymDof.hh>
+#include <core/conformation/util.hh>
 
 // Project headers
 #include <basic/Tracer.hh>
@@ -273,7 +274,7 @@ SymmData::get_virt_id_to_subunit_num() const
 	return virt_id_to_subunit_num_;
 }
 
-map< string, char > const &
+map< string, string > const &
 SymmData::get_virt_id_to_subunit_chain() const
 {
 	return virt_id_to_subunit_chain_;
@@ -419,7 +420,7 @@ SymmData::read_symmetry_data_from_stream(
 	Size num_transformations( 0 );                     // Number of sym transforms read
 	core::Size N( 1 );                                 // Number of subunits in the system
 	vector1< string > score_multiply_subunit_string;
-	std::set<char> subchains;
+	std::set< string > subchains;
 
 	// Read the file
 	while ( getline(infile,line) ) {
@@ -708,10 +709,10 @@ SymmData::read_symmetry_data_from_stream(
 						subunit_num_to_virt_id_[ newId ] = tokens[3];
 						if ( !have_virtual_coordinates ) utility_exit_with_message("multicomponent symmetry not supported with virtual_transforms_start/stop!");
 						string subchain = tokens[5];
-						if ( subchain.size() != 1 || subchain[0]==' ' ) utility_exit_with_message("[ERRIR] bad chain: "+subchain+" specified on SUBUNIT line:\n"+line);
-						virt_id_to_subunit_chain_[ tokens[3] ] = subchain[0];
-						subchains.insert(subchain[0]);
-						if ( tokens.size() > 5 && tokens[5][0] != '#' ) {
+						if ( ! is_chain_valid(subchain) ) utility_exit_with_message("[ERROR] bad chain: "+subchain+" specified on SUBUNIT line:\n"+line);
+						virt_id_to_subunit_chain_[ tokens[3] ] = subchain;
+						subchains.insert(subchain);
+						if ( tokens.size() > 5 && tokens[6][0] != '#' ) {
 							virt_id_to_subunit_residue_[ tokens[3] ] = tokens[6];
 						} else {
 							virt_id_to_subunit_residue_[ tokens[3] ] = get_anchor_residue(); // default subanchor
@@ -927,30 +928,30 @@ SymmData::read_symmetry_data_from_stream(
 	// postprocess multi-component related stuff // sheffler
 	// count num subs per component, correct raw virt_id_to_subunit_num_
 	if ( ! virt_id_to_subunit_chain_.empty() ) {
-		vector1<char> chains(subchains.begin(),subchains.end());
+		vector1<string> chains(subchains.begin(),subchains.end());
 		if ( chains.size() <= 1 ) utility_exit_with_message("processing multicomponent symmetry, but only one chain!");
 		std::sort(chains.begin(),chains.end());
-		vector1<char>::const_iterator i = chains.begin();
+		vector1<string>::const_iterator i = chains.begin();
 		TR << "MULTICOMPONENT " << "You have specified the following chains for multi-component:";
 		TR << " primary: " << *i;
 		TR << ", secondary:";
 		for ( ++i; i != chains.end(); ++i ) TR << " " << *i;
 		TR << std::endl;
-		char firstchain = chains[1];
+		string firstchain = chains[1];
 
 		if ( virt_id_to_subunit_chain_.size() != virt_id_to_subunit_num_.size() ) utility_exit_with_message("missing component chains!");
-		map<char,Size> chaincount;
-		for ( map<string,char>::const_iterator j = virt_id_to_subunit_chain_.begin(); j != virt_id_to_subunit_chain_.end(); ++j ) {
-			char const & chain = j->second;
+		map<string,Size> chaincount;
+		for ( map<string,string>::const_iterator j = virt_id_to_subunit_chain_.begin(); j != virt_id_to_subunit_chain_.end(); ++j ) {
+			string const & chain = j->second;
 			if ( chaincount.count(chain)==0 ) chaincount[chain] = 0;
 			chaincount[chain]++;
 		}
 		if ( chaincount.size() == 1 ) utility_exit_with_message("For compatibility, don't use multicomponent format with only one component!!!");
 		subunits_ = chaincount.begin()->second;
 		num_components_ = chaincount.size();
-		for ( map<char,Size>::const_iterator k = chaincount.begin(); k != chaincount.end(); ++k ) {
+		for ( map<string,Size>::const_iterator k = chaincount.begin(); k != chaincount.end(); ++k ) {
 			if ( k->second != subunits_ ) {
-				for ( map<char,Size>::const_iterator j = chaincount.begin(); j != chaincount.end(); ++j ) {
+				for ( map<string,Size>::const_iterator j = chaincount.begin(); j != chaincount.end(); ++j ) {
 					TR << "SUBUNIT " << j->first << " num subs: " << j->second << endl;
 				}
 				utility_exit_with_message("[ERROR] bad number of subunits");
@@ -958,11 +959,11 @@ SymmData::read_symmetry_data_from_stream(
 		}
 
 		// compute reference xforms
-		map<pair<char,Size>,Xform> frames;
+		map<pair<string,Size>,Xform> frames;
 		for ( map<string,Size>::const_iterator j = virt_id_to_subunit_num_.begin(); j != virt_id_to_subunit_num_.end(); ++j ) {
 			string const & virt_id = j->first;
 			Size const & subnum = j->second;
-			char const & chain = virt_id_to_subunit_chain_[virt_id];
+			string const & chain = virt_id_to_subunit_chain_[virt_id];
 			VirtualCoordinate const & vc( virtual_coordinates_[j->first] );
 
 			Vec zaxis( vc.get_x().cross(vc.get_y()).normalized() );
@@ -989,24 +990,24 @@ SymmData::read_symmetry_data_from_stream(
 		}
 
 		// compute relative xforms
-		map<pair<char,Size>,Xform> relxforms;
+		map<pair<string,Size>,Xform> relxforms;
 		for ( map<string,Size>::const_iterator j = virt_id_to_subunit_num_.begin(); j != virt_id_to_subunit_num_.end(); ++j ) {
 			string const & virt_id = j->first;
 			Size const & subnum = j->second;
-			char const & chain = virt_id_to_subunit_chain_[virt_id];
+			string const & chain = virt_id_to_subunit_chain_[virt_id];
 			relxforms[make_pair(chain,subnum)] = frames[make_pair(chain,(subnum-1)%subunits_+1)] * ~frames[make_pair(chain,1)];
 		}
 
-		map<pair<char,Size>,Size> subperm;
+		map<pair<string,Size>,Size> subperm;
 		for ( map<string,Size>::const_iterator i2 = virt_id_to_subunit_num_.begin(); i2 != virt_id_to_subunit_num_.end(); ++i2 ) {
 			string const & virt_id = i2->first;
 			Size const & subnum = i2->second;
-			char const & chain = virt_id_to_subunit_chain_[virt_id];
+			string const & chain = virt_id_to_subunit_chain_[virt_id];
 			if ( chain == firstchain ) continue;
 			Xform const & xform1( relxforms[make_pair(chain,subnum)] );
-			for ( map<pair<char,Size>,Xform>::const_iterator j = relxforms.begin(); j != relxforms.end(); ++j ) {
+			for ( map<pair<string,Size>,Xform>::const_iterator j = relxforms.begin(); j != relxforms.end(); ++j ) {
 				Size const & subnum2(j->first.second);
-				char const & chain2 (j->first.first);
+				string const & chain2 (j->first.first);
 				Xform const & xform2(j->second);
 				if ( chain2!=firstchain ) continue;
 				if ( xform1.distance(xform2) < 0.000001 ) {
@@ -1027,7 +1028,7 @@ SymmData::read_symmetry_data_from_stream(
 		for ( map<string,Size>::const_iterator i2 = virt_id_to_subunit_num_.begin(); i2 != virt_id_to_subunit_num_.end(); ++i2 ) {
 			string const & virt_id = i2->first;
 			Size const & subnum = i2->second;
-			char const & chain = virt_id_to_subunit_chain_[virt_id];
+			string const & chain = virt_id_to_subunit_chain_[virt_id];
 			Size newsubnum = 0;
 			if ( chain==firstchain ) {
 				newsubnum = (subnum-1)%subunits_+1;
@@ -1046,10 +1047,10 @@ SymmData::read_symmetry_data_from_stream(
 		}
 
 		// another sanity check
-		map<char,string> chainres;
-		for ( map<string,char>::const_iterator i2 = virt_id_to_subunit_chain_.begin(); i2 != virt_id_to_subunit_chain_.end(); ++i2 ) {
+		map<string,string> chainres;
+		for ( map<string,string>::const_iterator i2 = virt_id_to_subunit_chain_.begin(); i2 != virt_id_to_subunit_chain_.end(); ++i2 ) {
 			string const & virt_id = i2->first;
-			char const & chain = i2->second;
+			string const & chain = i2->second;
 			// make sure [<res req>] are all same
 			if ( chainres.count(chain)==0 ) chainres[chain] = virt_id_to_subunit_residue_[virt_id];
 			if ( chainres[chain] != virt_id_to_subunit_residue_[virt_id] ) {
@@ -1216,9 +1217,9 @@ SymmData::sanity_check()
 		utility_exit_with_message( "[ERROR] The number of subunits is not equal to the number of jumps from virtual residues to subunits..." );
 	}
 	bool nullchain = false;
-	for ( map<string,char>::const_iterator i = virt_id_to_subunit_chain_.begin(); i != virt_id_to_subunit_chain_.end(); ++i ) {
-		if ( i->second == (char)0 ) nullchain = true;
-		if ( nullchain && i->second != (char)0 ) utility_exit_with_message("[ERROR] all SUBUNITs must have chain if any have chain!");
+	for ( map<string,string>::const_iterator i = virt_id_to_subunit_chain_.begin(); i != virt_id_to_subunit_chain_.end(); ++i ) {
+		if ( !is_chain_valid( i->second ) ) nullchain = true;
+		if ( nullchain && is_chain_valid( i->second ) ) utility_exit_with_message("[ERROR] all SUBUNITs must have chain if any have chain!");
 	}
 }
 
@@ -1307,16 +1308,16 @@ SymmData::show()
 }
 
 
-utility::vector1<char> const &
+utility::vector1<std::string> const &
 SymmData::get_components() const {
 	return components_;
 }
 
-std::map<std::string,char> const &
+std::map<std::string,std::string> const &
 SymmData::get_subunit_name_to_component() const {
 	return name2component_;
 }
-std::map<std::string,utility::vector1<char> > const &
+std::map<std::string,utility::vector1<std::string> > const &
 SymmData::get_jump_name_to_components() const {
 	return jname2components_;
 }
@@ -1407,15 +1408,15 @@ SymmData::leaves_of_jump(std::string const & jname) const {
 }
 
 
-vector1<char>
+vector1<string>
 SymmData::components_moved_by_jump(std::string const & jname) const {
 	vector1<string> leaves = leaves_of_jump(jname);
-	std::set<char> components;
+	std::set<std::string> components;
 	for ( vector1<string>::const_iterator i = leaves.begin(); i != leaves.end(); ++i ) {
 		if ( virt_id_to_subunit_chain_.find(*i) == virt_id_to_subunit_chain_.end() ) break;
 		components.insert( virt_id_to_subunit_chain_.find(*i)->second );
 	}
-	return vector1<char>(components.begin(),components.end());
+	return vector1<string>(components.begin(),components.end());
 }
 
 vector1<Size>
@@ -1426,7 +1427,7 @@ SymmData::subunits_moved_by_jump(std::string const & jname) const {
 		if ( virt_id_to_subunit_num_.find(*i) == virt_id_to_subunit_num_.end() ) break;
 		subunits.insert( virt_id_to_subunit_num_.find(*i)->second );
 	}
-	return vector1<char>(subunits.begin(),subunits.end());
+	return vector1<Size>(subunits.begin(),subunits.end());
 }
 
 bool

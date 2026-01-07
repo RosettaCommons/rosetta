@@ -383,7 +383,7 @@ void
 output_stems( std::ostream & out, core::scoring::rna::RNA_Motifs const & rna_motifs, core::pose::Pose const & pose );
 
 /// @brief Figure out chains that have RNA in them. Can supply chains from command-line to focus on particular RNA chains.
-utility::vector1< std::pair< char, std::string > >
+utility::vector1< ChainSegID >
 figure_out_rna_chains( pose::Pose const & pose, utility::vector1< std::string > const & chains = utility::vector1< std::string >() );
 
 /// @brief Pull out RNA from pose, in chains specified by chain_segids.

@@ -24,6 +24,7 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 
@@ -100,7 +101,7 @@ public:
 	//getters for const access to movers and data of docking protocol
 	protocols::moves::MoverCOP to_centroid() const;
 
-	std::string partners() const { return partners_;} /// @brief returns the docking partners chain identifiers
+	core::pose::DockingPartners const & partners() const { return partners_;} /// @brief returns the docking partners chain identifiers
 
 	std::string get_name() const override { return "TemperedDocking"; }
 
@@ -112,7 +113,7 @@ public:
 	//setters
 	void set_autofoldtree( bool setting ){ autofoldtree_ = setting; }
 
-	void set_partners( std::string const& setting ){ partners_=setting; }
+	void set_partners( core::pose::DockingPartners const& setting ){ partners_=setting; }
 
 	void set_movable_jumps( DockJumps const& setting ){ movable_jumps_ = setting; }
 
@@ -158,7 +159,7 @@ private:
 	core::Size n_cycles_;
 
 	core::kinematics::FoldTree fold_tree_;
-	std::string partners_;
+	core::pose::DockingPartners partners_;
 
 	std::string previous_sequence_;
 

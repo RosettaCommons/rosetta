@@ -137,7 +137,7 @@ public:
 
 private:
 	core::Real weight_factor_;
-	std::set<char> chains_to_ignore_loops_;
+	std::set<std::string> chains_to_ignore_loops_;
 	std::string sec_str_;
 
 #ifdef    SERIALIZATION

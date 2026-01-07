@@ -391,7 +391,7 @@ void MergePDBatOverlapMover::minimize_overlap(Pose & pose,core::Size overlap_sta
 }
 
 
-bool MergePDBatOverlapMover::makeJunctions_apply(core::pose::Pose & pose, core::pose::Pose const & attach_pose, core::Size overlap_length,core::Real max_overlap_rmsd, std::string attachment_termini, char attachment_chain){
+bool MergePDBatOverlapMover::makeJunctions_apply(core::pose::Pose & pose, core::pose::Pose const & attach_pose, core::Size overlap_length,core::Real max_overlap_rmsd, std::string const & attachment_termini, std::string const & attachment_chain){
 	attach_pose_= attach_pose.clone();
 	overlap_length_ = overlap_length;
 	max_overlap_rmsd_ = max_overlap_rmsd;

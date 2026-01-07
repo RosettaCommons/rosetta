@@ -21,6 +21,7 @@
 // Project headers
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/DockingPartners.fwd.hh>
 
 // Utility headers
 
@@ -28,21 +29,22 @@
 namespace protocols {
 namespace docking {
 
-/// @details Converts a string representation of the partner from the dock_partners flag to a comma-separated list of
-/// chains that can be passed into a ChainSeletor.
-/// For example, the dock_partners flags "ABC_D" will split into two partners: "ABC" and "D".
-/// This function will convert "ABC" to "A,B,C".
-/// @return A comma-separated list of chains (e.g. "A,B,C")
-std::string
-comma_separated_partner_chains( std::string const & chains );
+///// @brief Setup FoldTree for docking across an interface.
+///// The partners are described by a string for the partner chains (using pdb_chain identification) separated by "_".
+///// The foldtree is set up such that the jump points are at the center of masses of the two partners.
+//void
+//setup_foldtree(
+// core::pose::Pose & pose,
+// std::string const & partner_chainID,
+// DockJumps & movable_jumps,
+// bool rand_jump_res_partner2 = false ); // default = false
 
 /// @brief Setup FoldTree for docking across an interface.
-/// The partners are described by a string for the partner chains (using pdb_chain identification) separated by "_".
 /// The foldtree is set up such that the jump points are at the center of masses of the two partners.
 void
 setup_foldtree(
 	core::pose::Pose & pose,
-	std::string const & partner_chainID,
+	core::pose::DockingPartners const & partners,
 	DockJumps & movable_jumps,
 	bool rand_jump_res_partner2 = false ); // default = false
 

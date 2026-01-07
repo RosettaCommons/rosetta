@@ -36,6 +36,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/id/AtomID.hh>
+#include <core/conformation/util.hh>
 
 // Utility Headers
 #include <utility/io/izstream.hh>
@@ -608,21 +609,21 @@ void
 ConstraintIO::parse_residue( pose::Pose const& pose, std::string const & residue_string, Size & residue_num, bool const force_pdb_info_mapping )
 {
 	std::stringstream data;
-	char chain;
+	std::string chain;
 	int resnum;
 
 	data.str( residue_string );
 
 	data >> resnum;
 
-	if ( (data >> chain).fail() ) chain = 0;
+	if ( (data >> chain).fail() ) chain = "";
 
 	residue_num = parse_residue( pose, resnum, chain, force_pdb_info_mapping );
 }
 
 
 Size
-ConstraintIO::parse_residue( pose::Pose const& pose, int const resnum, char const chain /* = 0 */, bool const force_pdb_info_mapping_in )
+ConstraintIO::parse_residue( pose::Pose const& pose, int const resnum, std::string const & chain /* = i"" */, bool const force_pdb_info_mapping_in )
 {
 	// this option is a vector1< bool > for pretty arcane reasons -- rosetta does not provide a set default option for bool, but does so for vector< bool>.
 	using namespace basic::options;
@@ -638,7 +639,7 @@ ConstraintIO::parse_residue( pose::Pose const& pose, int const resnum, char cons
 			return foo.at( const_full_model_info( pose ).full_model_parameters()->conventional_to_full( resnum, chain, "    " ) );
 		}
 	}
-	if ( chain != 0 && pose.pdb_info() ) {
+	if ( core::conformation::is_chain_valid(chain) && pose.pdb_info() ) {
 		// Enter this option if user provided a PDB chain ID and a residue number in the cst file
 		Size resnum_out( pose.pdb_info()->pdb2pose( chain, resnum ) );
 		// If resnum_out == 0, then user did not specify a Pose residue that (currently) exists
@@ -656,10 +657,10 @@ ConstraintIO::parse_residue( pose::Pose const& pose, int const resnum, char cons
 		( force_pdb_info_mapping_in || ( option[ OptionKeys::constraints::force_pdb_info_mapping ]().size() ?
 		option[ OptionKeys::constraints::force_pdb_info_mapping ]()[1] : false ) );
 	if ( force_pdb_info_mapping && pose.pdb_info() ) {
-		Size resnum_out = pose.pdb_info()->pdb2pose( 'A', resnum );
+		Size resnum_out = pose.pdb_info()->pdb2pose( "A", resnum );
 		if ( resnum_out > 0 ) return resnum_out;
 		// some legacy PDB's have ' ' instead of 'A' remaining as default for chains...
-		return pose.pdb_info()->pdb2pose( ' ', resnum );
+		return pose.pdb_info()->pdb2pose( " ", resnum );
 	}
 	// Return the input resnum if user provided a Pose residue number in the cst file
 	// If resnum > pose.size(), then user did not specify a Pose residue that (currently) exists

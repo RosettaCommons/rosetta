@@ -21,6 +21,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/signals/IdentityEvent.hh>
 #include <core/conformation/signals/LengthEvent.hh>
+#include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBPoseMap.hh>
 #include <core/pose/selection.hh>
@@ -47,8 +48,6 @@
 
 //using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
-
-using core::chemical::chr_chains;
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -127,9 +126,8 @@ PDBInfo::PDBInfo(
 		// do this manually to save on method calls
 		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			ResidueRecord & rr = residue_rec_[ i ];
-			// fpd: wrap around if > 62 chains.
-			// rhiju: note -- got rid of _ as first char of chr_chains.
-			rr.chainID = chr_chains[ (pose.residue( i ).chain() - 1)  % chr_chains.size() ];
+			Size chain = pose.residue( i ).chain();
+			rr.chainID = core::conformation::canonical_chain_letter_for_chain_number(chain);
 			// TODO: Should add segmentID fix here maybe
 			rr.resSeq = static_cast< int >( i );
 		}
@@ -437,7 +435,7 @@ PDBInfo::tighten_memory()
 std::string
 PDBInfo::tag( Size const res ) const
 {
-	std::string tag(1,chain(res));
+	std::string tag = chain(res);
 	tag += ":";
 
 	if ( segmentID( res ) != "    " ) tag += utility::strip(segmentID( res ) ) + ":";
@@ -468,7 +466,7 @@ PDBInfo::pose2pdb(
 int
 PDBInfo::num_chains() const
 {
-	std::set< char > chainIDs;
+	std::set< std::string > chainIDs;
 	for ( Size res(1); res <= residue_rec_.size(); ++res ) {
 		chainIDs.insert(residue_rec_[ res ].chainID);
 	}
@@ -494,7 +492,7 @@ PDBInfo::get_reslabels( Size const res ) const
 void
 PDBInfo::chain(
 	Size const res,
-	char const chain_id
+	std::string const & chain_id
 )
 {
 	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::chain( Size const res, char const chain_id ): res is not in this PDBInfo!" );
@@ -607,7 +605,7 @@ PDBInfo::show(
 std::string
 PDBInfo::short_desc() const {
 	utility::vector1< int > res_vector;
-	utility::vector1< char > chain_vector;
+	utility::vector1< std::string > chain_vector;
 	utility::vector1< std::string > segid_vector;
 
 	for ( core::Size ii(1); ii <= nres(); ++ii ) {
@@ -630,7 +628,7 @@ PDBInfo::short_desc() const {
 void
 PDBInfo::set_resinfo(
 	Size const res,
-	char const chain_id,
+	std::string const & chain_id,
 	int const pdb_res,
 	char const ins_code,
 	std::string const & segmentID,
@@ -758,14 +756,13 @@ PDBInfo::write_pdbinfo_labels( utility::vector1 < std::string > & remark_lines )
 
 /// @brief set all residue chain IDs to a single character
 void
-PDBInfo::set_chains( char const id ) {
+PDBInfo::set_all_chains( std::string const & id ) {
 	for ( auto i = residue_rec_.begin(), ie = residue_rec_.end(); i < ie; ++i ) {
 		i->chainID = id;
 	}
 
 	rebuild_pdb2pose();
 }
-
 
 /// @brief copy a section from another PDBInfo
 /// @param[in] input_info the PDBInfo to copy from

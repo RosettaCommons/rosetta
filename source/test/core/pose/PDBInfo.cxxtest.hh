@@ -79,10 +79,10 @@ public:
 	/// @brief test basic functionality of PDBInfo from input
 	void test_PDBInfo_from_input_pdb() {
 		// chain
-		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 1 ), 'L' );
-		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 2 ), 'H' );
-		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 3 ), 'H' );
-		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 4 ), 'P' );
+		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 1 ), "L" );
+		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 2 ), "H" );
+		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 3 ), "H" );
+		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 4 ), "P" );
 
 		// residue number
 		TS_ASSERT_EQUALS( pose.pdb_info()->number( 1 ), 1 );
@@ -101,10 +101,10 @@ public:
 	///  of PDBInfo from input
 	void test_PDBInfo_from_input_pdb_PDBPoseMap() {
 		TS_ASSERT_EQUALS( pose.pdb_info()->pdb2pose().size(), 4 );
-		TS_ASSERT_EQUALS( pose.pdb_info()->pdb2pose( 'L', 1, ' ' ), 1 );
-		TS_ASSERT_EQUALS( pose.pdb_info()->pdb2pose( 'H', 100, 'C' ), 2 );
-		TS_ASSERT_EQUALS( pose.pdb_info()->pdb2pose( 'H', 100, 'D' ), 3 );
-		TS_ASSERT_EQUALS( pose.pdb_info()->pdb2pose( 'P', 671, ' ' ), 4 );
+		TS_ASSERT_EQUALS( pose.pdb_info()->pdb2pose( "L", 1, ' ' ), 1 );
+		TS_ASSERT_EQUALS( pose.pdb_info()->pdb2pose( "H", 100, 'C' ), 2 );
+		TS_ASSERT_EQUALS( pose.pdb_info()->pdb2pose( "H", 100, 'D' ), 3 );
+		TS_ASSERT_EQUALS( pose.pdb_info()->pdb2pose( "P", 671, ' ' ), 4 );
 	}
 
 	/// @brief test single residue chain mutator
@@ -113,10 +113,10 @@ public:
 		PDBInfo info = *pose.pdb_info();
 
 		// invoke mutator
-		info.chain( 1, 'A' );
-		TS_ASSERT_EQUALS( info.chain( 1 ), 'A' );
-		TS_ASSERT_EQUALS( info.pdb2pose( 'A', 1, ' ' ), 1 );
-		TS_ASSERT_EQUALS( info.pdb2pose( 'L', 1, ' ' ), 0 ); // 0 == not found
+		info.chain( 1, "A" );
+		TS_ASSERT_EQUALS( info.chain( 1 ), "A" );
+		TS_ASSERT_EQUALS( info.pdb2pose( "A", 1, ' ' ), 1 );
+		TS_ASSERT_EQUALS( info.pdb2pose( "L", 1, ' ' ), 0 ); // 0 == not found
 	}
 
 	/// @brief test single residue number mutator
@@ -127,8 +127,8 @@ public:
 		// invoke mutator
 		info.number( 2, 999 );
 		TS_ASSERT_EQUALS( info.number( 2 ), 999 );
-		TS_ASSERT_EQUALS( info.pdb2pose( 'H', 999, 'C' ), 2 );
-		TS_ASSERT_EQUALS( info.pdb2pose( 'H', 100, 'C' ), 0 ); // 0 == not found
+		TS_ASSERT_EQUALS( info.pdb2pose( "H", 999, 'C' ), 2 );
+		TS_ASSERT_EQUALS( info.pdb2pose( "H", 100, 'C' ), 0 ); // 0 == not found
 	}
 
 	/// @brief test single residue insertion code mutator
@@ -139,8 +139,8 @@ public:
 		// invoke mutator
 		info.icode( 3, 'Z' );
 		TS_ASSERT_EQUALS( info.icode( 3 ), 'Z' );
-		TS_ASSERT_EQUALS( info.pdb2pose( 'H', 100, 'Z' ), 3 );
-		TS_ASSERT_EQUALS( info.pdb2pose( 'H', 100, 'D' ), 0 ); // 0 == not found
+		TS_ASSERT_EQUALS( info.pdb2pose( "H", 100, 'Z' ), 3 );
+		TS_ASSERT_EQUALS( info.pdb2pose( "H", 100, 'D' ), 0 ); // 0 == not found
 	}
 
 	/// @brief test single residue resinfo mutator
@@ -149,12 +149,12 @@ public:
 		PDBInfo info = *pose.pdb_info();
 
 		// invoke mutator
-		info.set_resinfo( 4, 'X', -1, 'Y' );
-		TS_ASSERT_EQUALS( info.chain( 4 ), 'X' );
+		info.set_resinfo( 4, "X", -1, 'Y' );
+		TS_ASSERT_EQUALS( info.chain( 4 ), "X" );
 		TS_ASSERT_EQUALS( info.number( 4 ), -1 );
 		TS_ASSERT_EQUALS( info.icode( 4 ), 'Y' );
-		TS_ASSERT_EQUALS( info.pdb2pose( 'X', -1, 'Y' ), 4 );
-		TS_ASSERT_EQUALS( info.pdb2pose( 'P', 671, ' ' ), 0 ); // 0 == not found
+		TS_ASSERT_EQUALS( info.pdb2pose( "X", -1, 'Y' ), 4 );
+		TS_ASSERT_EQUALS( info.pdb2pose( "P", 671, ' ' ), 0 ); // 0 == not found
 	}
 
 	/// @brief test en masse residue mutators
@@ -163,11 +163,11 @@ public:
 		PDBInfo info = *pose.pdb_info();
 
 		// make fake chain/resid/icode arrays
-		utility::vector1< char > chain;
-		chain.push_back( 'A' );
-		chain.push_back( 'B' );
-		chain.push_back( 'C' );
-		chain.push_back( 'D' );
+		utility::vector1< std::string > chain;
+		chain.push_back( "A" );
+		chain.push_back( "B" );
+		chain.push_back( "C" );
+		chain.push_back( "D" );
 		utility::vector1< int > resid;
 		resid.push_back( -2 );
 		resid.push_back( -1 );
@@ -184,11 +184,11 @@ public:
 		info.set_numbering( resid );
 		info.set_icodes( icode );
 
-		TS_ASSERT_EQUALS( info.chain( 1 ), 'A' );
+		TS_ASSERT_EQUALS( info.chain( 1 ), "A" );
 		TS_ASSERT_EQUALS( info.number( 2 ), -1 );
 		TS_ASSERT_EQUALS( info.icode( 4 ), 'Z' );
-		TS_ASSERT_EQUALS( info.pdb2pose( 'A', -2, 'W' ), 1 );
-		TS_ASSERT_EQUALS( info.pdb2pose( 'H', 100, 'C' ), 0 ); // 0 == not found
+		TS_ASSERT_EQUALS( info.pdb2pose( "A", -2, 'W' ), 1 );
+		TS_ASSERT_EQUALS( info.pdb2pose( "H", 100, 'C' ), 0 ); // 0 == not found
 	}
 
 	/// @brief test residue+atom record resize and availability
@@ -212,8 +212,8 @@ public:
 		TS_ASSERT_EQUALS( info.natoms( 4 ), 7 );
 		TS_ASSERT_EQUALS( info.natoms( 5 ), 7 );
 		TS_ASSERT_EQUALS( info.chain( 5 ), PDBInfo::empty_record() );
-		TS_ASSERT_EQUALS( info.chain( 3 ), 'H' );
-		TS_ASSERT_EQUALS( info.chain( 6 ), 'P' );
+		TS_ASSERT_EQUALS( info.chain( 3 ), "H" );
+		TS_ASSERT_EQUALS( info.chain( 6 ), "P" );
 	}
 
 	/// @brief test prepend residue
@@ -226,8 +226,8 @@ public:
 		TS_ASSERT_EQUALS( info.natoms( 3 ), 7 );
 		TS_ASSERT_EQUALS( info.natoms( 4 ), 7 );
 		TS_ASSERT_EQUALS( info.chain( 3 ), PDBInfo::empty_record() );
-		TS_ASSERT_EQUALS( info.chain( 2 ), 'H' );
-		TS_ASSERT_EQUALS( info.chain( 5 ), 'H' );
+		TS_ASSERT_EQUALS( info.chain( 2 ), "H" );
+		TS_ASSERT_EQUALS( info.chain( 5 ), "H" );
 	}
 
 	/// @brief test delete residue
@@ -237,7 +237,7 @@ public:
 		info.delete_res( 2 );
 		TS_ASSERT_EQUALS( info.nres(), 3 );
 		TS_ASSERT_EQUALS( info.natoms( 2 ), 8 ); // 7 atoms in gly + 1 OXT atom
-		TS_ASSERT_EQUALS( info.chain( 3 ), 'P' );
+		TS_ASSERT_EQUALS( info.chain( 3 ), "P" );
 	}
 
 	/// @brief test observer attach to/detach from Conformation

@@ -60,6 +60,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/types.hh>
 
 // Utility Headers
@@ -496,21 +497,18 @@ void reorder_membrane_foldtree( core::pose::Pose & pose ) {
 /// -------  -------  -------  -------  -------  M=root
 ///  chain1   chain2   chain3   chain4 ...
 ///
-///  iJ = interface jump, will be returned from the function
+//e  iJ = interface jump, will be returned from the function
 ///
-core::Size create_membrane_docking_foldtree_from_partners( core::pose::Pose & pose, std::string const & partners ) {
+core::Size create_membrane_docking_foldtree_from_partners( core::pose::Pose & pose, core::pose::DockingPartners const & partners ) {
 
 	using namespace utility;
 	using namespace core;
 	using namespace core::kinematics;
 
 	// check that partners isn't empty
-	if ( partners.size() == 0 || partners == "_" ) {
+	if ( partners.is_empty() ) {
 		utility_exit_with_message( "Membrane docking partners are undefined. Quitting..." );
 	}
-
-	// split partner string (AB, CDE)
-	utility::vector1< std::string > partner( utility::string_split( partners, '_' ) );
 
 	// initialize partners with chains (will be 1,2 / 3,4,5)
 	// initialize anchor points within these chains (will be 19,234 / 287,354,528)
@@ -524,10 +522,10 @@ core::Size create_membrane_docking_foldtree_from_partners( core::pose::Pose & po
 
 	// go through first partner chainIDs, convert into chain numbers, add to vector
 	// also get anchor points and cutpoints for these chains
-	for ( core::Size i = 1; i <= partner[ 1 ].size(); ++i ) {
+	for ( std::string const & chn: partners.partner1 ) {
 
 		// get chain, add to chains vector and get anchor point
-		core::Size chain = get_chain_id_from_chain( partner[ 1 ][ i-1 ], pose );
+		core::Size chain = get_chain_id_from_chain( chn, pose );
 		chains1.push_back( chain );
 		anchors1.push_back( rsd_closest_to_chain_tm_com( pose, chain ) );
 		cutpoints1.push_back( chain_end_res( pose, chain ) );
@@ -535,10 +533,10 @@ core::Size create_membrane_docking_foldtree_from_partners( core::pose::Pose & po
 
 	// go through second partner chainIDs, convert into chain numbers, add to vector
 	// also get anchor points and cutpoints for these chains
-	for ( core::Size i = 1; i <= partner[ 2 ].size(); ++i ) {
+	for ( std::string const & chn: partners.partner2 ) {
 
 		// get chain, add to chains vector and get anchor point
-		core::Size chain = get_chain_id_from_chain( partner[ 2 ][ i-1 ], pose );
+		core::Size chain = get_chain_id_from_chain( chn, pose );
 		chains2.push_back( chain );
 		anchors2.push_back( rsd_closest_to_chain_tm_com( pose, chain ) );
 		cutpoints2.push_back( chain_end_res( pose, chain ) );
@@ -732,7 +730,7 @@ core::Size create_membrane_foldtree_anchor_pose_tmcom( core::pose::Pose & pose )
 /////////////////////////////////////////
 
 /// @brief Create foldtree for multiple docking partners
-utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmcom( core::pose::Pose & pose, std::string partner ) {
+utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmcom( core::pose::Pose & pose, utility::vector1< utility::vector1< std::string > > const & partners ) {
 
 	// get chains from pose
 	utility::vector1< core::Size > chainids( get_chains( pose ) );
@@ -755,9 +753,6 @@ utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmc
 	core::Size jumpnumber( 1 );
 	utility::vector1< core::Size > jumps;
 
-	// split partners by underscore
-	utility::vector1< std::string > partners( utility::string_split( partner, '_' ) );
-
 	// go through partners (AB / CD)
 	for ( core::Size p = 1; p <= partners.size(); ++p ) {
 
@@ -766,7 +761,7 @@ utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmc
 		core::Size first_chain_anchor( 0 );
 
 		// convert chain from partners (f.ex. B) into chainID (f.ex. 2)
-		chainid = get_chain_id_from_chain( partners[ p ][ 0 ], pose );
+		chainid = get_chain_id_from_chain( partners[ p ][ 1 ], pose );
 
 		// go through chainids (except MEM) to find chain of interest  and first anchor point
 		for ( core::Size i = 1; i <= chainids.size()-1; ++i ) {
@@ -791,7 +786,7 @@ utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmc
 			core::Size chain_anchor( 0 );
 
 			// iterate through rest of chains in the partner (1,2,3), string indexes with 0
-			for ( core::Size c = 1; c < partners[ p ].size(); ++c ) {
+			for ( core::Size c = 2; c <= partners[ p ].size(); ++c ) {
 
 				// go through chainids (except MEM) to find chain of interest and anchor point
 				for ( core::Size i = 1; i <= chainids.size()-1; ++i ) {

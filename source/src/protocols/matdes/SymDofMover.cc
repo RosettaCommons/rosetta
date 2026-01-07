@@ -202,9 +202,10 @@ numeric::Real get_intra_contacts(Pose const & pose){
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
 	using numeric::Real;
-	runtime_assert( symmetric_components(pose).size() == 2 );
-	char c1 = symmetric_components(pose)[1];
-	char c2 = symmetric_components(pose)[2];
+	utility::vector1<std::string> symcomp = symmetric_components(pose);
+	runtime_assert( symcomp.size() == 2 );
+	std::string c1 = symcomp[1];
+	std::string c2 = symcomp[2];
 	core::Size beg1=get_component_lower_bound(pose,c1);
 	core::Size beg2=get_component_lower_bound(pose,c2);
 	core::Size end1=get_component_upper_bound(pose,c1);
@@ -221,9 +222,10 @@ void maximize_sub1_contact(Pose & pose, core::Size const & nf1, core::Size const
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
 	using numeric::Real;
-	runtime_assert( symmetric_components(pose).size() == 2 );
-	char c1 = symmetric_components(pose)[1];
-	char c2 = symmetric_components(pose)[2];
+	utility::vector1<std::string> symcomp = symmetric_components(pose);
+	runtime_assert( symcomp.size() == 2 );
+	std::string c1 = symcomp[1];
+	std::string c2 = symcomp[2];
 	core::Size beg1=get_component_lower_bound(pose,c1);
 	core::Size beg2=get_component_lower_bound(pose,c2);
 	core::Size end1=get_component_upper_bound(pose,c1);
@@ -258,10 +260,10 @@ SymDofMover::add_components_to_pose_if_necessary(Pose & pose){
 		core::Size nres1 = pose.size();
 		core::pose::append_pose_to_pose( pose, *b, true );
 		for ( core::uint ir =         1; ir <= nres1           ; ++ir ) {
-			pose.pdb_info()->chain(static_cast<long int>(ir), 'A');
+			pose.pdb_info()->chain(static_cast<long int>(ir), "A");
 		}
 		for ( core::uint ir = nres1 + 1; ir <= pose.size(); ++ir ) {
-			pose.pdb_info()->chain(static_cast<long int>(ir), 'B');
+			pose.pdb_info()->chain(static_cast<long int>(ir), "B");
 		}
 		pose.update_pose_chains_from_pdb_chains();
 		// for(int ir = 1; ir <= pose.size(); ++ir) std::cout << ir << " " << pose.chain(ir) << std::endl;

@@ -26,6 +26,7 @@
 #include <basic/Tracer.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <utility/exit.hh>
+#include <utility/stream_util.hh>
 #include <fstream>
 #include <string>
 
@@ -152,15 +153,17 @@ protocols::flexpep_docking::FlexPepDockingFlags::FlexPepDockingFlags
 
 	if ( option[ OptionKeys::flexPepDocking::receptor_chain ].user() ) {
 		set_user_defined_receptor(true);
-		this->set_receptor_chain
-			(option[ OptionKeys::flexPepDocking::receptor_chain ]() );
-		// TODO: validate string size!
+		// Limitation of the input format -- can only handle single residue chains
+		utility::vector1< std::string > chains;
+		for ( char c: option[ OptionKeys::flexPepDocking::receptor_chain ]() ) {
+			chains.push_back( std::string{c} );
+		}
+		this->set_receptor_chains( chains );
 	}
 	if ( option[ OptionKeys::flexPepDocking::peptide_chain ].user() ) {
 		set_user_defined_peptide(true);
 		this->set_peptide_chain
-			(option[ OptionKeys::flexPepDocking::peptide_chain ]().at(0) );
-		// TODO: validate string size!
+			(option[ OptionKeys::flexPepDocking::peptide_chain ]() );
 	}
 	// params file
 	if ( option[ OptionKeys::flexPepDocking::params_file ].user() ) {
@@ -195,15 +198,15 @@ bool FlexPepDockingFlags::is_ligand_present( core::pose::Pose const& pose ) cons
 	exit(-1);
 }
 
-std::string FlexPepDockingFlags::receptor_chain() const
+utility::vector1< std::string > const & FlexPepDockingFlags::receptor_chains() const
 {
-	if ( valid_chain_info() && !pep_fold_only ) return receptor_chain_;
+	if ( valid_chain_info() && !pep_fold_only ) return receptor_chains_;
 	TR.Error << "receptor chain invalid" << std::endl;
 	exit(-1);
 }
 
 
-char FlexPepDockingFlags::peptide_chain() const
+std::string FlexPepDockingFlags::peptide_chain() const
 {
 	if ( valid_chain_info() ) return peptide_chain_;
 	TR.Error << "peptide chain invalid" << std::endl;
@@ -298,14 +301,15 @@ FlexPepDockingFlags::updateChains
 	core::Size resi = 1;
 	// get receptor chain if needed
 	if ( !user_defined_receptor_chain() && ! pep_fold_only ) {
-		receptor_chain_ = " ";
-		receptor_chain_.at(0) = pdbinfo->chain(resi);
+		std::string receptor_chain = pdbinfo->chain(resi);
 		// make sure receptor is different from peptide
-		if ( user_defined_peptide_chain() && (receptor_chain_.at(0) == peptide_chain_) ) {
+		if ( user_defined_peptide_chain() && (receptor_chain == peptide_chain_) ) {
 			do{ resi++; }
 			while(resi <= pose.size() && pdbinfo->chain(resi) == peptide_chain_);
-			receptor_chain_.at(0) = pdbinfo->chain(resi);
+			receptor_chain = pdbinfo->chain(resi);
 		}
+		receptor_chains_.clear();
+		receptor_chains_.push_back( receptor_chain );
 		valid_receptor_chain_ = true;
 	}
 	// get peptide chain if needed
@@ -315,7 +319,7 @@ FlexPepDockingFlags::updateChains
 		} else { // docking mode
 			// skip receptor chain
 			while ( resi <= pose.size() &&
-					receptor_chain_.find(pdbinfo->chain(resi)) != std::string::npos ) {
+					receptor_chains_.contains(pdbinfo->chain(resi)) ) {
 				resi++;
 			}
 			this->set_peptide_chain(pdbinfo->chain(resi));
@@ -325,10 +329,10 @@ FlexPepDockingFlags::updateChains
 	// find receptor boundaries
 	resi = 1;
 	if ( ! pep_fold_only ) {
-		while ( resi <= pose.size() && receptor_chain_.find(pdbinfo->chain(resi)) == std::string::npos ) resi++;
+		while ( resi <= pose.size() && ! receptor_chains_.contains(pdbinfo->chain(resi)) ) resi++;
 		receptor_first_res_ = resi;
 		do{ resi++; }
-		while(resi <= pose.size() && receptor_chain_.find(pdbinfo->chain(resi)) != std::string::npos);
+		while(resi <= pose.size() && receptor_chains_.contains(pdbinfo->chain(resi)) );
 		receptor_nres_ = resi - receptor_first_res_;
 	} else {
 		receptor_first_res_ = 0;
@@ -345,7 +349,7 @@ FlexPepDockingFlags::updateChains
 	if ( peptide_nres_ > 30 ) {
 		TR.Warning << "peptide chain is longer than 30 residues" << std::endl;
 	}
-	TR << "Receptor chain: " << receptor_chain_ << std::endl;
+	TR << "Receptor chain: " << receptor_chains_ << std::endl;
 	TR << "Receptor first res: " << receptor_first_res_ << std::endl;
 	TR << "Receptor nres: " << receptor_nres_ << std::endl;
 	TR << "Peptide chain: " << peptide_chain_ << std::endl;

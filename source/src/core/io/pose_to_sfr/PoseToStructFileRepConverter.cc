@@ -37,6 +37,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/parametric/ParametersSet.hh>
+#include <core/conformation/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>
 #include <core/pose/Pose.hh>
@@ -593,12 +594,12 @@ PoseToStructFileRepConverter::recalculate_new_chainIDs( pose::Pose const & pose 
 	new_chainIDs_.resize( n_chains );
 	for ( uint chain_num( 1 ); chain_num <= n_chains; ++chain_num ) {
 		// Chain number (ex. 1) to chain ID (ex. A)
-		char chainID( pose.pdb_info()->chain( conf.chain_begin( chain_num ) ) );
+		std::string chainID( pose.pdb_info()->chain( conf.chain_begin( chain_num ) ) );
 		if ( chainID == pose::PDBInfo::empty_record() ) {
 			TR.Warning << "PDBInfo chain ID was left as character '" <<
 				pose::PDBInfo::empty_record() << "', denoting an empty record;"
 				" for convenience, replacing with space." << std::endl;
-			chainID = ' ';
+			chainID = " ";
 		}
 		// Ex. new_chainIDs_[ 1 ] = A for matching purposes
 		new_chainIDs_[ chain_num ] = chainID;
@@ -635,8 +636,7 @@ PoseToStructFileRepConverter::recalculate_new_chainIDs( pose::Pose const & pose 
 			// If the current chain has the same ID as any other chain in the structure
 			// it is not currently unique. Give it a new potential ID
 			if ( new_chainIDs_[ chain_num ] == new_chainIDs_[ ii ] ) {
-				char new_chainID =
-					chemical::chr_chains[ ( chain_num - 1 ) % chemical::chr_chains.size() ];
+				std::string new_chainID = core::conformation::canonical_chain_letter_for_chain_number(chain_num);
 				// If this is a carbohydrate lower connected to a non-protein residue,
 				// it is a carbohydrate residue branched off another carbohydrate
 				// (we already checked if this is a glycan conjugated to a protein)
@@ -647,8 +647,10 @@ PoseToStructFileRepConverter::recalculate_new_chainIDs( pose::Pose const & pose 
 					new_chainID = new_chainIDs_[ pose.chain( parent_res ) ];
 				} else {
 					// Otherwise, this ligand should have a new unique chain ID
+					uint chain_num2 = chain_num;
 					while ( new_chainIDs_.contains( new_chainID ) ) {
-						++new_chainID;
+						++chain_num2;
+						new_chainID = core::conformation::canonical_chain_letter_for_chain_number(chain_num2);
 					}
 				}
 				new_chainIDs_[ chain_num ] = new_chainID;
@@ -710,10 +712,7 @@ PoseToStructFileRepConverter::get_link_record(
 	link.resSeq1 = resinfo1.resSeq();
 	link.iCode1 = resinfo1.iCode();
 
-	std::stringstream ss;
-	ss.width(6);
-	ss << std::right << link.resSeq1;
-	link.resID1 = ss.str() + link.iCode1 + link.chainID1;
+	link.resID1 = ResID( link.resSeq1, link.iCode1, link.chainID1 );
 
 	link.name2 =  pose.residue_type( jj ).atom_name( pose.residue_type( jj ).residue_connect_atom_index( jj_conn ) );
 	if ( options_.output_alternate_atomids() && pose.residue_type( jj ).canonical_atom_aliases().count(link.name2) != 0 ) {
@@ -730,10 +729,7 @@ PoseToStructFileRepConverter::get_link_record(
 	link.resSeq2 = resinfo2.resSeq();
 	link.iCode2 = resinfo2.iCode();
 
-	std::stringstream ss2;
-	ss2.width(6);
-	ss2 << std::right << link.resSeq2;
-	link.resID2 = ss2.str() + link.iCode2 + link.chainID2;
+	link.resID2 = ResID( link.resSeq2, link.iCode2, link.chainID2 );
 
 	// Calculate bond distance.
 	uint start_atom_index = pose.residue_type( ii ).atom_index( link.name1 );
@@ -765,10 +761,7 @@ PoseToStructFileRepConverter::get_ssbond_record(
 	ssbond.resSeq1 = resinfo1.resSeq();
 	ssbond.iCode1 = resinfo1.iCode();
 
-	std::stringstream ss;
-	ss.width(6);
-	ss << std::right << ssbond.resSeq1;
-	ssbond.resID1 = ss.str() + ssbond.iCode1 + ssbond.chainID1;
+	ssbond.resID1 = ResID( ssbond.resSeq1, ssbond.iCode1, ssbond.chainID1 );
 
 	ResidueInformation resinfo2 = get_residue_information( pose, jj );
 	ssbond.resName2 = resinfo2.resName();
@@ -776,10 +769,7 @@ PoseToStructFileRepConverter::get_ssbond_record(
 	ssbond.resSeq2 = resinfo2.resSeq();
 	ssbond.iCode2 = resinfo2.iCode();
 
-	std::stringstream ss2;
-	ss2.width(6);
-	ss2 << std::right << ssbond.resSeq2;
-	ssbond.resID2 = ss2.str() + ssbond.iCode2 + ssbond.chainID2;
+	ssbond.resID2 = ResID( ssbond.resSeq2, ssbond.iCode2, ssbond.chainID2 );
 
 	// Calculate bond distance.
 	uint start_atom_index = pose.residue_type( ii ).atom_index( pose.residue_type( ii ).get_disulfide_atom_name() );
@@ -1076,7 +1066,7 @@ PoseToStructFileRepConverter::grab_membrane_info(
 		// Get rescount, chain count
 		core::Size const chaincount( sfr_->chains().size() - 1 );
 		core::Size const rescount( sfr_->chains()[chaincount][ sfr_->chains()[chaincount].size() - 1 ].serial );
-		char const newchain( sfr_->chains()[chaincount][ sfr_->chains()[chaincount].size() - 1 ].chainID + 1 );
+		std::string const newchain = core::conformation::canonical_chain_letter_for_chain_number( chaincount + 2 ); // Assume it's one past the end
 
 		AtomInformation ai1, ai2, ai3;
 		ai1.isHet = true;
@@ -1416,7 +1406,6 @@ PoseToStructFileRepConverter::get_residue_information(
 	ResidueInformation res_info;
 
 	using namespace core::pose;
-	using core::chemical::chr_chains;
 
 	res_info.resName( pose.residue_type( seqpos ).name3() );
 
@@ -1429,7 +1418,7 @@ PoseToStructFileRepConverter::get_residue_information(
 			if ( res_info.chainID() == PDBInfo::empty_record() ) {  // safety
 				TR.Warning << "PDBInfo chain ID was left as character '" << PDBInfo::empty_record()
 					<< "', denoting an empty record; for convenience, replacing with space." << std::endl;
-				res_info.chainID( ' ' );
+				res_info.chainID( " " );
 			}
 		} else {
 			res_info.chainID( new_chainIDs_[ pose.chain( seqpos ) ] );
@@ -1442,7 +1431,7 @@ PoseToStructFileRepConverter::get_residue_information(
 		uint const chain_num = pose.chain( seqpos );
 		runtime_assert( chain_num > 0 );
 
-		res_info.chainID( chr_chains[ ( chain_num - 1 ) % chr_chains.size() ] );
+		res_info.chainID( core::conformation::canonical_chain_letter_for_chain_number(chain_num) );
 		res_info.resSeq( seqpos );
 		res_info.iCode( ' ' );
 

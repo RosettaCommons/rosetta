@@ -91,35 +91,35 @@ Antibody::Antibody(
 
 	if ( !camelid_ ) {
 		if ( cdr_name == "l1" ) {
-			cdrl_[1][1] = Fv.pdb_info()->pdb2pose( 'L', 24 );
-			cdrl_[1][2] = Fv.pdb_info()->pdb2pose( 'L', 34 );
+			cdrl_[1][1] = Fv.pdb_info()->pdb2pose( "L", 24 );
+			cdrl_[1][2] = Fv.pdb_info()->pdb2pose( "L", 34 );
 			current_start = cdrl_[1][1];
 			current_end = cdrl_[1][2];
 		} else if ( cdr_name == "l2" ) {
-			cdrl_[2][1] = Fv.pdb_info()->pdb2pose( 'L', 50 );
-			cdrl_[2][2] = Fv.pdb_info()->pdb2pose( 'L', 56 );
+			cdrl_[2][1] = Fv.pdb_info()->pdb2pose( "L", 50 );
+			cdrl_[2][2] = Fv.pdb_info()->pdb2pose( "L", 56 );
 			current_start = cdrl_[2][1];
 			current_end = cdrl_[2][2];
 		} else if ( cdr_name == "l3" ) {
-			cdrl_[3][1] = Fv.pdb_info()->pdb2pose( 'L', 89 );
-			cdrl_[3][2] = Fv.pdb_info()->pdb2pose( 'L', 97 );
+			cdrl_[3][1] = Fv.pdb_info()->pdb2pose( "L", 89 );
+			cdrl_[3][2] = Fv.pdb_info()->pdb2pose( "L", 97 );
 			current_start = cdrl_[3][1];
 			current_end = cdrl_[3][2];
 		}
 	}
 	if ( cdr_name == "h1" ) {
-		cdrh_[1][1] = Fv.pdb_info()->pdb2pose( 'H', 26 );
-		cdrh_[1][2] = Fv.pdb_info()->pdb2pose( 'H', 35 );
+		cdrh_[1][1] = Fv.pdb_info()->pdb2pose( "H", 26 );
+		cdrh_[1][2] = Fv.pdb_info()->pdb2pose( "H", 35 );
 		current_start = cdrh_[1][1];
 		current_end = cdrh_[1][2];
 	} else if ( cdr_name == "h2" ) {
-		cdrh_[2][1] = Fv.pdb_info()->pdb2pose( 'H', 50 );
-		cdrh_[2][2] = Fv.pdb_info()->pdb2pose( 'H', 65 );
+		cdrh_[2][1] = Fv.pdb_info()->pdb2pose( "H", 50 );
+		cdrh_[2][2] = Fv.pdb_info()->pdb2pose( "H", 65 );
 		current_start = cdrh_[2][1];
 		current_end = cdrh_[2][2];
 	} else if ( cdr_name == "h3" ) {
-		cdrh_[3][1] = Fv.pdb_info()->pdb2pose( 'H', 95 );
-		cdrh_[3][2] = Fv.pdb_info()->pdb2pose( 'H', 102 );
+		cdrh_[3][1] = Fv.pdb_info()->pdb2pose( "H", 95 );
+		cdrh_[3][2] = Fv.pdb_info()->pdb2pose( "H", 102 );
 		current_start = cdrh_[3][1];
 		current_end = cdrh_[3][2];
 	} else {
@@ -132,45 +132,45 @@ Antibody::Antibody(
 void
 Antibody::set_defaults() {
 	if ( !camelid_ ) {
-		lfr_[1][1] = Fv.pdb_info()->pdb2pose( 'L', 4 );
-		lfr_[1][2] = Fv.pdb_info()->pdb2pose( 'L', 6 );
-		lfr_[2][1] = Fv.pdb_info()->pdb2pose( 'L', 10 );
-		lfr_[2][2] = Fv.pdb_info()->pdb2pose( 'L', 23 );
-		cdrl_[1][1] = Fv.pdb_info()->pdb2pose( 'L', 24 );
-		cdrl_[1][2] = Fv.pdb_info()->pdb2pose( 'L', 34 );
-		lfr_[3][1] = Fv.pdb_info()->pdb2pose( 'L', 35 );
-		lfr_[3][2] = Fv.pdb_info()->pdb2pose( 'L', 38 );
-		lfr_[4][1] = Fv.pdb_info()->pdb2pose( 'L', 45 );
-		lfr_[4][2] = Fv.pdb_info()->pdb2pose( 'L', 49 );
-		cdrl_[2][1] = Fv.pdb_info()->pdb2pose( 'L', 50 );
-		cdrl_[2][2] = Fv.pdb_info()->pdb2pose( 'L', 56 );
-		lfr_[5][1] = Fv.pdb_info()->pdb2pose( 'L', 57 );
-		lfr_[5][2] = Fv.pdb_info()->pdb2pose( 'L', 66 );
-		lfr_[6][1] = Fv.pdb_info()->pdb2pose( 'L', 71 );
-		lfr_[6][2] = Fv.pdb_info()->pdb2pose( 'L', 88 );
-		cdrl_[3][1] = Fv.pdb_info()->pdb2pose( 'L', 89 );
-		cdrl_[3][2] = Fv.pdb_info()->pdb2pose( 'L', 97 );
-		lfr_[7][1] = Fv.pdb_info()->pdb2pose( 'L', 98 );
-		lfr_[7][2] = Fv.pdb_info()->pdb2pose( 'L', 104 );
+		lfr_[1][1] = Fv.pdb_info()->pdb2pose( "L", 4 );
+		lfr_[1][2] = Fv.pdb_info()->pdb2pose( "L", 6 );
+		lfr_[2][1] = Fv.pdb_info()->pdb2pose( "L", 10 );
+		lfr_[2][2] = Fv.pdb_info()->pdb2pose( "L", 23 );
+		cdrl_[1][1] = Fv.pdb_info()->pdb2pose( "L", 24 );
+		cdrl_[1][2] = Fv.pdb_info()->pdb2pose( "L", 34 );
+		lfr_[3][1] = Fv.pdb_info()->pdb2pose( "L", 35 );
+		lfr_[3][2] = Fv.pdb_info()->pdb2pose( "L", 38 );
+		lfr_[4][1] = Fv.pdb_info()->pdb2pose( "L", 45 );
+		lfr_[4][2] = Fv.pdb_info()->pdb2pose( "L", 49 );
+		cdrl_[2][1] = Fv.pdb_info()->pdb2pose( "L", 50 );
+		cdrl_[2][2] = Fv.pdb_info()->pdb2pose( "L", 56 );
+		lfr_[5][1] = Fv.pdb_info()->pdb2pose( "L", 57 );
+		lfr_[5][2] = Fv.pdb_info()->pdb2pose( "L", 66 );
+		lfr_[6][1] = Fv.pdb_info()->pdb2pose( "L", 71 );
+		lfr_[6][2] = Fv.pdb_info()->pdb2pose( "L", 88 );
+		cdrl_[3][1] = Fv.pdb_info()->pdb2pose( "L", 89 );
+		cdrl_[3][2] = Fv.pdb_info()->pdb2pose( "L", 97 );
+		lfr_[7][1] = Fv.pdb_info()->pdb2pose( "L", 98 );
+		lfr_[7][2] = Fv.pdb_info()->pdb2pose( "L", 104 );
 	}
-	hfr_[1][1] = Fv.pdb_info()->pdb2pose( 'H', 5 );
-	hfr_[1][2] = Fv.pdb_info()->pdb2pose( 'H', 6 );
-	hfr_[2][1] = Fv.pdb_info()->pdb2pose( 'H', 10 );
-	hfr_[2][2] = Fv.pdb_info()->pdb2pose( 'H', 25 );
-	cdrh_[1][1] = Fv.pdb_info()->pdb2pose( 'H', 26 );
-	cdrh_[1][2] = Fv.pdb_info()->pdb2pose( 'H', 35 );
-	hfr_[3][1] = Fv.pdb_info()->pdb2pose( 'H', 36 );
-	hfr_[3][2] = Fv.pdb_info()->pdb2pose( 'H', 39 );
-	hfr_[4][1] = Fv.pdb_info()->pdb2pose( 'H', 46 );
-	hfr_[4][2] = Fv.pdb_info()->pdb2pose( 'H', 49 );
-	cdrh_[2][1] = Fv.pdb_info()->pdb2pose( 'H', 50 );
-	cdrh_[2][2] = Fv.pdb_info()->pdb2pose( 'H', 65 );
-	hfr_[5][1] = Fv.pdb_info()->pdb2pose( 'H', 66 );
-	hfr_[5][2] = Fv.pdb_info()->pdb2pose( 'H', 94 );
-	cdrh_[3][1] = Fv.pdb_info()->pdb2pose( 'H', 95 );
-	cdrh_[3][2] = Fv.pdb_info()->pdb2pose( 'H', 102 );
-	hfr_[6][1] = Fv.pdb_info()->pdb2pose( 'H', 103 );
-	hfr_[6][2] = Fv.pdb_info()->pdb2pose( 'H', 110 );
+	hfr_[1][1] = Fv.pdb_info()->pdb2pose( "H", 5 );
+	hfr_[1][2] = Fv.pdb_info()->pdb2pose( "H", 6 );
+	hfr_[2][1] = Fv.pdb_info()->pdb2pose( "H", 10 );
+	hfr_[2][2] = Fv.pdb_info()->pdb2pose( "H", 25 );
+	cdrh_[1][1] = Fv.pdb_info()->pdb2pose( "H", 26 );
+	cdrh_[1][2] = Fv.pdb_info()->pdb2pose( "H", 35 );
+	hfr_[3][1] = Fv.pdb_info()->pdb2pose( "H", 36 );
+	hfr_[3][2] = Fv.pdb_info()->pdb2pose( "H", 39 );
+	hfr_[4][1] = Fv.pdb_info()->pdb2pose( "H", 46 );
+	hfr_[4][2] = Fv.pdb_info()->pdb2pose( "H", 49 );
+	cdrh_[2][1] = Fv.pdb_info()->pdb2pose( "H", 50 );
+	cdrh_[2][2] = Fv.pdb_info()->pdb2pose( "H", 65 );
+	hfr_[5][1] = Fv.pdb_info()->pdb2pose( "H", 66 );
+	hfr_[5][2] = Fv.pdb_info()->pdb2pose( "H", 94 );
+	cdrh_[3][1] = Fv.pdb_info()->pdb2pose( "H", 95 );
+	cdrh_[3][2] = Fv.pdb_info()->pdb2pose( "H", 102 );
+	hfr_[6][1] = Fv.pdb_info()->pdb2pose( "H", 103 );
+	hfr_[6][2] = Fv.pdb_info()->pdb2pose( "H", 110 );
 
 
 	cdr_h3_cut_ = cdrh_[3][1] + 1;
@@ -357,7 +357,7 @@ Antibody::detect_regular_CDR_H3_stem_type() {
 		}
 
 		if ( !is_basic ) {
-			core::Size L49_pose_number = Fv.pdb_info()->pdb2pose( 'L', 49 );
+			core::Size L49_pose_number = Fv.pdb_info()->pdb2pose( "L", 49 );
 			char aa_code_L49 = Fv.residue( L49_pose_number ).name1();
 			if ( aa_code_L49 == 'R' || aa_code_L49 == 'K' ) {
 				is_basic = true;
@@ -379,7 +379,7 @@ Antibody::detect_regular_CDR_H3_stem_type() {
 		is_H3 = true;
 		if ( !is_H3 ) {
 			bool is_basic( false ); // Special basic residue exception flag
-			core::Size L46_pose_number = Fv.pdb_info()->pdb2pose( 'L', 46 );
+			core::Size L46_pose_number = Fv.pdb_info()->pdb2pose( "L", 46 );
 			char aa_code_L46 = Fv.residue( L46_pose_number ).name1();
 			if ( aa_code_L46 == 'R' || aa_code_L46 == 'K' ) {
 				is_basic = true;

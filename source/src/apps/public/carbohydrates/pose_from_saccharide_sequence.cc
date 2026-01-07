@@ -52,7 +52,7 @@ main( int argc, char * argv [] )
 			core::pose::pose_from_saccharide_sequence
 			( option[ carbohydrates::saccharide_sequence ].value() );
 		// And assign all residues in the Pose to chain X
-		pose->pdb_info()->set_chains('X');
+		pose->pdb_info()->set_all_chains("X");
 
 		// Minimize the glycan conformation once
 		core::scoring::ScoreFunctionOP sf = core::scoring::get_score_function();
