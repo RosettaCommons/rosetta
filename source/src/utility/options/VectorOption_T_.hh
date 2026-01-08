@@ -106,17 +106,7 @@ protected: // Creation
 
 
 	/// @brief Copy constructor
-	inline
-	VectorOption_T_( VectorOption_T_ const & option ) :
-		Super( option )
-#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
-		,
-		mutex_()
-#endif
-	{
-		(*this) = option;
-	}
-
+	VectorOption_T_( VectorOption_T_ const & option ) = default;
 
 	/// @brief Key + description constructor
 	inline

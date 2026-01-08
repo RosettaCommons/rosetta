@@ -443,6 +443,19 @@ settings = {
         },
     },
 
+    "gcc, |cxx_ver:>=15.0|" : {
+        "appends" : {
+            "flags" : {
+                "warn" : [
+                    "Wno-error=dangling-pointer=", # Boost spirit issue
+                    "Wno-error=stringop-overflow=", # Internal mis-prediction with small_vector1 
+                ],
+            },
+        },
+    },
+
+   
+
     "gcc, |cxx_ver:>=13.0|" : {
         "appends" : {
             "flags" : {
