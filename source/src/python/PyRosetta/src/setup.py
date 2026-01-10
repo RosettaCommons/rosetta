@@ -75,6 +75,9 @@ def setup_package():
             },
             distclass = PyRosettaDistribution,
             zip_safe = False,
+            install_requires=[
+                "numpy",  
+            ],
             extras_require = {
                 "distributed" : [
                     "numpy",
