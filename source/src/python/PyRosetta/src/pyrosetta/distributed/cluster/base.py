@@ -147,6 +147,18 @@ class TaskBase(Generic[G]):
             _protocols_index = len(priorities) - len(protocols)
             return priorities[_protocols_index]
 
+    def _get_retry(
+            self, retries: Optional[Union[int, List[int], Tuple[int, ...]]], protocols: List[Callable[..., Any]]
+        ) -> Optional[int]:
+        """Return the number of task retries for the current protocol."""
+        if retries is None:
+            return None
+        elif isinstance(retries, int):
+            return retries
+        else:
+            _protocols_index = len(retries) - len(protocols)
+            return retries[_protocols_index]
+
     def _parse_priorities(self, priorities: Any) -> Any:
         """Parse the priorities keyword argument."""
         if __dask_version__ < (1, 21, 0):
@@ -161,24 +173,40 @@ class TaskBase(Generic[G]):
         else:
             return priorities
 
+    def _parse_retries(self, retries: Any) -> Any:
+        """Parse the retries keyword argument."""
+        if __dask_version__ < (1, 20, 0):
+            _dask_version_str = ".".join(map(str, __dask_version__))
+            logging.warning(
+                "Use of the `retries` keyword argument is not supported for 'dask' and 'distributed' "
+                f"package versions <1.20.0\nCurrent dask version: {_dask_version_str}\n"
+                "Please set `PyRosettaCluster().distribute(retries=None)`, or upgrade the 'dask' and 'distributed' "
+                "package versions to >=1.20.0 to silence this warning. Automatically disabling task retries..."
+            )
+            return None
+        else:
+            return retries
+
     def _setup_kwargs(
         self,
         kwargs: Dict[Any, Any],
         clients_indices: List[int],
         resources: Optional[Union[List[Dict[Any, Any]], Tuple[Dict[Any, Any], ...]]],
         priorities: Optional[Union[List[int], Tuple[int, ...]]],
-    ) -> Tuple[bytes, Dict[str, Any], Callable[..., Any], int, Optional[Dict[Any, Any]], Optional[int]]:
+        retries: Optional[Union[int, List[int], Tuple[int, ...]]],
+    ) -> Tuple[bytes, Dict[str, Any], Callable[..., Any], int, Optional[Dict[Any, Any]], Optional[int], Optional[int]]:
         """Setup the kwargs for the subsequent tasks."""
         clients_index = self._get_clients_index(clients_indices, kwargs[self.protocols_key])
         resource = self._get_resource(resources, kwargs[self.protocols_key])
         priority = self._get_priority(priorities, kwargs[self.protocols_key])
+        retry = self._get_retry(retries, kwargs[self.protocols_key])
         _protocols, protocol, seed = self._get_task_state(kwargs[self.protocols_key])
         kwargs[self.protocols_key] = _protocols
         kwargs = self._setup_seed(kwargs, seed)
         pyrosetta_init_kwargs = self._setup_pyrosetta_init_kwargs(kwargs)
         compressed_kwargs = self.serializer.compress_kwargs(kwargs)
 
-        return compressed_kwargs, pyrosetta_init_kwargs, protocol, clients_index, resource, priority
+        return compressed_kwargs, pyrosetta_init_kwargs, protocol, clients_index, resource, priority, retry
 
     def _setup_seed(self, kwargs: Dict[Any, Any], seed: Optional[str]) -> Dict[Any, Any]:
         """
@@ -207,8 +235,8 @@ class TaskBase(Generic[G]):
         return kwargs
 
     def _setup_protocols_protocol_seed(
-        self, args: Tuple[Any, ...], protocols: Any, clients_indices: Any, resources: Any, priorities: Any
-    ) -> Tuple[List[Callable[..., Any]], Callable[..., Any], Optional[str], int, Optional[Dict[Any, Any]], Optional[int]]:
+        self, args: Tuple[Any, ...], protocols: Any, clients_indices: Any, resources: Any, priorities: Any, retries: Any
+    ) -> Tuple[List[Callable[..., Any]], Callable[..., Any], Optional[str], int, Optional[Dict[Any, Any]], Optional[int], Optional[int]]:
         """Parse, validate, and setup the user-provided PyRosetta protocol(s)."""
 
         _protocols = _parse_protocols(args) + _parse_protocols(protocols)
@@ -219,11 +247,12 @@ class TaskBase(Generic[G]):
         _clients_index = self._get_clients_index(clients_indices, _protocols)
         _resource = self._get_resource(resources, _protocols)
         _priority = self._get_priority(priorities, _protocols)
+        _retry = self._get_retry(retries, _protocols)
         _protocols, _protocol, _seed = self._get_task_state(
             _validate_protocols_seeds_decoy_ids(_protocols, self.seeds, self.decoy_ids)
         )
 
-        return _protocols, _protocol, _seed, _clients_index, _resource, _priority
+        return _protocols, _protocol, _seed, _clients_index, _resource, _priority, _retry
 
 
 def capture_task_metadata(func: M) -> M:
