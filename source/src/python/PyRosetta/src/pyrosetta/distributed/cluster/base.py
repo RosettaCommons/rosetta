@@ -38,6 +38,7 @@ from pyrosetta.distributed.cluster.validators import (
     _validate_priorities,
     _validate_protocols_seeds_decoy_ids,
     _validate_resources,
+    _validate_retries,
 )
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
@@ -244,6 +245,7 @@ class TaskBase(Generic[G]):
         _validate_clients_indices(clients_indices, _protocols, _clients_dict_keys)
         _validate_resources(resources, _protocols)
         _validate_priorities(priorities, _protocols)
+        _validate_retries(retries, _protocols)
         _clients_index = self._get_clients_index(clients_indices, _protocols)
         _resource = self._get_resource(resources, _protocols)
         _priority = self._get_priority(priorities, _protocols)

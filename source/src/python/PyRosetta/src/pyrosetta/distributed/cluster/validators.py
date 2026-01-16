@@ -106,6 +106,35 @@ def _validate_priorities(priorities: Any, _protocols: List[Callable[..., Any]]) 
             )
 
 
+def _validate_retries(retries: Any, _protocols: List[Callable[..., Any]]) -> Optional[NoReturn]:
+    """Validate the `retries` keyword argument parameter."""
+    if retries is not None:
+        if isinstance(retries, int):
+            if retries < 0:
+                raise ValueError(
+                    "If the `retries` keyword argument parameter is of type `int`, it must be greater than or equal to 0.\n"
+                    + f"Received: {retries}\n"
+                )
+        elif isinstance(retries, (tuple, list)):
+            for obj in retries:
+                if not isinstance(obj, int):
+                    raise ValueError(
+                        "Each item of the `retries` keyword argument parameter must be of type `int`.\n"
+                        + f"Received: {type(obj)}\n"
+                    )
+            if len(retries) != len(_protocols):
+                raise ValueError(
+                    "The `retries` keyword argument parameter must have the same length as the number of user-defined PyRosetta protocols!\n"
+                    + f"Received `PyRosettaCluster().distribute(protocols=...)`: {_protocols}\n"
+                    + f"Received `PyRosettaCluster().distribute(retries=...)`: {retries}\n"
+                )
+        else:
+            raise ValueError(
+                "The `retries` keyword argument parameter must be of type `int`, `list`, or `tuple`.\n"
+                + f"Received: {type(retries)}\n"
+            )
+
+
 def _validate_scorefile_name(self, attribute: str, value: Any) -> Optional[NoReturn]:
     if not value.endswith(".json"):
         raise ValueError(f"The '{attribute}' keyword argument parameter must end in '.json'.")
