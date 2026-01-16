@@ -928,13 +928,17 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             broadcast=False,
             hash=False,
         )
-        submit_kwargs = {"pure": False, "resources": resource}
+        submit_kwargs = {"pure": False}
+        # Omit resources keyword argument for distributed versions <2.1.0
+        # or use default if user specifies `resources=None` in distributed versions >=2.1.0
+        if resource is not None:
+            submit_kwargs["resources"] = resource
         # Omit priority keyword argument for distributed versions <1.21.0
         # or use default if user specifies `priorities=None` in distributed versions >=1.21.0
         if priority is not None:
             submit_kwargs["priority"] = priority
         # Omit retries keyword argument for distributed versions <1.20.0
-        # or use default if user specifies `retires=None` for distributed versions >=1.20.0
+        # or use default if user specifies `retries=None` for distributed versions >=1.20.0
         if retry is not None:
             submit_kwargs["retries"] = retry
 
@@ -1056,6 +1060,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         self._setup_task_security_plugin(clients)
         socket_listener_address, passkey = self._setup_socket_listener(clients)
         compressed_input_packed_pose = self.serializer.compress_packed_pose(self.input_packed_pose)
+        resources = self._parse_resources(resources)
         priorities = self._parse_priorities(priorities)
         retries = self._parse_retries(retries)
         protocols, protocol, seed, clients_index, resource, priority, retry = self._setup_protocols_protocol_seed(

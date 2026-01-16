@@ -27,7 +27,7 @@ import pyrosetta.distributed
 from datetime import datetime
 from functools import wraps
 from pyrosetta.distributed.cluster.config import __dask_version__
-from pyrosetta.distributed.cluster.converters import _parse_protocols
+from pyrosetta.distributed.cluster.converters import _parse_protocols, _version_tuple_to_str
 from pyrosetta.distributed.cluster.initialization import (
     _get_norm_task_options,
     _get_residue_type_set_name3 as _get_residue_type_set,
@@ -160,30 +160,56 @@ class TaskBase(Generic[G]):
             _protocols_index = len(retries) - len(protocols)
             return retries[_protocols_index]
 
+    def _parse_resources(self, resources: Any) -> Any:
+        """Parse the resources keyword argument parameter."""
+        _dask_version_threshold = (2, 1, 0)
+        if __dask_version__ < _dask_version_threshold:
+            if resources is not None:
+                _dask_version_str = _version_tuple_to_str(__dask_version__)
+                _dask_version_threshold_str = _version_tuple_to_str(_dask_version_threshold)
+                logging.warning(
+                    "Use of the `resources` keyword argument is not supported for 'dask' and 'distributed' "
+                    f"package versions <{_dask_version_threshold_str}\nCurrent dask version: {_dask_version_str}\n"
+                    "Please set `PyRosettaCluster().distribute(resources=None)`, or upgrade the 'dask' and 'distributed' "
+                    f"package versions to >={_dask_version_threshold_str} to silence this warning. "
+                    "Automatically disabling resource constraints..."
+                )
+            return None
+        else:
+            return resources
+
     def _parse_priorities(self, priorities: Any) -> Any:
-        """Parse the priorities keyword argument."""
-        if __dask_version__ < (1, 21, 0):
-            _dask_version_str = ".".join(map(str, __dask_version__))
-            logging.warning(
-                "Use of the `priorities` keyword argument is not supported for 'dask' and 'distributed' "
-                f"package versions <1.21.0\nCurrent dask version: {_dask_version_str}\n"
-                "Please set `PyRosettaCluster().distribute(priority=None)`, or upgrade the 'dask' and 'distributed' "
-                "package versions to >=1.21.0 to silence this warning. Automatically disabling priorities..."
-            )
+        """Parse the priorities keyword argument parameter."""
+        _dask_version_threshold = (1, 21, 0)
+        if __dask_version__ < _dask_version_threshold:
+            if priorities is not None:
+                _dask_version_str = _version_tuple_to_str(__dask_version__)
+                _dask_version_threshold_str = _version_tuple_to_str(_dask_version_threshold)
+                logging.warning(
+                    "Use of the `priorities` keyword argument is not supported for 'dask' and 'distributed' "
+                    f"package versions <{_dask_version_threshold_str}\nCurrent dask version: {_dask_version_str}\n"
+                    "Please set `PyRosettaCluster().distribute(priorities=None)`, or upgrade the 'dask' and 'distributed' "
+                    f"package versions to >={_dask_version_threshold_str} to silence this warning. "
+                    "Automatically disabling priorities..."
+                )
             return None
         else:
             return priorities
 
     def _parse_retries(self, retries: Any) -> Any:
-        """Parse the retries keyword argument."""
-        if __dask_version__ < (1, 20, 0):
-            _dask_version_str = ".".join(map(str, __dask_version__))
-            logging.warning(
-                "Use of the `retries` keyword argument is not supported for 'dask' and 'distributed' "
-                f"package versions <1.20.0\nCurrent dask version: {_dask_version_str}\n"
-                "Please set `PyRosettaCluster().distribute(retries=None)`, or upgrade the 'dask' and 'distributed' "
-                "package versions to >=1.20.0 to silence this warning. Automatically disabling task retries..."
-            )
+        """Parse the retries keyword argument parameter."""
+        _dask_version_threshold = (1, 20, 0)
+        if __dask_version__ < _dask_version_threshold:
+            if retries is not None:
+                _dask_version_str = _version_tuple_to_str(__dask_version__)
+                _dask_version_threshold_str = _version_tuple_to_str(_dask_version_threshold)
+                logging.warning(
+                    "Use of the `retries` keyword argument is not supported for 'dask' and 'distributed' "
+                    f"package versions <{_dask_version_threshold_str}\nCurrent dask version: {_dask_version_str}\n"
+                    "Please set `PyRosettaCluster().distribute(retries=None)`, or upgrade the 'dask' and 'distributed' "
+                    f"package versions to >={_dask_version_threshold_str} to silence this warning. "
+                    "Automatically disabling task retries..."
+                )
             return None
         else:
             return retries
