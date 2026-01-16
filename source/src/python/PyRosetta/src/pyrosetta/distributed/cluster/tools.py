@@ -632,11 +632,13 @@ def produce(**kwargs: Any) -> Optional[NoReturn]:
     clients_indices = kwargs.pop("clients_indices", None)
     resources = kwargs.pop("resources", None)
     priorities = kwargs.pop("priorities", None)
+    retries = kwargs.pop("retries", None)
     PyRosettaCluster(**kwargs).distribute(
         protocols=protocols,
         clients_indices=clients_indices,
         resources=resources,
         priorities=priorities,
+        retries=retries,
     )
 
 run: Callable[..., Optional[NoReturn]] = produce
@@ -647,11 +649,13 @@ def iterate(**kwargs: Any) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[A
     clients_indices = kwargs.pop("clients_indices", None)
     resources = kwargs.pop("resources", None)
     priorities = kwargs.pop("priorities", None)
+    retries = kwargs.pop("retries", None)
     for result in PyRosettaCluster(**kwargs).generate(
         protocols=protocols,
         clients_indices=clients_indices,
         resources=resources,
         priorities=priorities,
+        retries=retries,
     ):
         yield result
 
