@@ -2789,7 +2789,6 @@ class IntentionalError(RuntimeError):
 
 class RetriesTest(unittest.TestCase):
     """Smoke tests for the use case of task retries with PyRosettaCluster."""
-
     _n_tasks: int = 3
     _n_protocols: int = 2
     _n_retries_per_protocol: int = 2  # 3 attempts total
@@ -2873,6 +2872,7 @@ class RetriesTest(unittest.TestCase):
         # These warnings are expected from the `RetriesTest` test case, and do not indicate unit test failures.
         cls.client_1.close()
         cls.cluster_1.close()
+        time.sleep(5) # Allow logging messages from worker processes to flush
         print(f"{RetriesTest._sep} End ignoring expected Dask shutdown warnings {RetriesTest._sep}")
         cls.workdir.cleanup()
         print(f"{RetriesTest._sep} End testing PyRosettaCluster().distribute(retries=...) {RetriesTest._sep}")
