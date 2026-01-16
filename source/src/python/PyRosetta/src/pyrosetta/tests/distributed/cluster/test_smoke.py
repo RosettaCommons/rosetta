@@ -3046,7 +3046,7 @@ class RetriesTest(unittest.TestCase):
                 clients_indices=[0] * RetriesTest._n_protocols,
                 resources=None,
                 priorities=None,
-                retries=tuple(range(0, RetriesTest._n_protocols, 10)), # Test different values in tuple
+                retries=tuple(range(0, RetriesTest._n_protocols * 10, 10)), # Test different values in tuple
             )
         )
         produce(
@@ -3081,6 +3081,18 @@ class RetriesTest(unittest.TestCase):
                     clients_indices=[0] * RetriesTest._n_protocols,
                     resources=None,
                     priorities=None,
+                    retries=list(range(RetriesTest._n_protocols + 1)), # Test validation error with different size
+                )
+            )
+        with self.assertRaises(ValueError):
+            produce(
+                **self.default_instance_kwargs,
+                **dict(
+                    output_path=f"{output_path}_5",
+                    protocols=protocols,
+                    clients_indices=[0] * RetriesTest._n_protocols,
+                    resources=None,
+                    priorities=None,
                     retries=-1, # Test validation error with negative integer
                 )
             )
@@ -3088,7 +3100,7 @@ class RetriesTest(unittest.TestCase):
             produce(
                 **self.default_instance_kwargs,
                 **dict(
-                    output_path=f"{output_path}_4",
+                    output_path=f"{output_path}_6",
                     protocols=protocols,
                     clients_indices=[0] * RetriesTest._n_protocols,
                     resources=None,
