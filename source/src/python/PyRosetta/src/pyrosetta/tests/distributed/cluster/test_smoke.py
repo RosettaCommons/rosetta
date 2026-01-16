@@ -2872,7 +2872,7 @@ class RetriesTest(unittest.TestCase):
         # These warnings are expected from the `RetriesTest` test case, and do not indicate unit test failures.
         cls.client_1.close()
         cls.cluster_1.close()
-        time.sleep(5) # Allow logging messages from worker processes to flush
+        time.sleep(3) # Allow logging messages from worker processes to flush
         print(f"{RetriesTest._sep} End ignoring expected Dask shutdown warnings {RetriesTest._sep}")
         cls.workdir.cleanup()
         print(f"{RetriesTest._sep} End testing PyRosettaCluster().distribute(retries=...) {RetriesTest._sep}")
