@@ -432,6 +432,7 @@ def reproduce(
     instance_kwargs: Optional[Dict[Any, Any]] = None,
     clients_indices: Optional[List[int]] = None,
     resources: Optional[Dict[Any, Any]] = None,
+    retries: Optional[Union[int, List[int], Tuple[int, ...]]] = None,
     skip_corrections: bool = False,
     init_from_file_kwargs: Optional[Dict[str, Any]] = None,
 ) -> Optional[NoReturn]:
@@ -510,6 +511,23 @@ def reproduce(
             constraints so that it can schedule these protocols. Unless workers were created with these resource tags
             applied, the protocols will not run. See https://distributed.dask.org/en/latest/resources.html for more
             information.
+            Default: None
+        retries: An optional `list` or `tuple` of `int` objects, where each `int` object (≥0) sets the number of allowed
+            automatic retries of each failed task that was submitted to the corresponding user-provided PyRosetta protocol
+            (i.e., indexed the same as `client_indices`). If an `int` object (≥0) is provided, then apply that number of
+            allowed automatic retries to all user-provided PyRosetta protocols. If `None`, then no explicit retries are
+            allowed. If not `None` and not an `int` object, then the length of the `retries` parameter must equal the number
+            of protocols passed to the `PyRosettaCluster().distribute` method, and each `int` value determines the number
+            of automatic retries the dask scheduler allows for that protocol's failed tasks. Allowing retries of failed tasks
+            may be useful if remote compute resources are subject to preemption (e.g., cloud spot instances or backfill
+            queues). Note that retries are only appropriate for user-provided PyRosetta protocols that are side effect-free
+            upon preemption, in which tasks can be restarted without producing inconsistent external states if preempted midway
+            through the protocol. Also note that if `PyRosettaCluster(ignore_errors=True)` is used, then protocols failing due
+            to standard Python exceptions or Rosetta segmentation faults will still be considered successes, and this
+            keyword argument parameter has no effect on them since these protocol errors are ignored. However, if a compute
+            resource executing tasks is reclaimed midway through a protocol, then the dask scheduler registers those tasks
+            as incomplete, and they may be retried a certain number of times based on this keyword argument parameter.
+            See https://distributed.dask.org/en/latest/scheduling-state.html#task-state for more information.
             Default: None
         skip_corrections: A `bool` object specifying whether or not to skip any ScoreFunction corrections specified in
             the PyRosettaCluster task 'options' or 'extra_options' values (extracted from either the 'input_file' or
@@ -608,6 +626,8 @@ def reproduce(
         ),
         clients_indices=clients_indices,
         resources=resources,
+        priorities=None,
+        retries=retries,
     )
     if isinstance(_tmp_dir, tempfile.TemporaryDirectory):
         _tmp_dir.cleanup()
