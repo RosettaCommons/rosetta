@@ -122,6 +122,11 @@ def _validate_retries(retries: Any, _protocols: List[Callable[..., Any]]) -> Opt
                         "Each item of the `retries` keyword argument parameter must be of type `int`.\n"
                         + f"Received: {type(obj)}\n"
                     )
+                if obj < 0:
+                    raise ValueError(
+                        "Each item of the `retries` keyword argument parameter must be greater than or equal to 0.\n"
+                        + f"Received: {obj}\n"
+                    )
             if len(retries) != len(_protocols):
                 raise ValueError(
                     "The `retries` keyword argument parameter must have the same length as the number of user-defined PyRosetta protocols!\n"
