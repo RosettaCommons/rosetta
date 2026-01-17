@@ -637,16 +637,16 @@ def produce(**kwargs: Any) -> Optional[NoReturn]:
     """
     `PyRosettaCluster().distribute()` shim requiring the 'protocols' keyword argument, and optionally
     any PyRosettaCluster keyword arguments or the 'clients_indices' keyword argument (when using
-    the `PyRosettaCluster(clients=...)` keyword argument), or the 'resources' keyword argument, or
-    the 'priorities' keyword argument.
+    the `PyRosettaCluster(clients=...)` keyword argument), the 'resources' keyword argument,
+    the 'priorities' keyword argument, or the 'retries' keyword argument.
 
     Args:
         **kwargs: See `PyRosettaCluster` docstring. The keyword arguments must also include
             'protocols', an iterable object of function or generator objects specifying
             an ordered sequence of user-defined PyRosetta protocols to execute for
             the simulation (see `PyRosettaCluster().distribute` docstring). The keyword arguments
-            may also optionally include 'clients_indices', 'resources', and 'priorities' (see
-            `PyRosettaCluster().distribute` docstring).
+            may also optionally include 'clients_indices', 'resources', 'priorities', and 'retries'
+            (see `PyRosettaCluster().distribute` docstring).
     """
     protocols = kwargs.pop("protocols", None)
     clients_indices = kwargs.pop("clients_indices", None)

@@ -999,10 +999,16 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                 resources=[{"GPU": 2}, {"MEMORY": 100e9}],
             )
 
-            # Run protocols with depth-first task execution
+            # Run protocols with depth-first task execution:
             PyRosettaCluster().distribute(
                 protocols=[protocol_1, protocol_2, protocol_3, protocol_4],
                 priorities=[0, 10, 20, 30],
+            )
+
+            # Run protocols with up to three retries per failed task during `protocol_3` and `protocol_4`:
+            PyRosettaCluster().distribute(
+                protocols=[protocol_1, protocol_2, protocol_3, protocol_4],
+                retries=[0, 0, 3, 3],
             )
 
         Args:
