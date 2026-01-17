@@ -2864,7 +2864,6 @@ class RetriesTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        print(f"{RetriesTest._sep} Start ignoring expected Dask shutdown warnings {RetriesTest._sep}")
         # Note: During dask client/cluster shutdown, dask worker processes may still have in-flight tasks
         # or scheduled retries, which can lead to emitted warnings like:
         #   - "distributed.worker.state_machine - WARNING - Async instruction for <Task cancelled ...> ended with CancelledError"
@@ -2873,7 +2872,6 @@ class RetriesTest(unittest.TestCase):
         cls.client_1.close()
         cls.cluster_1.close()
         time.sleep(3) # Allow logging messages from worker processes to flush
-        print(f"{RetriesTest._sep} End ignoring expected Dask shutdown warnings {RetriesTest._sep}")
         cls.workdir.cleanup()
         print(f"{RetriesTest._sep} End testing PyRosettaCluster().distribute(retries=...) {RetriesTest._sep}")
 
@@ -3037,77 +3035,99 @@ class RetriesTest(unittest.TestCase):
     def test_retries_api(self):
         """Test retries API."""
         protocols = [RetriesTest.my_protocol] * RetriesTest._n_protocols
+        clients_indices = [0] * RetriesTest._n_protocols
         output_path = os.path.join(self.workdir.name, "outputs_protocols_retries_api")
         produce(
             **self.default_instance_kwargs,
             **dict(
                 output_path=f"{output_path}_1",
                 protocols=protocols,
-                clients_indices=[0] * RetriesTest._n_protocols,
+                clients_indices=clients_indices,
                 resources=None,
                 priorities=None,
                 retries=tuple(range(0, RetriesTest._n_protocols * 10, 10)), # Test different values in tuple
             )
         )
-        produce(
+        run(
             **self.default_instance_kwargs,
             **dict(
                 output_path=f"{output_path}_2",
                 protocols=protocols,
-                clients_indices=[0] * RetriesTest._n_protocols,
+                clients_indices=clients_indices,
                 resources=None,
                 priorities=None,
                 retries=list(reversed(range(RetriesTest._n_protocols))), # Test different values in list
             )
         )
-        with self.assertRaises(ValueError):
-            produce(
-                **self.default_instance_kwargs,
-                **dict(
-                    output_path=f"{output_path}_3",
-                    protocols=protocols,
-                    clients_indices=[0] * RetriesTest._n_protocols,
-                    resources=None,
-                    priorities=None,
-                    retries=set(range(RetriesTest._n_protocols)), # Test validation error with set
-                )
+        prc_iterator = iterate(
+            **self.default_instance_kwargs,
+            **dict(
+                output_path=f"{output_path}_3",
+                protocols=protocols,
+                clients_indices=clients_indices,
+                resources=None,
+                priorities=None,
+                retries=set(range(RetriesTest._n_protocols)), # Test validation error with set
             )
-        with self.assertRaises(ValueError):
-            produce(
-                **self.default_instance_kwargs,
-                **dict(
-                    output_path=f"{output_path}_4",
-                    protocols=protocols,
-                    clients_indices=[0] * RetriesTest._n_protocols,
-                    resources=None,
-                    priorities=None,
-                    retries=list(range(RetriesTest._n_protocols + 1)), # Test validation error with different size
-                )
+        )
+        with self.assertRaises(ValueError) as ex:
+            _ = list(prc_iterator)
+        self.assertIn(
+            "The `retries` keyword argument parameter must be of type `int`, `list`, or `tuple`.",
+            str(ex.exception),
+            msg="Incorrect error message."
+        )
+        prc_generator = PyRosettaCluster(
+            **self.default_instance_kwargs,
+            output_path=f"{output_path}_4",
+        ).generate(
+            protocols=protocols,
+            clients_indices=clients_indices,
+            resources=None,
+            priorities=None,
+            retries=list(range(RetriesTest._n_protocols + 1)), # Test validation error with different size
+        )
+        with self.assertRaises(ValueError) as ex:
+            _ = list(prc_generator)
+        self.assertIn(
+            "The `retries` keyword argument parameter must have the same length as the number of user-defined PyRosetta protocols!",
+            str(ex.exception),
+            msg="Incorrect error message."
+        )
+        prc = PyRosettaCluster(
+            **self.default_instance_kwargs,
+            output_path=f"{output_path}_5",
+        )
+        with self.assertRaises(ValueError) as ex:
+            prc.distribute(
+                protocols=protocols,
+                clients_indices=clients_indices,
+                resources=None,
+                priorities=None,
+                retries=-1, # Test validation error with negative integer
             )
-        with self.assertRaises(ValueError):
-            produce(
-                **self.default_instance_kwargs,
-                **dict(
-                    output_path=f"{output_path}_5",
-                    protocols=protocols,
-                    clients_indices=[0] * RetriesTest._n_protocols,
-                    resources=None,
-                    priorities=None,
-                    retries=-1, # Test validation error with negative integer
-                )
-            )
-        with self.assertRaises(ValueError):
+        self.assertIn(
+            "If the `retries` keyword argument parameter is of type `int`, it must be greater than or equal to 0.",
+            str(ex.exception),
+            msg="Incorrect error message."
+        )
+        with self.assertRaises(ValueError) as ex:
             produce(
                 **self.default_instance_kwargs,
                 **dict(
                     output_path=f"{output_path}_6",
                     protocols=protocols,
-                    clients_indices=[0] * RetriesTest._n_protocols,
+                    clients_indices=clients_indices,
                     resources=None,
                     priorities=None,
                     retries=1.0, # Test validation error with float
                 )
             )
+        self.assertIn(
+            "The `retries` keyword argument parameter must be of type `int`, `list`, or `tuple`.",
+            str(ex.exception),
+            msg="Incorrect error message."
+        )
         print("Unit test for retries API passed successfully!")
 
 
