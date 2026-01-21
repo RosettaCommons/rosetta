@@ -486,7 +486,9 @@ def pyrosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_driv
     # return results
     # ----------------------------------
 
-    release_name = 'PyRosetta4.{kind}.python{python_version}.{platform}'.format(kind=kind, platform='.'.join([platform['os']]+platform['extras']), python_version=platform['python'].replace('.', '') )
+    platform_os = 'ubuntu' if platform['os'].startswith('ubuntu') else platform['os']
+
+    release_name = 'PyRosetta4.{kind}.python{python_version}.{suffix}'.format(kind=kind, suffix='.'.join([platform_os]+platform['extras']), python_version=platform['python'].replace('.', '') )
 
     version_file = working_dir + '/version.json'
     generate_version_information(rosetta_dir, branch=config['branch'], revision=config['revision'], package=release_name, url='http://www.pyrosetta.org', file_name=version_file)  # date=datetime.datetime.now(), avoid setting date and instead use date from Git commit
