@@ -504,8 +504,7 @@ class IO(Generic[G]):
             self.toml_format = ""
 
         # Cache TOML filename as file format
-        if self.toml:
-            self.toml_format = os.path.basename(toml_file)
+        self.toml_format = os.path.basename(toml_file) if self.toml else ""
 
     def _write_environment_file(self, filename: str) -> None:
         """
