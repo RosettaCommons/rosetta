@@ -38,7 +38,7 @@ class EnvironmentConfig(Generic[G]):
     _ENV_MANAGERS: Tuple[str, ...] = ("pixi", "uv", "mamba", "conda")
     _ENV_EXPORT_CMDS: Dict[str, str] = {
         "pixi": "pixi lock --check || pixi lock --no-install",
-        "uv": "uv export --format requirements-txt --frozen",
+        "uv": "uv export --format requirements-txt --frozen --no-annotate --no-header",
         "mamba": f"mamba env export --prefix '{sys.prefix}'",
         "conda": f"conda env export --prefix '{sys.prefix}'",
     }
@@ -107,9 +107,7 @@ class EnvironmentConfig(Generic[G]):
                     "PyRosettaCluster detected the set 'UV_PROJECT' environment variable, and is "
                     + f"setting the flag `--project '{project_dir}'` in the `uv export` command."
                 )
-                return (
-                    f"uv export --format requirements-txt --frozen --project '{project_dir}'"
-                )
+                return f"{self._ENV_EXPORT_CMDS[self.environment_manager]} --project '{project_dir}'"
 
         # Use default environment export command
         return self._ENV_EXPORT_CMDS[self.environment_manager]

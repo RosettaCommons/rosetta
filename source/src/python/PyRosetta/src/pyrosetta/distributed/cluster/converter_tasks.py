@@ -501,12 +501,6 @@ def get_yml() -> str:
     Export the current environment to a string depending on the environment manager.
     """
 
-    def remove_comments(text: str) -> str:
-        """Remove lines starting with '#'."""
-        return "\n".join(
-            line for line in text.splitlines() if not line.strip().startswith("#")
-        )
-
     def remove_metadata(text: str) -> str:
         """Remove 'name:' and 'prefix:' lines."""
         filtered_lines = [
@@ -557,7 +551,7 @@ def get_yml() -> str:
         return ""
 
     if env_manager == "uv":
-        return remove_comments(raw_yml) # Not sanitized, since uv doesn't use conda channels
+        return raw_yml  # Not sanitized, since uv doesn't use conda channels
     elif env_manager in ("conda", "mamba"):
         return sanitize_urls(remove_metadata(raw_yml))
 
