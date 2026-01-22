@@ -432,7 +432,6 @@ class IO(Generic[G]):
     def _cache_toml(self) -> None:
         """Cache the pixi/uv TOML file string and TOML file format."""
 
-        toml_file = "" # Empty as fallback
         if self.environment_manager == "pixi":
             # https://pixi.sh/dev/reference/environment_variables/#environment-variables-set-by-pixi
             toml_file = os.environ.get("PIXI_PROJECT_MANIFEST", "")
@@ -440,6 +439,7 @@ class IO(Generic[G]):
                 if os.path.isfile(toml_file):
                     with open(toml_file, "r") as f:
                         self.toml = sanitize_urls(f.read())
+                    self.toml_format = os.path.basename(toml_file)
                 else:
                     logging.warning(
                         (
@@ -450,6 +450,7 @@ class IO(Generic[G]):
                         )
                     )
                     self.toml = ""
+                    self.toml_format = ""
             else:
                 # https://pixi.sh/dev/python/tutorial/#pixitoml-and-pyprojecttoml
                 for filename in ("pixi.toml", "pyproject.toml"):
@@ -457,6 +458,7 @@ class IO(Generic[G]):
                     if os.path.isfile(toml_file):
                         with open(toml_file, "r") as f:
                             self.toml = sanitize_urls(f.read())
+                        self.toml_format = os.path.basename(toml_file)
                         break
                 else:
                     logging.warning(
@@ -467,6 +469,7 @@ class IO(Generic[G]):
                         )
                     )
                     self.toml = ""
+                    self.toml_format = ""
         elif self.environment_manager == "uv":
             # https://docs.astral.sh/uv/reference/environment/#uv_project
             project_dir = os.environ.get("UV_PROJECT", None)
@@ -475,6 +478,7 @@ class IO(Generic[G]):
                 if os.path.isfile(toml_file):
                     with open(toml_file, "r") as f:
                         self.toml = sanitize_urls(f.read())
+                    self.toml_format = os.path.basename(toml_file)
                 else:
                     logging.warning(
                         (
@@ -485,26 +489,30 @@ class IO(Generic[G]):
                         )
                     )
                     self.toml = ""
+                    self.toml_format = ""
             else:
                 toml_file = os.path.join(os.getcwd(), "pyproject.toml")
                 if os.path.isfile(toml_file):
                     with open(toml_file, "r") as f:
                         self.toml = sanitize_urls(f.read())
+                    self.toml_format = os.path.basename(toml_file)
                 else:
                     logging.warning(
                         (
                             "PyRosettaCluster could not detect the uv `pyproject.toml` file! "
-                            "It is recommended to commit the uv `pyproject.toml` file to the "
-                            "git repository to reproduce the uv project later."
+                            "The 'UV_PROJECT' environment variable is not set, and a `pyproject.toml` "
+                            "file does not exist in the current working directory. For environment "
+                            "reproducibility, please set the 'UV_PROJECT' environment variable "
+                            "to the uv project root directory, or run the simulation from the uv project "
+                            "root directory. If continuing with this simulation, it is recommended to commit the "
+                            "uv `pyproject.toml` file to the git repository to reproduce the uv project later."
                         )
                     )
                     self.toml = ""
+                    self.toml_format = ""
         else:
             self.toml = ""
             self.toml_format = ""
-
-        # Cache TOML filename as file format
-        self.toml_format = os.path.basename(toml_file) if self.toml else ""
 
     def _write_environment_file(self, filename: str) -> None:
         """
