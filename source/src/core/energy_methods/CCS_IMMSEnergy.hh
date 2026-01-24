@@ -12,6 +12,7 @@
 /// @brief  this energy method does not return derivatives, and is not compatible with the minimizer
 /// @brief  core::Real parcs_ccs (.., .., ..) needs to be non-member function because CCS_IMMSEnergy() requires Experimental CCS, but ParcsCCS calculation does not. So defining it outside the CCS_IMMSEnergy
 /// @author SM Baargeen Alam Turzo <turzo.1@osu.edu>
+/// @author Akshaya Narayanasamy (akshaya.researcher@gmail.com)
 
 #ifndef INCLUDED_core_energy_methods_CCS_IMMSEnergy_hh
 #define INCLUDED_core_energy_methods_CCS_IMMSEnergy_hh
@@ -108,8 +109,8 @@ protected:
 	core::Size nrot_=300;
 	core::Real prad_=1.0;
 	bool use_multimer_=true;
-	core::Real lb_=10;
-	core::Real ub_=100;
+	core::Real lb_=60;   // Lower bound for complex energy 
+	core::Real ub_=1350;  // Upper bound for complex energy 
 };
 
 class CCS_IMMS_with_CryoEMEnergy : public core::scoring::methods::WholeStructureEnergy {

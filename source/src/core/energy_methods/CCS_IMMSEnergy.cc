@@ -9,7 +9,7 @@
 
 /// @file   core/energy_methods/CCS_IMMSEnergy.cc
 /// @author SM Bargeen Alam Turzo (turzo.1@osu.edu)
-
+/// @author Akshaya Narayanasamy (akshaya.researcher@gmail.com)
 #include <core/energy_methods/CCS_IMMSEnergy.hh>
 #include <core/energy_methods/CCS_IMMSEnergyCreator.hh>
 
@@ -117,11 +117,9 @@ CCS_IMMSComplexEnergy::CCS_IMMSComplexEnergy() :
     // Always use multimer for this energy
     use_multimer_ = true;
     
-    // Using hardcoded values for lb_, ub_, and weight_
-    // These values match the defaults defined in the header file
-    // lb_ = 10;  // Default value 
-    // ub_ = 100; // Default value
-    // weight_ = 100; // Default value
+    // complex energy scoring
+    lb_ = 60;   // Lower bound for complex energy
+    ub_ = 1350; // Upper bound for complex energy
 }
 
 CCS_IMMS_with_CryoEMEnergy::CCS_IMMS_with_CryoEMEnergy() :
@@ -136,11 +134,9 @@ CCS_IMMS_with_CryoEMEnergy::CCS_IMMS_with_CryoEMEnergy() :
     // Never use multimer for this energy
     use_multimer_ = false;
     
-    // Using hardcoded values for lb_, ub_, and weight_
-    // These values match the defaults defined in the header file
-    // lb_ = 10;  // Default value 
-    // ub_ = 100; // Default value
-    // weight_ = 100; // Default value
+    // cryoem energy scoring
+    lb_ = 25;   // Lower bound for cryoem energy
+    ub_ = 125;  // Upper bound for cryoem energy
 }
 
 
@@ -241,8 +237,6 @@ const {
 core::Real
 CCS_IMMSComplexEnergy::calc_IMMS_score(const core::Real &CCS_pred, const core::Real &CCS_exp) const {
     core::Real diff = std::abs(CCS_pred - CCS_exp);
-	core::Real ub = 1350;
-	core::Real lb = 60;
     core::Real CCS_score;
     
     if (diff <= lb_) {
@@ -261,8 +255,6 @@ CCS_IMMSComplexEnergy::calc_IMMS_score(const core::Real &CCS_pred, const core::R
 core::Real
 CCS_IMMS_with_CryoEMEnergy::calc_IMMS_score(const core::Real &CCS_pred, const core::Real &CCS_exp) const {
     core::Real diff = std::abs(CCS_pred - CCS_exp);
-	core::Real ub = 125;
-	core::Real lb = 25;
     core::Real CCS_score;
     
     if (diff <= lb_) {
@@ -271,7 +263,8 @@ CCS_IMMS_with_CryoEMEnergy::calc_IMMS_score(const core::Real &CCS_pred, const co
         core::Real b = -(diff - ub_) / (ub_ - lb_);
         core::Real b2 = b*b;
         core::Real b3 = b2*b;
-        CCS_score = 100 * (2*b3 - 3*b2 + 1);
+        // Use max_score (125) consistently in fading function
+        CCS_score = 125 * (2*b3 - 3*b2 + 1);
     } else {
         CCS_score = 125;
     }

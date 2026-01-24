@@ -9,7 +9,7 @@
 
 /// @file src/core/energy_methods/CCS_IMMSComplexEnergyCreator.hh
 /// @brief Declaration for the class that connects CCS_IMMSComplexEnergy with the ScoringManager
-/// @author Akshaya Narayanasamy <narayanasamy.4@osu.edu>
+/// @author Akshaya Narayanasamy <akshaya.researcher@gmail.com>
 
 #ifndef INCLUDED_core_energy_methods_CCS_IMMSComplexEnergyCreator_hh
 #define INCLUDED_core_energy_methods_CCS_IMMSComplexEnergyCreator_hh

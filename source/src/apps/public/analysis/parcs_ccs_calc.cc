@@ -10,6 +10,7 @@
 /// @file    apps/public/analysis/parcs_ccs_calc
 /// @brief   Application to calculate average collision cross section (in squared Angstroms) given a structure
 /// @author  SM Bargeen Alam Turzo <turzo.1@osu.edu>
+/// @author  Akshaya Narayanasamy <akshaya.researcher@gmail.com>
 ///
 
 // Devel header
@@ -63,9 +64,9 @@ int main(int argc, char * argv[])
 		core::Size pose_counter(0);
 		std::ostringstream out;
 		if ( use_multimer ) {
-			out <<"File_Name\tCS_PARCS_complex" << std::endl;
+			out <<"File_Name\tCCS_PARCS_complex" << std::endl;
 		} else {
-			out <<"File_Name\tCCS_PARCS" << std::endl;
+		out <<"File_Name\tCCS_PARCS" << std::endl;
 		}
 		while ( input.has_another_pose() ) {
 			core::pose::PoseOP mypose( utility::pointer::make_shared < core::pose::Pose >() );
