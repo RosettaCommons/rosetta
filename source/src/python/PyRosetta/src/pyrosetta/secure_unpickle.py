@@ -122,6 +122,8 @@ BLOCKED_GLOBALS: FrozenSet[Tuple[str, str]] = frozenset({
     ("os",        "popen"),
     ("os",        "system"),
     ("pandas",    "read_pickle"),
+    ("pandas.io", "pickle"),
+    ("pandas.io.pickle", "read_pickle"),
     ("posix",     "open"),
     ("posix",     "popen"),
     ("posix",     "system"),
