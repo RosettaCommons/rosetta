@@ -1273,7 +1273,6 @@ class TestPoseSecureUnpickler(unittest.TestCase):
             pyrosetta.secure_unpickle.clear_secure_packages()
             pyrosetta.secure_unpickle.add_secure_package("pandas")
             test_pose.cache.clear()
-            import uuid
             class _ReduceObject:
                 def __reduce__(self):
                     return (pandas.read_pickle, tuple())
