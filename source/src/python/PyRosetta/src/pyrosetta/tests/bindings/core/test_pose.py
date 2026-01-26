@@ -1243,6 +1243,54 @@ class TestPoseSecureUnpickler(unittest.TestCase):
                     _msg = str(ex.exception)
                     self.assertTrue(_msg.startswith("Disallowed unpickling"), msg=_msg)
 
+        # Test that `numpy.load` is disallowed
+        test_pose = pyrosetta.pose_from_sequence("TEST")
+        pyrosetta.secure_unpickle.clear_secure_packages()
+        pyrosetta.secure_unpickle.add_secure_package("numpy")
+        class _ReduceObject:
+            def __reduce__(self):
+                return (numpy.load, tuple())
+        key = "np.load"
+        test_pose.cache[key] = _ReduceObject()
+        with self.assertRaises(UnpickleSecurityError) as ex:
+            _obj = test_pose.cache[key] # Test that `np.load` is disallowed
+        _msg = str(ex.exception)
+        self.assertTrue(_msg.startswith("Disallowed unpickling"), msg=_msg)
+        test_pose.cache.clear()
+        class _ReduceObject:
+            def __reduce__(self):
+                return (numpy.array, (list(range(10)),))
+        key = "np.array"
+        test_pose.cache[key] = _ReduceObject()
+        _obj = test_pose.cache[key] # Test that `np.array` is allowed
+
+        # Test that `pandas.read_pickle` is disallowed
+        try:
+            import pandas
+        except ImportError:
+            print("Skipping test with `pandas.read_pickle` because 'pandas' is not installed.")
+        if "pandas" in sys.modules:
+            pyrosetta.secure_unpickle.clear_secure_packages()
+            pyrosetta.secure_unpickle.add_secure_package("pandas")
+            test_pose.cache.clear()
+            import uuid
+            class _ReduceObject:
+                def __reduce__(self):
+                    return (pandas.read_pickle, tuple())
+            key = "pd.read_pickle"
+            test_pose.cache[key] = _ReduceObject()
+            with self.assertRaises(UnpickleSecurityError) as ex:
+                _obj = test_pose.cache[key] # Test that `pd.read_pickle` is disallowed
+            _msg = str(ex.exception)
+            self.assertTrue(_msg.startswith("Disallowed unpickling"), msg=_msg)
+            test_pose.cache.clear()
+            class _ReduceObject:
+                def __reduce__(self):
+                    return (pandas.DataFrame, ({0: []},))
+            key = "pd.DataFrame"
+            test_pose.cache[key] = _ReduceObject()
+            _obj = test_pose.cache[key] # Test that `pd.DataFrame` is allowed
+            test_pose.cache.clear()
 
 # if __name__ == "__main__":
 #    unittest.main()
