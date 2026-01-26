@@ -115,7 +115,7 @@ def update_scores(packed_pose: PackedPose) -> PackedPose:
         otherwise the input `PackedPose` object.
     """
     _pose = packed_pose.pose
-    _pose_scoretypes = set(_pose.cache.keys())
+    _pose_scoretypes = set(_pose.cache.all_keys)
     _reserved_scoretypes = _pose.__cache_accessor._reserved.union(_pose_scoretypes)
     _filtered_scores = toolz.dicttoolz.keyfilter(
         lambda scoretype: scoretype not in _reserved_scoretypes,

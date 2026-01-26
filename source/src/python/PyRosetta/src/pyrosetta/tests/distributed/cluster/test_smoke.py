@@ -1801,6 +1801,19 @@ class ScoresTest(unittest.TestCase):
 
         return packed_pose
 
+    @staticmethod
+    def protocol_with_secure_package_pandas(packed_pose, **kwargs):
+        assert "pandas" not in pyrosetta.secure_unpickle.get_secure_packages()
+        pyrosetta.secure_unpickle.add_secure_package("pandas")
+        assert "pandas" in pyrosetta.secure_unpickle.get_secure_packages()
+        _ = packed_pose.pose.cache["df"]
+        return packed_pose
+
+    @staticmethod
+    def protocol_without_secure_package_pandas(packed_pose, **kwargs):
+        _ = packed_pose.pose.cache["df"]
+        return packed_pose
+
     def get_scores_dict(self, output_path):
         decoy_files = glob.glob(os.path.join(output_path, self.decoy_dir_name, "*", "*.bz2"))
         self.assertEqual(len(decoy_files), 1)
@@ -1888,6 +1901,55 @@ class ScoresTest(unittest.TestCase):
                     msg=f"Saving score '{key}' failed with compression={compression}",
                 )
                 self.assertEqual(scores_dict["scores"][key], ScoresTest._value)
+
+    def test_secure_packages_billiard(self):
+        """
+        Test caching a `pandas.DataFrame` with and without adding 'pandas'
+        as a secure package in the billiard subprocess.
+        """
+        pyrosetta.secure_unpickle.add_secure_package("pandas")
+        input_pose = self.input_packed_pose.pose.clone()
+        input_pose.cache["df"] = pandas.DataFrame().from_dict({0: ["foo"], 1: ["bar"]})
+        # Test a protocol that does not add 'pandas' to the unpickle-allowed list,
+        # and does not access the cached `pandas.DataFrame`; this tests that
+        # PyRosettaCluster infrastructure does not trigger deserialization alone
+        run(
+            **{
+                **self.instance_kwargs,
+                "input_packed_pose": input_pose.clone(),
+                "ignore_errors": False,
+                "protocols": ScoresTest.identity_protocol,
+            }
+        )
+        # Test a protocol that adds 'pandas' to the unpickle-allowed list, and
+        # accesses the cached `pandas.DataFrame`; this tests that the billiard
+        # subprocess requires adding 'pandas' to the unpickle-allowed list
+        # before data access, even though the client process has already added it
+        run(
+            **{
+                **self.instance_kwargs,
+                "input_packed_pose": input_pose.clone(),
+                "ignore_errors": False,
+                "protocols": ScoresTest.protocol_with_secure_package_pandas,
+            }
+        )
+        _sep = "*" * 60
+        print(f"{_sep} Begin testing expected `UnpickleSecurityError` in billiard subprocess {_sep}")
+        with self.assertRaises(WorkerError):
+            # Test a protocol that does not add 'pandas' to the unpickle-allowed list,
+            # and then accesses the cached `pandas.DataFrame`; this tests that the
+            # billiard subprocess requires adding 'pandas' to the unpickle-allowed list
+            # before data access, even though the client process has already added it,
+            # leading to an intentionally raised `WorkerError` exception
+            run(
+                **{
+                    **self.instance_kwargs,
+                    "input_packed_pose": input_pose.clone(),
+                    "ignore_errors": False,
+                    "protocols": ScoresTest.protocol_without_secure_package_pandas,
+                }
+            )
+        print(f"{_sep} End testing expected `UnpickleSecurityError` in billiard subprocess {_sep}")
 
 
 class TestInitFileSigner(unittest.TestCase):

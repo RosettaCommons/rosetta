@@ -71,6 +71,7 @@ from pyrosetta.distributed.cluster.io import (
     secure_read_pickle,
     sign_init_file_metadata_and_poses,
 )
+from pyrosetta.distributed.cluster.serialization import update_scores
 
 
 @contextmanager
@@ -730,7 +731,9 @@ def _parse_packed(
     obj: Union[Pose, PackedPose], _scores_dict: Dict[Any, Any], protocol_name: str
 ) -> List[PackedPose]:
     packed = to_packed(obj, protocol_name)
-    packed.scores = toolz.dicttoolz.merge(_scores_dict, packed.scores)
+    packed = packed.update_scores(
+        toolz.dicttoolz.merge(_scores_dict, dict(update_scores(packed).pose.cache))
+    )
     return [packed]
 
 
@@ -742,7 +745,9 @@ def _parse_iterable(
     for obj in objs:
         packed = to_packed(obj, protocol_name)
         if isinstance(packed, PackedPose):
-            packed.scores = toolz.dicttoolz.merge(_scores_dict, packed.scores)
+            packed = packed.update_scores(
+                toolz.dicttoolz.merge(_scores_dict, dict(update_scores(packed).pose.cache))
+            )
         out.append(packed)
     return out
 

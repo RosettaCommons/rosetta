@@ -9,6 +9,7 @@
 __author__ = "Jason C. Klima"
 
 
+import itertools
 import types
 
 try:
@@ -171,16 +172,20 @@ class PoseCacheAccessor(PoseCacheAccessorBase, MutableMapping):
     @property
     def all_keys(self):
         """Return a tuple of all score data keys."""
-        ref_keys = []
-        for k1, v1 in self.all_scores.items():
-            for k2, v2 in v1.items():
-                if k1 == "energies":
-                    ref_keys.append(k2)
-                else:
-                    for k3 in v2.keys():
-                        ref_keys.append(k3)
-
-        return tuple(ref_keys)
+        return tuple(
+            itertools.chain(
+                self.extra.string,
+                self.extra.real,
+                self.metrics.string,
+                self.metrics.real,
+                self.metrics.composite_string,
+                self.metrics.composite_real,
+                self.metrics.per_residue_string,
+                self.metrics.per_residue_real,
+                self.metrics.per_residue_probabilities,
+                self.energies,
+            )
+        )
 
     def assert_unique_keys(self):
         """Assert that `Pose.cache.all_keys` returns all unique keys."""

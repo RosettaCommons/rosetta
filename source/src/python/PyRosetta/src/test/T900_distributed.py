@@ -77,6 +77,7 @@ distributed_cluster_test_cases = [
     "pyrosetta.tests.distributed.cluster.test_smoke.ScoresTest.test_detached_scores",
     "pyrosetta.tests.distributed.cluster.test_smoke.ScoresTest.test_detached_scores_in_protocol",
     "pyrosetta.tests.distributed.cluster.test_smoke.ScoresTest.test_detached_scores_with_reserve_scores",
+    "pyrosetta.tests.distributed.cluster.test_smoke.ScoresTest.test_secure_packages_billiard",
     "pyrosetta.tests.distributed.cluster.test_smoke.MultipleClientsTest.test_clients",
     "pyrosetta.tests.distributed.cluster.test_smoke.ResourcesTest.test_resources",
     "pyrosetta.tests.distributed.cluster.test_smoke.ResourcesTest.test_resources_clients",

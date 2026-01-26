@@ -151,7 +151,7 @@ class IO(Generic[G]):
         """
 
         _pdbstring = io.to_pdbstring(result)
-        _scores_dict = update_scores(PackedPose(result)).scores
+        _scores_dict = dict(update_scores(PackedPose(result)).pose.cache)
         _filtered_scores_dict = IO._filter_scores_dict(self.serializer.deepcopy_kwargs(_scores_dict))
 
         return (result, _pdbstring, _scores_dict, _filtered_scores_dict)

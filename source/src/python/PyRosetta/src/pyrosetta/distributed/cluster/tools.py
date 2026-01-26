@@ -364,10 +364,13 @@ def reserve_scores(func: P) -> Union[P, NoReturn]:
     @wraps(func)
     def wrapper(packed_pose, **kwargs):
         if packed_pose is not None:
-            _scores_dict = update_scores(packed_pose).scores
+            _reserved_pose = update_scores(packed_pose).pose.clone()
         else:
-            _scores_dict = {}
+            _reserved_pose = None
         _output = func(packed_pose, **kwargs)
+        # Only deserialize after the user-provided PyRosetta protocol finished executing, giving
+        # the user an opportunity to add secure packages to the unpickle-allowed list as necessary
+        _scores_dict = dict(_reserved_pose.cache) if _reserved_pose is not None else {}
 
         return reserve_scores_in_results(_output, _scores_dict, func.__name__)
 

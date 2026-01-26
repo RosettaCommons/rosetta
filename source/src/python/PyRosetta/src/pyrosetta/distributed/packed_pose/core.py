@@ -41,7 +41,7 @@ class PackedPose:
         """Create a packed pose from pose, pack, or pickled bytes."""
         if isinstance(pose_or_pack, pose.Pose):
             self.pickled_pose = SecureSerializerBase.to_pickle(pose_or_pack)
-            self.scores = dict(pose_or_pack.cache)
+            self.scores = {}
 
         elif isinstance(pose_or_pack, PackedPose):
             self.pickled_pose = pose_or_pack.pickled_pose
