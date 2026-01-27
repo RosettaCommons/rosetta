@@ -77,6 +77,7 @@ BLOCKED_PACKAGES: FrozenSet[str] = frozenset({
     # Block process spawning:
     "billiard",
     "celery",
+    "concurrent",
     "dask",
     "distributed",
     "multiprocessing",
@@ -91,6 +92,7 @@ BLOCKED_PACKAGES: FrozenSet[str] = frozenset({
     "marshal",
     "msgpack",
     "pathlib",
+    "PIL",
     "psutil",
     "random",
     "requests",
