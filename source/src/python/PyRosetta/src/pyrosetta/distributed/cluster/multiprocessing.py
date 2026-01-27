@@ -23,6 +23,7 @@ except ImportError:
     )
     raise
 
+import inspect
 import logging
 import tempfile
 import time
@@ -86,6 +87,8 @@ def user_protocol(
     with tempfile.TemporaryDirectory() as tmp_path:
         kwargs["PyRosettaCluster_tmp_path"] = tmp_path
         result = protocol(packed_pose, **kwargs)
+        if inspect.isgenerator(result):
+            result = list(result)
 
     return result
 
