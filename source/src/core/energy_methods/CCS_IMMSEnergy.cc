@@ -118,8 +118,8 @@ CCS_IMMSComplexEnergy::CCS_IMMSComplexEnergy() :
     use_multimer_ = true;
     
     // complex energy scoring
-    lb_ = 60;   // Lower bound for complex energy
-    ub_ = 1350; // Upper bound for complex energy
+    lb_ = 60;   // Lower bound for complex score
+    ub_ = 1350; // Upper bound for complex score
 }
 
 CCS_IMMS_with_CryoEMEnergy::CCS_IMMS_with_CryoEMEnergy() :
@@ -215,61 +215,37 @@ parcs_ccs(core::pose::Pose &mypose , core::Size const nrot, core::Real const pra
 /////////////////////////////////////////////////////////////////////////////
 
 core::Real
-CCS_IMMSEnergy::calc_IMMS_score(const core::Real &CCS_pred, const core::Real &CCS_exp)
-const {
+calc_IMMS_score_utility(const core::Real &CCS_pred, const core::Real &CCS_exp, 
+                        const core::Real &lb, const core::Real &ub, const core::Real &max_score) {
 	core::Real diff = std::abs(CCS_pred - CCS_exp);
-	core::Real ub = 100;
-	core::Real lb = 10;
 	core::Real CCS_score;
-	if ( diff <=lb ) {
+	if ( diff <= lb ) {
 		CCS_score = 0;
 	} else if ( diff < ub ) {
-		core::Real b = -(diff - ub) / (ub-lb);
-		core::Real b2= b*b;
-		core::Real b3= b2*b;
-		CCS_score = 100*( 2*b3 -3*b2 +1 );
+		core::Real b = -(diff - ub) / (ub - lb);
+		core::Real b2 = b*b;
+		core::Real b3 = b2*b;
+		CCS_score = max_score * (2*b3 - 3*b2 + 1);
 	} else {
-		CCS_score = 100.0;
+		CCS_score = max_score;
 	}
 	return CCS_score;
 }
 
 core::Real
-CCS_IMMSComplexEnergy::calc_IMMS_score(const core::Real &CCS_pred, const core::Real &CCS_exp) const {
-    core::Real diff = std::abs(CCS_pred - CCS_exp);
-    core::Real CCS_score;
-    
-    if (diff <= lb_) {
-        CCS_score = 0;
-    } else if (diff < ub_) {
-        core::Real b = -(diff - ub_) / (ub_ - lb_);
-        core::Real b2 = b*b;
-        core::Real b3 = b2*b;
-        CCS_score = 100 * (2*b3 - 3*b2 + 1);
-    } else {
-        CCS_score = 100;
-    }
-    
-    return CCS_score;
+CCS_IMMSEnergy::calc_IMMS_score(const core::Real &CCS_pred, const core::Real &CCS_exp)
+const {
+	return calc_IMMS_score_utility(CCS_pred, CCS_exp, 10.0, 100.0, 100.0);
 }
+
+core::Real
+CCS_IMMSComplexEnergy::calc_IMMS_score(const core::Real &CCS_pred, const core::Real &CCS_exp) const {
+    return calc_IMMS_score_utility(CCS_pred, CCS_exp, lb_, ub_, 100.0);
+}
+
 core::Real
 CCS_IMMS_with_CryoEMEnergy::calc_IMMS_score(const core::Real &CCS_pred, const core::Real &CCS_exp) const {
-    core::Real diff = std::abs(CCS_pred - CCS_exp);
-    core::Real CCS_score;
-    
-    if (diff <= lb_) {
-        CCS_score = 0;
-    } else if (diff < ub_) {
-        core::Real b = -(diff - ub_) / (ub_ - lb_);
-        core::Real b2 = b*b;
-        core::Real b3 = b2*b;
-        // Use max_score (125) consistently in fading function
-        CCS_score = 125 * (2*b3 - 3*b2 + 1);
-    } else {
-        CCS_score = 125;
-    }
-    
-    return CCS_score;
+    return calc_IMMS_score_utility(CCS_pred, CCS_exp, lb_, ub_, 125.0);
 }
 
 void

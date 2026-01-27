@@ -44,6 +44,14 @@ namespace energy_methods {
 core::Real
 parcs_ccs(core::pose::Pose &mypose, core::Size const nrot, core::Real const prad, bool use_multimer = false);
 
+/////////////////////////////////////////////////////////////////////////////
+// IMMS Score Calculation Utility
+/////////////////////////////////////////////////////////////////////////////
+
+core::Real
+calc_IMMS_score_utility(const core::Real &CCS_pred, const core::Real &CCS_exp, 
+                        const core::Real &lb, const core::Real &ub, const core::Real &max_score);
+
 class CCS_IMMSEnergy : public core::scoring::methods::WholeStructureEnergy {
 public:
 	typedef core::scoring::methods::WholeStructureEnergy parent;
