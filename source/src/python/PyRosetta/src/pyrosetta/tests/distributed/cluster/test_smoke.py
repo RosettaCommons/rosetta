@@ -560,10 +560,15 @@ class SmokeTestMulti(unittest.TestCase):
             import pyrosetta  # noqa
             import pyrosetta.distributed.io as io  # noqa
 
-            self.assertEqual(
-                dict(packed_pose.scores),
-                {**dict(packed_pose.scores), **{"test_setPoseExtraScore": 123}},
-            )
+            self.assertIsInstance(packed_pose.scores, dict)
+            self.assertEqual(packed_pose.scores, {})
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.all_keys)
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra.keys())
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra.real.keys())
+            self.assertEqual(packed_pose.pose.cache.extra.real["test_setPoseExtraScore"], 123.0)
+            self.assertEqual(packed_pose.pose.cache.extra["test_setPoseExtraScore"], 123.0)
+            self.assertEqual(packed_pose.pose.cache["test_setPoseExtraScore"], 123.0)
+
             packed_pose.scores.clear()
             self.assertDictEqual({}, packed_pose.scores)
             pose = io.to_pose(packed_pose)
@@ -607,10 +612,14 @@ class SmokeTestMulti(unittest.TestCase):
             import pyrosetta
             import pyrosetta.distributed.io as io
 
-            self.assertEqual(
-                dict(packed_pose.scores),
-                {**dict(packed_pose.scores), **{"test_setPoseExtraScore": 123}},
-            )
+            self.assertIsInstance(packed_pose.scores, dict)
+            self.assertEqual(packed_pose.scores, {})
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.all_keys)
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra.keys())
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra.real.keys())
+            self.assertEqual(packed_pose.pose.cache.extra.real["test_setPoseExtraScore"], 123.0)
+            self.assertEqual(packed_pose.pose.cache.extra["test_setPoseExtraScore"], 123.0)
+            self.assertEqual(packed_pose.pose.cache["test_setPoseExtraScore"], 123.0)
 
             self.assertIn("task_packed_pose", kwargs)
             self.assertIsInstance(kwargs["task_packed_pose"], PackedPose)
@@ -638,6 +647,8 @@ class SmokeTestMulti(unittest.TestCase):
             self.assertNotIn("task_packed_pose", kwargs["PyRosettaCluster_task"])
             self.assertIn("saved_packed_pose", kwargs)
             self.assertIsInstance(kwargs["saved_packed_pose"], PackedPose)
+            tmp_path = kwargs["PyRosettaCluster_tmp_path"]
+            self.assertTrue(os.path.exists(tmp_path))
 
             yield None
             yield kwargs
@@ -652,6 +663,8 @@ class SmokeTestMulti(unittest.TestCase):
             self.assertIsInstance(kwargs, dict)
             self.assertIn("saved_packed_pose", kwargs)
             self.assertIsInstance(kwargs["saved_packed_pose"], PackedPose)
+            tmp_path = kwargs["PyRosettaCluster_tmp_path"]
+            self.assertTrue(os.path.exists(tmp_path))
 
             return kwargs
 
@@ -743,7 +756,7 @@ class SmokeTestMulti(unittest.TestCase):
                 simulation_records_in_scorefile=False,
                 decoy_dir_name="decoys",
                 logs_dir_name="logs",
-                ignore_errors=True,
+                ignore_errors=False,
                 timeout=1.0,
                 max_delay_time=3.0,
                 sha1=None,
