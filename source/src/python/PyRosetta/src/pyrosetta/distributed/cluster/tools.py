@@ -364,7 +364,7 @@ def reserve_scores(func: P) -> Union[P, NoReturn]:
     @wraps(func)
     def wrapper(packed_pose, **kwargs):
         if packed_pose is not None:
-            _reserved_pose = update_scores(packed_pose).pose.clone()
+            _reserved_pose = update_scores(packed_pose).pose
         else:
             _reserved_pose = None
         _output = func(packed_pose, **kwargs)
