@@ -1300,20 +1300,25 @@ class SerializationTest(unittest.TestCase):
 
                 if _compression in (False, None):
                     # Test PackedPose size
-                    self.assertEqual(
-                        sys.getsizeof(compressed_packed_pose.pickled_pose),
-                        sys.getsizeof(input_packed_pose.pickled_pose),
-                        msg=_error_msg,
-                    )
+                    if _test_case == 0:
+                        self.assertGreater(
+                            sys.getsizeof(compressed_packed_pose.pickled_pose),
+                            sys.getsizeof(input_packed_pose.pickled_pose),
+                            msg=_error_msg,
+                        ) # `PackedPose.scores` get cached in `Pose.cache`
+                    elif _test_case in (1, 2):
+                        self.assertEqual(
+                            sys.getsizeof(compressed_packed_pose.pickled_pose),
+                            sys.getsizeof(input_packed_pose.pickled_pose),
+                            msg=_error_msg,
+                        ) # `PackedPose.scores` are already cached in `Pose.cache`
                     self.assertEqual(
                         sys.getsizeof(compressed_packed_pose.pickled_pose),
                         sys.getsizeof(output_packed_pose.pickled_pose),
                         msg=_error_msg,
-                    )
+                    ) # `PackedPose.scores` are already cached in `Pose.cache`
                     # Test PackedPose identity
-                    self.assertEqual(id(input_packed_pose), id(compressed_packed_pose), msg=_error_msg)
                     self.assertEqual(id(compressed_packed_pose), id(output_packed_pose), msg=_error_msg)
-                    self.assertEqual(id(input_packed_pose), id(output_packed_pose), msg=_error_msg)
                 else:
                     # Test PackedPose size
                     self.assertLess(
@@ -1327,54 +1332,33 @@ class SerializationTest(unittest.TestCase):
                         msg=_error_msg,
                     )
                     # Test PackedPose identity
-                    self.assertNotEqual(id(input_packed_pose), id(compressed_packed_pose), msg=_error_msg)
                     self.assertNotEqual(id(compressed_packed_pose), id(output_packed_pose), msg=_error_msg)
-                    self.assertNotEqual(id(input_packed_pose), id(output_packed_pose), msg=_error_msg)
-                if _test_case == 0: # Compression has an effect only when user doesn't cache scores in Pose object
-                    if _compression in (False, None): # If compression is disabled, round-trip PackedPose objects remain identical
-                        self.assertNotEqual(input_packed_pose.pose.cache, scores, msg=_error_msg)
-                        self.assertEqual(input_packed_pose.scores, scores, msg=_error_msg)
-                        self.assertEqual(output_packed_pose.scores, scores, msg=_error_msg)
-                        self.assertEqual(input_packed_pose.scores, output_packed_pose.scores, msg=_error_msg)
-                        self.assertEqual(output_packed_pose.pose.cache, {}, msg=_error_msg)
-                        self.assertEqual(input_packed_pose.pose.cache, {}, msg=_error_msg)
-                        self.assertEqual(input_packed_pose.pose.cache, output_packed_pose.pose.cache, msg=_error_msg)
-                        self.assertSetEqual(
-                            set(input_packed_pose.scores.keys()),
-                            set(output_packed_pose.scores.keys()),
-                            msg=_error_msg,
-                        )
-                        for scoretype in input_packed_pose.scores.keys():
-                            input_value = input_packed_pose.scores[scoretype]
-                            output_value = output_packed_pose.scores[scoretype]
-                            self.assertEqual(input_value, output_value, msg=_error_msg)
-                        self.assertEqual(
-                            input_packed_pose.pickled_pose,
-                            output_packed_pose.pickled_pose,
-                            msg=_error_msg,
-                        )
-                    else: # If compression is enabled, round-trip automatically caches scores in Pose objects 
-                        self.assertNotEqual(input_packed_pose.pose.cache, scores, msg=_error_msg)
-                        self.assertEqual(input_packed_pose.scores, scores, msg=_error_msg)
-                        self.assertEqual(input_packed_pose.pose.cache, {}, msg=_error_msg)
-                        self.assertEqual(output_packed_pose.scores, {}, msg=_error_msg)
-                        self.assertEqual(output_packed_pose.pose.cache, scores, msg=_error_msg)
-                        self.assertEqual(input_packed_pose.scores, output_packed_pose.pose.cache, msg=_error_msg)
-                        self.assertEqual(output_packed_pose.pose.cache, scores, msg=_error_msg)
-                        self.assertSetEqual(
-                            set(input_packed_pose.scores.keys()),
-                            set(output_packed_pose.pose.cache.all_keys),
-                            msg=_error_msg,
-                        )
-                        for scoretype in input_packed_pose.scores.keys():
-                            input_value = input_packed_pose.scores[scoretype]
-                            output_value = output_packed_pose.pose.cache[scoretype]
-                            self.assertEqual(input_value, output_value, msg=_error_msg)
-                        self.assertNotEqual(
-                            input_packed_pose.pickled_pose,
-                            output_packed_pose.pickled_pose,
-                            msg=_error_msg,
-                        )
+                # Test PackedPose identity
+                self.assertNotEqual(id(input_packed_pose), id(compressed_packed_pose), msg=_error_msg)
+                self.assertNotEqual(id(input_packed_pose), id(output_packed_pose), msg=_error_msg)
+                # Test PackedPose scores
+                if _test_case == 0: # Compression has no effect when user doesn't cache scores in Pose object
+                    self.assertNotEqual(input_packed_pose.pose.cache, scores, msg=_error_msg)
+                    self.assertEqual(input_packed_pose.scores, scores, msg=_error_msg)
+                    self.assertEqual(input_packed_pose.pose.cache, {}, msg=_error_msg)
+                    self.assertEqual(output_packed_pose.scores, {}, msg=_error_msg)
+                    self.assertEqual(output_packed_pose.pose.cache, scores, msg=_error_msg)
+                    self.assertEqual(input_packed_pose.scores, output_packed_pose.pose.cache, msg=_error_msg)
+                    self.assertEqual(output_packed_pose.pose.cache, scores, msg=_error_msg)
+                    self.assertSetEqual(
+                        set(input_packed_pose.scores.keys()),
+                        set(output_packed_pose.pose.cache.all_keys),
+                        msg=_error_msg,
+                    )
+                    for scoretype in input_packed_pose.scores.keys():
+                        input_value = input_packed_pose.scores[scoretype]
+                        output_value = output_packed_pose.pose.cache[scoretype]
+                        self.assertEqual(input_value, output_value, msg=_error_msg)
+                    self.assertNotEqual(
+                        input_packed_pose.pickled_pose,
+                        output_packed_pose.pickled_pose,
+                        msg=_error_msg,
+                    )
                 elif _test_case in (1, 2): # Compression has no effect when user caches scores in Pose object (preferred syntax)
                     self.assertNotEqual(input_packed_pose.scores, scores, msg=_error_msg)
                     self.assertEqual(input_packed_pose.scores, {}, msg=_error_msg)
