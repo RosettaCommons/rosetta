@@ -723,8 +723,9 @@ def _merge_and_update_scores(
 ) -> PackedPose:
     _new_scores_dict = dict(update_scores(packed).pose.cache)
     _merged_scores_dict = toolz.dicttoolz.merge(_reserved_scores_dict, _new_scores_dict)
+    _reserved_scoretypes = packed.pose.cache._reserved
     _resolved_scores_dict = toolz.dicttoolz.keyfilter(
-        lambda k: k not in _new_scores_dict,
+        lambda k: k not in _new_scores_dict and k not in _reserved_scoretypes,
         _merged_scores_dict,
     )
     logging.info(
