@@ -75,10 +75,10 @@ class SmokeTestDistributed(unittest.TestCase):
         score_task = score.ScorePoseTask()
         rs_task = rosetta_scripts.SingleoutputRosettaScriptsTask(self.min_rs)
 
-        score_result = score_task(io.pose_from_sequence("TEST")).scores
-        rs_result = rs_task(io.pose_from_sequence("TEST")).scores
+        score_result = score_task(io.pose_from_sequence("TEST")).pose.cache
+        rs_result = rs_task(io.pose_from_sequence("TEST")).pose.cache
 
-        self.assertAlmostEqual(
+        self.assertEqual(
             score_result["total_score"], rs_result["total_score"]
         )
 
@@ -102,6 +102,7 @@ class SmokeTestDistributed(unittest.TestCase):
         work_pose = io.pose_from_sequence("TEST")
 
         self.assertDictEqual(work_pose.scores, dict())
+        self.assertDictEqual(dict(work_pose.pose.cache), dict())
 
         # Test merge and masking, just args
         work_updated = work_pose.update_scores(
@@ -110,7 +111,9 @@ class SmokeTestDistributed(unittest.TestCase):
         )
 
         self.assertDictEqual(work_pose.scores, dict())
-        self.assertDictEqual(work_updated.scores, dict(arg=1.0, arg2=2.0, dupe="bar"))
+        self.assertDictEqual(work_updated.scores, dict())
+        self.assertDictEqual(dict(work_pose.pose.cache), dict())
+        self.assertDictEqual(dict(work_updated.pose.cache), dict(arg=1.0, arg2=2.0, dupe="bar"))
 
         # Test merge and masking, args and kwargs
         work_updated = work_pose.update_scores(
@@ -121,7 +124,9 @@ class SmokeTestDistributed(unittest.TestCase):
         )
 
         self.assertDictEqual(work_pose.scores, dict())
-        self.assertDictEqual(work_updated.scores, dict(arg=1.0, arg2=2.0, kwarg="yes", dupe="bat"))
+        self.assertDictEqual(work_updated.scores, dict())
+        self.assertDictEqual(dict(work_pose.pose.cache), dict())
+        self.assertDictEqual(dict(work_updated.pose.cache), dict(arg=1.0, arg2=2.0, kwarg="yes", dupe="bat"))
 
         # Test just kwargs
         work_updated = work_pose.update_scores(
@@ -130,13 +135,17 @@ class SmokeTestDistributed(unittest.TestCase):
         )
 
         self.assertDictEqual(work_pose.scores, dict())
-        self.assertDictEqual(work_updated.scores, dict(kwarg="yes", dupe="bat"))
+        self.assertDictEqual(work_updated.scores, dict())
+        self.assertDictEqual(dict(work_pose.pose.cache), dict())
+        self.assertDictEqual(dict(work_updated.pose.cache), dict(kwarg="yes", dupe="bat"))
 
         # Test no args
         work_updated = work_pose.update_scores()
 
         self.assertDictEqual(work_pose.scores, dict())
         self.assertDictEqual(work_updated.scores, dict())
+        self.assertDictEqual(dict(work_pose.pose.cache), dict())
+        self.assertDictEqual(dict(work_updated.pose.cache), dict())
 
     def test_silent_io(self):
 
@@ -251,26 +260,40 @@ class SmokeTestDistributed(unittest.TestCase):
                         msg=f"Coordinate recovery failed for extension '{ext}'."
                     )
         # Test score recovery
-        self.assertTrue(dict(input_packed_pose.pose.scores), msg=f"Pose scores dictionary is empty for extension '{ext}'.")
+        self.assertEqual(input_packed_pose.scores, {}, msg=f"`PackedPose.scores` dictionary is non-empty for extension '{ext}'.")
+        self.assertEqual(output_packed_pose.scores, {}, msg=f"`PackedPose.scores` dictionary is non-empty for extension '{ext}'.")
+        self.assertDictEqual(
+            input_packed_pose.scores,
+            output_packed_pose.scores,
+            msg=f"`PackedPose.scores` dictionaries differ for extension '{ext}'."
+        )
+        self.assertTrue(dict(input_packed_pose.pose.scores), msg=f"`Pose.scores` dictionary is empty for extension '{ext}'.")
+        self.assertTrue(dict(input_packed_pose.pose.cache), msg=f"`Pose.cache` dictionary is empty for extension '{ext}'.")
         if ext in ("pdb", "scored.pdb", "cif", "mmcif", "mmtf", "pdb.bz2", "bz2", "pdb.gz", "gz", "pdb.xz", "xz"):
-            self.assertFalse(dict(output_packed_pose.pose.scores), msg=f"Pose scores dictionary has items for extension '{ext}'.")
+            self.assertFalse(dict(output_packed_pose.pose.scores), msg=f"`Pose.scores` dictionary has items for extension '{ext}'.")
+            self.assertFalse(dict(output_packed_pose.pose.cache), msg=f"`Pose.cache` dictionary has items for extension '{ext}'.")
             self.assertNotEqual(
-                input_packed_pose.scores,
-                output_packed_pose.scores,
-                msg=f"PackedPose scores dictionaries differ for extension '{ext}'."
-            )
-        else: # base64-encoded and pickle-encoded files save the `Pose.cache` dictionary
-            self.assertTrue(output_packed_pose.scores, msg=f"PackedPose scores dictionary is empty for extension '{ext}'.")
-            self.assertTrue(dict(output_packed_pose.pose.scores), msg=f"Pose scores dictionary is empty for extension '{ext}'.")
-            self.assertDictEqual(
-                input_packed_pose.scores,
-                output_packed_pose.scores,
-                msg=f"PackedPose scores dictionaries differ for extension '{ext}'."
-            )
-            self.assertDictEqual(
                 dict(input_packed_pose.pose.scores),
                 dict(output_packed_pose.pose.scores),
-                msg=f"Pose scores dictionaries differ for extension '{ext}'."
+                msg=f"`Pose.scores` dictionaries are equal for extension '{ext}'."
+            )
+            self.assertNotEqual(
+                dict(input_packed_pose.pose.cache),
+                dict(output_packed_pose.pose.cache),
+                msg=f"`Pose.cache` dictionaries are equal for extension '{ext}'."
+            )
+        else: # base64-encoded and pickle-encoded files save the `Pose.cache` dictionary
+            self.assertTrue(dict(output_packed_pose.pose.scores), msg=f"`Pose.scores` dictionary is empty for extension '{ext}'.")
+            self.assertTrue(dict(output_packed_pose.pose.cache), msg=f"`Pose.cache` dictionary is empty for extension '{ext}'.")
+            self.assertEqual(
+                dict(input_packed_pose.pose.scores),
+                dict(output_packed_pose.pose.scores),
+                msg=f"`Pose.scores` dictionaries differ for extension '{ext}'."
+            )
+            self.assertEqual(
+                dict(input_packed_pose.pose.cache),
+                dict(output_packed_pose.pose.cache),
+                msg=f"`Pose.cache` dictionaries differ for extension '{ext}'."
             )
 
     def test_packed_pose_io(self):
