@@ -8,14 +8,48 @@ else:
     from pkgutil import simplegeneric as singledispatch
 
 import base64
-
 import pyrosetta.rosetta.core.pose as pose
 import pyrosetta.distributed
+import warnings
 
 from pyrosetta.secure_unpickle import SecureSerializerBase
 
 
 __all__ = ["pack_result", "pose_result", "to_packed", "to_pose", "to_dict", "to_base64", "to_pickle", "PackedPose"]
+
+
+class _ScoresDict(dict):
+    def __init__(self, *args, _all_keys=(), **kwargs):
+        super().__init__(*args, **kwargs)
+        self._all_keys = set(_all_keys)
+        self._msg = (
+            "The key '{key}' is not found in `PackedPose.scores` dictionary! "
+            "Automatic duplication of `Pose.cache` dictionary entries into the "
+            "`PackedPose.scores` dictionary has been deprecated. However, the '{key}' key "
+            "exists in the `Pose.cache` dictionary. Did you mean to access `PackedPose.pose.cache`?"
+        )
+
+    def __repr__(self):
+        return super().__repr__()
+
+    def __getitem__(self, key):
+        try:
+            return super().__getitem__(key)
+        except KeyError:
+            if key in self._all_keys:
+                raise KeyError(self._msg.format(key=key)) from None
+            raise
+
+    def get(self, key, default=None):
+        if key in self:
+            return super().get(key, default)
+        if key in self._all_keys:
+            warnings.warn(
+                self._msg.format(key=key),
+                DeprecationWarning,
+                stacklevel=2,
+            )
+        return default
 
 
 class PackedPose:
@@ -41,7 +75,7 @@ class PackedPose:
         """Create a packed pose from pose, pack, or pickled bytes."""
         if isinstance(pose_or_pack, pose.Pose):
             self.pickled_pose = SecureSerializerBase.to_pickle(pose_or_pack)
-            self.scores = {}
+            self.scores = _ScoresDict(_all_keys=pose_or_pack.cache.all_keys)
 
         elif isinstance(pose_or_pack, PackedPose):
             self.pickled_pose = pose_or_pack.pickled_pose
