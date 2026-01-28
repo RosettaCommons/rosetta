@@ -563,8 +563,8 @@ class SmokeTestMulti(unittest.TestCase):
             self.assertIsInstance(packed_pose.scores, dict)
             self.assertEqual(packed_pose.scores, {})
             self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.all_keys)
-            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra.keys())
-            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra.real.keys())
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra)
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra.real)
             self.assertEqual(packed_pose.pose.cache.extra.real["test_setPoseExtraScore"], 123.0)
             self.assertEqual(packed_pose.pose.cache.extra["test_setPoseExtraScore"], 123.0)
             self.assertEqual(packed_pose.pose.cache["test_setPoseExtraScore"], 123.0)
@@ -615,8 +615,8 @@ class SmokeTestMulti(unittest.TestCase):
             self.assertIsInstance(packed_pose.scores, dict)
             self.assertEqual(packed_pose.scores, {})
             self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.all_keys)
-            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra.keys())
-            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra.real.keys())
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra)
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra.real)
             self.assertEqual(packed_pose.pose.cache.extra.real["test_setPoseExtraScore"], 123.0)
             self.assertEqual(packed_pose.pose.cache.extra["test_setPoseExtraScore"], 123.0)
             self.assertEqual(packed_pose.pose.cache["test_setPoseExtraScore"], 123.0)
@@ -805,22 +805,40 @@ class SmokeTestMulti(unittest.TestCase):
             import pyrosetta  # noqa
             import pyrosetta.distributed.io as io
 
-            self.assertEqual(
-                dict(packed_pose.scores),
-                {**dict(packed_pose.scores), **{"test_setPoseExtraScore": 123}},
-            )
+            self.assertIsInstance(packed_pose.scores, dict)
+            self.assertEqual(packed_pose.scores, {})
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.all_keys)
+            self.assertEqual(packed_pose.pose.cache["test_setPoseExtraScore"], 123.0)
+            if kwargs["PyRosettaCluster_protocol_number"] == 1:
+                self.assertEqual(kwargs["PyRosettaCluster_protocol_name"], "my_second_protocol")
+                self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra)
+                self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra.real)
+                self.assertEqual(packed_pose.pose.cache.extra.real["test_setPoseExtraScore"], 123.0)
+                self.assertEqual(packed_pose.pose.cache.extra["test_setPoseExtraScore"], 123.0)
+            elif kwargs["PyRosettaCluster_protocol_number"] == 2:
+                self.assertEqual(kwargs["PyRosettaCluster_protocol_name"], "my_third_protocol")
+                self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.metrics)
+                self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.metrics.real)
+                self.assertEqual(packed_pose.pose.cache.metrics.real["test_setPoseExtraScore"], 123.0)
+                self.assertEqual(packed_pose.pose.cache.metrics["test_setPoseExtraScore"], 123.0)
             packed_pose.scores.clear()
             self.assertDictEqual({}, packed_pose.scores)
             self.assertIn(kwargs["PyRosettaCluster_protocol_number"], [1, 2])
             pose = io.to_pose(packed_pose)
+            pose.cache.clear() # Clear scoreterms from `pose.cache.extra.real`
             for _ in range(3):
                 yield pose.clone()
 
         def my_third_protocol(packed_pose, **kwargs):
-            self.assertEqual(
-                dict(packed_pose.scores),
-                {**dict(packed_pose.scores), **{"test_setPoseExtraScore": 123}},
-            )
+            self.assertIsInstance(packed_pose.scores, dict)
+            self.assertEqual(packed_pose.scores, {})
+            # `reserve_scores` decorator on 'my_second_protocol' sets scoreterms in `packed_pose.pose.cache.metrics`
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.all_keys)
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.metrics)
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.metrics.real)
+            self.assertEqual(packed_pose.pose.cache.metrics.real["test_setPoseExtraScore"], 123.0)
+            self.assertEqual(packed_pose.pose.cache.metrics["test_setPoseExtraScore"], 123.0)
+            self.assertEqual(packed_pose.pose.cache["test_setPoseExtraScore"], 123.0)
             self.assertEqual(kwargs["PyRosettaCluster_protocol_number"], 2)
             return my_second_protocol(packed_pose, **kwargs)
 
@@ -854,7 +872,7 @@ class SmokeTestMulti(unittest.TestCase):
                 simulation_records_in_scorefile=False,
                 decoy_dir_name="decoys",
                 logs_dir_name="logs",
-                ignore_errors=True,
+                ignore_errors=False,
                 timeout=1.0,
                 sha1=None,
                 dry_run=False,
@@ -895,7 +913,7 @@ class SmokeTestMulti(unittest.TestCase):
                 simulation_records_in_scorefile=False,
                 decoy_dir_name="decoys",
                 logs_dir_name="logs",
-                ignore_errors=True,
+                ignore_errors=False,
                 timeout=1.0,
                 sha1=None,
                 dry_run=False,

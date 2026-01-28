@@ -718,6 +718,22 @@ def _from_str(obj: str) -> str:
     return obj
 
 
+def _merge_and_update_scores(
+    packed: PackedPose, _reserved_scores_dict: Dict[str, Any]
+) -> PackedPose:
+    _new_scores_dict = dict(update_scores(packed).pose.cache)
+    _merged_scores_dict = toolz.dicttoolz.merge(_reserved_scores_dict, _new_scores_dict)
+    _resolved_scores_dict = toolz.dicttoolz.keyfilter(
+        lambda k: k not in _new_scores_dict,
+        _merged_scores_dict,
+    )
+    logging.info(
+        "The `reserve_scores` decorator function is automatically restoring "
+        f"the following keys into the `Pose.cache` dictionary: {tuple(_resolved_scores_dict)}"
+    )
+    return packed.update_scores(_resolved_scores_dict)
+
+
 @singledispatch
 def reserve_scores_in_results(
     obj: Any, _scores_dict: Dict[Any, Any], protocol_name: str
@@ -731,9 +747,7 @@ def _parse_packed(
     obj: Union[Pose, PackedPose], _scores_dict: Dict[Any, Any], protocol_name: str
 ) -> List[PackedPose]:
     packed = to_packed(obj, protocol_name)
-    packed = packed.update_scores(
-        toolz.dicttoolz.merge(_scores_dict, dict(update_scores(packed).pose.cache))
-    )
+    packed = _merge_and_update_scores(packed, _scores_dict)
     return [packed]
 
 
@@ -745,9 +759,7 @@ def _parse_iterable(
     for obj in objs:
         packed = to_packed(obj, protocol_name)
         if isinstance(packed, PackedPose):
-            packed = packed.update_scores(
-                toolz.dicttoolz.merge(_scores_dict, dict(update_scores(packed).pose.cache))
-            )
+            packed = _merge_and_update_scores(packed, _scores_dict)
         out.append(packed)
     return out
 
