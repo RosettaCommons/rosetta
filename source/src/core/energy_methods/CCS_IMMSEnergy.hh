@@ -49,8 +49,8 @@ parcs_ccs(core::pose::Pose &mypose, core::Size const nrot, core::Real const prad
 /////////////////////////////////////////////////////////////////////////////
 
 core::Real
-calc_IMMS_score_utility(const core::Real &CCS_pred, const core::Real &CCS_exp, 
-                        const core::Real &lb, const core::Real &ub, const core::Real &max_score);
+calc_IMMS_score_utility(const core::Real &CCS_pred, const core::Real &CCS_exp,
+	const core::Real &lb, const core::Real &ub, const core::Real &max_score);
 
 class CCS_IMMSEnergy : public core::scoring::methods::WholeStructureEnergy {
 public:
@@ -117,8 +117,8 @@ protected:
 	core::Size nrot_=300;
 	core::Real prad_=1.0;
 	bool use_multimer_=true;
-	core::Real lb_=60;   // Lower bound for complex energy 
-	core::Real ub_=1350;  // Upper bound for complex energy 
+	core::Real lb_=60;   // Lower bound for complex energy
+	core::Real ub_=1350;  // Upper bound for complex energy
 };
 
 class CCS_IMMS_with_CryoEMEnergy : public core::scoring::methods::WholeStructureEnergy {
@@ -160,4 +160,4 @@ protected:
 } // energy_methods
 } // core
 
-#endif // INCLUDED_core_energy_methods_CCS_IMMSEnergy_hh 
+#endif // INCLUDED_core_energy_methods_CCS_IMMSEnergy_hh
