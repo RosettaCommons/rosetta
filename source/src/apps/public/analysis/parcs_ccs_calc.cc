@@ -66,7 +66,7 @@ int main(int argc, char * argv[])
 		if ( use_multimer ) {
 			out <<"File_Name\tCCS_PARCS_complex" << std::endl;
 		} else {
-		out <<"File_Name\tCCS_PARCS" << std::endl;
+			out <<"File_Name\tCCS_PARCS" << std::endl;
 		}
 		while ( input.has_another_pose() ) {
 			core::pose::PoseOP mypose( utility::pointer::make_shared < core::pose::Pose >() );
