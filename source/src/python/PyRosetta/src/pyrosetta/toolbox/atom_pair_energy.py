@@ -8,18 +8,19 @@ def etable_atom_pair_energies(res1, atom_index_1, res2, atom_index_2, sfxn):
     Args:
         res1 (pyrosetta.rosetta.core.conformation.Residue): the residue that contains the
             first atom of interest.
-        atom_index_1 (int): index of the desired atom in residue 1
+        atom_index_1 (int): index of the desired atom in residue 1.
         res2 (pyrosetta.rosetta.core.conformation.Residue): the residue that contains the
             second atom of interest.
-        atom_index_2 (int): index of the desired atom in residue 2
+        atom_index_2 (int): index of the desired atom in residue 2.
+        sfxn (pyrosetta.rosetta.core.scoring.ScoreFunction): the scorefunction to use.
 
     Returns:
         tuple: values of the lj_atr, lj_rep, fa_solv, and fa_elec potentials.
 
-    Usage: lj_atr, lj_rep, solv=etable_atom_pair_energies(res1, atom_index_1, res2, atom_index_2, sfxn)
+    Usage: lj_atr, lj_rep, fa_solv, fa_elec = etable_atom_pair_energies(res1, atom_index_1, res2, atom_index_2, sfxn)
         Description: given a pair of atoms (specified using a pair of residue objects and
         atom indices) and scorefunction, use the precomputed 'etable' to return
-        LJ attractive, LJ repulsive, and LK solvation energies
+        LJ attractive, LJ repulsive, LK solvation and electrostatic energies.
     """
     score_manager = rosetta.core.scoring.ScoringManager.get_instance()
     etable_ptr = score_manager.etable(sfxn.energy_method_options().etable_type())
@@ -67,7 +68,7 @@ def _atom_pair_energy_table(sfxn, score_type, residue_1, residue_2, threshold=0.
     for each atom on residue 1.
 
     Args:
-        sfxn (pyrosetta.ScoreFunction): the scorefunction to use
+        sfxn (pyrosetta.rosetta.core.scoring.ScoreFunction): the scorefunction to use
         score_type (str): the term of the scorefunction to yield
         residue_1 (pyrosetta.rosetta.core.conformation.Residue): residue 1
         residue_2 (pyrosetta.rosetta.core.conformation.Residue): residue 2
