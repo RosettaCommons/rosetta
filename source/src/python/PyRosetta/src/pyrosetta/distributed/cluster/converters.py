@@ -151,8 +151,8 @@ def _parse_environment(obj: Any) -> Union[str, NoReturn]:
                 logging.warning(
                     _warning_msg.format(
                         environment_cmd,
-                        "uv project requirements",
-                        f"{environment_cmd} > requirements.txt",
+                        "uv project lock",
+                        environment_cmd,
                     )
                 )
             elif environment_manager == "mamba":
@@ -191,7 +191,7 @@ def _parse_environment(obj: Any) -> Union[str, NoReturn]:
             if environment_manager == "pixi":
                 logging.warning(_warning_msg.format("pixi lock", "pixi project"))
             elif environment_manager == "uv":
-                logging.warning(_warning_msg.format("uv requirements", "uv project"))
+                logging.warning(_warning_msg.format("uv lock", "uv project"))
             elif environment_manager == "mamba":
                 logging.warning(_warning_msg.format("YML", "mamba environment"))
             elif environment_manager == "conda":
@@ -210,7 +210,7 @@ def _parse_environment(obj: Any) -> Union[str, NoReturn]:
                 if environment_manager == "pixi":
                     raise AssertionError(_err_msg.format("pixi lock", "pixi project"))
                 elif environment_manager == "uv":
-                    raise AssertionError(_err_msg.format("uv requirements", "uv project"))
+                    raise AssertionError(_err_msg.format("uv lock", "uv project"))
                 elif environment_manager == "mamba":
                     raise AssertionError(_err_msg.format("YML", "mamba environment"))
                 elif environment_manager == "conda":

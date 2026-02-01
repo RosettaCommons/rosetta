@@ -516,7 +516,7 @@ class IO(Generic[G]):
 
     def _write_environment_file(self, filename: str) -> None:
         """
-        Write the conda/mamba YML, uv requirements, or pixi lock file string to the input filename.
+        Write the conda/mamba YML or uv/pixi lock file string to the input filename.
         If pixi/uv is used as the environment manager, also write the TOML file string to a separate filename.
         """
 
