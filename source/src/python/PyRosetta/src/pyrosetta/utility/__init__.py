@@ -26,8 +26,7 @@ def get_package_version(distribution_name):
             t = tuple(map(int, v.split(".")[:3]))
         except ValueError:
             t = (v,)
-        finally:
-            return t
+        return t
 
     @to_tuple.register(int)
     def _from_int(v):
