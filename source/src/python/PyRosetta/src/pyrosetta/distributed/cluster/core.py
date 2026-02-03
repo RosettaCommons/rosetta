@@ -144,11 +144,11 @@ Args:
         for accounting.
         Default: `project_name` if not specified, else "PyRosettaCluster" if None
     environment: A `NoneType` or `str` object specifying either the active conda/mamba environment
-        YML file string, active uv project `requirements.txt` file string, or active pixi project
+        YML file string, active uv project `uv.lock` file string, or active pixi project
         `pixi.lock` file string. If a `NoneType` object is provided, then generate an environment file
         string for the active conda/mamba/uv/pixi environment and save it to the full simulation
         record. If a non-empty `str` object is provided, then validate it against the active
-        conda/mamba/uv/pixi environment YML/requirements/lock file string and save it to the
+        conda/mamba/uv/pixi environment YML/lock file string and save it to the
         full simulation record. This ensures that reproduction simulations use an identical
         conda/mamba/uv/pixi environment to the original simulation. To bypass conda/mamba/uv/pixi
         environment validation with a warning message, an empty string ('') may be provided (but
@@ -852,7 +852,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                         (
                             "pixi.lock"
                             if self.environment_manager == "pixi"
-                            else "requirements.txt"
+                            else "uv.lock"
                             if self.environment_manager == "uv"
                             else "environment.yml"
                         )

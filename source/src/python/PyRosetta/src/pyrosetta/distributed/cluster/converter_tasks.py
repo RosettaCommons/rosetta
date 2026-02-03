@@ -121,8 +121,8 @@ def maybe_issue_environment_warnings() -> None:
                         bool(re.search(conda_pyrosetta_pattern, yml)) or
                         ("name: pyrosetta\n" in yml) # Fallback
                     )
-                elif environment_manager == "uv": # Match uv `requirements.txt` format
-                    has_pinned_pyrosetta = bool(re.search(r"^pyrosetta==", yml, flags=re.MULTILINE))
+                elif environment_manager == "uv": # Match uv `uv.lock` format
+                    has_pinned_pyrosetta = bool(re.search(r'^\[\[package\]\]\s*\n\s*name\s*=\s*"pyrosetta"\s*$', yml, flags=re.MULTILINE))
                 else: # Match conda/mamba `environment.yml` format
                     has_pinned_pyrosetta = "- pyrosetta=" in yml
                 if not has_pinned_pyrosetta:
@@ -502,12 +502,6 @@ def get_yml() -> str:
     Export the current environment to a string depending on the environment manager.
     """
 
-    def remove_comments(text: str) -> str:
-        """Remove lines starting with '#'."""
-        return "\n".join(
-            line for line in text.splitlines() if not line.strip().startswith("#")
-        )
-
     def remove_metadata(text: str) -> str:
         """Remove 'name:' and 'prefix:' lines."""
         filtered_lines = [
@@ -540,26 +534,43 @@ def get_yml() -> str:
         except Exception:
             return ""
 
-    # For uv/conda/mamba environment managers, run the export command and process the output
-    try:
-        result = subprocess.run(
-            environment_cmd,
-            shell=True,
-            check=True,
-            stderr=subprocess.DEVNULL,
-            stdout=subprocess.PIPE,
-            text=True,
-        )
-    except subprocess.CalledProcessError:
-        return ""
-
-    raw_yml = result.stdout.strip()
-    if not raw_yml:
-        return ""
-
+    # Handle uv separately since it writes a `uv.lock` file
     if env_manager == "uv":
-        return remove_comments(raw_yml) # Not sanitized, since uv doesn't use conda channels
-    elif env_manager in ("conda", "mamba"):
+        try:
+            subprocess.run(
+                environment_cmd,
+                shell=True,
+                check=True,
+                stderr=subprocess.DEVNULL,
+            )
+            # https://docs.astral.sh/uv/reference/environment/#uv_project
+            project_dir = os.environ.get("UV_PROJECT")
+            lock_path = os.path.join(
+                project_dir if project_dir else os.getcwd(),
+                "uv.lock",
+            )
+            with open(lock_path, encoding="utf-8") as f:
+                return f.read()  # Not sanitized, since uv doesn't use conda channels
+        except Exception:
+            return ""
+
+    # For conda/mamba environment managers, run the export command and process the output
+    if env_manager in ("conda", "mamba"):
+        try:
+            result = subprocess.run(
+                environment_cmd,
+                shell=True,
+                check=True,
+                stderr=subprocess.DEVNULL,
+                stdout=subprocess.PIPE,
+                text=True,
+            )
+        except subprocess.CalledProcessError:
+            return ""
+
+        raw_yml = result.stdout.strip()
+        if not raw_yml:
+            return ""
         return sanitize_urls(remove_metadata(raw_yml))
 
     raise RuntimeError(f"Unsupported environment manager: '{env_manager}'")
