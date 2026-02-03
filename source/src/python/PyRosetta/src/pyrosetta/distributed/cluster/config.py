@@ -38,7 +38,7 @@ class EnvironmentConfig(Generic[G]):
     _ENV_MANAGERS: Tuple[str, ...] = ("pixi", "uv", "mamba", "conda")
     _ENV_EXPORT_CMDS: Dict[str, str] = {
         "pixi": "pixi lock --check || pixi lock --no-install",
-        "uv": "uv export --format requirements-txt --frozen",
+        "uv": "uv lock --check || uv lock",
         "mamba": f"mamba env export --prefix '{sys.prefix}'",
         "conda": f"conda env export --prefix '{sys.prefix}'",
     }
@@ -102,13 +102,14 @@ class EnvironmentConfig(Generic[G]):
             # https://docs.astral.sh/uv/reference/environment/#uv_project
             project_dir = os.environ.get("UV_PROJECT")
             if project_dir:
-                # Append `--project` flag
+                # Append `--project` flag to both commands in the OR clause
                 logging.info(
                     "PyRosettaCluster detected the set 'UV_PROJECT' environment variable, and is "
-                    + f"setting the flag `--project '{project_dir}'` in the `uv export` command."
+                    + f"setting the flag `--project '{project_dir}'` in the `uv lock` command."
                 )
                 return (
-                    f"uv export --format requirements-txt --frozen --project '{project_dir}'"
+                    f"uv lock --check --project '{project_dir}' || "
+                    f"uv lock --project '{project_dir}'"
                 )
 
         # Use default environment export command

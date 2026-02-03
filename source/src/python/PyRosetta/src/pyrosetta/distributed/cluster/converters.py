@@ -73,7 +73,7 @@ S = TypeVar("S", bound=Serialization)
 
 def _parse_filter_results(obj: Any) -> Union[bool, NoReturn]:
     """Parse the input `filter_results` attribute of PyRosettaCluster."""
-    _issue_future_warning = True
+    _issue_future_warning = False
 
     @singledispatch
     def converter(obj: Any) -> NoReturn:
@@ -151,8 +151,8 @@ def _parse_environment(obj: Any) -> Union[str, NoReturn]:
                 logging.warning(
                     _warning_msg.format(
                         environment_cmd,
-                        "uv project requirements",
-                        f"{environment_cmd} > requirements.txt",
+                        "uv project lock",
+                        environment_cmd,
                     )
                 )
             elif environment_manager == "mamba":
@@ -191,7 +191,7 @@ def _parse_environment(obj: Any) -> Union[str, NoReturn]:
             if environment_manager == "pixi":
                 logging.warning(_warning_msg.format("pixi lock", "pixi project"))
             elif environment_manager == "uv":
-                logging.warning(_warning_msg.format("uv requirements", "uv project"))
+                logging.warning(_warning_msg.format("uv lock", "uv project"))
             elif environment_manager == "mamba":
                 logging.warning(_warning_msg.format("YML", "mamba environment"))
             elif environment_manager == "conda":
@@ -210,7 +210,7 @@ def _parse_environment(obj: Any) -> Union[str, NoReturn]:
                 if environment_manager == "pixi":
                     raise AssertionError(_err_msg.format("pixi lock", "pixi project"))
                 elif environment_manager == "uv":
-                    raise AssertionError(_err_msg.format("uv requirements", "uv project"))
+                    raise AssertionError(_err_msg.format("uv lock", "uv project"))
                 elif environment_manager == "mamba":
                     raise AssertionError(_err_msg.format("YML", "mamba environment"))
                 elif environment_manager == "conda":
@@ -294,7 +294,7 @@ def _parse_yield_results(yield_results: Any) -> Union[bool, NoReturn]:
 
 def _parse_norm_task_options(obj: Any) -> Union[bool, NoReturn]:
     """Parse the input `norm_task_options` attribute of PyRosettaCluster."""
-    _issue_future_warning = True
+    _issue_future_warning = False
 
     @singledispatch
     def converter(obj: Any) -> NoReturn:
