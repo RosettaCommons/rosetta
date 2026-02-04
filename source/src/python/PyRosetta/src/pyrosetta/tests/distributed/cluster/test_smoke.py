@@ -81,6 +81,7 @@ from pyrosetta.distributed.cluster.io import (
     secure_read_pickle,
     sign_init_file_metadata_and_poses,
     verify_init_file,
+    _is_pandas_object_pyarrow_backed,
 )
 
 
@@ -1862,6 +1863,10 @@ class ScoresTest(unittest.TestCase):
         assert "pandas" not in pyrosetta.secure_unpickle.get_secure_packages()
         pyrosetta.secure_unpickle.add_secure_package("pandas")
         assert "pandas" in pyrosetta.secure_unpickle.get_secure_packages()
+        if "secure_packages" in kwargs and "pyarrow" in kwargs["secure_packages"]:
+            assert "pyarrow" not in pyrosetta.secure_unpickle.get_secure_packages()
+            pyrosetta.secure_unpickle.add_secure_package("pyarrow")
+            assert "pyarrow" in pyrosetta.secure_unpickle.get_secure_packages()
         _ = packed_pose.pose.cache["df"]
         return packed_pose
 
@@ -1964,14 +1969,23 @@ class ScoresTest(unittest.TestCase):
         as a secure package in the billiard subprocess.
         """
         pyrosetta.secure_unpickle.add_secure_package("pandas")
+        df = pandas.DataFrame().from_dict({0: ["foo"], 1: ["bar"]})
+        if _is_pandas_object_pyarrow_backed(df):
+            # If the cached `pandas.DataFrame` object uses Arrow-backed dtypes, then
+            # PyRosetta requires 'pyarrow' to be in the unpickle-allowed list during
+            # output decoy parsing. Certain `pandas` versions (with Python-3.13+)
+            # use Arrow-backed dtypes for `pandas.DataFrame` objects by default.
+            pyrosetta.secure_unpickle.add_secure_package("pyarrow")
         input_pose = self.input_packed_pose.pose.clone()
-        input_pose.cache["df"] = pandas.DataFrame().from_dict({0: ["foo"], 1: ["bar"]})
+        input_pose.cache["df"] = df # Cache `pandas.DataFrame` object
+        secure_packages = pyrosetta.secure_unpickle.get_secure_packages()
         # Test a protocol that does not add 'pandas' to the unpickle-allowed list,
         # and does not access the cached `pandas.DataFrame`; this tests that
         # PyRosettaCluster infrastructure does not trigger deserialization alone
         run(
             **{
                 **self.instance_kwargs,
+                "tasks": [{**task, "secure_packages": secure_packages} for task in ScoresTest.create_task()],
                 "input_packed_pose": input_pose.clone(),
                 "output_path": os.path.join(self.workdir.name, "test_secure_packages_billiard_1"),
                 "ignore_errors": False,
@@ -1985,6 +1999,7 @@ class ScoresTest(unittest.TestCase):
         run(
             **{
                 **self.instance_kwargs,
+                "tasks": [{**task, "secure_packages": secure_packages} for task in ScoresTest.create_task()],
                 "input_packed_pose": input_pose.clone(),
                 "output_path": os.path.join(self.workdir.name, "test_secure_packages_billiard_2"),
                 "ignore_errors": False,
@@ -2002,6 +2017,7 @@ class ScoresTest(unittest.TestCase):
             run(
                 **{
                     **self.instance_kwargs,
+                    "tasks": [{**task, "secure_packages": secure_packages} for task in ScoresTest.create_task()],
                     "input_packed_pose": input_pose.clone(),
                     "output_path": os.path.join(self.workdir.name, "test_secure_packages_billiard_3"),
                     "ignore_errors": False,
