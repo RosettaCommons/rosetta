@@ -190,6 +190,10 @@ Args:
         be analyzed using `pyrosetta.distributed.cluster.io.secure_read_pickle(compression="infer")`.
         Note that in order to save pickled `pandas.DataFrame` objects, please ensure
         that `pyrosetta.secure_unpickle.add_secure_package("pandas")` has been first run.
+        If using `pandas` version `>=3.0.0`, PyArrow-backed datatypes may be enabled by default;
+        in this case, please ensure that `pyrosetta.secure_unpickle.add_secure_package("pyarrow")`
+        has also been first run. See https://pandas.pydata.org/pdeps/0010-required-pyarrow-dependency.html
+        and https://pandas.pydata.org/pdeps/0014-string-dtype.html for more information.
         Default: [".json",]
     scorefile_name: A `str` object specifying the name of the output JSON-formatted
         scorefile, which must end in ".json". The scorefile location is always
