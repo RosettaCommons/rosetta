@@ -1973,6 +1973,7 @@ class ScoresTest(unittest.TestCase):
             **{
                 **self.instance_kwargs,
                 "input_packed_pose": input_pose.clone(),
+                "output_path": os.path.join(self.workdir.name, "test_secure_packages_billiard_1"),
                 "ignore_errors": False,
                 "protocols": ScoresTest.identity_protocol,
             }
@@ -1985,6 +1986,7 @@ class ScoresTest(unittest.TestCase):
             **{
                 **self.instance_kwargs,
                 "input_packed_pose": input_pose.clone(),
+                "output_path": os.path.join(self.workdir.name, "test_secure_packages_billiard_2"),
                 "ignore_errors": False,
                 "protocols": ScoresTest.protocol_with_secure_package_pandas,
             }
@@ -2001,6 +2003,7 @@ class ScoresTest(unittest.TestCase):
                 **{
                     **self.instance_kwargs,
                     "input_packed_pose": input_pose.clone(),
+                    "output_path": os.path.join(self.workdir.name, "test_secure_packages_billiard_3"),
                     "ignore_errors": False,
                     "protocols": ScoresTest.protocol_without_secure_package_pandas,
                 }
