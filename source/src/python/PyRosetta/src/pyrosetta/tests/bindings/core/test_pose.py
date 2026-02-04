@@ -1272,6 +1272,7 @@ class TestPoseSecureUnpickler(unittest.TestCase):
         if "pandas" in sys.modules:
             pyrosetta.secure_unpickle.clear_secure_packages()
             pyrosetta.secure_unpickle.add_secure_package("pandas")
+            pyrosetta.secure_unpickle.add_secure_package("pyarrow")
             test_pose.cache.clear()
             class _ReduceObject:
                 def __reduce__(self):
@@ -1290,6 +1291,7 @@ class TestPoseSecureUnpickler(unittest.TestCase):
             test_pose.cache[key] = _ReduceObject()
             _obj = test_pose.cache[key] # Test that `pd.DataFrame` is allowed
             test_pose.cache.clear()
+
 
 # if __name__ == "__main__":
 #    unittest.main()
