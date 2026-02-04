@@ -427,6 +427,7 @@ class IO(Generic[G]):
                     if os.path.isfile(_scorefile_path):
                         df_chunk = secure_read_pickle(_scorefile_path, compression="infer")
                         df = pandas.concat([df_chunk, df])
+                    df = df.convert_dtypes(dtype_backend="numpy_nullable") # Prevent PyArrow-backed dtypes in `pandas.DataFrame` scorefile
                     df.to_pickle(_scorefile_path, compression="infer", protocol=SecureSerializerBase._pickle_protocol)
 
     def _cache_toml(self) -> None:
