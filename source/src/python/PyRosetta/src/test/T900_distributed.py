@@ -1,6 +1,8 @@
 from __future__ import print_function
+import os
 import shutil
 import sys
+import tempfile
 import time
 
 
@@ -31,7 +33,23 @@ except ImportError as e:
     sys.exit(0)
 
 
-if shutil.which("conda"):
+if shutil.which("pixi"):
+    try:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_file = os.path.join(tmp_dir, "environment.yml")
+            subprocess.run(
+                f"pixi workspace export conda-environment '{tmp_file}'",
+                shell=True,
+            )
+            if os.path.isfile(tmp_file):
+                with open(tmp_file, "r") as f:
+                    export = f.read()
+                print("Current pixi environment:", export, sep="\n")
+            else:
+                print("The exported pixi environment file does not exist: '{0}'.".format(tmp_file))
+    except subprocess.CalledProcessError as ex:
+        print("Printing pixi environment failed with return code: {0}.".format(ex.returncode))
+elif shutil.which("conda"):
     try:
         export = subprocess.check_output(
             "conda env export --prefix $(conda env list | grep '*' | awk '{print $NF}')",
