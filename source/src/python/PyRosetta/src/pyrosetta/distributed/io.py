@@ -151,7 +151,6 @@ def _pose_from_none(none):
 @pose_from_base64.register(str)
 @requires_init
 @pack_result
-@pose_result
 def _pose_from_str(filename):
     with open(filename, "r") as f:
         return f.read()
@@ -182,7 +181,6 @@ def _pose_from_none(none):
 @pose_from_pickle.register(str)
 @requires_init
 @pack_result
-@pose_result
 def _pose_from_str(filename):
     with open(filename, "rb") as f:
         return f.read()

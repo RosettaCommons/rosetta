@@ -330,27 +330,31 @@ def get_instance_kwargs(
 def reserve_scores(func: P) -> Union[P, NoReturn]:
     """
     Use this as a Python decorator of any user-provided PyRosetta protocol.
-    If any scoreterms and values are present in the input `packed_pose`, then if
-    they are deleted during execution of the decorated user-provided PyRosetta
-    protocol, then append those scoreterms and values back into the `pose.cache`
+    If any scoreterms and values are present in the input `PackedPose` object,
+    then if they are deleted during execution of the decorated user-provided PyRosetta
+    protocol, then restore those scoreterms and values back into the `Pose.cache`
     dictionary after execution. If any scoreterms and values are present in the
-    input `packed_pose` and also present in the returned or yielded output `Pose`
-    or `PackedPose` objects, then do not append the original scoreterms and values
-    back into the `pose.cache` dictionary after execution (that is, keep the outputted
-    scoreterms and values in the `pose.cache` dictionary). Any new scoreterms and
+    input `PackedPose` object and also present in the returned or yielded output `Pose`
+    or `PackedPose` object(s), then do not set the original scoreterms and values
+    back into the `Pose.cache` dictionary after execution (that is, keep the outputted
+    scoreterms and values in the `Pose.cache` dictionary). Any new scoreterms and
     values acquired in the decorated user-provided PyRosetta protocol will never
     be overwritten. This allows users to maintain scoreterms and values acquired
     in earlier user-defined PyRosetta protocols if needing to execute Rosetta
-    Movers that happen to delete scores from pose objects.
+    `Mover` objects that happen to delete scores from `Pose` objects. Note that
+    this decorator reserves scoreterms and values from the input `PackedPose.scores`
+    and `Pose.cache` dictionaries, and any scoreterms and values restored to any
+    output `Pose.cache` dictionaries are set as SimpleMetrics.
 
     For example:
-
+    ```
     @reserve_scores
     def my_pyrosetta_protocol(packed_pose, **kwargs):
         from pyrosetta import MyMover
         pose = packed_pose.pose
         MyMover().apply(pose)
         return pose
+    ```
 
     Args:
         A user-provided PyRosetta function.
@@ -364,10 +368,13 @@ def reserve_scores(func: P) -> Union[P, NoReturn]:
     @wraps(func)
     def wrapper(packed_pose, **kwargs):
         if packed_pose is not None:
-            _scores_dict = update_scores(packed_pose).scores
+            _reserved_pose = update_scores(packed_pose).pose
         else:
-            _scores_dict = {}
+            _reserved_pose = None
         _output = func(packed_pose, **kwargs)
+        # Only deserialize after the user-provided PyRosetta protocol finished executing, giving
+        # the user an opportunity to add secure packages to the unpickle-allowed list as necessary
+        _scores_dict = dict(_reserved_pose.cache) if _reserved_pose is not None else {}
 
         return reserve_scores_in_results(_output, _scores_dict, func.__name__)
 
@@ -393,11 +400,12 @@ def requires_packed_pose(func: P) -> Union[PackedPose, None, P]:
     protocols are skipped if they are decorated with this decorator.
 
     For example:
-
+    ```
     @requires_packed_pose
     def my_pyrosetta_protocol(packed_pose, **kwargs):
         assert packed_pose.pose.size() > 0
         return packed_pose
+    ```
 
     Args:
         A user-provided PyRosetta function.

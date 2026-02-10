@@ -104,19 +104,18 @@ def _parse_compression(obj: Any) -> Optional[Union[str, bool]]:
 
 def update_scores(packed_pose: PackedPose) -> PackedPose:
     """
-    Cache scores into the `PackedPose` object that are not cached in the `Pose` object and do not
-    have keys with reserved scoretypes, then return the updated `PackedPose` object.
+    Cache scores from the `PackedPose.scores` dictionary that are not cached in the `Pose` object
+    and do not have keys with reserved scoretypes, then return a new `PackedPose` object.
 
     Args:
         packed_pose: the input `PackedPose` object in which to update scores.
 
     Returns:
-        A new `PackedPose` object with scores cached in its `Pose` object if scores could be cached,
-        otherwise the input `PackedPose` object.
+        A new `PackedPose` object, with scores cached in its `Pose` object if scores could be cached.
     """
     _pose = packed_pose.pose
-    _pose_scoretypes = set(_pose.cache.keys())
-    _reserved_scoretypes = _pose.__cache_accessor._reserved.union(_pose_scoretypes)
+    _pose_scoretypes = set(_pose.cache.all_keys)
+    _reserved_scoretypes = _pose.cache._reserved.union(_pose_scoretypes)
     _filtered_scores = toolz.dicttoolz.keyfilter(
         lambda scoretype: scoretype not in _reserved_scoretypes,
         packed_pose.scores,
@@ -131,9 +130,8 @@ def update_scores(packed_pose: PackedPose) -> PackedPose:
             SyntaxWarning,
             stacklevel=2,
         )
-        packed_pose = packed_pose.update_scores(_filtered_scores)
 
-    return packed_pose
+    return packed_pose.update_scores(_filtered_scores)
 
 
 @attr.s(kw_only=False, slots=True, frozen=True)
@@ -360,6 +358,18 @@ class Serialization(Generic[G]):
         """Compress an object with `zlib` level 9."""
         return zlib.compress(obj, 9)
 
+    def with_update_scores(func: T) -> T:
+        """
+        Wrapper that caches detached `PackedPose.scores` items into the `Pose.cache` dictionary.
+        """
+        @wraps(func)
+        def wrapper(self, obj: Any) -> Any:
+            if isinstance(obj, PackedPose):
+                obj = update_scores(obj)
+            return func(self, obj)
+
+        return cast(T, wrapper)
+
     def requires_compression(func: T) -> T:
         """
         Wrapper testing if compression is enabled, and skips compression if it's disabled.
@@ -432,6 +442,7 @@ class Serialization(Generic[G]):
 
         return _data
 
+    @with_update_scores
     @requires_compression
     def compress_packed_pose(self, packed_pose: Any) -> Union[NoReturn, None, bytes]:
         """
@@ -450,7 +461,6 @@ class Serialization(Generic[G]):
         if packed_pose is None:
             compressed_packed_pose = None
         elif isinstance(packed_pose, PackedPose):
-            packed_pose = update_scores(packed_pose)
             compressed_packed_pose = self.encoder(io.to_pickle(packed_pose))
         else:
             raise TypeError(

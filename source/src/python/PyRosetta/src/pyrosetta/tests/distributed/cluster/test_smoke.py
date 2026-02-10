@@ -81,6 +81,7 @@ from pyrosetta.distributed.cluster.io import (
     secure_read_pickle,
     sign_init_file_metadata_and_poses,
     verify_init_file,
+    _is_pandas_object_pyarrow_backed,
 )
 
 
@@ -560,10 +561,15 @@ class SmokeTestMulti(unittest.TestCase):
             import pyrosetta  # noqa
             import pyrosetta.distributed.io as io  # noqa
 
-            self.assertEqual(
-                dict(packed_pose.scores),
-                {**dict(packed_pose.scores), **{"test_setPoseExtraScore": 123}},
-            )
+            self.assertIsInstance(packed_pose.scores, dict)
+            self.assertEqual(packed_pose.scores, {})
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.all_keys)
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra)
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra.real)
+            self.assertEqual(packed_pose.pose.cache.extra.real["test_setPoseExtraScore"], 123.0)
+            self.assertEqual(packed_pose.pose.cache.extra["test_setPoseExtraScore"], 123.0)
+            self.assertEqual(packed_pose.pose.cache["test_setPoseExtraScore"], 123.0)
+
             packed_pose.scores.clear()
             self.assertDictEqual({}, packed_pose.scores)
             pose = io.to_pose(packed_pose)
@@ -607,10 +613,14 @@ class SmokeTestMulti(unittest.TestCase):
             import pyrosetta
             import pyrosetta.distributed.io as io
 
-            self.assertEqual(
-                dict(packed_pose.scores),
-                {**dict(packed_pose.scores), **{"test_setPoseExtraScore": 123}},
-            )
+            self.assertIsInstance(packed_pose.scores, dict)
+            self.assertEqual(packed_pose.scores, {})
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.all_keys)
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra)
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra.real)
+            self.assertEqual(packed_pose.pose.cache.extra.real["test_setPoseExtraScore"], 123.0)
+            self.assertEqual(packed_pose.pose.cache.extra["test_setPoseExtraScore"], 123.0)
+            self.assertEqual(packed_pose.pose.cache["test_setPoseExtraScore"], 123.0)
 
             self.assertIn("task_packed_pose", kwargs)
             self.assertIsInstance(kwargs["task_packed_pose"], PackedPose)
@@ -638,6 +648,8 @@ class SmokeTestMulti(unittest.TestCase):
             self.assertNotIn("task_packed_pose", kwargs["PyRosettaCluster_task"])
             self.assertIn("saved_packed_pose", kwargs)
             self.assertIsInstance(kwargs["saved_packed_pose"], PackedPose)
+            tmp_path = kwargs["PyRosettaCluster_tmp_path"]
+            self.assertTrue(os.path.exists(tmp_path))
 
             yield None
             yield kwargs
@@ -652,6 +664,8 @@ class SmokeTestMulti(unittest.TestCase):
             self.assertIsInstance(kwargs, dict)
             self.assertIn("saved_packed_pose", kwargs)
             self.assertIsInstance(kwargs["saved_packed_pose"], PackedPose)
+            tmp_path = kwargs["PyRosettaCluster_tmp_path"]
+            self.assertTrue(os.path.exists(tmp_path))
 
             return kwargs
 
@@ -743,7 +757,7 @@ class SmokeTestMulti(unittest.TestCase):
                 simulation_records_in_scorefile=False,
                 decoy_dir_name="decoys",
                 logs_dir_name="logs",
-                ignore_errors=True,
+                ignore_errors=False,
                 timeout=1.0,
                 max_delay_time=3.0,
                 sha1=None,
@@ -792,22 +806,40 @@ class SmokeTestMulti(unittest.TestCase):
             import pyrosetta  # noqa
             import pyrosetta.distributed.io as io
 
-            self.assertEqual(
-                dict(packed_pose.scores),
-                {**dict(packed_pose.scores), **{"test_setPoseExtraScore": 123}},
-            )
+            self.assertIsInstance(packed_pose.scores, dict)
+            self.assertEqual(packed_pose.scores, {})
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.all_keys)
+            self.assertEqual(packed_pose.pose.cache["test_setPoseExtraScore"], 123.0)
+            if kwargs["PyRosettaCluster_protocol_number"] == 1:
+                self.assertEqual(kwargs["PyRosettaCluster_protocol_name"], "my_second_protocol")
+                self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra)
+                self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.extra.real)
+                self.assertEqual(packed_pose.pose.cache.extra.real["test_setPoseExtraScore"], 123.0)
+                self.assertEqual(packed_pose.pose.cache.extra["test_setPoseExtraScore"], 123.0)
+            elif kwargs["PyRosettaCluster_protocol_number"] == 2:
+                self.assertEqual(kwargs["PyRosettaCluster_protocol_name"], "my_third_protocol")
+                self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.metrics)
+                self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.metrics.real)
+                self.assertEqual(packed_pose.pose.cache.metrics.real["test_setPoseExtraScore"], 123.0)
+                self.assertEqual(packed_pose.pose.cache.metrics["test_setPoseExtraScore"], 123.0)
             packed_pose.scores.clear()
             self.assertDictEqual({}, packed_pose.scores)
             self.assertIn(kwargs["PyRosettaCluster_protocol_number"], [1, 2])
             pose = io.to_pose(packed_pose)
+            pose.cache.clear() # Clear scoreterms from `pose.cache.extra.real`
             for _ in range(3):
                 yield pose.clone()
 
         def my_third_protocol(packed_pose, **kwargs):
-            self.assertEqual(
-                dict(packed_pose.scores),
-                {**dict(packed_pose.scores), **{"test_setPoseExtraScore": 123}},
-            )
+            self.assertIsInstance(packed_pose.scores, dict)
+            self.assertEqual(packed_pose.scores, {})
+            # `reserve_scores` decorator on 'my_second_protocol' sets scoreterms in `packed_pose.pose.cache.metrics`
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.all_keys)
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.metrics)
+            self.assertIn("test_setPoseExtraScore", packed_pose.pose.cache.metrics.real)
+            self.assertEqual(packed_pose.pose.cache.metrics.real["test_setPoseExtraScore"], 123.0)
+            self.assertEqual(packed_pose.pose.cache.metrics["test_setPoseExtraScore"], 123.0)
+            self.assertEqual(packed_pose.pose.cache["test_setPoseExtraScore"], 123.0)
             self.assertEqual(kwargs["PyRosettaCluster_protocol_number"], 2)
             return my_second_protocol(packed_pose, **kwargs)
 
@@ -841,7 +873,7 @@ class SmokeTestMulti(unittest.TestCase):
                 simulation_records_in_scorefile=False,
                 decoy_dir_name="decoys",
                 logs_dir_name="logs",
-                ignore_errors=True,
+                ignore_errors=False,
                 timeout=1.0,
                 sha1=None,
                 dry_run=False,
@@ -882,7 +914,7 @@ class SmokeTestMulti(unittest.TestCase):
                 simulation_records_in_scorefile=False,
                 decoy_dir_name="decoys",
                 logs_dir_name="logs",
-                ignore_errors=True,
+                ignore_errors=False,
                 timeout=1.0,
                 sha1=None,
                 dry_run=False,
@@ -1284,65 +1316,90 @@ class SerializationTest(unittest.TestCase):
                 output_packed_pose = serializer.decompress_packed_pose(compressed_packed_pose)
 
                 _error_msg = f"Failed on test case {_test_case} with compression {_compression}"
-                if _compression in (False, None):
-                    self.assertEqual(
-                        sys.getsizeof(compressed_packed_pose.pickled_pose),
-                        sys.getsizeof(input_packed_pose.pickled_pose),
-                        msg=_error_msg,
-                    )
-                    self.assertEqual(
-                        sys.getsizeof(compressed_packed_pose.pickled_pose),
-                        sys.getsizeof(output_packed_pose.pickled_pose),
-                        msg=_error_msg,
-                    )
-                else:
-                    self.assertLess(
-                        sys.getsizeof(compressed_packed_pose),
-                        sys.getsizeof(input_packed_pose.pickled_pose),
-                        msg=_error_msg,
-                    )
-                    self.assertLess(
-                        sys.getsizeof(compressed_packed_pose),
-                        sys.getsizeof(output_packed_pose.pickled_pose),
-                        msg=_error_msg,
-                    )
-                if _compression in (False, None):
-                    self.assertEqual(id(input_packed_pose), id(output_packed_pose), msg=_error_msg)
-                else:
-                    self.assertNotEqual(id(input_packed_pose), id(output_packed_pose), msg=_error_msg)
-                self.assertEqual(scores, output_packed_pose.scores, msg=_error_msg)
-                self.assertSetEqual(
-                    set(input_packed_pose.scores.keys()),
-                    set(output_packed_pose.scores.keys()),
-                    msg=_error_msg,
-                )
-                for scoretype in input_packed_pose.scores.keys():
-                    input_value = input_packed_pose.scores[scoretype]
-                    output_value = output_packed_pose.scores[scoretype]
-                    if isinstance(input_value, str):
-                        self.assertEqual(input_value, output_value, msg=_error_msg)
-                    elif isinstance(input_value, (int, float)):
-                        self.assertAlmostEqual(input_value, output_value, places=6, msg=_error_msg)
 
-                if _compression not in (False, None):
+                if _compression in (False, None):
+                    # Test PackedPose size
                     if _test_case == 0:
-                        self.assertEqual(scores, input_packed_pose.scores, msg=_error_msg)
-                        self.assertEqual(
-                            input_packed_pose.scores, output_packed_pose.scores, msg=_error_msg
-                        )
-                        self.assertNotEqual(
-                            input_packed_pose.pickled_pose,
-                            output_packed_pose.pickled_pose,
+                        self.assertGreater(
+                            sys.getsizeof(compressed_packed_pose.pickled_pose),
+                            sys.getsizeof(input_packed_pose.pickled_pose),
                             msg=_error_msg,
-                        )
+                        ) # `PackedPose.scores` get cached in `Pose.cache`
                     elif _test_case in (1, 2):
-                        self.assertEqual(scores, input_packed_pose.scores, msg=_error_msg)
-                        self.assertEqual(input_packed_pose.scores, output_packed_pose.scores, msg=_error_msg)
                         self.assertEqual(
-                            input_packed_pose.pickled_pose,
-                            output_packed_pose.pickled_pose,
+                            sys.getsizeof(compressed_packed_pose.pickled_pose),
+                            sys.getsizeof(input_packed_pose.pickled_pose),
                             msg=_error_msg,
-                        )
+                        ) # `PackedPose.scores` are already cached in `Pose.cache`
+                    self.assertEqual(
+                        sys.getsizeof(compressed_packed_pose.pickled_pose),
+                        sys.getsizeof(output_packed_pose.pickled_pose),
+                        msg=_error_msg,
+                    ) # `PackedPose.scores` are already cached in `Pose.cache`
+                    # Test PackedPose identity
+                    self.assertEqual(id(compressed_packed_pose), id(output_packed_pose), msg=_error_msg)
+                else:
+                    # Test PackedPose size
+                    self.assertLess(
+                        sys.getsizeof(compressed_packed_pose),
+                        sys.getsizeof(input_packed_pose.pickled_pose),
+                        msg=_error_msg,
+                    )
+                    self.assertLess(
+                        sys.getsizeof(compressed_packed_pose),
+                        sys.getsizeof(output_packed_pose.pickled_pose),
+                        msg=_error_msg,
+                    )
+                    # Test PackedPose identity
+                    self.assertNotEqual(id(compressed_packed_pose), id(output_packed_pose), msg=_error_msg)
+                # Test PackedPose identity
+                self.assertNotEqual(id(input_packed_pose), id(compressed_packed_pose), msg=_error_msg)
+                self.assertNotEqual(id(input_packed_pose), id(output_packed_pose), msg=_error_msg)
+                # Test PackedPose scores
+                if _test_case == 0: # Compression has no effect when user doesn't cache scores in Pose object
+                    self.assertNotEqual(input_packed_pose.pose.cache, scores, msg=_error_msg)
+                    self.assertEqual(input_packed_pose.scores, scores, msg=_error_msg)
+                    self.assertEqual(input_packed_pose.pose.cache, {}, msg=_error_msg)
+                    self.assertEqual(output_packed_pose.scores, {}, msg=_error_msg)
+                    self.assertEqual(output_packed_pose.pose.cache, scores, msg=_error_msg)
+                    self.assertEqual(input_packed_pose.scores, output_packed_pose.pose.cache, msg=_error_msg)
+                    self.assertEqual(output_packed_pose.pose.cache, scores, msg=_error_msg)
+                    self.assertSetEqual(
+                        set(input_packed_pose.scores.keys()),
+                        set(output_packed_pose.pose.cache.all_keys),
+                        msg=_error_msg,
+                    )
+                    for scoretype in input_packed_pose.scores.keys():
+                        input_value = input_packed_pose.scores[scoretype]
+                        output_value = output_packed_pose.pose.cache[scoretype]
+                        self.assertEqual(input_value, output_value, msg=_error_msg)
+                    self.assertNotEqual(
+                        input_packed_pose.pickled_pose,
+                        output_packed_pose.pickled_pose,
+                        msg=_error_msg,
+                    )
+                elif _test_case in (1, 2): # Compression has no effect when user caches scores in Pose object (preferred syntax)
+                    self.assertNotEqual(input_packed_pose.scores, scores, msg=_error_msg)
+                    self.assertEqual(input_packed_pose.scores, {}, msg=_error_msg)
+                    self.assertEqual(input_packed_pose.pose.cache, scores, msg=_error_msg)
+                    self.assertEqual(output_packed_pose.scores, {}, msg=_error_msg)
+                    self.assertEqual(input_packed_pose.scores, output_packed_pose.scores, msg=_error_msg)
+                    self.assertEqual(output_packed_pose.pose.cache, scores, msg=_error_msg)
+                    self.assertEqual(input_packed_pose.pose.cache, output_packed_pose.pose.cache, msg=_error_msg)
+                    self.assertSetEqual(
+                        set(input_packed_pose.pose.cache.all_keys),
+                        set(output_packed_pose.pose.cache.all_keys),
+                        msg=_error_msg,
+                    )
+                    for scoretype in input_packed_pose.pose.cache.all_keys:
+                        input_value = input_packed_pose.pose.cache[scoretype]
+                        output_value = output_packed_pose.pose.cache[scoretype]
+                        self.assertEqual(input_value, output_value, msg=_error_msg)
+                    self.assertEqual(
+                        input_packed_pose.pickled_pose,
+                        output_packed_pose.pickled_pose,
+                        msg=_error_msg,
+                    )
 
 
 class MultipleClientsTest(unittest.TestCase):
@@ -1801,6 +1858,23 @@ class ScoresTest(unittest.TestCase):
 
         return packed_pose
 
+    @staticmethod
+    def protocol_with_secure_package_pandas(packed_pose, **kwargs):
+        assert "pandas" not in pyrosetta.secure_unpickle.get_secure_packages()
+        pyrosetta.secure_unpickle.add_secure_package("pandas")
+        assert "pandas" in pyrosetta.secure_unpickle.get_secure_packages()
+        if "secure_packages" in kwargs and "pyarrow" in kwargs["secure_packages"]:
+            assert "pyarrow" not in pyrosetta.secure_unpickle.get_secure_packages()
+            pyrosetta.secure_unpickle.add_secure_package("pyarrow")
+            assert "pyarrow" in pyrosetta.secure_unpickle.get_secure_packages()
+        _ = packed_pose.pose.cache["df"]
+        return packed_pose
+
+    @staticmethod
+    def protocol_without_secure_package_pandas(packed_pose, **kwargs):
+        _ = packed_pose.pose.cache["df"]
+        return packed_pose
+
     def get_scores_dict(self, output_path):
         decoy_files = glob.glob(os.path.join(output_path, self.decoy_dir_name, "*", "*.bz2"))
         self.assertEqual(len(decoy_files), 1)
@@ -1888,6 +1962,69 @@ class ScoresTest(unittest.TestCase):
                     msg=f"Saving score '{key}' failed with compression={compression}",
                 )
                 self.assertEqual(scores_dict["scores"][key], ScoresTest._value)
+
+    def test_secure_packages_billiard(self):
+        """
+        Test caching a `pandas.DataFrame` with and without adding 'pandas'
+        as a secure package in the billiard subprocess.
+        """
+        pyrosetta.secure_unpickle.add_secure_package("pandas")
+        df = pandas.DataFrame().from_dict({0: ["foo"], 1: ["bar"]})
+        if _is_pandas_object_pyarrow_backed(df):
+            # If the cached `pandas.DataFrame` object uses Arrow-backed dtypes, then
+            # PyRosetta requires 'pyarrow' to be in the unpickle-allowed list during
+            # output decoy parsing. Certain `pandas` versions (with Python-3.13+)
+            # use Arrow-backed dtypes for `pandas.DataFrame` objects by default.
+            pyrosetta.secure_unpickle.add_secure_package("pyarrow")
+        input_pose = self.input_packed_pose.pose.clone()
+        input_pose.cache["df"] = df # Cache `pandas.DataFrame` object
+        secure_packages = pyrosetta.secure_unpickle.get_secure_packages()
+        # Test a protocol that does not add 'pandas' to the unpickle-allowed list,
+        # and does not access the cached `pandas.DataFrame`; this tests that
+        # PyRosettaCluster infrastructure does not trigger deserialization alone
+        run(
+            **{
+                **self.instance_kwargs,
+                "tasks": [{**task, "secure_packages": secure_packages} for task in ScoresTest.create_task()],
+                "input_packed_pose": input_pose.clone(),
+                "output_path": os.path.join(self.workdir.name, "test_secure_packages_billiard_1"),
+                "ignore_errors": False,
+                "protocols": ScoresTest.identity_protocol,
+            }
+        )
+        # Test a protocol that adds 'pandas' to the unpickle-allowed list, and
+        # accesses the cached `pandas.DataFrame`; this tests that the billiard
+        # subprocess requires adding 'pandas' to the unpickle-allowed list
+        # before data access, even though the client process has already added it
+        run(
+            **{
+                **self.instance_kwargs,
+                "tasks": [{**task, "secure_packages": secure_packages} for task in ScoresTest.create_task()],
+                "input_packed_pose": input_pose.clone(),
+                "output_path": os.path.join(self.workdir.name, "test_secure_packages_billiard_2"),
+                "ignore_errors": False,
+                "protocols": ScoresTest.protocol_with_secure_package_pandas,
+            }
+        )
+        _sep = "*" * 60
+        print(f"{_sep} Begin testing expected `UnpickleSecurityError` in billiard subprocess {_sep}")
+        with self.assertRaises(WorkerError):
+            # Test a protocol that does not add 'pandas' to the unpickle-allowed list,
+            # and then accesses the cached `pandas.DataFrame`; this tests that the
+            # billiard subprocess requires adding 'pandas' to the unpickle-allowed list
+            # before data access, even though the client process has already added it,
+            # leading to an intentionally raised `WorkerError` exception
+            run(
+                **{
+                    **self.instance_kwargs,
+                    "tasks": [{**task, "secure_packages": secure_packages} for task in ScoresTest.create_task()],
+                    "input_packed_pose": input_pose.clone(),
+                    "output_path": os.path.join(self.workdir.name, "test_secure_packages_billiard_3"),
+                    "ignore_errors": False,
+                    "protocols": ScoresTest.protocol_without_secure_package_pandas,
+                }
+            )
+        print(f"{_sep} End testing expected `UnpickleSecurityError` in billiard subprocess {_sep}")
 
 
 class TestInitFileSigner(unittest.TestCase):

@@ -151,7 +151,7 @@ class IO(Generic[G]):
         """
 
         _pdbstring = io.to_pdbstring(result)
-        _scores_dict = update_scores(PackedPose(result)).scores
+        _scores_dict = dict(update_scores(PackedPose(result)).pose.cache)
         _filtered_scores_dict = IO._filter_scores_dict(self.serializer.deepcopy_kwargs(_scores_dict))
 
         return (result, _pdbstring, _scores_dict, _filtered_scores_dict)
@@ -855,3 +855,34 @@ def sanitize_urls(yml_str: str) -> str:
     yml_sanitized_str = url_regex.sub(replacer, yml_str)
 
     return yml_sanitized_str
+
+
+def _is_pandas_object_pyarrow_backed(obj: Any) -> bool:
+    """
+    Determine if a `pandas.DataFrame` or `pandas.Series` object uses Arrow-backed pandas dtypes.
+
+    *Warning*: This function is experimental and subject to change in future versions.
+    See https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.convert_dtypes.html
+    for more information.
+
+    Args:
+        obj: An input `pandas.DataFrame` or `pandas.Series` object to test.
+
+    Returns:
+        A `bool` object.
+    """
+    def _is_arrow_dtype(dtype: Any) -> bool:
+        return dtype.__class__.__name__ == "ArrowDtype"
+
+    if isinstance(obj, pandas.DataFrame):
+        if any(map(_is_arrow_dtype, obj.dtypes)):
+            return True
+        if any(map(_is_arrow_dtype, (obj.index.dtype, obj.columns.dtype))):
+            return True
+        return False
+    elif isinstance(obj, pandas.Series):
+        if any(map(_is_arrow_dtype, (obj.dtype, obj.index.dtype))):
+            return True
+        return False
+    else:
+        raise TypeError(f"Unsupported `pandas` object type: {type(obj)}")

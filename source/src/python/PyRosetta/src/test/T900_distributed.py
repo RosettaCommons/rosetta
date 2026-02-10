@@ -1,6 +1,8 @@
 from __future__ import print_function
+import os
 import shutil
 import sys
+import tempfile
 import time
 
 
@@ -31,7 +33,23 @@ except ImportError as e:
     sys.exit(0)
 
 
-if shutil.which("conda"):
+if shutil.which("pixi"):
+    try:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_file = os.path.join(tmp_dir, "environment.yml")
+            subprocess.run(
+                f"pixi workspace export conda-environment '{tmp_file}'",
+                shell=True,
+            )
+            if os.path.isfile(tmp_file):
+                with open(tmp_file, "r") as f:
+                    export = f.read()
+                print("Current pixi environment:", export, sep="\n")
+            else:
+                print("The exported pixi environment file does not exist: '{0}'.".format(tmp_file))
+    except subprocess.CalledProcessError as ex:
+        print("Printing pixi environment failed with return code: {0}.".format(ex.returncode))
+elif shutil.which("conda"):
     try:
         export = subprocess.check_output(
             "conda env export --prefix $(conda env list | grep '*' | awk '{print $NF}')",
@@ -77,6 +95,7 @@ distributed_cluster_test_cases = [
     "pyrosetta.tests.distributed.cluster.test_smoke.ScoresTest.test_detached_scores",
     "pyrosetta.tests.distributed.cluster.test_smoke.ScoresTest.test_detached_scores_in_protocol",
     "pyrosetta.tests.distributed.cluster.test_smoke.ScoresTest.test_detached_scores_with_reserve_scores",
+    "pyrosetta.tests.distributed.cluster.test_smoke.ScoresTest.test_secure_packages_billiard",
     "pyrosetta.tests.distributed.cluster.test_smoke.MultipleClientsTest.test_clients",
     "pyrosetta.tests.distributed.cluster.test_smoke.ResourcesTest.test_resources",
     "pyrosetta.tests.distributed.cluster.test_smoke.ResourcesTest.test_resources_clients",
@@ -126,3 +145,4 @@ for test in tests:
     t1 = time.time()
     dt = t1 - t0
     print("Finished running test in {0} seconds: {1}\n".format(round(dt, 6), test))
+
