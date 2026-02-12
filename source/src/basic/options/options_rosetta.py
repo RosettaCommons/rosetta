@@ -5424,6 +5424,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option('initial_repack','Boolean',default='false'),
 #		Option('rb_file','String'),
 		Option('interface_ddg','Integer',default='0', desc='Calculate ddGs across an interface? Uses jump # specified for determining interface.'),
+		Option('interface', 'String', default='', desc="Interface definition (e.g. 'AB_HL' for chains A,B vs H,L). Overrides interface_ddg jump number if specified." ),
 		Option('ens_variation', 'Real', default='0.5'),
 		Option('sc_min_only','Boolean',default='true'),
 		Option('rna_all_prot_sc_min_only','Boolean',default='false'),
