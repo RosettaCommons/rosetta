@@ -3,7 +3,7 @@ Rosetta Biomolecular Modeling Library
 
 The Rosetta software suite includes algorithms for computational modeling and analysis of protein structures. It has enabled notable scientific advances in computational biology, including de novo protein design, enzyme design, ligand docking, and structure prediction of biological macromolecules and macromolecular complexes.
 
-Rosetta is maintained by the RosettaCommons, a collaboration of 50+ academic research groups, who have been developing Rosetta for over 20 years.
+Rosetta is maintained by the RosettaCommons, a collaboration of 100+ academic research groups who have been developing Rosetta for over 20 years, and is available by license from the University of Washington.
 See <https://www.rosettacommons.org> for more information about Rosetta and the RosettaCommons.
 
 Rosetta Code
