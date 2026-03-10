@@ -3394,15 +3394,17 @@ class TaskKeysTest(unittest.TestCase):
         self.assertIn(parameter_name, inspect.signature(protocol).parameters)
         print(f"{_sep} Begin testing expected `TypeError` in billiard subprocess {_sep}")
         with self.assertRaises(WorkerError):
-            # Catch exception in billiard subprocess raised due to the user-defined task dictionary containing the 'foo' key
-            # and the user-defined PyRosetta protocol defining the positional-or-keyword parameter 'foo'. When calling the
-            # user-defined PyRosetta protocol, PyRosettaCluster passes the `packed_pose` variable as a positional argument to the
-            # 'foo' parameter, and the user-defined task dictionary is unpacked with the 'foo' keyword argument name, causing the exception:
-            #     `TypeError: TaskKeysTest.positional_or_keyword_custom_parameter_protocol() got multiple values for argument 'foo'`
-            # However, this is a user error. To fix it, the user must either: (i) remove the 'foo' key from the user-defined task dictionary;
-            # (ii) add a positional-only argument separator to the user-defined PyRosetta protocol input signature to make the 'foo' parameter
-            # positional-only (as in Test Case #3); or (iii) change the positional-or-keyword parameter name in the user-defined PyRosetta protocol
-            # input signature so that it doesn't clash with the 'foo' key from the user-defined task dictionary (as in Test Case #2).
+            # Catch exception in billiard subprocess raised due to the user-defined task dictionary containing the
+            # 'foo' key and the user-defined PyRosetta protocol defining the positional-or-keyword parameter 'foo'.
+            # When calling the user-defined PyRosetta protocol, PyRosettaCluster passes the `packed_pose` variable as
+            # a positional argument to the 'foo' parameter, and the user-defined task dictionary is unpacked with the
+            # 'foo' keyword argument name, causing the exception:
+            #     TypeError: TaskKeysTest.positional_or_keyword_custom_parameter_protocol() got multiple values for argument 'foo'
+            # However, this is a user error. To fix it, the user must either: (i) remove the 'foo' key from the user-defined
+            # task dictionary; (ii) add a positional-only argument separator to the user-defined PyRosetta protocol input
+            # signature to make the 'foo' parameter positional-only (as in Test Case #3); or (iii) change the positional-or-keyword
+            # parameter name in the user-defined PyRosetta protocol input signature so that it doesn't clash with the 'foo' key
+            # from the user-defined task dictionary (as in Test Case #2).
             run(**instance_kwargs, protocols=protocol, output_path=f"{output_path}_4")
         print(f"{_sep} End testing expected `TypeError` in billiard subprocess {_sep}")
 
@@ -3427,15 +3429,17 @@ class TaskKeysTest(unittest.TestCase):
         self.assertIn(parameter_name, inspect.signature(protocol).parameters)
         print(f"{_sep} Begin testing expected `TypeError` in billiard subprocess {_sep}")
         with self.assertRaises(WorkerError):
-            # Catch exception in billiard subprocess raised due to the user-defined task dictionary containing the 'packed_pose' key
-            # and the user-defined PyRosetta protocol defining the positional-or-keyword parameter 'packed_pose'. When calling the
-            # user-defined PyRosetta protocol, PyRosettaCluster passes the `packed_pose` variable as a positional argument to the 'packed_pose'
-            # parameter, and the user-defined task dictionary is unpacked with the 'packed_pose' keyword argument name, causing the exception:
-            #     `TypeError: TaskKeysTest.positional_or_keyword_parameter_protocol() got multiple values for argument 'packed_pose'`
-            # However, this is a user error. To fix it, the user must either: (i) remove the 'packed_pose' key from the user-defined task dictionary;
-            # (ii) add a positional-only argument separator to the user-defined PyRosetta protocol input signature to make the 'packed_pose' parameter
-            # positional-only (as in Test Case #5); or (iii) change the positional-or-keyword parameter name in the user-defined PyRosetta protocol
-            # input signature so that it doesn't clash with the 'packed_pose' key from the user-defined task dictionary (as in Test Case #2).
+            # Catch exception in billiard subprocess raised due to the user-defined task dictionary containing the
+            # 'packed_pose' key and the user-defined PyRosetta protocol defining the positional-or-keyword parameter 'packed_pose'.
+            # When calling the user-defined PyRosetta protocol, PyRosettaCluster passes the `packed_pose` variable as a positional
+            # argument to the 'packed_pose' parameter, and the user-defined task dictionary is unpacked with the 'packed_pose'
+            # keyword argument name, causing the exception:
+            #     TypeError: TaskKeysTest.positional_or_keyword_parameter_protocol() got multiple values for argument 'packed_pose'
+            # However, this is a user error. To fix it, the user must either: (i) remove the 'packed_pose' key from the
+            # user-defined task dictionary; (ii) add a positional-only argument separator to the user-defined PyRosetta protocol
+            # input signature to make the 'packed_pose' parameter positional-only (as in Test Case #5); or (iii) change the
+            # positional-or-keyword parameter name in the user-defined PyRosetta protocol input signature so that it doesn't clash
+            # with the 'packed_pose' key from the user-defined task dictionary (as in Test Case #2).
             run(**instance_kwargs, protocols=protocol, output_path=f"{output_path}_6")
         print(f"{_sep} End testing expected `TypeError` in billiard subprocess {_sep}")
 
