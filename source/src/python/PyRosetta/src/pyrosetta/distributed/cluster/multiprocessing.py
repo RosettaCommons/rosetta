@@ -156,6 +156,7 @@ def target(
     client_repr: str,
     masked_key: Optional[bytes],
     task_id: str,
+    /,
     **pyrosetta_init_kwargs: Dict[str, Any],
 ) -> None:
     """A wrapper function for a user-provided PyRosetta protocol."""
