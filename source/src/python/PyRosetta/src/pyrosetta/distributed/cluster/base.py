@@ -297,8 +297,7 @@ def capture_task_metadata(func: M) -> M:
         protocols_key: str,
         decoy_ids: List[int],
         serializer: S,
-        /,
-        **kwargs: Dict[Any, Any],
+        kwargs: Dict[Any, Any],
     ) -> Any:
         """Wrapper function to capture_task_metadata."""
 
@@ -339,7 +338,7 @@ def capture_task_metadata(func: M) -> M:
             protocols_key,
             decoy_ids,
             serializer,
-            **kwargs,
+            kwargs,
         )
 
     return cast(M, wrapper)

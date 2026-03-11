@@ -81,8 +81,7 @@ def user_protocol(
     packed_pose: PackedPose,
     protocol: Callable[..., Any],
     ignore_errors: bool,
-    /,
-    **kwargs: Dict[Any, Any],
+    kwargs: Dict[Any, Any],
 ) -> Any:
     """Run the user-provided PyRosetta protocol."""
     with tempfile.TemporaryDirectory() as tmp_path:
@@ -105,11 +104,10 @@ def run_protocol(
     protocols_key: str,
     decoy_ids: List[int],
     serializer: S,
-    /,
-    **kwargs: Dict[Any, Any],
+    kwargs: Dict[Any, Any],
 ) -> List[Tuple[bytes, bytes]]:
     """Parse the user-provided PyRosetta protocol results."""
-    result = user_protocol(packed_pose, protocol, ignore_errors, **kwargs)
+    result = user_protocol(packed_pose, protocol, ignore_errors, kwargs)
     results = _parse_protocol_results(result, kwargs, protocol_name, protocols_key, decoy_ids, serializer)
 
     return results
@@ -156,7 +154,6 @@ def target(
     client_repr: str,
     masked_key: Optional[bytes],
     task_id: str,
-    /,
     **pyrosetta_init_kwargs: Dict[str, Any],
 ) -> None:
     """A wrapper function for a user-provided PyRosetta protocol."""
@@ -182,7 +179,7 @@ def target(
         protocols_key,
         decoy_ids,
         serializer,
-        **kwargs,
+        kwargs,
     )
     _validate_residue_type_sets(
         _get_residue_type_set(), client_residue_type_set,

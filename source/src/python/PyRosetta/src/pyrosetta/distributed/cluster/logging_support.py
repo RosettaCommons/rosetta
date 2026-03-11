@@ -292,7 +292,6 @@ def setup_target_logging(func: L) -> L:
         client_repr: str,
         masked_key: bytes,
         task_id: str,
-        /,
         **pyrosetta_init_kwargs: Dict[str, Any],
     ) -> Any:
         """Wrapper function to setup_target_logging."""
