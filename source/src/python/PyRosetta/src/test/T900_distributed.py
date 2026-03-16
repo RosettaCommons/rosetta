@@ -112,6 +112,7 @@ distributed_cluster_test_cases = [
     "pyrosetta.tests.distributed.cluster.test_smoke.RetriesTest.test_retries_succeed_on_last_retry",
     "pyrosetta.tests.distributed.cluster.test_smoke.RetriesTest.test_no_retries",
     "pyrosetta.tests.distributed.cluster.test_smoke.RetriesTest.test_retries_api",
+    "pyrosetta.tests.distributed.cluster.test_smoke.TaskKeysTest.test_task_keys",
     "pyrosetta.tests.distributed.cluster.test_logging.LoggingTest.test_logging",
     "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_minimizer_nstruct",
     "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_minimizer_nstruct_filter_results",
