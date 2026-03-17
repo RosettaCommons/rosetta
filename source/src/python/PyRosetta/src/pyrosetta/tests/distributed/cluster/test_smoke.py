@@ -3497,6 +3497,7 @@ class WorkerPreemptionTest(unittest.TestCase):
         cls.scorefile_name = "scores.json"
         cls.dry_run = False # Must be `False` for `WorkerPreemptionTest` test case to read the output scorefile
         cls.save_all = True # Must be `True` for `WorkerPreemptionTest` test case to preempt worker processes mid-trajectory using the `iterate` method
+        cls.simulation_records_in_scorefile = True # Must be `True` for `WorkerPreemptionTest` test case to read the output scorefile
         cls.default_instance_kwargs = dict(
             tasks=WorkerPreemptionTest.create_tasks,
             input_packed_pose=io.pose_from_sequence("ACDEFGHIKLMNPQRSTVWY" * 50),
@@ -3519,7 +3520,7 @@ class WorkerPreemptionTest(unittest.TestCase):
             project_name="PyRosettaCluster_Tests",
             simulation_name=uuid.uuid4().hex,
             environment=None,
-            simulation_records_in_scorefile=False,
+            simulation_records_in_scorefile=cls.simulation_records_in_scorefile,
             decoy_dir_name="decoys",
             logs_dir_name="logs",
             ignore_errors=False,
@@ -3629,6 +3630,7 @@ class WorkerPreemptionTest(unittest.TestCase):
         )
         self.assertFalse(getattr(prc, "dry_run", None))
         self.assertTrue(getattr(prc, "save_all", None))
+        self.assertTrue(getattr(prc, "simulation_records_in_scorefile", None))
         if task_registry is None:
             self.assertEqual(prc.registry, None)
         elif task_registry == "disk":
@@ -3669,6 +3671,13 @@ class WorkerPreemptionTest(unittest.TestCase):
             _n_expected_results,
             msg=f"Task chains did not run to completion with {n_non_preemptible_workers} non-preemptible workers.",
         )
+        # Assert that full simulation records do not save the 'max_task_replicas' or 'task_registry' instance attributes
+        with open(scorefile, "r") as f:
+            for line in f:
+                record = json.loads(line)
+                for entry in ("instance", "metadata", "scores"):
+                    self.assertNotIn("max_task_replicas", record[entry])
+                    self.assertNotIn("task_registry", record[entry])
 
     def test_disk_task_registry(self):
         self.simulate_worker_preemption(
