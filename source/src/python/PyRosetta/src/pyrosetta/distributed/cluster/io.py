@@ -95,6 +95,8 @@ class IO(Generic[G]):
         instance_state.pop("clients", None)
         instance_state.pop("output_init_file", None)
         instance_state.pop("logging_address", None)
+        instance_state.pop("max_task_replicas", None)
+        instance_state.pop("task_registry", None)
         instance_kwargs = self.serializer.deepcopy_kwargs(instance_state)
         for i in self.__attrs_attrs__:
             if not i.init:
