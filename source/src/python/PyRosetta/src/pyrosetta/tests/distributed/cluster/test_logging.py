@@ -202,7 +202,3 @@ class LoggingTest(unittest.TestCase):
                     )
                     self.assertIn(expected_msg, warning_msgs)
         params_dir.cleanup()
-
-
-# if __name__ == "__main__":
-#     unittest.main(verbosity=2)
