@@ -319,6 +319,41 @@ Args:
         initialization options and by relativization of any input files and directory paths
         to the current working directory from which the task is running.
         Default: True
+    max_task_replicas: An `int` (≥0) or `None` object to set the replication factor of tasks on
+        Dask workers within the network (only via Dask's best effort). If `None`, then attempt
+        to replicate each task on each Dask worker; tasks are automatically deleted from each Dask worker
+        upon completion. Task replication improves resilience of the simulation when compute resources
+        executing tasks are preempted midway through a user-provided PyRosetta protocol (e.g., due to
+        using spot instances or backfill queues), so scattered data can be recovered. If a Dask worker
+        is preempted during task execution, then the number of task retries is controlled by the Dask
+        configuration parameter `distributed.scheduler.allowed-failures`, which may be manually
+        configured prior to the simulation. Dask worker memory limits may also need to be increased
+        to achieve the desired replication factor (see `memory` keyword argument). Using task replicas
+        requires that Dask's Active Memory Manager is disabled, since replicated tasks consume additional
+        memory per Dask worker. Task size in memory is dominated by the input `PackedPose` object; a
+        rough estimate of additional memory usage is ~1 MB/task for a 500 residue protein. Task retries
+        are only appropriate when user-provided PyRosetta protocols are side effect-free upon preemption,
+        wherein tasks can be restarted without producing inconsistent external states if preempted midway
+        through the protocol. See https://distributed.dask.org/en/stable/api.html#distributed.Client.replicate
+        and https://docs.dask.org/en/stable/configuration.html for more information.
+        Default: 0
+    task_registry: A `None` or `str` object of either "disk" or "memory". If "disk" is provided, then
+        write the task registry to disk. If "memory" is provided, then keep the task registry in memory.
+        Maintaining a task registry improves resilience of the simulation when compute resources executing
+        tasks are preempted midway through a user-provided PyRosetta protocol (e.g., due to using
+        spot instances or backfill queues); if scattered data cannot be recovered (see `max_task_replicas`
+        keyword argument), then the task will be automatically resubmitted using the task input arguments
+        cached in the task registry. If "memory" is provided, then task input arguments consume memory on the
+        head node process, which is appropriate with fewer tasks (e.g., debugging pipelines). If "disk" is
+        provided, then task input arguments consume disk space (in the `scratch_dir` instance attribute),
+        which is appropriate for production simulations. Task size is dominated by the input `PackedPose`
+        object; a rough estimate of additional disk or memory usage is ~1 MB/task for a 500 residue protein.
+        Completed tasks are automatically deleted from the task registry upon task completion. If `None` is
+        provided, then the task registry is not created, which is appropriate for non-preemptible compute
+        resources. Task resubmissions are only appropriate when user-provided PyRosetta protocols are side
+        effect-free upon preemption, wherein tasks can be restarted without producing inconsistent external
+        states if preempted midway through the protocol.
+        Default: None
     author: An optional `str` object specifying the author(s) of the simulation that is
         written to the full simulation records and the PyRosetta initialization '.init' file.
         Default: ""
@@ -367,6 +402,7 @@ import logging
 import os
 import uuid
 
+from concurrent.futures import CancelledError
 from datetime import datetime
 from pyrosetta.distributed.cluster.base import TaskBase, _get_residue_type_set
 from pyrosetta.distributed.cluster.config import get_environment_manager
@@ -396,6 +432,7 @@ from pyrosetta.distributed.cluster.logging_support import LoggingSupport, Masked
 from pyrosetta.distributed.cluster.multiprocessing import user_spawn_thread
 from pyrosetta.distributed.cluster.security import SecurityIO
 from pyrosetta.distributed.cluster.serialization import NonceCache, Serialization
+from pyrosetta.distributed.cluster.task_registry import DiskTaskRegistry, MemoryTaskRegistry, UserArgs
 from pyrosetta.distributed.cluster.utilities import SchedulerManager
 from pyrosetta.distributed.cluster.validators import (
     _validate_dir,
@@ -403,6 +440,7 @@ from pyrosetta.distributed.cluster.validators import (
     _validate_float,
     _validate_int,
     _validate_logging_address,
+    _validate_max_task_replicas,
     _validate_min_len,
     _validate_output_init_file,
     _validate_scorefile_name,
@@ -739,6 +777,39 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         validator=attr.validators.instance_of(bool),
         converter=_parse_norm_task_options,
     )
+    max_task_replicas = attr.ib(
+        type=Optional[int],
+        default=0,
+        validator=[
+            _validate_max_task_replicas,
+            attr.validators.optional(attr.validators.instance_of(int))
+        ],
+    )
+    task_registry = attr.ib(
+        type=Optional[str],
+        default=None,
+        validator=[
+            attr.validators.optional(attr.validators.instance_of(str)),
+            attr.validators.in_([None, "disk", "memory"]),
+        ],
+    )
+    task_registry_dir = attr.ib(
+        type=Optional[str],
+        default=attr.Factory(
+            lambda self: os.path.join(
+                self.scratch_dir,
+                "_".join(
+                    [
+                        "task_registry",
+                        self.project_name.replace(" ", "-"),
+                        self.simulation_name.replace(" ", "-"),
+                    ]
+                ),
+            ) if self.task_registry == "disk" else None,
+            takes_self=True,
+        ),
+        validator=attr.validators.optional(attr.validators.instance_of(str)),
+    )
     yield_results = attr.ib(
         type=bool,
         init=False,
@@ -887,7 +958,6 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         self._cache_toml()
         self._write_environment_file(self.environment_file)
         self._write_init_file()
-        self.serializer = Serialization(compression=self.compression)
         self.clients_dict = self._setup_clients_dict()
         self.with_nonce = self._setup_with_nonce()
         self.serializer = Serialization(
@@ -899,10 +969,47 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             instance_id=self.instance_id,
             max_nonce=self.max_nonce,
         ) if self.with_nonce else None
+        if self.task_registry == "disk":
+            self.registry = DiskTaskRegistry(
+                instance_id=self.instance_id,
+                compression=self.compression,
+                task_registry_dir=self.task_registry_dir,
+            )
+        elif self.task_registry == "memory":
+            self.registry = MemoryTaskRegistry(
+                instance_id=self.instance_id,
+                compression=self.compression,
+            )
+        else:
+            self.registry = None
+
+    def _get_submit_kwargs(
+        self,
+        resources: Optional[Dict[Any, Any]] = None,
+        priority: Optional[int] = None,
+        retries: Optional[int] = None,
+    ) -> Dict[str, Any]:
+        """Setup `Client.submit` keyword arguments."""
+        submit_kwargs = {"pure": False}
+        # Omit resources keyword argument for distributed versions <2.1.0
+        # or use default if user specifies `resources=None` in distributed versions >=2.1.0
+        if resources is not None:
+            submit_kwargs["resources"] = resources
+        # Omit priority keyword argument for distributed versions <1.21.0
+        # or use default if user specifies `priorities=None` in distributed versions >=1.21.0
+        if priority is not None:
+            submit_kwargs["priority"] = priority
+        # Omit retries keyword argument for distributed versions <1.20.0
+        # or use default if user specifies `retries=None` for distributed versions >=1.20.0
+        if retries is not None:
+            submit_kwargs["retries"] = retries
+
+        return submit_kwargs
 
     def _create_future(
         self,
         client: Client,
+        clients_index: int,
         protocol_name: str,
         compressed_protocol: bytes,
         compressed_packed_pose: bytes,
@@ -917,36 +1024,53 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         """Scatter data and return submitted 'user_spawn_thread' future."""
         task_id = uuid.uuid4().hex
         masked_key = MaskedBytes(derive_task_key(passkey, task_id))
-        scatter = client.scatter(
-            (
-                protocol_name,
-                compressed_protocol,
-                compressed_packed_pose,
-                compressed_kwargs,
-                pyrosetta_init_kwargs,
-                repr(client),
-                extra_args,
-                masked_key,
-                task_id,
-            ),
-            broadcast=False,
-            hash=False,
+        user_args = UserArgs(
+            protocol_name=protocol_name,
+            compressed_protocol=compressed_protocol,
+            compressed_packed_pose=compressed_packed_pose,
+            compressed_kwargs=compressed_kwargs,
+            pyrosetta_init_kwargs=pyrosetta_init_kwargs,
+            client_repr=repr(client),
+            extra_args=extra_args,
+            masked_key=masked_key,
+            task_id=task_id,
         )
-        submit_kwargs = {"pure": False}
-        # Omit resources keyword argument for distributed versions <2.1.0
-        # or use default if user specifies `resources=None` in distributed versions >=2.1.0
-        if resource is not None:
-            submit_kwargs["resources"] = resource
-        # Omit priority keyword argument for distributed versions <1.21.0
-        # or use default if user specifies `priorities=None` in distributed versions >=1.21.0
-        if priority is not None:
-            submit_kwargs["priority"] = priority
-        # Omit retries keyword argument for distributed versions <1.20.0
-        # or use default if user specifies `retries=None` for distributed versions >=1.20.0
-        if retry is not None:
-            submit_kwargs["retries"] = retry
+        scatter = client.scatter(user_args, broadcast=False, hash=False)
+        if self.max_task_replicas != 0:
+            client.replicate(scatter, n=self.max_task_replicas)
+        submit_kwargs = self._get_submit_kwargs(resources=resource, priority=priority, retries=retry)
+        future = client.submit(user_spawn_thread, scatter, **submit_kwargs)
+        if self.task_registry:
+            self.registry.set(
+                future.key,
+                clients_index=clients_index,
+                user_args=user_args,
+                submit_kwargs=submit_kwargs,
+            )
 
-        return client.submit(user_spawn_thread, *scatter, **submit_kwargs)
+        return future
+
+    def _recreate_future(
+        self,
+        client: Client,
+        clients_index: int,
+        user_args: UserArgs,
+        submit_kwargs: Dict[str, Any],
+    ) -> Future:
+        """Re-scatter data and return submitted 'user_spawn_thread' future."""
+        scatter = client.scatter(user_args, broadcast=False, hash=False)
+        if self.max_task_replicas != 0:
+            client.replicate(scatter, n=self.max_task_replicas)
+        future = client.submit(user_spawn_thread, scatter, **submit_kwargs)
+        if self.task_registry:
+            self.registry.set(
+                future.key,
+                clients_index=clients_index,
+                user_args=user_args,
+                submit_kwargs=submit_kwargs,
+            )
+
+        return future
 
     def _run(
         self,
@@ -1070,15 +1194,17 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                 allowed automatic retries to all user-provided PyRosetta protocols. If `None`, then no explicit retries are
                 allowed. If not `None` and not an `int` object, then the length of the `retries` parameter must equal the number
                 of protocols passed to the `PyRosettaCluster().distribute` method, and each `int` value determines the number
-                of automatic retries the dask scheduler allows for that protocol's failed tasks. Allowing retries of failed tasks
-                may be useful if remote compute resources are subject to preemption (e.g., cloud spot instances or backfill
-                queues). Note that retries are only appropriate for user-provided PyRosetta protocols that are side effect-free
-                upon preemption, in which tasks can be restarted without producing inconsistent external states if preempted midway
-                through the protocol. Also note that if `PyRosettaCluster(ignore_errors=True)` is used, then protocols failing due
-                to standard Python exceptions or Rosetta segmentation faults will still be considered successes, and this
-                keyword argument parameter has no effect on them since these protocol errors are ignored. However, if a compute
-                resource executing tasks is reclaimed midway through a protocol, then the dask scheduler registers those tasks
-                as incomplete, and they may be retried a certain number of times based on this keyword argument parameter.
+                of automatic retries the Dask scheduler allows for that protocol's failed tasks. Allowing retries of failed tasks
+                may be useful if the user-provided protocol raises a standard Python exception or Rosetta throws a segmentation
+                fault in the billiard subprocess while the Dask worker remains alive and `PyRosettaCluster(ignore_errors=False)`.
+                If `PyRosettaCluster(ignore_errors=True)` is used, then protocols failing due to standard Python exceptions or
+                Rosetta segmentation faults will still be considered successes, and this keyword argument has no effect since
+                these protocol errors are ignored. Note that if a compute resource executing tasks is reclaimed midway through
+                a protocol, then the Dask scheduler registers those tasks as incomplete or cancelled, and retries are controlled
+                by the Dask configuration parameter `distributed.scheduler.allowed-failures`. When using preemptible resources
+                (e.g., spot instances or backfill queues), please increase Dask's `distributed.scheduler.allowed-failures`
+                configuration value to tolerate repeated Dask worker preemptions, and use `PyRosettaCluster(max_task_replices=...)`
+                and `PyRosettaCluster(task_registry=...)` keyword arguments for additional configurability of task retries.
                 See https://distributed.dask.org/en/latest/scheduling-state.html#task-state for more information.
                 Default: None
         """
@@ -1115,6 +1241,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             [
                 self._create_future(
                     clients[clients_index],
+                    clients_index,
                     protocol_name,
                     compressed_protocol,
                     compressed_input_packed_pose,
@@ -1135,9 +1262,33 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         for i, future in enumerate(seq, start=1):
             try:
                 results = future.result()
-            except KilledWorker as ex:
-                logging.error(ex)
+            except CancelledError as ex:
+                logging.error(f"{type(ex).__name__}: {ex}")
+                if self.task_registry:
+                    logging.info(
+                        f"Task '{future.key}' raised `CancelledError` upon gathering results. "
+                        + "Resubmitting task from task registry."
+                    )
+                    _task_record_values = self.registry.get(future.key)
+                    if _task_record_values is not None:
+                        clients_index, user_args, submit_kwargs = _task_record_values
+                        seq.add(
+                            self._recreate_future(
+                                clients[clients_index],
+                                clients_index,
+                                user_args,
+                                submit_kwargs,
+                            )
+                        )
+                        self.tasks_size += 1
+                        self._maybe_adapt(adaptive)
                 continue
+            except KilledWorker as ex:
+                logging.error(f"{type(ex).__name__}: {ex}")
+                continue
+            finally:
+                if self.task_registry:
+                    self.registry.pop(future.key)
             logging.info(
                 "Percent Complete = {0:0.5f} %".format((i / self.tasks_size) * 100.0)
             )
@@ -1167,6 +1318,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                     seq.add(
                         self._create_future(
                             clients[clients_index],
+                            clients_index,
                             protocol_name,
                             compressed_protocol,
                             compressed_packed_pose,
