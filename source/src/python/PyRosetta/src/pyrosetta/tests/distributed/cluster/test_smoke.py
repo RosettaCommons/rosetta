@@ -3455,8 +3455,9 @@ class WorkerPreemptionTest(unittest.TestCase):
     # otherwise task chains are terminated on client upon catching `KilledWorker` exceptions and test logic will fail.
     _allowed_failures = 9999
     _n_workers = 4 # Must be >1 for `WorkerPreemptionTest`
-    # `WorkerPreemptionTest._sleep_time` must be sufficient to allow Dask to have enough time to reschedule lost tasks on alive workers before the next worker preemption
-    # Empirically, the required sleep time depends on: the number of tasks in flight, the scheduler heartbeat, PyRosettaCluster overhead time (e.g., serializing data), etc.
+    # `WorkerPreemptionTest._sleep_time` must be sufficient to allow Dask to have enough time to reschedule lost tasks on alive workers
+    # before the next worker preemption. Empirically, the required sleep time depends on: the number of tasks in flight, the scheduler
+    # heartbeat, PyRosettaCluster overhead time (e.g., serializing data), etc.
     _sleep_time = 3
     _n_tasks = 4
     _n_protocols = 2
@@ -3496,7 +3497,7 @@ class WorkerPreemptionTest(unittest.TestCase):
         cls.client_1 = Client(cls.cluster_1)
         cls.scorefile_name = "scores.json"
         cls.dry_run = False # Must be `False` for `WorkerPreemptionTest` test case to read the output scorefile
-        cls.save_all = True # Must be `True` for `WorkerPreemptionTest` test case to preempt worker processes mid-trajectory using the `iterate` method
+        cls.save_all = True # Must be `True` for `WorkerPreemptionTest` test case to preempt Dask worker processes mid-trajectory
         cls.simulation_records_in_scorefile = True # Must be `True` for `WorkerPreemptionTest` test case to read the output scorefile
         cls.default_instance_kwargs = dict(
             tasks=WorkerPreemptionTest.create_tasks,
@@ -3539,14 +3540,22 @@ class WorkerPreemptionTest(unittest.TestCase):
             security=False,
             max_nonce=99999,
         )
-        print(f"{WorkerPreemptionTest._sep} Start testing worker preemption with expected 'Restarting worker'/'Removing worker' warnings {WorkerPreemptionTest._sep}")
+        print(
+            WorkerPreemptionTest._sep,
+            "Start testing worker preemption with expected 'Restarting worker'/'Removing worker' warnings",
+            WorkerPreemptionTest._sep,
+        )
 
     @classmethod
     def tearDownClass(cls):
         cls.client_1.close()
         cls.cluster_1.close()
         cls.workdir.cleanup()
-        print(f"{WorkerPreemptionTest._sep} End testing worker preemption with expected 'Restarting worker'/'Removing worker' warnings {WorkerPreemptionTest._sep}")
+        print(
+            WorkerPreemptionTest._sep,
+            "End testing worker preemption with expected 'Restarting worker'/'Removing worker' warnings",
+            WorkerPreemptionTest._sep,
+        )
 
     @staticmethod
     def create_tasks():
