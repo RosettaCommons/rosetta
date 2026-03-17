@@ -3593,7 +3593,7 @@ class WorkerPreemptionTest(unittest.TestCase):
         max_task_replicas=0,
         task_registry=None,
         n_non_preemptible_workers=2, # Must be < `WorkerPreemptionTest._n_workers`
-        verbose=True,
+        verbose=False,
     ):
         self.assertEqual(dask.config.get("distributed.scheduler.allowed-failures"), WorkerPreemptionTest._allowed_failures)
         self.assertFalse(dask.config.get("distributed.scheduler.active-memory-manager.start"))
