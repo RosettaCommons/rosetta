@@ -317,7 +317,6 @@ class Serialization(Generic[G]):
         validator=attr.validators.instance_of(int),
     )
 
-
     def __attrs_pre_init__(self) -> None:
         MessagePacking.__init__(self)
 
