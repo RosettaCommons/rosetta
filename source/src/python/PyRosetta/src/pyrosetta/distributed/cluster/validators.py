@@ -8,6 +8,19 @@
 
 __author__ = "Jason C. Klima"
 
+
+try:
+    import dask
+except ImportError:
+    print(
+        "Importing 'pyrosetta.distributed.cluster.validators' requires the "
+        + "third-party package 'dask' as a dependency!\n"
+        + "Please install this package into your python environment. "
+        + "For installation instructions, visit:\n"
+        + "https://pypi.org/project/dask/\n"
+    )
+    raise
+
 import logging
 import os
 
@@ -197,6 +210,24 @@ def _validate_min_len(self, attribute: str, value: Optional[List[Any]]) -> Optio
     if value is not None and len(value) < 1:
         raise ValueError(
             f"`{attribute}` must have at least one item if not `None`."
+        )
+
+
+def _validate_max_task_replicas(self, attribute: str, value: Optional[int]) -> Optional[NoReturn]:
+    """
+    Validate that the value is `None` or integers are greater than or equal to 0,
+    and that Dask's Active Memory Manager (AMM) policy is disabled.
+    """
+
+    if not (value is None or (isinstance(value, int) and value >= 0)):
+        raise ValueError(f"`{attribute}` must be `None` or a positive integer greater than or equal to 0. Received: {value}")
+    if (isinstance(value, int) and value > 0) and dask.config.get("distributed.scheduler.active-memory-manager.start"):
+        raise ValueError(
+            "Please disable Dask's Active Memory Manager to use task replicas. "
+            + "To accomlish this, run the following before instantiating `PyRosettaCluster` or any `distributed.Client` objects:\n"
+            + "    dask.config.set({'distributed.scheduler.active-memory-manager.start': False})\n"
+            + "For more information, see https://distributed.dask.org/en/stable/active_memory_manager.html#reducereplicas "
+            + "and https://docs.dask.org/en/stable/configuration.html"
         )
 
 
