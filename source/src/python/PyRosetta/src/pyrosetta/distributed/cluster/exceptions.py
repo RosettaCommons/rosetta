@@ -67,7 +67,7 @@ class InputFileError(TypeError):
 
     def __init__(self, obj: Any) -> NoReturn:
         super().__init__(
-            "The `input_file` argument value must be of type `str`, not of type {0}.".format(
+            "The `input_file` argument parameter must be of type `str`, not of type {0}.".format(
                 type(obj)
             )
         )
