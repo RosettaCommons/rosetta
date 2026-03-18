@@ -329,13 +329,14 @@ Args:
         configuration parameter `distributed.scheduler.allowed-failures`, which may be manually
         configured prior to the simulation. Dask worker memory limits may also need to be increased
         to achieve the desired replication factor (see `memory` keyword argument). Using task replicas
-        requires that Dask's Active Memory Manager is disabled, since replicated tasks consume additional
-        memory per Dask worker. Task size in memory is dominated by the input `PackedPose` object; a
-        rough estimate of additional memory usage is ~1 MB/task for a 500 residue protein. Task retries
-        are only appropriate when user-provided PyRosetta protocols are side effect-free upon preemption,
-        wherein tasks can be restarted without producing inconsistent external states if preempted midway
-        through the protocol. See https://distributed.dask.org/en/stable/api.html#distributed.Client.replicate
-        and https://docs.dask.org/en/stable/configuration.html for more information.
+        requires that either Dask's `ReduceReplicas` policy is disabled or that Dask's entire Active
+        Memory Manager is disabled, since replicated tasks consume additional memory per Dask worker.
+        Task size in memory is dominated by the input `PackedPose` object; a rough estimate of additional
+        memory usage is ~1 MB/task for a 500 residue protein. Task retries are only appropriate when
+        user-provided PyRosetta protocols are side effect-free upon preemption, wherein tasks can be
+        restarted without producing inconsistent external states if preempted midway through the protocol.
+        See https://distributed.dask.org/en/stable/api.html#distributed.Client.replicate and
+        https://docs.dask.org/en/stable/configuration.html for more information.
         Default: 0
     task_registry: A `None` or `str` object of either "disk" or "memory". If "disk" is provided, then
         write the task registry to disk. If "memory" is provided, then keep the task registry in memory.
