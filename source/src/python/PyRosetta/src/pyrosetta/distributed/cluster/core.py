@@ -1263,14 +1263,11 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             try:
                 results = future.result()
             except CancelledError as ex:
-                logging.error(f"{type(ex).__name__}: {ex}")
+                _err_msg = f"Task '{future.key}' raised `CancelledError` upon gathering results"
                 if self.task_registry:
-                    logging.info(
-                        f"Task '{future.key}' raised `CancelledError` upon gathering results. "
-                        + "Resubmitting task from task registry."
-                    )
                     _task_record_values = self.registry.get(future.key)
                     if _task_record_values is not None:
+                        logging.info(f"{type(ex).__name__}: {ex}. {_err_msg}. Resubmitting task from task registry and continuing.")
                         clients_index, user_args, submit_kwargs = _task_record_values
                         seq.add(
                             self._recreate_future(
@@ -1282,7 +1279,11 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                         )
                         self.tasks_size += 1
                         self._maybe_adapt(adaptive)
-                continue
+                        continue
+                    else:
+                        raise RuntimeError(f"{_err_msg} and task arguments could not be recovered from the task registry.") from ex
+                else:
+                    raise RuntimeError(f"{_err_msg}. Please enable the task registry to resubmit this task.") from ex
             except KilledWorker as ex:
                 logging.error(f"{type(ex).__name__}: {ex}")
                 continue
