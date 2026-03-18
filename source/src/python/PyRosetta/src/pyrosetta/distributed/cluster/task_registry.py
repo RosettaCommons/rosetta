@@ -123,6 +123,11 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
         validator=attr.validators.instance_of(str),
     )
 
+    def __attrs_post_init__(self) -> None:
+        if not os.path.isdir(self.task_registry_dir):
+            logging.info(f"Creating on-disk task registry directory: '{self.task_registry_dir}'")
+            os.mkdir(self.task_registry_dir)
+
     def __contains__(self, key: str) -> bool:
         task_file = self._get_task_file(key, makedirs=False)
 
@@ -184,7 +189,7 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
         return total_size
 
     def set(self, key: str, **kwargs: Any) -> None:
-        """Set a task record into the task registry."""
+        """Set a task record into the on-disk task registry."""
         task_file = self._get_task_file(key, makedirs=True)
         if os.path.isfile(task_file):
             logging.warning(f"Task future key already exists in the on-disk task registry: '{key}'")
@@ -192,7 +197,7 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
             f.write(self.seal(TaskRecord(**kwargs)))
 
     def get(self, key: str, default: None = None) -> Optional[UnpackedTaskRecord]:
-        """Get a task record from the task registry."""
+        """Get a task record from the on-disk task registry."""
         task_file = self._get_task_file(key, makedirs=False)
         if not os.path.isfile(task_file):
             logging.error(f"Task future key was not found in the on-disk task registry: '{key}'")
@@ -207,7 +212,7 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
         return self.to_tuple(task_record)
 
     def pop(self, key: str) -> None:
-        """Remove a task record from the task registry."""
+        """Remove a task record from the on-disk task registry."""
         task_file = self._get_task_file(key, makedirs=False)
         if os.path.isfile(task_file):
             if os.path.basename(task_file).startswith("user_spawn_thread-"):
@@ -222,6 +227,17 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
                 )
         else:
             logging.warning(f"Aborting deletion of a task registry file because it could not be located: '{task_file}'")
+
+    def clear(self) -> None:
+        """Clear all task records from the on-disk task registry."""
+        keys = list(self)
+        total_size = len(keys)
+        if total_size > 0:
+            logging.warning(f"Clearing {total_size} task records from the on-disk task registry: '{self.task_registry_dir}'")
+            for key in keys:
+                self.pop(key)
+        else:
+            logging.info(f"{total_size} remaining task records in the on-disk task registry.")
 
 
 @attr.s(kw_only=True, slots=True, frozen=False)
@@ -254,13 +270,13 @@ class MemoryTaskRegistry(TaskRegistryBase[G]):
         return total_size
 
     def set(self, key: str, **kwargs: Any) -> None:
-        """Set a task record into the task registry."""
+        """Set a task record into the in-memory task registry."""
         if key in self.registry:
             logging.warning(f"Task future key already exists in the in-memory task registry: '{key}'")
         self.registry[key] = self.seal(TaskRecord(**kwargs))
 
     def get(self, key: str, default: None = None) -> Optional[UnpackedTaskRecord]:
-        """Get a task record from the task registry."""
+        """Get a task record from the in-memory task registry."""
         if key not in self.registry:
             logging.error(f"Task future key was not found in the in-memory task registry: '{key}'")
             return default
@@ -271,5 +287,14 @@ class MemoryTaskRegistry(TaskRegistryBase[G]):
             return default
 
     def pop(self, key: str) -> None:
-        """Remove a task record from the task registry."""
+        """Remove a task record from the in-memory task registry."""
         self.registry.pop(key, None)
+
+    def clear(self) -> None:
+        """Clear all task records from the in-memory task registry."""
+        total_size = len(self)
+        if total_size > 0:
+            logging.warning(f"Clearing {total_size} task records from the in-memory task registry.")
+            self.registry.clear()
+        else:
+            logging.info(f"{total_size} remaining task records in the in-memory task registry.")

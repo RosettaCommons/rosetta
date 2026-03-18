@@ -795,23 +795,6 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             attr.validators.in_([None, "disk", "memory"]),
         ],
     )
-    task_registry_dir = attr.ib(
-        type=Optional[str],
-        default=attr.Factory(
-            lambda self: os.path.join(
-                self.scratch_dir,
-                "_".join(
-                    [
-                        "task_registry",
-                        self.project_name.replace(" ", "-"),
-                        self.simulation_name.replace(" ", "-"),
-                    ]
-                ),
-            ) if self.task_registry == "disk" else None,
-            takes_self=True,
-        ),
-        validator=attr.validators.optional(attr.validators.instance_of(str)),
-    )
     yield_results = attr.ib(
         type=bool,
         init=False,
@@ -940,6 +923,18 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         ),
         init=False,
         validator=attr.validators.instance_of(str),
+    )
+    task_registry_dir = attr.ib(
+        type=Optional[str],
+        default=attr.Factory(
+            lambda self: (
+                os.path.join(self.scratch_dir, f"task_registry-{self.instance_id}")
+                if self.task_registry == "disk"
+                else None
+            ),
+            takes_self=True,
+        ),
+        validator=attr.validators.optional(attr.validators.instance_of(str)),
     )
     pyrosetta_init_args = attr.ib(
         type=list,
@@ -1340,6 +1335,8 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                     self.tasks_size += 1
                     self._maybe_adapt(adaptive)
 
+        if self.task_registry:
+            self.registry.clear()
         self._close_socket_listener(clients)
         self._maybe_teardown(clients, cluster)
         self._close_logger()
