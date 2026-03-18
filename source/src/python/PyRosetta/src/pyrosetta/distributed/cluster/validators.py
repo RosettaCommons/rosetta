@@ -221,14 +221,24 @@ def _validate_max_task_replicas(self, attribute: str, value: Optional[int]) -> O
 
     if not (value is None or (isinstance(value, int) and value >= 0)):
         raise ValueError(f"`{attribute}` must be `None` or a positive integer greater than or equal to 0. Received: {value}")
-    if (isinstance(value, int) and value > 0) and dask.config.get("distributed.scheduler.active-memory-manager.start"):
-        raise ValueError(
-            "Please disable Dask's Active Memory Manager to use task replicas. "
-            + "To accomlish this, run the following before instantiating `PyRosettaCluster` or any `distributed.Client` objects:\n"
-            + "    dask.config.set({'distributed.scheduler.active-memory-manager.start': False})\n"
-            + "For more information, see https://distributed.dask.org/en/stable/active_memory_manager.html#reducereplicas "
-            + "and https://docs.dask.org/en/stable/configuration.html"
+    if isinstance(value, int) and value > 0:
+        amm_start = dask.config.get("distributed.scheduler.active-memory-manager.start")
+        amm_policies = dask.config.get("distributed.scheduler.active-memory-manager.policies") or []
+        reduce_replicas_enabled = any(
+            policy.get("class") == "distributed.active_memory_manager.ReduceReplicas"
+            for policy in amm_policies
         )
+        if amm_start and reduce_replicas_enabled:
+            raise ValueError(
+                "To use task replicas, please (1) disable Dask's `ReduceReplicas` policy, or (2) disable the Active Memory Manager (AMM) entirely. "
+                + "For (1), run the following (before instantiating `PyRosettaCluster` or any `distributed.Client` objects):\n"
+                + "    dask.config.set({'distributed.scheduler.active-memory-manager.policies': [...]}\n"
+                + "Ensure the `[...]` list does not contain the entry: `{'class': 'distributed.active_memory_manager.ReduceReplicas'}`"
+                + "For (2), run the following (before instantiating `PyRosettaCluster` or any `distributed.Client` objects):\n"
+                + "    dask.config.set({'distributed.scheduler.active-memory-manager.start': False})\n"
+                + "For more information, see https://distributed.dask.org/en/stable/active_memory_manager.html#reducereplicas "
+                + "and https://docs.dask.org/en/stable/configuration.html"
+            )
 
 
 def _validate_float(
