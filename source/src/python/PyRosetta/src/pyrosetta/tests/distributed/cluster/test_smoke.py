@@ -3221,7 +3221,7 @@ class RetriesTest(unittest.TestCase):
         with self.assertRaises(ValueError) as ex:
             _ = list(prc_iterator)
         self.assertIn(
-            "The `retries` keyword argument value must be of type `int`, `list`, or `tuple`.",
+            "The `retries` keyword argument parameter must be of type `int`, `list`, or `tuple`.",
             str(ex.exception),
             msg="Incorrect error message."
         )
@@ -3238,7 +3238,7 @@ class RetriesTest(unittest.TestCase):
         with self.assertRaises(ValueError) as ex:
             _ = list(prc_generator)
         self.assertIn(
-            "The `retries` keyword argument value must have the same length as the number of user-defined PyRosetta protocols!",
+            "The `retries` keyword argument parameter must have the same length as the number of user-defined PyRosetta protocols!",
             str(ex.exception),
             msg="Incorrect error message."
         )
@@ -3255,7 +3255,7 @@ class RetriesTest(unittest.TestCase):
                 retries=-1, # Test validation error with negative integer
             )
         self.assertIn(
-            "If the `retries` keyword argument value is of type `int`, it must be greater than or equal to 0.",
+            "If the `retries` keyword argument parameter is of type `int`, it must be greater than or equal to 0.",
             str(ex.exception),
             msg="Incorrect error message."
         )
@@ -3272,7 +3272,7 @@ class RetriesTest(unittest.TestCase):
                 )
             )
         self.assertIn(
-            "The `retries` keyword argument value must be of type `int`, `list`, or `tuple`.",
+            "The `retries` keyword argument parameter must be of type `int`, `list`, or `tuple`.",
             str(ex.exception),
             msg="Incorrect error message."
         )
