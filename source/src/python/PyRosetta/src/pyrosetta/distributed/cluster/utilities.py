@@ -58,7 +58,7 @@ class SchedulerManager(Generic[G]):
             return dict(enumerate(self.clients, start=0))
         else:
             raise ValueError(
-                "The PyRosettaCluster `client` and `clients` attribute parameters may not both be set. Received:\n" 
+                "The PyRosettaCluster `client` and `clients` keyword arguments may not both be set. Received:\n" 
                 + f"PyRosettaCluster().client: {self.client}\n"
                 + f"PyRosettaCluster().clients: {self.clients}\n"
             )
@@ -132,7 +132,7 @@ class SchedulerManager(Generic[G]):
                         "Use of `PyRosettaCluster(security=True)` may require Python version 3.8 or higher to use the "
                         + "'cryptography' package. Please upgrade your python version, or otherwise provide a dask "
                         + "`Security()` object (recommended) or `False` (not recommended unless using a firewall) "
-                        + "to the PyRosettaCluster `security` keyword argument parameter."
+                        + "to the PyRosettaCluster `security` keyword argument."
                     )
                 try:  # Uses `cryptography` package: https://distributed.dask.org/en/latest/_modules/distributed/security.html#Security.temporary
                     cluster = cluster_func(**_cluster_kwargs)
@@ -148,7 +148,7 @@ class SchedulerManager(Generic[G]):
                         + "protocols, which requires unpickling of the data received over the network. If not using "
                         + "a firewall, it is highly recommended to provide a dask `Security()` object (or `True` to "
                         + "automatically generate one with the 'cryptography' package) to the PyRosettaCluster "
-                        + "`security` keyword argument parameter. Alternatively, in order to generate a "
+                        + "`security` keyword argument. Alternatively, in order to generate a "
                         + "`Security()` object with OpenSSL, the `pyrosetta.distributed.cluster.generate_dask_tls_security()` "
                         + "function may also be used (see docstring for more information)."
                     )

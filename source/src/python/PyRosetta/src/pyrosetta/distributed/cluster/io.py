@@ -762,17 +762,17 @@ def get_poses_from_init_file(
 
     if not was_init_called():
         raise PyRosettaIsNotInitializedError(
-            f"Please first initialize PyRosetta with the 'init_file' argument parameter: '{init_file}'"
+            f"Please first initialize PyRosetta with the 'init_file' argument value: '{init_file}'"
         )
     if not isinstance(init_file, str):
-        raise TypeError(f"The 'init_file' argument parameter must be a `str` object. Received: {type(init_file)}")
+        raise TypeError(f"The 'init_file' argument value must be a `str` object. Received: {type(init_file)}")
     if init_file.endswith(".init.bz2"):
         with open(init_file, "rb") as fbz2:
             init_dict = PyRosettaInitFileReader.from_json(bz2.decompress(fbz2.read()).decode())
     elif init_file.endswith(".init"):
         init_dict = PyRosettaInitFileReader.read_json(init_file)
     else:
-        raise ValueError("The 'init_file' argument parameter must end with '.init' or '.init.bz2'.")
+        raise ValueError("The 'init_file' argument value must end with '.init' or '.init.bz2'.")
 
     metadata = init_dict["metadata"]
     poses = init_dict["poses"]

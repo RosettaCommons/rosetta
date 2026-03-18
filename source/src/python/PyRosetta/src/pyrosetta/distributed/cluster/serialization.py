@@ -68,7 +68,7 @@ G = TypeVar("G")
 def _parse_compression(obj: Any) -> Optional[Union[str, bool]]:
     """Parse the input `compression` attribute of `Serialization` class."""
     _error_msg = (
-        "The 'compression' keyword argument parameter must be one of the `str` objects "
+        "The 'compression' keyword argument value must be one of the `str` objects "
         + "'xz', 'zlib', or 'bz2', or an object of type `bool` or `NoneType`. Received: '{0}'"
     )
 
@@ -446,7 +446,7 @@ class Serialization(Generic[G]):
     def compress_packed_pose(self, packed_pose: Any) -> Union[NoReturn, None, bytes]:
         """
         Compress a `PackedPose` object with the custom serialization module. If the 'packed_pose' argument
-        parameter is `None`, then just return `None`.
+        value is `None`, then just return `None`.
 
         Args:
             packed_pose: the input `PackedPose` object to compress. If `None`, then just return `None`.
@@ -455,7 +455,7 @@ class Serialization(Generic[G]):
             A `bytes` object representing the compressed `PackedPose` object, or a `NoneType` object.
 
         Raises:
-            `TypeError` if the 'packed_pose' argument parameter is not of type `NoneType` or `PackedPose`.
+            `TypeError` if the 'packed_pose' argument value is not of type `NoneType` or `PackedPose`.
         """
         if packed_pose is None:
             compressed_packed_pose = None
@@ -463,7 +463,7 @@ class Serialization(Generic[G]):
             compressed_packed_pose = self.encoder(io.to_pickle(packed_pose))
         else:
             raise TypeError(
-                "The 'packed_pose' argument parameter must be of type `NoneType` or `PackedPose`."
+                "The 'packed_pose' argument value must be of type `NoneType` or `PackedPose`."
             )
 
         return compressed_packed_pose
@@ -472,7 +472,7 @@ class Serialization(Generic[G]):
     def decompress_packed_pose(self, compressed_packed_pose: Any) -> Union[NoReturn, None, PackedPose]:
         """
         Decompress a `bytes` object with the custom serialization module and secure implementation of the
-        `pickle` module. If the 'compressed_packed_pose' argument parameter is `None`, then just return `None`.
+        `pickle` module. If the 'compressed_packed_pose' argument value is `None`, then just return `None`.
 
         Args:
             compressed_packed_pose: the input `bytes` object to decompress. If `None`, then just return `None`.
@@ -481,7 +481,7 @@ class Serialization(Generic[G]):
             A `PackedPose` object representing the decompressed `bytes` object, or a `NoneType` object.
 
         Raises:
-            `TypeError` if the 'compressed_packed_pose' argument parameter is not of type `NoneType` or `bytes`.
+            `TypeError` if the 'compressed_packed_pose' argument value is not of type `NoneType` or `bytes`.
         """
         if compressed_packed_pose is None:
             packed_pose = None
@@ -489,7 +489,7 @@ class Serialization(Generic[G]):
             packed_pose = io.to_packed(SecureSerializerBase.secure_loads(self.decoder(compressed_packed_pose)))
         else:
             raise TypeError(
-                "The 'compressed_packed_pose' argument parameter must be of type `NoneType` or `bytes`."
+                "The 'compressed_packed_pose' argument value must be of type `NoneType` or `bytes`."
             )
 
         return packed_pose
@@ -519,12 +519,12 @@ class Serialization(Generic[G]):
             A `bytes` object representing the compressed `dict` object.
 
         Raises:
-            `TypeError` if the 'kwargs' argument parameter is not of type `dict`.
+            `TypeError` if the 'kwargs' argument value is not of type `dict`.
         """
         if isinstance(kwargs, dict):
             return self.dumps_object(kwargs)
         else:
-            raise TypeError("The 'kwargs' argument parameter must be of type `dict`.")
+            raise TypeError("The 'kwargs' argument value must be of type `dict`.")
 
     def decompress_kwargs(self, compressed_kwargs: bytes) -> Union[NoReturn, Dict[Any, Any]]:
         """
@@ -537,7 +537,7 @@ class Serialization(Generic[G]):
             A `dict` object representing the decompressed `bytes` object.
 
         Raises:
-            `TypeError` if the 'compressed_packed_pose' argument parameter is not of type `bytes`.
+            `TypeError` if the 'compressed_packed_pose' argument value is not of type `bytes`.
             `TypeError` if the returned kwargs is not of type `dict`.
         """
         if isinstance(compressed_kwargs, bytes):
@@ -546,7 +546,7 @@ class Serialization(Generic[G]):
                 raise TypeError(f"Decoded kwargs must be of type `dict`. Received: {type(kwargs)}")
             return kwargs
         else:
-            raise TypeError("The 'compressed_kwargs' argument parameter must be of type `bytes`.")
+            raise TypeError("The 'compressed_kwargs' argument value must be of type `bytes`.")
 
     def compress_object(self, obj: Any) -> bytes:
         """
@@ -571,12 +571,12 @@ class Serialization(Generic[G]):
             An object representing the decompressed `bytes` object.
 
         Raises:
-            `TypeError` if the 'compressed_obj' argument parameter is not of type `bytes`.
+            `TypeError` if the 'compressed_obj' argument value is not of type `bytes`.
         """
         if isinstance(compressed_obj, bytes):
             return self.loads_object(compressed_obj)
         else:
-            raise TypeError("The 'compressed_obj' argument parameter must be of type `bytes`.")
+            raise TypeError("The 'compressed_obj' argument value must be of type `bytes`.")
 
     @classmethod
     def deepcopy_kwargs(cls, kwargs: Any) -> Union[NoReturn, Dict[Any, Any]]:
@@ -591,9 +591,9 @@ class Serialization(Generic[G]):
             A deep copy of the `dict` object.
 
         Raises:
-            `TypeError` if the 'kwargs' argument parameter is not of type `dict`.
+            `TypeError` if the 'kwargs' argument value is not of type `dict`.
         """
         if isinstance(kwargs, dict):
             return cloudpickle.loads(cloudpickle.dumps(kwargs))
         else:
-            raise TypeError("The 'kwargs' argument parameter must be of type `dict`.")
+            raise TypeError("The 'kwargs' argument value must be of type `dict`.")

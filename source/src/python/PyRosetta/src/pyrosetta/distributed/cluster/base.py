@@ -161,7 +161,7 @@ class TaskBase(Generic[G]):
             return retries[_protocols_index]
 
     def _parse_resources(self, resources: Any) -> Any:
-        """Parse the resources keyword argument parameter."""
+        """Parse the `resources` keyword argument value."""
         _dask_version_threshold = (2, 1, 0)
         if __dask_version__ < _dask_version_threshold:
             if resources is not None:
@@ -179,7 +179,7 @@ class TaskBase(Generic[G]):
             return resources
 
     def _parse_priorities(self, priorities: Any) -> Any:
-        """Parse the priorities keyword argument parameter."""
+        """Parse the `priorities` keyword argument value."""
         _dask_version_threshold = (1, 21, 0)
         if __dask_version__ < _dask_version_threshold:
             if priorities is not None:
@@ -197,7 +197,7 @@ class TaskBase(Generic[G]):
             return priorities
 
     def _parse_retries(self, retries: Any) -> Any:
-        """Parse the retries keyword argument parameter."""
+        """Parse the `retries` keyword argument value."""
         _dask_version_threshold = (1, 20, 0)
         if __dask_version__ < _dask_version_threshold:
             if retries is not None:
