@@ -3599,7 +3599,7 @@ class WorkerPreemptionTest(unittest.TestCase):
                 print(f"Killed worker process ID: {_worker_pid}")
                 print(f"Killed worker: {_worker}")
         else:
-            print("Warning: no workers available to preempt! Continuing...")
+            print("Warning: no Dask workers available to preempt! Continuing without preemption.")
 
     def simulate_worker_preemption(
         self,
@@ -3657,8 +3657,8 @@ class WorkerPreemptionTest(unittest.TestCase):
             priorities=None,
             retries=None,
         )
-        # Start the simulation and keep shutting down workers while it is running
-        # using the `iterate` method to intervene periodically throughout the simulation
+        # Start the simulation and keep shutting down workers while it is running using the
+        # `PyRosettaCluster.generate` method to intervene periodically throughout the simulation
         self.assertGreaterEqual(WorkerPreemptionTest._sleep_time, 3)
         for _packed_pose, _kwargs in prc_iterator:
             if verbose:
@@ -3691,6 +3691,7 @@ class WorkerPreemptionTest(unittest.TestCase):
                 for entry in ("instance", "metadata", "scores"):
                     self.assertNotIn("max_task_replicas", record[entry])
                     self.assertNotIn("task_registry", record[entry])
+                break
 
     def test_disk_task_registry(self):
         self.simulate_worker_preemption(
