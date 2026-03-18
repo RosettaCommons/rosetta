@@ -2809,6 +2809,7 @@ class PrioritiesTest(unittest.TestCase):
             ]
             # Breadth-first task chains (first-in, first-out)
             breadth_first_priorities = [
+                None,
                 [0] * _n_protocols,
                 [25] * _n_protocols,
             ]
@@ -2828,7 +2829,10 @@ class PrioritiesTest(unittest.TestCase):
                 test_case += 1
             # Run test cases
             for test_case, priorities in priorities_test_cases.items():
-                output_path = os.path.join(workdir, "outputs" + "_".join(map(str, priorities)))
+                if isinstance(priorities, (tuple, list)):
+                    output_path = os.path.join(workdir, "outputs" + "_".join(map(str, priorities)))
+                else:
+                    output_path = os.path.join(workdir, "outputs" + f"_{priorities}")
                 instance_kwargs = dict(
                     tasks=create_tasks,
                     input_packed_pose=io.pose_from_sequence(sequence),
@@ -2894,14 +2898,14 @@ class PrioritiesTest(unittest.TestCase):
                 # Compute variance per task
                 task_variances = [numpy.var(pos) for pos in task_positions.values()]
                 # Compute mean variance
-                spread_metric = numpy.mean(task_variances)
+                spread_metric = float(numpy.mean(task_variances))
                 # Compute theoretical maximum variance
                 max_var = (len(sorted_results) - 1) ** 2 / 4
                 # Compute normalized variance metric
                 norm_variance = spread_metric / max_var
-                # Empirically, depth-first runs yield norm variance ~0.01-0.08 and breadth-first ~0.32-0.34.
-                # Therefore, the midpoint (~0.1894) robustly separates the two behaviors
-                norm_variance_threshold = 0.1894 # Empirically determined
+                # Empirically, depth-first runs yield norm variance ~0.01-0.08 and breadth-first ~0.16-0.34.
+                # Therefore, the midpoint (~0.12) separates the two behaviors
+                norm_variance_threshold = 0.12 # Empirically determined
                 _msg = ", ".join(
                     [
                         f"num_protocols={_n_protocols}",
