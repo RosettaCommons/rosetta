@@ -1268,7 +1268,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                 if self.task_registry:
                     _task_record_values = self.registry.get(future.key)
                     if _task_record_values is not None:
-                        logging.info(f"{type(ex).__name__}: {ex}. Resubmitting task from task registry and continuing.")
+                        logging.info(f"Caught exception {type(ex).__name__}: {ex}. Resubmitting task from task registry and continuing.")
                         clients_index, user_args, submit_kwargs = _task_record_values
                         seq.add(
                             self._recreate_future(
@@ -1290,7 +1290,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                         future.key, "Please enable the task registry to resubmit this task."
                     ) from ex
             except KilledWorker as ex:
-                logging.error(f"{type(ex).__name__}: {ex}")
+                logging.error(f"Caught exception {type(ex).__name__}: {ex}. Dropping task and continuing.")
                 continue
             finally:
                 if self.task_registry:
