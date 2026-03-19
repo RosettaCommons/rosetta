@@ -149,9 +149,7 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
             os.mkdir(self.task_registry_dir)
 
     def __contains__(self, key: str) -> bool:
-        task_file = self._get_task_file(key, makedirs=False)
-
-        return os.path.isfile(task_file)
+        return os.path.isfile(self._get_task_file(key, makedirs=False))
 
     def __len__(self) -> int:
         ext = self._get_file_ext()
