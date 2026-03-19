@@ -404,6 +404,7 @@ import os
 import uuid
 
 from concurrent.futures import CancelledError
+from dataclasses import asdict
 from datetime import datetime
 from pyrosetta.distributed.cluster.base import TaskBase, _get_residue_type_set
 from pyrosetta.distributed.cluster.config import get_environment_manager
@@ -1041,7 +1042,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             self.registry.set(
                 future.key,
                 clients_index=clients_index,
-                user_args=user_args,
+                user_args=UserArgs(**self.serializer.deepcopy_kwargs(asdict(user_args))),
                 submit_kwargs=submit_kwargs,
             )
 
@@ -1063,7 +1064,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             self.registry.set(
                 future.key,
                 clients_index=clients_index,
-                user_args=user_args,
+                user_args=UserArgs(**self.serializer.deepcopy_kwargs(asdict(user_args))),
                 submit_kwargs=submit_kwargs,
             )
 
