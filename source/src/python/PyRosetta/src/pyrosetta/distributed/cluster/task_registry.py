@@ -25,7 +25,7 @@ import logging
 import os
 import sys
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import (
     Any,
     Dict,
@@ -110,8 +110,28 @@ class TaskRegistryBase(Generic[G]):
 
         return task_record
 
-    def to_tuple(self, task_record: TaskRecord) -> Tuple[int, UserArgs, Dict[str, Any]]:
-        """Unpack a task registry entry."""
+    def deepcopy_user_args(self, user_args: UserArgs) -> UserArgs:
+        """
+        Deep copy a `UserArgs` dataclass to break in-memory references to any objects
+        that keep billiard subprocesses alive.
+        """
+        return UserArgs(**self.serializer.deepcopy_kwargs(asdict(user_args)))
+
+    def create_task_record(
+        self,
+        clients_index: int,
+        user_args: UserArgs,
+        submit_kwargs: Dict[str, Any],
+    ) -> TaskRecord:
+        """Create a task record."""
+        return TaskRecord(
+            clients_index=clients_index,
+            user_args=self.deepcopy_user_args(user_args),
+            submit_kwargs=submit_kwargs,
+        )
+
+    def unpack_task_record(self, task_record: TaskRecord) -> UnpackedTaskRecord:
+        """Unpack a task record."""
         return task_record.clients_index, task_record.user_args, task_record.submit_kwargs
 
 
@@ -194,10 +214,10 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
         if os.path.isfile(task_file):
             logging.warning(f"Task future key already exists in the on-disk task registry: '{key}'")
         with open(task_file, "wb") as f:
-            f.write(self.seal(TaskRecord(**kwargs)))
+            f.write(self.seal(self.create_task_record(**kwargs)))
 
     def get(self, key: str, default: None = None) -> Optional[UnpackedTaskRecord]:
-        """Get a task record from the on-disk task registry."""
+        """Get an unpacked task record from the on-disk task registry."""
         task_file = self._get_task_file(key, makedirs=False)
         if not os.path.isfile(task_file):
             logging.error(f"Task future key was not found in the on-disk task registry: '{key}'")
@@ -209,7 +229,7 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
                 logging.error(f"{type(ex).__name__}: Task record in the on-disk task registry is corrupted: '{key}'. {ex}")
                 return default
 
-        return self.to_tuple(task_record)
+        return self.unpack_task_record(task_record)
 
     def pop(self, key: str) -> None:
         """Remove a task record from the on-disk task registry."""
@@ -273,15 +293,15 @@ class MemoryTaskRegistry(TaskRegistryBase[G]):
         """Set a task record into the in-memory task registry."""
         if key in self.registry:
             logging.warning(f"Task future key already exists in the in-memory task registry: '{key}'")
-        self.registry[key] = self.seal(TaskRecord(**kwargs))
+        self.registry[key] = self.seal(self.create_task_record(**kwargs))
 
     def get(self, key: str, default: None = None) -> Optional[UnpackedTaskRecord]:
-        """Get a task record from the in-memory task registry."""
+        """Get an unpacked task record from the in-memory task registry."""
         if key not in self.registry:
             logging.error(f"Task future key was not found in the in-memory task registry: '{key}'")
             return default
         try:
-            return self.to_tuple(self.unseal(self.registry[key]))
+            return self.unpack_task_record(self.unseal(self.registry[key]))
         except Exception as ex:
             logging.error(f"{type(ex).__name__}: Task record in the in-memory task registry is corrupted: '{key}'. {ex}")
             return default
