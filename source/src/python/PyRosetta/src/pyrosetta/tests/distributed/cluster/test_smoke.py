@@ -20,9 +20,11 @@ import json
 import logging
 import numpy
 import os
+import psutil
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
 import random
+import signal
 import subprocess
 import sys
 import tempfile
@@ -3583,6 +3585,15 @@ class WorkerPreemptionTest(unittest.TestCase):
 
         Method adapted from: https://examples.dask.org/resilience.html#Suddenly-shutting-down-workers
         """
+        def _kill_process_tree(pid, sig=signal.SIGTERM):
+            try:
+                parent = psutil.Process(pid)
+                for child in parent.children(recursive=True):
+                    child.send_signal(sig)
+                parent.send_signal(sig)
+            except psutil.NoSuchProcess:
+                pass
+
         current_worker_pids_map = self.get_current_worker_pids_map()
         if verbose:
             print("Current workers and process IDs:")
@@ -3594,7 +3605,7 @@ class WorkerPreemptionTest(unittest.TestCase):
         if preemptible_worker_pids_map:
             _worker = random.choice(list(preemptible_worker_pids_map.keys()))
             _worker_pid = preemptible_worker_pids_map[_worker]
-            os.kill(_worker_pid, 15)
+            _kill_process_tree(_worker_pid)
             if verbose:
                 print(f"Killed worker process ID: {_worker_pid}")
                 print(f"Killed worker: {_worker}")
@@ -3692,6 +3703,9 @@ class WorkerPreemptionTest(unittest.TestCase):
                     self.assertNotIn("max_task_replicas", record[entry])
                     self.assertNotIn("task_registry", record[entry])
                 break
+
+        self.client_1.close()
+        self.cluster_1.close()
 
     def test_disk_task_registry(self):
         self.simulate_worker_preemption(
