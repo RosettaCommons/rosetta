@@ -15,6 +15,7 @@ from typing import (
     AbstractSet,
     Any,
     Callable,
+    Dict,
     Iterable,
     List,
     NoReturn,
@@ -264,3 +265,51 @@ def _validate_residue_type_sets(
         )
         logging.error(_msg)
         raise AssertionError(_msg)
+
+
+def _validate_tasks(
+    self, attribute: str, value: List[Dict[str, Any]]
+) -> Optional[NoReturn]:
+    """Validate that tasks do not contain disallowed or reserved values."""
+
+    _disallowed_run_options = (
+        "constant_seed",
+        "jran",
+        "use_time_as_seed",
+        "rng_seed_device",
+        "seed_offset",
+        "rng",
+    )
+    _disallowed_options = [
+        f"{_prefix}{_option}"
+        for _prefix in ("-run::", "-run:", "-")
+        for _option in _disallowed_run_options
+    ]
+    _disallowed_options_no_prefix = tuple(
+        map(lambda _option: _option.split("-")[1], _disallowed_options)
+    )
+    _reserved_key_prefix = "PyRosettaCluster_"
+    _msg = (
+        "Disallowed Rosetta command-line option '{option}' in the value of the '{key}' key of task: {task}\n"
+        "PyRosettaCluster handles seeding automatically. Please remove this Rosetta command-line option to continue."
+    )
+    for task in value:
+        for k, v in task.items():
+            if k in ("options", "extra_options"):
+                if isinstance(v, dict):
+                    for _option in v.keys():
+                        if any(_option in x for x in (_disallowed_options, _disallowed_options_no_prefix)):
+                            raise ValueError(_msg.format(option=_option, key=k, task=task))
+                elif isinstance(v, str):
+                    for _disallowed_option in _disallowed_options:
+                        if _disallowed_option in v:
+                            raise ValueError(_msg.format(option=_disallowed_option, key=k, task=task))
+                else:
+                    raise ValueError(
+                        f"The value of the '{k}' key must be an instance of `dict` or `str`. Received {type(v)} in task: {task}"
+                    )
+            elif k.startswith(_reserved_key_prefix):
+                raise ValueError(
+                    f"Disallowed user-defined task dictionary key '{k}' of task: {task}\n"
+                    + f"Task keys starting with '{_reserved_key_prefix}' are reserved for PyRosettaCluster."
+                )
