@@ -68,7 +68,7 @@ class TaskRecord(Generic[G]):
 UnpackedTaskRecord = Tuple[int, UserArgs, Dict[str, Any]]
 
 
-@attr.s(kw_only=True, slots=True, frozen=False)
+@attr.s(kw_only=True, slots=True, frozen=True)
 class TaskRegistryBase(Generic[G]):
     """PyRosettaCluster task registry base class."""
     instance_id = attr.ib(
@@ -135,45 +135,48 @@ class TaskRegistryBase(Generic[G]):
         return task_record.clients_index, task_record.user_args, task_record.submit_kwargs
 
 
-@attr.s(kw_only=True, slots=True, frozen=False)
+@attr.s(kw_only=True, slots=True, frozen=True)
 class DiskTaskRegistry(TaskRegistryBase[G]):
     """Task registry for on-disk PyRosettaCluster task arguments."""
     task_registry_dir = attr.ib(
         type=str,
         validator=attr.validators.instance_of(str),
     )
+    file_ext = attr.ib(
+        type=str,
+        default=attr.Factory(
+            lambda self: (
+                f".pkl.{self.serializer.compression}"
+                if isinstance(self.serializer.compression, str)
+                else ".pkl"
+            ),
+            takes_self=True,
+        ),
+        validator=attr.validators.instance_of(str),
+        init=False,
+    )
 
     def __attrs_post_init__(self) -> None:
         if not os.path.isdir(self.task_registry_dir):
             logging.info(f"Creating on-disk task registry directory: '{self.task_registry_dir}'")
-            os.mkdir(self.task_registry_dir)
+            os.makedirs(self.task_registry_dir, exist_ok=True)
 
     def __contains__(self, key: str) -> bool:
         return os.path.isfile(self._get_task_file(key, makedirs=False))
 
     def __len__(self) -> int:
-        ext = self._get_file_ext()
         total_files = 0
         for _root, _dirs, files in os.walk(self.task_registry_dir):
-            total_files += sum(1 for f in files if f.endswith(ext))
+            total_files += sum(1 for f in files if f.endswith(self.file_ext))
 
         return total_files
 
     def __iter__(self) -> Iterator[str]:
-        ext = self._get_file_ext()
         for _root, _dirs, files in os.walk(self.task_registry_dir):
             for file in files:
-                if file.endswith(ext):
-                    key = file[: -len(ext)]
+                if file.endswith(self.file_ext):
+                    key = file[: -len(self.file_ext)]
                     yield key
-
-    def _get_file_ext(self) -> str:
-        """Get the task file extension."""
-        ext = ".pkl"
-        if isinstance(self.serializer.compression, str):
-            ext += f".{self.serializer.compression}"
-
-        return ext
 
     def _shard_key(self, key: str) -> str:
         """Shard a Dask future key for a subdirectory name."""
@@ -188,17 +191,15 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
         cache_dir = os.path.join(self.task_registry_dir, self._shard_key(key))
         if makedirs:
             os.makedirs(cache_dir, exist_ok=True)
-        ext = self._get_file_ext()
 
-        return os.path.join(cache_dir, f"{key}{ext}")
+        return os.path.join(cache_dir, f"{key}{self.file_ext}")
 
     def total_size(self) -> int:
         """Return the total size of the on-disk task registry (in bytes)."""
-        ext = self._get_file_ext()
         total_size = 0
         for root, _dirs, files in os.walk(self.task_registry_dir):
             for file in files:
-                if file.endswith(ext):
+                if file.endswith(self.file_ext):
                     try:
                         total_size += os.path.getsize(os.path.join(root, file))
                     except Exception:
@@ -258,7 +259,7 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
             logging.info(f"{total_size} remaining task records in the on-disk task registry.")
 
 
-@attr.s(kw_only=True, slots=True, frozen=False)
+@attr.s(kw_only=True, slots=True, frozen=True)
 class MemoryTaskRegistry(TaskRegistryBase[G]):
     """Task registry for in-memory PyRosettaCluster task arguments."""
     registry = attr.ib(
