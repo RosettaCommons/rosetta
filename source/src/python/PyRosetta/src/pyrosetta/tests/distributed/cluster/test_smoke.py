@@ -194,6 +194,7 @@ class SmokeTest(unittest.TestCase):
                 ("rng", "mt19937"),
             )
             _run_prefixes = ("-run::", "-run:", "-")
+            _options_keys = ("options", "extra_options")
             _invalid_options_values = [
                 f"{prefix}{k} {v}"
                 for prefix in _run_prefixes
@@ -205,11 +206,19 @@ class SmokeTest(unittest.TestCase):
             _invalid_options_values += [True, 123, 123.456, complex(1, 2), b"foo"]
             _invalid_tasks = [
                 {_option: _value}
-                for _option in ("options", "extra_options")
+                for _option in _options_keys
                 for _value in _invalid_options_values
             ]
-            _invalid_tasks += [{"PyRosettaCluster_foo": "bar", "options": "", "extra_options": ""}]
+            _invalid_tasks += [
+                {"PyRosettaCluster_foo": "bar"},
+                {True: "bar"},
+                {0: "bar"},
+                {b"Bytes": "bar"},
+            ]
             for _invalid_task in _invalid_tasks:
+                for _option in _options_keys:
+                    if _option not in _invalid_task:
+                        _invalid_task[_option] = ""
                 with self.assertRaises(ValueError) as ex:
                     PyRosettaCluster(
                         tasks=_invalid_task,
