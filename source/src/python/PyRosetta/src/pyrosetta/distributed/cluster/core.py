@@ -1260,32 +1260,34 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             try:
                 results = future.result()
             except CancelledError as ex:
-                if self.task_registry:
-                    _task_record_values = self.registry.get(future.key)
-                    if _task_record_values is not None:
-                        logging.info(f"Caught exception {type(ex).__name__}: {ex}. Resubmitting task from task registry and continuing.")
-                        clients_index, user_args, submit_kwargs = _task_record_values
-                        seq.add(
-                            self._recreate_future(
-                                clients[clients_index],
-                                clients_index,
-                                user_args,
-                                submit_kwargs,
-                            )
-                        )
-                        self.tasks_size += 1
-                        self._maybe_adapt(adaptive)
-                        continue
-                    else:
-                        raise TaskCancelledError(
-                            future.key, "Task arguments could not be recovered from the task registry."
-                        ) from ex
-                else:
+                if not self.task_registry:
                     raise TaskCancelledError(
                         future.key, "Please enable the task registry to resubmit this task."
                     ) from ex
+                _task_record_values = self.registry.get(future.key)
+                if _task_record_values is None:
+                    raise TaskCancelledError(
+                        future.key, "Task arguments could not be recovered from the task registry."
+                    ) from ex
+                logging.info(
+                    f"Caught exception {type(ex).__name__}: {ex}. Resubmitting task from task registry and continuing."
+                )
+                clients_index, user_args, submit_kwargs = _task_record_values
+                seq.add(
+                    self._recreate_future(
+                        clients[clients_index],
+                        clients_index,
+                        user_args,
+                        submit_kwargs,
+                    )
+                )
+                self.tasks_size += 1
+                self._maybe_adapt(adaptive)
+                continue
             except KilledWorker as ex:
-                logging.error(f"Caught exception {type(ex).__name__}: {ex}. Dropping task and continuing.")
+                logging.error(
+                    f"Caught exception {type(ex).__name__}: {ex}. Dropping task and continuing."
+                )
                 continue
             finally:
                 if self.task_registry:
