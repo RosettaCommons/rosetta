@@ -185,6 +185,39 @@ class SmokeTest(unittest.TestCase):
                 with self.assertRaises(ImportError) as ex:
                     run(**instance_kwargs)
                 print(f"Successfully caught exception: {ex.exception}")
+            _invalid_run_options_values = (
+                ("constant_seed", "1"),
+                ("jran", "12345"),
+                ("use_time_as_seed", "1"),
+                ("rng_seed_device", "/dev/urandom"),
+                ("seed_offset", "2"),
+                ("rng", "mt19937"),
+            )
+            _run_prefixes = ("-run::", "-run:", "-")
+            _invalid_options_values = [
+                f"{prefix}{k} {v}"
+                for prefix in _run_prefixes
+                for k, v in _invalid_run_options_values
+            ]
+            _invalid_options_values += [
+                {k: v} for k, v in map(lambda val: val.split(), _invalid_options_values)
+            ]
+            _invalid_options_values += [True, 123, 123.456, complex(1, 2), b"foo"]
+            _invalid_tasks = [
+                {_option: _value}
+                for _option in ("options", "extra_options")
+                for _value in _invalid_options_values
+            ]
+            _invalid_tasks += [{"PyRosettaCluster_foo": "bar", "options": "", "extra_options": ""}]
+            for _invalid_task in _invalid_tasks:
+                with self.assertRaises(ValueError) as ex:
+                    PyRosettaCluster(
+                        tasks=_invalid_task,
+                        output_path=os.path.join(workdir, f"outputs_invalid_task_{uuid.uuid4().hex}"),
+                        scratch_dir=workdir,
+                        sha1=None,
+                    )
+                print(f"Successfully caught exception: {ex.exception}")
 
     def test_ignore_errors(self):
         """Test PyRosettaCluster usage with user-provided PyRosetta protocol error."""
