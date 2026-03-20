@@ -268,9 +268,9 @@ def _validate_residue_type_sets(
 
 
 def _validate_tasks(
-    self, attribute: str, value: List[Dict[str, Any]]
+    self, attribute: str, value: List[Dict[Any, Any]]
 ) -> Optional[NoReturn]:
-    """Validate that tasks do not contain disallowed or reserved values."""
+    """Validate that tasks do not contain disallowed or reserved keys/values."""
 
     _disallowed_run_options = (
         "constant_seed",
@@ -295,7 +295,11 @@ def _validate_tasks(
     )
     for task in value:
         for k, v in task.items():
-            if k in ("options", "extra_options"):
+            if not isinstance(k, str):
+                raise ValueError(
+                    f"User-defined task dictionary key must be an instance of `str`. Received {type(k)} in task: {task}"
+                )
+            elif k in ("options", "extra_options"):
                 if isinstance(v, dict):
                     for _option in v.keys():
                         if any(_option in x for x in (_disallowed_options, _disallowed_options_no_prefix)):
