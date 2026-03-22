@@ -1682,7 +1682,7 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
         protocol_options = {str(k): v for k, v in enumerate(protocol_options, start=0)} # Make JSON-serializable
 
         def create_tasks(verbose=verbose):
-            yield {:# -> tuple[Any, dict[str, Any]]
+            yield {
                 "options": protocol_options["0"],
                 "extra_options": "-out:level 300 -multithreading:total_threads 1", # Constant flags for each protocol
                 "set_logging_handler": "logging",
