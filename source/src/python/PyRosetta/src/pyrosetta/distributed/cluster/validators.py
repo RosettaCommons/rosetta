@@ -8,6 +8,7 @@
 
 __author__ = "Jason C. Klima"
 
+import json
 import logging
 import os
 
@@ -316,3 +317,19 @@ def _validate_tasks(self, attribute: str, value: List[Dict[Any, Any]]) -> None:
 
     for task in value:
         _validate_task(task)
+        if not _is_json_roundtrip_equal(task):
+            raise ValueError(
+                "An input user-defined task dictionary is not JSON-serializable! Please reformat "
+                + f"the input user-defined task dictionary for the PyRosettaCluster simulation:\n{task}"
+            )
+
+
+def _is_json_roundtrip_equal(obj: Any) -> bool:
+    """Test if an object is equal after roundtrip JSON-serialization."""
+
+    try:
+        return obj == json.loads(json.dumps(obj))
+    except (TypeError, json.JSONDecodeError, ValueError):
+        return False
+    except Exception as ex:
+        raise RuntimeError("Unexpected JSON-serialization error during roundtrip validation.") from ex
