@@ -14,6 +14,7 @@ __author__ = "Jason C. Klima"
 
 import functools
 import glob
+import itertools
 import json
 import os
 import pyrosetta
@@ -1647,6 +1648,214 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         reproduce2_pose = io.pose_from_base64(reproduce2_output_file).pose
         self.assert_atom_coordinates(reproduce_pose, reproduce2_pose)
         self.assert_atom_coordinates(original_pose, reproduce2_pose)
+
+
+class TestReproducibilityTaskUpdates(unittest.TestCase):
+    """Test case for decoy reproducibility with user-defined task dictionary updates."""
+    def score_function_is_available(self, name):
+        if not isinstance(name, str):
+            raise ValueError("Score function name must be a `str` object.")
+        if not name.endswith(".wts"):
+            name += ".wts"
+        db = pyrosetta.rosetta.basic.database.full_name("scoring/weights")
+
+        return os.path.isfile(os.path.join(db, name))
+
+    def test_reproduce_task_updates(self, verbose=False):
+        """
+        Test for PyRosettaCluster decoy reproducibility with updated task dictionaries
+        per user-provided PyRosetta protocol.
+        """
+        pyrosetta.distributed.init(
+            options=f"-run:constant_seed 1 -multithreading:total_threads 1",
+            extra_options="-out:level 300",
+            set_logging_handler="logging",
+        )
+
+        # Protocol number to Rosetta command-line options map
+        protocol_options = [
+            "", # Default ref2015
+            "-beta_nov16",
+            "-beta_nov16_cart",
+            "-beta_jan25" if self.score_function_is_available("beta_jan25") else "",
+        ]
+        protocol_options = {str(k): v for k, v in enumerate(protocol_options, start=0)} # Make JSON-serializable
+
+        def create_tasks(verbose=verbose):
+            yield {:# -> tuple[Any, dict[str, Any]]
+                "options": protocol_options["0"],
+                "extra_options": "-out:level 300 -multithreading:total_threads 1", # Constant flags for each protocol
+                "set_logging_handler": "logging",
+                "protocol_options": protocol_options,
+                "verbose": verbose,
+                "test_key": None,
+            }
+
+        def my_protocol(packed_pose, **kwargs):
+            import pyrosetta
+            import random
+
+            # Unpack scores
+            cache = packed_pose.pose.cache
+            protocol_scorefxn_names = cache.get("protocol_scorefxn_names", None) or {}
+            protocol_total_scores = cache.get("protocol_total_scores", None) or {}
+            # Add current values
+            scorefxn = pyrosetta.get_score_function()
+            protocol_number = kwargs["PyRosettaCluster_protocol_number"]
+            protocol_scorefxn_names[protocol_number] = scorefxn.get_name()
+            protocol_total_scores[protocol_number] = scorefxn(packed_pose.pose)
+            # Update scores
+            packed_pose = packed_pose.update_scores(
+                protocol_scorefxn_names=protocol_scorefxn_names,
+                protocol_total_scores=protocol_total_scores,
+            )
+            # Maybe update task dictionary for next PyRosetta protocol, which gets validated and kept
+            if protocol_number + 1 < len(kwargs["protocol_options"]):
+                kwargs["options"] = kwargs["protocol_options"][str(protocol_number + 1)]
+            # Test updating another existing key, which gets validated and kept
+            assert "test_key" in kwargs, (
+                f"Existing key not found in keyword arguments dictionary: '{test_key}'"
+            )
+            random.seed(kwargs["PyRosettaCluster_seed"])
+            kwargs["test_key"] = random.choice(
+                ["foo", "bar", "baz", "qux", "quux", frozenset([1, 2, 3]), complex(8, 9), True, False]
+            )
+            # Test adding a new key to current task dictionary, which gets validated and kept
+            key_template = "foobar_{0}"
+            for i in range(protocol_number - 1, -1, -1):
+                assert key_template.format(i) in kwargs, (
+                    f"Previously added key not found in keyword arguments dictionary: '{key_template.format(i)}'"
+                )
+            kwargs[key_template.format(protocol_number)] = "baz"
+            # Test adding a reserved key to current task dictionary, which gets automatically removed
+            reserved_key = "PyRosettaCluster_foobar"
+            assert reserved_key not in kwargs, (
+                f"Reserved key found in keyword arguments dictionary: '{reserved_key}'"
+            )
+            kwargs[reserved_key] = "baz"
+            # Test removing reserved keys from current task dictionary, which get automatically added back
+            kwargs.pop("PyRosettaCluster_task")
+            kwargs.pop("PyRosettaCluster_client_repr")
+            kwargs.pop("PyRosettaCluster_datetime_start")
+            # Test updating reserved keys in current task dictionary, which get automatically reverted
+            kwargs["PyRosettaCluster_protocol_name"] = "xyzzy"
+            kwargs["PyRosettaCluster_protocol_number"] = random.randbytes(14)
+            # Maybe print
+            if kwargs["verbose"]:
+                print(f"PyRosetta protocol number {protocol_number} Pose.cache:", packed_pose.pose.cache)
+
+            return packed_pose, kwargs
+
+        with tempfile.TemporaryDirectory() as workdir:
+            pyrosetta.secure_unpickle.add_secure_package("pandas")
+            sequence = "ACDEFGHIKLMNPQRSTVWY"
+            input_pose = io.to_pose(io.pose_from_sequence(sequence))
+            output_path = os.path.join(workdir, "outputs")
+            scorefile_name = "test_scores.json"
+            compressed = True
+            protocols = [my_protocol] * len(protocol_options)
+            PyRosettaCluster(
+                tasks=create_tasks,
+                input_packed_pose=input_pose,
+                output_path=output_path,
+                scratch_dir=workdir,
+                simulation_records_in_scorefile=True,
+                scorefile_name=scorefile_name,
+                compressed=compressed,
+                norm_task_options=True,
+                sha1=None,
+                project_name="PyRosettaCluster",
+                simulation_name="update_tasks",
+                output_decoy_types=[".pdb", ".init"],
+                output_scorefile_types=[".json", ".xz"],
+                output_init_file=None,
+            ).distribute(protocols=protocols)
+
+            scorefile_path = os.path.join(output_path, os.path.splitext(scorefile_name)[0] + ".xz")
+            df = secure_read_pickle(scorefile_path, compression="infer")
+            self.assertEqual(df.index.size, 1)
+            original_record = df.iloc[0]
+
+            if verbose:
+                logging_file = original_record["metadata"]["logging_file"]
+                _logging_files = glob.glob(os.path.join(os.path.dirname(logging_file), "*"))
+                for _logging_file in _logging_files:
+                    print("Output from logging file:", _logging_file)
+                    with open(_logging_file, "r") as f:
+                        print(f.read())
+
+            # Reproduce decoy
+            for i in range(2):
+                if i == 0: # Reproduce from a PyRosetta initialization file
+                    input_file = original_record["metadata"]["output_file"].split(os.extsep)[0] + (".init.bz2" if compressed else ".init")
+                    scorefile = None
+                    decoy_name = None
+                    input_packed_pose = None
+                elif i == 1: # Reproduce from a pickled `pandas.DataFrame` scorefile
+                    input_file = None
+                    scorefile = scorefile_path
+                    decoy_name = original_record["metadata"]["decoy_name"]
+                    input_packed_pose = input_pose
+                reproduce_scorefile_name = f"reproduce_test_scores_{i}.json"
+                skip_corrections = False
+                reproduce(
+                    input_file=input_file,
+                    scorefile=scorefile,
+                    decoy_name=decoy_name,
+                    input_packed_pose=input_packed_pose,
+                    protocols=protocols,
+                    client=None,
+                    clients=None,
+                    instance_kwargs={
+                        "sha1": None,
+                        "scorefile_name": reproduce_scorefile_name,
+                        "output_decoy_types": [".pdb", ".init"],
+                        "output_scorefile_types": [".json", ".xz"],
+                        "output_init_file": None, # Skip `dump_init_file`
+                    },
+                    skip_corrections=skip_corrections,
+                    init_from_file_kwargs=dict(
+                        dry_run=None,
+                        output_dir=os.path.join(workdir, f"reproduce_pyrosetta_init_files_{i}"),
+                        skip_corrections=skip_corrections,
+                        relative_paths=None,
+                        max_decompressed_bytes=1_000_000,
+                        restore_rg_state=None,
+                        database=None,
+                        verbose=None,
+                        set_logging_handler=None,
+                        notebook=None,
+                        silent=None,
+                    ),
+                )
+
+                reproduce_scorefile_path = os.path.join(output_path, os.path.splitext(reproduce_scorefile_name)[0] + ".xz")
+                df_reproduce = secure_read_pickle(reproduce_scorefile_path, compression="infer")
+                self.assertEqual(df_reproduce.index.size, 1)
+                reproduce_record = df_reproduce.iloc[0]
+                # Assert identical scorefunction results across original/reproduction
+                for protocol_number in range(len(protocols)):
+                    self.assertEqual(
+                        original_record["scores"]["protocol_scorefxn_names"][protocol_number],
+                        reproduce_record["scores"]["protocol_scorefxn_names"][protocol_number],
+                        msg=f"Protocol number {protocol_number} score function names differ."
+                    )
+                    self.assertEqual(
+                        original_record["scores"]["protocol_total_scores"][protocol_number],
+                        reproduce_record["scores"]["protocol_total_scores"][protocol_number],
+                        msg=f"Protocol number {protocol_number} total scores differ."
+                    )
+                # Assert unique scorefunction results within original/reproduce
+                for record in (original_record, reproduce_record):
+                    scorefxn_names = record["scores"]["protocol_scorefxn_names"]
+                    total_scores = record["scores"]["protocol_total_scores"]
+                    scorefxn_name_to_total_score_dict = {scorefxn_names[k]: total_scores[k] for k in scorefxn_names}
+                    for (name_i, total_score_i), (name_j, total_score_j) in itertools.combinations(scorefxn_name_to_total_score_dict.items(), 2):
+                        self.assertNotEqual(
+                            total_score_i,
+                            total_score_j,
+                            msg=f"Scorefunctions '{name_i}' and '{name_j}' resulted in identical total score: {total_score_i}",
+                        )
 
 
 # if __name__ == "__main__":
