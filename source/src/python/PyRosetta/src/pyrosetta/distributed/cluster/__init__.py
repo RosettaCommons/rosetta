@@ -50,7 +50,7 @@ __all__: List[str] = [
     "run",
     "update_scores",
 ]
-__version__: str = "3.8.1"
+__version__: str = "4.0.0"
 
 
 with warnings.catch_warnings() and suppress(NameError):

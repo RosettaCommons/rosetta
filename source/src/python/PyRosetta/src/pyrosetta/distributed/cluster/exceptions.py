@@ -25,6 +25,7 @@ except ImportError:
 import logging
 import traceback
 
+from concurrent.futures import CancelledError
 from functools import wraps
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from queue import Empty
@@ -61,7 +62,7 @@ class InputError(TypeError):
 
 class InputFileError(TypeError):
     """
-    Exception raised for PyRosettaCluster  errors for `str` and `int` types.
+    Exception raised for PyRosettaCluster errors for `str` and `int` types.
     """
 
     def __init__(self, obj: Any) -> NoReturn:
@@ -113,6 +114,15 @@ class WorkerError(WorkerLostError):
             return WorkerError._ignore_errors_msg(protocol_name)
         else:
             return WorkerError._msg(protocol_name)
+
+
+class TaskCancelledError(RuntimeError):
+    """Exception raised for Dask `CancelledError` exceptions."""
+
+    def __init__(self, key: str, extra_msg: str) -> NoReturn:
+        super().__init__(
+            f"Task '{key}' raised `CancelledError` upon gathering results. {extra_msg}"
+        )
 
 
 def trace_protocol_exceptions(func: T) -> Union[T, NoReturn]:

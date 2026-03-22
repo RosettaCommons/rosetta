@@ -58,6 +58,7 @@ from pyrosetta.distributed.cluster.logging_filters import (
 )
 from pyrosetta.distributed.cluster.logging_handlers import MsgpackHmacSocketHandler
 from pyrosetta.distributed.cluster.logging_listeners import MaskedBytes, SocketListener
+from pyrosetta.distributed.cluster.task_registry import UserArgs
 
 
 G = TypeVar("G")
@@ -355,23 +356,16 @@ def get_worker_logger(
 
 def setup_worker_logging(func: L) -> L:
     @wraps(func)
-    def wrapper(
-        protocol_name: str,
-        compressed_protocol: bytes,
-        compressed_packed_pose: bytes,
-        compressed_kwargs: bytes,
-        pyrosetta_init_kwargs: Dict[str, Any],
-        client_repr: str,
-        extra_args: Dict[str, Any],
-        masked_key: bytes,
-        task_id: str,
-    ) -> Any:
+    def wrapper(user_args: UserArgs) -> Any:
         try:
             worker = get_worker()
         except BaseException as ex:
             raise ValueError(f"Cannot get dask worker. {ex}")
 
-        socket_listener_address = extra_args["socket_listener_address"]
+        protocol_name = user_args.protocol_name
+        masked_key = user_args.masked_key
+        task_id = user_args.task_id
+        socket_listener_address = user_args.extra_args["socket_listener_address"]
 
         plugin = worker.plugins[SOCKET_LOGGER_PLUGIN_NAME]
         router = plugin.router
@@ -386,17 +380,7 @@ def setup_worker_logging(func: L) -> L:
             )
 
         try:
-            return func(
-                protocol_name,
-                compressed_protocol,
-                compressed_packed_pose,
-                compressed_kwargs,
-                pyrosetta_init_kwargs,
-                client_repr,
-                extra_args,
-                masked_key,
-                task_id,
-            )
+            return func(user_args)
         finally:
             del masked_key
             router.pop_masked_key(socket_listener_address, task_id)

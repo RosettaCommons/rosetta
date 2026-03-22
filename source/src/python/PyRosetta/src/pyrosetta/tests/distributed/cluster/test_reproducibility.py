@@ -1647,7 +1647,3 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         reproduce2_pose = io.pose_from_base64(reproduce2_output_file).pose
         self.assert_atom_coordinates(reproduce_pose, reproduce2_pose)
         self.assert_atom_coordinates(original_pose, reproduce2_pose)
-
-
-# if __name__ == "__main__":
-#     unittest.main(verbosity=2)
