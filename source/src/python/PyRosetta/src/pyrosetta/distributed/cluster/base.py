@@ -92,7 +92,7 @@ class TaskBase(Generic[G]):
         self,
         protocols: List[Callable[..., Any]],
         seed: Optional[str],
-        task: Dict[Any, Any],
+        task: Dict[str, Any],
     ) -> Tuple[bytes, Dict[str, Any]]:
         """Setup the kwargs for the initial task."""
 
@@ -108,7 +108,7 @@ class TaskBase(Generic[G]):
 
         return compressed_kwargs, pyrosetta_init_kwargs
 
-    def _setup_pyrosetta_init_kwargs(self, kwargs: Dict[Any, Any]) -> Dict[str, Any]:
+    def _setup_pyrosetta_init_kwargs(self, kwargs: Dict[str, Any]) -> Dict[str, Any]:
         pyrosetta_init_kwargs = toolz.dicttoolz.keyfilter(
             lambda k: k in self.pyrosetta_init_args,
             kwargs,
@@ -216,7 +216,7 @@ class TaskBase(Generic[G]):
 
     def _setup_kwargs(
         self,
-        kwargs: Dict[Any, Any],
+        kwargs: Dict[str, Any],
         clients_indices: List[int],
         resources: Optional[Union[List[Dict[Any, Any]], Tuple[Dict[Any, Any], ...]]],
         priorities: Optional[Union[List[int], Tuple[int, ...]]],
@@ -235,7 +235,7 @@ class TaskBase(Generic[G]):
 
         return compressed_kwargs, pyrosetta_init_kwargs, protocol, clients_index, resource, priority, retry
 
-    def _setup_seed(self, kwargs: Dict[Any, Any], seed: Optional[str]) -> Dict[Any, Any]:
+    def _setup_seed(self, kwargs: Dict[str, Any], seed: Optional[str]) -> Dict[str, Any]:
         """
         Setup the 'options' or 'extra_options' task kwargs with the `-run:jran`
         PyRosetta command line flag.
@@ -297,7 +297,7 @@ def capture_task_metadata(func: M) -> M:
         protocols_key: str,
         decoy_ids: List[int],
         serializer: S,
-        kwargs: Dict[Any, Any],
+        kwargs: Dict[str, Any],
     ) -> Any:
         """Wrapper function to capture_task_metadata."""
 

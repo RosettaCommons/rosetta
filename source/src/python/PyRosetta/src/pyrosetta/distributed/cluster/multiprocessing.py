@@ -81,7 +81,7 @@ def user_protocol(
     packed_pose: PackedPose,
     protocol: Callable[..., Any],
     ignore_errors: bool,
-    kwargs: Dict[Any, Any],
+    kwargs: Dict[str, Any],
 ) -> Any:
     """Run the user-provided PyRosetta protocol."""
     with tempfile.TemporaryDirectory() as tmp_path:
@@ -104,7 +104,7 @@ def run_protocol(
     protocols_key: str,
     decoy_ids: List[int],
     serializer: S,
-    kwargs: Dict[Any, Any],
+    kwargs: Dict[str, Any],
 ) -> List[Tuple[bytes, bytes]]:
     """Parse the user-provided PyRosetta protocol results."""
     result = user_protocol(packed_pose, protocol, ignore_errors, kwargs)
