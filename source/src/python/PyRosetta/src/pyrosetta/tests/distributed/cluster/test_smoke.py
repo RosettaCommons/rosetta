@@ -694,6 +694,8 @@ class SmokeTestMulti(unittest.TestCase):
             self.assertIsInstance(kwargs["saved_packed_pose"], PackedPose)
             tmp_path = kwargs["PyRosettaCluster_tmp_path"]
             self.assertTrue(os.path.exists(tmp_path))
+            protocol_number = kwargs.get("PyRosettaCluster_protocol_number")
+            kwargs[f"tmp_path_protocol_{protocol_number}"] = tmp_path
 
             yield None
             yield kwargs
@@ -710,6 +712,10 @@ class SmokeTestMulti(unittest.TestCase):
             self.assertIsInstance(kwargs["saved_packed_pose"], PackedPose)
             tmp_path = kwargs["PyRosettaCluster_tmp_path"]
             self.assertTrue(os.path.exists(tmp_path))
+            protocol_number = kwargs.get("PyRosettaCluster_protocol_number")
+            previous_tmp_path_key = f"tmp_path_protocol_{protocol_number - 1}"
+            self.assertIn(previous_tmp_path_key, kwargs)
+            self.assertNotEqual(kwargs[previous_tmp_path_key], tmp_path)
 
             return kwargs
 
@@ -742,7 +748,7 @@ class SmokeTestMulti(unittest.TestCase):
             import pyrosetta
             import pyrosetta.distributed.io as io
 
-            kwargs = dict(foo="bar", baz="qux")
+            kwargs = dict(foo="bar", baz="qux", PyRosettaCluster_foo="quux")
 
             yield kwargs
 
@@ -761,6 +767,7 @@ class SmokeTestMulti(unittest.TestCase):
             self.assertIn("PyRosettaCluster_decoy_ids", kwargs)
             self.assertIn("foo", kwargs)
             self.assertIn("baz", kwargs)
+            self.assertNotIn("PyRosettaCluster_foo", kwargs)
 
             kwargs = SmokeTestMulti._ref_kwargs
 
