@@ -579,7 +579,7 @@ class SmokeTestMulti(unittest.TestCase):
                     "extra_options": "-ex1 -multithreading:total_threads 1",
                     "set_logging_handler": "logging",
                     "seq": "TEST" * i,
-                    "task_packed_pose": io.pose_from_sequence("PACKED" * i),
+                    "task_b64_pose": io.to_base64(io.pose_from_sequence("PACKED" * i)),
                 }
 
         def my_first_protocol(packed_pose, **kwargs):
@@ -588,14 +588,20 @@ class SmokeTestMulti(unittest.TestCase):
 
             from pyrosetta.rosetta.core.pose import setPoseExtraScore
 
+            init_options = pyrosetta.get_init_options(compressed=False, as_dict=True)
+            self.assertEqual(init_options["multithreading:total_threads"], ["1"])
+            self.assertEqual(init_options["packing:ex1"], ["1"])
+            self.assertEqual(init_options["packing:ex2aro"], ["1"])
+
             pose = pyrosetta.io.pose_from_sequence(kwargs["seq"])
             setPoseExtraScore(pose, "test_setPoseExtraScore", 123)
 
+            kwargs["task_packed_pose"] = io.to_packed(kwargs["task_b64_pose"])
             self.assertIn("task_packed_pose", kwargs)
             self.assertIsInstance(kwargs["task_packed_pose"], PackedPose)
-            self.assertIn("task_packed_pose", kwargs["PyRosettaCluster_task"])
+            self.assertIn("task_b64_pose", kwargs["PyRosettaCluster_task"])
             self.assertEqual(
-                kwargs["PyRosettaCluster_task"]["task_packed_pose"].pose.sequence(),
+                io.to_pose(kwargs["PyRosettaCluster_task"]["task_b64_pose"]).sequence(),
                 kwargs["task_packed_pose"].pose.sequence(),
             )
             saved_packed_pose = io.to_packed(pose.clone())
@@ -644,12 +650,12 @@ class SmokeTestMulti(unittest.TestCase):
             if not "saved_variable" in kwargs.keys():
                 kwargs["saved_variable"] = {"foo": "bar"}
             else:
-                self.assertIn("task_packed_pose", kwargs["PyRosettaCluster_task"])
-                kwargs["PyRosettaCluster_task"].pop("task_packed_pose")
+                self.assertIn("task_b64_pose", kwargs["PyRosettaCluster_task"])
+                kwargs["PyRosettaCluster_task"].pop("task_b64_pose")
                 self.assertNotIn(
-                    "task_packed_pose",
+                    "task_b64_pose",
                     kwargs["PyRosettaCluster_task"],
-                    msg="Object of type `PackedPose` is not JSON serializable.",
+                    msg="Object of type `str` is in 'PyRosettaCluster_task' entry.",
                 )
                 self.assertIn(
                     "task_packed_pose",
@@ -696,7 +702,7 @@ class SmokeTestMulti(unittest.TestCase):
             self.assertFalse(packed_pose.pose.empty())
             self.assertIsInstance(packed_pose, PackedPose)
             self.assertIsInstance(kwargs, dict)
-            self.assertNotIn("task_packed_pose", kwargs["PyRosettaCluster_task"])
+            self.assertNotIn("task_b64_pose", kwargs["PyRosettaCluster_task"])
             self.assertIn("saved_packed_pose", kwargs)
             self.assertIsInstance(kwargs["saved_packed_pose"], PackedPose)
             tmp_path = kwargs["PyRosettaCluster_tmp_path"]
@@ -733,7 +739,7 @@ class SmokeTestMulti(unittest.TestCase):
             self.assertIsInstance(packed_pose, PackedPose)
             self.assertTrue(packed_pose.pose.empty())
             self.assertIsInstance(kwargs, dict)
-            self.assertNotIn("task_packed_pose", kwargs["PyRosettaCluster_task"])
+            self.assertNotIn("task_b64_pose", kwargs["PyRosettaCluster_task"])
             self.assertIn("saved_packed_pose", kwargs)
             self.assertIsInstance(kwargs["saved_packed_pose"], PackedPose)
 
@@ -772,6 +778,10 @@ class SmokeTestMulti(unittest.TestCase):
             self.assertIn("PyRosettaCluster_datetime_start", kwargs)
             self.assertIn("PyRosettaCluster_seeds", kwargs)
             self.assertIn("PyRosettaCluster_decoy_ids", kwargs)
+            self.assertIn("PyRosettaCluster_client_repr", kwargs)
+            self.assertIn("PyRosettaCluster_output_path", kwargs)
+            self.assertIn("PyRosettaCluster_seed", kwargs)
+            self.assertIn("PyRosettaCluster_tmp_path", kwargs)
             self.assertIn("foo", kwargs)
             self.assertIn("baz", kwargs)
             self.assertNotIn("PyRosettaCluster_foo", kwargs)
@@ -788,6 +798,16 @@ class SmokeTestMulti(unittest.TestCase):
             for k in ref_kwargs.keys():
                 self.assertIn(k, kwargs)
                 self.assertEqual(ref_kwargs[k], kwargs[k])
+
+            self.assertNotIn("options", kwargs)
+            self.assertNotIn("extra_options", kwargs)
+            self.assertNotIn("set_logging_handler", kwargs)
+            self.assertNotIn("notebook", kwargs)
+            self.assertNotIn("silent", kwargs)
+            init_options = pyrosetta.get_init_options(compressed=False, as_dict=True)
+            self.assertEqual(init_options["out:levels"], ["all:warning"])
+            self.assertEqual(init_options["packing:ex1"], ["1"])
+            self.assertEqual(init_options["packing:ex2aro"], ["1"])
 
         with tempfile.TemporaryDirectory() as workdir:
             PyRosettaCluster(
