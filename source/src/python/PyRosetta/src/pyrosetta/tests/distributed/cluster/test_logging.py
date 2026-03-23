@@ -155,6 +155,8 @@ class LoggingTest(unittest.TestCase):
                 max_delay_time=3.0,
                 norm_task_options=None,
                 output_init_file=os.path.join(output_path, "pyrosetta.init"),
+                max_task_replicas=0,
+                task_registry="disk",
             )
             cluster.distribute(my_pyrosetta_protocol_1, my_pyrosetta_protocol_2)
 
@@ -218,8 +220,9 @@ class LoggingTest(unittest.TestCase):
                         "dictionary to remove this warning message."
                     )
                     self.assertIn(expected_msg, warning_msgs)
+            with open(prc_log, "r") as f:
+                lines = f.readlines()
+                info_msgs = [line.split("INFO:root: ")[-1].rstrip() for line in lines if "INFO:root: " in line]
+                expected_msg = "0 remaining task records in the on-disk task registry."
+                self.assertIn(expected_msg, info_msgs)
         params_dir.cleanup()
-
-
-# if __name__ == "__main__":
-#     unittest.main(verbosity=2)

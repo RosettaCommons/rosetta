@@ -60,7 +60,3 @@ class BasicTest(unittest.TestCase):
             simulation_records_in_scorefile=True,
             ignore_errors=True,
         ).distribute(protocols=[my_pyrosetta_protocol, my_pyrosetta_protocol_2])
-
-
-# if __name__ == "__main__":
-#     unittest.main(verbosity=2)

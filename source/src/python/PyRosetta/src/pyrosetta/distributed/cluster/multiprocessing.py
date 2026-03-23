@@ -48,6 +48,7 @@ from pyrosetta.distributed.cluster.logging_support import (
     setup_worker_logging,
 )
 from pyrosetta.distributed.cluster.serialization import Serialization
+from pyrosetta.distributed.cluster.task_registry import UserArgs
 from pyrosetta.distributed.cluster.validators import _validate_residue_type_sets
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
@@ -189,18 +190,20 @@ def target(
 
 @setup_worker_logging
 def user_spawn_thread(
-    protocol_name: str,
-    compressed_protocol: bytes,
-    compressed_packed_pose: bytes,
-    compressed_kwargs: bytes,
-    pyrosetta_init_kwargs: Dict[str, Any],
-    client_repr: str,
-    extra_args: Dict[str, Any],
-    masked_key: bytes,
-    task_id: str,
+    user_args: UserArgs,
 ) -> List[Tuple[Optional[Union[PackedPose, bytes]], Union[Dict[Any, Any], bytes]]]:
     """Generic worker task using the billiard multiprocessing module."""
     t0 = time.time()
+
+    protocol_name = user_args.protocol_name
+    compressed_protocol = user_args.compressed_protocol
+    compressed_packed_pose = user_args.compressed_packed_pose
+    compressed_kwargs = user_args.compressed_kwargs
+    pyrosetta_init_kwargs = user_args.pyrosetta_init_kwargs
+    client_repr = user_args.client_repr
+    extra_args = user_args.extra_args
+    masked_key = user_args.masked_key
+    task_id = user_args.task_id
 
     decoy_ids = extra_args["decoy_ids"]
     protocols_key = extra_args["protocols_key"]

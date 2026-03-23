@@ -2194,7 +2194,3 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
                                 total_score_j,
                                 msg=f"Scorefunctions '{name_i}' and '{name_j}' resulted in identical total score: {total_score_i}",
                             )
-
-
-# if __name__ == "__main__":
-#     unittest.main(verbosity=2)

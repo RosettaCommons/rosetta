@@ -526,15 +526,17 @@ def reproduce(
             allowed automatic retries to all user-provided PyRosetta protocols. If `None`, then no explicit retries are
             allowed. If not `None` and not an `int` object, then the length of the `retries` parameter must equal the number
             of protocols passed to the `PyRosettaCluster().distribute` method, and each `int` value determines the number
-            of automatic retries the dask scheduler allows for that protocol's failed tasks. Allowing retries of failed tasks
-            may be useful if remote compute resources are subject to preemption (e.g., cloud spot instances or backfill
-            queues). Note that retries are only appropriate for user-provided PyRosetta protocols that are side effect-free
-            upon preemption, in which tasks can be restarted without producing inconsistent external states if preempted midway
-            through the protocol. Also note that if `PyRosettaCluster(ignore_errors=True)` is used, then protocols failing due
-            to standard Python exceptions or Rosetta segmentation faults will still be considered successes, and this
-            keyword argument parameter has no effect on them since these protocol errors are ignored. However, if a compute
-            resource executing tasks is reclaimed midway through a protocol, then the dask scheduler registers those tasks
-            as incomplete, and they may be retried a certain number of times based on this keyword argument parameter.
+            of automatic retries the Dask scheduler allows for that protocol's failed tasks. Allowing retries of failed tasks
+            may be useful if the user-provided protocol raises a standard Python exception or Rosetta throws a segmentation
+            fault in the billiard subprocess while the Dask worker remains alive and `PyRosettaCluster(ignore_errors=False)`.
+            If `PyRosettaCluster(ignore_errors=True)` is used, then protocols failing due to standard Python exceptions or
+            Rosetta segmentation faults will still be considered successes, and this keyword argument has no effect since
+            these protocol errors are ignored. Note that if a compute resource executing tasks is reclaimed midway through
+            a protocol, then the Dask scheduler registers those tasks as incomplete or cancelled, and retries are controlled
+            by the Dask configuration parameter `distributed.scheduler.allowed-failures`. When using preemptible resources
+            (e.g., spot instances or backfill queues), please increase Dask's `distributed.scheduler.allowed-failures`
+            configuration value to tolerate repeated Dask worker preemptions, and use `PyRosettaCluster(max_task_replices=...)`
+            and `PyRosettaCluster(task_registry=...)` keyword arguments for additional configurability of task retries.
             See https://distributed.dask.org/en/latest/scheduling-state.html#task-state for more information.
             Default: None
         skip_corrections: A `bool` object specifying whether or not to skip any ScoreFunction corrections specified in
