@@ -2056,7 +2056,7 @@ class ScoresTest(unittest.TestCase):
             pyrosetta.secure_unpickle.add_secure_package("pyarrow")
         input_pose = self.input_packed_pose.pose.clone()
         input_pose.cache["df"] = df # Cache `pandas.DataFrame` object
-        secure_packages = pyrosetta.secure_unpickle.get_secure_packages()
+        secure_packages = list(pyrosetta.secure_unpickle.get_secure_packages())
         # Test a protocol that does not add 'pandas' to the unpickle-allowed list,
         # and does not access the cached `pandas.DataFrame`; this tests that
         # PyRosettaCluster infrastructure does not trigger deserialization alone
