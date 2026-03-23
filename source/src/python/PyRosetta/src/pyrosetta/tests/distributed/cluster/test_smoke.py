@@ -590,8 +590,8 @@ class SmokeTestMulti(unittest.TestCase):
 
             init_options = pyrosetta.get_init_options(compressed=False, as_dict=True)
             self.assertEqual(init_options["multithreading:total_threads"], ["1"])
-            self.assertEqual(init_options["packing:ex1"], ["1"])
-            self.assertEqual(init_options["packing:ex2aro"], ["1"])
+            self.assertEqual(init_options["packing:ex1"], ["true"])
+            self.assertEqual(init_options["packing:ex2aro"], ["true"])
 
             pose = pyrosetta.io.pose_from_sequence(kwargs["seq"])
             setPoseExtraScore(pose, "test_setPoseExtraScore", 123)
@@ -806,8 +806,8 @@ class SmokeTestMulti(unittest.TestCase):
             self.assertNotIn("silent", kwargs)
             init_options = pyrosetta.get_init_options(compressed=False, as_dict=True)
             self.assertEqual(init_options["out:levels"], ["all:warning"])
-            self.assertEqual(init_options["packing:ex1"], ["1"])
-            self.assertEqual(init_options["packing:ex2aro"], ["1"])
+            self.assertEqual(init_options["packing:ex1"], ["true"])
+            self.assertEqual(init_options["packing:ex2aro"], ["true"])
 
         with tempfile.TemporaryDirectory() as workdir:
             PyRosettaCluster(
