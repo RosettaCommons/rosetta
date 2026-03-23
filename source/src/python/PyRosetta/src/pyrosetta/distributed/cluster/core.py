@@ -1,11 +1,12 @@
 """
-PyRosettaCluster is a class for reproducible, high-throughput job distribution
-of user-defined PyRosetta protocols efficiently parallelized on the user's
-local computer, high-performance computing (HPC) cluster, or elastic cloud
+`PyRosettaCluster` is a versitile Python-based framework for scalable and reproducible
+job distribution of user-defined PyRosetta protocols efficiently parallelized on the
+user's local workstation, high-performance computing (HPC) cluster, or elastic cloud
 computing infrastructure with available compute resources.
 
 Args:
-    tasks: A `list` of `dict` objects, a callable or called function returning
+    `tasks`:
+        A `list` of `dict` objects, a callable or called function returning
         a `list` of `dict` objects, or a callable or called generator yielding
         a `list` of `dict` objects. Each dictionary object element of the list
         is accessible via kwargs in the user-defined PyRosetta protocols.
@@ -14,17 +15,26 @@ Args:
         `extra_options` and/or `options` must be a key of each dictionary object,
         where the value is a `str`, `tuple`, `list`, `set`, or `dict` of
         PyRosetta command line options.
-        Default: [{}]
-    input_packed_pose: Optional input `PackedPose` object that is accessible via
+
+        Default: `[{}]`
+
+    `input_packed_pose`:
+        Optional input `PackedPose` object that is accessible via
         the first argument of the first user-defined PyRosetta protocol.
-        Default: None
-    seeds: A `list` of `int` objects specifying the random number generator seeds
+
+        Default: `None`
+
+    `seeds`:
+        A `list` of `int` objects specifying the random number generator seeds
         to use for each user-defined PyRosetta protocol. The number of seeds
         provided must be equal to the number of user-defined input PyRosetta
         protocols. Seeds are used in the same order that the user-defined PyRosetta
         protocols are executed.
-        Default: None
-    decoy_ids: A `list` of `int` objects specifying the decoy numbers to keep after
+
+        Default: `None`
+
+    `decoy_ids`:
+        A `list` of `int` objects specifying the decoy numbers to keep after
         executing user-defined PyRosetta protocols. User-provided PyRosetta
         protocols may return a list of `Pose` and/or `PackedPose` objects, or
         yield multiple `Pose` and/or `PackedPose` objects. To reproduce a
@@ -36,77 +46,119 @@ Args:
         user-defined input PyRosetta protocols, so that one decoy is saved for each
         user-defined PyRosetta protocol. Decoy ids are applied in the same order
         that the user-defined PyRosetta protocols are executed.
-        Default: None
-    client: An initialized Dask `distributed.Client` object to be used as
+
+        Default: `None`
+
+    `client`:
+        An initialized Dask `distributed.Client` object to be used as
         the Dask client interface to the local or remote compute cluster. If `None`,
         then PyRosettaCluster initializes its own Dask client based on the
         `PyRosettaCluster(scheduler=...)` keyword argument value. Deprecated by the
         `PyRosettaCluster(clients=...)` keyword argument, but supported for legacy
         purposes. Either or both of the `client` or `clients` keyword argument values
         must be `None`.
-        Default: None
-    clients: A `list` or `tuple` object of initialized Dask `distributed.Client`
+
+        Default: `None`
+
+    `clients`:
+        A `list` or `tuple` object of initialized Dask `distributed.Client`
         objects to be used as the Dask client interface(s) to the local or remote compute
         cluster(s). If `None`, then PyRosettaCluster initializes its own Dask client based
         on the `PyRosettaCluster(scheduler=...)` keyword argument value. Optionally used in
         combination with the `PyRosettaCluster().distribute(clients_indices=...)` method.
         Either or both of the `client` or `clients` keyword argument values must be `None`.
         See the `PyRosettaCluster().distribute()` method docstring for usage examples.
-        Default: None
-    scheduler: A `str` of either "sge" or "slurm", or `None`. If "sge", then
+
+        Default: `None`
+
+    `scheduler`:
+        A `str` of either "sge" or "slurm", or `None`. If "sge", then
         PyRosettaCluster schedules jobs using `SGECluster` with `dask-jobqueue`.
         If "slurm", then PyRosettaCluster schedules jobs using `SLURMCluster` with
-        `dask-jobqueue`. If `None`, then PyRosettaCluster schedules jobs using
-        `LocalCluster` with `dask.distributed`. If `PyRosettaCluster(client=...)`
+        `dask-jobqueue`. If `None`, then PyRosettaCluster schedules jobs using a
+        `distributed.LocalCluster` instance. If `PyRosettaCluster(client=...)`
         or `PyRosettaCluster(clients=...)` is provided, then 
         `PyRosettaCluster(scheduler=...)` is ignored.
-        Default: None
-    cores: An `int` object specifying the total number of cores per job, which
+
+        Default: `None`
+
+    `cores`:
+        An `int` object specifying the total number of cores per job, which
         is input to the `dask_jobqueue.SLURMCluster(cores=...)` argument or
         the `dask_jobqueue.SGECluster(cores=...)` argument.
-        Default: 1
-    processes: An `int` object specifying the total number of processes per job,
+
+        Default: `1`
+
+    `processes`:
+        An `int` object specifying the total number of processes per job,
         which is input to the `dask_jobqueue.SLURMCluster(processes=...)` argument
         or the `dask_jobqueue.SGECluster(processes=...)` argument.
         This cuts the job up into this many processes.
-        Default: 1
-    memory: A `str` object specifying the total amount of memory per job, which
+
+        Default: `1`
+
+    `memory`:
+        A `str` object specifying the total amount of memory per job, which
         is input to the `dask_jobqueue.SLURMCluster(memory=...)` argument or
         the `dask_jobqueue.SGECluster(memory=...)` argument.
-        Default: "4g"
-    scratch_dir: A `str` object specifying the path to a scratch directory where
+
+        Default: `"4g"`
+
+    `scratch_dir`:
+        A `str` object specifying the path to a scratch directory where
         Dask litter may go.
-        Default: "/temp" if it exists, otherwise the current working directory
-    min_workers: An `int` object specifying the minimum number of workers to
+
+        Default: `"/temp"` if it exists, otherwise the current working directory.
+
+    `min_workers`:
+        An `int` object specifying the minimum number of workers to
         which to adapt during parallelization of user-provided PyRosetta protocols.
-        Default: 1
-    max_workers: An `int` object specifying the maximum number of workers to
+
+        Default: `1`
+
+    `max_workers`:
+        An `int` object specifying the maximum number of workers to
         which to adapt during parallelization of user-provided PyRosetta protocols.
-        Default: 1000 if the initial number of `tasks` is <1000, else use the
-            the initial number of `tasks`
-    dashboard_address: A `str` object specifying the port over which the Dask
+
+        Default: `1000` if the initial number of the `tasks` keyword argument value is `<1000`,
+        else use the the initial size of `tasks` keyword argument value.
+
+    `dashboard_address`:
+        A `str` object specifying the port over which the Dask
         dashboard is forwarded. Particularly useful for diagnosing PyRosettaCluster
         performance in real-time.
-        Default=":8787"
-    nstruct: An `int` object specifying the number of repeats of the first
+
+        Default: `":8787"`
+
+    `nstruct`:
+        An `int` object specifying the number of repeats of the first
         user-provided PyRosetta protocol. The user can control the number of
         repeats of subsequent user-provided PyRosetta protocols via returning
         multiple clones of the output pose(s) from a user-provided PyRosetta
         protocol run earlier, or cloning the input pose(s) multiple times in a
         user-provided PyRosetta protocol run later.
-        Default: 1
-    compressed: A `bool` object specifying whether or not to compress the output
+
+        Default: `1`
+
+    `compressed`:
+        A `bool` object specifying whether or not to compress the output
         ".pdb", ".pkl_pose", ".b64_pose", and ".init" files with `bzip2`, resulting
         in appending ".bz2" to output decoy files and PyRosetta initialization files.
         Also see the 'output_decoy_types' and 'output_init_file' keyword arguments.
-        Default: True
-    compression: A `str` object of 'xz', 'zlib' or 'bz2', or a `bool` or `NoneType`
+
+        Default: `True`
+
+    `compression`:
+        A `str` object of 'xz', 'zlib' or 'bz2', or a `bool` or `NoneType`
         object representing the internal compression library for pickled `PackedPose` 
         objects and user-defined PyRosetta protocol `kwargs` objects. The default of
         `True` uses 'xz' for serialization if it's installed, otherwise uses 'zlib'
         for serialization.
-        Default: True
-    system_info: A `dict` or `NoneType` object specifying the system information
+
+        Default: `True`
+
+    `system_info`:
+        A `dict` or `NoneType` object specifying the system information
         required to reproduce the simulation. If `None` is provided, then PyRosettaCluster
         automatically detects the platform and sets this attribute as a dictionary
         `{'sys.platform': `sys.platform`}` (for example, `{'sys.platform': 'linux'}`).
@@ -116,8 +168,11 @@ Args:
         and compute fleet instance type identifier may be stored in this dictionary,
         but is not validated. This information is stored in the simulation records for
         accounting.
-        Default: None
-    pyrosetta_build: A `str` or `NoneType` object specifying the PyRosetta build as
+
+        Default: `None`
+
+    `pyrosetta_build`:
+        A `str` or `NoneType` object specifying the PyRosetta build as
         output by `pyrosetta._build_signature()`. If `None` is provided, then PyRosettaCluster
         automatically detects the PyRosetta build and sets this attribute as the `str`.
         If a non-empty `str` is provided, then validate that the input PyRosetta build is
@@ -125,25 +180,37 @@ Args:
         reproduction simulations use an identical PyRosetta build from the original
         simulation. To bypass PyRosetta build validation with a warning message, an
         empty string ('') may be provided (but does not ensure reproducibility).
-        Default: None
-    sha1: A `str` or `NoneType` object specifying the git SHA1 hash string of the
+
+        Default: `None`
+
+    `sha1`:
+        A `str` or `NoneType` object specifying the git SHA1 hash string of the
         particular git commit being simulated. If a non-empty `str` object is provided,
         then it is validated to match the SHA1 hash string of the current HEAD,
         and then it is added to the simulation record for accounting. If an empty string
         is provided, then ensure that everything in the working directory is committed
         to the repository. If `None` is provided, then bypass SHA1 hash string
         validation and set this attribute to an empty string.
-        Default: ""
-    project_name: A `str` object specifying the project name of this simulation.
+
+        Default: `""`
+
+    `project_name`:
+        A `str` object specifying the project name of this simulation.
         This option just adds the user-provided project_name to the scorefile
         for accounting.
-        Default: datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f") if not specified,
-            else "PyRosettaCluster" if None
-    simulation_name: A `str` object specifying the name of this simulation.
+
+        Default: `datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f")` if not specified,
+        else `"PyRosettaCluster"` if `None`.
+
+    `simulation_name`:
+        A `str` object specifying the name of this simulation.
         This option just adds the user-provided `simulation_name` to the scorefile
         for accounting.
-        Default: `project_name` if not specified, else "PyRosettaCluster" if None
-    environment: A `NoneType` or `str` object specifying either the active conda/mamba environment
+
+        Default: `project_name` if not specified, else `"PyRosettaCluster"` if `None`
+
+    `environment`:
+        A `NoneType` or `str` object specifying either the active conda/mamba environment
         YML file string, active uv project `uv.lock` file string, or active pixi project
         `pixi.lock` file string. If a `NoneType` object is provided, then generate an environment file
         string for the active conda/mamba/uv/pixi environment and save it to the full simulation
@@ -153,12 +220,18 @@ Args:
         conda/mamba/uv/pixi environment to the original simulation. To bypass conda/mamba/uv/pixi
         environment validation with a warning message, an empty string ('') may be provided (but
         does not ensure reproducibility).
-        Default: None
-    output_path: A `str` object specifying the full path of the output directory
+
+        Default: `None`
+
+    `output_path`:
+        A `str` object specifying the full path of the output directory
         (to be created if it doesn't exist) where the output results will be saved
         to disk.
-        Default: "./outputs"
-    output_init_file: A `str` object specifying the output ".init" file path that caches
+
+        Default: `"./outputs"`
+
+    `output_init_file`:
+        A `str` object specifying the output ".init" file path that caches
         the `input_packed_pose` keyword argument value upon PyRosettaCluster instantiation,
         and not including any output decoys, which is optionally used for exporting PyRosetta
         initialization files with output decoys by the `pyrosetta.distributed.cluster.export_init_file()`
@@ -168,8 +241,11 @@ Args:
         it is recommended to run `pyrosetta.dump_init_file()` before or after the simulation.
         If `compressed=True`, then the output file is further compressed by `bzip2`, and ".bz2"
         is appended to the filename.
-        Default: `output_path`/`project_name`_`simulation_name`_pyrosetta.init
-    output_decoy_types: An iterable of `str` objects representing the output decoy
+
+        Default: ```output_path` "/" `project_name` "_" `simulation_name` "_pyrosetta.init"``
+
+    `output_decoy_types`:
+        An iterable of `str` objects representing the output decoy
         filetypes to save during the simulation. Available options are: ".pdb" for PDB
         files; ".pkl_pose" for pickled Pose files; ".b64_pose" for base64-encoded
         pickled Pose files; and ".init" for PyRosetta initialization files, each caching
@@ -181,8 +257,11 @@ Args:
         `pyrosetta.distributed.cluster.export_init_file()` on only decoys of interest after the
         simulation completes without specifying ".init". If `compressed=True`, then each decoy
         output file is further compressed by `bzip2`, and ".bz2" is appended to the filename.
-        Default: [".pdb",]
-    output_scorefile_types: An iterable of `str` objects representing the output scorefile
+
+        Default: `[".pdb",]`
+
+    `output_scorefile_types`:
+        An iterable of `str` objects representing the output scorefile
         filetypes to save during the simulation. Available options are: ".json" for a
         JSON-encoded scorefile, and any filename extensions accepted by
         `pandas.DataFrame().to_pickle(compression="infer")` (including ".gz", ".bz2",
@@ -194,14 +273,20 @@ Args:
         in this case, please ensure that `pyrosetta.secure_unpickle.add_secure_package("pyarrow")`
         has also first been run. See https://pandas.pydata.org/pdeps/0010-required-pyarrow-dependency.html
         and https://pandas.pydata.org/pdeps/0014-string-dtype.html for more information.
-        Default: [".json",]
-    scorefile_name: A `str` object specifying the name of the output JSON-formatted
+
+        Default: `[".json",]`
+
+    `scorefile_name`:
+        A `str` object specifying the name of the output JSON-formatted
         scorefile, which must end in ".json". The scorefile location is always
         `output_path`/`scorefile_name`. If ".json" is not in the `output_scorefile_types`
         keyword argument value, the JSON-formatted scorefile will not be output,
         but other scorefile types will get the same filename before the ".json" extension.
-        Default: "scores.json"
-    simulation_records_in_scorefile: A `bool` object specifying whether or not to
+
+        Default: `"scores.json"`
+
+    `simulation_records_in_scorefile`:
+        A `bool` object specifying whether or not to
         write full simulation records to the scorefile. If `True`, then write
         full simulation records to the scorefile. This results in some redundant
         information on each line, allowing downstream reproduction of a decoy from
@@ -214,41 +299,62 @@ Args:
         output decoy files (the types of which are specified by the `output_decoy_types`
         keyword argument value), which can be used to reproduce any decoy without
         the scorefile.
-        Default: False
-    decoy_dir_name: A `str` object specifying the directory name where the
+
+        Default: `False`
+
+    `decoy_dir_name`:
+        A `str` object specifying the directory name where the
         output decoys will be saved. The directory location is always
         `output_path`/`decoy_dir_name`.
-        Default: "decoys"
-    logs_dir_name: A `str` object specifying the directory name where the
+
+        Default: `"decoys"`
+
+    `logs_dir_name`:
+        A `str` object specifying the directory name where the
         output log files will be saved. The directory location is always
         `output_path`/`logs_dir_name`.
-        Default: "logs"
-    logging_level: A `str` object specifying the logging level of python tracer
+
+        Default: `"logs"`
+
+    `logging_level`:
+        A `str` object specifying the logging level of python tracer
         output to write to the log file of either "NOTSET", "DEBUG", "INFO",
         "WARNING", "ERROR", or "CRITICAL". The output log file is always written
         to `output_path`/`logs_dir_name`/`simulation_name`.log on disk.
-        Default: "INFO"
-    logging_address: A `str` object specifying the socket endpoint for sending and receiving
+
+        Default: `"INFO"`
+
+    `logging_address`:
+        A `str` object specifying the socket endpoint for sending and receiving
         log messages across a network, so log messages from user-provided PyRosetta
         protocols may be written to a single log file on the host node. The `str` object
         must take the format 'host:port' where 'host' is either an IP address, 'localhost',
         or Domain Name System (DNS)-accessible domain name, and the 'port' is a digit greater
         than or equal to 0. If the 'port' is '0', then the next free port is selected.
-        Default: 'localhost:0' if `scheduler=None` or either the `client` or `clients`
-            keyword argument values specify instances of `dask.distributed.LocalCluster`,
-            otherwise '0.0.0.0:0'
-    ignore_errors: A `bool` object specifying for PyRosettaCluster to ignore errors
+
+        Default: `"localhost:0"` if `scheduler=None` or either the `client` or `clients`
+        keyword argument values specify instances of `distributed.LocalCluster`,
+        otherwise `"0.0.0.0:0"`.
+
+    `ignore_errors`:
+        A `bool` object specifying for PyRosettaCluster to ignore errors
         raised in the user-provided PyRosetta protocols. This comes in handy when
         well-defined errors are sparse and sporadic (such as rare Segmentation Faults),
         and the user would like PyRosettaCluster to run without raising the errors.
-        Default: False
-    timeout: A `float` or `int` object specifying how many seconds to wait between
+
+        Default: `False`
+
+    `timeout`:
+        A `float` or `int` object specifying how many seconds to wait between
         PyRosettaCluster checking-in on the running user-provided PyRosetta protocols.
         If each user-provided PyRosetta protocol is expected to run quickly, then
         0.1 seconds seems reasonable. If each user-provided PyRosetta protocol is
         expected to run slowly, then >1 second seems reasonable.
-        Default: 0.5
-    max_delay_time: A `float` or `int` object specifying the maximum number of seconds to 
+
+        Default: `0.5`
+
+    `max_delay_time`:
+        A `float` or `int` object specifying the maximum number of seconds to 
         sleep before returning the result(s) from each user-provided PyRosetta protocol
         back to the client. If a Dask worker returns the result(s) from a user-provided
         PyRosetta protocol too quickly, the Dask scheduler needs to first register that
@@ -257,8 +363,11 @@ Args:
         worker sleeps for the remainder of the time, if any, before returning the result(s).
         It's recommended to set this option to at least 1 second, but longer times may
         be used as a safety throttle in cases of overwhelmed Dask scheduler processes.
-        Default: 3.0
-    filter_results: A `bool` object specifying whether or not to filter out empty
+
+        Default: `3.0`
+
+    `filter_results`:
+        A `bool` object specifying whether or not to filter out empty
         `PackedPose` objects between user-provided PyRosetta protocols. When a protocol
         returns or yields `NoneType`, PyRosettaCluster converts it to an empty `PackedPose`
         object that gets passed to the next protocol. If `True`, then filter out any empty
@@ -267,19 +376,28 @@ Args:
         to the next protocol. This is used for filtering out decoys mid-trajectory through
         user-provided PyRosetta protocols if protocols return or yield any `None`, empty
         `Pose`, or empty `PackedPose` objects.
-        Default: True
-    save_all: A `bool` object specifying whether or not to save all of the returned
+
+        Default: `True`
+
+    `save_all`:
+        A `bool` object specifying whether or not to save all of the returned
         or yielded `Pose` and `PackedPose` objects from all user-provided
         PyRosetta protocols. This option may be used for checkpointing trajectories.
         To save arbitrary poses to disk, from within any user-provided PyRosetta
         protocol:
             `pose.dump_pdb(
                 os.path.join(kwargs["PyRosettaCluster_output_path"], "checkpoint.pdb"))`
-        Default: False
-    dry_run: A `bool` object specifying whether or not to save '.pdb' files to
+
+        Default: `False`
+
+    `dry_run`:
+        A `bool` object specifying whether or not to save '.pdb' files to
         disk. If `True`, then do not write '.pdb' or '.pdb.bz2' files to disk.
-        Default: False
-    security: A `bool` object or instance of `dask.distributed.Security()`, only having
+
+        Default: `False`
+
+    `security`:
+        A `bool` object or instance of `dask.distributed.Security()`, only having
         effect if `client=None` and `clients=None`, that is passed to Dask if using
         `scheduler=None` or passed to 'dask-jobqueue' if using `scheduler="slurm"` or
         `scheduler="sge"`. If `True` is provided, then invoke the 'cryptography' package
@@ -294,8 +412,11 @@ Args:
         default. In order to generate a `dask.distributed.Security()` object with OpenSSL,
         the `pyrosetta.distributed.cluster.generate_dask_tls_security()` function may also
         be used (see docstring for more information) instead of the 'cryptography' package.
-        Default: `False` if `scheduler=None`, otherwise `True`
-    max_nonce: An `int` object greater than or equal to 1 specifying the maximum number of
+
+        Default: `False` if `scheduler=None`, else `True`
+
+    `max_nonce`:
+        An `int` object greater than or equal to 1 specifying the maximum number of
         nonces to cache per process if Dask security is disabled while using remote clusters,
         which protects against replay attacks. If nonce caching is in use, each process
         (including the host node process and all Dask worker processes) cache nonces upon
@@ -307,19 +428,28 @@ Args:
         per process permits, it is recommended to set this value to at least the
         number of tasks times the number of protocols submitted, so that every nonce
         from every communication exchange over the network gets cached.
-        Default: 4096
-    cooldown_time: A `float` or `int` object specifying how many seconds to sleep after the
+
+        Default: `4096`
+
+    `cooldown_time`:
+        A `float` or `int` object specifying how many seconds to sleep after the
         simulation is complete to allow loggers to flush. For very slow network filesystems,
         2.0 or more seconds may be reasonable.
-        Default: 0.5
-    norm_task_options: A `bool` object specifying whether or not to normalize the task
+
+        Default: `0.5`
+
+    `norm_task_options`:
+        A `bool` object specifying whether or not to normalize the task
         'options' and 'extra_options' values after PyRosetta initialization on the remote
         compute cluster. If `True`, then this enables more facile simulation reproduction
         by the use of the `ProtocolSettingsMetric` SimpleMetric to normalize the PyRosetta
         initialization options and by relativization of any input files and directory paths
         to the current working directory from which the task is running.
-        Default: True
-    max_task_replicas: An `int` (≥0) or `None` object to set the replication factor of tasks on
+
+        Default: `True`
+
+    `max_task_replicas`:
+        An `int` (≥0) or `None` object to set the replication factor of tasks on
         Dask workers within the network (only via Dask's best effort). If `None`, then attempt
         to replicate each task on each Dask worker; tasks are automatically deleted from each Dask worker
         upon completion. Task replication improves resilience of the simulation when compute resources
@@ -335,10 +465,14 @@ Args:
         memory usage is ~1 MB/task for a 500 residue protein. Task retries are only appropriate when
         user-provided PyRosetta protocols are side effect-free upon preemption, wherein tasks can be
         restarted without producing inconsistent external states if preempted midway through the protocol.
+
         See https://distributed.dask.org/en/stable/api.html#distributed.Client.replicate and
         https://docs.dask.org/en/stable/configuration.html for more information.
-        Default: 0
-    task_registry: A `None` or `str` object of either "disk" or "memory". If "disk" is provided, then
+
+        Default: `0`
+
+    `task_registry`:
+        A `None` or `str` object of either "disk" or "memory". If "disk" is provided, then
         write the task registry to disk. If "memory" is provided, then keep the task registry in memory.
         Maintaining a task registry improves resilience of the simulation when compute resources executing
         tasks are preempted midway through a user-provided PyRosetta protocol (e.g., due to using
@@ -354,21 +488,31 @@ Args:
         resources. Task resubmissions are only appropriate when user-provided PyRosetta protocols are side
         effect-free upon preemption, wherein tasks can be restarted without producing inconsistent external
         states if preempted midway through the protocol.
-        Default: None
-    author: An optional `str` object specifying the author(s) of the simulation that is
+
+        Default: `None`
+
+    `author`:
+        An optional `str` object specifying the author(s) of the simulation that is
         written to the full simulation records and the PyRosetta initialization '.init' file.
-        Default: ""
-    email: An optional `str` object specifying the email address(es) of the author(s) of
+
+        Default: `""`
+
+    `email`:
+        An optional `str` object specifying the email address(es) of the author(s) of
         the simulation that is written to the full simulation records and the PyRosetta
         initialization '.init' file.
-        Default: ""
-    license: An optional `str` object specifying the license of the output data of the
+
+        Default: `""`
+
+    `license`:
+        An optional `str` object specifying the license of the output data of the
         simulation that is written to the full simulation records and the PyRosetta
         initialization '.init' file (e.g., "ODC-ODbL", "CC BY-ND", "CDLA Permissive-2.0", etc.).
-        Default: ""
+
+        Default: `""`
 
 Returns:
-    A PyRosettaCluster instance.
+    A `PyRosettaCluster` instance.
 """
 # :noTabs=true:
 # (c) Copyright Rosetta Commons Member Institutions.
@@ -1099,7 +1243,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         Run user-provided PyRosetta protocols on a local or remote compute cluster using
         the user-customized PyRosettaCluster instance. Either arguments or the 'protocols'
         keyword argument is required. If both are provided, then the 'protocols' keyword
-        argument gets concatenated after the input arguments.
+        argument value gets concatenated after the input arguments.
 
         Examples:
 
@@ -1162,20 +1306,28 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             ... )
 
         Args:
-            *args: Optional instances of type `types.GeneratorType` or `types.FunctionType`,
-                in the order of protocols to be executed.
-            protocols: An optional iterable of extra callable PyRosetta protocols,
-                i.e. an iterable of objects of `types.GeneratorType` and/or
-                `types.FunctionType` types; or a single instance of type
+            `*args`:
+                Optional callables of type `types.GeneratorType` or `types.FunctionType` representing PyRosetta protocols
+                in the order to be executed.
+
+            `protocols`:
+                An optional iterable of extra callable user-defined PyRosetta protocols; i.e., an iterable of objects
+                of `types.GeneratorType` and/or `types.FunctionType` types, or a single callable of type
                 `types.GeneratorType` or `types.FunctionType`.
-                Default: None
-            clients_indices: An optional `list` or `tuple` object of `int` objects, where each `int` object represents
+
+                Default: `None`
+
+            `clients_indices`:
+                An optional `list` or `tuple` object of `int` objects, where each `int` object represents
                 a zero-based index corresponding to the initialized Dask `distributed.Client` object(s) passed 
                 to the `PyRosettaCluster(clients=...)` keyword argument value. If not `None`, then the length of the
                 `clients_indices` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
                 method.
-                Default: None
-            resources: An optional `list` or `tuple` object of `dict` objects, where each `dict` object represents
+
+                Default: `None`
+
+            `resources`:
+                An optional `list` or `tuple` object of `dict` objects, where each `dict` object represents
                 an abstract, arbitrary resource to constrain which Dask workers run the user-defined PyRosetta protocols.
                 If `None`, then do not impose resource constaints on any protocols. If not `None`, then the length
                 of the `resources` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
@@ -1185,14 +1337,19 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                 constraints. If Dask workers were not instantiated to satisfy the specified resource constraints, protocols
                 will hang indefinitely because the Dask scheduler is waiting for workers that meet the specified resource 
                 constraints so that it can schedule these protocols. Unless workers were created with these resource tags
-                applied, the protocols will not run. See https://distributed.dask.org/en/stable/resources.html for more
-                information.
-                Default: None
-            priorities: An optional `list` or `tuple` of `int` objects, where each `int` object sets the Dask scheduler
+                applied, the protocols will not run.
+
+                See https://distributed.dask.org/en/stable/resources.html for more information.
+
+                Default: `None`
+
+            `priorities`:
+                An optional `list` or `tuple` of `int` objects, where each `int` object sets the Dask scheduler
                 priority for the corresponding user-defined PyRosetta protocol (i.e., indexed the same as `client_indices`).
                 If `None`, then no explicit priorities are set. If not `None`, then the length of the `priorities` object
                 must equal the number of protocols passed to the `PyRosettaCluster().distribute` method, and each `int`
                 value determines the Dask scheduler priority for that protocol's received tasks.
+
                 Breadth-first task execution (default):
                     When all user-defined PyRosetta protocols have an identical priority (e.g., `[0] * len(protocols)` or
                     `None`), then all tasks enter the Dask scheduler's queue with equal priority. Under equal priority, Dask
@@ -1200,6 +1357,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                     causes all tasks submitted to upstream protocols to run to completion before tasks are scheduled to run
                     downstream protocols, producing a breadth-first task execution behavior across user-defined PyRosetta
                     protocols.
+
                 Depth-first task execution:
                     To allow tasks to run through all user-defined PyRosetta protocols before all tasks submitted to
                     upstream protocols complete, assign increasing priorities to downstream protocols (e.g.,
@@ -1208,9 +1366,13 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                     so tasks may run through all user-defined PyRosetta protocols to completion as Dask worker resources
                     become available. This produces a depth-first task execution behavior across user-defined PyRosetta
                     protocols when Dask worker resources are saturated.
+
                 See https://distributed.dask.org/en/stable/priority.html for more information.
-                Default: None
-            retries: An optional `list` or `tuple` of `int` objects, where each `int` object (≥0) sets the number of allowed
+
+                Default: `None`
+
+            `retries`:
+                An optional `list` or `tuple` of `int` objects, where each `int` object (≥0) sets the number of allowed
                 automatic retries of each failed task that was submitted to the corresponding user-provided PyRosetta protocol
                 (i.e., indexed the same as `client_indices`). If an `int` object (≥0) is provided, then apply that number of
                 allowed automatic retries to all user-provided PyRosetta protocols. If `None`, then no explicit retries are
@@ -1227,8 +1389,11 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                 (e.g., spot instances or backfill queues), please increase Dask's `distributed.scheduler.allowed-failures`
                 configuration value to tolerate repeated Dask worker preemptions, and use `PyRosettaCluster(max_task_replices=...)`
                 and `PyRosettaCluster(task_registry=...)` keyword arguments for additional configurability of task retries.
+
                 See https://distributed.dask.org/en/latest/scheduling-state.html#task-state for more information.
-                Default: None
+
+                Default: `None`
+
         """
         yield_results = _parse_yield_results(self.yield_results)
         clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
@@ -1487,7 +1652,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             ...     # Post-process results on host node asynchronously from results generation
 
         Yields:
-            (PackedPose, dict) tuples from the most recently run user-provided PyRosetta protocol if
+            ``(`PackedPose`, `dict`)`` tuples from the most recently run user-provided PyRosetta protocol if
             `PyRosettaCluster(save_all=True)` otherwise from the final user-defined PyRosetta protocol.
         """
 
