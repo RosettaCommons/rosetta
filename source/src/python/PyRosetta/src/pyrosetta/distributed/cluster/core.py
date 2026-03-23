@@ -1102,56 +1102,64 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         argument gets concatenated after the input arguments.
 
         Examples:
-            PyRosettaCluster().distribute(protocol_1)
-            PyRosettaCluster().distribute(protocols=protocol_1)
-            PyRosettaCluster().distribute(protocol_1, protocol_2, protocol_3)
-            PyRosettaCluster().distribute(protocols=(protocol_1, protocol_2, protocol_3))
-            PyRosettaCluster().distribute(protocol_1, protocol_2, protocols=[protocol_3, protocol_4])
 
-            # Run `protocol_1` on `client_1`,
-            # then `protocol_2` on `client_2`, 
-            # then `protocol_3` on `client_1`,
-            # then `protocol_4` on `client_2`:
-            PyRosettaCluster(clients=[client_1, client_2]).distribute(
-                protocols=[protocol_1, protocol_2, protocol_3, protocol_4],
-                clients_indices=[0, 1, 0, 1],
-            )
+        Basic usage:
+            >>> PyRosettaCluster().distribute(protocol_1)
+            >>> PyRosettaCluster().distribute(protocols=protocol_1)
+            >>> PyRosettaCluster().distribute(protocol_1, protocol_2, protocol_3)
+            >>> PyRosettaCluster().distribute(protocols=(protocol_1, protocol_2, protocol_3))
+            >>> PyRosettaCluster().distribute(protocol_1, protocol_2, protocols=[protocol_3, protocol_4])
 
-            # Run `protocol_1` on `client_2`,
-            # then `protocol_2` on `client_3`,
-            # then `protocol_3` on `client_1`:
-            PyRosettaCluster(clients=[client_1, client_2, client_3]).distribute(
-                protocols=[protocol_1, protocol_2, protocol_3],
-                clients_indices=[1, 2, 0],
-            )
+        Run with two Dask clients:
+            >>> # Run `protocol_1` on `client_1`,
+            >>> # then `protocol_2` on `client_2`,
+            >>> # then `protocol_3` on `client_1`,
+            >>> # then `protocol_4` on `client_2`:
+            >>> PyRosettaCluster(clients=[client_1, client_2]).distribute(
+            ...     protocols=[protocol_1, protocol_2, protocol_3, protocol_4],
+            ...     clients_indices=[0, 1, 0, 1],
+            ... )
 
-            # Run `protocol_1` on `client_1` with Dask worker resource constraints "GPU=2",
-            # then `protocol_2` on `client_1` with Dask worker resource constraints "MEMORY=100e9",
-            # then `protocol_3` on `client_1` without Dask worker resource constraints:
-            PyRosettaCluster(client=client_1).distribute(
-                protocols=[protocol_1, protocol_2, protocol_3],
-                resources=[{"GPU": 2}, {"MEMORY": 100e9}, None],
-            )
+        Run with multiple Dask clients:
+            >>> # Run `protocol_1` on `client_2`,
+            >>> # then `protocol_2` on `client_3`,
+            >>> # then `protocol_3` on `client_1`:
+            >>> PyRosettaCluster(clients=[client_1, client_2, client_3]).distribute(
+            ...     protocols=[protocol_1, protocol_2, protocol_3],
+            ...     clients_indices=[1, 2, 0],
+            ... )
 
-            # Run `protocol_1` on `client_1` with Dask worker resource constraints "GPU=2",
-            # then `protocol_2` on `client_2` with Dask worker resource constraints "MEMORY=100e9":
-            PyRosettaCluster(clients=[client_1, client_2]).distribute(
-                protocols=[protocol_1, protocol_2],
-                clients_indices=[0, 1],
-                resources=[{"GPU": 2}, {"MEMORY": 100e9}],
-            )
+        Run with one Dask client and compute resource constraints:
+            >>> # Run `protocol_1` on `client_1` with Dask worker resource constraints "GPU=2",
+            >>> # then `protocol_2` on `client_1` with Dask worker resource constraints "MEMORY=100e9",
+            >>> # then `protocol_3` on `client_1` without Dask worker resource constraints:
+            >>> PyRosettaCluster(client=client_1).distribute(
+            ...     protocols=[protocol_1, protocol_2, protocol_3],
+            ...     resources=[{"GPU": 2}, {"MEMORY": 100e9}, None],
+            ... )
 
-            # Run protocols with depth-first task execution:
-            PyRosettaCluster().distribute(
-                protocols=[protocol_1, protocol_2, protocol_3, protocol_4],
-                priorities=[0, 10, 20, 30],
-            )
+        Run with two Dask clients and compute resource constraints:
+            >>> # Run `protocol_1` on `client_1` with Dask worker resource constraints "GPU=2",
+            >>> # then `protocol_2` on `client_2` with Dask worker resource constraints "MEMORY=100e9":
+            >>> PyRosettaCluster(clients=[client_1, client_2]).distribute(
+            ...     protocols=[protocol_1, protocol_2],
+            ...     clients_indices=[0, 1],
+            ...     resources=[{"GPU": 2}, {"MEMORY": 100e9}],
+            ... )
 
-            # Run protocols with up to three retries per failed task during `protocol_3` and `protocol_4`:
-            PyRosettaCluster().distribute(
-                protocols=[protocol_1, protocol_2, protocol_3, protocol_4],
-                retries=[0, 0, 3, 3],
-            )
+        Run with task priorities:
+            >>> # Run protocols with depth-first task execution:
+            >>> PyRosettaCluster().distribute(
+            ...     protocols=[protocol_1, protocol_2, protocol_3, protocol_4],
+            ...     priorities=[0, 10, 20, 30],
+            ... )
+
+        Run with task retries:
+            >>> # Run protocols with up to three retries per failed task during `protocol_3` and `protocol_4`:
+            >>> PyRosettaCluster(ignore_errors=False).distribute(
+            ...     protocols=[protocol_1, protocol_2, protocol_3, protocol_4],
+            ...     retries=[0, 0, 3, 3],
+            ... )
 
         Args:
             *args: Optional instances of type `types.GeneratorType` or `types.FunctionType`,
@@ -1436,46 +1444,47 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
 
         Extra examples:
 
-            # Iterate over results in real-time as they are yielded from the cluster:
-            for packed_pose, kwargs in PyRosettaCluster().generate(protocols):
-                ...
+        Iterate over results in real-time as they are yielded from the cluster:
+            >>> for packed_pose, kwargs in PyRosettaCluster().generate(protocols):
+            ...     ...
 
-            # Iterate over submissions to the same client:
-            client = Client()
-            for packed_pose, kwargs in PyRosettaCluster(client=client).generate(protocols):
-                # Post-process results on host node asynchronously from results generation
-                prc = PyRosettaCluster(
-                    input_packed_pose=packed_pose,
-                    client=client,
-                    logs_dir_name=f"logs_{uuid.uuid4().hex}", # Make sure to write new log files
-                )
-                for packed_pose, kwargs in prc.generate(other_protocols):
-                    ...
+        Iterate over submissions to the same Dask client:
+            >>> client = Client()
+            >>> for packed_pose, kwargs in PyRosettaCluster(client=client).generate(protocols):
+            ...     # Post-process results on host node asynchronously from results generation
+            ...     prc = PyRosettaCluster(
+            ...         input_packed_pose=packed_pose,
+            ...         client=client,
+            ...         logs_dir_name=f"logs_{uuid.uuid4().hex}", # Make sure to write new log files
+            ...     )
+            ...     for packed_pose, kwargs in prc.generate(other_protocols):
+            ...         ...
 
-            # Iterate over multiple clients:
-            client_1 = Client()
-            client_2 = Client()
-            for packed_pose, kwargs in PyRosettaCluster(client=client_1).generate(protocols):
-                # Post-process results on host node asynchronously from results generation
-                prc = PyRosettaCluster(
-                    input_packed_pose=packed_pose,
-                    client=client_2,
-                    logs_dir_name=f"logs_{uuid.uuid4().hex}", # Make sure to write new log files
-                )
-                for packed_pose, kwargs in prc.generate(other_protocols):
-                    ...
+        Iterate over two PyRosettaCluster instances, each managing one Dask client, creating additional overhead:
+            >>> client_1 = Client()
+            >>> client_2 = Client()
+            >>> for packed_pose, kwargs in PyRosettaCluster(client=client_1).generate(protocols):
+            ...     # Post-process results on host node asynchronously from results generation
+            ...     prc = PyRosettaCluster(
+            ...         input_packed_pose=packed_pose,
+            ...         client=client_2,
+            ...         logs_dir_name=f"logs_{uuid.uuid4().hex}", # Make sure to write new log files
+            ...     )
+            ...     for packed_pose, kwargs in prc.generate(other_protocols):
+            ...         ...
 
-            # Using multiple `distributed.as_completed` iterators on the host node creates additional overhead.
-            # If post-processing on the host node is not required between user-provided PyRosetta protocols,
-            # the preferred method is to distribute protocols within a single `PyRosettaCluster().generate()`
-            # method call using the `clients_indices` keyword argument:
-            prc_generate = PyRosettaCluster(clients=[client_1, client_2]).generate(
-                protocols=[protocol_1, protocol_2],
-                clients_indices=[0, 1],
-                resources=[{"GPU": 1}, {"CPU": 1}],
-            )
-            for packed_pose, kwargs in prc_generate:
-                # Post-process results on host node asynchronously from results generation
+        Iterate over one PyRosettaCluster instance managing two Dask clients, reducing overhead:
+            >>> # Using multiple `distributed.as_completed` iterators on the head node creates additional overhead.
+            >>> # If post-processing on the head node is not required between user-provided PyRosetta protocols,
+            >>> # the preferred method is to distribute protocols within a single `PyRosettaCluster().generate()`
+            >>> # method call using the `clients_indices` keyword argument:
+            >>> prc_generate = PyRosettaCluster(clients=[client_1, client_2]).generate(
+            ...     protocols=[protocol_1, protocol_2],
+            ...     clients_indices=[0, 1],
+            ...     resources=[{"GPU": 1}, {"CPU": 1}],
+            ... )
+            ... for packed_pose, kwargs in prc_generate:
+            ...     # Post-process results on host node asynchronously from results generation
 
         Yields:
             (PackedPose, dict) tuples from the most recently run user-provided PyRosetta protocol if
