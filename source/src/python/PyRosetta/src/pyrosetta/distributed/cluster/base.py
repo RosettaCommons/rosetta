@@ -305,9 +305,10 @@ def capture_task_metadata(func: M) -> M:
         if not "PyRosettaCluster_protocols" in kwargs:
             kwargs["PyRosettaCluster_protocols"] = []
         kwargs["PyRosettaCluster_protocols"].append(protocol_name)
-        kwargs["PyRosettaCluster_protocol_number"] = (
+        protocol_number = (
             len(kwargs["PyRosettaCluster_protocols"]) - 1
         )  # Pythonic indices
+        kwargs["PyRosettaCluster_protocol_number"] = protocol_number
         if not "PyRosettaCluster_datetime_start" in kwargs:
             kwargs["PyRosettaCluster_datetime_start"] = datetime.now().strftime(
                 datetime_format
@@ -317,7 +318,7 @@ def capture_task_metadata(func: M) -> M:
             kwargs["PyRosettaCluster_seeds"] = []
         kwargs["PyRosettaCluster_seeds"].append((protocol_name, str(seed)))
         kwargs["PyRosettaCluster_seed"] = seed
-        if norm_task_options:
+        if norm_task_options and protocol_number == 0:
             options = _get_norm_task_options(ignore_errors)
             if "extra_options" in kwargs["PyRosettaCluster_task"]:
                 kwargs["PyRosettaCluster_task"]["extra_options"] = options
