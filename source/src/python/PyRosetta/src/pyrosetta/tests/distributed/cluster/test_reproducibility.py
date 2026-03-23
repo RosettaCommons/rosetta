@@ -1657,7 +1657,8 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
     def setUp(self):
         random.seed(111)
 
-    def score_function_is_available(self, name):
+    @staticmethod
+    def score_function_is_available(name):
         if not isinstance(name, str):
             raise ValueError("Score function name must be a `str` object.")
         if not name.endswith(".wts"):
@@ -1682,7 +1683,7 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
             "", # Default ref2015
             "-beta_nov16",
             "-beta_nov16_cart",
-            "-beta_jan25" if self.score_function_is_available("beta_jan25") else "",
+            "-beta_jan25" if TestReproducibilityTaskUpdates.score_function_is_available("beta_jan25") else "",
         ]
         protocol_options = {str(k): v for k, v in enumerate(protocol_options, start=0)} # Make JSON-serializable
 
@@ -1921,7 +1922,7 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
     def get_random_options(scorefxn_flags):
         key, value = random.choice(scorefxn_flags)
         options = {key: value}
-        options.update(TestReproducibilityTaskUpdates.get_remodel_options())
+        options.update(TestReproducibilityRemodelTaskUpdates.get_remodel_options())
 
         return options
 
@@ -1940,12 +1941,12 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             ("-score:weights", "ref2015"),
             ("-beta_nov16", "1"),
             ("-beta_nov16_cart", "1"),
-            ("-beta_jan25", "1") if self.score_function_is_available("beta_jan25") else ("-score:weights", "ref2015"),
+            ("-beta_jan25", "1") if TestReproducibilityTaskUpdates.score_function_is_available("beta_jan25") else ("-score:weights", "ref2015"),
         }
         _scorefxn_flags = list(map(list, _available_score_functions)) # Make JSON-serializable
 
         def create_tasks(verbose=verbose):
-            options = TestReproducibilityTaskUpdates.get_random_options(_scorefxn_flags)
+            options = TestReproducibilityRemodelTaskUpdates.get_random_options(_scorefxn_flags)
             constant_options = {
                 "-multithreading:total_threads": "1",
                 "-out:level": "200",
@@ -2065,7 +2066,7 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             if protocol_number + 1 < kwargs["n_protocols"]:
                 kwargs["options"] = ""
                 kwargs["extra_options"] = {
-                    **TestReproducibilityTaskUpdates.get_random_options(kwargs["scorefxn_flags"]),
+                    **TestReproducibilityRemodelTaskUpdates.get_random_options(kwargs["scorefxn_flags"]),
                     **kwargs["constant_options"],
                 }
             # Maybe print
