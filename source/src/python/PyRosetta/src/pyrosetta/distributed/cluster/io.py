@@ -288,7 +288,7 @@ class IO(Generic[G]):
 
         if self.dry_run:
             logging.info(
-                "PyRosettaCluster `dry_run` attribute is enabled. Skipping saving!"
+                "The PyRosettaCluster `dry_run` attribute is set to `True`. Skipping saving!"
             )
             return
 
@@ -544,7 +544,7 @@ class IO(Generic[G]):
             if not self.output_init_file.endswith((".init", ".init.bz2")):
                 raise ValueError(
                     "The output PyRosetta initialization file must end in '.init' or '.init.bz2'. "
-                    + "The current PyRosettaCluster 'output_init_file' instance attribute is: "
+                    + "The current PyRosettaCluster 'output_init_file' instance attribute is set to: "
                     + f"'{self.output_init_file}'"
                 )
             self._dump_init_file(

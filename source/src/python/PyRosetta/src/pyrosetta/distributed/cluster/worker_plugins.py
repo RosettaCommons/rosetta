@@ -45,7 +45,7 @@ WORKER_LOGGER_NAME: str = "PyRosettaCluster_dask_worker"
 
 
 class SocketLoggerPlugin(WorkerPlugin):
-    """Install a `MultiSocketHandler` logging handler on a dask worker logger."""
+    """Install a `MultiSocketHandler` logging handler on a Dask worker logger."""
     def __init__(self, logging_level: str, maxsize: int = 128) -> None:
         self.logging_level: str = logging_level
         self.maxsize: int = maxsize
@@ -53,13 +53,13 @@ class SocketLoggerPlugin(WorkerPlugin):
         self.router: Optional[logging.Handler] = None
 
     def setup(self, worker: Worker) -> None:
-        """Setup dask worker plugin."""
+        """Setup Dask worker plugin."""
         logger = logging.getLogger(self.logger_name)
         logger.setLevel(self.logging_level)
         logger.propagate = False # Root logger records handled by `logging.StreamHandler(sys.stdout)`
         self.router = MultiSocketHandler(logging_level=self.logging_level, maxsize=self.maxsize)
         self.router.setLevel(self.logging_level)
-        # On dask workers, contextual information from `logging.LoggerAdapter` supersedes
+        # On Dask workers, contextual information from `logging.LoggerAdapter` supersedes
         # these default filters (added for any root logger records from third-party dependencies)
         self.router.addFilter(DefaultProtocolNameFilter())
         self.router.addFilter(DefaultSocketAddressFilter())
@@ -67,7 +67,7 @@ class SocketLoggerPlugin(WorkerPlugin):
         logger.addHandler(self.router)
 
     def teardown(self, worker: Worker) -> None:
-        """Teardown dask worker plugin."""
+        """Teardown Dask worker plugin."""
         logger = logging.getLogger(self.logger_name)
         if self.router and self.router in logger.handlers:
             self.router.flush()
@@ -78,7 +78,7 @@ class SocketLoggerPlugin(WorkerPlugin):
 
 
 class TaskSecurityPlugin(WorkerPlugin, NonceCache):
-    """Install a secure `NonceCache` instance with replay protection on a dask worker."""
+    """Install a secure `NonceCache` instance with replay protection on a Dask worker."""
     def __init__(self, instance_id: str, prk: MaskedBytes, max_nonce: int) -> None:
         NonceCache.__init__(self, instance_id=instance_id, prk=prk, max_nonce=max_nonce)
 

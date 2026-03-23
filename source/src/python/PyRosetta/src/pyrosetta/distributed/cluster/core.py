@@ -37,17 +37,17 @@ Args:
         user-defined PyRosetta protocol. Decoy ids are applied in the same order
         that the user-defined PyRosetta protocols are executed.
         Default: None
-    client: An initialized dask `distributed.client.Client` object to be used as
-        the dask client interface to the local or remote compute cluster. If `None`,
-        then PyRosettaCluster initializes its own dask client based on the
+    client: An initialized Dask `distributed.Client` object to be used as
+        the Dask client interface to the local or remote compute cluster. If `None`,
+        then PyRosettaCluster initializes its own Dask client based on the
         `PyRosettaCluster(scheduler=...)` keyword argument value. Deprecated by the
         `PyRosettaCluster(clients=...)` keyword argument, but supported for legacy
         purposes. Either or both of the `client` or `clients` keyword argument values
         must be `None`.
         Default: None
-    clients: A `list` or `tuple` object of initialized dask `distributed.client.Client`
-        objects to be used as the dask client interface(s) to the local or remote compute
-        cluster(s). If `None`, then PyRosettaCluster initializes its own dask client based
+    clients: A `list` or `tuple` object of initialized Dask `distributed.Client`
+        objects to be used as the Dask client interface(s) to the local or remote compute
+        cluster(s). If `None`, then PyRosettaCluster initializes its own Dask client based
         on the `PyRosettaCluster(scheduler=...)` keyword argument value. Optionally used in
         combination with the `PyRosettaCluster().distribute(clients_indices=...)` method.
         Either or both of the `client` or `clients` keyword argument values must be `None`.
@@ -75,7 +75,7 @@ Args:
         the `dask_jobqueue.SGECluster(memory=...)` argument.
         Default: "4g"
     scratch_dir: A `str` object specifying the path to a scratch directory where
-        dask litter may go.
+        Dask litter may go.
         Default: "/temp" if it exists, otherwise the current working directory
     min_workers: An `int` object specifying the minimum number of workers to
         which to adapt during parallelization of user-provided PyRosetta protocols.
@@ -84,7 +84,7 @@ Args:
         which to adapt during parallelization of user-provided PyRosetta protocols.
         Default: 1000 if the initial number of `tasks` is <1000, else use the
             the initial number of `tasks`
-    dashboard_address: A `str` object specifying the port over which the dask
+    dashboard_address: A `str` object specifying the port over which the Dask
         dashboard is forwarded. Particularly useful for diagnosing PyRosettaCluster
         performance in real-time.
         Default=":8787"
@@ -97,7 +97,7 @@ Args:
         Default: 1
     compressed: A `bool` object specifying whether or not to compress the output
         ".pdb", ".pkl_pose", ".b64_pose", and ".init" files with `bzip2`, resulting
-        in appending ".bz2" to decoy output files and PyRosetta initialization files.
+        in appending ".bz2" to output decoy files and PyRosetta initialization files.
         Also see the 'output_decoy_types' and 'output_init_file' keyword arguments.
         Default: True
     compression: A `str` object of 'xz', 'zlib' or 'bz2', or a `bool` or `NoneType`
@@ -189,10 +189,10 @@ Args:
         and ".xz") for pickled `pandas.DataFrame` objects of scorefile data that can later
         be analyzed using `pyrosetta.distributed.cluster.io.secure_read_pickle(compression="infer")`.
         Note that in order to save pickled `pandas.DataFrame` objects, please ensure
-        that `pyrosetta.secure_unpickle.add_secure_package("pandas")` has been first run.
+        that `pyrosetta.secure_unpickle.add_secure_package("pandas")` has first been run.
         If using `pandas` version `>=3.0.0`, PyArrow-backed datatypes may be enabled by default;
         in this case, please ensure that `pyrosetta.secure_unpickle.add_secure_package("pyarrow")`
-        has also been first run. See https://pandas.pydata.org/pdeps/0010-required-pyarrow-dependency.html
+        has also first been run. See https://pandas.pydata.org/pdeps/0010-required-pyarrow-dependency.html
         and https://pandas.pydata.org/pdeps/0014-string-dtype.html for more information.
         Default: [".json",]
     scorefile_name: A `str` object specifying the name of the output JSON-formatted
@@ -250,13 +250,13 @@ Args:
         Default: 0.5
     max_delay_time: A `float` or `int` object specifying the maximum number of seconds to 
         sleep before returning the result(s) from each user-provided PyRosetta protocol
-        back to the client. If a dask worker returns the result(s) from a user-provided
-        PyRosetta protocol too quickly, the dask scheduler needs to first register that
+        back to the client. If a Dask worker returns the result(s) from a user-provided
+        PyRosetta protocol too quickly, the Dask scheduler needs to first register that
         the task is processing before it completes. In practice, in each user-provided
-        PyRosetta protocol the runtime is subtracted from `max_delay_time`, and the dask
+        PyRosetta protocol the runtime is subtracted from `max_delay_time`, and the Dask
         worker sleeps for the remainder of the time, if any, before returning the result(s).
         It's recommended to set this option to at least 1 second, but longer times may
-        be used as a safety throttle in cases of overwhelmed dask scheduler processes.
+        be used as a safety throttle in cases of overwhelmed Dask scheduler processes.
         Default: 3.0
     filter_results: A `bool` object specifying whether or not to filter out empty
         `PackedPose` objects between user-provided PyRosetta protocols. When a protocol
@@ -280,13 +280,13 @@ Args:
         disk. If `True`, then do not write '.pdb' or '.pdb.bz2' files to disk.
         Default: False
     security: A `bool` object or instance of `dask.distributed.Security()`, only having
-        effect if `client=None` and `clients=None`, that is passed to 'dask' if using
+        effect if `client=None` and `clients=None`, that is passed to Dask if using
         `scheduler=None` or passed to 'dask-jobqueue' if using `scheduler="slurm"` or
         `scheduler="sge"`. If `True` is provided, then invoke the 'cryptography' package
-        to generate a `Security.temporary()` object through 'dask' or 'dask-jobqueue'. See
-        https://distributed.dask.org/en/latest/tls.html#distributed.security.Security.temporary
-        for more information. If a dask `Security()` object is provided, then pass it to
-        dask with `scheduler=None`, or pass it to 'dask-jobqueue' (where 'shared_temp_directory'
+        to generate a `Security.temporary()` object through the 'dask' or 'dask-jobqueue' packages.
+        See https://distributed.dask.org/en/latest/tls.html#distributed.security.Security.temporary
+        for more information. If a Dask `Security()` object is provided, then pass it to
+        Dask with `scheduler=None`, or pass it to 'dask-jobqueue' (where 'shared_temp_directory'
         is set to the `output_path` keyword argument value) with `scheduler="slurm"` or
         `scheduler="sge"`. If `False` is provided, then security is disabled regardless
         of the `scheduler` keyword argument value (which is not recommended for remote
@@ -296,9 +296,9 @@ Args:
         be used (see docstring for more information) instead of the 'cryptography' package.
         Default: `False` if `scheduler=None`, otherwise `True`
     max_nonce: An `int` object greater than or equal to 1 specifying the maximum number of
-        nonces to cache per process if dask security is disabled while using remote clusters,
+        nonces to cache per process if Dask security is disabled while using remote clusters,
         which protects against replay attacks. If nonce caching is in use, each process
-        (including the host node process and all dask worker processes) cache nonces upon
+        (including the host node process and all Dask worker processes) cache nonces upon
         communication exchange over the network, which can increase memory usage in each
         process. A rough estimate of additional memory usage is ~0.2 KB per task
         per user-provided PyRosetta protocol per process. For example, submitting
@@ -1125,16 +1125,16 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                 clients_indices=[1, 2, 0],
             )
 
-            # Run `protocol_1` on `client_1` with dask worker resource constraints "GPU=2",
-            # then `protocol_2` on `client_1` with dask worker resource constraints "MEMORY=100e9",
-            # then `protocol_3` on `client_1` without dask worker resource constraints:
+            # Run `protocol_1` on `client_1` with Dask worker resource constraints "GPU=2",
+            # then `protocol_2` on `client_1` with Dask worker resource constraints "MEMORY=100e9",
+            # then `protocol_3` on `client_1` without Dask worker resource constraints:
             PyRosettaCluster(client=client_1).distribute(
                 protocols=[protocol_1, protocol_2, protocol_3],
                 resources=[{"GPU": 2}, {"MEMORY": 100e9}, None],
             )
 
-            # Run `protocol_1` on `client_1` with dask worker resource constraints "GPU=2",
-            # then `protocol_2` on `client_2` with dask worker resource constraints "MEMORY=100e9":
+            # Run `protocol_1` on `client_1` with Dask worker resource constraints "GPU=2",
+            # then `protocol_2` on `client_2` with Dask worker resource constraints "MEMORY=100e9":
             PyRosettaCluster(clients=[client_1, client_2]).distribute(
                 protocols=[protocol_1, protocol_2],
                 clients_indices=[0, 1],
@@ -1162,33 +1162,33 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                 `types.GeneratorType` or `types.FunctionType`.
                 Default: None
             clients_indices: An optional `list` or `tuple` object of `int` objects, where each `int` object represents
-                a zero-based index corresponding to the initialized dask `distributed.client.Client` object(s) passed 
+                a zero-based index corresponding to the initialized Dask `distributed.Client` object(s) passed 
                 to the `PyRosettaCluster(clients=...)` keyword argument value. If not `None`, then the length of the
                 `clients_indices` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
                 method.
                 Default: None
             resources: An optional `list` or `tuple` object of `dict` objects, where each `dict` object represents
-                an abstract, arbitrary resource to constrain which dask workers run the user-defined PyRosetta protocols.
+                an abstract, arbitrary resource to constrain which Dask workers run the user-defined PyRosetta protocols.
                 If `None`, then do not impose resource constaints on any protocols. If not `None`, then the length
                 of the `resources` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
                 method, such that each resource specified indicates the unique resource constraints for the protocol at the
                 corresponding index of the protocols passed to `PyRosettaCluster().distribute`. Note that this feature is only 
-                useful when one passes in their own instantiated client(s) with dask workers set up with various resource
-                constraints. If dask workers were not instantiated to satisfy the specified resource constraints, protocols
-                will hang indefinitely because the dask scheduler is waiting for workers that meet the specified resource 
+                useful when one passes in their own instantiated client(s) with Dask workers set up with various resource
+                constraints. If Dask workers were not instantiated to satisfy the specified resource constraints, protocols
+                will hang indefinitely because the Dask scheduler is waiting for workers that meet the specified resource 
                 constraints so that it can schedule these protocols. Unless workers were created with these resource tags
                 applied, the protocols will not run. See https://distributed.dask.org/en/stable/resources.html for more
                 information.
                 Default: None
-            priorities: An optional `list` or `tuple` of `int` objects, where each `int` object sets the dask scheduler
+            priorities: An optional `list` or `tuple` of `int` objects, where each `int` object sets the Dask scheduler
                 priority for the corresponding user-defined PyRosetta protocol (i.e., indexed the same as `client_indices`).
                 If `None`, then no explicit priorities are set. If not `None`, then the length of the `priorities` object
                 must equal the number of protocols passed to the `PyRosettaCluster().distribute` method, and each `int`
-                value determines the dask scheduler priority for that protocol's received tasks.
+                value determines the Dask scheduler priority for that protocol's received tasks.
                 Breadth-first task execution (default):
                     When all user-defined PyRosetta protocols have an identical priority (e.g., `[0] * len(protocols)` or
-                    `None`), then all tasks enter the dask scheduler's queue with equal priority. Under equal priority, dask
-                    mainly schedules tasks in a first-in, first-out manner. When dask worker resources are saturated, this
+                    `None`), then all tasks enter the Dask scheduler's queue with equal priority. Under equal priority, Dask
+                    mainly schedules tasks in a first-in, first-out manner. When Dask worker resources are saturated, this
                     causes all tasks submitted to upstream protocols to run to completion before tasks are scheduled to run
                     downstream protocols, producing a breadth-first task execution behavior across user-defined PyRosetta
                     protocols.
@@ -1197,9 +1197,9 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                     upstream protocols complete, assign increasing priorities to downstream protocols (e.g.,
                     `list(range(0, len(protocols) * 10, 10))`). Once a task completes an upstream protocol, it is submitted
                     to the next downstream protocol with a higher priority than tasks still queued for upstream protocols,
-                    so tasks may run through all user-defined PyRosetta protocols to completion as dask worker resources
+                    so tasks may run through all user-defined PyRosetta protocols to completion as Dask worker resources
                     become available. This produces a depth-first task execution behavior across user-defined PyRosetta
-                    protocols when dask worker resources are saturated.
+                    protocols when Dask worker resources are saturated.
                 See https://distributed.dask.org/en/stable/priority.html for more information.
                 Default: None
             retries: An optional `list` or `tuple` of `int` objects, where each `int` object (≥0) sets the number of allowed
@@ -1465,7 +1465,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                 for packed_pose, kwargs in prc.generate(other_protocols):
                     ...
 
-            # Using multiple `dask.distributed.as_completed` iterators on the host node creates additional overhead.
+            # Using multiple `distributed.as_completed` iterators on the host node creates additional overhead.
             # If post-processing on the host node is not required between user-provided PyRosetta protocols,
             # the preferred method is to distribute protocols within a single `PyRosettaCluster().generate()`
             # method call using the `clients_indices` keyword argument:

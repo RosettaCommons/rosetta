@@ -60,16 +60,16 @@ def _validate_clients_indices(
             )
         if not all(x in _clients_dict_keys for x in set(clients_indices)):
             raise ValueError(
-                "Each item of the `clients_indices` keyword argument value must correspond to an index passed to the `PyRosettaCluster(clients=...)` class attribute.\n"
-                + f"Available clients indices based on the `PyRosettaCluster(clients=...)` class attribute: {_clients_dict_keys}\n"
+                "Each item of the `clients_indices` keyword argument value must correspond to an index passed to the `PyRosettaCluster(clients=...)` keyword argument value.\n"
+                + f"Available clients indices based on the `PyRosettaCluster(clients=...)` instance attribute: {_clients_dict_keys}\n"
                 + f"Received `PyRosettaCluster().distribute(clients_indices=...)`: {clients_indices}\n"
             )
         for i in _clients_dict_keys:
             if clients_indices.count(i) == 0:
                 logging.warning(
-                    f"The `Client` object at index {i} of the `PyRosettaCluster(clients=...)` class attribute will not be used in the simulation "
+                    f"The `Client` object at index {i} of the `PyRosettaCluster(clients=...)` instance attribute will not be used in the simulation "
                     + "because it was not added as an index in the `PyRosettaCluster().distribute(clients_indices=...)` keyword argument value!\n"
-                    + f"Available clients indices based on the `PyRosettaCluster(clients=...)` class attribute: {_clients_dict_keys}\n"
+                    + f"Available clients indices based on the `PyRosettaCluster(clients=...)` instance attribute: {_clients_dict_keys}\n"
                     + f"Received `PyRosettaCluster().distribute(clients_indices=...)`: {clients_indices}\n"
                     + "Continuing with the simulation.\n"
                 )
@@ -192,7 +192,7 @@ def _validate_dir(self, attribute: str, value: str) -> Optional[NoReturn]:
     if value != "":
         os.makedirs(value, exist_ok=True)
         if not os.path.isdir(value):
-            raise ValueError(f"`{attribute}` directory {value} could not be created.")
+            raise ValueError(f"The `{attribute}` directory {value} could not be created.")
 
 
 def _validate_int(self, attribute: str, value: int) -> Optional[NoReturn]:
@@ -200,7 +200,7 @@ def _validate_int(self, attribute: str, value: int) -> Optional[NoReturn]:
 
     if value < 1:
         raise ValueError(
-            f"`{attribute}` must be a positive integer greater than or equal to 1."
+            f"The `{attribute}` must be a positive integer greater than or equal to 1."
         )
     
 
@@ -209,7 +209,7 @@ def _validate_min_len(self, attribute: str, value: Optional[List[Any]]) -> Optio
 
     if value is not None and len(value) < 1:
         raise ValueError(
-            f"`{attribute}` must have at least one item if not `None`."
+            f"The `{attribute}` must have at least one item if not `None`."
         )
 
 
@@ -246,7 +246,7 @@ def _validate_float(
 ) -> Optional[NoReturn]:
     """Validate that floats are greater than or equal to 0.0"""
 
-    msg = f"`{attribute}` must be a positive `float` or `int` value greater than or equal to 0."
+    msg = f"The `{attribute}` must be a positive `float` or `int` value greater than or equal to 0."
     try:
         float(value)
     except:
@@ -262,7 +262,7 @@ def _validate_protocols_seeds_decoy_ids(
 ) -> Union[List[Union[Callable[..., Any], Iterable[Any]]], NoReturn]:
     """
     Validate that the user-provided PyRosetta protocols and PyRosettaCluster
-    `seeds` and `decoy_ids` attributes have the same size.
+    `seeds` and `decoy_ids` keyword argument values have the same size.
     """
     if len(protocols) < 1:
         raise RuntimeError(

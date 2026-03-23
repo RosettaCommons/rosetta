@@ -76,7 +76,7 @@ class SecurityIO(Generic[G]):
         Test if the `self.clients_dict` has security enabled on all clients, excluding
         clients with `LocalCluster` clusters.
         """
-        assert len(self.clients_dict) > 0, "No clients in `self.clients_dict` to test for `security` attribute."
+        assert len(self.clients_dict) > 0, "No clients in `self.clients_dict` to test for `security` attribute setup."
         for _client in self.clients_dict.values():
             if not isinstance(_client.cluster, LocalCluster) and not isinstance(_client.security, Security):
                 _has_security = False

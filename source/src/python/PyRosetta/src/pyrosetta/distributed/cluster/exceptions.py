@@ -49,32 +49,28 @@ T = TypeVar("T", bound=Callable[..., Any])
 
 
 class InputError(TypeError):
-    """
-    Exception raised for PyRosettaCluster attribute input errors for `str` and `int` types.
-    """
+    """Exception raised for PyRosettaCluster keyword argument value errors for `str` and `int` types."""
 
     def __init__(self, obj: Any, attribute: str) -> NoReturn:
         super().__init__(
-            f"PyRosettaCluster '{attribute}' attribute must be of type `int` or `str`, "
-            + f"or an iterable containing `int` or `str` types. Received {obj} of type `{type(obj)}`."
+            f"PyRosettaCluster '{attribute}' keyword argument value must be of type `int` or `str`, "
+            + f"or an iterable containing `int` or `str` types. Received '{obj}' of type `{type(obj)}`."
         )
 
 
 class InputFileError(TypeError):
-    """
-    Exception raised for PyRosettaCluster errors for `str` and `int` types.
-    """
+    """Exception raised for PyRosettaCluster errors for `str` and `int` types."""
 
     def __init__(self, obj: Any) -> NoReturn:
         super().__init__(
-            "The `input_file` argument value must be of type `str`, not of type {0}.".format(
+            "The `input_file` keyword argument value must be of type `str`, not of type {0}.".format(
                 type(obj)
             )
         )
 
 
 class OutputError(TypeError):
-    """Exception raised for worker output errors."""
+    """Exception raised for user-defined PyRosetta protocol output errors."""
 
     def __init__(self, obj: Any) -> NoReturn:
         super().__init__(
@@ -89,7 +85,7 @@ class OutputError(TypeError):
 
 
 class WorkerError(WorkerLostError):
-    """Exception raised for worker errors."""
+    """Exception raised for Dask worker errors."""
 
     def __init__(self, protocol_name: str) -> NoReturn:
         super().__init__(WorkerError._msg(protocol_name))

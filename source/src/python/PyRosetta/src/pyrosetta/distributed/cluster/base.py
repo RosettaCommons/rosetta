@@ -169,7 +169,7 @@ class TaskBase(Generic[G]):
                 _dask_version_threshold_str = _version_tuple_to_str(_dask_version_threshold)
                 logging.warning(
                     "Use of the `resources` keyword argument is not supported for 'dask' and 'distributed' "
-                    f"package versions <{_dask_version_threshold_str}\nCurrent dask version: {_dask_version_str}\n"
+                    f"package versions <{_dask_version_threshold_str}\nCurrent Dask version: {_dask_version_str}\n"
                     "Please set `PyRosettaCluster().distribute(resources=None)`, or upgrade the 'dask' and 'distributed' "
                     f"package versions to >={_dask_version_threshold_str} to silence this warning. "
                     "Automatically disabling resource constraints..."
@@ -187,7 +187,7 @@ class TaskBase(Generic[G]):
                 _dask_version_threshold_str = _version_tuple_to_str(_dask_version_threshold)
                 logging.warning(
                     "Use of the `priorities` keyword argument is not supported for 'dask' and 'distributed' "
-                    f"package versions <{_dask_version_threshold_str}\nCurrent dask version: {_dask_version_str}\n"
+                    f"package versions <{_dask_version_threshold_str}\nCurrent Dask version: {_dask_version_str}\n"
                     "Please set `PyRosettaCluster().distribute(priorities=None)`, or upgrade the 'dask' and 'distributed' "
                     f"package versions to >={_dask_version_threshold_str} to silence this warning. "
                     "Automatically disabling priorities..."
@@ -205,7 +205,7 @@ class TaskBase(Generic[G]):
                 _dask_version_threshold_str = _version_tuple_to_str(_dask_version_threshold)
                 logging.warning(
                     "Use of the `retries` keyword argument is not supported for 'dask' and 'distributed' "
-                    f"package versions <{_dask_version_threshold_str}\nCurrent dask version: {_dask_version_str}\n"
+                    f"package versions <{_dask_version_threshold_str}\nCurrent Dask version: {_dask_version_str}\n"
                     "Please set `PyRosettaCluster().distribute(retries=None)`, or upgrade the 'dask' and 'distributed' "
                     f"package versions to >={_dask_version_threshold_str} to silence this warning. "
                     "Automatically disabling task retries..."

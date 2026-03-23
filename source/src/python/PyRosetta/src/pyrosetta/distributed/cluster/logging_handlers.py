@@ -180,8 +180,8 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler, HandlerMixin):
 
 class MultiSocketHandler(logging.Handler, HandlerMixin):
     """
-    Cache mutable dask worker logger handlers up to a maximum size, pruning least recently used (LRU)
-    dask worker loggers first.
+    Cache mutable Dask worker logger handlers up to a maximum size, pruning least recently used (LRU)
+    Dask worker loggers first.
     """
     def __init__(self, logging_level: Union[str, int] = logging.NOTSET, maxsize: int = 128) -> None:
         super().__init__()
@@ -228,7 +228,7 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
         socket_address = getattr(record, "socket_address", None)
         task_id = getattr(record, "task_id", None)
         if any(x in (None, "-", "-:0") for x in (protocol_name, socket_address, task_id)):
-            # Log record was emitted from root logger on dask worker
+            # Log record was emitted from root logger on Dask worker
             self.stdout_handler.handle(record)
             return
         host, port = split_socket_address(socket_address)
@@ -278,7 +278,7 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
 
 
 def get_stdout_handler(logging_level: Union[str, int] = logging.NOTSET) -> logging.Handler:
-    """Get a logging stream handler to `sys.stdout` for root logger records from dask workers."""
+    """Get a logging stream handler to `sys.stdout` for root logger records from Dask workers."""
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging_level)
     formatter = logging.Formatter(

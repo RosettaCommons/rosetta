@@ -87,7 +87,7 @@ class SchedulerManager(Generic[G]):
                 if self.security:
                     _cluster_kwargs["security"] = self.security
                     if self.security is True:
-                        logging.info("Using the 'cryptography' package to generate a dask `Security.temporary()` object...")
+                        logging.info("Using the 'cryptography' package to generate a Dask `Security.temporary()` object...")
                 if __dask_version__ <= (2, 1, 0):
                     _cluster_kwargs["local_dir"] = _cluster_kwargs.pop("local_directory", self.scratch_dir)
                 if self.security is True:
@@ -121,7 +121,7 @@ class SchedulerManager(Generic[G]):
                 _cluster_kwargs["security"] = self.security
                 if self.security is True:
                     _cluster_kwargs["shared_temp_directory"] = self.output_path
-                    logging.info("Using the 'cryptography' package to generate a dask `Security.temporary()` object...")
+                    logging.info("Using the 'cryptography' package to generate a Dask `Security.temporary()` object...")
             if __dask_version__ <= (2, 1, 0):
                 _cluster_kwargs["local_dir"] = _cluster_kwargs.pop("local_directory", self.scratch_dir)
             if __dask_jobqueue_version__ < (0, 8, 0):
@@ -130,7 +130,7 @@ class SchedulerManager(Generic[G]):
                 if sys.version_info[:2] <= (3, 7):
                     logging.warning(
                         "Use of `PyRosettaCluster(security=True)` may require Python version 3.8 or higher to use the "
-                        + "'cryptography' package. Please upgrade your python version, or otherwise provide a dask "
+                        + "'cryptography' package. Please upgrade your python version, or otherwise provide a Dask "
                         + "`Security()` object (recommended) or `False` (not recommended unless using a firewall) "
                         + "to the PyRosettaCluster `security` keyword argument."
                     )
@@ -146,7 +146,7 @@ class SchedulerManager(Generic[G]):
                         "Warning! Dask TLS/SSL communication is not enabled while using a remote compute cluster! "
                         + "PyRosettaCluster uses the `cloudpickle` module to serialize user-provided PyRosetta "
                         + "protocols, which requires unpickling of the data received over the network. If not using "
-                        + "a firewall, it is highly recommended to provide a dask `Security()` object (or `True` to "
+                        + "a firewall, it is highly recommended to provide a Dask `Security()` object (or `True` to "
                         + "automatically generate one with the 'cryptography' package) to the PyRosettaCluster "
                         + "`security` keyword argument. Alternatively, in order to generate a "
                         + "`Security()` object with OpenSSL, the `pyrosetta.distributed.cluster.generate_dask_tls_security()` "

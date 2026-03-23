@@ -77,15 +77,15 @@ def _parse_filter_results(obj: Any) -> Union[bool, NoReturn]:
 
     @singledispatch
     def converter(obj: Any) -> NoReturn:
-        raise ValueError("'filter_results' must be of type `bool` or `NoneType`!")
+        raise ValueError("The 'filter_results' keyword argument value must be of type `bool` or `NoneType`!")
 
     @converter.register(type(None))
     def _parse_none(obj: None) -> bool:
         if _issue_future_warning:
             warnings.warn(
                 (
-                    "As of PyRosettaCluster version 2.1.0, the 'filter_results' instance attribute "
-                    "is enabled by default, which automatically filters empty `PackedPose` objects between "
+                    "As of PyRosettaCluster version 2.1.0, the 'filter_results' keyword argument value is "
+                    "set to `True` by default, which automatically filters empty `PackedPose` objects between "
                     "user-provided PyRosetta protocols to help reduce compute overhead. Please explicitly set "
                     "either `filter_results=True` (the currently enabled, new setting) or `filter_results=False` "
                     "(to revert to legacy behavior before version 2.1.0) to silence this notice. This notice "
@@ -121,11 +121,11 @@ def _parse_empty_queue(protocol_name: str, ignore_errors: bool) -> None:
 
 
 def _parse_environment(obj: Any) -> Union[str, NoReturn]:
-    """Parse the input `environment` attribute of PyRosettaCluster."""
+    """Parse the input `environment` keyword argument value of PyRosettaCluster."""
 
     @singledispatch
     def converter(obj: Any) -> NoReturn:
-        raise ValueError("The 'environment' instance attribute must be of type `str` or `NoneType`!")
+        raise ValueError("The 'environment' keyword argument value must be of type `str` or `NoneType`!")
 
     @converter.register(type(None))
     def _parse_none(obj: None) -> str:
@@ -293,7 +293,7 @@ def _parse_yield_results(yield_results: Any) -> Union[bool, NoReturn]:
 
 
 def _parse_norm_task_options(obj: Any) -> Union[bool, NoReturn]:
-    """Parse the input `norm_task_options` attribute of PyRosettaCluster."""
+    """Parse the input `norm_task_options` keyword argument value of PyRosettaCluster."""
     _issue_future_warning = False
 
     @singledispatch
@@ -305,9 +305,9 @@ def _parse_norm_task_options(obj: Any) -> Union[bool, NoReturn]:
         if _issue_future_warning:
             warnings.warn(
                 (
-                    "As of PyRosettaCluster version 2.3.0, the 'norm_task_options' instance attribute is enabled by "
-                    "default, which automatically normalizes the task 'options' and 'extra_options' keyword arguments "
-                    "for facile reproducibility. Please explicitly set either `norm_task_options=True` (the currently "
+                    "As of PyRosettaCluster version 2.3.0, the 'norm_task_options' keyword argument value is set to `True` "
+                    "by default, which automatically normalizes the task 'options' and 'extra_options' keyword arguments of the first "
+                    "PyRosetta protocol for facile reproducibility. Please explicitly set either `norm_task_options=True` (the currently "
                     "enabled, new setting) or `norm_task_options=False` (to revert to legacy behavior before version 2.3.0) "
                     "to silence this notice. This notice will disappear in a future version of PyRosettaCluster."
                 ),
@@ -370,7 +370,7 @@ def _parse_pyrosetta_build(obj: Any) -> Union[str, NoReturn]:
 
 
 def _parse_scratch_dir(obj: Any) -> Union[str, NoReturn]:
-    """Parse the input `scratch_dir` attribute of PyRosettaCluster."""
+    """Parse the input `scratch_dir` keyword argument value of PyRosettaCluster."""
 
     @singledispatch
     def converter(obj: Any) -> NoReturn:
@@ -403,15 +403,15 @@ def _parse_seeds(objs: Any) -> List[str]:
 
 
 def _parse_sha1(obj: Any) -> Union[str, NoReturn]:
-    """Parse the input `sha1` attribute of PyRosettaCluster."""
+    """Parse the input `sha1` keyword argument value of PyRosettaCluster."""
 
     @singledispatch
     def converter(obj: Any) -> NoReturn:
-        raise ValueError(f"'sha1' attribute must be of type `str` or `NoneType`!")
+        raise ValueError(f"The 'sha1' keyword argument value must be of type `str` or `NoneType`!")
 
     @converter.register(str)
     def _register_str(obj: str) -> Union[str, NoReturn]:
-        """Parse `str` type inputs to the 'sha1' attribute."""
+        """Parse `str` type inputs of the 'sha1' keyword argument value."""
 
         try:
             repo = git.Repo(".", search_parent_directories=True)
@@ -420,7 +420,7 @@ def _parse_sha1(obj: Any) -> Union[str, NoReturn]:
                 f"{ex}\nThe script being executed is not in a git repository! "
                 + "It is strongly recommended to use version control for your "
                 + "scripts. To continue without using version control, set the "
-                + "`sha1` attribute of PyRosettaCluster to `None`."
+                + "`sha1` keyword argument value of PyRosettaCluster to `None`."
             )
         # Path to and name of the git repository
         git_root = repo.git.rev_parse("--show-toplevel")
@@ -452,13 +452,13 @@ def _parse_sha1(obj: Any) -> Union[str, NoReturn]:
             # A sha1 was provided. Validate that it is HEAD
             if not commit.hexsha.startswith(obj):
                 logging.error(
-                    "A `sha1` attribute was provided to PyRosettaCluster, "
+                    "A `sha1` keyword argument value was provided to PyRosettaCluster, "
                     + "but it appears that you have not checked out this revision!"
                     + f"Please run on the command line:\n`git checkout {obj}`\n"
                     + "and then re-execute this script."
                 )
                 raise RuntimeError(
-                    "The `sha1` attribute provided to PyRosettaCluster "
+                    "The `sha1` keyword argument value provided to PyRosettaCluster "
                     + "does not match the current `HEAD`! "
                     + "See log files for details on resolving the issue."
                 )
@@ -466,7 +466,7 @@ def _parse_sha1(obj: Any) -> Union[str, NoReturn]:
 
     @converter.register(type(None))
     def _default_none(obj: None) -> str:
-        """If the user provides `None` to the `sha1` attribute, return an empty string."""
+        """If the user provides `None` to the `sha1` keyword argument value, return an empty string."""
 
         return ""
 
@@ -474,7 +474,7 @@ def _parse_sha1(obj: Any) -> Union[str, NoReturn]:
 
 
 def _parse_system_info(obj: Any) -> Union[Dict[Any, Any], NoReturn]:
-    """Parse the input `system_info` attribute of PyRosettaCluster."""
+    """Parse the input `system_info` keyword argument value of PyRosettaCluster."""
 
     _sys_platform = {"sys.platform": sys.platform}
 
@@ -499,7 +499,7 @@ def _parse_system_info(obj: Any) -> Union[Dict[Any, Any], NoReturn]:
                     + f"system platform is '{_curr_sys_platform}'! Therefore, the original "
                     + "decoy may not necessarily be reproduced! Platform-specific "
                     + "information can lead to different outputs. Please consider "
-                    + "running this simulation in a Docker container with the same "
+                    + "running this simulation in a Docker/Apptainer container with the same "
                     + "system platform as the original simulation run, or switching "
                     + "to the original system platform before reproducing this simulation."
                 )
@@ -638,12 +638,12 @@ def _parse_target_results(objs: List[Tuple[bytes, bytes]]) -> List[Tuple[bytes, 
 
 
 def _parse_tasks(objs: Any) -> Union[List[Dict[Any, Any]], NoReturn]:
-    """Parse the input `tasks` attribute of PyRosettaCluster."""
+    """Parse the input `tasks` keyword argument value of PyRosettaCluster."""
 
     @singledispatch
     def converter(objs: Any) -> NoReturn:
         raise ValueError(
-            "The value passed to the 'tasks' argument must be an iterable, a function, a generator, or None!"
+            "The value passed to the 'tasks' keyword argument value must be an iterable, a function, a generator, or `None`!"
         )
 
     @converter.register(dict)
@@ -653,7 +653,7 @@ def _parse_tasks(objs: Any) -> Union[List[Dict[Any, Any]], NoReturn]:
     @converter.register(type(None))
     def _from_none(obj: None) -> List[Dict[Any, Any]]:
         logging.warning(
-            "PyRosettaCluster `tasks` attribute was set to `None`! Using a default empty task."
+            "PyRosettaCluster `tasks` keyword argument value was set to `None`! Using a default empty task."
         )
         return [{}]
 
@@ -688,13 +688,13 @@ def _parse_tasks(objs: Any) -> Union[List[Dict[Any, Any]], NoReturn]:
 
 
 def _parse_output_decoy_types(objs: Any) -> Union[List[str], NoReturn]:
-    """Parse the input `output_decoy_types` attribute of PyRosettaCluster."""
+    """Parse the input `output_decoy_types` keyword argument value of PyRosettaCluster."""
     _output_decoy_types = (".pdb", ".pkl_pose", ".b64_pose", ".init")
 
     @singledispatch
     def converter(objs: Any) -> NoReturn:
         raise ValueError(
-            "The value passed to the 'output_decoy_types' argument must be "
+            "The value passed to the 'output_decoy_types' keyword argument must be "
             + "an iterable of `str` objects, or `None`."
         )
 
@@ -722,13 +722,13 @@ def _parse_output_decoy_types(objs: Any) -> Union[List[str], NoReturn]:
 
 
 def _parse_output_scorefile_types(objs: Any) -> Union[List[str], NoReturn]:
-    """Parse the input `output_scorefile_types` attribute of PyRosettaCluster."""
+    """Parse the input `output_scorefile_types` keyword argument value of PyRosettaCluster."""
     _output_scorefile_types = (".json",)
 
     @singledispatch
     def converter(objs: Any) -> NoReturn:
         raise ValueError(
-            "The value passed to the 'output_scorefile_types' argument must be "
+            "The value passed to the 'output_scorefile_types' keyword argument must be "
             + "an iterable of `str` objects, or `None`."
         )
 
@@ -762,9 +762,13 @@ def _parse_output_scorefile_types(objs: Any) -> Union[List[str], NoReturn]:
         _compression_msg = ", ".join(_compressions) if len(_compressions) > 2 else " ".join(_compressions)
         _msg = (
             f"In order to save PyRosettaCluster scorefiles with {_compression_msg} file type compression, "
-            + "the output `pandas.DataFrame()` objects must be securely unpicklable. In order to securely "
-            + "unpickle `pandas.DataFrame()` objects in PyRosetta, please add 'pandas' as a secure package "
-            + "using `pyrosetta.secure_unpickle.add_secure_package('pandas')`, then try again!"
+            "the output `pandas.DataFrame` objects must be securely unpicklable. In order to securely "
+            "unpickle `pandas.DataFrame` objects in PyRosetta, please add 'pandas' as a secure package "
+            "using `pyrosetta.secure_unpickle.add_secure_package('pandas')`, then try again! "
+            "If using `pandas` version `>=3.0.0`, PyArrow-backed datatypes may be enabled by default; "
+            "in this case, please ensure that `pyrosetta.secure_unpickle.add_secure_package('pyarrow')` "
+            "has also been run. See https://pandas.pydata.org/pdeps/0010-required-pyarrow-dependency.html "
+            "and https://pandas.pydata.org/pdeps/0014-string-dtype.html for more information."
         )
         raise AssertionError(_msg)
 
