@@ -20,9 +20,11 @@ import json
 import logging
 import numpy
 import os
+import psutil
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
 import random
+import signal
 import subprocess
 import sys
 import tempfile
@@ -3577,29 +3579,71 @@ class WorkerPreemptionTest(unittest.TestCase):
     def get_current_worker_pids_map(self):
         return {k: v.pid for k, v in self.client_1.cluster.scheduler.workers.items()}
 
-    def kill_a_worker(self, non_preemptible_worker_pids_map, verbose=True):
+    def preempt_a_worker(self, non_preemptible_worker_pids_map, max_attempts=50, verbose=True):
         """
-        Randomly select and kill a worker process to simulate compute resource preemption.
+        Randomly select and terminate a worker process and its billiard subprocesses
+        to simulate compute resource preemption. Method adapted from:
+        https://examples.dask.org/resilience.html#Suddenly-shutting-down-workers
+        """
+        def _terminate_process_tree(pid, sig=signal.SIGTERM):
+            try:
+                parent = psutil.Process(pid)
+            except psutil.NoSuchProcess:
+                return False
+            for child in parent.children(recursive=True):
+                try:
+                    child.send_signal(sig)
+                except psutil.NoSuchProcess:
+                    pass
+            try:
+                parent.send_signal(sig)
+                return True
+            except psutil.NoSuchProcess:
+                return False
 
-        Method adapted from: https://examples.dask.org/resilience.html#Suddenly-shutting-down-workers
-        """
-        current_worker_pids_map = self.get_current_worker_pids_map()
-        if verbose:
-            print("Current workers and process IDs:")
-            pprint(current_worker_pids_map)
-        preemptible_worker_pids_map = toolz.dicttoolz.keyfilter(
-            lambda k: k not in non_preemptible_worker_pids_map,
-            current_worker_pids_map
-        )
-        if preemptible_worker_pids_map:
+        self.assertGreaterEqual(WorkerPreemptionTest._sleep_time, 3)
+        preempted = False
+        _attempts = 0
+        while _attempts < max_attempts:
+            _attempts += 1
+            current_worker_pids_map = self.get_current_worker_pids_map()
+            if verbose:
+                print("Current workers and process IDs:")
+                pprint(current_worker_pids_map)
+            preemptible_worker_pids_map = toolz.dicttoolz.keyfilter(
+                lambda k: k not in non_preemptible_worker_pids_map,
+                current_worker_pids_map
+            )
+            if not preemptible_worker_pids_map:
+                if verbose:
+                    print(f"Preemption attempt {_attempts} has no preemptible Dask workers. Skipping preemption.")
+                preempted = False
+                break
             _worker = random.choice(list(preemptible_worker_pids_map.keys()))
             _worker_pid = preemptible_worker_pids_map[_worker]
-            os.kill(_worker_pid, 15)
-            if verbose:
-                print(f"Killed worker process ID: {_worker_pid}")
-                print(f"Killed worker: {_worker}")
+            _terminated = _terminate_process_tree(_worker_pid)
+            if _terminated:
+                if verbose:
+                    print(f"Terminated worker process ID: {_worker_pid}")
+                    print(f"Terminated worker: {_worker}")
+                preempted = True
+                break
+            else:
+                if verbose:
+                    print(f"Warning: preemption attempt {_attempts} failed to terminate Dask worker '{_worker}' with process ID {_worker_pid}. Retrying...")
+                time.sleep(random.uniform(0.5, 3.0))
         else:
-            print("Warning: no Dask workers available to preempt! Continuing without preemption.")
+            raise RuntimeError(
+                f"No Dask workers available to preempt after {_attempts} attempts!\n"
+                + f"Current Dask workers and PIDs: {current_worker_pids_map}\n"
+                + f"Preemptible Dask workers and PIDs: {preemptible_worker_pids_map}\n"
+                + f"Non-Preemptible Dask workers and PIDs: {non_preemptible_worker_pids_map}\n"
+            )
+        if verbose:
+            print(f"Sleeping for {WorkerPreemptionTest._sleep_time} seconds...")
+        time.sleep(WorkerPreemptionTest._sleep_time)
+
+        return preempted
 
     def simulate_worker_preemption(
         self,
@@ -3659,7 +3703,7 @@ class WorkerPreemptionTest(unittest.TestCase):
         )
         # Start the simulation and keep shutting down workers while it is running using the
         # `PyRosettaCluster.generate` method to intervene periodically throughout the simulation
-        self.assertGreaterEqual(WorkerPreemptionTest._sleep_time, 3)
+        total_preempted_workers = 0
         for _packed_pose, _kwargs in prc_iterator:
             if verbose:
                 print("Yielded decoy IDs:", _kwargs.get("PyRosettaCluster_decoy_ids"))
@@ -3672,8 +3716,15 @@ class WorkerPreemptionTest(unittest.TestCase):
                     print(f"Current number of task registry entries: {len(prc.registry)}")
                     print("Current task registry keys:")
                     pprint(list(prc.registry))
-            self.kill_a_worker(non_preemptible_worker_pids_map, verbose=verbose)
-            time.sleep(WorkerPreemptionTest._sleep_time)
+            preempted = self.preempt_a_worker(non_preemptible_worker_pids_map, verbose=verbose)
+            total_preempted_workers += int(preempted)
+        self.assertGreater(
+            total_preempted_workers,
+            0,
+            msg=f"Finished PyRosettaCluster simulation, but preempted {total_preempted_workers} Dask workers in total."
+        )
+        if verbose:
+            print(f"Finished PyRosettaCluster simulation. Preempted {total_preempted_workers} Dask workers in total.")
         # Assert that all task chains completed
         scorefile = os.path.join(output_path, self.scorefile_name)
         with open(scorefile, "r") as f:

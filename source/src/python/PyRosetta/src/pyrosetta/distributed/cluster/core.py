@@ -346,7 +346,7 @@ Args:
         keyword argument), then the task will be automatically resubmitted using the task input arguments
         cached in the task registry. If "memory" is provided, then task input arguments consume memory on the
         head node process, which is appropriate with fewer tasks (e.g., debugging pipelines). If "disk" is
-        provided, then task input arguments consume disk space (in the `scratch_dir` keyword argument value),
+        provided, then task input arguments consume disk space (in the `scratch_dir` instance attribute),
         which is appropriate for production simulations. Task size is dominated by the input `PackedPose`
         object; a rough estimate of additional disk or memory usage is ~1 MB/task for a 500 residue protein.
         Completed tasks are automatically deleted from the task registry upon task completion. If `None` is
@@ -941,6 +941,18 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         init=False,
         validator=attr.validators.instance_of(str),
     )
+    task_registry_dir = attr.ib(
+        type=Optional[str],
+        default=attr.Factory(
+            lambda self: (
+                os.path.join(self.scratch_dir, f"task_registry-{self.instance_id}")
+                if self.task_registry == "disk"
+                else None
+            ),
+            takes_self=True,
+        ),
+        validator=attr.validators.optional(attr.validators.instance_of(str)),
+    )
     pyrosetta_init_args = attr.ib(
         type=list,
         default=attr.Factory(_get_pyrosetta_init_args),
@@ -1265,32 +1277,34 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             try:
                 results = future.result()
             except CancelledError as ex:
-                if self.task_registry:
-                    _task_record_values = self.registry.get(future.key)
-                    if _task_record_values is not None:
-                        logging.info(f"Caught exception {type(ex).__name__}: {ex}. Resubmitting task from task registry and continuing.")
-                        clients_index, user_args, submit_kwargs = _task_record_values
-                        seq.add(
-                            self._recreate_future(
-                                clients[clients_index],
-                                clients_index,
-                                user_args,
-                                submit_kwargs,
-                            )
-                        )
-                        self.tasks_size += 1
-                        self._maybe_adapt(adaptive)
-                        continue
-                    else:
-                        raise TaskCancelledError(
-                            future.key, "Task arguments could not be recovered from the task registry."
-                        ) from ex
-                else:
+                if not self.task_registry:
                     raise TaskCancelledError(
                         future.key, "Please enable the task registry to resubmit this task."
                     ) from ex
+                _task_record_values = self.registry.get(future.key)
+                if _task_record_values is None:
+                    raise TaskCancelledError(
+                        future.key, "Task arguments could not be recovered from the task registry."
+                    ) from ex
+                logging.info(
+                    f"Caught exception {type(ex).__name__}: {ex}. Resubmitting task from task registry and continuing."
+                )
+                clients_index, user_args, submit_kwargs = _task_record_values
+                seq.add(
+                    self._recreate_future(
+                        clients[clients_index],
+                        clients_index,
+                        user_args,
+                        submit_kwargs,
+                    )
+                )
+                self.tasks_size += 1
+                self._maybe_adapt(adaptive)
+                continue
             except KilledWorker as ex:
-                logging.error(f"Caught exception {type(ex).__name__}: {ex}. Dropping task and continuing.")
+                logging.error(
+                    f"Caught exception {type(ex).__name__}: {ex}. Dropping task and continuing."
+                )
                 continue
             finally:
                 if self.task_registry:
@@ -1340,6 +1354,8 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                     self.tasks_size += 1
                     self._maybe_adapt(adaptive)
 
+        if self.task_registry:
+            self.registry.clear()
         self._close_socket_listener(clients)
         self._maybe_teardown(clients, cluster)
         self._close_logger()
