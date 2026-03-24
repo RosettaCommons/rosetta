@@ -1667,7 +1667,7 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
 
         return os.path.isfile(os.path.join(db, name))
 
-    def test_reproduce_task_updates(self, verbose=False):
+    def test_reproduce_task_updates(self, verbose=True):
         """
         Test for PyRosettaCluster decoy reproducibility with updated task dictionaries
         per user-provided PyRosetta protocol.
@@ -1686,18 +1686,25 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
             "-beta_jan25" if TestReproducibilityTaskUpdates.score_function_is_available("beta_jan25") else "",
         ]
         protocol_options = {str(k): v for k, v in enumerate(protocol_options, start=0)} # Make JSON-serializable
+        if verbose:
+            print(f"Protocol options: {protocol_options}")
 
         def create_tasks(verbose=verbose):
-            extra_options = protocol_options["0"]
+            custom_options = protocol_options["0"]
             constant_options = "-out:level 200 -multithreading:total_threads 1" # Constant flags for each protocol
             # For stability of concatenation of the values for the 'options' and 'extra_options' keys, if updating Rosetta command-line flags
             # between PyRosetta protocols, either:
             # (1) exclude the 'options' key (using the default '-ex1 -ex2aro' flags of pyrosetta.init) and only set a value for the 'extra_options' key
             # (2) or set the value of the 'options' key to an empty string ('') and only set a value for the 'extra_options' key
             # (3) or exclude the 'extra_options' key, and only set a value for the 'options' key
+            options = ""
+            extra_options = f"{custom_options} {constant_options}"
+            if verbose:
+                print(f"Input task 'options' value: '{options}'")
+                print(f"Input task 'extra_options' value: '{extra_options}'")
             yield {
-                "options": "",
-                "extra_options": f"{extra_options} {constant_options}",
+                "options": options,
+                "extra_options": extra_options,
                 "set_logging_handler": "logging",
                 "protocol_options": protocol_options,
                 "verbose": verbose,
@@ -1873,6 +1880,9 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
                                 total_score_j,
                                 msg=f"Scorefunctions '{name_i}' and '{name_j}' resulted in identical total score: {total_score_i}",
                             )
+                    if verbose:
+                        print(f"Successfully validated reproduction simulation for iteration: {i}")
+
 
 class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
     """Test case for decoy reproducibility with user-defined task dictionary updates with RosettaRemodel."""
@@ -1926,7 +1936,7 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
 
         return options
 
-    def test_reproduce_remodel_task_updates(self, verbose=False):
+    def test_reproduce_remodel_task_updates(self, verbose=True):
         """
         Test for PyRosettaCluster decoy reproducibility with updated task dictionaries
         using RosettaRemodel per user-provided PyRosetta protocol.
@@ -1944,9 +1954,11 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             ("-beta_jan25", "1") if TestReproducibilityTaskUpdates.score_function_is_available("beta_jan25") else ("-score:weights", "ref2015"),
         }
         _scorefxn_flags = list(map(list, _available_score_functions)) # Make JSON-serializable
+        if verbose:
+            print(f"Available scorefunction flags: {_scorefxn_flags}")
 
         def create_tasks(verbose=verbose):
-            options = TestReproducibilityRemodelTaskUpdates.get_random_options(_scorefxn_flags)
+            custom_options = TestReproducibilityRemodelTaskUpdates.get_random_options(_scorefxn_flags)
             constant_options = {
                 "-multithreading:total_threads": "1",
                 "-out:level": "200",
@@ -1970,9 +1982,14 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             # (1) exclude the 'options' key (using the default '-ex1 -ex2aro' flags of pyrosetta.init) and only set a value for the 'extra_options' key
             # (2) or set the value of the 'options' key to an empty string ('') and only set a value for the 'extra_options' key
             # (3) or exclude the 'extra_options' key, and only set a value for the 'options' key
+            options = ""
+            extra_options = {**custom_options, **constant_options}
+            if verbose:
+                print(f"Input task 'options' value: '{options}'")
+                print("Input task 'extra_options' value:", extra_options)
             yield {
-                "options": "",
-                "extra_options": {**options, **constant_options},
+                "options": options,
+                "extra_options": extra_options,
                 "set_logging_handler": "logging",
                 "verbose": verbose,
                 "n_protocols": _n_protocols,
@@ -2194,3 +2211,5 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
                                 total_score_j,
                                 msg=f"Scorefunctions '{name_i}' and '{name_j}' resulted in identical total score: {total_score_i}",
                             )
+                    if verbose:
+                        print(f"Successfully validated reproduction simulation for iteration: {i}")
