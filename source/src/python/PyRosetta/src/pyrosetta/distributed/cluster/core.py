@@ -938,6 +938,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             ),
             takes_self=True,
         ),
+        init=False,
         validator=attr.validators.optional(attr.validators.instance_of(str)),
     )
     pyrosetta_init_args = attr.ib(
