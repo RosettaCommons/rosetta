@@ -211,57 +211,57 @@ Args:
         Default: `"./outputs"`
 
     `output_init_file`:
-        A `str` object specifying the output ".init" file path that caches
-        the `input_packed_pose` keyword argument value upon PyRosettaCluster instantiation,
-        and not including any output decoys, which is optionally used for exporting PyRosetta
-        initialization files with output decoys by the `pyrosetta.distributed.cluster.export_init_file()`
-        function after the simulation completes (see the 'output_decoy_types' keyword argument).
-        If a `NoneType` object (or an empty `str` object ('')) is provided, or `dry_run=True`,
-        then skip writing an output ".init" file upon PyRosettaCluster instantiation. If skipped,
-        it is recommended to run `pyrosetta.dump_init_file()` before or after the simulation.
-        If `compressed=True`, then the output file is further compressed by `bzip2`, and ".bz2"
-        is appended to the filename.
+        A `str` object specifying the absolute path to the output ".init" file that caches the
+        `input_packed_pose` keyword argument value upon `PyRosettaCluster` instantiation. The file does not
+        include any output decoys, and is optionally used for exporting PyRosetta initialization files with
+        output decoys by the `pyrosetta.distributed.cluster.export_init_file` function after the simulation
+        completes (see the `output_decoy_types` keyword argument). If `None` (or an empty `str` object (`""`))
+        is provided, or `dry_run` keyword argument value is set to `True`, then skip writing an output ".init"
+        file upon `PyRosettaCluster` instantiation. If skipped, it is recommended to run the
+        `pyrosetta.dump_init_file` function before or after the simulation. If the `compressed` keyword
+        argument value is set to `True`, then the output file is further compressed by the `bzip2` library,
+        and ".bz2" is automatically appended to the filename.
 
         Default: ```output_path` "/" `project_name` "_" `simulation_name` "_pyrosetta.init"``
 
     `output_decoy_types`:
-        An iterable of `str` objects representing the output decoy
-        filetypes to save during the simulation. Available options are: ".pdb" for PDB
-        files; ".pkl_pose" for pickled Pose files; ".b64_pose" for base64-encoded
-        pickled Pose files; and ".init" for PyRosetta initialization files, each caching
-        the host node PyRosetta initialization options (and input files, if any), the
-        `input_packed_pose` keyword argument value (if any) and an output decoy.
-        Because each ".init" file contains a copy of the PyRosetta initialization input files
-        and input `PackedPose` object, unless these objects are relatively small in size
-        or there are relatively few expected output decoys, then it is recommended to run
-        `pyrosetta.distributed.cluster.export_init_file()` on only decoys of interest after the
-        simulation completes without specifying ".init". If `compressed=True`, then each decoy
-        output file is further compressed by `bzip2`, and ".bz2" is appended to the filename.
+        An iterable of `str` objects representing the output decoy filetypes to save during the simulation.
+        Available options are: `".pdb"` for PDB files; `".pkl_pose"` for pickled `Pose` files; `".b64_pose"`
+        for Base64-encoded pickled `Pose` files; and `".init"` for PyRosetta initialization files, each
+        caching: the Rosetta command-line options (and PyRosetta initialization input files, if any)
+        initialized on the head node, the `input_packed_pose` keyword argument value (if any), and an output
+        decoy. Because each PyRosetta initialization file contains a copy of the PyRosetta initialization
+        input files and input `PackedPose` object (if any), unless these objects are relatively small in size
+        or there are relatively few expected output decoys, then it is recommended to run the
+        `pyrosetta.distributed.cluster.export_init_file` function on only output decoys of interest after the
+        simulation completes without specifying `".init"` in this iterable. If the `compressed` keyword
+        argument value is set to `True`, then each output decoy file is further compressed by the `bzip2`
+        library, and ".bz2" is automatically appended to the filename.
 
         Default: `[".pdb",]`
 
     `output_scorefile_types`:
-        An iterable of `str` objects representing the output scorefile
-        filetypes to save during the simulation. Available options are: ".json" for a
-        JSON-encoded scorefile, and any filename extensions accepted by
-        `pandas.DataFrame().to_pickle(compression="infer")` (including ".gz", ".bz2",
-        and ".xz") for pickled `pandas.DataFrame` objects of scorefile data that can later
-        be analyzed using `pyrosetta.distributed.cluster.io.secure_read_pickle(compression="infer")`.
-        Note that in order to save pickled `pandas.DataFrame` objects, please ensure
-        that `pyrosetta.secure_unpickle.add_secure_package("pandas")` has first been run.
-        If using `pandas` version `>=3.0.0`, PyArrow-backed datatypes may be enabled by default;
-        in this case, please ensure that `pyrosetta.secure_unpickle.add_secure_package("pyarrow")`
-        has also first been run. See https://pandas.pydata.org/pdeps/0010-required-pyarrow-dependency.html
-        and https://pandas.pydata.org/pdeps/0014-string-dtype.html for more information.
+        An iterable of `str` objects representing the output scorefile filetypes to save during the
+        simulation. Available options are: `".json"` for a JSON Lines (JSONL)-formatted scorefile, and any
+        filename extensions accepted by the `pandas.DataFrame.to_pickle(compression="infer")` method
+        (including `".gz"`, `".bz2"`, and `".xz"`) for pickled `pandas.DataFrame` objects of scorefile data
+        that may be analyzed using `pyrosetta.distributed.cluster.io.secure_read_pickle(compression="infer")`.
+        Note that in order to write pickled `pandas.DataFrame` objects to disk, please ensure that
+        `pyrosetta.secure_unpickle.add_secure_package("pandas")` has first been run. If using `pandas` version
+        `>=3.0.0`, PyArrow-backed datatypes may be enabled by default; in this case, please ensure that
+        `pyrosetta.secure_unpickle.add_secure_package("pyarrow")` has also first been run.
+
+        See https://pandas.pydata.org/pdeps/0010-required-pyarrow-dependency.html and
+        https://pandas.pydata.org/pdeps/0014-string-dtype.html for more information.
 
         Default: `[".json",]`
 
     `scorefile_name`:
-        A `str` object specifying the name of the output JSON-formatted
-        scorefile, which must end in ".json". The scorefile location is always
-        `output_path`/`scorefile_name`. If ".json" is not in the `output_scorefile_types`
-        keyword argument value, the JSON-formatted scorefile will not be output,
-        but other scorefile types will get the same filename before the ".json" extension.
+        A `str` object specifying the name of the output JSON Lines (JSONL)-formatted scorefile, which must
+        end in ".json". The scorefile location is always ```output_path` "/" `scorefile_name```. If `".json"`
+        is not in the `output_scorefile_types` keyword argument value, the JSONL-formatted scorefile will not
+        be output, but other scorefile types (if any) will still get the same filename stem (i.e., before the
+        ".json" extension).
 
         Default: `"scores.json"`
 
