@@ -1689,10 +1689,10 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
             "-beta_nov16 1",
             "-beta_nov16_cart 1",
         ]
-        # if TestReproducibilityTaskUpdates.score_function_is_available("beta_jan25"):
-        #     protocol_options.append("-beta_jan25 1")
-        # else:
-        #     protocol_options.append("-score:weights ref2015")
+        if TestReproducibilityTaskUpdates.score_function_is_available("beta_jan25"):
+            protocol_options.append("-beta_jan25 1")
+        else:
+            protocol_options.append("-score:weights ref2015")
         protocol_options = {str(k): v for k, v in enumerate(protocol_options, start=0)} # Make JSON-serializable
         if verbose:
             print(f"Protocol options: {protocol_options}")
@@ -1775,6 +1775,11 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
             # Maybe print
             if kwargs["verbose"]:
                 print(f"PyRosetta protocol number {protocol_number} Pose.cache:", packed_pose.pose.cache)
+
+            # Test clearing energies
+            pose = io.to_pose(packed_pose)
+            pose.energies().clear()
+            packed_pose = io.to_packed(pose)
 
             return packed_pose, kwargs
 
@@ -1988,8 +1993,8 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             ("-beta_nov16", "1"),
             ("-beta_nov16_cart", "1"),
         }
-        # if TestReproducibilityTaskUpdates.score_function_is_available("beta_jan25"):
-        #     _available_score_functions.add(("-beta_jan25", "1"))
+        if TestReproducibilityTaskUpdates.score_function_is_available("beta_jan25"):
+            _available_score_functions.add(("-beta_jan25", "1"))
         _scorefxn_flags = sorted(map(list, _available_score_functions)) # Make JSON-serializable
         if verbose:
             print(f"Available scorefunction flags: {_scorefxn_flags}")
@@ -2128,6 +2133,11 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             # Maybe print
             if verbose:
                 print(f"PyRosetta protocol number {protocol_number} Pose.cache:", packed_pose.pose.cache)
+
+            # Test clearing energies
+            pose = io.to_pose(packed_pose)
+            pose.energies().clear()
+            packed_pose = io.to_packed(pose)
 
             return packed_pose, kwargs
 
