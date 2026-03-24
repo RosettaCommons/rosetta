@@ -266,55 +266,50 @@ Args:
         Default: `"scores.json"`
 
     `simulation_records_in_scorefile`:
-        A `bool` object specifying whether or not to
-        write full simulation records to the scorefile. If `True`, then write
-        full simulation records to the scorefile. This results in some redundant
-        information on each line, allowing downstream reproduction of a decoy from
-        the scorefile, but a larger scorefile. If `False`, then write
-        curtailed simulation records to the scorefile. This results in minimally
-        redundant information on each line, disallowing downstream reproduction
-        of a decoy from the scorefile, but a smaller scorefile. If `False`, also
-        write the active conda/mamba/uv/pixi environment to a file in the `output_path`
-        keyword argument value. Full simulation records are always written to the
-        output decoy files (the types of which are specified by the `output_decoy_types`
-        keyword argument value), which can be used to reproduce any decoy without
-        the scorefile.
+        A `bool` object specifying whether or not to write full simulation records to the output scorefile(s).
+        If `True`, then write full simulation records to the output scorefile(s). This results in some
+        redundant information in each entry, allowing downstream reproduction of a decoy of interest from the
+        scorefile, but a larger scorefile storage footprint. If `False`, then write curtailed simulation
+        records to the scorefile(s) containing only the `Pose.cache` dictionary data. This results in
+        minimally redundant information in each entry, disallowing downstream reproduction of a decoy of
+        interest from the output scorefile(s), but a smaller scorefile storage footprint. If `False`, also
+        write the active Conda/Mamba/uv/Pixi environment configuration to a separate output file in the
+        `output_path` keyword argument value for accounting purposes. Full simulation records are always
+        written to the output decoy files, which may still be used to reproduce any decoy without the
+        scorefile.
 
         Default: `False`
 
     `decoy_dir_name`:
-        A `str` object specifying the directory name where the
-        output decoys will be saved. The directory location is always
-        `output_path`/`decoy_dir_name`.
+        A `str` object specifying the directory name where the output decoy files will be saved. The directory
+        location is always determined by: ```output_path` "/" `decoy_dir_name```.
 
         Default: `"decoys"`
 
     `logs_dir_name`:
-        A `str` object specifying the directory name where the
-        output log files will be saved. The directory location is always
-        `output_path`/`logs_dir_name`.
+        A `str` object specifying the directory name where the output log files will be saved. The directory
+        location is always determined by: ```output_path` "/" `logs_dir_name```.
 
         Default: `"logs"`
 
     `logging_level`:
-        A `str` object specifying the logging level of python tracer
-        output to write to the log file of either "NOTSET", "DEBUG", "INFO",
-        "WARNING", "ERROR", or "CRITICAL". The output log file is always written
-        to `output_path`/`logs_dir_name`/`simulation_name`.log on disk.
+        A `str` object specifying the logging level of Python logging output to write to the log file.
+        The available options are either: `"NOTSET"`, `"DEBUG"`, `"INFO"`, `"WARNING"`, `"ERROR"`, or
+        `"CRITICAL"`. The output log file location is always determined by:
+        ```output_path` "/" `logs_dir_name` "/" `simulation_name```.
 
         Default: `"INFO"`
 
     `logging_address`:
-        A `str` object specifying the socket endpoint for sending and receiving
-        log messages across a network, so log messages from user-provided PyRosetta
-        protocols may be written to a single log file on the host node. The `str` object
-        must take the format 'host:port' where 'host' is either an IP address, 'localhost',
-        or Domain Name System (DNS)-accessible domain name, and the 'port' is a digit greater
-        than or equal to 0. If the 'port' is '0', then the next free port is selected.
+        A `str` object specifying the socket endpoint for sending and receiving log messages across a network,
+        so log messages from user-defined PyRosetta protocols may be written to a single log file on the head
+        node. The `str` object must take the format of a socket address (i.e.,
+        "`<host address>`:`<port number>`") where the `<host address>` is either an IP address, "localhost", or
+        Domain Name System (DNS)-accessible domain name, and the `<port number>` is a digit greater than or
+        equal to "0". If the port number is "0", then the next free port number is selected.
 
-        Default: `"localhost:0"` if `scheduler=None` or either the `client` or `clients`
-        keyword argument values specify instances of `distributed.LocalCluster`,
-        otherwise `"0.0.0.0:0"`.
+        Default: `"localhost:0"` if the `scheduler` keyword argument value is `None` or either the `client` or
+        `clients` keyword argument values specify instances of `distributed.LocalCluster`, else `"0.0.0.0:0"`.
 
     `ignore_errors`:
         A `bool` object specifying for PyRosettaCluster to ignore errors
