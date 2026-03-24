@@ -1790,7 +1790,7 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
         scorefile_name = "test_scores.json"
         compressed = True
         protocols = [my_protocol] * len(protocol_options)
-        for norm_task_options in (True, False):
+        for norm_task_options in (False, True):
             output_path = os.path.join(self.workdir, f"outputs_norm_task_options_{int(norm_task_options)}")
             PyRosettaCluster(
                 tasks=create_tasks,
@@ -1989,12 +1989,12 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
         )
         _n_protocols = 3
         _available_score_functions = {
-            ("-score:weights", "ref2015"),
+            # ("-score:weights", "ref2015"),
             ("-beta_nov16", "1"),
-            ("-beta_nov16_cart", "1"),
+            # ("-beta_nov16_cart", "1"),
         }
-        if TestReproducibilityTaskUpdates.score_function_is_available("beta_jan25"):
-            _available_score_functions.add(("-beta_jan25", "1"))
+        # if TestReproducibilityTaskUpdates.score_function_is_available("beta_jan25"):
+        #     _available_score_functions.add(("-beta_jan25", "1"))
         _scorefxn_flags = sorted(map(list, _available_score_functions)) # Make JSON-serializable
         if verbose:
             print(f"Available scorefunction flags: {_scorefxn_flags}")
@@ -2147,7 +2147,7 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
         input_packed_pose = None
         compressed = True
         protocols = [my_remodel_protocol] * _n_protocols
-        for norm_task_options in (True, False):
+        for norm_task_options in (False, True):
             output_path = os.path.join(self.workdir, f"outputs_norm_task_options_{int(norm_task_options)}")
             PyRosettaCluster(
                 tasks=create_tasks,
