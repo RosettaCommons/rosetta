@@ -1656,6 +1656,11 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
 
     def setUp(self):
         random.seed(111)
+        self.tmpdir = tempfile.TemporaryDirectory()
+        self.workdir = self.tmpdir.name
+
+    def tearDown(self):
+        self.tmpdir.cleanup()
 
     @staticmethod
     def score_function_is_available(name):
@@ -1680,11 +1685,14 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
 
         # Protocol number to Rosetta command-line options map
         protocol_options = [
-            "", # Default ref2015
-            "-beta_nov16",
-            "-beta_nov16_cart",
-            "-beta_jan25" if TestReproducibilityTaskUpdates.score_function_is_available("beta_jan25") else "",
+            "-score:weights ref2015",
+            "-beta_nov16 1",
+            "-beta_nov16_cart 1",
         ]
+        if TestReproducibilityTaskUpdates.score_function_is_available("beta_jan25"):
+            protocol_options.append("-beta_jan25 1")
+        else:
+            protocol_options.append("-score:weights ref2015")
         protocol_options = {str(k): v for k, v in enumerate(protocol_options, start=0)} # Make JSON-serializable
         if verbose:
             print(f"Protocol options: {protocol_options}")
@@ -1714,7 +1722,10 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
         def my_protocol(packed_pose, **kwargs):
             import pyrosetta
             import random
-
+            
+            # Initialize seed
+            seed = kwargs["PyRosettaCluster_seed"]
+            random.seed(seed)
             # Unpack scores
             cache = packed_pose.pose.cache
             protocol_scorefxn_names = cache.get("protocol_scorefxn_names", None) or {}
@@ -1738,7 +1749,6 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
             assert "test_key" in kwargs, (
                 f"Existing key not found in keyword arguments dictionary: 'test_key'"
             )
-            random.seed(kwargs["PyRosettaCluster_seed"])
             kwargs["test_key"] = random.choice(
                 ["foo", "bar", "baz", "qux", "quux", frozenset([1, 2, 3]), complex(8, 9), True, False]
             )
@@ -1768,130 +1778,154 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
 
             return packed_pose, kwargs
 
-        with tempfile.TemporaryDirectory() as workdir:
-            pyrosetta.secure_unpickle.add_secure_package("pandas")
-            pyrosetta.secure_unpickle.add_secure_package("pyarrow")
-            sequence = "ACDEFGHIKLMNPQRSTVWY"
-            input_pose = io.to_pose(io.pose_from_sequence(sequence))
-            scorefile_name = "test_scores.json"
-            compressed = True
-            protocols = [my_protocol] * len(protocol_options)
-            for norm_task_options in (True, False):
-                output_path = os.path.join(workdir, f"outputs_norm_task_options_{int(norm_task_options)}")
-                PyRosettaCluster(
-                    tasks=create_tasks,
-                    input_packed_pose=input_pose,
-                    output_path=output_path,
-                    scratch_dir=workdir,
-                    simulation_records_in_scorefile=True,
-                    scorefile_name=scorefile_name,
-                    compressed=compressed,
-                    norm_task_options=norm_task_options,
-                    sha1=None,
-                    project_name="PyRosettaCluster",
-                    simulation_name="update_tasks",
-                    output_decoy_types=[".pdb", ".init"],
-                    output_scorefile_types=[".json", ".xz"],
-                    output_init_file=None,
-                ).distribute(protocols=protocols)
+        pyrosetta.secure_unpickle.add_secure_package("pandas")
+        pyrosetta.secure_unpickle.add_secure_package("pyarrow")
+        sequence = "ACDEFGHIKLMNPQRSTVWY"
+        input_pose = io.to_pose(io.pose_from_sequence(sequence))
+        scorefile_name = "test_scores.json"
+        compressed = True
+        protocols = [my_protocol] * len(protocol_options)
+        for norm_task_options in (True, False):
+            output_path = os.path.join(self.workdir, f"outputs_norm_task_options_{int(norm_task_options)}")
+            PyRosettaCluster(
+                tasks=create_tasks,
+                input_packed_pose=input_pose,
+                output_path=output_path,
+                scratch_dir=self.workdir,
+                simulation_records_in_scorefile=True,
+                scorefile_name=scorefile_name,
+                compressed=compressed,
+                norm_task_options=norm_task_options,
+                sha1=None,
+                project_name="PyRosettaCluster",
+                simulation_name="update_tasks",
+                output_decoy_types=[".pdb", ".init"],
+                output_scorefile_types=[".json", ".xz"],
+                output_init_file=None,
+                min_workers=1,
+                max_workers=2,
+                cooldown_time=2.5,
+            ).distribute(protocols=protocols)
 
-                scorefile_path = os.path.join(output_path, os.path.splitext(scorefile_name)[0] + ".xz")
-                df = secure_read_pickle(scorefile_path, compression="infer")
-                self.assertEqual(df.index.size, 1)
-                original_record = df.iloc[0]
+            scorefile_path = os.path.join(output_path, os.path.splitext(scorefile_name)[0] + ".xz")
+            df = secure_read_pickle(scorefile_path, compression="infer")
+            self.assertEqual(df.index.size, 1)
+            original_record = df.iloc[0]
 
-                if verbose:
-                    logging_file = original_record["metadata"]["logging_file"]
-                    _logging_files = glob.glob(os.path.join(os.path.dirname(logging_file), "*"))
-                    for _logging_file in _logging_files:
-                        print("Output from logging file:", _logging_file)
-                        with open(_logging_file, "r") as f:
-                            print(f.read())
+            if verbose:
+                logging_file = original_record["metadata"]["logging_file"]
+                _logging_files = glob.glob(os.path.join(os.path.dirname(logging_file), "*"))
+                for _logging_file in _logging_files:
+                    print("Output from logging file:", _logging_file)
+                    with open(_logging_file, "r") as f:
+                        print(f.read())
 
-                # Reproduce decoy
-                for i in range(2):
-                    if i == 0: # Reproduce from a PyRosetta initialization file
-                        input_file = original_record["metadata"]["output_file"].split(os.extsep)[0] + (".init.bz2" if compressed else ".init")
-                        scorefile = None
-                        decoy_name = None
-                        input_packed_pose = None
-                    elif i == 1: # Reproduce from a pickled `pandas.DataFrame` scorefile
-                        input_file = None
-                        scorefile = scorefile_path
-                        decoy_name = original_record["metadata"]["decoy_name"]
-                        input_packed_pose = input_pose
-                    reproduce_scorefile_name = f"reproduce_test_scores_{i}.json"
-                    skip_corrections = False
-                    reproduce(
-                        input_file=input_file,
-                        scorefile=scorefile,
-                        decoy_name=decoy_name,
-                        input_packed_pose=input_packed_pose,
-                        protocols=protocols,
-                        client=None,
-                        clients=None,
-                        instance_kwargs={
-                            "sha1": None,
-                            "scorefile_name": reproduce_scorefile_name,
-                            "output_decoy_types": [".pdb", ".init"],
-                            "output_scorefile_types": [".json", ".xz"],
-                            "output_init_file": None, # Skip `dump_init_file`
-                        },
+            # Reproduce decoy
+            if verbose:
+                print(f"Original simulation complete for `norm_task_options={norm_task_options}`.")
+            for i in range(2):
+                print(f"Running reproduction simulation for `norm_task_options={norm_task_options}` on iteration: {i}")
+                if i == 0: # Reproduce from a PyRosetta initialization file
+                    input_file = original_record["metadata"]["output_file"].split(os.extsep)[0] + (".init.bz2" if compressed else ".init")
+                    scorefile = None
+                    decoy_name = None
+                    input_packed_pose = None
+                elif i == 1: # Reproduce from a pickled `pandas.DataFrame` scorefile
+                    input_file = None
+                    scorefile = scorefile_path
+                    decoy_name = original_record["metadata"]["decoy_name"]
+                    input_packed_pose = input_pose
+                output_path = os.path.join(self.workdir, f"outputs_reproduce_norm_task_options_{int(norm_task_options)}_{i}")
+                reproduce_scorefile_name = f"reproduce_test_scores_{i}.json"
+                skip_corrections = False
+                reproduce(
+                    input_file=input_file,
+                    scorefile=scorefile,
+                    decoy_name=decoy_name,
+                    input_packed_pose=input_packed_pose,
+                    protocols=protocols,
+                    client=None,
+                    clients=None,
+                    instance_kwargs={
+                        "output_path": output_path,
+                        "scratch_dir": self.workdir,
+                        "simulation_records_in_scorefile": True,
+                        "scorefile_name": reproduce_scorefile_name,
+                        "compressed": compressed,
+                        "norm_task_options": norm_task_options,
+                        "sha1": None,
+                        "output_decoy_types": [".pdb", ".init"],
+                        "output_scorefile_types": [".json", ".xz"],
+                        "output_init_file": None, # Skip `dump_init_file`
+                        "min_workers": 1,
+                        "max_workers": 2,
+                        "cooldown_time": 2.5,
+                    },
+                    skip_corrections=skip_corrections,
+                    init_from_file_kwargs=dict(
+                        dry_run=None,
+                        output_dir=os.path.join(self.workdir, f"reproduce_pyrosetta_init_files_{i}"),
                         skip_corrections=skip_corrections,
-                        init_from_file_kwargs=dict(
-                            dry_run=None,
-                            output_dir=os.path.join(workdir, f"reproduce_pyrosetta_init_files_{i}"),
-                            skip_corrections=skip_corrections,
-                            relative_paths=None,
-                            max_decompressed_bytes=1_000_000,
-                            restore_rg_state=None,
-                            database=None,
-                            verbose=verbose,
-                            set_logging_handler=None,
-                            notebook=None,
-                            silent=None,
-                        ),
-                    )
+                        relative_paths=None,
+                        max_decompressed_bytes=1_000_000,
+                        restore_rg_state=None,
+                        database=None,
+                        verbose=verbose,
+                        set_logging_handler=None,
+                        notebook=None,
+                        silent=None,
+                    ),
+                )
 
-                    reproduce_scorefile_path = os.path.join(output_path, os.path.splitext(reproduce_scorefile_name)[0] + ".xz")
-                    df_reproduce = secure_read_pickle(reproduce_scorefile_path, compression="infer")
-                    self.assertEqual(df_reproduce.index.size, 1)
-                    reproduce_record = df_reproduce.iloc[0]
-                    # Assert identical scorefunction results across original versus reproduction
-                    for protocol_number in range(len(protocols)):
-                        self.assertEqual(
-                            original_record["scores"]["protocol_scorefxn_names"][protocol_number],
-                            reproduce_record["scores"]["protocol_scorefxn_names"][protocol_number],
-                            msg=f"Protocol number {protocol_number} score function names differ."
+                reproduce_scorefile_path = os.path.join(output_path, os.path.splitext(reproduce_scorefile_name)[0] + ".xz")
+                df_reproduce = secure_read_pickle(reproduce_scorefile_path, compression="infer")
+                self.assertEqual(df_reproduce.index.size, 1)
+                reproduce_record = df_reproduce.iloc[0]
+                # Assert identical scorefunction results across original versus reproduction
+                for protocol_number in range(len(protocols)):
+                    self.assertEqual(
+                        original_record["scores"]["protocol_scorefxn_names"][protocol_number],
+                        reproduce_record["scores"]["protocol_scorefxn_names"][protocol_number],
+                        msg=f"Protocol number {protocol_number} score function names differ."
+                    )
+                    self.assertEqual(
+                        original_record["scores"]["protocol_total_scores"][protocol_number],
+                        reproduce_record["scores"]["protocol_total_scores"][protocol_number],
+                        msg=f"Protocol number {protocol_number} total scores differ."
+                    )
+                # Assert unique scorefunction results within original and reproduction
+                for record in (original_record, reproduce_record):
+                    scorefxn_names = record["scores"]["protocol_scorefxn_names"]
+                    total_scores = record["scores"]["protocol_total_scores"]
+                    scorefxn_name_to_total_score_dict = {scorefxn_names[k]: total_scores[k] for k in scorefxn_names}
+                    for (name_i, total_score_i), (name_j, total_score_j) in itertools.combinations(scorefxn_name_to_total_score_dict.items(), 2):
+                        self.assertNotEqual(
+                            total_score_i,
+                            total_score_j,
+                            msg=f"Scorefunctions '{name_i}' and '{name_j}' resulted in identical total score: {total_score_i}",
                         )
-                        self.assertEqual(
-                            original_record["scores"]["protocol_total_scores"][protocol_number],
-                            reproduce_record["scores"]["protocol_total_scores"][protocol_number],
-                            msg=f"Protocol number {protocol_number} total scores differ."
-                        )
-                    # Assert unique scorefunction results within original and reproduction
-                    for record in (original_record, reproduce_record):
-                        scorefxn_names = record["scores"]["protocol_scorefxn_names"]
-                        total_scores = record["scores"]["protocol_total_scores"]
-                        scorefxn_name_to_total_score_dict = {scorefxn_names[k]: total_scores[k] for k in scorefxn_names}
-                        for (name_i, total_score_i), (name_j, total_score_j) in itertools.combinations(scorefxn_name_to_total_score_dict.items(), 2):
-                            self.assertNotEqual(
-                                total_score_i,
-                                total_score_j,
-                                msg=f"Scorefunctions '{name_i}' and '{name_j}' resulted in identical total score: {total_score_i}",
-                            )
-                    if verbose:
-                        print(f"Successfully validated reproduction simulation for iteration: {i}")
+                # Assert identical sequence through original and reproduction simulations
+                for record in (original_record, reproduce_record):
+                    self.assertEqual(
+                        io.pose_from_file(record["metadata"]["output_file"]).pose.sequence(),
+                        sequence,
+                        msg="Pose sequence diverged."
+                    )
+                if verbose:
+                    print(f"Successfully validated reproduction simulation for `norm_task_options={norm_task_options}` on iteration: {i}")
 
 
 class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
     """Test case for decoy reproducibility with user-defined task dictionary updates with RosettaRemodel."""
 
     def setUp(self):
+        random.seed(111)
+        self.tmpdir = tempfile.TemporaryDirectory()
+        self.workdir = self.tmpdir.name
         self.cwd = os.getcwd()
         self.remodel_1_pdb_file = os.path.join(self.cwd, "1.pdb")
         self.assertFalse(os.path.isfile(self.remodel_1_pdb_file))
-        random.seed(111)
+        os.chdir(self.workdir) # Prevent RosettaRemodel dumping '1.pdb' in current working directory
 
     def tearDown(self):
         if os.path.isfile(self.remodel_1_pdb_file):
@@ -1899,6 +1933,8 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
                 os.remove(self.remodel_1_pdb_file)
             except Exception:
                 print(f"Warning: RosettaRemodel output file still exists: {self.remodel_1_pdb_file}")
+        os.chdir(self.cwd)
+        self.tmpdir.cleanup()
 
     @staticmethod
     def get_remodel_options():
@@ -1951,9 +1987,10 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             ("-score:weights", "ref2015"),
             ("-beta_nov16", "1"),
             ("-beta_nov16_cart", "1"),
-            ("-beta_jan25", "1") if TestReproducibilityTaskUpdates.score_function_is_available("beta_jan25") else ("-score:weights", "ref2015"),
         }
-        _scorefxn_flags = list(map(list, _available_score_functions)) # Make JSON-serializable
+        if TestReproducibilityTaskUpdates.score_function_is_available("beta_jan25"):
+            _available_score_functions.add(("-beta_jan25", "1"))
+        _scorefxn_flags = sorted(map(list, _available_score_functions)) # Make JSON-serializable
         if verbose:
             print(f"Available scorefunction flags: {_scorefxn_flags}")
 
@@ -2081,6 +2118,8 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             )
             # Maybe update task dictionary for next PyRosetta protocol, which gets validated and kept
             if protocol_number + 1 < kwargs["n_protocols"]:
+                if verbose:
+                    print(f"PyRosetta protocol number {protocol_number} random RNG state: {hash(str(random.getstate()))}")
                 kwargs["options"] = ""
                 kwargs["extra_options"] = {
                     **TestReproducibilityRemodelTaskUpdates.get_random_options(kwargs["scorefxn_flags"]),
@@ -2092,124 +2131,137 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
 
             return packed_pose, kwargs
 
-        with tempfile.TemporaryDirectory() as workdir:
-            os.chdir(workdir) # Prevent RosettaRemodel dumping '1.pdb' in current working directory
-            pyrosetta.secure_unpickle.add_secure_package("pandas")
-            pyrosetta.secure_unpickle.add_secure_package("pyarrow")
-            scorefile_name = "test_scores.json"
-            input_packed_pose = None
-            compressed = True
-            protocols = [my_remodel_protocol] * _n_protocols
-            for norm_task_options in (True, False):
-                output_path = os.path.join(workdir, f"outputs_norm_task_options_{int(norm_task_options)}")
-                PyRosettaCluster(
-                    tasks=create_tasks(),
+        pyrosetta.secure_unpickle.add_secure_package("pandas")
+        pyrosetta.secure_unpickle.add_secure_package("pyarrow")
+        scorefile_name = "test_scores.json"
+        input_packed_pose = None
+        compressed = True
+        protocols = [my_remodel_protocol] * _n_protocols
+        for norm_task_options in (True, False):
+            output_path = os.path.join(self.workdir, f"outputs_norm_task_options_{int(norm_task_options)}")
+            PyRosettaCluster(
+                tasks=create_tasks,
+                input_packed_pose=input_packed_pose,
+                output_path=output_path,
+                scratch_dir=self.workdir,
+                simulation_records_in_scorefile=True,
+                scorefile_name=scorefile_name,
+                compressed=compressed,
+                norm_task_options=norm_task_options,
+                sha1=None,
+                project_name="PyRosettaCluster",
+                simulation_name="update_tasks",
+                output_decoy_types=[".pdb", ".init"],
+                output_scorefile_types=[".json", ".xz"],
+                output_init_file=None,
+                min_workers=1,
+                max_workers=2,
+                cooldown_time=2.5,
+            ).distribute(protocols=protocols)
+
+            scorefile_path = os.path.join(output_path, os.path.splitext(scorefile_name)[0] + ".xz")
+            df = secure_read_pickle(scorefile_path, compression="infer")
+            self.assertEqual(df.index.size, 1)
+            original_record = df.iloc[0]
+
+            if verbose:
+                print("Original record:", original_record["instance"])
+            if verbose:
+                logging_file = original_record["metadata"]["logging_file"]
+                _logging_files = glob.glob(os.path.join(os.path.dirname(logging_file), "*"))
+                for _logging_file in _logging_files:
+                    print("Output from logging file:", _logging_file)
+                    with open(_logging_file, "r") as f:
+                        print(f.read())
+
+            # Reproduce decoy
+            if verbose:
+                print(f"Original simulation complete for `norm_task_options={norm_task_options}`.")
+            for i in range(2):
+                print(f"Running reproduction simulation for `norm_task_options={norm_task_options}` on iteration: {i}")
+                if i == 0: # Reproduce from a PyRosetta initialization file
+                    input_file = original_record["metadata"]["output_file"].split(os.extsep)[0] + (".init.bz2" if compressed else ".init")
+                    scorefile = None
+                    decoy_name = None
+                    input_packed_pose = None
+                elif i == 1: # Reproduce from a pickled `pandas.DataFrame` scorefile
+                    input_file = None
+                    scorefile = scorefile_path
+                    decoy_name = original_record["metadata"]["decoy_name"]
+                    input_packed_pose = input_packed_pose
+                output_path = os.path.join(self.workdir, f"outputs_reproduce_norm_task_options_{int(norm_task_options)}_{i}")
+                reproduce_scorefile_name = f"reproduce_test_scores_{i}.json"
+                skip_corrections = False
+                reproduce(
+                    input_file=input_file,
+                    scorefile=scorefile,
+                    decoy_name=decoy_name,
                     input_packed_pose=input_packed_pose,
-                    output_path=output_path,
-                    scratch_dir=workdir,
-                    simulation_records_in_scorefile=True,
-                    scorefile_name=scorefile_name,
-                    compressed=compressed,
-                    norm_task_options=norm_task_options,
-                    sha1=None,
-                    project_name="PyRosettaCluster",
-                    simulation_name="update_tasks",
-                    output_decoy_types=[".pdb", ".init"],
-                    output_scorefile_types=[".json", ".xz"],
-                    output_init_file=None,
-                ).distribute(protocols=protocols)
-
-                scorefile_path = os.path.join(output_path, os.path.splitext(scorefile_name)[0] + ".xz")
-                df = secure_read_pickle(scorefile_path, compression="infer")
-                self.assertEqual(df.index.size, 1)
-                original_record = df.iloc[0]
-
-                if verbose:
-                    print("Original record:", original_record["instance"])
-                if verbose:
-                    logging_file = original_record["metadata"]["logging_file"]
-                    _logging_files = glob.glob(os.path.join(os.path.dirname(logging_file), "*"))
-                    for _logging_file in _logging_files:
-                        print("Output from logging file:", _logging_file)
-                        with open(_logging_file, "r") as f:
-                            print(f.read())
-
-                # Reproduce decoy
-                for i in range(2):
-                    if i == 0: # Reproduce from a PyRosetta initialization file
-                        input_file = original_record["metadata"]["output_file"].split(os.extsep)[0] + (".init.bz2" if compressed else ".init")
-                        scorefile = None
-                        decoy_name = None
-                        input_packed_pose = None
-                    elif i == 1: # Reproduce from a pickled `pandas.DataFrame` scorefile
-                        input_file = None
-                        scorefile = scorefile_path
-                        decoy_name = original_record["metadata"]["decoy_name"]
-                        input_packed_pose = input_packed_pose
-                    reproduce_scorefile_name = f"reproduce_test_scores_{i}.json"
-                    skip_corrections = False
-                    reproduce(
-                        input_file=input_file,
-                        scorefile=scorefile,
-                        decoy_name=decoy_name,
-                        input_packed_pose=input_packed_pose,
-                        protocols=protocols,
-                        client=None,
-                        clients=None,
-                        instance_kwargs={
-                            "sha1": None,
-                            "scorefile_name": reproduce_scorefile_name,
-                            "output_decoy_types": [".pdb", ".init"],
-                            "output_scorefile_types": [".json", ".xz"],
-                            "output_init_file": None, # Skip `dump_init_file`
-                        },
+                    protocols=protocols,
+                    client=None,
+                    clients=None,
+                    instance_kwargs={
+                        "output_path": output_path,
+                        "scratch_dir": self.workdir,
+                        "simulation_records_in_scorefile": True,
+                        "scorefile_name": reproduce_scorefile_name,
+                        "compressed": compressed,
+                        "norm_task_options": norm_task_options,
+                        "sha1": None,
+                        "output_decoy_types": [".pdb", ".init"],
+                        "output_scorefile_types": [".json", ".xz"],
+                        "output_init_file": None, # Skip `dump_init_file`
+                        "min_workers": 1,
+                        "max_workers": 2,
+                        "cooldown_time": 2.5,
+                    },
+                    skip_corrections=skip_corrections,
+                    init_from_file_kwargs=dict(
+                        dry_run=None,
+                        output_dir=os.path.join(self.workdir, f"reproduce_pyrosetta_init_files_{i}"),
                         skip_corrections=skip_corrections,
-                        init_from_file_kwargs=dict(
-                            dry_run=None,
-                            output_dir=os.path.join(workdir, f"reproduce_pyrosetta_init_files_{i}"),
-                            skip_corrections=skip_corrections,
-                            relative_paths=None,
-                            max_decompressed_bytes=1_000_000,
-                            restore_rg_state=None,
-                            database=None,
-                            verbose=verbose,
-                            set_logging_handler=None,
-                            notebook=None,
-                            silent=None,
-                        ),
-                    )
+                        relative_paths=None,
+                        max_decompressed_bytes=1_000_000,
+                        restore_rg_state=None,
+                        database=None,
+                        verbose=verbose,
+                        set_logging_handler=None,
+                        notebook=None,
+                        silent=None,
+                    ),
+                )
 
-                    reproduce_scorefile_path = os.path.join(output_path, os.path.splitext(reproduce_scorefile_name)[0] + ".xz")
-                    df_reproduce = secure_read_pickle(reproduce_scorefile_path, compression="infer")
-                    self.assertEqual(df_reproduce.index.size, 1)
-                    reproduce_record = df_reproduce.iloc[0]
-                    # Assert identical protocol results across original versus reproduction
-                    for protocol_number in range(len(protocols)):
-                        self.assertEqual(
-                            original_record["scores"]["protocol_scorefxn_names"][protocol_number],
-                            reproduce_record["scores"]["protocol_scorefxn_names"][protocol_number],
-                            msg=f"Protocol number {protocol_number} score function names differ."
+                reproduce_scorefile_path = os.path.join(output_path, os.path.splitext(reproduce_scorefile_name)[0] + ".xz")
+                df_reproduce = secure_read_pickle(reproduce_scorefile_path, compression="infer")
+                self.assertEqual(df_reproduce.index.size, 1)
+                reproduce_record = df_reproduce.iloc[0]
+                # Assert identical protocol results across original versus reproduction
+                for protocol_number in range(len(protocols)):
+                    self.assertEqual(
+                        original_record["scores"]["protocol_scorefxn_names"][protocol_number],
+                        reproduce_record["scores"]["protocol_scorefxn_names"][protocol_number],
+                        msg=f"Protocol number {protocol_number} score function names differ."
+                    )
+                    self.assertEqual(
+                        original_record["scores"]["protocol_total_scores"][protocol_number],
+                        reproduce_record["scores"]["protocol_total_scores"][protocol_number],
+                        msg=f"Protocol number {protocol_number} total scores differ."
+                    )
+                    self.assertEqual(
+                        original_record["scores"]["protocol_n_res"][protocol_number],
+                        reproduce_record["scores"]["protocol_n_res"][protocol_number],
+                        msg=f"Protocol number {protocol_number} number of residues differ."
+                    )
+                # Assert unique scorefunction results within original/reproduce
+                for record in (original_record, reproduce_record):
+                    scorefxn_names = record["scores"]["protocol_scorefxn_names"]
+                    total_scores = record["scores"]["protocol_total_scores"]
+                    scorefxn_name_to_total_score_dict = {scorefxn_names[k]: total_scores[k] for k in scorefxn_names}
+                    for (name_i, total_score_i), (name_j, total_score_j) in itertools.combinations(scorefxn_name_to_total_score_dict.items(), 2):
+                        self.assertNotEqual(
+                            total_score_i,
+                            total_score_j,
+                            msg=f"Scorefunctions '{name_i}' and '{name_j}' resulted in identical total score: {total_score_i}",
                         )
-                        self.assertEqual(
-                            original_record["scores"]["protocol_total_scores"][protocol_number],
-                            reproduce_record["scores"]["protocol_total_scores"][protocol_number],
-                            msg=f"Protocol number {protocol_number} total scores differ."
-                        )
-                        self.assertEqual(
-                            original_record["scores"]["protocol_n_res"][protocol_number],
-                            reproduce_record["scores"]["protocol_n_res"][protocol_number],
-                            msg=f"Protocol number {protocol_number} number of residues differ."
-                        )
-                    # Assert unique scorefunction results within original/reproduce
-                    for record in (original_record, reproduce_record):
-                        scorefxn_names = record["scores"]["protocol_scorefxn_names"]
-                        total_scores = record["scores"]["protocol_total_scores"]
-                        scorefxn_name_to_total_score_dict = {scorefxn_names[k]: total_scores[k] for k in scorefxn_names}
-                        for (name_i, total_score_i), (name_j, total_score_j) in itertools.combinations(scorefxn_name_to_total_score_dict.items(), 2):
-                            self.assertNotEqual(
-                                total_score_i,
-                                total_score_j,
-                                msg=f"Scorefunctions '{name_i}' and '{name_j}' resulted in identical total score: {total_score_i}",
-                            )
-                    if verbose:
-                        print(f"Successfully validated reproduction simulation for iteration: {i}")
+                if verbose:
+                    print(f"Successfully validated reproduction simulation for `norm_task_options={norm_task_options}` on iteration: {i}")
