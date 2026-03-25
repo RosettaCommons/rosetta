@@ -17,6 +17,14 @@ Args:
 
         Default: `[{}]`
 
+    `nstruct`:
+        An `int` object specifying the number of repeats of the first user-defined PyRosetta protocol. The
+        user can control the number of repeats of downstream PyRosetta protocols via returning multiple
+        clones of any output decoys from any upstream PyRosetta protocols, or by cloning the input decoy
+        multiple times inside a downstream PyRosetta protocol.
+
+        Default: `1`
+
     `input_packed_pose`:
         An input `PackedPose` object that is accessible via the first positional-or-keyword parameter of the
         first user-defined PyRosetta protocol.
@@ -119,65 +127,6 @@ Args:
 
         Default: `":8787"`
 
-    `nstruct`:
-        An `int` object specifying the number of repeats of the first user-defined PyRosetta protocol. The
-        user can control the number of repeats of downstream PyRosetta protocols via returning multiple
-        clones of any output decoys from any upstream PyRosetta protocols, or by cloning the input decoy
-        multiple times inside a downstream PyRosetta protocol.
-
-        Default: `1`
-
-    `compressed`:
-        A `bool` object specifying whether or not to compress the output decoy files and output PyRosetta
-        initialization files using the `bzip2` library, resulting in the appending of ".bz2" to output decoy
-        files and PyRosetta initialization files. Also see the `output_decoy_types` and `output_init_file`
-        keyword arguments.
-
-        Default: `True`
-
-    `compression`:
-        A `str` object of either `"xz"`, `"zlib"` or `"bz2"`, or a `bool` or `None` object representing the
-        internal compression library for pickled `Pose` objects and user-defined task dictionaries. The
-        default of `True` uses `"xz"` for compression if it is installed, otherwise resorts to `"zlib"` for
-        compression.
-
-        Default: `True`
-
-    `system_info`:
-        A `dict` or `None` object specifying the system information and/or extra simulation informatio
-        required to reproduce the simulation. If `None` is provided, then `PyRosettaCluster` automatically
-        detects the platform and sets this value as the dictionary ``{"sys.platform": `sys.platform`}`` (e.g.,
-        `{"sys.platform": "linux"}`). If a `dict` object is provided, then validate that the `"sys.platform"`
-        key has a value equal to the current `sys.platform` result, and log a warning message if not.
-        System information such as Amazon Machine Image (AMI) identifier and compute fleet instance type
-        identifier may be stored in this dictionary, but it is not automatically validated upon reproduction
-        simulations. This information is stored in the full simulation records for accounting.
-
-        Default: `None`
-
-    `pyrosetta_build`:
-        A `str` or `None` object specifying the PyRosetta build signature as output by
-        `pyrosetta._build_signature()`. If `None` is provided, then `PyRosettaCluster` automatically detects
-        the PyRosetta build signature and sets this keyword argument value. If a non-empty `str` object is
-        provided, then validate that the input PyRosetta build signature is equal to the active PyRosetta
-        build signature, and raise an exception if not. This validation process ensures that reproduction
-        simulations use an identical PyRosetta build signature from the original simulation. To bypass
-        PyRosetta build signature validation with a warning message, an empty string ('') may be provided
-        but does not assure reproducibility.
-
-        Default: `None`
-
-    `sha1`:
-        A `str` or `None` object specifying the Git commit SHA-1 hash string of the local Git repository
-        defining the simulation. If a non-empty `str` object is provided, then it is validated to match the
-        Git commit SHA-1 hash string of the most recent commit in the local Git repository checked out in the
-        current working directory, and then it is added to the simulation record for accounting. If an empty
-        string is provided, then ensure that everything in the current working directory is committed to the
-        local Git repository. If `None` is provided, then bypass SHA-1 hash string validation and set this
-        value to an empty string.
-
-        Default: `""`
-
     `project_name`:
         A `str` object specifying the project name for this simulation. This keyword argument value is just
         added to the full simulation record for accounting purposes.
@@ -191,38 +140,11 @@ Args:
 
         Default: `project_name` if not specified, else `"PyRosettaCluster"` if `None`
 
-    `environment`:
-        A `None` or `str` object specifying either the active Conda/Mamba environment YML file string, active
-        uv project `uv.lock` file string, or active Pixi project `pixi.lock` file string. If `None` is
-        provided, then generate an environment file string for the active Conda/Mamba/uv/Pixi environment and
-        save it to the full simulation record. If a non-empty `str` object is provided, then validate it
-        to match the active Conda/Mamba/uv/Pixi environment YML/lock file string and save it to the full
-        simulation record. This ensures that reproduction simulations use an identical Conda/Mamba/uv/Pixi
-        environment configuration to the original simulation. To bypass Conda/Mamba/uv/Pixi environment
-        validation with a warning message, an empty string ('') may be provided, but does not assure
-        reproducibility.
-
-        Default: `None`
-
     `output_path`:
         A `str` object specifying the absolute path of the output directory where the results will be written
         to disk. The directory will be created be created if it does not exist.
 
         Default: `"./outputs"`
-
-    `output_init_file`:
-        A `str` object specifying the absolute path to the output ".init" file that caches the
-        `input_packed_pose` keyword argument value upon `PyRosettaCluster` instantiation. The file does not
-        include any output decoys, and is optionally used for exporting PyRosetta initialization files with
-        output decoys by the `pyrosetta.distributed.cluster.export_init_file` function after the simulation
-        completes (see the `output_decoy_types` keyword argument). If `None` (or an empty `str` object (`""`))
-        is provided, or `dry_run` keyword argument value is set to `True`, then skip writing an output ".init"
-        file upon `PyRosettaCluster` instantiation. If skipped, it is recommended to run the
-        `pyrosetta.dump_init_file` function before or after the simulation. If the `compressed` keyword
-        argument value is set to `True`, then the output file is further compressed by the `bzip2` library,
-        and ".bz2" is automatically appended to the filename.
-
-        Default: ```output_path` "/" `project_name` "_" `simulation_name` "_pyrosetta.init"``
 
     `output_decoy_types`:
         An iterable of `str` objects representing the output decoy filetypes to save during the simulation.
@@ -311,6 +233,33 @@ Args:
         Default: `"localhost:0"` if the `scheduler` keyword argument value is `None` or either the `client` or
         `clients` keyword argument values specify instances of `distributed.LocalCluster`, else `"0.0.0.0:0"`.
 
+    `compressed`:
+        A `bool` object specifying whether or not to compress the output decoy files and output PyRosetta
+        initialization files using the `bzip2` library, resulting in the appending of ".bz2" to output decoy
+        files and PyRosetta initialization files. Also see the `output_decoy_types` and `output_init_file`
+        keyword arguments.
+
+        Default: `True`
+
+    `compression`:
+        A `str` object of either `"xz"`, `"zlib"` or `"bz2"`, or a `bool` or `None` object representing the
+        internal compression library for pickled `Pose` objects and user-defined task dictionaries. The
+        default of `True` uses `"xz"` for compression if it is installed, otherwise resorts to `"zlib"` for
+        compression.
+
+        Default: `True`
+
+    `sha1`:
+        A `str` or `None` object specifying the Git commit SHA-1 hash string of the local Git repository
+        defining the simulation. If a non-empty `str` object is provided, then it is validated to match the
+        Git commit SHA-1 hash string of the most recent commit in the local Git repository checked out in the
+        current working directory, and then it is added to the simulation record for accounting. If an empty
+        string is provided, then ensure that everything in the current working directory is committed to the
+        local Git repository. If `None` is provided, then bypass SHA-1 hash string validation and set this
+        value to an empty string.
+
+        Default: `""`
+
     `ignore_errors`:
         A `bool` object specifying whether or not to ignore raised Python exceptions and thrown Rosetta
         segmentation faults in the user-defined PyRosetta protocols. This comes in handy when well-defined
@@ -366,46 +315,6 @@ Args:
 
         Default: `False`
 
-    `security`:
-        A `bool` object or instance of `distributed.Security`, only having an effect if both `client=None` and
-        `clients=None`, that is passed to Dask if using `scheduler=None` or passed to Dask-Jobqueue if using
-        `scheduler="slurm"` or `scheduler="sge"`. If `True` is provided, then invoke the `cryptography` package
-        to generate a `distributed.Security.temporary` object through Dask or Dask-Jobqueue. If a Dask
-        `distributed.Security` object is provided, then pass it to Dask with `scheduler=None`, or pass it to
-        Dask-Jobqueue with `scheduler="slurm"` or `scheduler="sge"` (where the `shared_temp_directory` keyword
-        argument value of `SLURMCluster` or `SGECluster` is set to the `output_path` keyword argument value of
-        `PyRosettaCluster`). If `False` is provided, then Dask TLS security is disabled regardless of the
-        `scheduler` keyword argument value (which is *not* recommended for remote Dask clusters unless behind a
-        trusted private network segment (i.e., a firewall). If `None` is provided, then `True` is used by
-        default. In order to generate a `distributed.Security` object with the OpenSSL command-line interface,
-        the `pyrosetta.distributed.cluster.generate_dask_tls_security` function may also be used (see docstring
-        for more information) instead of the `cryptography` package.
-
-        See https://distributed.dask.org/en/latest/tls.html#distributed.security.Security.temporary for more
-        information.
-
-        Default: `False` if `scheduler=None`, else `True`
-
-    `max_nonce`:
-        An `int` object greater than or equal to 1 specifying the maximum number of nonces to cache per process
-        if Dask TLS security is disabled while using remote Dask clusters, which protects against replay
-        attacks. If nonce caching is in use, each process (including the head node process and all Dask worker
-        processes) cache nonces upon communication exchange over the network, which can increase memory usage
-        in each process. A rough estimate of additional memory usage is ~0.2 KB per task per user-defined
-        PyRosetta protocol per process. For example, submitting 1000 tasks with 2 PyRosetta protocols adds
-        (~0.2 KB/task/protocol × 1000 tasks × 2 protocols) = ~0.4 MB of additional memory per processs. If
-        memory usage per process permits, it is recommended to set this value to at least the number of tasks
-        times the number of protocols submitted, so that every nonce from every communication exchange over the
-        network gets cached.
-
-        Default: `4096`
-
-    `cooldown_time`:
-        A `float` or `int` object specifying how many seconds to sleep after the simulation is complete to
-        allow loggers to flush. For very slow network filesystems, 2 or more seconds may be reasonable.
-
-        Default: `0.5`
-
     `norm_task_options`:
         A `bool` object specifying whether or not to normalize the task
         'options' and 'extra_options' values after PyRosetta initialization on the remote
@@ -459,6 +368,83 @@ Args:
 
         Default: `None`
 
+    `cooldown_time`:
+        A `float` or `int` object specifying how many seconds to sleep after the simulation is complete to
+        allow loggers to flush. For very slow network filesystems, 2 or more seconds may be reasonable.
+
+        Default: `0.5`
+
+    `system_info`:
+        A `dict` or `None` object specifying the system information and/or extra simulation informatio
+        required to reproduce the simulation. If `None` is provided, then `PyRosettaCluster` automatically
+        detects the platform and sets this value as the dictionary ``{"sys.platform": `sys.platform`}`` (e.g.,
+        `{"sys.platform": "linux"}`). If a `dict` object is provided, then validate that the `"sys.platform"`
+        key has a value equal to the current `sys.platform` result, and log a warning message if not.
+        System information such as Amazon Machine Image (AMI) identifier and compute fleet instance type
+        identifier may be stored in this dictionary, but it is not automatically validated upon reproduction
+        simulations. This information is stored in the full simulation records for accounting.
+
+        Default: `None`
+
+    `pyrosetta_build`:
+        A `str` or `None` object specifying the PyRosetta build signature as output by
+        `pyrosetta._build_signature()`. If `None` is provided, then `PyRosettaCluster` automatically detects
+        the PyRosetta build signature and sets this keyword argument value. If a non-empty `str` object is
+        provided, then validate that the input PyRosetta build signature is equal to the active PyRosetta
+        build signature, and raise an exception if not. This validation process ensures that reproduction
+        simulations use an identical PyRosetta build signature from the original simulation. To bypass
+        PyRosetta build signature validation with a warning message, an empty string ('') may be provided
+        but does not assure reproducibility.
+
+        Default: `None`
+
+    `security`:
+        A `bool` object or instance of `distributed.Security`, only having an effect if both `client=None` and
+        `clients=None`, that is passed to Dask if using `scheduler=None` or passed to Dask-Jobqueue if using
+        `scheduler="slurm"` or `scheduler="sge"`. If `True` is provided, then invoke the `cryptography` package
+        to generate a `distributed.Security.temporary` object through Dask or Dask-Jobqueue. If a Dask
+        `distributed.Security` object is provided, then pass it to Dask with `scheduler=None`, or pass it to
+        Dask-Jobqueue with `scheduler="slurm"` or `scheduler="sge"` (where the `shared_temp_directory` keyword
+        argument value of `SLURMCluster` or `SGECluster` is set to the `output_path` keyword argument value of
+        `PyRosettaCluster`). If `False` is provided, then Dask TLS security is disabled regardless of the
+        `scheduler` keyword argument value (which is *not* recommended for remote Dask clusters unless behind a
+        trusted private network segment (i.e., a firewall). If `None` is provided, then `True` is used by
+        default. In order to generate a `distributed.Security` object with the OpenSSL command-line interface,
+        the `pyrosetta.distributed.cluster.generate_dask_tls_security` function may also be used (see docstring
+        for more information) instead of the `cryptography` package.
+
+        See https://distributed.dask.org/en/latest/tls.html#distributed.security.Security.temporary for more
+        information.
+
+        Default: `False` if `scheduler=None`, else `True`
+
+    `max_nonce`:
+        An `int` object greater than or equal to 1 specifying the maximum number of nonces to cache per process
+        if Dask TLS security is disabled while using remote Dask clusters, which protects against replay
+        attacks. If nonce caching is in use, each process (including the head node process and all Dask worker
+        processes) cache nonces upon communication exchange over the network, which can increase memory usage
+        in each process. A rough estimate of additional memory usage is ~0.2 KB per task per user-defined
+        PyRosetta protocol per process. For example, submitting 1000 tasks with 2 PyRosetta protocols adds
+        (~0.2 KB/task/protocol × 1000 tasks × 2 protocols) = ~0.4 MB of additional memory per processs. If
+        memory usage per process permits, it is recommended to set this value to at least the number of tasks
+        times the number of protocols submitted, so that every nonce from every communication exchange over the
+        network gets cached.
+
+        Default: `4096`
+
+    `environment`:
+        A `None` or `str` object specifying either the active Conda/Mamba environment YML file string, active
+        uv project `uv.lock` file string, or active Pixi project `pixi.lock` file string. If `None` is
+        provided, then generate an environment file string for the active Conda/Mamba/uv/Pixi environment and
+        save it to the full simulation record. If a non-empty `str` object is provided, then validate it
+        to match the active Conda/Mamba/uv/Pixi environment YML/lock file string and save it to the full
+        simulation record. This ensures that reproduction simulations use an identical Conda/Mamba/uv/Pixi
+        environment configuration to the original simulation. To bypass Conda/Mamba/uv/Pixi environment
+        validation with a warning message, an empty string ('') may be provided, but does not assure
+        reproducibility.
+
+        Default: `None`
+
     `author`:
         A `str` object specifying the author(s) of the simulation that is written to the full simulation
         records and the output PyRosetta initialization file(s).
@@ -477,6 +463,20 @@ Args:
         "CDLA Permissive-2.0", etc.).
 
         Default: `""`
+
+    `output_init_file`:
+        A `str` object specifying the absolute path to the output PyRosetta initialization file that caches the
+        `input_packed_pose` keyword argument value upon `PyRosettaCluster` instantiation. The file does not
+        include any output decoys, and is optionally used for exporting PyRosetta initialization files with
+        output decoys by the `pyrosetta.distributed.cluster.export_init_file` function after the simulation
+        completes (see the `output_decoy_types` keyword argument). If `None` (or an empty `str` object (`""`))
+        is provided, or `dry_run` keyword argument value is set to `True`, then skip writing an output ".init"
+        file upon `PyRosettaCluster` instantiation. If skipped, it is recommended to run the
+        `pyrosetta.dump_init_file` function before or after the simulation. If the `compressed` keyword
+        argument value is set to `True`, then the output file is further compressed by the `bzip2` library,
+        and ".bz2" is automatically appended to the filename.
+
+        Default: ```output_path` "/" `project_name` "_" `simulation_name` "_pyrosetta.init"``
 
 Returns:
     A `PyRosettaCluster` instance.
@@ -906,23 +906,6 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             attr.validators.in_([None, "disk", "memory"]),
         ],
     )
-    task_registry_dir = attr.ib(
-        type=Optional[str],
-        default=attr.Factory(
-            lambda self: os.path.join(
-                self.scratch_dir,
-                "_".join(
-                    [
-                        "task_registry",
-                        self.project_name.replace(" ", "-"),
-                        self.simulation_name.replace(" ", "-"),
-                    ]
-                ),
-            ) if self.task_registry == "disk" else None,
-            takes_self=True,
-        ),
-        validator=attr.validators.optional(attr.validators.instance_of(str)),
-    )
     yield_results = attr.ib(
         type=bool,
         init=False,
@@ -1062,6 +1045,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             ),
             takes_self=True,
         ),
+        init=False,
         validator=attr.validators.optional(attr.validators.instance_of(str)),
     )
     pyrosetta_init_args = attr.ib(
