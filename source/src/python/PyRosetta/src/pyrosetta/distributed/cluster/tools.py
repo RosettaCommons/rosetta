@@ -73,45 +73,66 @@ P = TypeVar("P", bound=Callable[..., Any])
 
 
 def get_protocols(
-    protocols: Optional[Union[List[Union[Callable[..., Any], str]], Callable[..., Any], str]] = None,
+    protocols: Optional[Union[List[Union[Callable[..., Any], str]], Callable[..., Any]]] = None,
     input_file: Optional[Union[str, Pose, PackedPose]] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
-) -> Union[List[Union[Callable[..., Any], str]], NoReturn]:
+) -> Union[List[Callable[..., Any]], NoReturn]:
     """
-    Given an 'input_file' that was written by PyRosettaCluster, or a full 'scorefile'
-    and a 'decoy_name' that was written by PyRosettaCluster, if 'protocols' is provided
-    then validate the 'protocols' against those in the 'input_file' or 'scorefile',
-    otherwise if 'protocols' is `NoneType` then attempt to return the PyRosettaCluster
-    protocols from the current scope matching the protocol names in the 'input_file'
-    or 'scorefile' keyword argument values.
+    Given an input file that was written by `PyRosettaCluster`, or a scorefile with full simulation records
+    that was written by `PyRosettaCluster` and a decoy name, if an iterable of PyRosetta protocols is provided
+    then validate the PyRosetta protocols against those in the full simulation record, otherwise if PyRosetta
+    protocols are not provided then attempt to return the PyRosetta protocols from back two frames of the
+    current scope where callable names may match the PyRosetta protocol names in the full simulation record.
+    If the `protocols` keyword argument value is `None`, it is recommended to validate that the returned
+    PyRosetta protocols are indeed those executed in the original `PyRosettaCluster` simulation.
 
     Args:
-        protocols: An iterable of `str` objects specifying the names of user-provided
-            PyRosetta protocols to validate or return.
-            Default: None
-        input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
-            '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init', or '.init.bz2' file,
-            or a `Pose`or `PackedPose` object, from which to extract PyRosettaCluster instance
-            kwargs. If 'input_file' is provided, then ignore the 'scorefile' and 'decoy_name'
-            keyword arguments.
-            Default: None
-        scorefile: A `str` object specifying the path to the JSON-formatted scorefile
-            (or pickled `pandas.DataFrame` scorefile) from a PyRosettaCluster simulation
-            from which to extract PyRosettaCluster instance kwargs. If 'scorefile'
-            is provided, 'decoy_name' must also be provided. In order to use a scorefile,
-            it must contain full simulation records from the original production
-            run; i.e., the 'simulation_records_in_scorefile' attribute was set to `True`.
-            Default: None
-        decoy_name: A `str` object specifying the decoy name for which to extract
-            PyRosettaCluster instance kwargs. If decoy_name is provided, scorefile
-            must also be provided.
-            Default: None
+        `protocols`:
+            An iterable of callable user-defined PyRosetta protocols; i.e., an iterable of objects of
+            `types.GeneratorType` and/or `types.FunctionType` types, or a single callable of type
+            `types.GeneratorType` or `types.FunctionType`, specifying an ordered sequence of PyRosetta
+            protocols. If `None`, then the PyRosetta protocols are automatically detected (by a best effort
+            only) from back two frames of the current scope.
+
+            Default: `None`
+
+        `input_file`:
+            A `str` object specifying the path to the ".pdb", ".pdb.bz2", ".pkl_pose", ".pkl_pose.bz2",
+            ".b64_pose", ".b64_pose.bz2", ".init" or ".init.bz2" file from which to extract `PyRosettaCluster`
+            instance attributes. If `input_file` is provided, then ignore the `scorefile` and `decoy_name`
+            keyword arguments. Note that ".pkl_pose", ".pkl_pose.bz2", ".b64_pose", ".b64_pose.bz2", ".init"
+            and ".init.bz2" files contain pickled `Pose` objects that are deserialized using the
+            `SecureSerializerBase` class in PyRosetta upon calling the this function, but please still
+            only input these file types if you know and trust their source. Learn more
+            `here <https://docs.python.org/3/library/pickle.html>`_.
+
+            Default: `None`
+
+        `scorefile`:
+            A `str` object specifying the path to a JSON Lines (JSONL)-formatted scorefile or pickled
+            `pandas.DataFrame` scorefile from a PyRosettaCluster simulation from which to extract
+            `PyRosettaCluster` instance attributes. If `scorefile` is provided, then `decoy_name` must also be
+            provided. In order to use a scorefile, it must contain full simulation records from the original
+            `PyRosettaCluster` simulation; i.e., the `simulation_records_in_scorefile` keyword argument value
+            was set to `True`. Note that in order to securely load pickled `pandas.DataFrame` objects, please
+            ensure that `pyrosetta.secure_unpickle.add_secure_package("pandas")` has been run. If using `pandas`
+            version `>=3.0.0`, PyArrow-backed datatypes may be enabled by default; in this case, please ensure
+            that `pyrosetta.secure_unpickle.add_secure_package("pyarrow")` has also first been run.
+
+            Default: `None`
+
+        `decoy_name`:
+            A `str` object specifying the decoy name for which to extract `PyRosettaCluster` instance
+            attributes. If `decoy_name` is provided, then `scorefile` must also be provided.
+
+            Default: `None`
 
     Returns:
-        A `list` of user-defined PyRosetta protocol names from the 'input_file' or 'scorefile'.
-        If `protocols` is None, then attempt to return the PyRosettaCluster protocols
-        from the current scope matching the protocol names in the 'input_file' or 'scorefile'.
+        A `list` object of callable PyRosetta protocols as determined from the full simulation record. If the
+        `protocols` keyword argument value is `None`, then attempt to return the callable PyRosetta protocols
+        (by a best effort only) from back two frames of the current scope where callable names may match the
+        PyRosetta protocol names in the full simulation record.
     """
 
     if protocols:
@@ -125,22 +146,22 @@ def get_protocols(
         assert len(original_protocols_list_of_str) == len(
             input_protocols_list_of_str
         ), (
-            "The original user-defined PyRosetta protocols list and the 'protocols' keyword argument "
-            + " value have different lengths! Cannot reproduce!"
+            "The original user-defined PyRosetta protocols list and the `protocols` keyword argument "
+            + "value have different lengths! Cannot reproduce!"
         )
         if original_protocols_list_of_str == input_protocols_list_of_str:
             logging.info(
-                "The 'protocols' keyword argument value matches the user-defined PyRosetta protocols "
-                + "from the original production run. Continuing with the reproduction."
+                "The `protocols` keyword argument value matches the user-defined PyRosetta protocols "
+                + "from the original production simulation. Continuing with the reproduction simulation."
             )
         for i in range(len(original_protocols_list_of_str)):
             if original_protocols_list_of_str[i] != input_protocols_list_of_str[i]:
                 logging.warning(
                     f"The original user-defined PyRosetta protocol '{original_protocols_list_of_str[i]}' "
                     + f"appears to have changed names to '{input_protocols_list_of_str[i]}'! "
-                    + f"Please verify that {input_protocols_list_of_str[i]}' is functionally equivalent to "
+                    + f"Please verify that '{input_protocols_list_of_str[i]}' is functionally equivalent to "
                     + f"'{original_protocols_list_of_str[i]}', otherwise the reproduction simulation "
-                    + "will not reproduce the original decoy(s)! Continuing with the reproduction run."
+                    + "will not reproduce the original decoy! Continuing with the reproduction simulation."
                 )
     else:
         # Get the protocols in the scope from the list of protocol names as strings
@@ -152,24 +173,24 @@ def get_protocols(
         ):
             if protocol_name in scope.f_locals:
                 logging.info(
-                    f"Automatically detected user-provided PyRosetta protocol '{protocol_name}' "
+                    f"Automatically detected user-defined PyRosetta protocol '{protocol_name}' "
                     + "in the local variables of the current frame."
                 )
                 protocols.append(scope.f_locals[protocol_name])
             elif protocol_name in scope.f_globals:
                 logging.info(
-                    f"Automatically detected user-provided PyRosetta protocol '{protocol_name}' "
+                    f"Automatically detected user-defined PyRosetta protocol '{protocol_name}' "
                     + "in the global variables of the current frame."
                 )
                 protocols.append(scope.f_globals[protocol_name])
             else:
                 raise RuntimeError(
                     f"The original user-defined PyRosetta protocol '{protocol_name}' "
-                    + "could not be found in the current scope! Please verify that the original "
-                    + "user-defined PyRosetta protocols are defined in the same scope as they were in "
+                    + "could not be found back two frames of the current scope! Please verify that the "
+                    + "original PyRosetta protocols are defined in the same scope as they were in "
                     + "the original production run. Alternatively, you may pass the original "
-                    + "user-defined PyRosetta protocols (defined under the new scope) maintaining "
-                    + "the original protocol order as a value to the 'protocols' keyword argument."
+                    + "PyRosetta protocols (defined under the new scope) maintaining "
+                    + "the original protocol order as a value to the `protocols` keyword argument."
                 )
 
     return _parse_protocols(protocols)
@@ -183,55 +204,74 @@ def get_instance_kwargs(
     with_metadata_kwargs: Optional[bool] = None,
 ) -> Union[Dict[str, Any], Tuple[Dict[str, Any], Dict[str, Any]], NoReturn]:
     """
-    Given an input file that was written by PyRosettaCluster, or a scorefile
-    and a decoy name that was written by PyRosettaCluster, return the PyRosettaCluster
-    instance kwargs needed to reproduce the decoy using PyRosettaCluster.
+    Given an input file that was written by `PyRosettaCluster`, or a scorefile with full simulation records
+    that was written by `PyRosettaCluster` and a decoy name, return the `PyRosettaCluster` instance attributes
+    (and optionally the "metadata" keyword arguments) needed to reproduce the decoy using `PyRosettaCluster`.
 
     Args:
-        input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2', '.pkl_pose',
-            '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init', or '.init.bz2' file, or a
-            `Pose` or `PackedPose` object, from which to extract PyRosettaCluster instance kwargs.
-            If 'input_file' is provided, then ignore the 'scorefile' and 'decoy_name' keyword
-            arguments.
-            Default: None
-        scorefile: A `str` object specifying the path to the JSON-formatted scorefile
-            (or pickled `pandas.DataFrame` scorefile) from a PyRosettaCluster simulation
-            from which to extract PyRosettaCluster instance kwargs. If 'scorefile'
-            is provided, 'decoy_name' must also be provided. In order to use a scorefile,
-            it must contain full simulation records from the original production
-            run; i.e., the 'simulation_records_in_scorefile' attribute was set to `True`.
-            Default: None
-        decoy_name: A `str` object specifying the decoy name for which to extract
-            PyRosettaCluster instance kwargs. If 'decoy_name' is provided, 'scorefile'
-            must also be provided.
-            Default: None
-        skip_corrections: A `bool` object specifying whether or not to skip any ScoreFunction
-            corrections specified in the PyRosettaCluster task initialization options
-            (extracted from the 'input_file' or 'scorefile' keyword argument value).
-            Default: None
-        with_metadata_kwargs: A `bool` object specifying whether or not to return a `tuple`
-            object with the instance kwargs as the first element and the metadata kwargs as
-            the second element.
-            Default: None
+        `input_file`:
+            A `str` object specifying the path to the ".pdb", ".pdb.bz2", ".pkl_pose", ".pkl_pose.bz2",
+            ".b64_pose", ".b64_pose.bz2", ".init" or ".init.bz2" file from which to extract `PyRosettaCluster`
+            instance attributes. If `input_file` is provided, then ignore the `scorefile` and `decoy_name`
+            keyword arguments. Note that ".pkl_pose", ".pkl_pose.bz2", ".b64_pose", ".b64_pose.bz2", ".init"
+            and ".init.bz2" files contain pickled `Pose` objects that are deserialized using the
+            `SecureSerializerBase` class in PyRosetta upon calling the this function, but please still
+            only input these file types if you know and trust their source. Learn more
+            `here <https://docs.python.org/3/library/pickle.html>`_.
+
+            Default: `None`
+
+        `scorefile`:
+            A `str` object specifying the path to a JSON Lines (JSONL)-formatted scorefile or pickled
+            `pandas.DataFrame` scorefile from a PyRosettaCluster simulation from which to extract
+            `PyRosettaCluster` instance attributes. If `scorefile` is provided, then `decoy_name` must also be
+            provided. In order to use a scorefile, it must contain full simulation records from the original
+            `PyRosettaCluster` simulation; i.e., the `simulation_records_in_scorefile` keyword argument value
+            was set to `True`. Note that in order to securely load pickled `pandas.DataFrame` objects, please
+            ensure that `pyrosetta.secure_unpickle.add_secure_package("pandas")` has been run. If using `pandas`
+            version `>=3.0.0`, PyArrow-backed datatypes may be enabled by default; in this case, please ensure
+            that `pyrosetta.secure_unpickle.add_secure_package("pyarrow")` has also first been run.
+
+            Default: `None`
+
+        `decoy_name`:
+            A `str` object specifying the decoy name for which to extract `PyRosettaCluster` instance
+            attributes. If `decoy_name` is provided, then `scorefile` must also be provided.
+
+            Default: `None`
+
+        `skip_corrections`:
+            A `bool` object specifying whether or not to skip any `ScoreFunction` corrections specified in the
+            `PyRosettaCluster` task's PyRosetta initialization options (extracted from the full simulation
+            record in the `input_file` or `scorefile` keyword argument value). If `None`, then `False`.
+
+            Default: `None`
+
+        `with_metadata_kwargs`:
+            A `bool` object specifying whether or not to return a `tuple` object with the `PyRosettaCluster`
+            instance attributes as the first element and the "metadata" keyword arguments as the second element.
+            If `None`, then `False`.
+
+            Default: `None`
 
     Returns:
-        A `dict` object of PyRosettaCluster instance kwargs, or a `tuple` object of `dict`
-        objects with the PyRosettaCluster instance kwargs as the first element and the
-        PyRosettaCluster metadata kwargs as the second element when `with_metadata_kwargs=True`.
+        A `dict` object of `PyRosettaCluster` instance attributes, or a `tuple` object of `dict` objects with
+        the `PyRosettaCluster` instance attributes as the first element and the "metadata" keyword arguments as
+        the second element when the `with_metadata_kwargs` keyword argument value is set to `True`.
     """
     _simulation_records_in_scorefile_msg = (
-        "The 'scorefile' argument value does not contain the full simulation records. "
-        + "In order to reproduce a decoy using a 'scorefile', the PyRosettaCluster "
-        + "'simulation_records_in_scorefile' attribute must have been set to `True` in "
-        + "the original simulation. Please provide an 'input_file' generated by PyRosettaCluster, "
-        + "or a 'scorefile' with full simulation records generated by PyRosettaCluster, "
-        + "in order to reproduce."
+        "The `scorefile` keyword argument value does not contain the full simulation records. "
+        + "In order to reproduce a decoy using a scorefile, the `PyRosettaCluster` instance attribute "
+        + "'simulation_records_in_scorefile' must have been set to `True` in the original simulation. "
+        + "Please provide an output decoy file that was written by `PyRosettaCluster` to the `input_file` "
+        + "keyword argument value, or an output scorefile with full simulation records that was written by "
+        + "`PyRosettaCluster` to the `scorefile` keyword argument value, in order to reproduce."
     )
     if input_file:
         if scorefile or decoy_name:
             warnings.warn(
-                "Received 'input_file' and either 'scorefile' or 'decoy_name' keyword arguments. "
-                + "Ignoring 'scorefile' and 'decoy_name' and using 'input_file' keyword argument!",
+                "Received `input_file` and either `scorefile` or `decoy_name` keyword arguments. "
+                + "Ignoring `scorefile` and `decoy_name` values and using the `input_file` value!",
                 UserWarning,
                 stacklevel=2,
             )
@@ -251,7 +291,8 @@ def get_instance_kwargs(
                         scorefile_entry = json.loads(line)
                     except:
                         raise TypeError(
-                            "`get_instance_kwargs()` received `scorefile` which does not appear to be JSON-formatted."
+                            "Received a `scorefile` keyword argument value that does not appear "
+                            + f"to be JSONL-formatted: '{scorefile}'"
                         )
                     if all(k in scorefile_entry for k in ("metadata", "instance")):
                         if "decoy_name" in scorefile_entry["metadata"]:
@@ -267,8 +308,8 @@ def get_instance_kwargs(
                 df = secure_read_pickle(scorefile, compression="infer")
             except:
                 raise TypeError(
-                    "`get_instance_kwargs()` received `scorefile` which does not appear to be "
-                    + "readable by `pyrosetta.distributed.cluster.io.secure_read_pickle(compression='infer')`."
+                    "Received a `scorefile` keyword argument value that does not appear to be readable by "
+                    + f"`pyrosetta.distributed.cluster.io.secure_read_pickle(compression='infer')`: '{scorefile}'"
                 )
             if all(k in df.columns for k in ("metadata", "instance")):
                 for instance, metadata in df[["instance", "metadata"]].values:
@@ -282,24 +323,25 @@ def get_instance_kwargs(
                 raise NotImplementedError(_simulation_records_in_scorefile_msg)
         if instance_kwargs is None:
             raise KeyError(
-                "Error in `get_instance_kwargs()`! The provided `decoy_name` is not in the provided `scorefile`."
+                f"The `decoy_name` keyword argument value is not in the provided scorefile: '{scorefile}'"
             )
     else:
         raise NotImplementedError(
-            "`get_instance_kwargs()` requires either `input_file` (or `scorefile` and `decoy_name`) argument value inputs."
+            "Either an `input_file` keyword argument value, or both `scorefile` and `decoy_name` keyword "
+            + "argument values, must be provided."
         )
     assert isinstance(
         instance_kwargs, dict
-    ), "Returned instance keyword arguments are not of type `dict`."
+    ), f"Returned instance keyword arguments are not of type `dict`: {type(instance_kwargs)}"
     if with_metadata_kwargs:
         assert isinstance(
             metadata_kwargs, dict
-        ), "Returned metadata keyword arguments are not of type `dict`."
+        ), f"Returned metadata keyword arguments are not of type `dict`: {type(metadata_kwargs)}"
 
     if skip_corrections:
         assert isinstance(
             instance_kwargs["tasks"], dict
-        ), "PyRosettaCluster 'tasks' keyword argument value must be an instance of `dict`."
+        ), f"The 'tasks' instance attribute must be of type `dict`: {type(instance_kwargs['tasks'])}"
         for option in ("extra_options", "options"):
             if option in instance_kwargs["tasks"]:
                 if isinstance(instance_kwargs["tasks"][option], dict):
@@ -310,14 +352,14 @@ def get_instance_kwargs(
                 elif isinstance(instance_kwargs["tasks"][option], str):
                     if "corrections:" in instance_kwargs["tasks"][option]:
                         raise NotImplementedError(
-                            "Cannot skip ScoreFunction corrections because the original simulation did not output "
-                            + "PyRosettaCluster results with normalized PyRosetta initialization options or configure "
-                            + "the task's PyRosetta initialization options as an instance of `dict`. Please disable the "
-                            + "'skip_corrections' keyword argument to continue with the reproduction."
+                            "Cannot skip `ScoreFunction` corrections because the original `PyRosettaCluster` simulation "
+                            + "did not output results with normalized Rosetta command-line options or configure "
+                            + "the task's Rosetta command-line options as an instance of `dict`. Please disable the "
+                            + "'skip_corrections' keyword argument and try again."
                         )
                 else:
                     raise TypeError(
-                        f"PyRosettaCluster task key '{option}' must have a value of type `dict` or `str`. "
+                        f"The `PyRosettaCluster` task key '{option}' must have a value of type `dict` or `str`. "
                         + f"Received: {type(instance_kwargs['tasks'][option])}"
                     )
 
@@ -483,7 +525,7 @@ def reproduce(
             `types.GeneratorType` or `types.FunctionType`, specifying an ordered sequence of PyRosetta
             protocols to execute for the reproduction simulation. If `None`, the PyRosetta protocols are
             automatically detected (by a best effort only) in the scope from which the `reproduce` function is
-            called using the `locals()` and `globals()` built-in functions.
+            called.
 
             Default: `None`
 
