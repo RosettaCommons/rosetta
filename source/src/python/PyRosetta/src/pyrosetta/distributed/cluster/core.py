@@ -593,7 +593,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
     project_name = attr.ib(
         type=str,
         default=datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f"),
-        validator=attr.validators.optional(attr.validators.instance_of(str)),
+        validator=attr.validators.instance_of(str),
         converter=attr.converters.default_if_none(default="PyRosettaCluster"),
     )
     simulation_name = attr.ib(
