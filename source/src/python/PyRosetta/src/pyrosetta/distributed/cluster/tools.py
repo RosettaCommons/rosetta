@@ -329,38 +329,36 @@ def get_instance_kwargs(
 
 def reserve_scores(func: P) -> Union[P, NoReturn]:
     """
-    Use this as a Python decorator of any user-provided PyRosetta protocol.
-    If any scoreterms and values are present in the input `PackedPose` object,
-    then if they are deleted during execution of the decorated user-provided PyRosetta
-    protocol, then restore those scoreterms and values back into the `Pose.cache`
-    dictionary after execution. If any scoreterms and values are present in the
-    input `PackedPose` object and also present in the returned or yielded output `Pose`
-    or `PackedPose` object(s), then do not set the original scoreterms and values
-    back into the `Pose.cache` dictionary after execution (that is, keep the outputted
-    scoreterms and values in the `Pose.cache` dictionary). Any new scoreterms and
-    values acquired in the decorated user-provided PyRosetta protocol will never
-    be overwritten. This allows users to maintain scoreterms and values acquired
-    in earlier user-defined PyRosetta protocols if needing to execute Rosetta
-    `Mover` objects that happen to delete scores from `Pose` objects. Note that
-    this decorator reserves scoreterms and values from the input `PackedPose.scores`
-    and `Pose.cache` dictionaries, and any scoreterms and values restored to any
-    output `Pose.cache` dictionaries are set as SimpleMetrics.
+    A decorator for any user-defined PyRosetta protocol. If any non-scoreterm keys are present in the input
+    `PackedPose` object's `Pose.cache` dictionary, and if they are deleted during execution of the decorated
+    PyRosetta protocol, then restore those non-scoreterm keys and their values back into the `Pose.cache`
+    dictionary after execution. If any keys are present in the input `PackedPose` object's `Pose.cache`
+    dictionary and also present in the returned or yielded output `Pose` or `PackedPose` object's `Pose.cache`
+    dictionary, then do not set the original values back into the `Pose.cache` dictionary after execution (that
+    is, do not overwrite the new values in the `Pose.cache` dictionary). Any new keys acquired in the decorated
+    PyRosetta protocol will never be overwritten. This allows users to maintain keys and values acquired in
+    upstream PyRosetta protocols if needing to execute RosettaScripts `Mover` objects that happen to delete
+    cached scores from `Pose` objects. Note that this decorator reserves keys and values from the input
+    `PackedPose.scores` and `Pose.cache` dictionaries, and any keys and values restored to any output
+    `Pose.cache` dictionaries are set as `SimpleMetrics` metrics.
 
-    For example:
-    ```
-    @reserve_scores
-    def my_pyrosetta_protocol(packed_pose, **kwargs):
-        from pyrosetta import MyMover
-        pose = packed_pose.pose
-        MyMover().apply(pose)
-        return pose
-    ```
+    Example:
+        >>> @reserve_scores
+        ... def my_pyrosetta_protocol(packed_pose, /, **kwargs):
+        ...     from pyrosetta import MyMover
+        ...     pose = packed_pose.pose
+        ...     MyMover().apply(pose)
+        ...     return pose
 
     Args:
-        A user-provided PyRosetta function.
+        `func`:
+            A callable of type `types.GeneratorType` or `types.FunctionType` representing a user-defined
+            PyRosetta protocol.
 
     Returns:
-        The output from the user-provided PyRosetta function, reserving the scores.
+        The output from the decorated user-defined PyRosetta protocol with reserved scores from the input
+        `PackedPose` object's `Pose.cache` dictionary updated into the output `Pose` or `PackedPose`
+        object's (or objects') `Pose.cache` dictionary (or dictionaries).
     """
     import pyrosetta  # noqa
     import pyrosetta.distributed  # noqa
@@ -383,36 +381,32 @@ def reserve_scores(func: P) -> Union[P, NoReturn]:
 
 def requires_packed_pose(func: P) -> Union[PackedPose, None, P]:
     """
-    Use this as a Python decorator of any user-provided PyRosetta protocol.
-    If a user-provided PyRosetta protocol requires that the first positional-or-keyword
-    parameter be a non-empty `PackedPose` object, then return any received empty
-    `PackedPose` objects or `NoneType` objects and skip the decorated protocol,
-    otherwise run the decorated protocol.
-
-    If using `PyRosettaCluster(filter_results=False)` and the preceding protocol
-    returns or yields either `None`, an empty `Pose` object, or an empty `PackedPose`
-    object, then an empty `PackedPose` object is distributed to the next user-provided
-    PyRosetta protocol, in which case the next protocol and/or any downstream
+    A decorator for any user-defined PyRosetta protocol. If a PyRosetta protocol requires that the first
+    positional-or-keyword parameter be a non-empty `PackedPose` object, then immediately return any bound empty
+    `PackedPose` or `None` objects and skip the decorated PyRosetta protocol, otherwise run the decorated
+    PyRosetta protocol. If using `PyRosettaCluster(filter_results=False)` and the preceding PyRosetta protocol
+    produces either `None`, an empty `Pose` object, or an empty `PackedPose` object, then an empty `PackedPose`
+    object is distributed to the next PyRosetta protocol, in which case the next protocol and/or any downstream
     protocols are skipped if they are decorated with this decorator. If using
-    `PyRosettaCluster(ignore_errors=True)` and an error is raised in the preceding
-    protocol, then a `NoneType` object is distributed to the next user-provided
-    PyRosetta protocol, in which case the next protocol and/or any downstream
-    protocols are skipped if they are decorated with this decorator.
+    `PyRosettaCluster(ignore_errors=True)` and a standard Python exception is raised or a Rosetta segmentation
+    fault is thrown in the preceding PyRosetta protocol, then `None` is distributed to the next PyRosetta
+    protocol, in which case the next PyRosetta protocol and/or any downstream protocols are skipped if they are
+    decorated with this decorator.
 
-    For example:
-    ```
-    @requires_packed_pose
-    def my_pyrosetta_protocol(packed_pose, **kwargs):
-        assert packed_pose.pose.size() > 0
-        return packed_pose
-    ```
+    Example:
+        >>> @requires_packed_pose
+        ... def my_pyrosetta_protocol(packed_pose, /, **kwargs):
+        ...     assert not packed_pose.empty() or packed_pose.pose.size() > 0
+        ...     return packed_pose
 
     Args:
-        A user-provided PyRosetta function.
+        `func`:
+            A callable of type `types.GeneratorType` or `types.FunctionType` representing a user-defined
+            PyRosetta protocol.
 
     Returns:
-        The input `packed_pose` argument value if it is an empty `PackedPose` object
-        or a `NoneType` object, otherwise the results from the decorated protocol.
+        The first positional-or-keyword parameter if it is an empty `PackedPose` object or `None`, otherwise
+        the produced results from the decorated protocol.
     """
     @wraps(func)
     def wrapper(packed_pose, **kwargs):
@@ -445,129 +439,183 @@ def reproduce(
     init_from_file_kwargs: Optional[Dict[str, Any]] = None,
 ) -> Optional[NoReturn]:
     """
-    Given an input file that was written by PyRosettaCluster (or a full scorefile
-    and a decoy name that was written by PyRosettaCluster) and any additional
-    PyRosettaCluster instance kwargs, run the reproduction simulation for the
-    given decoy with a new instance of PyRosettaCluster.
+    Given an input file (or a scorefile with full simulation records and a decoy name) that was written by
+    `PyRosettaCluster` and any additional `PyRosettaCluster` class keyword arguments, execute the
+    decoy reproduction simulation with a new instance of `PyRosettaCluster`.
 
     Args:
-        input_file: A `str` object specifying the path to the '.pdb', '.pdb.bz2',
-            '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', '.b64_pose.bz2', '.init' or '.init.bz2'
-            file from which to extract PyRosettaCluster instance kwargs. If 'input_file'
-            is provided, then ignore the 'scorefile' and 'decoy_name' keyword arguments.
-            If a '.init' or '.init.bz2' file is provided and PyRosetta is not yet initialized,
-            this first initializes PyRosetta with the PyRosetta initialization file (see the
-            'init_from_file_kwargs' keyword argument). Note that '.pkl_pose', '.pkl_pose.bz2',
-            '.b64_pose', '.b64_pose.bz2', '.init' and '.init.bz2' files contain pickled Pose
-            objects that are deserialized using PyRosetta's secure unpickler upon running the
-            `reproduce()` function, but please still only input these file types if you know and
-            trust their source. Learn more `here <https://docs.python.org/3/library/pickle.html>`_.
-            Default: None
-        scorefile: A `str` object specifying the path to the JSON-formatted scorefile
-            (or pickled `pandas.DataFrame` scorefile) from a PyRosettaCluster simulation
-            from which to extract PyRosettaCluster instance kwargs. If 'scorefile'
-            is provided, 'decoy_name' must also be provided. In order to use a scorefile,
-            it must contain full simulation records from the original production
-            run; i.e., the 'simulation_records_in_scorefile' attribute was set to `True`.
-            Note that in order to securely load pickled `pandas.DataFrame` objects, please
-            ensure that `pyrosetta.secure_unpickle.add_secure_package("pandas")` has been run.
-            Default: None
-        decoy_name: A `str` object specifying the decoy name for which to extract
-            PyRosettaCluster instance kwargs. If decoy_name is provided, scorefile
-            must also be provided.
-            Default: None
-        protocols: An optional iterable object of function or generator objects specifying
-            an ordered sequence of user-defined PyRosetta protocols to execute for
-            the reproduction. This argument only needs to be provided if the user-defined
-            PyRosetta protocols are not defined with the same scope as in the original
-            production run.
-            Default: None
-        client: An optional initialized Dask `distributed.Client` object to be used as
-            the Dask client interface to the local or remote compute cluster. If `None`,
-            then PyRosettaCluster initializes its own Dask client based on the settings
-            from the original production run. Deprecated by the `clients` keyword argument, but
-            supported for legacy purposes. Either or both of the `client` or `clients` keyword
-            argument values must be `None`.
-            Default: None
-        clients: An optional `list` or `tuple` object of initialized Dask `distributed.Client`
-            objects to be used as the Dask client interface(s) to the local or remote compute
-            cluster(s). If `None`, then PyRosettaCluster initializes its own Dask client based
-            on the settings from the original production run. Optionally used in combination with
-            the `clients_indices` keyword argument. Either or both of the `client` or `clients`
-            keyword argument values must be `None`.
-            Default: None
-        input_packed_pose: An optional input `PackedPose` object that is accessible via
-            the first argument of the first user-defined PyRosetta protocol.
-            Default: None
-        instance_kwargs: An optional `dict` object of valid PyRosettaCluster keyword arguments
-            which will override any PyRosettaCluster instance attributes that were used to generate
-            the original decoy.
-            Default: None
-        clients_indices: An optional `list` or `tuple` object of `int` objects, where each `int` object represents
-            a zero-based index corresponding to the initialized Dask `distributed.Client` object(s) passed 
-            to the `PyRosettaCluster(clients=...)` keyword argument value. If not `None`, then the length of the 
-            `clients_indices` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
-            method.
-            Default: None
-        resources: An optional `list` or `tuple` object of `dict` objects, where each `dict` object represents
-            an abstract, arbitrary resource to constrain which Dask workers run the user-defined PyRosetta protocols.
-            If `None`, then do not impose resource constaints on any protocols. If not `None`, then the length
-            of the `resources` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
-            method, such that each resource specified indicates the unique resource constraints for the protocol at the
-            corresponding index of the protocols passed to `PyRosettaCluster().distribute`. Note that this feature is only 
-            useful when one passes in their own instantiated client(s) with Dask workers set up with various resource
-            constraints. If Dask workers were not instantiated to satisfy the specified resource constraints, protocols
-            will hang indefinitely because the Dask scheduler is waiting for workers that meet the specified resource 
-            constraints so that it can schedule these protocols. Unless workers were created with these resource tags
-            applied, the protocols will not run. See https://distributed.dask.org/en/latest/resources.html for more
-            information.
-            Default: None
-        retries: An optional `list` or `tuple` of `int` objects, where each `int` object (≥0) sets the number of allowed
-            automatic retries of each failed task that was submitted to the corresponding user-provided PyRosetta protocol
-            (i.e., indexed the same as `client_indices`). If an `int` object (≥0) is provided, then apply that number of
-            allowed automatic retries to all user-provided PyRosetta protocols. If `None`, then no explicit retries are
-            allowed. If not `None` and not an `int` object, then the length of the `retries` keyword argument value must equal
-            the number of protocols passed to the `PyRosettaCluster().distribute` method, and each `int` value determines the
-            number of automatic retries the Dask scheduler allows for that protocol's failed tasks. Allowing retries of failed
-            tasks may be useful if the user-provided protocol raises a standard Python exception or Rosetta throws a segmentation
-            fault in the billiard subprocess while the Dask worker remains alive and `PyRosettaCluster(ignore_errors=False)`.
-            If `PyRosettaCluster(ignore_errors=True)` is used, then protocols failing due to standard Python exceptions or
-            Rosetta segmentation faults will still be considered successes, and this keyword argument has no effect since
-            these protocol errors are ignored. Note that if a compute resource executing tasks is reclaimed midway through
-            a protocol, then the Dask scheduler registers those tasks as incomplete or cancelled, and retries are controlled
-            by the Dask configuration parameter `distributed.scheduler.allowed-failures`. When using preemptible resources
-            (e.g., spot instances or backfill queues), please increase Dask's `distributed.scheduler.allowed-failures`
-            configuration value to tolerate repeated Dask worker preemptions, and use `PyRosettaCluster(max_task_replices=...)`
-            and `PyRosettaCluster(task_registry=...)` keyword arguments for additional configurability of task retries.
+        `input_file`:
+            A `str` object specifying the path to the ".pdb", ".pdb.bz2", ".pkl_pose", ".pkl_pose.bz2",
+            ".b64_pose", ".b64_pose.bz2", ".init" or ".init.bz2" file from which to extract `PyRosettaCluster`
+            instance attributes. If `input_file` is provided, then ignore the `scorefile` and `decoy_name`
+            keyword arguments. If a ".init" or ".init.bz2" file is provided and PyRosetta is not yet
+            initialized, then first initialize PyRosetta with the PyRosetta initialization file (see the
+            `init_from_file_kwargs` keyword argument). Note that ".pkl_pose", ".pkl_pose.bz2", ".b64_pose",
+            ".b64_pose.bz2", ".init" and ".init.bz2" files contain pickled `Pose` objects that are deserialized
+            using the `SecureSerializerBase` class in PyRosetta upon calling the `reproduce` function, but
+            please still only input these file types if you know and trust their source. Learn more
+            `here <https://docs.python.org/3/library/pickle.html>`_.
+
+            Default: `None`
+
+        `scorefile`:
+            A `str` object specifying the path to a JSON Lines (JSONL)-formatted scorefile or pickled
+            `pandas.DataFrame` scorefile from a PyRosettaCluster simulation from which to extract
+            `PyRosettaCluster` instance attributes. If `scorefile` is provided, then `decoy_name` must also be
+            provided. In order to use a scorefile, it must contain full simulation records from the original
+            `PyRosettaCluster` simulation; i.e., the `simulation_records_in_scorefile` keyword argument value
+            was set to `True`. Note that in order to securely load pickled `pandas.DataFrame` objects, please
+            ensure that `pyrosetta.secure_unpickle.add_secure_package("pandas")` has been run. If using `pandas`
+            version `>=3.0.0`, PyArrow-backed datatypes may be enabled by default; in this case, please ensure
+            that `pyrosetta.secure_unpickle.add_secure_package("pyarrow")` has also first been run.
+
+            Default: `None`
+
+        `decoy_name`:
+            A `str` object specifying the decoy name for which to extract `PyRosettaCluster` instance
+            attributes. If `decoy_name` is provided, then `scorefile` must also be provided.
+
+            Default: `None`
+
+        `protocols`:
+            An iterable of callable user-defined PyRosetta protocols; i.e., an iterable of objects of
+            `types.GeneratorType` and/or `types.FunctionType` types, or a single callable of type
+            `types.GeneratorType` or `types.FunctionType`, specifying an ordered sequence of PyRosetta
+            protocols to execute for the reproduction simulation. If `None`, the PyRosetta protocols are
+            automatically detected (by a best effort only) in the scope from which the `reproduce` function is
+            called using the `locals()` and `globals()` built-in functions.
+
+            Default: `None`
+
+        `client`:
+            An initialized Dask `distributed.Client` object to be used as the Dask client interface to the local
+            or remote Dask cluster. If `None`, then `PyRosettaCluster` initializes its own Dask client based on
+            the `scheduler` keyword argument value (see `instance_kwargs` keyword argument). Deprecated by the
+            `clients` keyword argument, but supported for legacy purposes. Either or both of the `client` or
+            `clients` keyword argument values must be `None`.
+
+            Default: `None`
+
+        `clients`:
+            A `list` or `tuple` object of initialized Dask `distributed.Client` objects to be used as the Dask
+            client interface(s) to the local or remote Dask cluster(s). If `None`, then `PyRosettaCluster`
+            initializes its own Dask client based on the `scheduler` keyword argument value (see
+            `instance_kwargs` keyword argument). Optionally used in combination with the `clients_indices`
+            keyword argument. Either or both of the `client` or `clients` keyword argument values must be
+            `None`.
+
+            Default: `None`
+
+        `input_packed_pose`:
+            An input `PackedPose` object that is accessible via the first positional-or-keyword parameter of the
+            first user-defined PyRosetta protocol.
+            Default: `None`
+
+        `instance_kwargs`:
+            A `dict` object of valid `PyRosettaCluster` keyword arguments which will override any
+            `PyRosettaCluster` instance attributes that were used to generate the original decoy and that were
+            stored in the full simulation record.
+
+            Default: `None`
+
+        `clients_indices`:
+            A `list` or `tuple` object of `int` objects, where each `int` object represents a zero-based index
+            corresponding to the initialized Dask `distributed.Client` object(s) passed to the `clients`
+            keyword argument value. If not `None`, then the length of the `clients_indices` object must equal
+            the number of PyRosetta protocols (see `protocols` keyword argument).
+
+            Default: `None`
+
+        `resources`:
+            A `list` or `tuple` object of `dict` objects, where each `dict` object represents an abstract,
+            arbitrary resource to constrain which Dask workers execute the user-defined PyRosetta protocols. If
+            `None`, then do not impose resource constaints on any PyRosetta protocols. If not `None`, then the
+            length of the `resources` object must equal the number of PyRosetta protocols passed to the
+            `protocols` keyword argument, such that each resource specified indicates the unique resource
+            constraints for the protocol at the corresponding index of the PyRosetta protocols passed to the
+            `protocols` keyword argument. Note that this feature is only useful when one passes in their own
+            instantiated Dask client(s) with Dask workers set up with various resource constraints. If Dask
+            workers were not instantiated to satisfy the specified resource constraints, PyRosetta protocols
+            will hang indefinitely by design because the Dask scheduler is waiting for Dask workers that meet
+            the specified resource constraints so that it may schedule these tasks. Unless Dask workers were
+            created with these resource tags applied, the PyRosetta protocols will not run.
+
+            See https://distributed.dask.org/en/stable/resources.html for more information.
+
+            Default: `None`
+
+        `retries`:
+            A `list` or `tuple` of `int` objects, where each `int` object (≥0) sets the number of allowed
+            automatic retries of each failed task that was applied to the corresponding user-defined PyRosetta
+            protocol (i.e., indexed the same as `client_indices` keyword argument value). If an `int` object
+            (≥0) is provided, then apply that number of allowed automatic retries to all PyRosetta protocols.
+            If `None` is provided, then no explicit retries are allowed. If not `None` and not an `int` object,
+            then the length of this value must equal the number of PyRosetta protocols passed to the
+            `PyRosettaCluster.distribute` method, and each `int` value determines the number of automatic
+            retries the Dask scheduler allows for that the tasks applied to that PyRosetta protocol. Allowing
+            retries of failed tasks may be useful if the PyRosetta protocol raises a standard Python exception
+            or Rosetta throws a segmentation fault in the `billiard` subprocess while the Dask worker remains
+            alive and the value of the `ignore_errors` key in the `instance_kwargs` keyword argument value is
+            set to `False`. If `ignore_errors` is set to `True`, then protocols failing due to standard Python
+            exceptions or Rosetta segmentation faults will still be considered successes, and this keyword
+            argument has no effect since these PyRosetta protocol errors are ignored. Note that if a compute
+            resource executing a PyRosetta protocol is preempted, then the Dask worker process does not remain
+            alive and the Dask scheduler registers that failed task as incomplete or cancelled. In this case,
+            the number of allowed task retries is controlled by the Dask configuration parameter
+            `distributed.scheduler.allowed-failures`; please use the `max_task_replices` and `task_registry`
+            keys of the dictionary passed to the `instance_kwargs` keyword argument value for further
+            configuration of task retries after compute resource preemption.
+
             See https://distributed.dask.org/en/latest/scheduling-state.html#task-state for more information.
-            Default: None
-        skip_corrections: A `bool` object specifying whether or not to skip any ScoreFunction corrections specified in
-            the PyRosettaCluster task 'options' or 'extra_options' values (extracted from either the 'input_file' or
-            'scorefile' keyword argument value), which are set in-code upon PyRosetta initialization. If the current
-            PyRosetta build and conda environment are identical to those used for the original simulation, this keyword argument
-            may be set to `True` to enable the reproduced output decoy file to be used for successive reproductions. If
-            reproducing from a '.init' file, it is recommended to also set 'skip_corrections' of the 'init_from_file_kwargs'
-            keyword argument to the same value.
-            Default: False
-        init_from_file_kwargs: An optional `dict` object to override the default `pyrosetta.init_from_file()` keyword
-            arguments if the 'input_file' keyword argument value is a path to a '.init' file, otherwise it is not used.
-            See the `pyrosetta.init_from_file` docstring for more information.
-            Default: {
-                'output_dir': os.path.join(tempfile.TemporaryDirectory().name, "pyrosetta_init_input_files"),
-                'skip_corrections': skip_corrections, # Defaults to the 'skip_corrections' value from `reproduce()`
-                'relative_paths': True,
-                'dry_run': False,
-                'max_decompressed_bytes': pow(2, 30), # 1 GiB
-                'restore_rg_state': True,
-                'database': None,
-                'verbose': True,
-                'set_logging_handler': 'logging',
-                'notebook': None,
-                'silent': False,
-            }
+
+            Default: `None`
+
+        `skip_corrections`:
+            A `bool` object specifying whether or not to skip any `ScoreFunction` corrections specified in the
+            values of the `"options"` or `"extra_options"` keys from task dictionary of the original simulation.
+            (extracted from the full simulation record from either the `input_file` or `scorefile` keyword
+            argument value), which are set in-code upon PyRosetta initialization. If the current PyRosetta build
+            and Conda/Mamba/uv/Pixi environment are identical to those used for the original simulation, this
+            keyword argument value may be set to `True` to enable the reproduced output decoy file to be used
+            for successive reproductions. If reproducing from a PyRosetta initialization file, it is recommended
+            to also set the value of the `skip_corrections` key from the `init_from_file_kwargs` keyword
+            argument value to the same boolean value.
+
+            Default: `False`
+
+        `init_from_file_kwargs`:
+            A `dict` object to override the default `pyrosetta.init_from_file` keyword arguments if the
+            `input_file` keyword argument value is a path to a PyRosetta initialization file, otherwise it is
+            has no effect. See the `pyrosetta.init_from_file <pyrosetta.utility.initialization.PyRosettaInitFileParser.init_from_file>`_
+            docstring for more information.
+
+            Default: A `dict` object with the following entries by default:
+
+                `output_dir`: `os.path.join(tempfile.TemporaryDirectory().name, "pyrosetta_init_input_files")`
+
+                `skip_corrections`: `skip_corrections` # Defaults to the `skip_corrections` keyword argument
+                value from the `reproduce` function.
+
+                `relative_paths: `True`
+
+                `dry_run`: `False`
+
+                `max_decompressed_bytes`: `pow(2, 30)` # 1 GiB.
+
+                `restore_rg_state`: `True`
+
+                `database`: `None`
+
+                `verbose`: `True`
+
+                `set_logging_handler`: "logging"
+
+                `notebook`: `None`
+
+                `silent`: `False`
 
     Returns:
-        None
+        `None`
     """
     if not isinstance(skip_corrections, bool):
         raise TypeError(
@@ -647,18 +695,21 @@ def reproduce(
 
 def produce(**kwargs: Any) -> Optional[NoReturn]:
     """
-    `PyRosettaCluster().distribute()` shim requiring the 'protocols' keyword argument, and optionally
-    any PyRosettaCluster keyword arguments or the 'clients_indices' keyword argument (when using
-    the `PyRosettaCluster(clients=...)` keyword argument), the 'resources' keyword argument,
-    the 'priorities' keyword argument, or the 'retries' keyword argument.
+    A `PyRosettaCluster.distribute` method shim requiring the `protocols` keyword argument, and optionally any
+    `PyRosettaCluster` keyword arguments or the `clients_indices` keyword argument (in combination with the
+    `clients` keyword argument), the `resources` keyword argument, the `priorities` keyword argument, or the
+    `retries` keyword argument.
 
     Args:
-        **kwargs: See `PyRosettaCluster` docstring. The keyword arguments must also include
-            'protocols', an iterable object of function or generator objects specifying
-            an ordered sequence of user-defined PyRosetta protocols to execute for
-            the simulation (see `PyRosettaCluster().distribute` docstring). The keyword arguments
-            may also optionally include 'clients_indices', 'resources', 'priorities', and 'retries'
-            (see `PyRosettaCluster().distribute` docstring).
+        `**kwargs`:
+            See the `PyRosettaCluster` docstring. The keyword arguments must also include `protocols`, an
+            iterable object of callable or generator function objects specifying an ordered sequence of
+            user-defined PyRosetta protocols to execute for the simulation (see `PyRosettaCluster.distribute`
+            docstring). The keyword arguments may also optionally include `clients_indices`, `resources`,
+            `priorities`, and `retries` (see `PyRosettaCluster.distribute` docstring).
+
+    Returns:
+        `None`
     """
     protocols = kwargs.pop("protocols", None)
     clients_indices = kwargs.pop("clients_indices", None)
@@ -693,12 +744,12 @@ def iterate(**kwargs: Any) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[A
 
 produce.__doc__ += """
     Returns:
-        None
+        `None`
     """
 iterate.__doc__ = iterate.__doc__.replace(
-    "PyRosettaCluster().distribute", "PyRosettaCluster().generate"
+    "PyRosettaCluster.distribute", "PyRosettaCluster.generate"
 ) + """
     Yields:
-        (PackedPose, dict) tuples from the most recently run user-provided PyRosetta protocol if
-        `PyRosettaCluster(save_all=True)` otherwise from the final user-defined PyRosetta protocol.
+        ``(`PackedPose`, `dict`)`` tuples from the most recently executed user-defined PyRosetta protocol
+        if `PyRosettaCluster(save_all=True)` is used, otherwise from the final PyRosetta protocol.
     """
