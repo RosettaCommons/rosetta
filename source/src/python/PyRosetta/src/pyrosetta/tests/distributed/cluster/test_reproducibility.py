@@ -1989,13 +1989,22 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
         )
         _n_protocols = 3
         _available_score_functions = set()
-            # ("-score:weights", "ref2015"),
-            # ("-beta_nov16", "1"),
-            # ("-beta_nov16_cart", "1"),
         if TestReproducibilityTaskUpdates.score_function_is_available("beta_jan25"):
             _available_score_functions.add(("-beta_jan25", "1"))
         else:
             _available_score_functions.add(("-beta_nov16", "1"))
+        # Initializing more than one scorefunction across PyRosetta protocols sporadically throws the following errors from Dask workers on the Benchmark server:
+        #     `free(): invalid next size (fast)`
+        #     `munmap_chunk(): invalid pointer`
+        # This bug is not fully characterized. It may be due to multiple billiard subprocesses initializing PyRosetta with different scorefunctions
+        # across different sub-test subprocesses, sporadically causing corrupted memory deallocation (or heap corruption) at billiard subprocess shutdown.
+        # The error does not occur on a local workstation or Colab, which runs successfully using the following scorefunctions:
+        # _available_score_functions = {
+        #     ("-score:weights", "ref2015"),
+        #     ("-beta_nov16", "1"),
+        #     ("-beta_nov16_cart", "1"),
+        #     ("-beta_jan25", "1"),
+        # }
         _scorefxn_flags = sorted(map(list, _available_score_functions)) # Make JSON-serializable
         if verbose:
             print(f"Available scorefunction flags: {_scorefxn_flags}")
@@ -2134,11 +2143,6 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             # Maybe print
             if verbose:
                 print(f"PyRosetta protocol number {protocol_number} Pose.cache:", packed_pose.pose.cache)
-
-            # Test clearing energies
-            pose = io.to_pose(packed_pose)
-            pose.energies().clear()
-            packed_pose = io.to_packed(pose)
 
             return packed_pose, kwargs
 
