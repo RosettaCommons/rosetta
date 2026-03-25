@@ -1829,7 +1829,8 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
             if verbose:
                 print(f"Original simulation complete for `norm_task_options={norm_task_options}`.")
             for i in range(2):
-                print(f"Running reproduction simulation for `norm_task_options={norm_task_options}` on iteration: {i}")
+                if verbose:
+                    print(f"Running reproduction simulation for `norm_task_options={norm_task_options}` on iteration: {i}")
                 if i == 0: # Reproduce from a PyRosetta initialization file
                     input_file = original_record["metadata"]["output_file"].split(os.extsep)[0] + (".init.bz2" if compressed else ".init")
                     scorefile = None
@@ -2206,7 +2207,8 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             if verbose:
                 print(f"Original simulation complete for `norm_task_options={norm_task_options}`.")
             for i in range(2):
-                print(f"Running reproduction simulation for `norm_task_options={norm_task_options}` on iteration: {i}")
+                if verbose:
+                    print(f"Running reproduction simulation for `norm_task_options={norm_task_options}` on iteration: {i}")
                 if i == 0: # Reproduce from a PyRosetta initialization file
                     input_file = original_record["metadata"]["output_file"].split(os.extsep)[0] + (".init.bz2" if compressed else ".init")
                     scorefile = None
