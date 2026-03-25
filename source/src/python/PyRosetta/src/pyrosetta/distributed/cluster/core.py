@@ -312,104 +312,97 @@ Args:
         `clients` keyword argument values specify instances of `distributed.LocalCluster`, else `"0.0.0.0:0"`.
 
     `ignore_errors`:
-        A `bool` object specifying for PyRosettaCluster to ignore errors
-        raised in the user-provided PyRosetta protocols. This comes in handy when
-        well-defined errors are sparse and sporadic (such as rare Segmentation Faults),
-        and the user would like PyRosettaCluster to run without raising the errors.
+        A `bool` object specifying whether or not to ignore raised Python exceptions and thrown Rosetta
+        segmentation faults in the user-defined PyRosetta protocols. This comes in handy when well-defined
+        errors are sparse and sporadic (such as rare Rosetta segmentation faults), and the user would like
+        `PyRosettaCluster` to continue running without otherwise raising a `WorkerError` exception.
 
         Default: `False`
 
     `timeout`:
-        A `float` or `int` object specifying how many seconds to wait between
-        PyRosettaCluster checking-in on the running user-provided PyRosetta protocols.
-        If each user-provided PyRosetta protocol is expected to run quickly, then
-        0.1 seconds seems reasonable. If each user-provided PyRosetta protocol is
-        expected to run slowly, then >1 second seems reasonable.
+        A `float` or `int` object specifying how many seconds to wait between `PyRosettaCluster` checking-in
+        on the running user-defined PyRosetta protocols. If each PyRosetta protocol is expected to run quickly,
+        then `0.1` seconds seems reasonable. If each PyRosetta protocol is expected to run slowly, then `>1`
+        second seems reasonable.
 
         Default: `0.5`
 
     `max_delay_time`:
-        A `float` or `int` object specifying the maximum number of seconds to 
-        sleep before returning the result(s) from each user-provided PyRosetta protocol
-        back to the client. If a Dask worker returns the result(s) from a user-provided
-        PyRosetta protocol too quickly, the Dask scheduler needs to first register that
-        the task is processing before it completes. In practice, in each user-provided
-        PyRosetta protocol the runtime is subtracted from `max_delay_time`, and the Dask
-        worker sleeps for the remainder of the time, if any, before returning the result(s).
-        It's recommended to set this option to at least 1 second, but longer times may
-        be used as a safety throttle in cases of overwhelmed Dask scheduler processes.
+        A `float` or `int` object specifying the maximum number of seconds to sleep before returning the
+        result(s) from each user-defined PyRosetta protocol back to the Dask client on the head node. If a
+        Dask worker returns the result(s) from a PyRosetta protocol too quickly, the Dask scheduler needs to
+        first register that the task is processing before it completes. In practice, in each PyRosetta
+        protocol the runtime is subtracted from the `max_delay_time` keyword argument value, and the Dask
+        worker sleeps for the remainder of the time (if any) before returning the result(s). It is recommended
+        to set this option to at least 1 second, but longer times may be used as a safety throttle in cases
+        of overwhelmed Dask scheduler processes. Because spawning a `billiard` subprocess for PyRosetta
+        protocol execution may take ~3–5 seconds already before the PyRosetta protocol executes, this feature
+        usually does not have an effect with the default value.
 
         Default: `3.0`
 
     `filter_results`:
-        A `bool` object specifying whether or not to filter out empty
-        `PackedPose` objects between user-provided PyRosetta protocols. When a protocol
-        returns or yields `NoneType`, PyRosettaCluster converts it to an empty `PackedPose`
-        object that gets passed to the next protocol. If `True`, then filter out any empty
-        `PackedPose` objects where there are no residues in the conformation as given by
-        `Pose.empty()`, otherwise if `False` then continue to pass empty `PackedPose` objects
-        to the next protocol. This is used for filtering out decoys mid-trajectory through
-        user-provided PyRosetta protocols if protocols return or yield any `None`, empty
-        `Pose`, or empty `PackedPose` objects.
+        A `bool` object specifying whether or not to filter out empty `PackedPose` objects between
+        user-defined PyRosetta protocols. When a PyRosetta protocol returns or yields `None`,
+        `PyRosettaCluster` converts it to an empty `PackedPose` object that gets bound to the first
+        positional-or-keyword parameter of the next PyRosetta protocol. If `True`, then filter out any empty
+        `PackedPose` objects where there are no residues in the conformation as given by `PackedPose.empty()`.
+        If `False`, then continue to pass the empty `PackedPose` objects to the next PyRosetta protocol. This
+        is used for filtering out decoys mid-trajectory in-between PyRosetta protocols if PyRosetta protocols
+        return or yield any `None`, empty `Pose`, or empty `PackedPose` objects.
 
         Default: `True`
 
     `save_all`:
-        A `bool` object specifying whether or not to save all of the returned
-        or yielded `Pose` and `PackedPose` objects from all user-provided
-        PyRosetta protocols. This option may be used for checkpointing trajectories.
-        To save arbitrary poses to disk, from within any user-provided PyRosetta
-        protocol:
-            `pose.dump_pdb(
-                os.path.join(kwargs["PyRosettaCluster_output_path"], "checkpoint.pdb"))`
+        A `bool` object specifying whether or not to save all of the returned non-empty `PackedPose` objects
+        from all user-defined PyRosetta protocols. This option may be used to checkpoint decoy trajectories
+        after each PyRosetta protocol.
 
         Default: `False`
 
     `dry_run`:
-        A `bool` object specifying whether or not to save '.pdb' files to
-        disk. If `True`, then do not write '.pdb' or '.pdb.bz2' files to disk.
+        A `bool` object specifying whether or not to save output decoy files to disk. If `True`, then do not
+        write output decoy files to disk. This feature may be useful for debugging.
 
         Default: `False`
 
     `security`:
-        A `bool` object or instance of `dask.distributed.Security()`, only having
-        effect if `client=None` and `clients=None`, that is passed to Dask if using
-        `scheduler=None` or passed to 'dask-jobqueue' if using `scheduler="slurm"` or
-        `scheduler="sge"`. If `True` is provided, then invoke the 'cryptography' package
-        to generate a `Security.temporary()` object through the 'dask' or 'dask-jobqueue' packages.
-        See https://distributed.dask.org/en/latest/tls.html#distributed.security.Security.temporary
-        for more information. If a Dask `Security()` object is provided, then pass it to
-        Dask with `scheduler=None`, or pass it to 'dask-jobqueue' (where 'shared_temp_directory'
-        is set to the `output_path` keyword argument value) with `scheduler="slurm"` or
-        `scheduler="sge"`. If `False` is provided, then security is disabled regardless
-        of the `scheduler` keyword argument value (which is not recommended for remote
-        clusters unless using a firewall). If `None` is provided, then `True` is used by
-        default. In order to generate a `dask.distributed.Security()` object with OpenSSL,
-        the `pyrosetta.distributed.cluster.generate_dask_tls_security()` function may also
-        be used (see docstring for more information) instead of the 'cryptography' package.
+        A `bool` object or instance of `distributed.Security`, only having an effect if both `client=None` and
+        `clients=None`, that is passed to Dask if using `scheduler=None` or passed to Dask-Jobqueue if using
+        `scheduler="slurm"` or `scheduler="sge"`. If `True` is provided, then invoke the `cryptography` package
+        to generate a `distributed.Security.temporary` object through Dask or Dask-Jobqueue. If a Dask
+        `distributed.Security` object is provided, then pass it to Dask with `scheduler=None`, or pass it to
+        Dask-Jobqueue with `scheduler="slurm"` or `scheduler="sge"` (where the `shared_temp_directory` keyword
+        argument value of `SLURMCluster` or `SGECluster` is set to the `output_path` keyword argument value of
+        `PyRosettaCluster`). If `False` is provided, then Dask TLS security is disabled regardless of the
+        `scheduler` keyword argument value (which is *not* recommended for remote Dask clusters unless behind a
+        trusted private network segment (i.e., a firewall). If `None` is provided, then `True` is used by
+        default. In order to generate a `distributed.Security` object with the OpenSSL command-line interface,
+        the `pyrosetta.distributed.cluster.generate_dask_tls_security` function may also be used (see docstring
+        for more information) instead of the `cryptography` package.
+
+        See https://distributed.dask.org/en/latest/tls.html#distributed.security.Security.temporary for more
+        information.
 
         Default: `False` if `scheduler=None`, else `True`
 
     `max_nonce`:
-        An `int` object greater than or equal to 1 specifying the maximum number of
-        nonces to cache per process if Dask security is disabled while using remote clusters,
-        which protects against replay attacks. If nonce caching is in use, each process
-        (including the host node process and all Dask worker processes) cache nonces upon
-        communication exchange over the network, which can increase memory usage in each
-        process. A rough estimate of additional memory usage is ~0.2 KB per task
-        per user-provided PyRosetta protocol per process. For example, submitting
-        1000 tasks with 2 user-provided PyRosetta protocols adds ~0.2 KB/task/protocol
-        * 1000 tasks * 2 protocols = ~0.4 MB of memory per processs. If memory usage
-        per process permits, it is recommended to set this value to at least the
-        number of tasks times the number of protocols submitted, so that every nonce
-        from every communication exchange over the network gets cached.
+        An `int` object greater than or equal to 1 specifying the maximum number of nonces to cache per process
+        if Dask TLS security is disabled while using remote Dask clusters, which protects against replay
+        attacks. If nonce caching is in use, each process (including the head node process and all Dask worker
+        processes) cache nonces upon communication exchange over the network, which can increase memory usage
+        in each process. A rough estimate of additional memory usage is ~0.2 KB per task per user-defined
+        PyRosetta protocol per process. For example, submitting 1000 tasks with 2 PyRosetta protocols adds
+        (~0.2 KB/task/protocol × 1000 tasks × 2 protocols) = ~0.4 MB of additional memory per processs. If
+        memory usage per process permits, it is recommended to set this value to at least the number of tasks
+        times the number of protocols submitted, so that every nonce from every communication exchange over the
+        network gets cached.
 
         Default: `4096`
 
     `cooldown_time`:
-        A `float` or `int` object specifying how many seconds to sleep after the
-        simulation is complete to allow loggers to flush. For very slow network filesystems,
-        2.0 or more seconds may be reasonable.
+        A `float` or `int` object specifying how many seconds to sleep after the simulation is complete to
+        allow loggers to flush. For very slow network filesystems, 2 or more seconds may be reasonable.
 
         Default: `0.5`
 
@@ -424,22 +417,22 @@ Args:
         Default: `True`
 
     `max_task_replicas`:
-        An `int` (≥0) or `None` object to set the replication factor of tasks on
-        Dask workers within the network (only via Dask's best effort). If `None`, then attempt
-        to replicate each task on each Dask worker; tasks are automatically deleted from each Dask worker
-        upon completion. Task replication improves resilience of the simulation when compute resources
-        executing tasks are preempted midway through a user-provided PyRosetta protocol (e.g., due to
-        using spot instances or backfill queues), so scattered data can be recovered. If a Dask worker
-        is preempted during task execution, then the number of task retries is controlled by the Dask
-        configuration parameter `distributed.scheduler.allowed-failures`, which may be manually
-        configured prior to the simulation. Dask worker memory limits may also need to be increased
-        to achieve the desired replication factor (see `memory` keyword argument). Using task replicas
-        requires that either Dask's `ReduceReplicas` policy is disabled or that Dask's entire Active
-        Memory Manager is disabled, since replicated tasks consume additional memory per Dask worker.
-        Task size in memory is dominated by the input `PackedPose` object; a rough estimate of additional
-        memory usage is ~1 MB/task for a 500 residue protein. Task retries are only appropriate when
-        user-provided PyRosetta protocols are side effect-free upon preemption, wherein tasks can be
-        restarted without producing inconsistent external states if preempted midway through the protocol.
+        An `int` or `None` object specifying the replication factor of tasks on Dask workers within the network
+        (only via Dask's best effort). If an `int` object, the value must be greater than or equal to `0`. If
+        `None`, then attempt to replicate all tasks on each Dask worker. Tasks are automatically deleted from
+        each Dask worker upon task completion. Task replication improves resilience of the simulation when
+        compute resources executing tasks are preempted midway through a user-defined PyRosetta protocol
+        (e.g., due to using cloud spot instances or cluster backfill queues), so scattered data can be
+        recovered. If a Dask worker is preempted during task execution, then the number of task retries is
+        controlled by the Dask configuration parameter `distributed.scheduler.allowed-failures`, which may be
+        manually configured prior to the simulation. Dask worker memory limits may also need to be increased to
+        achieve the desired replication factor (see `memory` keyword argument). Using task replicas requires
+        that either Dask's `ReduceReplicas` policy is disabled or that Dask's entire Active Memory Manager
+        (AMM) is disabled, since replicated tasks consume additional memory per Dask worker. Task size in
+        memory is dominated by the input `PackedPose` object; a rough estimate of additional memory usage is
+        ~1 MB/task for a 500 residue protein. Task retries are only appropriate when PyRosetta protocols are
+        side effect-free upon preemption, wherein tasks can be restarted without producing inconsistent
+        external states if preempted midway through a PyRosetta protocol.
 
         See https://distributed.dask.org/en/stable/api.html#distributed.Client.replicate and
         https://docs.dask.org/en/stable/configuration.html for more information.
@@ -447,42 +440,41 @@ Args:
         Default: `0`
 
     `task_registry`:
-        A `None` or `str` object of either "disk" or "memory". If "disk" is provided, then
-        write the task registry to disk. If "memory" is provided, then keep the task registry in memory.
-        Maintaining a task registry improves resilience of the simulation when compute resources executing
-        tasks are preempted midway through a user-provided PyRosetta protocol (e.g., due to using
-        spot instances or backfill queues); if scattered data cannot be recovered (see `max_task_replicas`
-        keyword argument), then the task will be automatically resubmitted using the task input arguments
-        cached in the task registry. If "memory" is provided, then task input arguments consume memory on the
-        head node process, which is appropriate with fewer tasks (e.g., debugging pipelines). If "disk" is
-        provided, then task input arguments consume disk space (in the `scratch_dir` instance attribute),
-        which is appropriate for production simulations. Task size is dominated by the input `PackedPose`
-        object; a rough estimate of additional disk or memory usage is ~1 MB/task for a 500 residue protein.
-        Completed tasks are automatically deleted from the task registry upon task completion. If `None` is
-        provided, then the task registry is not created, which is appropriate for non-preemptible compute
-        resources. Task resubmissions are only appropriate when user-provided PyRosetta protocols are side
-        effect-free upon preemption, wherein tasks can be restarted without producing inconsistent external
-        states if preempted midway through the protocol.
+        A `None` object or `str` object of either `"disk"` or `"memory"`. If `"disk"` is provided, then write
+        the task registry to disk. If `"memory"` is provided, then keep the task registry in memory on the head
+        node process. Maintaining a task registry improves the resilience of the simulation when compute
+        resources executing tasks are preempted midway through a user-defined PyRosetta protocol (e.g., due to
+        using cloud spot instances or cluster backfill queues); if scattered data cannot be recovered (see
+        `max_task_replicas` keyword argument), then the task will be automatically resubmitted using the task
+        input arguments cached in the task registry. If `"memory"` is provided, then task input arguments
+        consume memory on the head node process, which is appropriate with fewer tasks (e.g., debugging
+        pipelines). If `"disk"` is provided, then task input arguments consume disk space (in the `scratch_dir`
+        keyword argument value), which is appropriate for production simulations. Task size is dominated by the
+        input `PackedPose` object; a rough estimate of additional disk or memory usage is ~1 MB/task for a 500
+        residue protein. Completed tasks are automatically deleted from the task registry upon task completion.
+        If `None` is provided, then the task registry is not created, which is appropriate for non-preemptible
+        compute resources. Task resubmissions are only appropriate when user-provided PyRosetta protocols are
+        side effect-free upon preemption, wherein tasks can be restarted without producing inconsistent
+        external states if preempted midway through a PyRosetta protocol.
 
         Default: `None`
 
     `author`:
-        An optional `str` object specifying the author(s) of the simulation that is
-        written to the full simulation records and the PyRosetta initialization '.init' file.
+        A `str` object specifying the author(s) of the simulation that is written to the full simulation
+        records and the output PyRosetta initialization file(s).
 
         Default: `""`
 
     `email`:
-        An optional `str` object specifying the email address(es) of the author(s) of
-        the simulation that is written to the full simulation records and the PyRosetta
-        initialization '.init' file.
+        A `str` object specifying the email address(es) of the author(s) of the simulation that is written to
+        the full simulation records and the output PyRosetta initialization file(s).
 
         Default: `""`
 
     `license`:
-        An optional `str` object specifying the license of the output data of the
-        simulation that is written to the full simulation records and the PyRosetta
-        initialization '.init' file (e.g., "ODC-ODbL", "CC BY-ND", "CDLA Permissive-2.0", etc.).
+        A `str` object specifying the license of the output data of the simulation that is written to the full
+        simulation records and the output PyRosetta initialization file(s) (e.g., "ODC-ODbL", "CC BY-ND",
+        "CDLA Permissive-2.0", etc.).
 
         Default: `""`
 
@@ -1355,7 +1347,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                 the number of protocols passed to the `PyRosettaCluster().distribute` method, and each `int` value determines the
                 number of automatic retries the Dask scheduler allows for that protocol's failed tasks. Allowing retries of failed
                 tasks may be useful if the user-provided protocol raises a standard Python exception or Rosetta throws a segmentation
-                fault in the billiard subprocess while the Dask worker remains alive and `PyRosettaCluster(ignore_errors=False)`.
+                fault in the `billiard` subprocess while the Dask worker remains alive and `PyRosettaCluster(ignore_errors=False)`.
                 If `PyRosettaCluster(ignore_errors=True)` is used, then protocols failing due to standard Python exceptions or
                 Rosetta segmentation faults will still be considered successes, and this keyword argument has no effect since
                 these protocol errors are ignored. Note that if a compute resource executing tasks is reclaimed midway through
