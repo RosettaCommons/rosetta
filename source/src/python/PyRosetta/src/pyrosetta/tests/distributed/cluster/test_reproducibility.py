@@ -1672,7 +1672,7 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
 
         return os.path.isfile(os.path.join(db, name))
 
-    def test_reproduce_task_updates(self, verbose=True):
+    def test_reproduce_task_updates(self, verbose=False):
         """
         Test for PyRosettaCluster decoy reproducibility with updated task dictionaries
         per user-provided PyRosetta protocol.
@@ -1977,7 +1977,7 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
 
         return options
 
-    def test_reproduce_remodel_task_updates(self, verbose=True):
+    def test_reproduce_remodel_task_updates(self, verbose=False):
         """
         Test for PyRosettaCluster decoy reproducibility with updated task dictionaries
         using RosettaRemodel per user-provided PyRosetta protocol.
