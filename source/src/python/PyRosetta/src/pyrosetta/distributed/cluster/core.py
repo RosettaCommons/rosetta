@@ -557,6 +557,7 @@ from pyrosetta.distributed.cluster.validators import (
     _validate_min_len,
     _validate_output_init_file,
     _validate_scorefile_name,
+    _validate_tasks,
 )
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
@@ -580,10 +581,13 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
     tasks = attr.ib(
         type=list,
         default=[{}],
-        validator=attr.validators.deep_iterable(
-            member_validator=attr.validators.instance_of(dict),
-            iterable_validator=attr.validators.instance_of(list),
-        ),
+        validator=[
+            attr.validators.deep_iterable(
+                member_validator=attr.validators.instance_of(dict),
+                iterable_validator=attr.validators.instance_of(list),
+            ),
+            _validate_tasks,
+        ],
         converter=_parse_tasks,
     )
     nstruct = attr.ib(

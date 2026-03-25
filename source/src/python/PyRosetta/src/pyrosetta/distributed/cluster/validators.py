@@ -21,6 +21,7 @@ except ImportError:
     )
     raise
 
+import json
 import logging
 import os
 
@@ -28,12 +29,25 @@ from typing import (
     AbstractSet,
     Any,
     Callable,
+    Dict,
     Iterable,
     List,
     NoReturn,
     Optional,
     Union,
 )
+
+
+OPTION_KEYS: AbstractSet[str] = {"options", "extra_options"}
+DISALLOWED_RUN_OPTIONS: AbstractSet[str] = set(
+    f"{prefix}{option}"
+    for prefix in ("-run::", "-run:", "-")
+    for option in ("constant_seed", "jran", "use_time_as_seed", "rng_seed_device", "seed_offset", "rng")
+)
+DISALLOWED_RUN_OPTIONS_NO_PREFIX: AbstractSet[str] = set(
+    map(lambda option: option.lstrip("-"), DISALLOWED_RUN_OPTIONS)
+)
+PYROSETTACLUSTER_KEY_PREFIX: str = "PyRosettaCluster_"
 
 
 def _validate_clients_indices(
@@ -305,3 +319,58 @@ def _validate_residue_type_sets(
         )
         logging.error(_msg)
         raise AssertionError(_msg)
+
+
+def _validate_task(task: Dict[Any, Any]) -> Optional[NoReturn]:
+    """Validate that a task does not contain disallowed or reserved keys/values."""
+
+    _msg = (
+        "Disallowed Rosetta command-line option '{option}' in the value of the '{key}' key of task: {task}\n"
+        "PyRosettaCluster handles seeding automatically. Please remove this Rosetta command-line option to continue."
+    )
+    for k, v in task.items():
+        if not isinstance(k, str):
+            raise ValueError(
+                f"User-defined task dictionary key must be an instance of `str`. Received {type(k)} in task: {task}"
+            )
+        elif k in OPTION_KEYS:
+            if isinstance(v, dict):
+                for _option in v.keys():
+                    if any(_option in x for x in (DISALLOWED_RUN_OPTIONS, DISALLOWED_RUN_OPTIONS_NO_PREFIX)):
+                        raise ValueError(_msg.format(option=_option, key=k, task=task))
+            elif isinstance(v, str):
+                for _disallowed_option in DISALLOWED_RUN_OPTIONS:
+                    if _disallowed_option in v:
+                        raise ValueError(_msg.format(option=_disallowed_option, key=k, task=task))
+            else:
+                raise ValueError(
+                    f"The value of the '{k}' key must be an instance of `dict` or `str`. Received {type(v)} in task: {task}"
+                )
+        elif k.startswith(PYROSETTACLUSTER_KEY_PREFIX):
+            raise ValueError(
+                f"Disallowed user-defined task dictionary key '{k}' of task: {task}\n"
+                + f"Task keys starting with '{PYROSETTACLUSTER_KEY_PREFIX}' are reserved for PyRosettaCluster."
+            )
+
+
+def _validate_tasks(self, attribute: str, value: List[Dict[Any, Any]]) -> None:
+    """Validate that tasks do not contain disallowed or reserved keys/values."""
+
+    for task in value:
+        _validate_task(task)
+        if not _is_json_roundtrip_equal(task):
+            raise ValueError(
+                "An input user-defined task dictionary is not JSON-serializable! Please reformat "
+                + f"the input user-defined task dictionary for the PyRosettaCluster simulation:\n{task}"
+            )
+
+
+def _is_json_roundtrip_equal(obj: Any) -> bool:
+    """Test if an object is equal after roundtrip JSON-serialization."""
+
+    try:
+        return obj == json.loads(json.dumps(obj))
+    except (TypeError, json.JSONDecodeError, ValueError):
+        return False
+    except Exception as ex:
+        raise RuntimeError("Unexpected JSON-serialization error during roundtrip validation.") from ex
