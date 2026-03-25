@@ -1988,13 +1988,14 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             set_logging_handler="logging",
         )
         _n_protocols = 3
-        _available_score_functions = {
-            ("-score:weights", "ref2015"),
+        _available_score_functions = set()
+            # ("-score:weights", "ref2015"),
             # ("-beta_nov16", "1"),
             # ("-beta_nov16_cart", "1"),
-        }
         if TestReproducibilityTaskUpdates.score_function_is_available("beta_jan25"):
             _available_score_functions.add(("-beta_jan25", "1"))
+        else:
+            _available_score_functions.add(("-beta_nov16", "1"))
         _scorefxn_flags = sorted(map(list, _available_score_functions)) # Make JSON-serializable
         if verbose:
             print(f"Available scorefunction flags: {_scorefxn_flags}")
