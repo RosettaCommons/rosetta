@@ -909,20 +909,20 @@ def parse_init_file(
     if not was_init_called():
         if skip_corrections != init_from_file_kwargs["skip_corrections"]:
             _skip_corrections_warning_msg = (
-                "Please set the 'skip_corrections' keyword argument in the `reproduce()` function and in "
-                "the 'init_from_file_kwargs' keyword arguments to the same value to silence this warning."
+                "Please set the `skip_corrections` keyword argument in the `reproduce` function and in "
+                "the `init_from_file_kwargs` keyword arguments to the same value to silence this warning."
             )
             if skip_corrections and not init_from_file_kwargs["skip_corrections"]:
                 warnings.warn(
-                    "Skipping ScoreFunction corrections for the PyRosettaCluster task but "
+                    "Skipping `ScoreFunction` corrections for the `PyRosettaCluster` task but "
                     + f"not for the head node process PyRosetta initialization from the '.init' file! {_skip_corrections_warning_msg}",
                     UserWarning,
                     stacklevel=3,
                 )
             elif not skip_corrections and init_from_file_kwargs["skip_corrections"]:
                 warnings.warn(
-                    "Skipping ScoreFunction corrections for the head node process PyRosetta initialization "
-                    + f"from the '.init' file but not for the PyRosettaCluster task! {_skip_corrections_warning_msg}",
+                    "Skipping `ScoreFunction` corrections for the head node process PyRosetta initialization "
+                    + f"from the '.init' file but not for the `PyRosettaCluster` task! {_skip_corrections_warning_msg}",
                     UserWarning,
                     stacklevel=3,
                 )
@@ -930,38 +930,38 @@ def parse_init_file(
             io.init_from_file(input_file, **init_from_file_kwargs)
         except BufferError as ex:
             raise BufferError(
-                f"{ex}. Please set a larger 'max_decompressed_bytes' value in the 'init_from_file_kwargs' "
-                + "keyword argument of the `reproduce()` function to initialize PyRosetta with the input "
+                f"{ex}. Please set a larger `max_decompressed_bytes` value in the `init_from_file_kwargs` "
+                + "keyword argument value of the `reproduce` function to initialize PyRosetta with the input "
                 + f"PyRosetta initialization file: '{input_file}'"
             )
         except Exception as ex:
             raise Exception(
                 f"{type(ex).__name__}: {ex}. Could not initialize PyRosetta from the input PyRosetta initialization "
-                + f"file '{input_file}' using `pyrosetta.init_from_file()` keyword arguments: '{init_from_file_kwargs}'. "
-                + "Please ensure `pyrosetta.distributed.io.init_from_file()` runs with the '.init' or '.init.bz2' file "
-                + "separately before passing it into `reproduce()`, and update any necessary `pyrosetta.init_from_file()` "
-                + "keyword arguments in the 'init_from_file_kwargs' keyword argument value of the `reproduce()` function. "
-                + "The '.init' or '.init.bz2' file may also be passed to `reproduce()` after a separate PyRosetta initialization."
+                + f"file '{input_file}' using `pyrosetta.init_from_file` keyword arguments: '{init_from_file_kwargs}'. "
+                + "Please ensure that the `pyrosetta.distributed.io.init_from_file` fucntion runs with the '.init' or '.init.bz2' "
+                + "file separately before passing it to the `reproduce` function, and update any necessary `pyrosetta.init_from_file` "
+                + "keyword argument values in the `init_from_file_kwargs` keyword argument value of the `reproduce` function. "
+                + "The '.init' or '.init.bz2' file may also be passed to `reproduce` after a separate PyRosetta initialization."
             )
     else:
         _skip_corrections_warning_msg = (
             "Please ensure that PyRosetta was initialized from the same PyRosetta initialization file using "
-            + f"`pyrosetta.init_from_file(skip_corrections={skip_corrections})` before running the `reproduce()` "
+            + f"`pyrosetta.init_from_file(skip_corrections={skip_corrections})` before running the `reproduce` "
             + "function. To silence this warning, please ensure that PyRosetta is not already initialized before "
-            + f"running the `reproduce()` function with the input PyRosetta initialization file: '{input_file}'"
+            + f"running the `reproduce` function with the input PyRosetta initialization file: '{input_file}'"
         )
         if skip_corrections:
             warnings.warn(
-                "Skipping ScoreFunction corrections for the PyRosettaCluster task but PyRosetta is already "
-                + "initialized on the head node process (with or without skipped ScoreFunction corrections)! "
+                "Skipping `ScoreFunction` corrections for the `PyRosettaCluster` task but PyRosetta is already "
+                + "initialized on the head node process (with or without skipped `ScoreFunction` corrections)! "
                 + _skip_corrections_warning_msg,
                 UserWarning,
                 stacklevel=3,
             )
         else:
             warnings.warn(
-                "Preserving ScoreFunction corrections for the PyRosettaCluster task but PyRosetta is already "
-                + "initialized on the head node process (with or without preserved ScoreFunction corrections)! "
+                "Preserving `ScoreFunction` corrections for the `PyRosettaCluster` task but PyRosetta is already "
+                + "initialized on the head node process (with or without preserved `ScoreFunction` corrections)! "
                 + _skip_corrections_warning_msg,
                 UserWarning,
                 stacklevel=3,
@@ -970,22 +970,23 @@ def parse_init_file(
     _input_packed_pose, _output_packed_pose = get_poses_from_init_file(input_file, verify=True)
     if _output_packed_pose is None:
         raise ValueError(
-            f"The input '.init' file does not contain an output decoy from a PyRosettaCluster simulation: '{input_file}'. "
-            + "To reproduce from a '.init' file, please ensure that `pyrosetta.distributed.cluster.export_init_file()` "
-            + "was run on the original output decoy file, or that the `PyRosettaCluster(output_decoy_types=['.init'])` "
-            + "PyRosetta initialization file output decoy type was enabled in the original PyRosettaCluster simulation."
+            f"The input '.init' file does not contain an output decoy from a `PyRosettaCluster` simulation: '{input_file}'. "
+            + "To reproduce from a '.init' file, please ensure that the `pyrosetta.distributed.cluster.export_init_file` "
+            + "function was called with the original output decoy file, or that the PyRosetta initialization file output decoy "
+            + "type was enabled in the original `PyRosettaCluster` simulation (using "
+            + "`PyRosettaCluster(output_decoy_types=['.init', ...])` syntax)."
         )
 
     input_packed_pose = parse_input_packed_pose(input_packed_pose)
     if input_packed_pose is not None and not identical_b64_poses(input_packed_pose, _input_packed_pose):
         _input_packed_pose_error_msg = (
-            "the input `PackedPose` object from the original PyRosettaCluster simulation is not identical "
-            "to the provided 'input_packed_pose' keyword argument value of the `reproduce()` function"
+            "the input `PackedPose` object from the original `PyRosettaCluster` simulation is not identical "
+            "to the provided `input_packed_pose` keyword argument value of the `reproduce` function"
         ) if _input_packed_pose is not None else (
-            "the '.init' file does not contain an input `PackedPose` object from the original PyRosettaCluster simulation"
+            "the '.init' file does not contain an input `PackedPose` object from the original `PyRosettaCluster` simulation"
         )
         raise TypeError(
-            "Please set the 'input_packed_pose' keyword argument value to a `NoneType` object when "
+            "Please set the `input_packed_pose` keyword argument value to `None` when "
             + f"reproducing from a '.init' file, because {_input_packed_pose_error_msg}."
         )
 
