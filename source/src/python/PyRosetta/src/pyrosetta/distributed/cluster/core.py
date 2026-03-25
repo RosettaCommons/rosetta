@@ -620,19 +620,19 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         converter=attr.converters.optional(_parse_decoy_ids),
     )
     client = attr.ib(
-        type=Optional[distributed.client.Client],
+        type=Optional[distributed.Client],
         default=None,
         validator=attr.validators.optional(
-            attr.validators.instance_of(distributed.client.Client)
+            attr.validators.instance_of(distributed.Client)
         ),
     )
     clients = attr.ib(
-        type=Optional[List[distributed.client.Client]],
+        type=Optional[List[distributed.Client]],
         default=None,
         validator=[
             attr.validators.optional(
                 attr.validators.deep_iterable(
-                    member_validator=attr.validators.instance_of(distributed.client.Client),
+                    member_validator=attr.validators.instance_of(distributed.Client),
                     iterable_validator=attr.validators.instance_of((tuple, list)),
                 ),
             ),

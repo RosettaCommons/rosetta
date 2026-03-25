@@ -196,8 +196,8 @@ def get_protocols_list_of_str(
     if input_file:
         if scorefile or decoy_name:
             warnings.warn(
-                "Received 'input_file' and either 'scorefile' or 'decoy_name' keyword argument values. "
-                + "Ignoring 'scorefile' and 'decoy_name' and using 'input_file' keyword argument values!",
+                "Received `input_file` and either `scorefile` or `decoy_name` keyword arguments. "
+                + "Ignoring `scorefile` and `decoy_name` values and using the `input_file` value!",
                 UserWarning,
                 stacklevel=3,
             )
@@ -787,15 +787,15 @@ def _default_none(
 @singledispatch
 def parse_client(obj: Any) -> NoReturn:
     raise TypeError(
-        "The `client` argument value must be of type `distributed.client.Client` "
+        "The `client` argument value must be of type `distributed.Client` "
         + "or `NoneType`, not of type {0}.".format(type(obj))
     )
 
 
-ClientType = TypeVar("ClientType", bound=distributed.client.Client)
+ClientType = TypeVar("ClientType", bound=distributed.Client)
 
 
-@parse_client.register(distributed.client.Client)
+@parse_client.register(distributed.Client)
 @parse_client.register(type(None))
 def _default(obj: Optional[ClientType]) -> Optional[ClientType]:
     return obj
