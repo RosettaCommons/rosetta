@@ -1274,90 +1274,99 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
 
         Args:
             `*args`:
-                Optional callables of type `types.GeneratorType` or `types.FunctionType` representing PyRosetta protocols
-                in the order to be executed.
+                Optional callables of type `types.GeneratorType` or `types.FunctionType` representing
+                user-defined PyRosetta protocols in the order to be executed.
 
             `protocols`:
-                An optional iterable of extra callable user-defined PyRosetta protocols; i.e., an iterable of objects
+                An iterable of extra callable user-defined PyRosetta protocols; i.e., an iterable of objects
                 of `types.GeneratorType` and/or `types.FunctionType` types, or a single callable of type
                 `types.GeneratorType` or `types.FunctionType`.
 
                 Default: `None`
 
             `clients_indices`:
-                An optional `list` or `tuple` object of `int` objects, where each `int` object represents
-                a zero-based index corresponding to the initialized Dask `distributed.Client` object(s) passed 
-                to the `PyRosettaCluster(clients=...)` keyword argument value. If not `None`, then the length of the
-                `clients_indices` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
-                method.
+                A `list` or `tuple` object of `int` objects, where each `int` object represents a zero-based
+                index corresponding to the initialized Dask `distributed.Client` object(s) passed to the
+                `PyRosettaCluster(clients=...)` keyword argument value. If not `None`, then the length of the
+                `clients_indices` object must equal the number of protocols passed to the
+                `PyRosettaCluster.distribute` method.
 
                 Default: `None`
 
             `resources`:
-                An optional `list` or `tuple` object of `dict` objects, where each `dict` object represents
-                an abstract, arbitrary resource to constrain which Dask workers run the user-defined PyRosetta protocols.
-                If `None`, then do not impose resource constaints on any protocols. If not `None`, then the length
-                of the `resources` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
-                method, such that each resource specified indicates the unique resource constraints for the protocol at the
-                corresponding index of the protocols passed to `PyRosettaCluster().distribute`. Note that this feature is only 
-                useful when one passes in their own instantiated client(s) with Dask workers set up with various resource
-                constraints. If Dask workers were not instantiated to satisfy the specified resource constraints, protocols
-                will hang indefinitely because the Dask scheduler is waiting for workers that meet the specified resource 
-                constraints so that it can schedule these protocols. Unless workers were created with these resource tags
-                applied, the protocols will not run.
+                A `list` or `tuple` object of `dict` objects, where each `dict` object represents an abstract,
+                arbitrary resource to constrain which Dask workers execute the user-defined PyRosetta protocols.
+                If `None`, then do not impose resource constaints on any PyRosetta protocols. If not `None`,
+                then the length of the `resources` object must equal the number of PyRosetta protocols passed
+                to the `PyRosettaCluster.distribute` method, such that each resource specified indicates the
+                unique resource constraints for the protocol at the corresponding index of the PyRosetta
+                protocols passed to the `PyRosettaCluster.distribute` method. Note that this feature is only
+                useful when one passes in their own instantiated Dask client(s) with Dask workers set up with
+                various resource constraints. If Dask workers were not instantiated to satisfy the specified
+                resource constraints, PyRosetta protocols will hang indefinitely by design because the Dask
+                scheduler is waiting for Dask workers that meet the specified resource constraints so that it
+                may schedule these tasks. Unless Dask workers were created with these resource tags applied,
+                the PyRosetta protocols will not run.
 
                 See https://distributed.dask.org/en/stable/resources.html for more information.
 
                 Default: `None`
 
             `priorities`:
-                An optional `list` or `tuple` of `int` objects, where each `int` object sets the Dask scheduler
-                priority for the corresponding user-defined PyRosetta protocol (i.e., indexed the same as `client_indices`).
-                If `None`, then no explicit priorities are set. If not `None`, then the length of the `priorities` object
-                must equal the number of protocols passed to the `PyRosettaCluster().distribute` method, and each `int`
-                value determines the Dask scheduler priority for that protocol's received tasks.
+                A `list` or `tuple` object of `int` objects, where each `int` object sets the Dask scheduler
+                priority for the corresponding user-defined PyRosetta protocol (i.e., indexed the same as the
+                `client_indices` keyword argument value). If `None`, then no explicit priorities are set. If
+                not `None`, then the length of this value must equal the number of PyRosetta protocols passed
+                to the `PyRosettaCluster.distribute` method, and each `int` value determines the Dask scheduler
+                priority for the tasks applied to that PyRosetta protocol.
 
                 Breadth-first task execution (default):
-                    When all user-defined PyRosetta protocols have an identical priority (e.g., `[0] * len(protocols)` or
-                    `None`), then all tasks enter the Dask scheduler's queue with equal priority. Under equal priority, Dask
-                    mainly schedules tasks in a first-in, first-out manner. When Dask worker resources are saturated, this
-                    causes all tasks submitted to upstream protocols to run to completion before tasks are scheduled to run
-                    downstream protocols, producing a breadth-first task execution behavior across user-defined PyRosetta
-                    protocols.
+                    When all user-defined PyRosetta protocols have an identical priority (e.g.,
+                    `[0] * len(protocols)` or `None`), then all tasks enter the Dask scheduler's queue with
+                    equal priority. Under equal priority, Dask mainly schedules tasks in a first-in, first-out
+                    behavior. When Dask worker resources are saturated, this causes all tasks submitted to
+                    upstream PyRosetta protocols to run to completion before tasks are scheduled to execute
+                    downstream PyRosetta protocols, producing a breadth-first task execution behavior across
+                    PyRosetta protocols.
 
                 Depth-first task execution:
-                    To allow tasks to run through all user-defined PyRosetta protocols before all tasks submitted to
-                    upstream protocols complete, assign increasing priorities to downstream protocols (e.g.,
-                    `list(range(0, len(protocols) * 10, 10))`). Once a task completes an upstream protocol, it is submitted
-                    to the next downstream protocol with a higher priority than tasks still queued for upstream protocols,
-                    so tasks may run through all user-defined PyRosetta protocols to completion as Dask worker resources
-                    become available. This produces a depth-first task execution behavior across user-defined PyRosetta
-                    protocols when Dask worker resources are saturated.
+                    To allow tasks to run through all user-defined PyRosetta protocols before all tasks
+                    applied to upstream PyRosetta protocols complete, assign increasing priorities to
+                    downstream protocols (e.g., `list(range(0, len(protocols) * 10, 10))`). Once a task
+                    completes an upstream PyRosetta protocol, it is applied to the next downstream PyRosetta
+                    protocol with a higher priority than tasks still queued for upstream PyRosetta protocols,
+                    so tasks may run through all user-defined PyRosetta protocols to completion as Dask worker
+                    resources become available. This produces a depth-first task execution behavior across
+                    PyRosetta protocols when Dask worker resources are saturated.
 
                 See https://distributed.dask.org/en/stable/priority.html for more information.
 
                 Default: `None`
 
             `retries`:
-                An optional `list` or `tuple` of `int` objects, where each `int` object (≥0) sets the number of allowed
-                automatic retries of each failed task that was submitted to the corresponding user-provided PyRosetta protocol
-                (i.e., indexed the same as `client_indices`). If an `int` object (≥0) is provided, then apply that number of
-                allowed automatic retries to all user-provided PyRosetta protocols. If `None`, then no explicit retries are
-                allowed. If not `None` and not an `int` object, then the length of the `retries` keyword argument value must equal
-                the number of protocols passed to the `PyRosettaCluster().distribute` method, and each `int` value determines the
-                number of automatic retries the Dask scheduler allows for that protocol's failed tasks. Allowing retries of failed
-                tasks may be useful if the user-provided protocol raises a standard Python exception or Rosetta throws a segmentation
-                fault in the `billiard` subprocess while the Dask worker remains alive and `PyRosettaCluster(ignore_errors=False)`.
-                If `PyRosettaCluster(ignore_errors=True)` is used, then protocols failing due to standard Python exceptions or
-                Rosetta segmentation faults will still be considered successes, and this keyword argument has no effect since
-                these protocol errors are ignored. Note that if a compute resource executing tasks is reclaimed midway through
-                a protocol, then the Dask scheduler registers those tasks as incomplete or cancelled, and retries are controlled
-                by the Dask configuration parameter `distributed.scheduler.allowed-failures`. When using preemptible resources
-                (e.g., spot instances or backfill queues), please increase Dask's `distributed.scheduler.allowed-failures`
-                configuration value to tolerate repeated Dask worker preemptions, and use `PyRosettaCluster(max_task_replices=...)`
-                and `PyRosettaCluster(task_registry=...)` keyword arguments for additional configurability of task retries.
+                A `list` or `tuple` of `int` objects, where each `int` object (≥0) sets the number of allowed
+                automatic retries of each failed task that was applied to the corresponding user-defined
+                PyRosetta protocol (i.e., indexed the same as `client_indices` keyword argument value). If an
+                `int` object (≥0) is provided, then apply that number of allowed automatic retries to all
+                PyRosetta protocols. If `None` is provided, then no explicit retries are allowed. If not `None`
+                and not an `int` object, then the length of this value must equal the number of PyRosetta
+                protocols passed to the `PyRosettaCluster.distribute` method, and each `int` value determines
+                the number of automatic retries the Dask scheduler allows for that the tasks applied to that
+                PyRosetta protocol. Allowing retries of failed tasks may be useful if the PyRosetta protocol
+                raises a standard Python exception or Rosetta throws a segmentation fault in the `billiard`
+                subprocess while the Dask worker remains alive and `PyRosettaCluster(ignore_errors=False)` is
+                configured. If `PyRosettaCluster(ignore_errors=True)` is configured, then protocols failing due
+                to standard Python exceptions or Rosetta segmentation faults will still be considered
+                successes, and this keyword argument has no effect since these PyRosetta protocol errors are
+                ignored. Note that if a compute resource executing a PyRosetta protocol is preempted, then the
+                Dask worker process does not remain alive and the Dask scheduler registers that failed task as
+                incomplete or cancelled. In this case, the number of allowed task retries is controlled by the
+                Dask configuration parameter `distributed.scheduler.allowed-failures`; please use the
+                `max_task_replices` and `task_registry` keyword arguments of `PyRosettaCluster` for further
+                configuration of task retries after compute resource preemption.
 
-                See https://distributed.dask.org/en/latest/scheduling-state.html#task-state for more information.
+                See https://distributed.dask.org/en/latest/scheduling-state.html#task-state for more
+                information.
 
                 Default: `None`
 
@@ -1557,21 +1566,22 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         Extra information:
 
         The `PyRosettaCluster.generate` method may be used for developing PyRosetta protocols on a local or
-        remote compute cluster and optionally post-processing or visualizing output `PackedPose` objects in memory.
-        Importantly, subsequent code run on the yielded results is not captured by PyRosettaCluster, and so use
-        of this method does not ensure reproducibility of the simulation. Use the `PyRosettaCluster.distribute`
-        method for reproducible simulations.
+        remote compute cluster and optionally post-processing or visualizing output `PackedPose` objects in
+        memory. Importantly, subsequent code run on the yielded results is not captured by `PyRosettaCluster`,
+        and so use of this method does not ensure reproducibility of the simulation. Use the
+        `PyRosettaCluster.distribute` method for reproducible simulations.
 
         Each yielded result is a `tuple` object with a `PackedPose` object as the first element and a `dict`
         object as the second element. The `PackedPose` object represents a returned or yielded `PackedPose`
-        (or `Pose` or `NoneType`) object from the most recently run user-provided PyRosetta protocol. The `dict`
-        object represents the optionally returned or yielded user-defined PyRosetta protocol `kwargs` dictionary
-        object from the same most recently run user-provided PyRosetta protocol (see 'protocols' argument). If
-        `PyRosettaCluster(save_all=True)`, results are yielded after each user-provided PyRosetta protocol,
-        otherwise results are yielded after the final user-defined PyRosetta protocol. Results are yielded in the
-        order in which they arrive back to the client(s) from the distributed cluster (which may differ from the
-        order that tasks are submitted, due to tasks running asynchronously). If `PyRosettaCluster(dry_run=True)`,
-        results are still yielded but '.pdb' or '.pdb.bz2' files are not saved to disk.
+        (or `Pose` or `NoneType`) object from the most recently executed user-defined PyRosetta protocol. The
+        `dict` object represents the optionally returned or yielded dictionary of keyword arguments from the
+        same most recently executed PyRosetta protocol (see the `protocols` keyword argument). If
+        `PyRosettaCluster(save_all=True)` is used, tuples are yielded after each PyRosetta protocol, otherwise
+        tuples are yielded after the final PyRosetta protocol. Tuples are yielded in the order in which they
+        arrive back to the Dask client(s) from the distributed cluster (which may differ from the order that
+        tasks are submitted, due to tasks running asynchronously). If `PyRosettaCluster(dry_run=True)` is used,
+        then tuples are still yielded but output decoy files are not written to disk.
+
         See https://docs.dask.org/en/latest/futures.html#distributed.as_completed for more information.
 
         Extra examples:
@@ -1583,7 +1593,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         Iterate over submissions to the same Dask client:
             >>> client = Client()
             >>> for packed_pose, kwargs in PyRosettaCluster(client=client).generate(protocols):
-            ...     # Post-process results on host node asynchronously from results generation
+            ...     # Post-process results on head node asynchronously from results generation
             ...     prc = PyRosettaCluster(
             ...         input_packed_pose=packed_pose,
             ...         client=client,
@@ -1592,11 +1602,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             ...     for packed_pose, kwargs in prc.generate(other_protocols):
             ...         ...
 
-        Iterate over two PyRosettaCluster instances, each managing one Dask client, creating additional overhead:
+        Iterate over two PyRosettaCluster instances, each managing one Dask client, creating additional
+        overhead:
             >>> client_1 = Client()
             >>> client_2 = Client()
             >>> for packed_pose, kwargs in PyRosettaCluster(client=client_1).generate(protocols):
-            ...     # Post-process results on host node asynchronously from results generation
+            ...     # Post-process results on head node asynchronously from results generation
             ...     prc = PyRosettaCluster(
             ...         input_packed_pose=packed_pose,
             ...         client=client_2,
@@ -1606,21 +1617,22 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             ...         ...
 
         Iterate over one PyRosettaCluster instance managing two Dask clients, reducing overhead:
-            >>> # Using multiple `distributed.as_completed` iterators on the head node creates additional overhead.
-            >>> # If post-processing on the head node is not required between user-provided PyRosetta protocols,
-            >>> # the preferred method is to distribute protocols within a single `PyRosettaCluster().generate()`
-            >>> # method call using the `clients_indices` keyword argument:
+            >>> # Using multiple `distributed.as_completed` iterators on the head node creates additional
+            >>> # overhead. If post-processing on the head node is not required between user-defined PyRosetta
+            >>> # protocols, the preferred method is to distribute PyRosetta protocols within a single
+            >>> # `PyRosettaCluster.generate` method call using the `clients_indices` keyword argument:
             >>> prc_generate = PyRosettaCluster(clients=[client_1, client_2]).generate(
             ...     protocols=[protocol_1, protocol_2],
             ...     clients_indices=[0, 1],
             ...     resources=[{"GPU": 1}, {"CPU": 1}],
             ... )
             ... for packed_pose, kwargs in prc_generate:
-            ...     # Post-process results on host node asynchronously from results generation
+            ...     # Post-process results on head node asynchronously from results generation
+            ...     ...
 
         Yields:
-            ``(`PackedPose`, `dict`)`` tuples from the most recently run user-provided PyRosetta protocol if
-            `PyRosettaCluster(save_all=True)` otherwise from the final user-defined PyRosetta protocol.
+            ``(`PackedPose`, `dict`)`` tuples from the most recently executed user-defined PyRosetta protocol
+            if `PyRosettaCluster(save_all=True)` is used, otherwise from the final PyRosetta protocol.
         """
 
 PyRosettaCluster.__doc__ = __doc__
