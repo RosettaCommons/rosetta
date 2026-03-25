@@ -1843,7 +1843,7 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
                 output_path = os.path.join(self.workdir, f"outputs_reproduce_norm_task_options_{int(norm_task_options)}_{i}")
                 reproduce_scorefile_name = f"reproduce_test_scores_{i}.json"
                 skip_corrections = False
-                reproduce(
+                reproduce_kwargs = dict(
                     input_file=input_file,
                     scorefile=scorefile,
                     decoy_name=decoy_name,
@@ -1881,6 +1881,19 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
                         silent=None,
                     ),
                 )
+                if i == 0:
+                    with self.assertWarns(UserWarning) as cm:
+                        # PyRosetta is already initialized on the head node process but we reproduce from a PyRosetta initialization file
+                        reproduce(**reproduce_kwargs)
+                    self.assertTrue(
+                        str(cm.warning).startswith(
+                            "Skipping ScoreFunction corrections for the PyRosettaCluster task"
+                            if skip_corrections
+                            else "Preserving ScoreFunction corrections for the PyRosettaCluster task"
+                        )
+                    )
+                elif i == 1:
+                    reproduce(**reproduce_kwargs)
 
                 reproduce_scorefile_path = os.path.join(output_path, os.path.splitext(reproduce_scorefile_name)[0] + ".xz")
                 df_reproduce = secure_read_pickle(reproduce_scorefile_path, compression="infer")
@@ -2207,7 +2220,7 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
                 output_path = os.path.join(self.workdir, f"outputs_reproduce_norm_task_options_{int(norm_task_options)}_{i}")
                 reproduce_scorefile_name = f"reproduce_test_scores_{i}.json"
                 skip_corrections = False
-                reproduce(
+                reproduce_kwargs = dict(
                     input_file=input_file,
                     scorefile=scorefile,
                     decoy_name=decoy_name,
@@ -2245,6 +2258,19 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
                         silent=None,
                     ),
                 )
+                if i == 0:
+                    with self.assertWarns(UserWarning) as cm:
+                        # PyRosetta is already initialized on the head node process but we reproduce from a PyRosetta initialization file
+                        reproduce(**reproduce_kwargs)
+                    self.assertTrue(
+                        str(cm.warning).startswith(
+                            "Skipping ScoreFunction corrections for the PyRosettaCluster task"
+                            if skip_corrections
+                            else "Preserving ScoreFunction corrections for the PyRosettaCluster task"
+                        )
+                    )
+                elif i == 1:
+                    reproduce(**reproduce_kwargs)
 
                 reproduce_scorefile_path = os.path.join(output_path, os.path.splitext(reproduce_scorefile_name)[0] + ".xz")
                 df_reproduce = secure_read_pickle(reproduce_scorefile_path, compression="infer")
