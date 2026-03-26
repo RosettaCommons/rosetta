@@ -72,6 +72,7 @@ S = TypeVar("S", bound=Serialization)
 
 def _parse_filter_results(obj: Any) -> Union[bool, NoReturn]:
     """Parse the `filter_results` keyword argument value of `PyRosettaCluster`."""
+
     _issue_future_warning = False
 
     @singledispatch
@@ -119,7 +120,6 @@ def _parse_empty_queue(protocol_name: str, ignore_errors: bool) -> None:
         f"User-provided PyRosetta protocol '{protocol_name}' resulted in an empty queue with "
         + f"`ignore_errors={ignore_errors}`! Putting `None` into the queue."
     )
-
     return None
 
 
@@ -179,6 +179,7 @@ def _parse_environment(obj: Any) -> Union[str, NoReturn]:
                 )
             else:
                 raise RuntimeError(f"Unsupported environment manager: {environment_manager}")
+
         return yml
 
     @converter.register(str)
@@ -204,6 +205,7 @@ def _parse_environment(obj: Any) -> Union[str, NoReturn]:
                 logging.warning(_warning_msg.format("YML", "conda environment"))
             else:
                 raise RuntimeError(f"Unsupported environment manager: {environment_manager}")
+
             return obj
         else:
             if obj != get_yml():
@@ -229,6 +231,7 @@ def _parse_environment(obj: Any) -> Union[str, NoReturn]:
                     logging.debug(_debug_msg.format(f"{environment_manager} project"))
                 else:
                     logging.debug(_debug_msg.format(f"{environment_manager} environment"))
+
                 return obj
 
     return converter(obj)
@@ -301,6 +304,7 @@ def _parse_yield_results(yield_results: Any) -> Union[bool, NoReturn]:
 
 def _parse_norm_task_options(obj: Any) -> Union[bool, NoReturn]:
     """Parse the `norm_task_options` keyword argument value of `PyRosettaCluster`."""
+
     _issue_future_warning = False
 
     @singledispatch
@@ -461,6 +465,7 @@ def _parse_sha1(obj: Any) -> Union[str, NoReturn]:
                     "The current working directory is dirty! "
                     + "Commit local changes to ensure reproducibility."
                 )
+
             return commit.hexsha
         else:
             # A sha1 was provided. Validate that it is HEAD
@@ -476,6 +481,7 @@ def _parse_sha1(obj: Any) -> Union[str, NoReturn]:
                     + "does not match the current `HEAD`! "
                     + "See log files for details on resolving the issue."
                 )
+
             return obj
 
     @converter.register(type(None))
@@ -520,6 +526,7 @@ def _parse_system_info(obj: Any) -> Union[Dict[Any, Any], NoReturn]:
                     + "system platform as the original simulation run, or switching "
                     + "to the original system platform before reproducing this simulation."
                 )
+
         return toolz.dicttoolz.merge(obj, _sys_platform)
 
     return converter(obj)
@@ -563,7 +570,6 @@ def _get_decoy_id(protocols: Sized, decoy_ids: List[int]) -> Optional[int]:
 
 def _is_reserved_key(key: Any) -> bool:
     """Test if a task dictionary key is a `PyRosettaCluster` reserved key."""
-
     return isinstance(key, str) and key.startswith(PYROSETTACLUSTER_KEY_PREFIX)
 
 

@@ -885,6 +885,7 @@ def _parse_dict(obj: Dict[Any, Any]) -> Dict[Any, Any]:
                 + "PyRosetta protocol, so results must be filtered identically. Please remove "
                 + "this keyword argument to run the `reproduce` function."
             )
+
     return obj
 
 
@@ -996,10 +997,12 @@ def is_empty(obj: Any) -> NoReturn:
     """Test whether a `PackedPose` object is empty."""
     raise NotImplementedError(type(obj))
 
+
 @is_empty.register(type(None))
 def _from_none(obj: None) -> bool:
     # Protocol results return a `None` object when a segmentation fault occurs with `ignore_errors=True`
     return False
+
 
 @is_empty.register(PackedPose)
 def _from_packed(obj: PackedPose) -> bool:
@@ -1015,12 +1018,15 @@ def identical_b64_poses(
 
 
 def is_bytes(obj: Any) -> bool:
+    """Test whether an object is an instance of `bytes`."""
     return isinstance(obj, bytes)
 
 
 def is_packed(obj: Any) -> bool:
+    """Test whether an object is an instance of `PackedPose`."""
     return isinstance(obj, PackedPose)
 
 
 def is_dict(obj: Any) -> bool:
+    """Test whether an object is an instance of `dict`."""
     return isinstance(obj, dict)

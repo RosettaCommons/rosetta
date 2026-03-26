@@ -41,7 +41,6 @@ from typing import (
 
 def _get_pyrosetta_init_args() -> List[str]:
     """Return a `list` object representing `pyrosetta.init` parameters."""
-
     return inspect.getfullargspec(pyrosetta.init).args
 
 

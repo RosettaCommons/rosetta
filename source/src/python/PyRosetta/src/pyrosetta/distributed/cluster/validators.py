@@ -51,6 +51,7 @@ def _validate_clients_indices(
         clients_indices: Any, _protocols: List[Callable[..., Any]], _clients_dict_keys: List[int],
     ) -> Optional[NoReturn]:
     """Validate the `clients_indices` keyword argument value for the `PyRosettaCluster.distribute` method."""
+
     if clients_indices is not None:
         if not isinstance(clients_indices, (tuple, list)):
             raise ValueError(
@@ -88,6 +89,7 @@ def _validate_clients_indices(
 
 def _validate_resources(resources: Any, _protocols: List[Callable[..., Any]]) -> Optional[NoReturn]:
     """Validate the `resources` keyword argument value for the `PyRosettaCluster.distribute` method."""
+
     if resources is not None:
         if not isinstance(resources, (tuple, list)):
             raise ValueError(
@@ -110,6 +112,7 @@ def _validate_resources(resources: Any, _protocols: List[Callable[..., Any]]) ->
 
 def _validate_priorities(priorities: Any, _protocols: List[Callable[..., Any]]) -> Optional[NoReturn]:
     """Validate the `priorities` keyword argument value for the `PyRosettaCluster.distribute` method."""
+
     if priorities is not None:
         if not isinstance(priorities, (tuple, list)):
             raise ValueError(
@@ -132,6 +135,7 @@ def _validate_priorities(priorities: Any, _protocols: List[Callable[..., Any]]) 
 
 def _validate_retries(retries: Any, _protocols: List[Callable[..., Any]]) -> Optional[NoReturn]:
     """Validate the `retries` keyword argument value for the `PyRosettaCluster.distribute` method."""
+
     if retries is not None:
         if isinstance(retries, int):
             if retries < 0:
@@ -166,18 +170,21 @@ def _validate_retries(retries: Any, _protocols: List[Callable[..., Any]]) -> Opt
 
 def _validate_scorefile_name(self, attribute: str, value: Any) -> Optional[NoReturn]:
     """Validate the `scorefile_name` keyword argument value of `PyRosettaCluster`."""
+
     if not value.endswith(".json"):
         raise ValueError(f"The '{attribute}' keyword argument value must end in '.json'. Received: '{value}'")
 
 
 def _validate_output_init_file(self, attribute: str, value: Any) -> Optional[NoReturn]:
     """Validate the `output_init_file` keyword argument value of `PyRosettaCluster`."""
+
     if value != "" and not value.endswith(".init"):
         raise ValueError(f"The '{attribute}' keyword argument value must end in '.init'. Received: '{value}'")
 
 
 def _validate_logging_address(self, attribute: str, value: Any) -> Optional[NoReturn]:
     """Validate the `logging_address` keyword argument value of `PyRosettaCluster`."""
+
     if not isinstance(value, str):
         raise ValueError(f"The `{attribute}` keyword argument value must be of type `str`. Received: {type(value)}")
     if value.count(":") != 1:
@@ -209,6 +216,7 @@ def _validate_dirs(self, attribute: str, value: Any) -> Optional[NoReturn]:
 
 def _validate_dir(self, attribute: str, value: str) -> Optional[NoReturn]:
     """Validate the scratch directory."""
+
     if value != "":
         os.makedirs(value, exist_ok=True)
         if not os.path.isdir(value):
@@ -287,6 +295,7 @@ def _validate_protocols_seeds_decoy_ids(
     Validate that the user-defined PyRosetta protocols, and the `seeds` and `decoy_ids` keyword argument values
     of `PyRosettaCluster` have the same size.
     """
+
     if len(protocols) < 1:
         raise RuntimeError(
             "The user-defined PyRosetta protocols must contain at least one "

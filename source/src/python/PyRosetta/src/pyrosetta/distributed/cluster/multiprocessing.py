@@ -82,6 +82,7 @@ def user_protocol(
     kwargs: Dict[str, Any],
 ) -> Any:
     """Run the user-defined PyRosetta protocol."""
+
     with tempfile.TemporaryDirectory() as tmp_path:
         kwargs["PyRosettaCluster_tmp_path"] = tmp_path
         result = protocol(packed_pose, **kwargs)
@@ -105,6 +106,7 @@ def run_protocol(
     kwargs: Dict[str, Any],
 ) -> List[Tuple[bytes, bytes]]:
     """Parse the user-defined PyRosetta protocol results."""
+
     result = user_protocol(packed_pose, protocol, ignore_errors, kwargs)
     results = _parse_protocol_results(result, kwargs, protocol_name, protocols_key, decoy_ids, serializer)
 
@@ -121,6 +123,7 @@ def get_target_results_kwargs(
     ignore_errors: bool,
 ) -> List[Tuple[Optional[bytes], bytes]]:
     """Get and parse the `billiard` subprocess results."""
+
     if p.is_alive():
         return _parse_target_results(q.get(block=True, timeout=timeout))
     else:
@@ -155,6 +158,7 @@ def target(
     **pyrosetta_init_kwargs: Dict[str, Any],
 ) -> None:
     """A wrapper function for a user-defined PyRosetta protocol."""
+
     serializer = Serialization(
         instance_id=instance_id,
         prk=prk,
@@ -190,6 +194,7 @@ def user_spawn_thread(
     user_args: UserArgs,
 ) -> List[Tuple[Optional[Union[PackedPose, bytes]], Union[Dict[Any, Any], bytes]]]:
     """Generic Dask worker task using the `billiard` module."""
+
     t0 = time.time()
 
     protocol_name = user_args.protocol_name

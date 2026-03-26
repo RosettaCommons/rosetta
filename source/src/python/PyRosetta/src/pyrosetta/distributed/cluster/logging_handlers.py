@@ -82,6 +82,8 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler, HandlerMixin):
     _supported_types = (str, int, float, bool, type(None), bytes, bytearray)
 
     def __init__(self, host: str, port: int) -> None:
+        """Initialize the `MsgpackHmacSocketHandler` class."""
+
         super().__init__(host, port)
         self.masked_keys: Dict[str, bytearray] = {}
         self.pack: types.BuiltinFunctionType = msgpack.Packer(use_bin_type=True).pack
@@ -94,6 +96,7 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler, HandlerMixin):
 
     def pop_masked_key(self, task_id: str) -> None:
         """Pop a task ID and HMAC key from the cache."""
+
         with self._locked():
             masked_key = self.masked_keys.pop(task_id, None)
         self.zeroize(masked_key)
@@ -101,6 +104,7 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler, HandlerMixin):
     @HandlerMixin.lock
     def clear_masked_keys(self) -> None:
         """Clear all task IDs and HMAC keys from the cache."""
+
         for task_id in list(self.masked_keys.keys()):
             masked_key = self.masked_keys.pop(task_id, None)
             self.zeroize(masked_key)
@@ -108,16 +112,19 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler, HandlerMixin):
 
     def zeroize(self, buffer: Optional[bytearray]) -> None:
         """Zeroize a bytearray in memory."""
+
         if isinstance(buffer, bytearray):
             buffer[:] = b"\x00" * len(buffer)
 
     def close(self) -> None:
         """Close the handler."""
+
         self.clear_masked_keys()
         super().close()
 
     def sanitize_record_arg(self, arg: Any) -> Any:
         """Sanitize a single element of log record `args` for MessagePack."""
+
         try:
             return arg if isinstance(arg, MsgpackHmacSocketHandler._supported_types) else str(arg)
         except Exception:
@@ -125,6 +132,7 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler, HandlerMixin):
 
     def sanitize_record_args(self, args: Any) -> Any:
         """Sanitize log record `args` for MessagePack."""
+
         if isinstance(args, dict):
             return args
         elif isinstance(args, list):
@@ -136,6 +144,7 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler, HandlerMixin):
 
     def makePickle(self, record: logging.LogRecord) -> bytes:
         """Compress a logging record with MessagePack and a hash-based message authentication code (HMAC)."""
+
         record_dict = dict(
             msg=record.msg,
             args=self.sanitize_record_args(record.args),
@@ -184,6 +193,8 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
     worker loggers first.
     """
     def __init__(self, logging_level: Union[str, int] = logging.NOTSET, maxsize: int = 128) -> None:
+        """Initialize the `MultiSocketHandler` class."""
+
         super().__init__()
         self.cache: OrderedDict[Tuple[str, int], MsgpackHmacSocketHandler] = collections.OrderedDict()
         self.logging_level: Union[str, int] = logging_level
@@ -192,6 +203,7 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
 
     def set_masked_key(self, socket_listener_address: Tuple[str, int], task_id: str, masked_key: bytes) -> None:
         """Set a masked key to handler cache."""
+
         host, port = socket_listener_address
         with self._locked():
             key, handler = self.get(host, port)
@@ -199,6 +211,7 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
 
     def pop_masked_key(self, socket_listener_address: Tuple[str, int], task_id: str) -> None:
         """Pop a masked key a handler cache."""
+
         host, port = socket_listener_address
         with self._locked():
             key, handler = self.get(host, port)
@@ -206,6 +219,7 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
 
     def setup_handler(self, host: str, port: int) -> MsgpackHmacSocketHandler:
         """Setup a `MsgpackHmacSocketHandler` instance."""
+
         handler = MsgpackHmacSocketHandler(host, port)
         handler.setLevel(self.logging_level)
         handler.closeOnError = True
@@ -214,6 +228,7 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
 
     def get(self, host: str, port: int) -> Tuple[Tuple[str, int], MsgpackHmacSocketHandler]:
         """Set a key as most recently used, and return the key and value from the cache."""
+
         key = (host, port)
         with self._locked():
             handler = self.cache.pop(key, None) or self.setup_handler(host, port)
@@ -224,6 +239,7 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
 
     def emit(self, record: logging.LogRecord) -> None:
         """Logging handler custom emit method override."""
+
         protocol_name = getattr(record, "protocol_name", None)
         socket_address = getattr(record, "socket_address", None)
         task_id = getattr(record, "task_id", None)
@@ -246,6 +262,7 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
 
     def maybe_prune(self) -> None:
         """Prune the least recently used (LRU) items within the maximum size of the cache."""
+
         while len(self.cache) > self.maxsize:
             with self._locked():
                 _, handler = self.cache.popitem(last=False)
@@ -255,6 +272,7 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
 
     def purge_address(self, key: Tuple[str, int]) -> None:
         """Close and remove an item from the cache."""
+
         with self._locked():
             handler = self.cache.pop(key, None)
         if handler:
@@ -265,6 +283,7 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
     @HandlerMixin.lock
     def purge_all(self) -> None:
         """Close and remove all items from the cache."""
+
         for handler in self.cache.values():
             handler.flush()
             with suppress(Exception):
@@ -273,12 +292,14 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
 
     def close(self) -> None:
         """Logging handler custom close method override."""
+
         self.purge_all()
         super().close()
 
 
 def get_stdout_handler(logging_level: Union[str, int] = logging.NOTSET) -> logging.Handler:
     """Get a logging stream handler to `sys.stdout` for root logger records from Dask workers."""
+
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging_level)
     formatter = logging.Formatter(

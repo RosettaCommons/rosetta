@@ -258,6 +258,7 @@ def get_instance_kwargs(
         the `PyRosettaCluster` instance attributes as the first element and the "metadata" keyword arguments as
         the second element when the `with_metadata_kwargs` keyword argument value is set to `True`.
     """
+
     _simulation_records_in_scorefile_msg = (
         "The `scorefile` keyword argument value does not contain the full simulation records. "
         + "In order to reproduce a decoy using a scorefile, the `PyRosettaCluster` instance attribute "
@@ -405,7 +406,9 @@ def reserve_scores(func: P) -> Union[P, NoReturn]:
     import pyrosetta.distributed  # noqa
 
     @wraps(func)
-    def wrapper(packed_pose, **kwargs):
+    def wrapper(packed_pose: Optional[PackedPose], **kwargs: Any) -> Any:
+        """Wrapper function for the `reserve_scores` decorator."""
+
         if packed_pose is not None:
             _reserved_pose = update_scores(packed_pose).pose
         else:
@@ -450,7 +453,9 @@ def requires_packed_pose(func: P) -> Union[PackedPose, None, P]:
         the produced results from the decorated protocol.
     """
     @wraps(func)
-    def wrapper(packed_pose, **kwargs):
+    def wrapper(packed_pose: Optional[PackedPose], **kwargs: Any) -> Any:
+        """Wrapper function for the `requires_packed_pose` decorator."""
+
         _msg = "User-provided PyRosetta protocol '{0}' received and is duly returning {1} object."
         if is_empty(packed_pose):
             logging.info(_msg.format(func.__name__, "an empty `PackedPose`"))
@@ -658,6 +663,7 @@ def reproduce(
     Returns:
         `None`
     """
+
     if not isinstance(skip_corrections, bool):
         raise TypeError(
             "The 'skip_corrections' keyword argument value must be of type `bool`. "
@@ -748,10 +754,9 @@ def produce(**kwargs: Any) -> Optional[NoReturn]:
             user-defined PyRosetta protocols to execute for the simulation (see `PyRosettaCluster.distribute`
             docstring). The keyword arguments may also optionally include `clients_indices`, `resources`,
             `priorities`, and `retries` (see `PyRosettaCluster.distribute` docstring).
-
-    Returns:
-        `None`
     """
+    # See `produce.__doc__` updated below
+
     protocols = kwargs.pop("protocols", None)
     clients_indices = kwargs.pop("clients_indices", None)
     resources = kwargs.pop("resources", None)
@@ -765,10 +770,13 @@ def produce(**kwargs: Any) -> Optional[NoReturn]:
         retries=retries,
     )
 
+
 run: Callable[..., Optional[NoReturn]] = produce
+
 
 @wraps(produce, assigned=("__doc__",), updated=())
 def iterate(**kwargs: Any) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[Any, Any]], None, None]]:
+    # See assigned `iterate.__doc__` updated below
     protocols = kwargs.pop("protocols", None)
     clients_indices = kwargs.pop("clients_indices", None)
     resources = kwargs.pop("resources", None)
@@ -783,10 +791,13 @@ def iterate(**kwargs: Any) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[A
     ):
         yield result
 
+
 produce.__doc__ += """
     Returns:
         `None`
     """
+
+
 iterate.__doc__ = iterate.__doc__.replace(
     "PyRosettaCluster.distribute", "PyRosettaCluster.generate"
 ) + """

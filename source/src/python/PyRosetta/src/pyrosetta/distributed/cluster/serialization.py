@@ -72,6 +72,7 @@ G = TypeVar("G")
 
 def _parse_compression(obj: Any) -> Optional[Union[str, bool]]:
     """Parse the `compression` keyword argument value of the `Serialization` class."""
+
     _error_msg = (
         "The `compression` keyword argument value must be one of the `str` objects "
         + "'xz', 'zlib', or 'bz2', or an object of type `bool` or `None`. Received: '{0}'"
@@ -119,6 +120,7 @@ def update_scores(packed_pose: PackedPose) -> PackedPose:
     Returns:
         A new `PackedPose` object, with scores cached in its `Pose.cache` dictionary if scores could be cached.
     """
+
     _pose = packed_pose.pose
     _pose_scoretypes = set(_pose.cache.all_keys)
     _reserved_scoretypes = _pose.cache._reserved.union(_pose_scoretypes)
@@ -225,6 +227,7 @@ class NonceCache(Generic[G]):
         Run Hash-based Message Authentication Code (HMAC) verification and cache nonces for replay protection
         without data decompression.
         """
+
         package = self.unpack(sealed)
         if not isinstance(package, dict) or package.get("v", None) != 1:
             _err_msg = (
@@ -366,10 +369,13 @@ class Serialization(Generic[G]):
 
     def with_update_scores(func: T) -> T:
         """
-        Wrapper that caches detached `PackedPose.scores` items into the `Pose.cache` dictionary.
+        Decorator that caches detached `PackedPose.scores` items into the `Pose.cache` dictionary.
         """
+
         @wraps(func)
         def wrapper(self, obj: Any) -> Any:
+            """Wrapper function to the `with_update_scores` decorator."""
+
             if isinstance(obj, PackedPose):
                 obj = update_scores(obj)
             return func(self, obj)
@@ -378,10 +384,13 @@ class Serialization(Generic[G]):
 
     def requires_compression(func: T) -> T:
         """
-        Wrapper testing if compression is enabled, and skips compression if it is disabled.
+        Decorator testing if compression is enabled, and skips compression if it is disabled.
         """
+
         @wraps(func)
         def wrapper(self, obj: Any) -> Any:
+            """Wrapper function to the `requires_compression` decorator."""
+
             if all(x is not None for x in (self.encoder, self.decoder)):
                 return func(self, obj)
             else:
@@ -392,6 +401,7 @@ class Serialization(Generic[G]):
 
     def _seal(self, data: bytes) -> bytes:
         """Seal data with `MessagePack`."""
+
         if self.instance_id is None or self.prk is None:
             raise ValueError(
                 "Sealing requires the 'instance_id' and 'prk' instance attributes."
@@ -415,6 +425,7 @@ class Serialization(Generic[G]):
         """
         Unseal data with `MessagePack` and perform Hash-based Message Authentication Code (HMAC) verification.
         """
+
         if self.instance_id is None or self.prk is None:
             raise ValueError(
                 "Unsealing requires the 'instance_id' and 'prk' instance attributes."
@@ -464,6 +475,7 @@ class Serialization(Generic[G]):
         Raises:
             `TypeError` if the `packed_pose` argument value is not of type `NoneType` or `PackedPose`.
         """
+
         if packed_pose is None:
             compressed_packed_pose = None
         elif isinstance(packed_pose, PackedPose):
@@ -492,6 +504,7 @@ class Serialization(Generic[G]):
         Raises:
             `TypeError` if the `compressed_packed_pose` argument value is not of type `NoneType` or `bytes`.
         """
+
         if compressed_packed_pose is None:
             packed_pose = None
         elif isinstance(compressed_packed_pose, bytes):
@@ -506,6 +519,7 @@ class Serialization(Generic[G]):
 
     def loads_object(self, compressed_obj: bytes) -> Any:
         """Unseal data and run the `cloudpickle.loads` method."""
+
         data = self._unseal(compressed_obj)
         buffer = self.decoder(data) if self.decoder else data
 
@@ -513,6 +527,7 @@ class Serialization(Generic[G]):
 
     def dumps_object(self, obj: Any) -> bytes:
         """Run the `cloudpickle.dumps` method and seal data."""
+
         pickled = cloudpickle.dumps(obj)
         buffer = self.encoder(pickled) if self.encoder else pickled
 
@@ -532,6 +547,7 @@ class Serialization(Generic[G]):
         Raises:
             `TypeError` if the 'kwargs' argument value is not of type `dict`.
         """
+
         if isinstance(kwargs, dict):
             return self.dumps_object(kwargs)
         else:
@@ -555,6 +571,7 @@ class Serialization(Generic[G]):
             `TypeError` if the `compressed_packed_pose` argument value is not of type `bytes`.
             `TypeError` if the decompressed object is not of type `dict`.
         """
+
         if isinstance(compressed_kwargs, bytes):
             kwargs = self.loads_object(compressed_kwargs)
             if not isinstance(kwargs, dict):
@@ -593,6 +610,7 @@ class Serialization(Generic[G]):
         Raises:
             `TypeError` if the `compressed_obj` argument value is not of type `bytes`.
         """
+
         if isinstance(compressed_obj, bytes):
             return self.loads_object(compressed_obj)
         else:
@@ -617,6 +635,7 @@ class Serialization(Generic[G]):
         Raises:
             `TypeError` if the `kwargs` argument value is not of type `dict`.
         """
+
         if isinstance(kwargs, dict):
             return cloudpickle.loads(cloudpickle.dumps(kwargs))
         else:

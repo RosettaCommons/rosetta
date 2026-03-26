@@ -51,13 +51,16 @@ WORKER_LOGGER_NAME: str = "PyRosettaCluster_dask_worker"
 class SocketLoggerPlugin(WorkerPlugin):
     """Install a `MultiSocketHandler` logging handler on a Dask worker logger."""
     def __init__(self, logging_level: str, maxsize: int = 128) -> None:
+        """Initialize the `SocketLoggerPlugin` Dask worker plugin."""
+
         self.logging_level: str = logging_level
         self.maxsize: int = maxsize
         self.logger_name: str = WORKER_LOGGER_NAME
         self.router: Optional[logging.Handler] = None
 
     def setup(self, worker: Worker) -> None:
-        """Setup Dask worker plugin."""
+        """Setup the `SocketLoggerPlugin` Dask worker plugin."""
+
         logger = logging.getLogger(self.logger_name)
         logger.setLevel(self.logging_level)
         logger.propagate = False # Root logger records handled by `logging.StreamHandler(sys.stdout)`
@@ -71,7 +74,8 @@ class SocketLoggerPlugin(WorkerPlugin):
         logger.addHandler(self.router)
 
     def teardown(self, worker: Worker) -> None:
-        """Teardown Dask worker plugin."""
+        """Teardown the `SocketLoggerPlugin` Dask worker plugin."""
+
         logger = logging.getLogger(self.logger_name)
         if self.router and self.router in logger.handlers:
             self.router.flush()
@@ -83,10 +87,14 @@ class SocketLoggerPlugin(WorkerPlugin):
 
 class TaskSecurityPlugin(WorkerPlugin, NonceCache):
     """Install a secure `NonceCache` instance with replay protection on a Dask worker."""
+
     def __init__(self, instance_id: str, prk: MaskedBytes, max_nonce: int) -> None:
+        """Initialize the `TaskSecurityPlugin` Dask worker plugin."""
         NonceCache.__init__(self, instance_id=instance_id, prk=prk, max_nonce=max_nonce)
 
     def setup(self, worker: Worker) -> None:
+        """Setup the `TaskSecurityPlugin` Dask worker plugin."""
+
         # Worker plugin name must be the PyRosettaCluster instance identifier
         _maybe_existing_plugin = worker.plugins.get(self.instance_id, None)
         if _maybe_existing_plugin is not None and _maybe_existing_plugin is not self:
@@ -97,4 +105,5 @@ class TaskSecurityPlugin(WorkerPlugin, NonceCache):
         assert self.__getstate__()["prk"] is None, f"Pseudo-random key is not hidden on worker nonce cache."
 
     def teardown(self, worker: Worker) -> None:
+        """Teardown the `TaskSecurityPlugin` Dask worker plugin."""
         self.prk = None

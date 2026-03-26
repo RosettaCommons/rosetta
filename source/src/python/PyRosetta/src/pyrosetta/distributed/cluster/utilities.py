@@ -59,6 +59,8 @@ G = TypeVar("G")
 class SchedulerManager(Generic[G]):
     """Dask utility manager for `PyRosettaCluster`."""
     def _setup_clients_dict(self) -> Union[Dict[int, ClientType], NoReturn]:
+        """Setup Dask clients dictionary for `PyRosettaCluster`."""
+
         if all(x is None for x in (self.client, self.clients)):
             return {}
         elif isinstance(self.client, Client) and self.clients is None:
@@ -169,9 +171,12 @@ class SchedulerManager(Generic[G]):
     def _setup_clients_cluster_adaptive(
         self,
     ) -> Tuple[
-        Dict[int, ClientType], Optional[ClusterType], Optional[AdaptiveType],
+        Dict[int, ClientType],
+        Optional[ClusterType],
+        Optional[AdaptiveType],
     ]:
         """Given user input arguments, return the requested Dask client, cluster, and adaptive instance."""
+
         if self.clients_dict:
             clients = self.clients_dict
             cluster = None
@@ -202,7 +207,9 @@ class SchedulerManager(Generic[G]):
             adaptive.maximum = self.tasks_size
 
     def _maybe_teardown(
-        self, clients: Dict[int, ClientType], cluster: Optional[ClusterType],
+        self,
+        clients: Dict[int, ClientType],
+        cluster: Optional[ClusterType],
     ) -> None:
         """Teardown the Dask client and cluster."""
 

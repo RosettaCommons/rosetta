@@ -53,9 +53,9 @@ G = TypeVar("G")
 
 class SecurityIO(Generic[G]):
     """Security methods for `PyRosettaCluster`."""
-
     def _setup_task_security_plugin(self, clients: Dict[int, Client]) -> None:
         """Setup task security worker plugin(s)."""
+
         prk = MaskedBytes(derive_task_key(os.urandom(32), self.instance_id))
         self._register_task_security_plugin(clients, prk)
         self.serializer.prk = prk
@@ -69,6 +69,7 @@ class SecurityIO(Generic[G]):
 
     def _register_task_security_plugin(self, clients: Dict[int, Client], prk: MaskedBytes) -> None:
         """Register `TaskSecurityPlugin` as a Dask worker plugin on Dask clients."""
+
         for client in clients.values():
             plugin = TaskSecurityPlugin(self.instance_id, prk, self.max_nonce)
             plugin.idempotent = True # Never re-register plugin
@@ -82,6 +83,7 @@ class SecurityIO(Generic[G]):
         Test if the `clients_dict` attribute has security enabled on all clients, excluding clients with
         `LocalCluster` clusters.
         """
+
         assert len(self.clients_dict) > 0, "No clients in `self.clients_dict` to test for `security` attribute setup."
         for _client in self.clients_dict.values():
             if not isinstance(_client.cluster, LocalCluster) and not isinstance(_client.security, Security):
@@ -94,6 +96,7 @@ class SecurityIO(Generic[G]):
 
     def _setup_with_nonce(self) -> bool:
         """Post-init hook to setup the `PyRosettaCluster.with_nonce` instance attribute."""
+
         if self.clients_dict:
             with_nonce = not self._clients_dict_has_security()
             if with_nonce:
@@ -263,7 +266,9 @@ def generate_dask_tls_security(
         keyword argument value set to `True`) and configured to use the generated certificates and private keys
         for the Dask scheduler, workers, and client.
     """
+
     def _run(cmd: List[str]) -> Optional[NoReturn]:
+        """Run the OpenSSL command-line tool in a subprocess."""
         try:
             subprocess.run(cmd, check=True, capture_output=True, text=True)
         except subprocess.CalledProcessError as ex:
@@ -276,12 +281,14 @@ def generate_dask_tls_security(
             ) from ex
 
     def _chmod_600(path: Path) -> None:
+        """Change permissions of a `Path` object to `600`."""
         try:
             os.chmod(path, 0o600)
         except Exception:
             pass # Ignored on platforms that do not support `chmod`
 
     def _maybe_unlink(path: Path) -> None:
+        """Unlink a `Path` object if it exists."""
         try:
             if path.exists():
                 path.unlink()

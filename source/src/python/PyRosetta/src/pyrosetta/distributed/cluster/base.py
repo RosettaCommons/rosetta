@@ -65,7 +65,6 @@ S = TypeVar("S", bound=Serialization)
 
 class TaskBase(Generic[G]):
     """Task objects underpinning `PyRosettaCluster`."""
-
     def _get_seed(self, protocols: Sized) -> Optional[str]:
         """Get the PyRosetta RNG seed for the input user-defined PyRosetta protocol."""
 
@@ -111,6 +110,8 @@ class TaskBase(Generic[G]):
         return compressed_kwargs, pyrosetta_init_kwargs
 
     def _setup_pyrosetta_init_kwargs(self, kwargs: Dict[str, Any]) -> Dict[str, Any]:
+        """Setup the `pyrosetta.init` function keyword arguments."""
+
         pyrosetta_init_kwargs = toolz.dicttoolz.keyfilter(
             lambda k: k in self.pyrosetta_init_args,
             kwargs,
@@ -122,6 +123,7 @@ class TaskBase(Generic[G]):
             self, clients_indices: List[int], protocols: List[Callable[..., Any]]
         ) -> int:
         """Return the clients index for the current PyRosetta protocol."""
+
         if clients_indices is None:
             return 0
         else:
@@ -134,6 +136,7 @@ class TaskBase(Generic[G]):
             protocols: List[Callable[..., Any]],
         ) -> Optional[Dict[Any, Any]]:
         """Return the resource for the current PyRosetta protocol."""
+
         if resources is None:
             return None
         else:
@@ -144,6 +147,7 @@ class TaskBase(Generic[G]):
             self, priorities: Optional[Union[List[int], Tuple[int, ...]]], protocols: List[Callable[..., Any]]
         ) -> Optional[int]:
         """Return the priority for the current PyRosetta protocol."""
+
         if priorities is None:
             return None
         else:
@@ -154,6 +158,7 @@ class TaskBase(Generic[G]):
             self, retries: Optional[Union[int, List[int], Tuple[int, ...]]], protocols: List[Callable[..., Any]]
         ) -> Optional[int]:
         """Return the number of task retries for the current PyRosetta protocol."""
+
         if retries is None:
             return None
         elif isinstance(retries, int):
@@ -164,6 +169,7 @@ class TaskBase(Generic[G]):
 
     def _parse_resources(self, resources: Any) -> Any:
         """Parse the `resources` keyword argument value of the `PyRosettaCluster.distribute` method."""
+
         _dask_version_threshold = (2, 1, 0)
         if __dask_version__ < _dask_version_threshold:
             if resources is not None:
@@ -182,6 +188,7 @@ class TaskBase(Generic[G]):
 
     def _parse_priorities(self, priorities: Any) -> Any:
         """Parse the `priorities` keyword argument value of the `PyRosettaCluster.distribute` method."""
+
         _dask_version_threshold = (1, 21, 0)
         if __dask_version__ < _dask_version_threshold:
             if priorities is not None:
@@ -200,6 +207,7 @@ class TaskBase(Generic[G]):
 
     def _parse_retries(self, retries: Any) -> Any:
         """Parse the `retries` keyword argument value of the `PyRosettaCluster.distribute` method."""
+
         _dask_version_threshold = (1, 20, 0)
         if __dask_version__ < _dask_version_threshold:
             if retries is not None:
@@ -223,8 +231,17 @@ class TaskBase(Generic[G]):
         resources: Optional[Union[List[Dict[Any, Any]], Tuple[Dict[Any, Any], ...]]],
         priorities: Optional[Union[List[int], Tuple[int, ...]]],
         retries: Optional[Union[int, List[int], Tuple[int, ...]]],
-    ) -> Tuple[bytes, Dict[str, Any], Callable[..., Any], int, Optional[Dict[Any, Any]], Optional[int], Optional[int]]:
+    ) -> Tuple[
+        bytes,
+        Dict[str, Any],
+        Callable[..., Any],
+        int,
+        Optional[Dict[Any, Any]],
+        Optional[int],
+        Optional[int],
+    ]:
         """Setup the keyword arguments for the subsequent user-defined task dictionary."""
+
         clients_index = self._get_clients_index(clients_indices, kwargs[self.protocols_key])
         resource = self._get_resource(resources, kwargs[self.protocols_key])
         priority = self._get_priority(priorities, kwargs[self.protocols_key])
@@ -235,7 +252,15 @@ class TaskBase(Generic[G]):
         pyrosetta_init_kwargs = self._setup_pyrosetta_init_kwargs(kwargs)
         compressed_kwargs = self.serializer.compress_kwargs(kwargs)
 
-        return compressed_kwargs, pyrosetta_init_kwargs, protocol, clients_index, resource, priority, retry
+        return (
+            compressed_kwargs,
+            pyrosetta_init_kwargs,
+            protocol,
+            clients_index,
+            resource,
+            priority,
+            retry,
+        )
 
     def _setup_seed(self, kwargs: Dict[str, Any], seed: Optional[str]) -> Dict[str, Any]:
         """
@@ -264,8 +289,21 @@ class TaskBase(Generic[G]):
         return kwargs
 
     def _setup_protocols_protocol_seed(
-        self, args: Tuple[Any, ...], protocols: Any, clients_indices: Any, resources: Any, priorities: Any, retries: Any
-    ) -> Tuple[List[Callable[..., Any]], Callable[..., Any], Optional[str], int, Optional[Dict[Any, Any]], Optional[int], Optional[int]]:
+        self,
+        args: Tuple[Any, ...],
+        protocols: Any,
+        clients_indices: Any,
+        resources: Any,
+        priorities: Any,
+        retries: Any,
+    ) -> Tuple[
+        List[Callable[..., Any]],
+        Callable[..., Any],
+        Optional[str], int,
+        Optional[Dict[Any, Any]],
+        Optional[int],
+        Optional[int],
+    ]:
         """Parse, validate, and setup the user-defined PyRosetta protocol(s)."""
 
         _protocols = _parse_protocols(args) + _parse_protocols(protocols)
@@ -282,7 +320,15 @@ class TaskBase(Generic[G]):
             _validate_protocols_seeds_decoy_ids(_protocols, self.seeds, self.decoy_ids)
         )
 
-        return _protocols, _protocol, _seed, _clients_index, _resource, _priority, _retry
+        return (
+            _protocols,
+            _protocol,
+            _seed,
+            _clients_index,
+            _resource,
+            _priority,
+            _retry,
+        )
 
 
 def capture_task_metadata(func: M) -> M:

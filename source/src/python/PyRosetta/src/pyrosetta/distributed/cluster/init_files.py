@@ -41,7 +41,6 @@ G = TypeVar("G")
 
 class PackedPoseHasher(Generic[G]):
     """Digest the scientific state of a `PackedPose` or `Pose` object."""
-
     _encoding: str = "utf-8"
     _default_bytes: bytes = (b'\x00' * 32)
 
@@ -81,6 +80,7 @@ class PackedPoseHasher(Generic[G]):
 
     def digest(self) -> bytes:
         """Digest the `PackedPose` or `Pose` object, otherwise return a default value."""
+
         if isinstance(self.pose, Pose):
             self.add_coordinates()
             if self.include_cache:
@@ -97,6 +97,7 @@ class PackedPoseHasher(Generic[G]):
 
     def update_hashmod(self, obj: Any) -> Optional[NoReturn]:
         """Update the hashmod with an input object."""
+
         if isinstance(obj, str):
             self.hashmod.update(self.encode_string(obj))
         elif isinstance(obj, int):
@@ -115,6 +116,7 @@ class PackedPoseHasher(Generic[G]):
         Update hashmod with residue numbers, residue names, atom numbers, atom names, and double precision
         atomic coordinate components of the `Pose` object.
         """
+
         for res in range(1, self.pose.size() + 1):
             residue = self.pose.residue(res)
             # Add residue number
@@ -133,6 +135,7 @@ class PackedPoseHasher(Generic[G]):
 
     def add_cache(self) -> None:
         """Update hashmod with serialized `Pose.cache` dictionary entries."""
+
         for entry in (
             self.pose.cache.energies.all,
             self.pose.cache.extra.string.all,
@@ -155,6 +158,7 @@ class PackedPoseHasher(Generic[G]):
 
     def add_comments(self) -> None:
         """Update hashmod with raw `Pose` comments."""
+
         comments = dict(get_all_comments(self.pose))
         for key, value in sorted(comments.items()):
             self.update_hashmod(key)
@@ -163,7 +167,6 @@ class PackedPoseHasher(Generic[G]):
 
 class InitFileSigner(Generic[G]):
     """Sign or verify PyRosetta initialization files by `PyRosettaCluster`."""
-
     _encoding: str = "utf-8"
     _prefix: bytes = b'PyRosettaCluster_init_file_signer'
 

@@ -85,7 +85,6 @@ G = TypeVar("G")
 
 class IO(Generic[G]):
     """Input/Output methods for `PyRosettaCluster`."""
-
     DATETIME_FORMAT: str = "%Y-%m-%d %H:%M:%S.%f"
     REMARK_FORMAT: str = "REMARK PyRosettaCluster: "
 
@@ -144,6 +143,7 @@ class IO(Generic[G]):
     @staticmethod
     def _filter_scores_dict(scores_dict: Dict[str, Any]) -> Dict[str, Any]:
         """Filter for JSON-serializable scoring data."""
+
         for key in list(scores_dict.keys()):
             try:
                 IO._dump_json(scores_dict[key])
@@ -191,6 +191,7 @@ class IO(Generic[G]):
             A `list` object of `tuple` objects, where each `tuple` object contains a PDB string, `Pose.cache`
             dictionary, and JSON-serializable `Pose.cache` dictionary.
         """
+
         if isinstance(results, bytes):
             results = self.serializer.decompress_packed_pose(results)
 
@@ -849,6 +850,7 @@ def sanitize_urls(yml_str: str) -> str:
 
     def sanitize_url(url: str) -> str:
         """Remove username and password from URLs pointing to source domains."""
+
         parsed = urlparse(url)
 
         # No credentials present
@@ -907,6 +909,7 @@ def _is_pandas_object_pyarrow_backed(obj: Any) -> bool:
     Returns:
         A `bool` object.
     """
+
     def _is_arrow_dtype(dtype: Any) -> bool:
         return dtype.__class__.__name__ == "ArrowDtype"
 

@@ -1081,9 +1081,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
     )
 
     def __attrs_pre_init__(self) -> None:
+        """Pre-initialization hook for `PyRosettaCluster`."""
         _maybe_issue_environment_warnings()
 
     def __attrs_post_init__(self) -> None:
+        """Post-initialization hook for `PyRosettaCluster`."""
+
         _maybe_init_client()
         self._setup_logger()
         self._cache_toml()
@@ -1121,6 +1124,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         retries: Optional[int] = None,
     ) -> Dict[str, Any]:
         """Setup `Client.submit` keyword arguments."""
+
         submit_kwargs = {"pure": False}
         # Omit resources keyword argument for distributed versions <2.1.0
         # or use default if user specifies `resources=None` in distributed versions >=2.1.0
@@ -1152,7 +1156,8 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         priority: Optional[int],
         retry: Optional[int],
     ) -> Future:
-        """Scatter data and return submitted 'user_spawn_thread' future."""
+        """Scatter data and return submitted `user_spawn_thread` future."""
+
         task_id = uuid.uuid4().hex
         masked_key = MaskedBytes(derive_task_key(passkey, task_id))
         user_args = UserArgs(
@@ -1189,6 +1194,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         submit_kwargs: Dict[str, Any],
     ) -> Future:
         """Re-scatter data and return submitted 'user_spawn_thread' future."""
+
         scatter = client.scatter(user_args, broadcast=False, hash=False)
         if self.max_task_replicas != 0:
             client.replicate(scatter, n=self.max_task_replicas)
@@ -1375,8 +1381,8 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                 information.
 
                 Default: `None`
-
         """
+
         yield_results = _parse_yield_results(self.yield_results)
         clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
         self._setup_task_security_plugin(clients)
@@ -1523,14 +1529,16 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         resources: Any = None,
         priorities: Any = None,
         retries: Any = None,
-    ) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[Any, Any]], None, None]]:
+    ) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[str, Any]], None, None]]:
+        # See `generate.__doc__` explicitly set below
+
         if self.sha1 != "":
             logging.warning(
                 "Use of the `PyRosettaCluster.generate` method for reproducible simulations is not supported! "
-                + "PyRosettaCluster reproduces decoys from the output files written to disk. Subsequent code run "
-                + "on these results is not being saved by PyRosettaCluster. Use the `PyRosettaCluster.distribute` "
+                + "`PyRosettaCluster` reproduces decoys from the output files written to disk. Subsequent code run "
+                + "on these results is not being saved by `PyRosettaCluster`. Use the `PyRosettaCluster.distribute` "
                 + "method for reproducible simulations. To silence this warning and continue without using version "
-                + "control, set the `sha1` keyword argument value of PyRosettaCluster to `None`."
+                + "control, set the `sha1` keyword argument value of `PyRosettaCluster` to `None`."
             )
         self.yield_results = True
         for result in self._run(
@@ -1552,6 +1560,8 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         priorities: Any = None,
         retries: Any = None,
     ) -> Optional[NoReturn]:
+        # See `distribute.__doc__` explicitly set below
+
         self.yield_results = False
         for _ in self._run(
             *args,

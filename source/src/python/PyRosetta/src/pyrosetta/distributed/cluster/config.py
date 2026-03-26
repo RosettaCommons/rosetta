@@ -28,10 +28,17 @@ __dask_jobqueue_version__: Tuple[int, int, int] = get_package_version("dask-jobq
 
 G = TypeVar("G")
 
+# Conda channels and/or source domains (potentially containing credentials)
+# to be sanitized from environment file strings.
+source_domains: List[str] = [
+    "conda.graylab.jhu.edu",
+    "west.rosettacommons.org",
+    "conda.rosettacommons.org",
+]
+
 
 class EnvironmentConfig(Generic[G]):
     """Environment configuration management for `PyRosettaCluster`."""
-
     _ENV_VAR: str = "PYROSETTACLUSTER_ENVIRONMENT_MANAGER"
     _ENV_MANAGERS: Tuple[str, ...] = ("pixi", "uv", "mamba", "conda")
     _ENV_EXPORT_CMDS: Dict[str, str] = {
@@ -80,6 +87,7 @@ class EnvironmentConfig(Generic[G]):
         automatically adjusts for Pixi or uv when a manifest path or project path, respectively, is set via
         environment variables.
         """
+
         # Update pixi environment command if `$PIXI_PROJECT_MANIFEST` is set
         if self.environment_manager == "pixi":
             # https://pixi.sh/dev/reference/environment_variables/#environment-variables-set-by-pixi
@@ -133,10 +141,3 @@ def get_environment_cmd() -> str:
 def get_environment_var() -> str:
     """Get the `PyRosettaCluster` operating system environment variable name."""
     return EnvironmentConfig._ENV_VAR
-
-
-source_domains: List[str] = [
-    "conda.graylab.jhu.edu",
-    "west.rosettacommons.org",
-    "conda.rosettacommons.org",
-]  # Conda channels and/or source domains (potentially containing PyRosetta usernames/passwords) to be sanitized from environment file strings.

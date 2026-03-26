@@ -54,11 +54,13 @@ class LogRecordRequestHandler(socketserver.StreamRequestHandler):
     """
     def setup(self) -> None:
         """Setup socket server."""
+
         super().setup()
         self.unpack: partial = partial(msgpack.unpackb, raw=False)
 
     def handle(self) -> None:
         """Handle raw logging message and make log record."""
+
         while True:
             header = self.connection.recv(4)
             if len(header) < 4:
@@ -85,6 +87,7 @@ class LogRecordRequestHandler(socketserver.StreamRequestHandler):
         Log record decompress method override using MessagePack and hash-based message authentication codes
         (HMAC).
         """
+
         packet = self.unpack(msg)
         signature = packet["signature"]
         packed_frame = packet["packed_frame"]
@@ -119,6 +122,8 @@ class SocketListener(socketserver.ThreadingTCPServer):
         timeout: Union[float, int],
         ignore_errors: bool,
     ) -> None:
+        """Initialize the `SocketListener` class."""
+
         _host, _port = split_socket_address(logging_address)
         super().__init__((_host, _port), LogRecordRequestHandler)
         self.socket_listener_address = self.socket.getsockname()
@@ -132,6 +137,7 @@ class SocketListener(socketserver.ThreadingTCPServer):
 
     def setup_handler(self, logging_file: str, logging_level: str) -> logging.FileHandler:
         """Setup logging file handler for logging socket listener."""
+
         handler = logging.FileHandler(logging_file, mode="a")
         handler.setLevel(logging_level)
         handler.addFilter(SocketAddressFilter(self.socket_listener_address))
@@ -152,11 +158,13 @@ class SocketListener(socketserver.ThreadingTCPServer):
 
     def start(self) -> None:
         """Start logging socket listener."""
+
         self._thread = threading.Thread(target=self.serve_forever, daemon=True)
         self._thread.start()
 
     def stop(self) -> None:
         """Stop logging socket listener."""
+
         self.shutdown()
         self.server_close()
         if self._thread:
@@ -164,6 +172,7 @@ class SocketListener(socketserver.ThreadingTCPServer):
 
     def serve_until_stopped(self) -> None:
         """Run logging socket listener until aborted."""
+
         abort = 0
         while not abort:
             _read_ready, _, _ = select.select([self.socket.fileno()], [], [], self.timeout)
