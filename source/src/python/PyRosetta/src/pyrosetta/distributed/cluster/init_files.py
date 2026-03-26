@@ -85,8 +85,8 @@ class PackedPoseHasher(Generic[G]):
 
     def add_coordinates(self) -> None:
         """
-        Update hashmod with residue numbers, atom numbers, atom names,
-        and double precision atomic coordinates of the `Pose` object.
+        Update hashmod with residue numbers, residue names, atom numbers, atom names, and double precision
+        atomic coordinates of the `Pose` object.
         """
         for res in range(1, self.pose.size() + 1):
             residue = self.pose.residue(res)
@@ -135,7 +135,7 @@ class PackedPoseHasher(Generic[G]):
 
 
 class InitFileSigner(Generic[G]):
-    """Sign or verify PyRosetta initialization files by PyRosettaCluster."""
+    """Sign or verify PyRosetta initialization files by `PyRosettaCluster`."""
 
     _encoding: str = "utf-8"
     _prefix: bytes = b'PyRosettaCluster_init_file_signer'

@@ -76,8 +76,8 @@ class HandlerMixin:
 
 class MsgpackHmacSocketHandler(logging.handlers.SocketHandler, HandlerMixin):
     """
-    Subclass of `logging.handlers.SocketHandler` using MessagePack and hash-based message
-    authentication codes (HMAC).
+    Subclass of `logging.handlers.SocketHandler` using MessagePack and hash-based message authentication codes
+    (HMAC).
     """
     _supported_types = (str, int, float, bool, type(None), bytes, bytearray)
 
@@ -180,8 +180,8 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler, HandlerMixin):
 
 class MultiSocketHandler(logging.Handler, HandlerMixin):
     """
-    Cache mutable Dask worker logger handlers up to a maximum size, pruning least recently used (LRU)
-    Dask worker loggers first.
+    Cache mutable Dask worker logger handlers up to a maximum size, pruning least recently used (LRU) Dask
+    worker loggers first.
     """
     def __init__(self, logging_level: Union[str, int] = logging.NOTSET, maxsize: int = 128) -> None:
         super().__init__()

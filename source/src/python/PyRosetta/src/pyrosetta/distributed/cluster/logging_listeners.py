@@ -79,7 +79,8 @@ class LogRecordRequestHandler(socketserver.StreamRequestHandler):
 
     def unPickle(self, msg: bytes) -> Dict[str, Any]:
         """
-        Log record decompress method override using MessagePack and hash-based message authentication codes (HMAC).
+        Log record decompress method override using MessagePack and hash-based message authentication codes
+        (HMAC).
         """
         packet = self.unpack(msg)
         signature = packet["signature"]

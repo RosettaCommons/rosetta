@@ -59,7 +59,7 @@ class UserArgs(Generic[G]):
 
 @dataclass
 class TaskRecord(Generic[G]):
-    """Dataclass for PyRosettaCluster task registry entries."""
+    """Dataclass for `PyRosettaCluster` task registry entries."""
     clients_index: int
     user_args: UserArgs
     submit_kwargs: Dict[str, Any]
@@ -70,7 +70,7 @@ UnpackedTaskRecord = Tuple[int, UserArgs, Dict[str, Any]]
 
 @attr.s(kw_only=True, slots=True, frozen=True)
 class TaskRegistryBase(Generic[G]):
-    """PyRosettaCluster task registry base class."""
+    """Task registry base class for `PyRosettaCluster`."""
     instance_id = attr.ib(
         type=Optional[str],
         default=None,
@@ -112,8 +112,8 @@ class TaskRegistryBase(Generic[G]):
 
     def deepcopy_user_args(self, user_args: UserArgs) -> UserArgs:
         """
-        Deep copy a `UserArgs` dataclass to break in-memory references to any objects
-        that keep billiard subprocesses alive.
+        Deep copy a `UserArgs` dataclass to break in-memory references to any objects that keep `billiard`
+        subprocesses alive.
         """
         return UserArgs(**self.serializer.deepcopy_kwargs(asdict(user_args)))
 
@@ -137,7 +137,7 @@ class TaskRegistryBase(Generic[G]):
 
 @attr.s(kw_only=True, slots=True, frozen=True)
 class DiskTaskRegistry(TaskRegistryBase[G]):
-    """Task registry for on-disk PyRosettaCluster task arguments."""
+    """Task registry for on-disk `PyRosettaCluster` task arguments."""
     task_registry_dir = attr.ib(
         type=str,
         validator=attr.validators.instance_of(str),
@@ -261,7 +261,7 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
 
 @attr.s(kw_only=True, slots=True, frozen=True)
 class MemoryTaskRegistry(TaskRegistryBase[G]):
-    """Task registry for in-memory PyRosettaCluster task arguments."""
+    """Task registry for in-memory `PyRosettaCluster` task arguments."""
     registry = attr.ib(
         type=Dict[str, bytes],
         default=attr.Factory(dict, takes_self=False),

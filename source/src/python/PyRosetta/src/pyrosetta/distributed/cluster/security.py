@@ -48,6 +48,8 @@ G = TypeVar("G")
 
 
 class SecurityIO(Generic[G]):
+    """Security methods for `PyRosettaCluster`."""
+
     def _setup_task_security_plugin(self, clients: Dict[int, Client]) -> None:
         """Setup task security worker plugin(s)."""
         prk = MaskedBytes(derive_task_key(os.urandom(32), self.instance_id))
@@ -62,19 +64,19 @@ class SecurityIO(Generic[G]):
             assert self.nonce_cache.__getstate__()["prk"] is None, "Pseudo-random key is not hidden on host nonce cache."
 
     def _register_task_security_plugin(self, clients: Dict[int, Client], prk: MaskedBytes) -> None:
-        """Register `TaskSecurityPlugin` as a dask worker plugin on dask clients."""
+        """Register `TaskSecurityPlugin` as a Dask worker plugin on Dask clients."""
         for client in clients.values():
             plugin = TaskSecurityPlugin(self.instance_id, prk, self.max_nonce)
             plugin.idempotent = True # Never re-register plugin
             if hasattr(client, "register_plugin"):
                 client.register_plugin(plugin=plugin, name=self.instance_id)
-            else: # Deprecated since dask version 2023.9.2
+            else: # Deprecated since `dask` version 2023.9.2
                 client.register_worker_plugin(plugin=plugin, name=self.instance_id, nanny=False)
 
     def _clients_dict_has_security(self) -> bool:
         """
-        Test if the `self.clients_dict` has security enabled on all clients, excluding
-        clients with `LocalCluster` clusters.
+        Test if the `clients_dict` attribute has security enabled on all clients, excluding clients with
+        `LocalCluster` clusters.
         """
         assert len(self.clients_dict) > 0, "No clients in `self.clients_dict` to test for `security` attribute setup."
         for _client in self.clients_dict.values():
@@ -87,7 +89,7 @@ class SecurityIO(Generic[G]):
         return _has_security
 
     def _setup_with_nonce(self) -> bool:
-        """Post-init hook to setup the `PyRosettaCluster().with_nonce` instance attribute."""
+        """Post-init hook to setup the `PyRosettaCluster.with_nonce` instance attribute."""
         if self.clients_dict:
             with_nonce = not self._clients_dict_has_security()
             if with_nonce:
@@ -127,118 +129,135 @@ def generate_dask_tls_security(
     cleanup: bool = True,
 ) -> Union[Security, NoReturn]:
     """
-    Create cryptographic certificates and private keys for securing a dask cluster,
-    and return a dask `Security` object that can be passed directly to the
-    `PyRosettaCluster(security=...)` keyword argument.
+    Create cryptographic certificates and private keys for securing a Dask cluster, and return a Dask
+    `distributed.Security` object that can be passed directly to the `security` keyword argument of
+    `PyRosettaCluster`. See https://distributed.dask.org/en/latest/tls.html for more information.
 
     This function uses the `openssl` command-line tool to generate the following:
 
-    - A "certificate authority" certificate and key:
-      These act as a trusted "parent" identity used to sign other certificates.
-      Files: `ca.pem` (certificate), `ca.key` (private key).
+    - A "certificate authority" certificate and key that act as a trusted parent identity used to sign other
+      certificates:
+        - `ca.pem` (the certificate)
+        - `ca.key` (the private key)
 
-    - A "leaf" certificate and key:
-      These represent the actual dask processes (scheduler, workers, and client).
-      Files: `tls.crt` (certificate), `tls.key` (private key).
+    - A "leaf" certificate and key that represent the actual Dask processes (scheduler, workers, and client):
+        - `tls.crt` (the certificate)
+        - `tls.key` (the private key)
 
-    By default, the leaf certificate is signed by the certificate authority,
-    meaning that any process configured with this authority will trust the leaf
-    certificate as valid.
+    By default, the leaf certificate is signed by the certificate authority, meaning that any process
+    configured with this authority will trust the leaf certificate as valid. All generated files are placed in
+    the `output_dir` keyword argument value, which defaults to the current working directory.
 
-    All generated files are placed in the `output_dir` keyword argument value,
-    which defaults to the current working directory.
+    Example:
+        Generate a new set of certificates and a configured Dask `distributed.Security` object:
+            >>> security = generate_dask_tls_security(
+            ...     output_dir="./dask_certs",
+            ...     common_name="my-cluster",
+            ...     san_dns=["localhost", "my-host.local"],
+            ...     san_ip=["127.0.0.1"],
+            ...     cleanup=False,
+            ... )
 
-    Keyword Args:
-        output_dir: A `str` object representing the directory where all certificate and
-            key files will be written. The directory will be created if it does not exist.
-            All generated files (CA certificate, leaf certificate, leaf private key, and
-            optional bookkeeping files) are output to this single directory. Therefore,
-            for a distributed dask setup, this directory must be readable by the scheduler,
-            workers, and client processes, either via a shared filesystem or via copying and
-            mounting (e.g., if using Docker, Apptainer, or other container applications).
-            Default: "."
-        common_name: A `str` object representing the "Common Name" placed inside the leaf
-            certificate. This is a human-readable identifier that typically names the
-            system or service to which the certificate belongs.
-            Default: "dask_tls_security"
-        days: An `int` object representing the number of days the certificates will be
-            valid before expiring.
-            Default: 365
-        openssl_bin: A `str` object representing the path or name of the `openssl`
-            executable. If the OpenSSL executable is not in the system "PATH"
-            environment variable, then the full path must be provided.
-            Default: "openssl"
-        overwrite: A `bool` object specifying whether or not to overwrite existing
-            files in 'output_dir' keyword argument value. If `True` is provided,
-            the same filenames will be deleted and replaced with newly generated ones.
-            If `False` is provided, then existing files are re-used.
-            Default: False
-        san_dns: An optional iterable of `str` object representing a list of hostnames
-            (e.g., `["localhost", "cluster.example.com"]`) that should be accepted when
-            verifying the certificate. These are included in an extension field called
-            "Subject Alternative Names".
-            Default: None
-        san_ip: An optional iterable of `str` object representing a list of IP addresses
-            (e.g., `["127.0.0.1", "111.111.111.1"]`) that should be accepted when verifying
-            the certificate. These are also included in the "Subject Alternative Names" field.
-            Default: None
-        cleanup: An optional `bool` object specifying whether or not to delete the `index.txt`
-            and `serial` bookkeeping files used by OpenSSL.
-            Default: True
-
-    Returns:
-        A `dask.distributed.Security()` instance configured to require encryption (with
-        `require_encryption=True`) and configured to use the generated certificates
-        and keys for the scheduler, workers, and client.
-
-
-    Examples:
-        Generate a new set of certificates and a configured dask `Security` object:
-        ```
-        security = pyrosetta.distributed.cluster.generate_dask_tls_security(
-            output_dir="./dask_certs",
-            common_name="my-cluster",
-            san_dns=["localhost", "my-host.local"],
-            san_ip=["127.0.0.1"],
-            cleanup=False,
-        )
-        ```
         After running this function, the directory `./dask_certs` will contain:
-        - `ca.pem`: certificate authority certificate (used by dask)
+
+        - `ca.pem`: certificate authority certificate (used by Dask)
+
         - `ca.key`: certificate authority private key
-        - `tls.crt`: leaf certificate (used by dask)
-        - `tls.key`: leaf private key (used by dask)
+
+        - `tls.crt`: leaf certificate (used by Dask)
+
+        - `tls.key`: leaf private key (used by Dask)
+
         - `index.txt`, `serial`, and `ca.cnf`: bookkeeping files used by OpenSSL (with `cleanup=False`)
 
-        Then use the configured dask `Security` object with PyRosettaCluster:
-        ```
-        PyRosettaCluster(security=security, ...).distribute(...)
-        ```
+        Then, simply use the configured Dask `distributed.Security` object with `PyRosettaCluster`:
+            >>> PyRosettaCluster(security=security, ...).distribute(...)
 
     Additional Notes:
-        - A "certificate authority" (CA) act as a trusted "parent" identity that
-        confirms whether a certificate is real. In this function, the user generates
-        their own local CA for the dask cluster.
-        - A "leaf certificate" is the actual identity used by a running process
-        (i.e., the scheduler, a worker, or a client).
-        - "Subject Alternative Names" (SANs) are extra hostnames or IP addresses
-        for which the certificate is valid. This enables the user to connect using
-        either a machine name or an IP address without validation errors.
-        - File permissions are automatically set for private keys using `chmod 600`
-        so they are restricted to the owner (read/write only) for basic security.
-        - This function generates all necessary files in a single directory. For
-        proper TLS validation in a distributed dask setup, the CA certificate must
-        be accessible from all nodes (i.e., the scheduler, workers, and client).
-        Leaf certificates and keys must be accessible by the process using them.
-        For example, all files can be placed in a common directory from which all
-        processes can read, or the directory can be mounted (e.g., if using Docker,
-        Apptainer, or other container applications).
-        - If `cleanup=False` and the same directory is used for multiple function
-        calls, then OpenSSL may create additional files in the output directory
-        (e.g., `*.pem`, `index.txt.attr`, `index.txt.old`, and `serial.old`).
-        These are simply bookkeeping files used internally by OpenSSL and are not
-        required by dask, so they can be safely deleted after the leaf certificate
-        has been issued.
+        - A "certificate authority" (CA) act as a trusted parent identity that confirms whether a certificate
+          is real. In this function, the user generates their own local CA for the Dask cluster.
+
+        - A "leaf certificate" is the actual identity used by a running process (i.e., the scheduler, a worker,
+          or a client).
+
+        - "Subject Alternative Names" (SANs) are extra hostnames or IP addresses for which the certificate is
+          valid. This enables the user to connect using either a machine name or an IP address without
+          validation errors.
+
+        - File permissions are automatically set for private keys using `chmod 600` so they are restricted to
+          the owner (read/write only) for basic security.
+
+        - This function generates all necessary files in a single directory. For proper TLS verification in a
+          distributed Dask setup, the CA certificate must be accessible from all nodes (i.e., the scheduler,
+          workers, and client). Leaf certificates and keys must be accessible by the process using them. For
+          example, all files can be placed in a common directory from which all processes can read, or the
+          directory can be mounted (e.g., if using Docker, Apptainer, or other container applications).
+
+        - If `cleanup=False` and the same directory is used for multiple function calls, then OpenSSL may create
+          additional files in the output directory (e.g., `*.pem`, `index.txt.attr`, `index.txt.old`, and
+          `serial.old`). These are bookkeeping files used internally by OpenSSL and are not required by Dask,
+          so they can be safely deleted after the leaf certificate has been issued.
+
+    Args:
+        `output_dir`:
+            A `str` object representing the directory where all certificate and key files will be written. The
+            directory will be created if it does not exist. All generated files (CA certificate, leaf
+            certificate, leaf private key, and optional bookkeeping files) are output to this single directory.
+            Therefore, for a distributed Dask setup, this directory must be readable by the scheduler, workers,
+            and client processes, either via a shared filesystem or via copying and mounting (e.g., if using
+            Docker, Apptainer, or other container applications).
+
+            Default: `"."`
+
+        `common_name`:
+            A `str` object representing the "Common Name" placed inside the leaf certificate. This is a
+            human-readable identifier that typically names the system or service to which the certificate
+            belongs.
+
+            Default: `"dask_tls_security"`
+
+        `days`:
+            An `int` object representing the number of days the certificates will be valid before expiring.
+
+            Default: `365`
+
+        `openssl_bin`:
+            A `str` object representing the path or name of the `openssl` executable. If the OpenSSL executable
+            is not in the system "PATH" environment variable, then the full path must be provided.
+
+            Default: `"openssl"`
+
+        `overwrite`:
+            A `bool` object specifying whether or not to overwrite existing files in 'output_dir' keyword
+            argument value. If `True` is provided, the same filenames will be deleted and replaced with newly
+            generated ones. If `False` is provided, then existing files are re-used.
+
+            Default: `False`
+
+        `san_dns`:
+            An optional iterable of `str` object representing a list of hostnames (e.g., 
+            `["localhost", "cluster.example.com"]`) that should be accepted when verifying the certificate.
+            These are included in an extension field called "Subject Alternative Names".
+
+            Default: `None`
+
+        `san_ip`:
+            An optional iterable of `str` object representing a list of IP addresses (e.g.,
+            `["127.0.0.1", "111.111.111.1"]`) that should be accepted when verifying the certificate. These are
+            also included in the "Subject Alternative Names" field.
+
+            Default: `None`
+
+        `cleanup`:
+            An optional `bool` object specifying whether or not to delete the `index.txt` and `serial`
+            bookkeeping files used by OpenSSL.
+
+            Default: `True`
+
+    Returns:
+        A `distributed.Security` instance configured to require encryption (i.e., with the `require_encryption`
+        keyword argument value set to `True`) and configured to use the generated certificates and private keys
+        for the Dask scheduler, workers, and client.
     """
     def _run(cmd: List[str]) -> Optional[NoReturn]:
         try:

@@ -15,7 +15,9 @@ from typing import Tuple
 
 
 class DefaultProtocolNameFilter(logging.Filter):
-    """Maybe set protocol name of third-party root log records for logging socket listener formatter."""
+    """
+    Maybe set PyRosetta protocol name of third-party root log records for logging socket listener formatter.
+    """
     def __init__(self) -> None:
         super().__init__()
 
@@ -26,7 +28,7 @@ class DefaultProtocolNameFilter(logging.Filter):
 
 
 class SetProtocolNameFilter(logging.Filter):
-    """Set protocol name for logging socket listener formatter."""
+    """Set PyRosetta protocol name for logging socket listener formatter."""
     def __init__(self, protocol_name: str) -> None:
         super().__init__()
         self.protocol_name = protocol_name

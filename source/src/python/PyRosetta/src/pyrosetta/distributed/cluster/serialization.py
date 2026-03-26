@@ -66,15 +66,15 @@ G = TypeVar("G")
 
 
 def _parse_compression(obj: Any) -> Optional[Union[str, bool]]:
-    """Parse the input `compression` attribute of `Serialization` class."""
+    """Parse the `compression` keyword argument value of the `Serialization` class."""
     _error_msg = (
-        "The 'compression' keyword argument value must be one of the `str` objects "
-        + "'xz', 'zlib', or 'bz2', or an object of type `bool` or `NoneType`. Received: '{0}'"
+        "The `compression` keyword argument value must be one of the `str` objects "
+        + "'xz', 'zlib', or 'bz2', or an object of type `bool` or `None`. Received: '{0}'"
     )
 
     @singledispatch
     def converter(obj: Any) -> NoReturn:
-        raise ValueError(_error_msg.format(obj))
+        raise ValueError(_error_msg.format(type(obj)))
 
     @converter.register(str)
     def _is_str(obj: str) -> str:
@@ -104,14 +104,15 @@ def _parse_compression(obj: Any) -> Optional[Union[str, bool]]:
 
 def update_scores(packed_pose: PackedPose) -> PackedPose:
     """
-    Cache scores from the `PackedPose.scores` dictionary that are not cached in the `Pose` object
-    and do not have keys with reserved scoretypes, then return a new `PackedPose` object.
+    Cache scores from the `PackedPose.scores` dictionary that are not cached in the `Pose.cache` dictionary and
+    do not have keys with reserved scoretypes, then return a new `PackedPose` object.
 
     Args:
-        packed_pose: the input `PackedPose` object in which to update scores.
+        `packed_pose`:
+            An input `PackedPose` object in which to update scores.
 
     Returns:
-        A new `PackedPose` object, with scores cached in its `Pose` object if scores could be cached.
+        A new `PackedPose` object, with scores cached in its `Pose.cache` dictionary if scores could be cached.
     """
     _pose = packed_pose.pose
     _pose_scoretypes = set(_pose.cache.all_keys)
@@ -122,8 +123,8 @@ def update_scores(packed_pose: PackedPose) -> PackedPose:
     )
     if _filtered_scores:
         warnings.warn(
-            "PyRosettaCluster detected scores in the `PackedPose.scores` dictionary that have "
-            + "not been added to the `Pose.cache` dictionary! PyRosettaCluster is now adding "
+            "`PyRosettaCluster` detected scores in the `PackedPose.scores` dictionary that have "
+            + "not been added to the `Pose.cache` dictionary! `PyRosettaCluster` is now adding "
             + f"the following scores to the `Pose.cache` dictionary: {tuple(_filtered_scores.keys())}. "
             + "Please use the `packed_pose = packed_pose.update_scores(**scores_dict)` syntax instead of "
             + "the `packed_pose.scores[key] = value` syntax to suppress this warning.",
@@ -136,7 +137,7 @@ def update_scores(packed_pose: PackedPose) -> PackedPose:
 
 @attr.s(kw_only=False, slots=True, frozen=True)
 class MessagePacking(Generic[G]):
-    """PyRosettaCluster MessagePack base class."""
+    """`MessagePack` base class for `PyRosettaCluster`."""
     pack = attr.ib(
         type=partial,
         default=partial(msgpack.packb, use_bin_type=True),
@@ -153,7 +154,7 @@ class MessagePacking(Generic[G]):
 
 @attr.s(kw_only=True, slots=False, frozen=False)
 class NonceCache(Generic[G]):
-    """PyRosettaCluster nonce cache base class."""
+    """Nonce cache base class for `PyRosettaCluster`."""
     instance_id = attr.ib(
         type=str,
         validator=attr.validators.instance_of(str),
@@ -197,8 +198,8 @@ class NonceCache(Generic[G]):
     @staticmethod
     def _get_state(self) -> Dict[str, Any]:
         """
-        A method used to override the default `NonceCache.__getstate__()` method
-        that sets the pseudo-random key value to `None` in the returned state.
+        A method used to override the default `NonceCache.__getstate__()` method that sets the value of the
+        the 'prk' key (i.e., the pseudorandom key (PRK)) to `None` in the returned state.
         """
         state = self.__dict__.copy()
         state["prk"] = None
@@ -207,7 +208,7 @@ class NonceCache(Generic[G]):
 
     @staticmethod
     def _on_worker() -> bool:
-        """Test if the nonce cache is on a dask worker."""
+        """Test if the nonce cache is on a Dask worker."""
         try:
             _worker = get_worker()
             return True
@@ -216,8 +217,8 @@ class NonceCache(Generic[G]):
 
     def _cache_nonce(self, sealed: bytes) -> None:
         """
-        Run Hash-based Message Authentication Code (HMAC) verification and cache nonces
-        for replay protection without data decompression.
+        Run Hash-based Message Authentication Code (HMAC) verification and cache nonces for replay protection
+        without data decompression.
         """
         package = self.unpack(sealed)
         if not isinstance(package, dict) or package.get("v", None) != 1:
@@ -237,7 +238,7 @@ class NonceCache(Generic[G]):
         _version = package["v"] # `int`: Version
 
         if _instance_id != self.instance_id:
-            raise ValueError("PyRosettaCluster instance identifier mismatch in sealed package.")
+            raise ValueError("`PyRosettaCluster` instance identifier mismatch in sealed package.")
 
         msg = self.pack([_instance_id, _data, _nonce, _version])
         _expected_mac = hmac_digest(bytes(self.prk), msg)
@@ -256,10 +257,10 @@ class NonceCache(Generic[G]):
             if _nonce in self._seen:
                 # Replay protection
                 _err_msg = (
-                    "PyRosettaCluster detected a repeat nonce on the {0} for the instance identifier "
+                    "`PyRosettaCluster` detected a repeat nonce on the {0} for the instance identifier "
                     + f"'{self.instance_id}', which might indicate a replay attack is in progress! "
                     + "Exiting process for security. Please ensure that `PyRosettaCluster(security=True)` "
-                    + f"is enabled in future PyRosettaCluster simulations. Received: '{_nonce}'."
+                    + f"is enabled in future `PyRosettaCluster` simulations. Received: '{_nonce}'."
                 )
                 if NonceCache._on_worker():
                     raise SystemExit(_err_msg.format("worker"))
@@ -286,7 +287,7 @@ class NonceCache(Generic[G]):
 
 @attr.s(kw_only=True, slots=False, frozen=False)
 class Serialization(Generic[G]):
-    """PyRosettaCluster serialization base class."""
+    """Serialization base class for `PyRosettaCluster`."""
     instance_id = attr.ib(
         type=Optional[str],
         default=None,
@@ -325,9 +326,10 @@ class Serialization(Generic[G]):
             if "lzma" not in sys.modules:
                 raise ImportError(
                     (
-                        "Using 'xz' for compression requires installing the 'xz' package into your python environment. "
-                        + "For installation instructions, visit:\n"
+                        "Using 'xz' for compression requires installing the 'xz' package into "
+                        + "your python environment. For installation instructions, visit:\n"
                         + "https://anaconda.org/anaconda/xz\n"
+                        + "https://pypi.org/project/python-xz\n"
                     )
                 )
             self.encoder = xz.compress
@@ -344,8 +346,8 @@ class Serialization(Generic[G]):
 
     def __getstate__(self) -> Dict[str, Any]:
         """
-        A method used to override the default `Serialization.__getstate__()` method
-        that sets the pseudo-random key value to `None` in the returned state.
+        A method used to override the default `Serialization.__getstate__()` method that sets  the value of the
+        the 'prk' key (i.e., the pseudorandom key (PRK)) to `None` in the returned state.
         """
         state = self.__dict__.copy()
         state["prk"] = None
@@ -371,7 +373,7 @@ class Serialization(Generic[G]):
 
     def requires_compression(func: T) -> T:
         """
-        Wrapper testing if compression is enabled, and skips compression if it's disabled.
+        Wrapper testing if compression is enabled, and skips compression if it is disabled.
         """
         @wraps(func)
         def wrapper(self, obj: Any) -> Any:
@@ -384,7 +386,7 @@ class Serialization(Generic[G]):
         return cast(T, wrapper)
 
     def _seal(self, data: bytes) -> bytes:
-        """Seal data with MessagePack."""
+        """Seal data with `MessagePack`."""
         if self.instance_id is None or self.prk is None:
             raise ValueError(
                 "Sealing requires the 'instance_id' and 'prk' instance attributes."
@@ -406,8 +408,7 @@ class Serialization(Generic[G]):
 
     def _unseal(self, obj: bytes) -> bytes:
         """
-        Unseal data with MessagePack and perform Hash-based
-        Message Authentication Code (HMAC) verification.
+        Unseal data with `MessagePack` and perform Hash-based Message Authentication Code (HMAC) verification.
         """
         if self.instance_id is None or self.prk is None:
             raise ValueError(
@@ -449,13 +450,14 @@ class Serialization(Generic[G]):
         value is `None`, then just return `None`.
 
         Args:
-            packed_pose: the input `PackedPose` object to compress. If `None`, then just return `None`.
+            `packed_pose`:
+                An input `PackedPose` object to compress. If `None`, then just return `None`.
 
         Returns:
-            A `bytes` object representing the compressed `PackedPose` object, or a `NoneType` object.
+            A `bytes` object representing the compressed `PackedPose` object, or `None`.
 
         Raises:
-            `TypeError` if the 'packed_pose' argument value is not of type `NoneType` or `PackedPose`.
+            `TypeError` if the `packed_pose` argument value is not of type `NoneType` or `PackedPose`.
         """
         if packed_pose is None:
             compressed_packed_pose = None
@@ -463,7 +465,8 @@ class Serialization(Generic[G]):
             compressed_packed_pose = self.encoder(io.to_pickle(packed_pose))
         else:
             raise TypeError(
-                "The 'packed_pose' argument value must be of type `NoneType` or `PackedPose`."
+                "The `packed_pose` argument value must be of type `NoneType` or `PackedPose`. "
+                + f"Received: {type(packed_pose)}"
             )
 
         return compressed_packed_pose
@@ -472,16 +475,17 @@ class Serialization(Generic[G]):
     def decompress_packed_pose(self, compressed_packed_pose: Any) -> Union[NoReturn, None, PackedPose]:
         """
         Decompress a `bytes` object with the custom serialization module and secure implementation of the
-        `pickle` module. If the 'compressed_packed_pose' argument value is `None`, then just return `None`.
+        `pickle` module. If the `compressed_packed_pose` argument value is `None`, then just return `None`.
 
         Args:
-            compressed_packed_pose: the input `bytes` object to decompress. If `None`, then just return `None`.
+            `compressed_packed_pose`:
+                An input `bytes` object to decompress. If `None`, then just return `None`.
 
         Returns:
-            A `PackedPose` object representing the decompressed `bytes` object, or a `NoneType` object.
+            A `PackedPose` object representing the decompressed `bytes` object, or `None`.
 
         Raises:
-            `TypeError` if the 'compressed_packed_pose' argument value is not of type `NoneType` or `bytes`.
+            `TypeError` if the `compressed_packed_pose` argument value is not of type `NoneType` or `bytes`.
         """
         if compressed_packed_pose is None:
             packed_pose = None
@@ -489,7 +493,8 @@ class Serialization(Generic[G]):
             packed_pose = io.to_packed(SecureSerializerBase.secure_loads(self.decoder(compressed_packed_pose)))
         else:
             raise TypeError(
-                "The 'compressed_packed_pose' argument value must be of type `NoneType` or `bytes`."
+                "The `compressed_packed_pose` argument value must be of type `NoneType` or `bytes`. "
+                + f"Received: {type(compressed_packed_pose)}"
             )
 
         return packed_pose
@@ -513,7 +518,8 @@ class Serialization(Generic[G]):
         Compress a `dict` object with the `cloudpickle` and custom serialization modules.
 
         Args:
-            kwargs: the input `dict` object to compress.
+            `kwargs`:
+                An input `dict` object to compress.
 
         Returns:
             A `bytes` object representing the compressed `dict` object.
@@ -524,36 +530,44 @@ class Serialization(Generic[G]):
         if isinstance(kwargs, dict):
             return self.dumps_object(kwargs)
         else:
-            raise TypeError("The 'kwargs' argument value must be of type `dict`.")
+            raise TypeError(
+                "The `kwargs` argument value must be of type `dict`. "
+                + f"Received: {type(kwargs)}"
+            )
 
     def decompress_kwargs(self, compressed_kwargs: bytes) -> Union[NoReturn, Dict[Any, Any]]:
         """
         Decompress a `bytes` object with the custom serialization and `cloudpickle` modules.
 
         Args:
-            compressed_kwargs: the input `bytes` object to decompress.
+            `compressed_kwargs`:
+                An input `bytes` object to decompress.
 
         Returns:
             A `dict` object representing the decompressed `bytes` object.
 
         Raises:
-            `TypeError` if the 'compressed_packed_pose' argument value is not of type `bytes`.
-            `TypeError` if the returned kwargs is not of type `dict`.
+            `TypeError` if the `compressed_packed_pose` argument value is not of type `bytes`.
+            `TypeError` if the decompressed object is not of type `dict`.
         """
         if isinstance(compressed_kwargs, bytes):
             kwargs = self.loads_object(compressed_kwargs)
             if not isinstance(kwargs, dict):
-                raise TypeError(f"Decoded kwargs must be of type `dict`. Received: {type(kwargs)}")
+                raise TypeError(f"Decompressed object must be of type `dict`. Received: {type(kwargs)}")
             return kwargs
         else:
-            raise TypeError("The 'compressed_kwargs' argument value must be of type `bytes`.")
+            raise TypeError(
+                "The `compressed_kwargs` argument value must be of type `bytes`. "
+                + f"Received: {type(compressed_kwargs)}"
+            )
 
     def compress_object(self, obj: Any) -> bytes:
         """
         Compress an object with the `cloudpickle` and custom serialization modules.
 
         Args:
-            obj: the input object to compress.
+            `obj`:
+                An input object to compress.
 
         Returns:
             A `bytes` object representing the compressed object.
@@ -565,35 +579,43 @@ class Serialization(Generic[G]):
         Decompress a `bytes` object with the custom serialization and `cloudpickle` modules.
 
         Args:
-            compressed_obj: the input `bytes` object to decompress.
+            `compressed_obj`:
+                An input `bytes` object to decompress.
 
         Returns:
             An object representing the decompressed `bytes` object.
 
         Raises:
-            `TypeError` if the 'compressed_obj' argument value is not of type `bytes`.
+            `TypeError` if the `compressed_obj` argument value is not of type `bytes`.
         """
         if isinstance(compressed_obj, bytes):
             return self.loads_object(compressed_obj)
         else:
-            raise TypeError("The 'compressed_obj' argument value must be of type `bytes`.")
+            raise TypeError(
+                "The `compressed_obj` argument value must be of type `bytes`. "
+                + f"Received: {type(compressed_obj)}"
+            )
 
     @classmethod
     def deepcopy_kwargs(cls, kwargs: Any) -> Union[NoReturn, Dict[Any, Any]]:
         """
-        The `cloudpickle` module makes it possible to serialize Python constructs not supported
-        by the default `pickle` module from the Python standard library.
+        The `cloudpickle` module makes it possible to serialize Python constructs not supported by the default
+        `pickle` module from the Python standard library.
 
         Args:
-            kwargs: the `dict` object to be deep copied.
+            `kwargs`:
+                A `dict` object to be deep copied.
 
         Returns:
             A deep copy of the `dict` object.
 
         Raises:
-            `TypeError` if the 'kwargs' argument value is not of type `dict`.
+            `TypeError` if the `kwargs` argument value is not of type `dict`.
         """
         if isinstance(kwargs, dict):
             return cloudpickle.loads(cloudpickle.dumps(kwargs))
         else:
-            raise TypeError("The 'kwargs' argument value must be of type `dict`.")
+            raise TypeError(
+                "The `kwargs` argument value must be of type `dict`. "
+                + f"Received: {type(kwargs)}"
+            )

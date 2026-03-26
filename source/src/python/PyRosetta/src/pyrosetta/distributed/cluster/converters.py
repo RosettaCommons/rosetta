@@ -704,7 +704,7 @@ def _parse_protocol_results(
 
 
 def _parse_target_results(objs: List[Tuple[bytes, bytes]]) -> List[Tuple[bytes, bytes]]:
-    """Validate results returned from the billiard subprocess."""
+    """Validate results returned from the `billiard` subprocess."""
 
     ids = set()
     n_obj = 0

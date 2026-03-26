@@ -73,7 +73,7 @@ G = TypeVar("G")
 
 
 class IO(Generic[G]):
-    """Input/Output methods for PyRosettaCluster."""
+    """Input/Output methods for `PyRosettaCluster`."""
 
     DATETIME_FORMAT: str = "%Y-%m-%d %H:%M:%S.%f"
     REMARK_FORMAT: str = "REMARK PyRosettaCluster: "
@@ -82,8 +82,8 @@ class IO(Generic[G]):
         self, kwargs: Dict[str, Any]
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
-        Get the current state of the PyRosettaCluster instance, and split the
-        kwargs into the PyRosettaCluster instance kwargs and ancillary metadata.
+        Get the current state of the `PyRosettaCluster` instance, and split the input keyword arguments into
+        the `PyRosettaCluster` instance attributes and ancillary metadata.
         """
 
         instance_state = self.__getstate__()
@@ -132,15 +132,16 @@ class IO(Generic[G]):
 
     @staticmethod
     def _filter_scores_dict(scores_dict: Dict[str, Any]) -> Dict[str, Any]:
+        """Filter for JSON-serializable scoring data."""
         for key in list(scores_dict.keys()):
             try:
                 IO._dump_json(scores_dict[key])
             except:
                 logging.warning(
-                    f"Removing score key '{key}' with value of type '{type(scores_dict[key])}' before "
-                    + "saving PyRosettaCluster result! Only JSON-serializable score values can be written to "
-                    + "output files. Consider custom serializing the value to save this score or removing the "
-                    + "key from the `pose.cache` dictionary to remove this warning message."
+                    f"Removing score key '{key}' with value of type '{type(scores_dict[key])}' before saving "
+                    + "`PyRosettaCluster` result! Only JSON-serializable scoring data can be written to output "
+                    + "decoy files and scorefiles. Consider custom serializing the value to save this score "
+                    + "or removing the key from the `Pose.cache` dictionary to silence this warning message."
                 )
                 scores_dict.pop(key, None)
 
@@ -150,8 +151,8 @@ class IO(Generic[G]):
         self, result: Union[Pose, PackedPose]
     ) -> Tuple[PackedPose, str, Dict[str, Any], Dict[str, Any]]:
         """
-        Given a `Pose` or `PackedPose` object, return a tuple containing
-        the pdb string and a scores dictionary.
+        Given a `Pose` or `PackedPose` object, return a `tuple` object containing the `Pose` or `PackedPose`
+        object, and its PDB string, `Pose.cache` dictionary, and JSON-serializable `Pose.cache` dictionary.
         """
 
         _pdbstring = io.to_pdbstring(result)
@@ -168,10 +169,16 @@ class IO(Generic[G]):
         ],
     ) -> Union[List[Tuple[str, Dict[str, Any]]], NoReturn]:
         """
-        Format output results on distributed worker. Input argument `results` can be a
-        `Pose`, `PackedPose`, or `None` object, or a `list` or `tuple` of `Pose` and/or `PackedPose`
-        objects, or an empty `list` or `tuple`. Returns a list of tuples, each tuple
-        containing the pdb string and a scores dictionary.
+        Format output results from a Dask worker.
+
+        Args:
+            `results`:
+                An `Pose`, `PackedPose`, `bytes` or `None` object, or an iterable of `Pose`, `PackedPose`,
+                or `bytes` objects.
+
+        Returns:
+            A `list` object of `tuple` objects, where each `tuple` object contains a PDB string, `Pose.cache`
+            dictionary, and JSON-serializable `Pose.cache` dictionary.
         """
         if isinstance(results, bytes):
             results = self.serializer.decompress_packed_pose(results)
@@ -199,10 +206,7 @@ class IO(Generic[G]):
         return out
 
     def _process_kwargs(self, kwargs: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Remove seed specification from 'extra_options' or 'options',
-        and remove protocols_key from kwargs.
-        """
+        """Parse a returned task dictionary."""
 
         for k in list(kwargs.keys()):
             if not k.startswith("PyRosettaCluster_"):
@@ -257,7 +261,7 @@ class IO(Generic[G]):
 
     @staticmethod
     def _add_pose_comment(packed_pose: PackedPose, pdbfile_data: str) -> PackedPose:
-        """Cache simulation data as a pose comment."""
+        """Cache simulation data as a `Pose` comment."""
 
         _pose = packed_pose.pose.clone()
         add_comment(
@@ -286,11 +290,11 @@ class IO(Generic[G]):
         )
 
     def _save_results(self, results: Any, kwargs: Dict[str, Any]) -> None:
-        """Write results and kwargs to disk."""
+        """Write output results to disk."""
 
         if self.dry_run:
             logging.info(
-                "The PyRosettaCluster `dry_run` attribute is set to `True`. Skipping saving!"
+                "The `dry_run` instance attribute is set to `True`. Skipping saving!"
             )
             return
 
@@ -434,7 +438,7 @@ class IO(Generic[G]):
                     df.to_pickle(_scorefile_path, compression="infer", protocol=SecureSerializerBase._pickle_protocol)
 
     def _cache_toml(self) -> None:
-        """Cache the pixi/uv TOML file string and TOML file format."""
+        """Cache the Pixi/uv TOML file string and TOML file format."""
 
         if self.environment_manager == "pixi":
             # https://pixi.sh/dev/reference/environment_variables/#environment-variables-set-by-pixi
@@ -447,10 +451,10 @@ class IO(Generic[G]):
                 else:
                     logging.warning(
                         (
-                            "PyRosettaCluster detected the set 'PIXI_PROJECT_MANIFEST' "
-                            "environment variable, but the pixi manifest file does not exist! "
-                            "It is recommended to commit the pixi manifest file to the "
-                            "git repository to reproduce the pixi project later."
+                            "`PyRosettaCluster` detected the set 'PIXI_PROJECT_MANIFEST' "
+                            "environment variable, but the Pixi manifest file does not exist! "
+                            "It is recommended to commit the Pixi manifest file to the "
+                            "Git repository to reproduce the Pixi project later."
                         )
                     )
                     self.toml = ""
@@ -467,9 +471,9 @@ class IO(Generic[G]):
                 else:
                     logging.warning(
                         (
-                            "PyRosettaCluster could not detect the pixi manifest file! "
-                            "It is recommended to commit the pixi manifest file to the "
-                            "git repository to reproduce the pixi project later."
+                            "`PyRosettaCluster` could not detect the Pixi manifest file! "
+                            "It is recommended to commit the Pixi manifest file to the "
+                            "Git repository to reproduce the Pixi project later."
                         )
                     )
                     self.toml = ""
@@ -486,10 +490,10 @@ class IO(Generic[G]):
                 else:
                     logging.warning(
                         (
-                            "PyRosettaCluster detected the set 'UV_PROJECT' "
+                            "`PyRosettaCluster` detected the set 'UV_PROJECT' "
                             "environment variable, but the uv `pyproject.toml` file does not exist! "
                             "It is recommended to commit the uv `pyproject.toml` file to the "
-                            "git repository to reproduce the uv project later."
+                            "Git repository to reproduce the uv project later."
                         )
                     )
                     self.toml = ""
@@ -503,13 +507,13 @@ class IO(Generic[G]):
                 else:
                     logging.warning(
                         (
-                            "PyRosettaCluster could not detect the uv `pyproject.toml` file! "
+                            "`PyRosettaCluster` could not detect the uv `pyproject.toml` file! "
                             "The 'UV_PROJECT' environment variable is not set, and a `pyproject.toml` "
                             "file does not exist in the current working directory. For environment "
                             "reproducibility, please set the 'UV_PROJECT' environment variable "
                             "to the uv project root directory, or run the simulation from the uv project "
                             "root directory. If continuing with this simulation, it is recommended to commit the "
-                            "uv `pyproject.toml` file to the git repository to reproduce the uv project later."
+                            "uv `pyproject.toml` file to the Git repository to reproduce the uv project later."
                         )
                     )
                     self.toml = ""
@@ -520,8 +524,8 @@ class IO(Generic[G]):
 
     def _write_environment_file(self, filename: str) -> None:
         """
-        Write the conda/mamba YML or uv/pixi lock file string to the input filename.
-        If pixi/uv is used as the environment manager, also write the TOML file string to a separate filename.
+        Write the Conda/Mamba YML or uv/Pixi lock file string to the input filename. If Pixi/uv is used as the
+        environment manager, also write the TOML file string to a separate filename.
         """
 
         if (
@@ -538,7 +542,7 @@ class IO(Generic[G]):
                     f.write(self.toml)
 
     def _write_init_file(self) -> None:
-        """Maybe write PyRosetta initialization file to the input filename."""
+        """Maybe dump a PyRosetta initialization file."""
 
         if self.output_init_file != "":
             if self.compressed and self.output_init_file.endswith(".init"):
@@ -563,7 +567,10 @@ class IO(Generic[G]):
         output_packed_pose: Optional[PackedPose] = None,
         verbose: bool = True,
     ) -> None:
-        """Dump compressed PyRosetta initialization input files and poses to the input filename."""
+        """
+        Dump compressed PyRosetta initialization input files and `Pose` or `PackedPose` objects to the input
+        filename.
+        """
 
         out = RedirectToLogger(logging.INFO)
         err = RedirectToLogger(logging.ERROR)
@@ -584,9 +591,9 @@ class IO(Generic[G]):
             )
             _logging_debug_msg = "Successfully ran `{0}` on the host node."
             _logging_error_msg = (
-                "{0}: {1}. `{2}` did not run successfully, so PyRosetta initialization input data may not "
-                "be saved! It is recommended to run `pyrosetta.dump_init_file()` to reproduce PyRosetta "
-                "initialization options on the host node later."
+                "{0}: {1}. `{2}` did not run successfully, so PyRosetta initialization input files may not "
+                "be saved! It is recommended to run `pyrosetta.dump_init_file` to reproduce PyRosetta "
+                "initialization options on the head node later."
             )
             if self.compressed:
                 try:
@@ -596,15 +603,15 @@ class IO(Generic[G]):
                         writer.print_cached_files(filename, dump_init_file_kwargs["dry_run"])
                     with open(filename, "wb") as f:
                         f.write(bz2.compress(str.encode(init_file_json)))
-                    logging.debug(_logging_debug_msg.format("PyRosettaInitDictWriter().get_json()"))
+                    logging.debug(_logging_debug_msg.format("PyRosettaInitDictWriter.get_json"))
                 except Exception as ex:
-                    logging.error(_logging_error_msg.format(type(ex).__name__, ex, "PyRosettaInitDictWriter().get_json()"))
+                    logging.error(_logging_error_msg.format(type(ex).__name__, ex, "PyRosettaInitDictWriter.get_json"))
             else:
                 try:
                     pyrosetta.dump_init_file(filename, **dump_init_file_kwargs)
-                    logging.debug(_logging_debug_msg.format("pyrosetta.dump_init_file()"))
+                    logging.debug(_logging_debug_msg.format("pyrosetta.dump_init_file"))
                 except Exception as ex:
-                    logging.error(_logging_error_msg.format(type(ex).__name__, ex, "pyrosetta.dump_init_file()"))
+                    logging.error(_logging_error_msg.format(type(ex).__name__, ex, "pyrosetta.dump_init_file"))
         out.flush()
         err.flush()
 
@@ -615,11 +622,11 @@ def verify_init_file(
     output_packed_pose: Optional[PackedPose],
     metadata: Dict[str, Any],
 ) -> Optional[NoReturn]:
-    """Verify a PyRosetta initialization file."""
+    """Verify that a PyRosetta initialization file was written by `PyRosettaCluster`."""
 
     @toolz.functoolz.curry
     def _verify_signer(_signer: InitFileSigner, _sha256: str, _signature: str) -> Optional[NoReturn]:
-        """Verify that current PyRosetta and PyRosettaCluster versions match that dumped in the '.init' file"""
+        """Verify that current PyRosetta and `PyRosettaCluster` versions match that dumped in the '.init' file"""
 
         _init_file_err_msg = (
             f"Failed to verify data integrity of the input PyRosetta initialization file: '{init_file}'"
@@ -711,7 +718,7 @@ def sign_init_file_metadata_and_poses(
         _key = IO.REMARK_FORMAT.rstrip() # Remove extra space since `add_comment` adds a space
         if _key not in _comments.keys():
             raise NotImplementedError(
-                "Signing '.init' file metadata and poses when PyRosettaCluster simulation data is not "
+                "Signing '.init' file metadata and poses when `PyRosettaCluster` simulation data is not "
                 + f"cached in the output `PackedPose` object comments is not supported: {_comments}"
             )
         poses.append(output_packed_pose)
@@ -735,7 +742,7 @@ def get_poses_from_init_file(
 ) -> Union[Tuple[Optional[PackedPose], Optional[PackedPose]], NoReturn]:
     """
     Return a `tuple` object of the input `PackedPose` object and the output `PackedPose` object
-    from a '.init' file, and optionally verify PyRosettaCluster metadata in the '.init' file.
+    from a '.init' file, and optionally verify `PyRosettaCluster` metadata in the '.init' file.
     """
 
     @toolz.functoolz.curry
@@ -794,10 +801,24 @@ def secure_read_pickle(
     storage_options: Optional[Dict[str, Any]] = None,
 ) -> pandas.DataFrame:
     """
-    Secure replacement for `pandas.read_pickle()` for file-like objects.
+    Secure replacement for `pandas.read_pickle` for file-like objects using the `SecureSerializerBase` class
+    in PyRosetta. Usage requires adding "pandas" as a secure package to unpickle in PyRosetta, but please still
+    only input files if you know and trust their source. Learn more
+    `here <https://docs.python.org/3/library/pickle.html>`_.
 
-    Usage requires adding 'pandas' as a secure package to unpickle in PyRosetta:
-    `pyrosetta.secure_unpickle.add_secure_package('pandas')`
+    Example:
+        >>> pyrosetta.secure_unpickle.add_secure_package('pandas')
+        >>> secure_read_pickle("/path/to/my/scorefile.gz")
+
+    Note:
+        If using `pandas` version `>=3.0.0`, PyArrow-backed datatypes may be enabled by default; in this case,
+        please ensure that `pyrosetta.secure_unpickle.add_secure_package("pyarrow")` has also first been run.
+
+        See https://pandas.pydata.org/pdeps/0010-required-pyarrow-dependency.html and
+        https://pandas.pydata.org/pdeps/0014-string-dtype.html for more information.
+
+    Returns:
+        A deserialized `pandas.DataFrame` object.
     """
     with pandas.io.common.get_handle(
         filepath_or_buffer,
@@ -811,8 +832,8 @@ def secure_read_pickle(
 
 def sanitize_urls(yml_str: str) -> str:
     """
-    Scan the input string and sanitize any URLs that include
-    credentials for source domains, returning the updated string.
+    Scan the input string and sanitize any URLs that include credentials for source domains, returning the
+    updated string.
     """
 
     def sanitize_url(url: str) -> str:
@@ -838,9 +859,9 @@ def sanitize_urls(yml_str: str) -> str:
         # Warn without leaking credentials
         warnings.warn(
             (
-                "PyRosettaCluster automatically removed embedded credentials from the "
-                f"conda channel '{host_domain}' while processing the environment file. "
-                "These credentials are no longer required by this conda channel. "
+                "`PyRosettaCluster` automatically removed embedded credentials from the "
+                f"Conda channel '{host_domain}' while processing the environment file. "
+                "These credentials are no longer required by this Conda channel. "
                 "Please remove them from your configuration to silence this warning."
             ),
             UserWarning,

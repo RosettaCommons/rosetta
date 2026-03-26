@@ -25,7 +25,6 @@ except ImportError:
 import logging
 import traceback
 
-from concurrent.futures import CancelledError
 from functools import wraps
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from queue import Empty
@@ -49,23 +48,21 @@ T = TypeVar("T", bound=Callable[..., Any])
 
 
 class InputError(TypeError):
-    """Exception raised for PyRosettaCluster keyword argument value errors for `str` and `int` types."""
+    """Exception raised for `PyRosettaCluster` keyword argument value errors for `str` and `int` types."""
 
     def __init__(self, obj: Any, attribute: str) -> NoReturn:
         super().__init__(
-            f"PyRosettaCluster '{attribute}' keyword argument value must be of type `int` or `str`, "
+            f"The '{attribute}' keyword argument value must be of type `int` or `str`, "
             + f"or an iterable containing `int` or `str` types. Received '{obj}' of type `{type(obj)}`."
         )
 
 
 class InputFileError(TypeError):
-    """Exception raised for PyRosettaCluster errors for `str` and `int` types."""
+    """Exception raised for `PyRosettaCluster` errors for `str` types."""
 
     def __init__(self, obj: Any) -> NoReturn:
         super().__init__(
-            "The `input_file` keyword argument value must be of type `str`, not of type {0}.".format(
-                type(obj)
-            )
+            f"The `input_file` keyword argument value must be of type `str`. Received: {type(obj)}."
         )
 
 
@@ -93,15 +90,15 @@ class WorkerError(WorkerLostError):
     @staticmethod
     def _msg(protocol_name: str) -> str:
         return (
-            "Worker thread killed due to an error or segmentation fault encountered "
-            + f"in the user-provided PyRosetta protocol '{protocol_name}'."
+            "A Dask worker subprocess was killed due to an exception or segmentation fault "
+            + f"encountered in the user-defined PyRosetta protocol '{protocol_name}'"
         )
 
     @staticmethod
     def _ignore_errors_msg(protocol_name: str) -> str:
         return (
             WorkerError._msg(protocol_name)
-            + " Ignoring error because `ignore_errors` is enabled!"
+            + " Ignoring error because the `ignore_errors` instance attribute is set to `True`!"
         )
 
     @staticmethod
@@ -122,7 +119,7 @@ class TaskCancelledError(RuntimeError):
 
 
 def trace_protocol_exceptions(func: T) -> Union[T, NoReturn]:
-    """Trace exceptions in user-provided PyRosetta protocols."""
+    """Trace exceptions in user-defined PyRosetta protocols."""
     @wraps(func)
     def wrapper(
         packed_pose: PackedPose,
@@ -139,7 +136,7 @@ def trace_protocol_exceptions(func: T) -> Union[T, NoReturn]:
                 + WorkerError._get_msg(protocol_name, ignore_errors)
             )
             if ignore_errors:
-                # Return a `NoneType` object to be converted to an empty `PackedPose` object
+                # Return `None` to be converted to an empty `PackedPose` object
                 # when a non-system-exiting Python exception is raised
                 result = None
             else:
@@ -151,7 +148,7 @@ def trace_protocol_exceptions(func: T) -> Union[T, NoReturn]:
 
 
 def trace_subprocess_exceptions(func: T) -> Union[T, NoReturn]:
-    """Trace exceptions in billiard subprocesses."""
+    """Trace exceptions in `billiard` subprocesses."""
     @wraps(func)
     def wrapper(
         q: Q,

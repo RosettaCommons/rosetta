@@ -93,7 +93,7 @@ class RedirectToLogger(Generic[G]):
 
 
 class LoggingSupport(Generic[G]):
-    """Supporting logging methods for PyRosettaCluster."""
+    """Supporting logging methods for `PyRosettaCluster`."""
     def __init__(self) -> None:
         """Log warnings from the warnings module."""
         logging.captureWarnings(True)
@@ -270,7 +270,7 @@ def close_target_logger(
 
 
 def setup_target_logging(func: L) -> L:
-    """Support logging within the billiard spawned thread."""
+    """Support logging from a `billiard` subprocess."""
     @wraps(func)
     def wrapper(
         protocol_name: str,
@@ -295,7 +295,7 @@ def setup_target_logging(func: L) -> L:
         task_id: str,
         **pyrosetta_init_kwargs: Dict[str, Any],
     ) -> Any:
-        """Wrapper function to setup_target_logging."""
+        """Wrapper function to `setup_target_logging` decorator."""
         logger, socket_handler, filters = setup_target_logger(
             protocol_name, socket_listener_address, masked_key, task_id, logging_level
         )
@@ -344,6 +344,7 @@ def get_worker_logger(
     socket_listener_address: Tuple[str, int],
     task_id: str,
 ) -> logging.LoggerAdapter:
+    """Get a Dask worker logger adapter."""
     return logging.LoggerAdapter(
         logger=logging.getLogger(WORKER_LOGGER_NAME),
         extra=dict(
@@ -355,8 +356,10 @@ def get_worker_logger(
 
 
 def setup_worker_logging(func: L) -> L:
+    """Support logging from a Dask worker."""
     @wraps(func)
     def wrapper(user_args: UserArgs) -> Any:
+        """Wrapper function to `setup_worker_logging` decorator."""
         try:
             worker = get_worker()
         except BaseException as ex:
