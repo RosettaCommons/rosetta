@@ -10,6 +10,8 @@ __author__ = "Jason C. Klima"
 import warnings
 
 from contextlib import suppress
+from typing import List
+
 from pyrosetta.distributed.cluster.core import PyRosettaCluster
 from pyrosetta.distributed.cluster.toolkit import (
     Serialization,
@@ -28,7 +30,6 @@ from pyrosetta.distributed.cluster.toolkit import (
     run,
     update_scores,
 )
-from typing import List
 
 __all__: List[str] = [
     "PyRosettaCluster",
