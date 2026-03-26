@@ -5,7 +5,6 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
 
 try:
@@ -30,30 +29,10 @@ import tempfile
 import warnings
 
 from functools import wraps
-from pyrosetta.distributed.cluster.converters import _parse_protocols
-from pyrosetta.distributed.cluster.converter_tasks import (
-    is_dict,
-    is_empty,
-    get_protocols_list_of_str,
-    parse_client,
-    parse_decoy_name,
-    parse_init_file,
-    parse_input_file_to_instance_kwargs,
-    parse_input_file_to_instance_metadata_kwargs,
-    parse_instance_kwargs,
-    parse_scorefile,
-    reserve_scores_in_results,
-)
-from pyrosetta.distributed.cluster.io import secure_read_pickle
-from pyrosetta.distributed.cluster.serialization import (
-    Serialization,
-    update_scores,
-)
-from pyrosetta.distributed.cluster.core import PyRosettaCluster
 from pyrosetta.distributed.packed_pose.core import PackedPose
+from pyrosetta.exceptions import PyRosettaIsNotInitializedError
 from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.rosetta.core.pose import Pose
-from pyrosetta.exceptions import PyRosettaIsNotInitializedError
 from typing import (
     Any,
     Callable,
@@ -68,6 +47,26 @@ from typing import (
     cast,
 )
 
+from pyrosetta.distributed.cluster.converters import _parse_protocols
+from pyrosetta.distributed.cluster.converter_tasks import (
+    is_dict,
+    is_empty,
+    get_protocols_list_of_str,
+    parse_client,
+    parse_decoy_name,
+    parse_init_file,
+    parse_input_file_to_instance_kwargs,
+    parse_input_file_to_instance_metadata_kwargs,
+    parse_instance_kwargs,
+    parse_scorefile,
+    reserve_scores_in_results,
+)
+from pyrosetta.distributed.cluster.core import PyRosettaCluster
+from pyrosetta.distributed.cluster.io import secure_read_pickle
+from pyrosetta.distributed.cluster.serialization import (
+    Serialization,
+    update_scores,
+)
 
 P = TypeVar("P", bound=Callable[..., Any])
 

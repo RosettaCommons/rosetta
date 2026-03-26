@@ -5,9 +5,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
-
 
 try:
     import attr
@@ -25,7 +23,10 @@ import logging
 import os
 import sys
 
-from dataclasses import asdict, dataclass
+from dataclasses import (
+    asdict,
+    dataclass,
+)
 from typing import (
     Any,
     Dict,
@@ -38,7 +39,6 @@ from typing import (
 )
 
 from pyrosetta.distributed.cluster.serialization import Serialization
-
 
 G = TypeVar("G")
 

@@ -5,21 +5,27 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
 
 try:
     import psutil
-    from dask.distributed import Adaptive, Client, LocalCluster
-    from dask_jobqueue import SGECluster, SLURMCluster
+    from distributed import (
+        Adaptive,
+        Client,
+        LocalCluster,
+    )
+    from dask_jobqueue import (
+        SGECluster,
+        SLURMCluster,
+    )
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.utilities' requires the "
-        + "third-party packages 'dask', 'dask-jobqueue', and 'psutil' as dependencies!\n"
+        + "third-party packages 'dask-jobqueue', 'distributed', and 'psutil' as dependencies!\n"
         + "Please install these packages into your python environment. "
         + "For installation instructions, visit:\n"
-        + "https://pypi.org/project/dask/\n"
         + "https://pypi.org/project/dask-jobqueue/\n"
+        + "https://pypi.org/project/distributed/\n"
         + "https://pypi.org/project/psutil/\n"
     )
     raise
@@ -39,8 +45,10 @@ from typing import (
     Union,
 )
 
-from pyrosetta.distributed.cluster.config import __dask_version__, __dask_jobqueue_version__
-
+from pyrosetta.distributed.cluster.config import (
+    __dask_jobqueue_version__,
+    __dask_version__,
+)
 
 AdaptiveType = TypeVar("AdaptiveType", bound=Adaptive)
 ClientType = TypeVar("ClientType", bound=Client)

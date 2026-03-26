@@ -5,9 +5,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
-
 
 try:
     import git
@@ -68,7 +66,6 @@ from pyrosetta.distributed.cluster.converter_tasks import (
 )
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.validators import PYROSETTACLUSTER_KEY_PREFIX, _validate_task
-
 
 S = TypeVar("S", bound=Serialization)
 

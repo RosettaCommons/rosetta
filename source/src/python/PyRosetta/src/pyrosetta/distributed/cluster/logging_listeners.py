@@ -5,9 +5,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
-
 
 try:
     import msgpack
@@ -37,7 +35,12 @@ from typing import (
     Union,
 )
 
-from pyrosetta.distributed.cluster.hkdf import MaskedBytes, compare_digest, derive_task_key, hmac_digest
+from pyrosetta.distributed.cluster.hkdf import (
+    MaskedBytes,
+    compare_digest,
+    derive_task_key,
+    hmac_digest,
+)
 from pyrosetta.distributed.cluster.logging_filters import (
     SocketAddressFilter,
     split_socket_address,

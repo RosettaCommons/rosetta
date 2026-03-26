@@ -5,12 +5,13 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
 
-
 try:
-    from distributed import Worker, WorkerPlugin
+    from distributed import (
+        Worker,
+        WorkerPlugin,
+    )
 except ImportError:
     try:
         from distributed import Worker
@@ -30,7 +31,11 @@ import logging
 from contextlib import suppress
 from typing import Optional
 
-from pyrosetta.distributed.cluster.hkdf import MaskedBytes, compare_digest, hmac_digest
+from pyrosetta.distributed.cluster.hkdf import (
+    MaskedBytes,
+    compare_digest,
+    hmac_digest,
+)
 from pyrosetta.distributed.cluster.logging_handlers import MultiSocketHandler
 from pyrosetta.distributed.cluster.logging_filters import (
     DefaultProtocolNameFilter,
@@ -38,7 +43,6 @@ from pyrosetta.distributed.cluster.logging_filters import (
     DefaultTaskIdFilter,
 )
 from pyrosetta.distributed.cluster.serialization import NonceCache
-
 
 SOCKET_LOGGER_PLUGIN_NAME: str = "PyRosettaCluster_socket_logger_plugin"
 WORKER_LOGGER_NAME: str = "PyRosettaCluster_dask_worker"

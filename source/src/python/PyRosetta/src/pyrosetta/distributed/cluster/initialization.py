@@ -5,11 +5,10 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
 
 try:
-    import numpy as np
+    import numpy
     import toolz
 except ImportError:
     print(
@@ -81,7 +80,7 @@ def _maybe_init_client() -> Optional[NoReturn]:
             "please initialize PyRosetta with the Rosetta command-line option '-run:constant_seed 1'. "
             "The following actual PyRosetta RNG seed was retrieved compared to the desired constant seed:"
         )
-        np.testing.assert_equal(
+        numpy.testing.assert_equal(
             pyrosetta.rosetta.numeric.random.rg().get_seed(),
             1111111,
             err_msg=err_msg,

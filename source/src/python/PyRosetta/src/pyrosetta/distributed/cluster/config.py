@@ -5,9 +5,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
-
 
 import logging
 import os
@@ -25,10 +23,8 @@ from typing import (
     TypeVar,
 )
 
-
 __dask_version__: Tuple[int, int, int] = get_package_version("dask")
 __dask_jobqueue_version__: Tuple[int, int, int] = get_package_version("dask-jobqueue")
-
 
 G = TypeVar("G")
 

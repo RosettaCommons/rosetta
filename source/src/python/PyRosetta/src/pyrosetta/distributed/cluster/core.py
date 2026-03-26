@@ -488,23 +488,25 @@ Returns:
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
 
 try:
     import attr
-    import distributed
     import toolz
-    from dask.distributed import Client, Future, Security, as_completed
+    from distributed import (
+        Client,
+        Future,
+        Security,
+        as_completed,
+    )
     from distributed.scheduler import KilledWorker
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.core' requires the "
-        + "third-party packages 'attrs', 'dask', 'distributed', and 'toolz' as dependencies!\n"
+        + "third-party packages 'attrs', 'distributed', and 'toolz' as dependencies!\n"
         + "Please install these packages into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/attrs/\n"
-        + "https://pypi.org/project/dask/\n"
         + "https://pypi.org/project/distributed/\n"
         + "https://pypi.org/project/toolz/\n"
     )
@@ -516,7 +518,23 @@ import uuid
 
 from concurrent.futures import CancelledError
 from datetime import datetime
-from pyrosetta.distributed.cluster.base import TaskBase, _get_residue_type_set
+from pyrosetta.distributed.packed_pose.core import PackedPose
+from typing import (
+    Any,
+    Dict,
+    Generator,
+    List,
+    NoReturn,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
+)
+
+from pyrosetta.distributed.cluster.base import (
+    TaskBase,
+    _get_residue_type_set,
+)
 from pyrosetta.distributed.cluster.config import get_environment_manager
 from pyrosetta.distributed.cluster.converters import (
     is_empty as _is_empty,
@@ -539,13 +557,26 @@ from pyrosetta.distributed.cluster.converters import (
 )
 from pyrosetta.distributed.cluster.exceptions import TaskCancelledError
 from pyrosetta.distributed.cluster.hkdf import derive_task_key
-from pyrosetta.distributed.cluster.initialization import _get_pyrosetta_init_args, _maybe_init_client
+from pyrosetta.distributed.cluster.initialization import (
+    _get_pyrosetta_init_args,
+    _maybe_init_client,
+)
 from pyrosetta.distributed.cluster.io import IO
-from pyrosetta.distributed.cluster.logging_support import LoggingSupport, MaskedBytes
+from pyrosetta.distributed.cluster.logging_support import (
+    LoggingSupport,
+    MaskedBytes,
+)
 from pyrosetta.distributed.cluster.multiprocessing import user_spawn_thread
 from pyrosetta.distributed.cluster.security import SecurityIO
-from pyrosetta.distributed.cluster.serialization import NonceCache, Serialization
-from pyrosetta.distributed.cluster.task_registry import DiskTaskRegistry, MemoryTaskRegistry, UserArgs
+from pyrosetta.distributed.cluster.serialization import (
+    NonceCache,
+    Serialization,
+)
+from pyrosetta.distributed.cluster.task_registry import (
+    DiskTaskRegistry,
+    MemoryTaskRegistry,
+    UserArgs,
+)
 from pyrosetta.distributed.cluster.utilities import SchedulerManager
 from pyrosetta.distributed.cluster.validators import (
     _validate_dir,
@@ -559,19 +590,6 @@ from pyrosetta.distributed.cluster.validators import (
     _validate_scorefile_name,
     _validate_tasks,
 )
-from pyrosetta.distributed.packed_pose.core import PackedPose
-from typing import (
-    Any,
-    Dict,
-    Generator,
-    List,
-    NoReturn,
-    Optional,
-    Tuple,
-    TypeVar,
-    Union,
-)
-
 
 G = TypeVar("G")
 
@@ -624,19 +642,19 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         converter=attr.converters.optional(_parse_decoy_ids),
     )
     client = attr.ib(
-        type=Optional[distributed.Client],
+        type=Optional[Client],
         default=None,
         validator=attr.validators.optional(
-            attr.validators.instance_of(distributed.Client)
+            attr.validators.instance_of(Client)
         ),
     )
     clients = attr.ib(
-        type=Optional[List[distributed.Client]],
+        type=Optional[List[Client]],
         default=None,
         validator=[
             attr.validators.optional(
                 attr.validators.deep_iterable(
-                    member_validator=attr.validators.instance_of(distributed.Client),
+                    member_validator=attr.validators.instance_of(Client),
                     iterable_validator=attr.validators.instance_of((tuple, list)),
                 ),
             ),

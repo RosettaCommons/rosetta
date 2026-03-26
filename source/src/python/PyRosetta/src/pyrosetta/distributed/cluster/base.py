@@ -5,7 +5,6 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
 
 try:
@@ -26,20 +25,6 @@ import pyrosetta.distributed
 
 from datetime import datetime
 from functools import wraps
-from pyrosetta.distributed.cluster.config import __dask_version__
-from pyrosetta.distributed.cluster.converters import _parse_protocols, _version_tuple_to_str
-from pyrosetta.distributed.cluster.initialization import (
-    _get_norm_task_options,
-    _get_residue_type_set_name3 as _get_residue_type_set,
-)
-from pyrosetta.distributed.cluster.serialization import Serialization
-from pyrosetta.distributed.cluster.validators import (
-    _validate_clients_indices,
-    _validate_priorities,
-    _validate_protocols_seeds_decoy_ids,
-    _validate_resources,
-    _validate_retries,
-)
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
     Any,
@@ -55,6 +40,23 @@ from typing import (
     cast,
 )
 
+from pyrosetta.distributed.cluster.config import __dask_version__
+from pyrosetta.distributed.cluster.converters import (
+    _parse_protocols,
+    _version_tuple_to_str,
+)
+from pyrosetta.distributed.cluster.initialization import (
+    _get_norm_task_options,
+    _get_residue_type_set_name3 as _get_residue_type_set,
+)
+from pyrosetta.distributed.cluster.serialization import Serialization
+from pyrosetta.distributed.cluster.validators import (
+    _validate_clients_indices,
+    _validate_priorities,
+    _validate_protocols_seeds_decoy_ids,
+    _validate_resources,
+    _validate_retries,
+)
 
 G = TypeVar("G")
 M = TypeVar("M", bound=Callable[..., Any])

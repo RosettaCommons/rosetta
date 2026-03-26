@@ -5,9 +5,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
-
 
 try:
     import dask
@@ -36,7 +34,6 @@ from typing import (
     Optional,
     Union,
 )
-
 
 OPTION_KEYS: AbstractSet[str] = {"options", "extra_options"}
 DISALLOWED_RUN_OPTIONS: AbstractSet[str] = set(

@@ -5,13 +5,15 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
-
 
 try:
     import billiard
-    from distributed import Client, Worker, get_worker
+    from distributed import (
+        Client,
+        Worker,
+        get_worker,
+    )
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.logging_support' requires the "
@@ -57,9 +59,11 @@ from pyrosetta.distributed.cluster.logging_filters import (
     split_socket_address,
 )
 from pyrosetta.distributed.cluster.logging_handlers import MsgpackHmacSocketHandler
-from pyrosetta.distributed.cluster.logging_listeners import MaskedBytes, SocketListener
+from pyrosetta.distributed.cluster.logging_listeners import (
+    MaskedBytes,
+    SocketListener,
+)
 from pyrosetta.distributed.cluster.task_registry import UserArgs
-
 
 G = TypeVar("G")
 L = TypeVar("L", bound=Callable[..., Any])

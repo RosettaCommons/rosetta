@@ -5,7 +5,6 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
 
 try:
@@ -34,9 +33,16 @@ import re
 import uuid
 import warnings
 
-from contextlib import redirect_stdout, redirect_stderr
+from contextlib import (
+    redirect_stdout,
+    redirect_stderr,
+)
 from datetime import datetime
-from pyrosetta.rosetta.core.pose import Pose, add_comment, get_all_comments
+from pyrosetta.rosetta.core.pose import (
+    Pose,
+    add_comment,
+    get_all_comments,
+)
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.exceptions import PyRosettaIsNotInitializedError
 from pyrosetta.rosetta.basic import was_init_called
@@ -57,14 +63,19 @@ from typing import (
     TypeVar,
     Union,
 )
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import (
+    urlparse,
+    urlunparse,
+)
 
 from pyrosetta.distributed.cluster.config import source_domains
 from pyrosetta.distributed.cluster.exceptions import OutputError
 from pyrosetta.distributed.cluster.init_files import InitFileSigner
 from pyrosetta.distributed.cluster.logging_support import RedirectToLogger
-from pyrosetta.distributed.cluster.serialization import Serialization, update_scores
-
+from pyrosetta.distributed.cluster.serialization import (
+    Serialization,
+    update_scores,
+)
 
 METADATA_INPUT_DECOY_KEY: str = "idx_poses_input"
 METADATA_OUTPUT_DECOY_KEY: str = "idx_poses_output"

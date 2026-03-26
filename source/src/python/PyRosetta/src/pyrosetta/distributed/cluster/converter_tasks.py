@@ -5,7 +5,6 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
 
 try:
@@ -72,7 +71,6 @@ from pyrosetta.distributed.cluster.io import (
     sign_init_file_metadata_and_poses,
 )
 from pyrosetta.distributed.cluster.serialization import update_scores
-
 
 ClientType = TypeVar("ClientType", bound=distributed.Client)
 

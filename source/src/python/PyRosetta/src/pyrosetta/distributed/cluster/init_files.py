@@ -5,9 +5,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
-
 
 import json
 import hmac
@@ -16,8 +14,10 @@ import pyrosetta.distributed.io as io
 import struct
 
 from pyrosetta.distributed.packed_pose.core import PackedPose
-from pyrosetta.rosetta.core.pose import Pose, get_all_comments
-
+from pyrosetta.rosetta.core.pose import (
+    Pose,
+    get_all_comments,
+)
 from typing import (
     Any,
     Dict,
@@ -27,33 +27,60 @@ from typing import (
     Optional,
     Tuple,
     TypeVar,
+    Union,
 )
 
-from pyrosetta.distributed.cluster.hkdf import HASHMOD, compare_digest, derive_init_key
-
+from pyrosetta.distributed.cluster.hkdf import (
+    HASHMOD,
+    compare_digest,
+    derive_init_key,
+)
 
 G = TypeVar("G")
 
 
 class PackedPoseHasher(Generic[G]):
-    """Digest the scientific state of a `PackedPose` object."""
+    """Digest the scientific state of a `PackedPose` or `Pose` object."""
 
     _encoding: str = "utf-8"
     _default_bytes: bytes = (b'\x00' * 32)
 
     def __init__(
         self,
-        packed_pose: Optional[PackedPose] = None,
+        packed_pose: Optional[Union[PackedPose, Pose]] = None,
         include_cache: bool = False,
         include_comments: bool = False,
     ) -> None:
+        """
+        Initialize the `PackedPoseHasher` class.
+
+        Args:
+            `packed_pose`:
+                A `PackedPose` or `Pose` object to hash. If `None`, then other keyword arguments have no effect
+                and a constant hash is returned from the `PackedPoseHasher.digest` method.
+
+                Default: `None`
+
+            `include_cache`:
+                A `bool` object specifying whether or not to include the `Pose.cache` entries.
+
+                Default: `False`
+
+             `include_comments`:
+                A `bool` object specifying whether or not to include the `Pose` comments entries.
+
+                Default: `False`
+
+        Returns:
+            `None`
+        """
         self.pose = io.to_pose(packed_pose)
         self.include_cache = include_cache
         self.include_comments = include_comments
         self.hashmod = HASHMOD()
 
     def digest(self) -> bytes:
-        """Digest the `PackedPose` object, otherwise return a default value."""
+        """Digest the `PackedPose` or `Pose` object, otherwise return a default value."""
         if isinstance(self.pose, Pose):
             self.add_coordinates()
             if self.include_cache:
@@ -86,7 +113,7 @@ class PackedPoseHasher(Generic[G]):
     def add_coordinates(self) -> None:
         """
         Update hashmod with residue numbers, residue names, atom numbers, atom names, and double precision
-        atomic coordinates of the `Pose` object.
+        atomic coordinate components of the `Pose` object.
         """
         for res in range(1, self.pose.size() + 1):
             residue = self.pose.residue(res)
@@ -105,7 +132,7 @@ class PackedPoseHasher(Generic[G]):
                     self.update_hashmod(getattr(xyz, axis))
 
     def add_cache(self) -> None:
-        """Update hashmod with raw `Pose.cache` dictionary entries."""
+        """Update hashmod with serialized `Pose.cache` dictionary entries."""
         for entry in (
             self.pose.cache.energies.all,
             self.pose.cache.extra.string.all,

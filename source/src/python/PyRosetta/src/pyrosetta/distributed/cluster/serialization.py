@@ -5,9 +5,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
-
 
 try:
     import attr
@@ -29,6 +27,11 @@ except ImportError:
     )
     raise
 
+try:
+    import lzma as xz
+except ImportError:
+    pass
+
 import bz2
 import logging
 import os
@@ -37,13 +40,12 @@ import sys
 import warnings
 import zlib
 
-try:
-    import lzma as xz
-except ImportError:
-    pass
-
 from collections import deque
-from functools import partial, singledispatch, wraps
+from functools import (
+    partial,
+    singledispatch,
+    wraps,
+)
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.secure_unpickle import SecureSerializerBase
 from typing import (
@@ -58,8 +60,11 @@ from typing import (
     cast,
 )
 
-from pyrosetta.distributed.cluster.hkdf import MaskedBytes, compare_digest, hmac_digest
-
+from pyrosetta.distributed.cluster.hkdf import (
+    MaskedBytes,
+    compare_digest,
+    hmac_digest,
+)
 
 T = TypeVar("T", bound=Callable[..., Any])
 G = TypeVar("G")

@@ -5,9 +5,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
-
 
 try:
     import msgpack
@@ -27,7 +25,10 @@ import struct
 import sys
 import types
 
-from contextlib import contextmanager, suppress
+from contextlib import (
+    contextmanager,
+    suppress,
+)
 from functools import wraps
 from typing import (
     Any,
@@ -44,7 +45,6 @@ from typing import (
 
 from pyrosetta.distributed.cluster.hkdf import hmac_digest
 from pyrosetta.distributed.cluster.logging_filters import split_socket_address
-
 
 L = TypeVar("L", bound=Callable[..., Any])
 

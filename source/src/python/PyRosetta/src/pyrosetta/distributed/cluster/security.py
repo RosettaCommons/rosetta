@@ -5,12 +5,14 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
 
-
 try:
-    from dask.distributed import Client, LocalCluster, Security
+    from dask.distributed import (
+        Client,
+        LocalCluster,
+        Security,
+    )
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.security' requires the "
@@ -39,10 +41,12 @@ from typing import (
     Union,
 )
 
-from pyrosetta.distributed.cluster.hkdf import MaskedBytes, derive_task_key
+from pyrosetta.distributed.cluster.hkdf import (
+    MaskedBytes,
+    derive_task_key,
+)
 from pyrosetta.distributed.cluster.serialization import NonceCache
 from pyrosetta.distributed.cluster.worker_plugins import TaskSecurityPlugin
-
 
 G = TypeVar("G")
 

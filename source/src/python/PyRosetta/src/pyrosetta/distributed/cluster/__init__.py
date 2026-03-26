@@ -5,7 +5,6 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
 
 import warnings
@@ -31,7 +30,6 @@ from pyrosetta.distributed.cluster.toolkit import (
 )
 from typing import List
 
-
 __all__: List[str] = [
     "PyRosettaCluster",
     "Serialization",
@@ -50,8 +48,7 @@ __all__: List[str] = [
     "run",
     "update_scores",
 ]
-__version__: str = "4.1.1"
-
+__version__: str = "4.2.0"
 
 with warnings.catch_warnings() and suppress(NameError):
     warnings.simplefilter("ignore", category=UserWarning)
