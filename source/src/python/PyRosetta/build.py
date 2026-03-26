@@ -756,14 +756,14 @@ def generate_version_file(rosetta_source_path, file_name):
 
 def generate_stubs(rosetta_source_path):
     try: 
-        from pybind11_stubgen import main
+        from pybind11_stubgen import stubgen_main
     except ImportError:
         print("Error: Type stub generation requires pybind11-stubgen installed!")
         sys.exit(1) #TODO: install pybind11-stubgen if not present? Include as submodule?
-    build_dir = (get_binding_build_root(rosetta_source_path, build=True))
+    build_dir = get_binding_build_root(rosetta_source_path, build=True)
     try:
         sys.path.append(build_dir)
-        main(['pyrosetta','-o','stubs']) #generate stubs
+        stubgen_main(['pyrosetta','-o','stubs']) #generate stubs
         dir_util_module.copy_tree('stubs/pyrosetta/rosetta',build_dir+'/pyrosetta/rosetta') #only copy the stubs for the core rosetta features, since all other files are pure python
     finally:
         sys.path.pop(-1) #remove build dir from sys.path
