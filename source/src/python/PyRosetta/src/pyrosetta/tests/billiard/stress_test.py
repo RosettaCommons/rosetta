@@ -1,6 +1,7 @@
 import billiard
 import os
 import pyrosetta
+import pyrosetta.distributed.io as io
 import queue
 import random
 import tempfile
@@ -8,10 +9,11 @@ import time
 import traceback
 import unittest
 
-from distributed import Client, LocalCluster
-
+from distributed import Client, LocalCluster, as_completed
+from pyrosetta.distributed.cluster import Serialization
 
 CONSTANT_FLAGS = "-out:level 100 -multithreading:total_threads 1"
+COMPRESSION = "xz"
 
 
 def score_function_is_available(name):
@@ -78,9 +80,11 @@ def write_remodel_blueprint(pose, workdir, n_res_cterm_ext=4, n_term_threshold=2
     return blueprint_file
 
 
-def target(proc_id, log_q, sfxn_flags):
+def target(r, proc_id, q, sfxn_flags):
     import pyrosetta
     import pyrosetta.distributed
+    import pyrosetta.distributed.io as io
+    from pyrosetta.distributed.cluster import Serialization
     from pyrosetta.rosetta.protocols.rosetta_scripts import XmlObjects
 
     prefix = f"[Process ID: {os.getpid()}, Number: {proc_id}]"
@@ -90,15 +94,18 @@ def target(proc_id, log_q, sfxn_flags):
         sfxn_flag = sfxn_flags[proc_id % len(sfxn_flags)]
         remodel_flags = pyrosetta.distributed._normflags(get_remodel_options())
         options = " ".join([sfxn_flag, remodel_flags, CONSTANT_FLAGS])
-
         pyrosetta.distributed.maybe_init(options=options, extra_options="", silent=True)
-
         seed = pyrosetta.rosetta.numeric.random.rg().get_seed()
-        log_q.put(f"{prefix}, Seed: {seed}, Initialized: {options}")
+
+        # Unpack pose
+        serializer = Serialization(compression=COMPRESSION)
+        if r is None:
+            seq = "".join(random.sample("ACDEFGHIKLMNPQRSTVWY", k=random.randint(2, 7)))
+            pose = pyrosetta.pose_from_sequence(seq)
+        else:
+            pose = serializer.decompress_packed_pose(r).pose
 
         # Do minimal work
-        seq = "".join(random.sample("ACDEFGHIKLMNPQRSTVWY", k=random.randint(2, 7)))
-        pose = pyrosetta.pose_from_sequence(seq)
         scorefxn_fa = pyrosetta.get_score_function()
         scorefxn_fa(pose)
         # Make Remodel blueprint file
@@ -120,36 +127,43 @@ def target(proc_id, log_q, sfxn_flags):
         tmp_path.cleanup()
         # Score
         total_score = scorefxn_fa(pose)
-        log_q.put(f"{prefix} Total Score: {total_score}")
-    
+        print(f"{prefix}, Seed: {seed}, Total Score: {total_score}, Initialized: {options}", flush=True)
+        # Add counter
+        if "counter" not in pose.cache.all_keys:
+            pose.cache["counter"] = 0
+        else:
+            pose.cache["counter"] += 1
+        # Put result
+        r = serializer.compress_packed_pose(io.to_packed(pose))
+        q.put(r)
+
         # Keep process alive briefly to overlap teardown
-        time.sleep(random.uniform(0, 0.05))
+        time.sleep(random.uniform(0, 0.4))
 
     except Exception as ex:
-        log_q.put(f"{prefix} Exception: {ex}")
-        log_q.put(traceback.format_exc())
+        print(f"{prefix} Exception: {ex}", flush=True)
+        print(traceback.format_exc(), flush=True)
 
 
-def run_once(sfxn_flags, round, n_procs):
+def run_once(r, sfxn_flags, round, n_procs):
     print(f"--- Round {round} ---", flush=True)
 
     context = billiard.get_context("spawn")
-    log_q = context.Queue()
+    q = context.Queue()
 
     procs = []
     for proc_id in range(n_procs):
-        p = context.Process(target=target, args=(proc_id, log_q, sfxn_flags))
+        p = context.Process(target=target, args=(r, proc_id, q, sfxn_flags))
         p.start()
         procs.append(p)
 
-    # Drain logs while running
+    # Drain while running
     alive = True
     while alive:
         alive = any(p.is_alive() for p in procs)
         try:
             while True:
-                msg = log_q.get_nowait()
-                print(msg, flush=True)
+                r = q.get_nowait()
         except queue.Empty:
             pass
         time.sleep(0.05)
@@ -160,10 +174,11 @@ def run_once(sfxn_flags, round, n_procs):
     # Final drain
     try:
         while True:
-            msg = log_q.get_nowait()
-            print(msg, flush=True)
+            r = q.get_nowait()
     except queue.Empty:
         pass
+
+    return r
 
 
 class StressTest(unittest.TestCase):
@@ -186,30 +201,46 @@ class StressTest(unittest.TestCase):
 
     def test_rounds(self, rounds=100):
 
-        pyrosetta.init(options=CONSTANT_FLAGS, extra_options="", silent=True)
+        pyrosetta.init(options=CONSTANT_FLAGS, extra_options="-run:constant_seed 1 -score:weights ref2015", silent=True)
 
         sfxn_flags = [
             "-beta_nov16 1",
             "-beta_nov16_cart 1",
             "-score:weights ref2015",
+            "-restore_talaris_behavior 1",
+            "-gen_potential 1",
         ]
         if score_function_is_available("beta_jan25"):
             sfxn_flags.append("-beta_jan25 1")
         print("Available scorefunction flags:", sfxn_flags)
 
+        serializer = Serialization(compression=COMPRESSION)
+
         n_procs = 8
-        n_workers = 2
+        n_workers = 4
         threads_per_worker = 1
         with LocalCluster(n_workers=n_workers, threads_per_worker=threads_per_worker) as cluster:
             with Client(cluster) as client:
+                # Submit futures
                 futures = []
                 for round in range(rounds):
-                    args = client.scatter((sfxn_flags, round, n_procs), broadcast=False, hash=False)
+                    args = client.scatter((None, sfxn_flags, round, n_procs), broadcast=False, hash=False)
                     future = client.submit(run_once, *args, pure=False)
                     futures.append(future)
-
-                for future in futures:
-                    future.result()
+                seq = as_completed(futures)
+                # Gather results
+                for i, future in enumerate(seq, start=1):
+                    r = future.result()
+                    # Deserialize
+                    pose = serializer.decompress_packed_pose(r).pose
+                    if pose.cache["counter"] >= 1:
+                        continue
+                    # Serialize
+                    r = serializer.compress_packed_pose(io.to_packed(pose))
+                    # Submit future
+                    args = client.scatter((r, sfxn_flags, rounds + i, n_procs), broadcast=False, hash=False)
+                    future = client.submit(run_once, *args, pure=False)
+                    seq.add(future)
 
 
 if __name__ == "__main__":
