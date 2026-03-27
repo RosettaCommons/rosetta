@@ -91,6 +91,7 @@ def run_subprocess(cmd: str) -> int:
 
 tests = [
     "pyrosetta.tests.billiard.stress_test"
+    "pyrosetta.tests.billiard.stress_test_2"
 ]
 for test in tests:
     t0 = time.perf_counter()
