@@ -44,12 +44,12 @@ def worker(proc_id, barrier):
 
 class StressTest(unittest.TestCase):
     def test_stress(self):
-        for round in range(10):  # loop to amplify probability
+        for round in range(100):  # loop to amplify probability
             print(f"\n--- round {round} ---", flush=True)
 
             ctx = mp.get_context("spawn")
 
-            n_procs = os.cpu_count() * 3  # increase pressure
+            n_procs = os.cpu_count() * 4  # increase pressure
             barrier = ctx.Barrier(n_procs)
 
             procs = []
