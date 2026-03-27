@@ -443,6 +443,16 @@ settings = {
         },
     },
 
+    "gcc, |cxx_ver:>=15.0|" : {
+        "appends" : {
+            "flags" : {
+                "warn" : [
+                    "Wno-error=dangling-pointer=", # Boost spirit issue
+                ],
+            },
+        },
+    },
+
     "gcc, |cxx_ver:>=13.0|" : {
         "appends" : {
             "flags" : {
