@@ -550,12 +550,19 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', opti
 
     #binder = install_llvm_tool('binder', source_location='{}/source/src/python/PyRosetta/binder'.format(rosetta_dir), config=config)
 
-    py_env = conda if conda else local_python_install(platform, config)
+    py_env = conda if conda else local_python_install(platform, config, packages='pybind11-stubgen')
+
+    # if conda:
+    #     py_env = conda
+    # else:
+    #     # py_env = local_python_install(platform, config, packages='pybind11-stubgen')
+    #     py_env = setup_persistent_python_virtual_environment(local_python_install(platform, config), 'pybind11-stubgen')
+
 
     #print(sysconfig.get_config_vars())
     #CONFINCLUDEPY
 
-    extra = ' --python-include-dir={py_env.python_include_dir} --python-lib={py_env.python_lib_dir}'.format(**vars())
+    extra = f' --python-include-dir={py_env.python_include_dir} --python-lib={py_env.python_lib_dir} --stubs'
     # if platform['os'] == 'mac'  and  platform['python'].startswith('python3'):
     #     python_prefix = execute('Getting {} prefix path...'.format(platform['python']), '{}-config --prefix'.format(platform['python']), return_='output')
     #     extra += ' --python-include-dir={0}/include/python3.5m --python-lib={0}/lib/libpython3.5.dylib'.format(python_prefix)
@@ -568,6 +575,7 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', opti
     if version: extra += " --version '{version}'".format(**vars())
 
     command_line = f'cd {rosetta_dir}/source/src/python/PyRosetta && {py_env.python} build.py -j{jobs} --compiler {platform["compiler"]} --type {mode}{extra} {options}'
+    # command_line = f'{py_env.activate} && cd {rosetta_dir}/source/src/python/PyRosetta && python build.py -j{jobs} --compiler {platform["compiler"]} --type {mode}{extra} {options}'
 
     pyrosetta_path = execute('Getting PyRosetta build path...', command_line + ' --print-build-root', return_='output').split()[-1]
 
@@ -809,7 +817,7 @@ def remove_pip_and_easy_install(prefix_root_path):
 
 
 
-def local_python_install(platform, config):
+def local_python_install(platform, config, *, packages=None):
     ''' Perform local install of given Python version and return path-to-python-interpreter, python_include_dir, python_lib_dir
         If previous install is detected skip installiation.
         Provided Python install will _persistent_ and _immutable_
@@ -866,7 +874,7 @@ def local_python_install(platform, config):
     }
 
     #packages = '' if (python_version[0] == '2' or  python_version == '3.5' ) and  platform['os'] == 'mac' else 'pip setuptools wheel' # 2.7 is now deprecated on Mac so some packages could not be installed
-    packages = 'setuptools'
+    packages = 'setuptools' + ( (' ' + packages) if packages else '')
 
     url = python_sources[python_version]
 
@@ -1004,7 +1012,7 @@ def setup_persistent_python_virtual_environment(python_environment, packages):
         #if 'certifi' not in packages: packages += ' certifi'
 
         h = hashlib.md5()
-        h.update(f'v1.0.0 platform: {python_environment.platform} python_source_url: {python_environment.url} python-hash: {python_environment.hash} packages: {packages}'.encode('utf-8', errors='backslashreplace') )
+        h.update(f'v1.1.0 platform: {python_environment.platform} python_source_url: {python_environment.url} python-hash: {python_environment.hash} packages: {packages}'.encode('utf-8', errors='backslashreplace') )
         hash = h.hexdigest()
 
         prefix = calculate_unique_prefix_path(python_environment.platform, python_environment.config)
@@ -1023,7 +1031,7 @@ def setup_persistent_python_virtual_environment(python_environment, packages):
             remove_pip_and_easy_install(root)  # removing all pip's and easy_install's to make sure that environment is immutable
             with open(signature_file_name, 'w') as f: f.write(signature)
 
-        return NT(activate = activate, python = bin + '/python', root = root, bin = bin, hash = hash)
+        return NT(activate = activate, python = bin + '/python', root = root, bin = bin, hash = hash, python_include_dir= python_environment.python_include_dir, python_lib_dir=python_environment.python_lib_dir)
 
 
 

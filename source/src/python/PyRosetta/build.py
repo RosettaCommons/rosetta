@@ -755,8 +755,8 @@ def generate_version_file(rosetta_source_path, file_name):
         #     ), f, sort_keys=True, indent=2)
 
 def generate_stubs(rosetta_source_path):
-    try: 
-        from pybind11_stubgen import stubgen_main
+    try:
+        from pybind11_stubgen import main as stubgen_main
     except ImportError:
         print("Error: Type stub generation requires pybind11-stubgen installed!")
         sys.exit(1) #TODO: install pybind11-stubgen if not present? Include as submodule?
@@ -897,7 +897,7 @@ def main(args):
 
     parser.add_argument('-p', '--create-package', default='', help='Create PyRosetta Python package at specified path (default is to skip creating package)')
     parser.add_argument('--create-wheel', default='', help='Create python wheel in the specified directory. (default is to skip creating wheel)')
-    
+
     parser.add_argument('--stubs',action="store_true",help='Generate python type stub (*.pyi) files in build directory using pybind11-stubgen')
 
     parser.add_argument('--python-include-dir', default=None, help='Path to python C headers. Use this if CMake fails to autodetect it')
