@@ -132,7 +132,7 @@ def trace_protocol_exceptions(func: T) -> Union[T, NoReturn]:
         packed_pose: PackedPose,
         protocol: Callable[..., Any],
         ignore_errors: bool,
-        kwargs: Dict[Any, Any],
+        kwargs: Dict[str, Any],
     ) -> Union[Any, NoReturn]:
         protocol_name = protocol.__name__
         try:

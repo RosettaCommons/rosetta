@@ -83,8 +83,10 @@ class LoggingTest(unittest.TestCase):
                 test_warning_with_pose=packed_pose.pose.clone(),
                 test_warning_with_packed_pose=io.to_packed(packed_pose.pose.clone()),
             )
+            # Testing that warnings are emitted when attempting to return keys starting with "PyRosettaCluster_"
+            kwargs["PyRosettaCluster_foo"] = "bar"
 
-            return packed_pose
+            return packed_pose, kwargs
 
         def my_pyrosetta_protocol_2(packed_pose, **kwargs):
             import pyrosetta
@@ -186,6 +188,21 @@ class LoggingTest(unittest.TestCase):
                 log_fields = last.split()
                 self.assertEqual(log_fields[-1], "complete!")
             # Ensure warnings are emitted
+            with open(protocol_log, "r") as f:
+                lines = f.readlines()
+                key = "PyRosettaCluster_foo"
+                expected_msg = (
+                    f"User-provided PyRosetta protocol 'my_pyrosetta_protocol_1' returned one object of type `dict`, "
+                    + f"but a key starting with 'PyRosettaCluster_' was added: '{key}'. "
+                    + f"Task keys starting with 'PyRosettaCluster_' are reserved for PyRosettaCluster! "
+                    + f"Automatically ignoring the '{key}' key from the returned task."
+                )
+                warning_msgs = []
+                for line in lines:
+                     if line.startswith("WARNING:"):
+                        match = re.split(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}: ", line, maxsplit=1) # Split on datetime
+                        warning_msgs.append(match[1].rstrip() if len(match) > 1 else line.rstrip())
+                self.assertIn(expected_msg, warning_msgs)
             score_key_class_name_dict = {
                 "test_warning_with_complex": "complex",
                 "test_warning_with_pose": "pyrosetta.rosetta.core.pose.Pose",

@@ -131,6 +131,8 @@ distributed_cluster_test_cases = [
     "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityMulti.test_reproducibility_packer_nstruct_multi_decoy_ids",
     "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityMulti.test_reproducibility_packer_nstruct_multi_decoy_ids_filter_results",
     "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityPoseDataFrame.test_reproducibility_from_reproduce",
+    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityTaskUpdates.test_reproduce_task_updates",
+    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityRemodelTaskUpdates.test_reproduce_remodel_task_updates",
 ]
 distributed_test_suites = [
     "pyrosetta.tests.bindings.init.test_init_files",
@@ -150,4 +152,3 @@ for test in tests:
     t1 = time.time()
     dt = t1 - t0
     print("Finished running test in {0} seconds: {1}\n".format(round(dt, 6), test))
-

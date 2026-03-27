@@ -192,6 +192,48 @@ class SmokeTest(unittest.TestCase):
                 with self.assertRaises(ImportError) as ex:
                     run(**instance_kwargs)
                 print(f"Successfully caught exception: {ex.exception}")
+            _invalid_run_options_values = (
+                ("constant_seed", "1"),
+                ("jran", "12345"),
+                ("use_time_as_seed", "1"),
+                ("rng_seed_device", "/dev/urandom"),
+                ("seed_offset", "2"),
+                ("rng", "mt19937"),
+            )
+            _run_prefixes = ("-run::", "-run:", "-")
+            _options_keys = ("options", "extra_options")
+            _invalid_options_values = [
+                f"{prefix}{k} {v}"
+                for prefix in _run_prefixes
+                for k, v in _invalid_run_options_values
+            ]
+            _invalid_options_values += [
+                {k: v} for k, v in map(lambda val: val.split(), _invalid_options_values)
+            ]
+            _invalid_options_values += [True, 123, 123.456, complex(1, 2), b"foo"]
+            _invalid_tasks = [
+                {_option: _value}
+                for _option in _options_keys
+                for _value in _invalid_options_values
+            ]
+            _invalid_tasks += [
+                {"PyRosettaCluster_foo": "bar"},
+                {True: "bar"},
+                {0: "bar"},
+                {b"Bytes": "bar"},
+            ]
+            for _invalid_task in _invalid_tasks:
+                for _option in _options_keys:
+                    if _option not in _invalid_task:
+                        _invalid_task[_option] = ""
+                with self.assertRaises(ValueError) as ex:
+                    PyRosettaCluster(
+                        tasks=_invalid_task,
+                        output_path=os.path.join(workdir, f"outputs_invalid_task_{uuid.uuid4().hex}"),
+                        scratch_dir=workdir,
+                        sha1=None,
+                    )
+                print(f"Successfully caught exception: {ex.exception}")
 
     def test_ignore_errors(self):
         """Test PyRosettaCluster usage with user-provided PyRosetta protocol error."""
@@ -537,7 +579,7 @@ class SmokeTestMulti(unittest.TestCase):
                     "extra_options": "-ex1 -multithreading:total_threads 1",
                     "set_logging_handler": "logging",
                     "seq": "TEST" * i,
-                    "task_packed_pose": io.pose_from_sequence("PACKED" * i),
+                    "task_b64_pose": io.to_base64(io.pose_from_sequence("PACKED" * i)),
                 }
 
         def my_first_protocol(packed_pose, **kwargs):
@@ -546,14 +588,20 @@ class SmokeTestMulti(unittest.TestCase):
 
             from pyrosetta.rosetta.core.pose import setPoseExtraScore
 
+            init_options = pyrosetta.get_init_options(compressed=False, as_dict=True)
+            self.assertEqual(init_options["multithreading:total_threads"], ["1"])
+            self.assertEqual(init_options["packing:ex1"], ["true"])
+            self.assertEqual(init_options["packing:ex2aro"], ["true"])
+
             pose = pyrosetta.io.pose_from_sequence(kwargs["seq"])
             setPoseExtraScore(pose, "test_setPoseExtraScore", 123)
 
+            kwargs["task_packed_pose"] = io.to_packed(kwargs["task_b64_pose"])
             self.assertIn("task_packed_pose", kwargs)
             self.assertIsInstance(kwargs["task_packed_pose"], PackedPose)
-            self.assertIn("task_packed_pose", kwargs["PyRosettaCluster_task"])
+            self.assertIn("task_b64_pose", kwargs["PyRosettaCluster_task"])
             self.assertEqual(
-                kwargs["PyRosettaCluster_task"]["task_packed_pose"].pose.sequence(),
+                io.to_pose(kwargs["PyRosettaCluster_task"]["task_b64_pose"]).sequence(),
                 kwargs["task_packed_pose"].pose.sequence(),
             )
             saved_packed_pose = io.to_packed(pose.clone())
@@ -602,12 +650,12 @@ class SmokeTestMulti(unittest.TestCase):
             if not "saved_variable" in kwargs.keys():
                 kwargs["saved_variable"] = {"foo": "bar"}
             else:
-                self.assertIn("task_packed_pose", kwargs["PyRosettaCluster_task"])
-                kwargs["PyRosettaCluster_task"].pop("task_packed_pose")
+                self.assertIn("task_b64_pose", kwargs["PyRosettaCluster_task"])
+                kwargs["PyRosettaCluster_task"].pop("task_b64_pose")
                 self.assertNotIn(
-                    "task_packed_pose",
+                    "task_b64_pose",
                     kwargs["PyRosettaCluster_task"],
-                    msg="Object of type `PackedPose` is not JSON serializable.",
+                    msg="Object of type `str` is in 'PyRosettaCluster_task' entry.",
                 )
                 self.assertIn(
                     "task_packed_pose",
@@ -654,11 +702,13 @@ class SmokeTestMulti(unittest.TestCase):
             self.assertFalse(packed_pose.pose.empty())
             self.assertIsInstance(packed_pose, PackedPose)
             self.assertIsInstance(kwargs, dict)
-            self.assertNotIn("task_packed_pose", kwargs["PyRosettaCluster_task"])
+            self.assertNotIn("task_b64_pose", kwargs["PyRosettaCluster_task"])
             self.assertIn("saved_packed_pose", kwargs)
             self.assertIsInstance(kwargs["saved_packed_pose"], PackedPose)
             tmp_path = kwargs["PyRosettaCluster_tmp_path"]
             self.assertTrue(os.path.exists(tmp_path))
+            protocol_number = kwargs.get("PyRosettaCluster_protocol_number")
+            kwargs[f"tmp_path_protocol_{protocol_number}"] = tmp_path
 
             yield None
             yield kwargs
@@ -675,6 +725,10 @@ class SmokeTestMulti(unittest.TestCase):
             self.assertIsInstance(kwargs["saved_packed_pose"], PackedPose)
             tmp_path = kwargs["PyRosettaCluster_tmp_path"]
             self.assertTrue(os.path.exists(tmp_path))
+            protocol_number = kwargs.get("PyRosettaCluster_protocol_number")
+            previous_tmp_path_key = f"tmp_path_protocol_{protocol_number - 1}"
+            self.assertIn(previous_tmp_path_key, kwargs)
+            self.assertNotEqual(kwargs[previous_tmp_path_key], tmp_path)
 
             return kwargs
 
@@ -685,7 +739,7 @@ class SmokeTestMulti(unittest.TestCase):
             self.assertIsInstance(packed_pose, PackedPose)
             self.assertTrue(packed_pose.pose.empty())
             self.assertIsInstance(kwargs, dict)
-            self.assertNotIn("task_packed_pose", kwargs["PyRosettaCluster_task"])
+            self.assertNotIn("task_b64_pose", kwargs["PyRosettaCluster_task"])
             self.assertIn("saved_packed_pose", kwargs)
             self.assertIsInstance(kwargs["saved_packed_pose"], PackedPose)
 
@@ -707,7 +761,7 @@ class SmokeTestMulti(unittest.TestCase):
             import pyrosetta
             import pyrosetta.distributed.io as io
 
-            kwargs = dict(foo="bar", baz="qux")
+            kwargs = dict(foo="bar", baz="qux", PyRosettaCluster_foo="quux")
 
             yield kwargs
 
@@ -724,8 +778,13 @@ class SmokeTestMulti(unittest.TestCase):
             self.assertIn("PyRosettaCluster_datetime_start", kwargs)
             self.assertIn("PyRosettaCluster_seeds", kwargs)
             self.assertIn("PyRosettaCluster_decoy_ids", kwargs)
+            self.assertIn("PyRosettaCluster_client_repr", kwargs)
+            self.assertIn("PyRosettaCluster_output_path", kwargs)
+            self.assertIn("PyRosettaCluster_seed", kwargs)
+            self.assertIn("PyRosettaCluster_tmp_path", kwargs)
             self.assertIn("foo", kwargs)
             self.assertIn("baz", kwargs)
+            self.assertNotIn("PyRosettaCluster_foo", kwargs)
 
             kwargs = SmokeTestMulti._ref_kwargs
 
@@ -739,6 +798,16 @@ class SmokeTestMulti(unittest.TestCase):
             for k in ref_kwargs.keys():
                 self.assertIn(k, kwargs)
                 self.assertEqual(ref_kwargs[k], kwargs[k])
+
+            self.assertNotIn("options", kwargs)
+            self.assertNotIn("extra_options", kwargs)
+            self.assertNotIn("set_logging_handler", kwargs)
+            self.assertNotIn("notebook", kwargs)
+            self.assertNotIn("silent", kwargs)
+            init_options = pyrosetta.get_init_options(compressed=False, as_dict=True)
+            self.assertEqual(init_options["out:levels"], ["all:warning"])
+            self.assertEqual(init_options["packing:ex1"], ["true"])
+            self.assertEqual(init_options["packing:ex2aro"], ["true"])
 
         with tempfile.TemporaryDirectory() as workdir:
             PyRosettaCluster(
@@ -1987,7 +2056,7 @@ class ScoresTest(unittest.TestCase):
             pyrosetta.secure_unpickle.add_secure_package("pyarrow")
         input_pose = self.input_packed_pose.pose.clone()
         input_pose.cache["df"] = df # Cache `pandas.DataFrame` object
-        secure_packages = pyrosetta.secure_unpickle.get_secure_packages()
+        secure_packages = list(pyrosetta.secure_unpickle.get_secure_packages())
         # Test a protocol that does not add 'pandas' to the unpickle-allowed list,
         # and does not access the cached `pandas.DataFrame`; this tests that
         # PyRosettaCluster infrastructure does not trigger deserialization alone
