@@ -41,6 +41,8 @@
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/ddg/CartesianddG.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
+#include <protocols/docking/types.hh>
+#include <protocols/docking/util.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -314,6 +316,16 @@ main( int argc, char * argv [] )
 
 			//interface mode? setting = jump number to use for interface
 			Size interface_ddg = option[ OptionKeys::ddg::interface_ddg ].value();
+
+			if ( option[ OptionKeys::ddg::interface ].user() ) {
+				std::string interface_str = option[ OptionKeys::ddg::interface ].value();
+				protocols::docking::DockJumps movable_jumps;
+				protocols::docking::setup_foldtree( pose, interface_str, movable_jumps );
+				if ( movable_jumps.size() > 0 ) {
+					interface_ddg = movable_jumps[1];
+					TR << "Setting interface jump to " << interface_ddg << " from string " << interface_str << std::endl;
+				}
+			}
 
 			//fd try to be smart .. look for interchain jump
 			if ( interface_ddg > pose.num_jump() ) {
