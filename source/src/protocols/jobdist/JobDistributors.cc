@@ -709,7 +709,9 @@ void PlainPdbJobDistributor::dump_pose_and_map(
 			name = scorefile_name_.base()+"score."+scorefile_name_.ext();
 		}
 		core::io::raw_data::ScoreFileData sfd(name);
-		sfd.write_pose( pose, score_map_, outfile_name );
+
+		std::map < std::string, std::string > string_map; //empty
+		sfd.write_scorefile( outfile_name, score_map_, string_map );
 	}
 	this->end_critical_section();
 }

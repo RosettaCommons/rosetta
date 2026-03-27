@@ -148,7 +148,7 @@ void FileJobOutputter::scorefile(
 	}
 	*/
 
-	sfd.write_pose( pose, score_map, (prefix_tag + output_name(job) + suffix_tag), string_map );
+	sfd.write_scorefile( (prefix_tag + output_name(job) + suffix_tag), score_map, string_map );
 }
 
 
