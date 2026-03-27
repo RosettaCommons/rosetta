@@ -1,17 +1,7 @@
-
 import os, sys, os.path, json, subprocess
 
-# defining FileNotFoundError in Python-2.*
-try:
-    FileNotFoundError
-except NameError:
-    FileNotFoundError = IOError
-
-# Assert or bootstrap minimum setuptools version required for find_packages
-import ez_setup
-ez_setup.use_setuptools("3.3")
-
 from setuptools import setup, find_packages, Distribution
+
 
 def get_file_list(directory):
     """Get list of all files in directory, relative to directory name."""
@@ -76,7 +66,7 @@ def setup_package():
             distclass = PyRosettaDistribution,
             zip_safe = False,
             install_requires=[
-                "numpy",  
+                "numpy",
             ],
             extras_require = {
                 "distributed" : [
