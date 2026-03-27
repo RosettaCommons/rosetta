@@ -100,7 +100,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		core::io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr;
 		pose_to_sfr.init_from_pose( *pose );
-		pose_to_sfr.grab_membrane_info( *pose, true );
+		pose_to_sfr.grab_membrane_info( *pose, true ); // Re-adds an additional Membrane residue, in addtion to the current in-pose one.
 
 		core::Size const maxchain( pose_to_sfr.sfr()->chains().size() - 1 );
 		TS_ASSERT_EQUALS( maxchain, 2 );
@@ -115,7 +115,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT(pose_to_sfr.sfr()->chains()[maxchain][0].isHet);
 		TS_ASSERT(pose_to_sfr.sfr()->chains()[maxchain][1].isHet);
 		TS_ASSERT(pose_to_sfr.sfr()->chains()[maxchain][2].isHet);
-		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].serial, 3507); // NOTE -- 2 copies of the membrane HETATMs are dumped, apparently.
+		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].serial, 3507);
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][1].serial, 3508);
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][2].serial, 3509);
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].name, "THKN");
@@ -124,9 +124,9 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].resName, "MEM");
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][1].resName, "MEM");
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][2].resName, "MEM");
-		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].chainID, 'C'); // NOTE -- 2 copies of the membrane HETATMs are dumped, apparently.
-		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][1].chainID, 'C');
-		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][2].chainID, 'C');
+		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].chainID, "C");
+		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][1].chainID, "C");
+		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][2].chainID, "C");
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].x, 15.3510);
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].y, 0.0 );
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].z, 0.0 );
@@ -199,20 +199,20 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		// Rosetta reorders the chains by default from how they appear in the .pdb file itself,
 		// grouping the three chain As together.
-		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 1 ), 'A' );  // peptide chain
-		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 6 ), 'A' );  // oligosaccharide chain
-		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 11 ), 'A' );  // oligosaccharide chain
-		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 16 ), 'B' );  // peptide chain
+		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 1 ), "A" );  // peptide chain
+		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 6 ), "A" );  // oligosaccharide chain
+		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 11 ), "A" );  // oligosaccharide chain
+		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 16 ), "B" );  // peptide chain
 
 		pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr_converter;
 		pose_to_sfr_converter.init_from_pose( pose );
 		StructFileRepCOP sfr( pose_to_sfr_converter.sfr() );
 		utility::vector0< utility::vector0< AtomInformation > > const & chains( sfr->chains() );
 
-		TS_ASSERT_EQUALS( chains[ 0 ][ 0 ].chainID, 'A' );
-		TS_ASSERT_EQUALS( chains[ 1 ][ 0 ].chainID, 'C' );
-		TS_ASSERT_EQUALS( chains[ 2 ][ 0 ].chainID, 'D' );
-		TS_ASSERT_EQUALS( chains[ 3 ][ 0 ].chainID, 'B' );
+		TS_ASSERT_EQUALS( chains[ 0 ][ 0 ].chainID, "A" );
+		TS_ASSERT_EQUALS( chains[ 1 ][ 0 ].chainID, "C" );
+		TS_ASSERT_EQUALS( chains[ 2 ][ 0 ].chainID, "D" );
+		TS_ASSERT_EQUALS( chains[ 3 ][ 0 ].chainID, "B" );
 	}
 
 	void test_ssbond_numbering() {
@@ -239,14 +239,14 @@ public:  // Tests /////////////////////////////////////////////////////////////
 			SSBondInformation const & ssbi = entry.second[1];
 			if ( ssbi.resSeq1 == 1 ) {
 				TS_ASSERT_EQUALS( ssbi.resSeq1, 1 );
-				TS_ASSERT_EQUALS( ssbi.chainID1, 'A' );
+				TS_ASSERT_EQUALS( ssbi.chainID1, "A" );
 				TS_ASSERT_EQUALS( ssbi.resSeq2, 10 );
-				TS_ASSERT_EQUALS( ssbi.chainID2, 'A' );
+				TS_ASSERT_EQUALS( ssbi.chainID2, "A" );
 			} else {
 				TS_ASSERT_EQUALS( ssbi.resSeq1, 4 );
-				TS_ASSERT_EQUALS( ssbi.chainID1, 'A' );
+				TS_ASSERT_EQUALS( ssbi.chainID1, "A" );
 				TS_ASSERT_EQUALS( ssbi.resSeq2, 16 );
-				TS_ASSERT_EQUALS( ssbi.chainID2, 'A' );
+				TS_ASSERT_EQUALS( ssbi.chainID2, "A" );
 			}
 		}
 

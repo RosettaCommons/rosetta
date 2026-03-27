@@ -309,7 +309,7 @@ SimulateCryoMover::pose_to_xyz( core::pose::Pose const & pose,
 	utility::vector1< core::Real > & all_z) {
 	for ( core::Size res_num = 1; res_num <= pose.size(); ++res_num ) {
 		core::conformation::Residue const & rsd( pose.residue(res_num) );
-		char chain = pose.pdb_info()->chain(res_num);
+		std::string chain = pose.pdb_info()->chain(res_num);
 		std::size_t search(std::string::npos);
 		if ( option[dupe_chains].user() ) {
 			search = option[dupe_chains]().find(chain);
@@ -650,7 +650,7 @@ SimulateCryoMover::set_bfactors( core::pose::Pose pose ) {
 
 	for ( core::Size res_num = 1; res_num <= pose.size(); ++res_num ) {
 		core::conformation::Residue const & rsd( pose.residue(res_num) );
-		char chain = pose.pdb_info()->chain(res_num);
+		std::string chain = pose.pdb_info()->chain(res_num);
 		std::size_t search(std::string::npos);
 		if ( option[dupe_chains].user() ) {
 			search = option[dupe_chains]().find(chain);

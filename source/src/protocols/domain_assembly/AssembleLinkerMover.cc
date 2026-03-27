@@ -51,11 +51,11 @@ void AssembleLinkerMover::apply( core::pose::Pose & pose ) {
 	using core::Real;
 	using std::string;
 
-	char const first_chain( pose.pdb_info()->chain(1) );
+	std::string first_chain( pose.pdb_info()->chain(1) );
 	// rename second chain
 	core::Size breakpoint(0);
 	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
-		char const chain_ii( pose.pdb_info()->chain(ii) );
+		std::string chain_ii( pose.pdb_info()->chain(ii) );
 		if ( !breakpoint && chain_ii != first_chain ) {
 			breakpoint = ii;
 		}

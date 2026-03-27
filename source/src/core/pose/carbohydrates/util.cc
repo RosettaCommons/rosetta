@@ -443,7 +443,7 @@ glycosylate_pose(
 	// Keep in an-tact PDBInfo and organize it nicely.
 	if ( keep_pdbinfo && pose.pdb_info() != nullptr ) {
 
-		char protein_chain = pose.pdb_info()->chain( sequence_position );
+		std::string protein_chain = pose.pdb_info()->chain( sequence_position );
 		int max_protein_chain_pdbnum = 0;
 
 		//If you have a residue number that is negative - what the hell is that?

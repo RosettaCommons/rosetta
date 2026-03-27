@@ -78,7 +78,7 @@ public:
 		std::string const & cst_fn,
 		std::string const & symmdef_file = "NULL",
 		core::Real const weight = 1.,
-		utility::vector1<char> const & rand_chains = utility::vector1<core::Size>(0),
+		utility::vector1<std::string> const & rand_chains = utility::vector1<std::string>(),
 		bool const align_pdb_info = true);
 
 	void add_null_template(
@@ -92,7 +92,7 @@ public:
 		std::string const & cst_fn,
 		std::string const & symmdef_file = "NULL",
 		core::Real const weight = 1.,
-		utility::vector1<char> const & rand_chains = utility::vector1<core::Size>(0),
+		utility::vector1<std::string> const & rand_chains = utility::vector1<std::string>(),
 		std::string const & filename="default",
 		bool const align_pdb_info = true);
 
@@ -240,7 +240,7 @@ private:
 	utility::vector1< bool > should_align_pdb_infos_;
 	utility::vector1< protocols::loops::Loops > template_chunks_;    // template secstruct definitions
 	utility::vector1< protocols::loops::Loops > template_contigs_;   // template continuous pieces
-	utility::vector1< utility::vector1<char> > randomize_chains_;  // per-template chain randomization
+	utility::vector1< utility::vector1<std::string> > randomize_chains_;  // per-template chain randomization
 	utility::vector1< detailedControlsTagSetting > detailed_controls_settings_;
 
 	std::string cen_cst_in_;

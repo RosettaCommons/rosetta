@@ -79,7 +79,7 @@ public:
 
 private:
 	protocols::qsar::scoring_grid::GridSetCOP grid_set_prototype_;
-	char chain_;
+	std::string chain_;
 
 
 };

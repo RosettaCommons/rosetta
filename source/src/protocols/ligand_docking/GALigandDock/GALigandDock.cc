@@ -746,7 +746,7 @@ GALigandDock::apply( pose::Pose & pose )
 					if ( TR.Debug.visible() ) TR.Debug << "Fixing pdb info." << std::endl;
 					core::Size newid(1);
 					for ( core::Size ligid : lig_resids ) {
-						pose.pdb_info()->chain( ligid, 'B' );
+						pose.pdb_info()->chain( ligid, "B" );
 						pose.pdb_info()->number( ligid, newid );
 						newid++;
 					}
@@ -798,7 +798,7 @@ GALigandDock::apply( pose::Pose & pose )
 						if ( TR.Debug.visible() ) TR.Debug << "Fixing pdb info." << std::endl;
 						core::Size newid(1);
 						for ( core::Size ligid : lig_resids ) {
-							pose.pdb_info()->chain( ligid, 'B' );
+							pose.pdb_info()->chain( ligid, "B" );
 							pose.pdb_info()->number( ligid, newid );
 							newid++;
 						}

@@ -1041,8 +1041,8 @@ bool
 not_already_connected(
 	pose::Pose const & pose,
 	core::Size const num_jumps,
-	char const this_chain,
-	char const other_chain,
+	std::string const & this_chain,
+	std::string const & other_chain,
 	ObjexxFCL::FArray2D< core::Size > & jump_pairs
 )
 {
@@ -1050,8 +1050,8 @@ not_already_connected(
 	for ( core::Size i = 1 ; i <= num_jumps ; ++i ) {
 
 		// Get chain ids for residues involved in jumps
-		char const jump_chain1( pose.pdb_info()->chain( jump_pairs( 1, i ) ) );
-		char const jump_chain2( pose.pdb_info()->chain( jump_pairs( 2, i ) ) );
+		std::string const & jump_chain1( pose.pdb_info()->chain( jump_pairs( 1, i ) ) );
+		std::string const & jump_chain2( pose.pdb_info()->chain( jump_pairs( 2, i ) ) );
 
 		// Check versus pre-existing jump ( both ways )
 

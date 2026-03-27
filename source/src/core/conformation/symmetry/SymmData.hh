@@ -81,7 +81,7 @@ private:
 	std::map< std::string, core::Size > jump_string_to_jump_num_;
 	std::map< std::string, core::Size > virt_id_to_virt_num_;
 	std::map< std::string, core::Size > virt_id_to_subunit_num_;
-	std::map< std::string, char > virt_id_to_subunit_chain_;
+	std::map< std::string, std::string > virt_id_to_subunit_chain_;
 	std::map< std::string, std::string > virt_id_to_subunit_residue_;
 	std::map< core::Size, std::string > virt_num_to_virt_id_;
 	std::map< core::Size, std::string > subunit_num_to_virt_id_;
@@ -92,9 +92,9 @@ private:
 	utility::vector1< core::Size > include_subunit_;
 	utility::vector1< core::Size > output_subunit_;
 
-	utility::vector1<char> components_;
-	std::map<std::string,char> name2component_;
-	std::map<std::string,utility::vector1<char> > jname2components_;
+	utility::vector1<std::string> components_;
+	std::map<std::string,std::string> name2component_;
+	std::map<std::string,utility::vector1<std::string> > jname2components_;
 	std::map<std::string,utility::vector1<Size> > jname2subunits_;
 
 	utility::vector1<std::string> leaves_of_jump(std::string const & jname) const;
@@ -182,7 +182,7 @@ public:
 	std::map< std::string, Size > const &
 	get_virt_id_to_subunit_num() const;
 
-	std::map< std::string, char > const &
+	std::map< std::string, std::string > const &
 	get_virt_id_to_subunit_chain() const;
 
 	std::map< std::string, std::string > const &
@@ -239,9 +239,9 @@ public:
 	set_symm_transforms(
 		std::vector< std::vector< std::string> > symm_transforms );
 
-	utility::vector1<char> const & get_components() const;
-	std::map<std::string,char> const & get_subunit_name_to_component() const;
-	std::map<std::string,utility::vector1<char> > const & get_jump_name_to_components() const;
+	utility::vector1<std::string> const & get_components() const;
+	std::map<std::string,std::string> const & get_subunit_name_to_component() const;
+	std::map<std::string,utility::vector1<std::string> > const & get_jump_name_to_components() const;
 	std::map<std::string,utility::vector1<Size> > const & get_jump_name_to_subunits() const;
 
 	std::string const & get_parent_jump(std::string const & jname) const;
@@ -250,7 +250,7 @@ public:
 	std::string const & get_least_common_ancertor_jump(std::string const & jname1, std::string const & jname2) const;
 	std::string const & get_least_common_ancertor_virtual(std::string const & vname1, std::string const & vname2) const;
 
-	utility::vector1<char> components_moved_by_jump(std::string const & jname) const;
+	utility::vector1<std::string> components_moved_by_jump(std::string const & jname) const;
 	utility::vector1<Size> subunits_moved_by_jump(std::string const & jname) const;
 
 };

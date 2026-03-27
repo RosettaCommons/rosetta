@@ -210,7 +210,7 @@ public:
 
 		TR << "Testing glycosylating pose" << std::endl;
 		std::string man5 = "a-D-Manp-(1->3)-[a-D-Manp-(1->3)-[a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-b-D-GlcpNAc-(1->4)-b-D-GlcpNAc-";
-		core::pose::carbohydrates::glycosylate_pose( glycan_free_pose_, glycan_free_pose_.pdb_info()->pdb2pose('A', 21), man5);
+		core::pose::carbohydrates::glycosylate_pose( glycan_free_pose_, glycan_free_pose_.pdb_info()->pdb2pose("A", 21), man5);
 
 		//TS_ASSERT( glycan_free_pose_.glycan_tree_set() != nullptr );
 
@@ -225,7 +225,7 @@ public:
 
 
 
-		core::Size asn_residue = pose_.pdb_info()->pdb2pose('A', 109);
+		core::Size asn_residue = pose_.pdb_info()->pdb2pose("A", 109);
 
 		core::pose::carbohydrates::glycosylate_pose( pose_, asn_residue, man5, false);
 		pose_.dump_pdb("gp120_3_glycans.pdb");

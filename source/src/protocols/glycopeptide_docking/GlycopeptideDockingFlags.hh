@@ -362,11 +362,6 @@ public:
 
 
 private:
-	/// @brief Function to get index of anchor, donor and glycosylation residues
-	/// from specified string.
-	core::Size
-	get_resnum(core::pose::Pose const &pose,std::string const &special_residue);
-
 	core::Size first_residue_substrate_;
 	core::Size last_residue_substrate_;
 	core::Size anchor_residue_substrate_;

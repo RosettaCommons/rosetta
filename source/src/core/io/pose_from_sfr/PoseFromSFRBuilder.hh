@@ -107,7 +107,7 @@ private:
 	void determine_residue_branching_info(
 		Size seqpos,
 		utility::vector1< std::string > & known_connect_atoms_on_this_residue,
-		std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > const & explicit_link_mapping );
+		std::map< ResID, std::map< std::string, std::pair< ResID, std::string > > > const & explicit_link_mapping );
 
 	void pre_process_residue_type_information();
 
@@ -142,15 +142,15 @@ private:
 		std::string const & name3,
 		Size seqpos,
 		utility::vector1< std::string > const & known_connect_atoms_on_this_residue,
-		std::string const & resid,
+		ResID const & resid,
 		bool const is_lower_terminus,
 		bool const is_upper_terminus,
 		bool const is_d_aa,
 		bool const is_l_aa
 	);
 
-	bool lower_terminus_is_occupied_according_to_link_map( std::string const & resid );
-	bool upper_terminus_is_occupied_according_to_link_map( std::string const & resid );
+	bool lower_terminus_is_occupied_according_to_link_map( ResID const & resid );
+	bool upper_terminus_is_occupied_according_to_link_map( ResID const & resid );
 
 	void convert_nucleic_acid_residue_info_to_standard();
 
@@ -159,11 +159,11 @@ private:
 	Size next_residue_skipping_merges( Size resid ) const;
 	Size next_residue_skipping_null_residue_types( Size resid ) const;
 
-	bool determine_separate_chemical_entity( char chainID ) const;
+	bool determine_separate_chemical_entity( std::string const & chainID ) const;
 	bool determine_same_chain_prev( Size resid, bool separate_chemical_entity ) const;
 	bool determine_same_chain_next( Size resid, bool separate_chemical_entity ) const;
-	bool determine_check_Ntermini_for_this_chain( char chainID ) const;
-	bool determine_check_Ctermini_for_this_chain( char chainID ) const;
+	bool determine_check_Ntermini_for_this_chain( std::string const & chainID ) const;
+	bool determine_check_Ctermini_for_this_chain( std::string const & chainID ) const;
 
 	void fill_name_map( Size seqpos );
 
@@ -186,7 +186,7 @@ private:
 	id::AtomID_Mask missing_;
 
 	utility::vector1< ResidueInformation > rinfos_;
-	std::map< std::string, core::Size > resid_to_index_;
+	std::map< ResID, core::Size > resid_to_index_;
 
 	id::NamedAtomID_Mask coordinates_assigned_;
 	utility::vector1< Size > pose_to_rinfo_;
@@ -207,7 +207,7 @@ private:
 	utility::vector1< bool > residue_was_recognized_;
 
 	// What links have been explicitly called? Entry for each direction, by resid and atom name on residue
-	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > known_links_;
+	std::map< ResID, std::map< std::string, std::pair< ResID, std::string > > > known_links_;
 
 	bool outputted_ignored_water_warning_;
 

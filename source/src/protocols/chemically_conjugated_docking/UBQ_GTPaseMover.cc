@@ -202,7 +202,7 @@ catch ( utility::excn::Exception & e ) {
 
 	//determine cysteine target
 	runtime_assert(GTPase.conformation().num_chains() == 1);
-	char const GTPasechain(GTPase.pdb_info()->chain(1));
+	std::string GTPasechain(GTPase.pdb_info()->chain(1));
 	GTPase_lys_ = GTPase.pdb_info()->pdb2pose(GTPasechain, GTPase_residue);
 	//runtime_assert(GTPase.residue_type(GTPase_lys_).aa() == core::chemical::aa_lys);
 

@@ -84,7 +84,7 @@ public:
 	std::string get_type() const override = 0;
 
 	/// @brief set the chain the grid applies to
-	void set_chain(char ) override
+	void set_chain(std::string const & ) override
 	{
 
 	}

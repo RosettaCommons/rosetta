@@ -17,6 +17,7 @@
 
 #include <iosfwd>
 #include <map>
+#include <string>
 
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -36,11 +37,11 @@ struct ResID;
 typedef map<ResID,core::conformation::Residue*> resids_type;
 
 struct ResID {
-	char chain_id;
+	std::string chain_id;
 	int res_num;
 
 	ResID();
-	ResID( char chain_id, int res_num );
+	ResID( std::string const & chain_id, int res_num );
 	ResID( core::conformation::Residue const& r );
 
 	bool operator==(ResID const& other ) const;
