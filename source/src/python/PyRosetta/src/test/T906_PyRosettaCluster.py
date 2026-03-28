@@ -7,12 +7,10 @@
 
 __author__ = "Jason C. Klima"
 
-from benchmark_test_utils import run_test_cases
+from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
-run_test_cases(
-    "pyrosetta.tests.distributed.cluster.test_smoke.WorkerPreemptionTest.test_disk_task_registry",
-    "pyrosetta.tests.distributed.cluster.test_smoke.WorkerPreemptionTest.test_memory_task_registry",
-    "pyrosetta.tests.distributed.cluster.test_smoke.WorkerPreemptionTest.test_disk_max_task_replicas_all",
-    "pyrosetta.tests.distributed.cluster.test_smoke.WorkerPreemptionTest.test_disk_max_task_replicas_int",
+run_distributed_cluster_test_cases(
+    "test_smoke.ResourcesTest.test_resources",
+    "test_smoke.ResourcesTest.test_resources_clients",
 )

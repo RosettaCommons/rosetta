@@ -7,10 +7,10 @@
 
 __author__ = "Jason C. Klima"
 
-from benchmark_test_utils import run_test_cases
+from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
-run_test_cases(
-    "pyrosetta.tests.distributed.cluster.test_smoke.SmokeTest.test_smoke",
-    "pyrosetta.tests.distributed.cluster.test_smoke.SmokeTest.test_ignore_errors",
+run_distributed_cluster_test_cases(
+    "test_smoke.SmokeTest.test_smoke",
+    "test_smoke.SmokeTest.test_ignore_errors",
 )

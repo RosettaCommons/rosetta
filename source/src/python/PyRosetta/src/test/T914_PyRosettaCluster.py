@@ -11,5 +11,8 @@ from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
 run_distributed_cluster_test_cases(
-    "test_smoke.SerializationTest.test_serialization",
+    "test_smoke.WorkerPreemptionTest.test_disk_task_registry",
+    "test_smoke.WorkerPreemptionTest.test_memory_task_registry",
+    "test_smoke.WorkerPreemptionTest.test_disk_max_task_replicas_all",
+    "test_smoke.WorkerPreemptionTest.test_disk_max_task_replicas_int",
 )

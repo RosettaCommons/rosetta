@@ -7,14 +7,10 @@
 
 __author__ = "Jason C. Klima"
 
-from benchmark_test_utils import run_test_cases
+from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
-run_test_cases(
-    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_minimizer_nstruct",
-    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_minimizer_nstruct_filter_results",
-    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_packer_nstruct",
-    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_packer_nstruct_filter_results",
-    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_packer_separate",
-    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibility.test_reproducibility_packer_separate_filter_results",
+run_distributed_cluster_test_cases(
+    "test_smoke.RuntimeTest.test_timing_multi_instance",
+    "test_smoke.RuntimeTest.test_timing_single_instance",
 )

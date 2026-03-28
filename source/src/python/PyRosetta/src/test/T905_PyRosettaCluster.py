@@ -7,16 +7,9 @@
 
 __author__ = "Jason C. Klima"
 
-from benchmark_test_utils import run_test_cases
+from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
-run_test_cases(
-    "pyrosetta.tests.distributed.cluster.test_smoke.IOTest.test_io",
-    "pyrosetta.tests.distributed.cluster.test_smoke.TestInitFileSigner.test_init_file_signer",
-    "pyrosetta.tests.distributed.cluster.test_smoke.PrioritiesTest.test_priorities",
-    "pyrosetta.tests.distributed.cluster.test_smoke.RetriesTest.test_retries_persistent_errors",
-    "pyrosetta.tests.distributed.cluster.test_smoke.RetriesTest.test_retries_succeed_on_last_retry",
-    "pyrosetta.tests.distributed.cluster.test_smoke.RetriesTest.test_no_retries",
-    "pyrosetta.tests.distributed.cluster.test_smoke.RetriesTest.test_retries_api",
-    "pyrosetta.tests.distributed.cluster.test_smoke.TaskKeysTest.test_task_keys",
+run_distributed_cluster_test_cases(
+    "test_smoke.MultipleClientsTest.test_clients",
 )

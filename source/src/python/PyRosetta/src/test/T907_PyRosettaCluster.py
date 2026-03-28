@@ -7,9 +7,12 @@
 
 __author__ = "Jason C. Klima"
 
-from benchmark_test_utils import run_test_cases
+from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
-run_test_cases(
-    "pyrosetta.tests.distributed.cluster.test_logging.LoggingTest.test_logging",
+run_distributed_cluster_test_cases(
+    "test_smoke.GeneratorTest.test_generate_builtin_clients",
+    "test_smoke.GeneratorTest.test_generate_multi_user_clients",
+    "test_smoke.GeneratorTest.test_generate_partition_clients",
+    "test_smoke.GeneratorTest.test_generate_user_client",
 )

@@ -7,17 +7,12 @@
 
 __author__ = "Jason C. Klima"
 
-from benchmark_test_utils import run_test_cases
+from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
-run_test_cases(
-    "pyrosetta.tests.distributed.cluster.test_smoke.MultipleClientsTest.test_clients",
-    "pyrosetta.tests.distributed.cluster.test_smoke.ResourcesTest.test_resources",
-    "pyrosetta.tests.distributed.cluster.test_smoke.ResourcesTest.test_resources_clients",
-    "pyrosetta.tests.distributed.cluster.test_smoke.GeneratorTest.test_generate_builtin_clients",
-    "pyrosetta.tests.distributed.cluster.test_smoke.GeneratorTest.test_generate_multi_user_clients",
-    "pyrosetta.tests.distributed.cluster.test_smoke.GeneratorTest.test_generate_partition_clients",
-    "pyrosetta.tests.distributed.cluster.test_smoke.GeneratorTest.test_generate_user_client",
-    "pyrosetta.tests.distributed.cluster.test_smoke.RuntimeTest.test_timing_multi_instance",
-    "pyrosetta.tests.distributed.cluster.test_smoke.RuntimeTest.test_timing_single_instance",
+run_distributed_cluster_test_cases(
+    "test_smoke.ScoresTest.test_detached_scores",
+    "test_smoke.ScoresTest.test_detached_scores_in_protocol",
+    "test_smoke.ScoresTest.test_detached_scores_with_reserve_scores",
+    "test_smoke.ScoresTest.test_secure_packages_billiard",
 )

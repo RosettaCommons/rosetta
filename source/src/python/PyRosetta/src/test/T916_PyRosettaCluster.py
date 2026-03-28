@@ -11,5 +11,10 @@ from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
 run_distributed_cluster_test_cases(
-    "test_smoke.SerializationTest.test_serialization",
+    "test_reproducibility.TestReproducibility.test_reproducibility_minimizer_nstruct",
+    "test_reproducibility.TestReproducibility.test_reproducibility_minimizer_nstruct_filter_results",
+    "test_reproducibility.TestReproducibility.test_reproducibility_packer_nstruct",
+    "test_reproducibility.TestReproducibility.test_reproducibility_packer_nstruct_filter_results",
+    "test_reproducibility.TestReproducibility.test_reproducibility_packer_separate",
+    "test_reproducibility.TestReproducibility.test_reproducibility_packer_separate_filter_results",
 )

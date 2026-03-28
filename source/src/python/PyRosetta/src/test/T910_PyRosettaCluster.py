@@ -7,11 +7,9 @@
 
 __author__ = "Jason C. Klima"
 
-from benchmark_test_utils import run_test_cases
+from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
-run_test_cases(
-    "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityPoseDataFrame.test_reproducibility_from_reproduce",
-    # "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityTaskUpdates.test_reproduce_task_updates",
-    # "pyrosetta.tests.distributed.cluster.test_reproducibility.TestReproducibilityRemodelTaskUpdates.test_reproduce_remodel_task_updates",
+run_distributed_cluster_test_cases(
+    "test_smoke.TestInitFileSigner.test_init_file_signer",
 )

@@ -136,3 +136,11 @@ def run_test_cases(*test_cases: str) -> None:
         t1 = time.perf_counter()
         dt = t1 - t0
         print(f"Finished running test in {dt:.6f} seconds: {test_case}\n")
+
+
+def run_distributed_cluster_test_cases(*test_cases: str) -> None:
+    """Run the input test cases (each prepended with "pyrosetta.tests.distributed.cluster.") using the `unittest` module."""
+
+    prefix = "pyrosetta.tests.distributed.cluster."
+    prepend = lambda test_case: f"{prefix}{test_case}"
+    run_test_cases(*map(prepend, test_cases))
