@@ -562,7 +562,11 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', opti
     #print(sysconfig.get_config_vars())
     #CONFINCLUDEPY
 
-    extra = f' --python-include-dir={py_env.python_include_dir} --python-lib={py_env.python_lib_dir} --stubs'
+    extra = f' --python-include-dir={py_env.python_include_dir} --python-lib={py_env.python_lib_dir}'
+
+    python_version = platform.get('python', DEFAULT_PYTHON_VERSION)
+    if not (python_version in ['3.8'] and conda): extra += ' --stubs'
+
     # if platform['os'] == 'mac'  and  platform['python'].startswith('python3'):
     #     python_prefix = execute('Getting {} prefix path...'.format(platform['python']), '{}-config --prefix'.format(platform['python']), return_='output')
     #     extra += ' --python-include-dir={0}/include/python3.5m --python-lib={0}/lib/libpython3.5.dylib'.format(python_prefix)
