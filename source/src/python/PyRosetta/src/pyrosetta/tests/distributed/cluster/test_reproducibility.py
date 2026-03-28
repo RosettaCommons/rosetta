@@ -1984,9 +1984,8 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
         }
 
     @staticmethod
-    def get_random_options(scorefxn_flags):
-        key, value = random.choice(scorefxn_flags)
-        options = {key: value}
+    def get_random_options():
+        options = {}
         options.update(TestReproducibilityRemodelTaskUpdates.get_remodel_options())
 
         return options
@@ -2002,15 +2001,15 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             set_logging_handler="logging",
         )
         _n_protocols = 3
-        _available_score_functions = {
-            ("-score:weights", "ref2015"),
-            ("-beta_nov16", "1"),
-            ("-beta_nov16_cart", "1"),
-        }
-        if TestReproducibilityTaskUpdates.score_function_is_available("beta_jan25"):
-            _available_score_functions.add(("-beta_jan25", "1"))
-        else:
-            _available_score_functions.add(("-beta_nov16", "1"))
+        # _available_score_functions = {
+        #     ("-score:weights", "ref2015"),
+        #     ("-beta_nov16", "1"),
+        #     ("-beta_nov16_cart", "1"),
+        # }
+        # if TestReproducibilityTaskUpdates.score_function_is_available("beta_jan25"):
+        #     _available_score_functions.add(("-beta_jan25", "1"))
+        # else:
+        #     _available_score_functions.add(("-beta_nov16", "1"))
         # Initializing more than one scorefunction across PyRosetta protocols sporadically throws the following errors from Dask workers on the Benchmark server:
         #     `free(): invalid next size (fast)`
         #     `munmap_chunk(): invalid pointer`
@@ -2023,12 +2022,13 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
         #     ("-beta_nov16_cart", "1"),
         #     ("-beta_jan25", "1"),
         # }
-        _scorefxn_flags = sorted(map(list, _available_score_functions)) # Make JSON-serializable
-        if verbose:
-            print(f"Available scorefunction flags: {_scorefxn_flags}")
+        # _scorefxn_flags = sorted(map(list, _available_score_functions)) # Make JSON-serializable
+        # if verbose:
+        #     print(f"Available scorefunction flags: {_scorefxn_flags}")
 
         def create_tasks(verbose=verbose):
-            custom_options = TestReproducibilityRemodelTaskUpdates.get_random_options(_scorefxn_flags)
+            custom_options = TestReproducibilityRemodelTaskUpdates.get_random_options()
+            custom_options["-beta_nov16"] = "1" # First protocol always uses 'beta_nov16'
             constant_options = {
                 "-multithreading:total_threads": "1",
                 "-out:level": "200",
@@ -2063,7 +2063,6 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
                 "set_logging_handler": "logging",
                 "verbose": verbose,
                 "n_protocols": _n_protocols,
-                "scorefxn_flags": _scorefxn_flags,
                 "constant_options": constant_options,
             }
 
@@ -2235,7 +2234,8 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
                     print(f"PyRosetta protocol number {protocol_number} random RNG state: {hash(str(random.getstate()))}")
                 kwargs["options"] = ""
                 kwargs["extra_options"] = {
-                    **TestReproducibilityRemodelTaskUpdates.get_random_options(kwargs["scorefxn_flags"]),
+                    **{"-beta_jan25": "1"}, # Subsequent protocols always uses 'beta_jan25'
+                    **TestReproducibilityRemodelTaskUpdates.get_random_options(),
                     **kwargs["constant_options"],
                 }
             # Maybe print
@@ -2251,6 +2251,8 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
         compressed = True
         protocols = [my_remodel_protocol] * _n_protocols
         for norm_task_options in (False, True):
+            if verbose:
+                print(f"Running original simulation for `norm_task_options={norm_task_options}`.")
             output_path = os.path.join(self.workdir, f"outputs_norm_task_options_{int(norm_task_options)}")
             PyRosettaCluster(
                 tasks=create_tasks,
