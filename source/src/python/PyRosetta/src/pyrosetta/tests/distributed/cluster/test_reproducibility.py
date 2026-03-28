@@ -2163,6 +2163,7 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             import pyrosetta
             import pyrosetta.distributed.io as io
             import random
+            import toolz
 
             from pyrosetta.rosetta.protocols.rosetta_scripts import XmlObjects
             from pyrosetta.distributed.cluster.init_files import PackedPoseHasher
@@ -2179,8 +2180,12 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
                 if "extra_options" in kwargs:
                     print(f"PyRosetta protocol number {protocol_number} value of 'extra_options' key:", kwargs["extra_options"])
             # Setup PackedPose
-            if packed_pose is None:
-                packed_pose = io.pose_from_sequence("AA")
+            # if packed_pose is None:
+            #     packed_pose = io.pose_from_sequence("AA")
+            _reserved = pyrosetta.Pose().cache._reserved
+            _is_not_reserved = lambda k: k not in _reserved
+            _cache = toolz.keyfilter(_is_not_reserved, packed_pose.pose.cache) if packed_pose is not None else {}
+            packed_pose = io.pose_from_sequence("AA").update_scores(_cache)
             # Make Remodel blueprint file
             n_res_cterm_ext = random.randint(3, 5)
             n_term_threshold = random.randint(2, 3)
@@ -2193,15 +2198,15 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             )
             # Run RemodelMover
             pose = packed_pose.pose
+            cache = toolz.keyfilter(_is_not_reserved, pose.cache)
             xml_obj = XmlObjects.create_from_string(
                 f"""<MOVERS><RemodelMover name="remodel" blueprint="{blueprint_file}"/></MOVERS>"""
             ).get_mover("remodel")
             if verbose:
                 print(f"Running Remodel in PyRosetta protocol number {protocol_number}.")
             xml_obj.apply(pose)
-            packed_pose = io.to_packed(pose)
+            packed_pose = io.to_packed(pose).update_scores(cache)
             # Unpack scores
-            cache = packed_pose.pose.cache
             protocol_scorefxn_names = cache.get("protocol_scorefxn_names", None) or {}
             protocol_total_scores = cache.get("protocol_total_scores", None) or {}
             protocol_n_res = cache.get("protocol_n_res", None) or {}
