@@ -28,6 +28,7 @@ import os
 import pyrosetta
 import pyrosetta.distributed
 
+from pyrosetta.exceptions import PyRosettaIsNotInitializedError
 from typing import (
     AbstractSet,
     Dict,
@@ -57,7 +58,7 @@ def _get_residue_type_set_name3() -> Union[AbstractSet[str], NoReturn]:
         _brt = _res_set.base_residue_types()
         _name3_list = [_brt.pop().name3() for _ in range(_brt.capacity())]
     else:
-        raise RuntimeError("PyRosetta is not initialized.")
+        raise PyRosettaIsNotInitializedError("PyRosetta is not initialized.")
 
     return set(_name3_list)
 

@@ -66,6 +66,7 @@ from pyrosetta.distributed.cluster.converter_tasks import (
     maybe_issue_environment_warnings as _maybe_issue_environment_warnings,
 )
 from pyrosetta.distributed.cluster.serialization import Serialization
+from pyrosetta.distributed.cluster.validators import PYROSETTACLUSTER_KEY_PREFIX, _validate_task
 
 
 S = TypeVar("S", bound=Serialization)
@@ -542,11 +543,65 @@ def _get_decoy_id(protocols: Sized, decoy_ids: List[int]) -> Optional[int]:
     return decoy_id
 
 
+def _is_reserved_key(key: Any) -> bool:
+    """Test if a task dictionary key is a PyRosettaCluster reserved key."""
+    return isinstance(key, str) and key.startswith(PYROSETTACLUSTER_KEY_PREFIX)
+
+
+def _parse_output_kwargs(
+    output_kwargs: Dict[str, Any], input_kwargs: Dict[str, Any], protocol_name: str
+) -> Dict[str, Any]:
+    """Parse a returned task dictionary from a user-provided PyRosetta protocol."""
+
+    prc_kwargs = toolz.dicttoolz.keyfilter(_is_reserved_key, input_kwargs)
+    task_kwargs = {}
+    existing_kwargs = {}
+    for key, value in output_kwargs.items():
+        if not isinstance(key, str):
+            raise ValueError(
+                f"User-provided PyRosetta protocol '{protocol_name}' returned one object of type `dict`, "
+                + f"but the keys must be of type `str`. Received: '{type(key)}'"
+            )
+        elif _is_reserved_key(key): # Do not validate since it contains reserved keys
+            if key not in prc_kwargs:
+                logging.warning(
+                    f"User-provided PyRosetta protocol '{protocol_name}' returned one object of type `dict`, "
+                    + f"but a key starting with '{PYROSETTACLUSTER_KEY_PREFIX}' was added: '{key}'. "
+                    + f"Task keys starting with '{PYROSETTACLUSTER_KEY_PREFIX}' are reserved for PyRosettaCluster! "
+                    + f"Automatically ignoring the '{key}' key from the returned task."
+                )
+            continue
+        elif key in input_kwargs:
+            input_value = input_kwargs[key]
+            try:
+                is_equal = (value == input_value)
+            except Exception:
+                logging.debug(
+                    f"Equality check failed for key '{key}' while parsing the output task dictionary from user-provided "
+                    + f"PyRosetta protocol '{protocol_name}' -- treating value as updated and validating value: '{value}'"
+                )
+                is_equal = False
+            if is_equal: # Do not validate since 'options'/'extra_options' values contain seed-related flags during reproduction simulations
+                existing_kwargs[key] = value
+            else: # Must validate since user updated value of key
+                task_kwargs[key] = value
+        else: # Must validate new keys
+            task_kwargs[key] = value
+
+    _validate_task(task_kwargs)
+    assert set(existing_kwargs).isdisjoint(set(prc_kwargs)), (
+        f"Cannot merge duplicate task dictionary keys: {set(existing_kwargs).intersection(set(prc_kwargs))}"
+    )
+    task_kwargs.update(**existing_kwargs, **prc_kwargs)
+
+    return task_kwargs
+
+
 def _get_packed_poses_output_kwargs(
     result: Any,
-    input_kwargs: Dict[Any, Any],
+    input_kwargs: Dict[str, Any],
     protocol_name: str,
-) -> Tuple[List[PackedPose], Dict[Any, Any]]:
+) -> Tuple[List[PackedPose], Dict[str, Any]]:
     packed_poses = []
     protocol_kwargs = []
     for obj in to_iterable(result, to_packed, protocol_name):
@@ -562,9 +617,8 @@ def _get_packed_poses_output_kwargs(
         output_kwargs = input_kwargs
     elif len(protocol_kwargs) == 1:
         output_kwargs = next(iter(protocol_kwargs))
-        output_kwargs.update(
-            toolz.dicttoolz.keyfilter(lambda k: k.startswith("PyRosettaCluster_"), input_kwargs)
-        )
+        output_kwargs.pop("PyRosettaCluster_tmp_path", None)
+        output_kwargs = _parse_output_kwargs(output_kwargs, input_kwargs, protocol_name)
     elif len(protocol_kwargs) >= 2:
         raise ValueError(
             f"User-provided PyRosetta protocol '{protocol_name}' may return at most one object of type `dict`."
@@ -575,7 +629,7 @@ def _get_packed_poses_output_kwargs(
 
 def _get_compressed_packed_pose_kwargs_pairs_list(
     packed_poses: List[PackedPose],
-    output_kwargs: Dict[Any, Any],
+    output_kwargs: Dict[str, Any],
     protocol_name: str,
     protocols_key: str,
     decoy_ids: List[int],
