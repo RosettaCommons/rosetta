@@ -446,6 +446,7 @@ from pyrosetta.distributed.cluster.validators import (
     _validate_min_len,
     _validate_output_init_file,
     _validate_scorefile_name,
+    _validate_tasks,
 )
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
@@ -469,10 +470,13 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
     tasks = attr.ib(
         type=list,
         default=[{}],
-        validator=attr.validators.deep_iterable(
-            member_validator=attr.validators.instance_of(dict),
-            iterable_validator=attr.validators.instance_of(list),
-        ),
+        validator=[
+            attr.validators.deep_iterable(
+                member_validator=attr.validators.instance_of(dict),
+                iterable_validator=attr.validators.instance_of(list),
+            ),
+            _validate_tasks,
+        ],
         converter=_parse_tasks,
     )
     nstruct = attr.ib(
@@ -589,7 +593,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
     project_name = attr.ib(
         type=str,
         default=datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f"),
-        validator=attr.validators.optional(attr.validators.instance_of(str)),
+        validator=attr.validators.instance_of(str),
         converter=attr.converters.default_if_none(default="PyRosettaCluster"),
     )
     simulation_name = attr.ib(
@@ -934,6 +938,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             ),
             takes_self=True,
         ),
+        init=False,
         validator=attr.validators.optional(attr.validators.instance_of(str)),
     )
     pyrosetta_init_args = attr.ib(

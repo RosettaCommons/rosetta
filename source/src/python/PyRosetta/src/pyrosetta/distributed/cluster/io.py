@@ -79,8 +79,8 @@ class IO(Generic[G]):
     REMARK_FORMAT: str = "REMARK PyRosettaCluster: "
 
     def _get_instance_and_metadata(
-        self, kwargs: Dict[Any, Any]
-    ) -> Tuple[Dict[Any, Any], Dict[Any, Any]]:
+        self, kwargs: Dict[str, Any]
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get the current state of the PyRosettaCluster instance, and split the
         kwargs into the PyRosettaCluster instance kwargs and ancillary metadata.
@@ -131,7 +131,7 @@ class IO(Generic[G]):
         return output_dir
 
     @staticmethod
-    def _filter_scores_dict(scores_dict: Dict[Any, Any]) -> Dict[Any, Any]:
+    def _filter_scores_dict(scores_dict: Dict[str, Any]) -> Dict[str, Any]:
         for key in list(scores_dict.keys()):
             try:
                 IO._dump_json(scores_dict[key])
@@ -146,7 +146,9 @@ class IO(Generic[G]):
 
         return scores_dict
 
-    def _format_result(self, result: Union[Pose, PackedPose]) -> Tuple[str, Dict[Any, Any], PackedPose]:
+    def _format_result(
+        self, result: Union[Pose, PackedPose]
+    ) -> Tuple[PackedPose, str, Dict[str, Any], Dict[str, Any]]:
         """
         Given a `Pose` or `PackedPose` object, return a tuple containing
         the pdb string and a scores dictionary.
@@ -164,7 +166,7 @@ class IO(Generic[G]):
             Iterable[Optional[Union[Pose, PackedPose, bytes]]],
             Optional[Union[Pose, PackedPose]],
         ],
-    ) -> Union[List[Tuple[str, Dict[Any, Any]]], NoReturn]:
+    ) -> Union[List[Tuple[str, Dict[str, Any]]], NoReturn]:
         """
         Format output results on distributed worker. Input argument `results` can be a
         `Pose`, `PackedPose`, or `None` object, or a `list` or `tuple` of `Pose` and/or `PackedPose`
@@ -196,7 +198,7 @@ class IO(Generic[G]):
 
         return out
 
-    def _process_kwargs(self, kwargs: Dict[Any, Any]) -> Dict[Any, Any]:
+    def _process_kwargs(self, kwargs: Dict[str, Any]) -> Dict[str, Any]:
         """
         Remove seed specification from 'extra_options' or 'options',
         and remove protocols_key from kwargs.
@@ -283,7 +285,7 @@ class IO(Generic[G]):
             sort_keys=False,
         )
 
-    def _save_results(self, results: Any, kwargs: Dict[Any, Any]) -> None:
+    def _save_results(self, results: Any, kwargs: Dict[str, Any]) -> None:
         """Write results and kwargs to disk."""
 
         if self.dry_run:
