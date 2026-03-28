@@ -1991,7 +1991,7 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
 
         return options
 
-    def test_reproduce_remodel_task_updates(self, verbose=False):
+    def test_reproduce_remodel_task_updates(self, verbose=True):
         """
         Test for PyRosettaCluster decoy reproducibility with updated task dictionaries
         using RosettaRemodel per user-provided PyRosetta protocol.
@@ -2002,7 +2002,11 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             set_logging_handler="logging",
         )
         _n_protocols = 3
-        _available_score_functions = set()
+        _available_score_functions = {
+            ("-score:weights", "ref2015"),
+            ("-beta_nov16", "1"),
+            ("-beta_nov16_cart", "1"),
+        }
         if TestReproducibilityTaskUpdates.score_function_is_available("beta_jan25"):
             _available_score_functions.add(("-beta_jan25", "1"))
         else:
@@ -2063,6 +2067,73 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
                 "constant_options": constant_options,
             }
 
+        def get_pose_data(pose):
+            aa_name3s = [
+                "ALA", "CYS", "ASP", "GLU", "PHE", "GLY", "HIS", "ILE", "LYS", "LEU",
+                "MET", "ASN", "PRO", "GLN", "ARG", "SER", "THR", "VAL", "TRP", "TYR",
+            ]
+
+            def fingerprint_residue(rts, name3):
+                res = rts.get_representative_type_name3(name3)
+
+                def fingerprint_variant(rts=rts, name3=name3):
+                    variants = ["LOWER_TERMINUS_VARIANT", "UPPER_TERMINUS_VARIANT"]
+                    for v in variants:
+                        try:
+                            res_v = rts.get_residue_type_with_variant_added(res, v)
+                            return {
+                                "variant": v,
+                                "name": res_v.name(),
+                                "n_atoms": res_v.natoms(),
+                            }
+                        except Exception as e:
+                            return {"variant": v, "error": str(e)}
+
+                return {
+                    "name": res.name(),
+                    "n_atoms": res.natoms(),
+                    "atom_names": tuple(res.atom_name(i) for i in range(1, res.natoms() + 1)),
+                    "atom_types": tuple(res.atom_type(i).name() for i in range(1, res.natoms() + 1)),
+                    "elements": tuple(res.element(i).name for i in range(1, res.natoms() + 1)),
+                    "variants": fingerprint_variant(),
+                    "has_group": rts.has_interchangeability_group(res.name()),
+                }
+
+            def fingerprint_patches(rts):
+                patch_map = rts.patch_map()
+                return {
+                    "n_patch_types": len(patch_map),
+                    "patch_names": tuple(sorted(patch_map.keys())),
+                }
+
+            rts = pose.conformation().modifiable_residue_type_set_for_conf(
+                pyrosetta.rosetta.core.chemical.FULL_ATOM_t
+            )
+
+            data = {}
+            data["aa_name3_fingerprints"] = {
+                aa_name3: fingerprint_residue(rts, aa_name3)
+                for aa_name3 in aa_name3s
+            }
+            data["patches"] = fingerprint_patches(rts)
+            seq_data = {}
+            for i in range(1, pose.size()+1):
+                res = pose.residue(i)
+                seq_data[i] = {
+                    "name3": res.name3(),
+                    "n_atoms": res.natoms(),
+                }
+            data["seq_data"] = seq_data
+            sfxn = pyrosetta.get_score_function()
+            data["scorefunction"] = sfxn.get_name()
+            data["weights"] = {
+                str(scoretype).split(".")[1]: sfxn.get_weight(scoretype)
+                for scoretype in sfxn.get_nonzero_weighted_scoretypes()
+            }
+            data["sequence"] = pose.sequence()
+
+            return data
+
         def write_remodel_blueprint(packed_pose, workdir, n_res_cterm_ext=4, n_term_threshold=2, verbose=False):
             line_template = "{res} {name1} {ss}{resfile_cmd}"
             pose = packed_pose.pose
@@ -2095,6 +2166,7 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             import random
 
             from pyrosetta.rosetta.protocols.rosetta_scripts import XmlObjects
+            from pyrosetta.distributed.cluster.init_files import PackedPoseHasher
 
             verbose = kwargs["verbose"]
             tmp_path = kwargs["PyRosettaCluster_tmp_path"]
@@ -2134,16 +2206,28 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             protocol_scorefxn_names = cache.get("protocol_scorefxn_names", None) or {}
             protocol_total_scores = cache.get("protocol_total_scores", None) or {}
             protocol_n_res = cache.get("protocol_n_res", None) or {}
+            protocol_packed_pose_hash = cache.get("protocol_packed_pose_hash", None) or {}
+            protocol_packed_pose_hash_cache = cache.get("protocol_packed_pose_hash_cache", None) or {}
+            protocol_packed_pose_hash_cache_comments = cache.get("protocol_packed_pose_hash_cache_comments", None) or {}
+            protocol_pose_data = cache.get("protocol_pose_data", None) or {}
             # Add current values
             scorefxn = pyrosetta.get_score_function()
             protocol_scorefxn_names[protocol_number] = scorefxn.get_name()
             protocol_total_scores[protocol_number] = scorefxn(packed_pose.pose)
             protocol_n_res[protocol_number] = packed_pose.pose.size()
+            protocol_packed_pose_hash[protocol_number] = hash(PackedPoseHasher(packed_pose, include_cache=False, include_comments=False).digest())
+            protocol_packed_pose_hash_cache[protocol_number] = hash(PackedPoseHasher(packed_pose, include_cache=True, include_comments=False).digest())
+            protocol_packed_pose_hash_cache_comments[protocol_number] = hash(PackedPoseHasher(packed_pose, include_cache=True, include_comments=True).digest())
+            protocol_pose_data[protocol_number] = get_pose_data(packed_pose.pose)
             # Update scores
             packed_pose = packed_pose.update_scores(
                 protocol_scorefxn_names=protocol_scorefxn_names,
                 protocol_total_scores=protocol_total_scores,
                 protocol_n_res=protocol_n_res,
+                protocol_packed_pose_hash=protocol_packed_pose_hash,
+                protocol_packed_pose_hash_cache=protocol_packed_pose_hash_cache,
+                protocol_packed_pose_hash_cache_comments=protocol_packed_pose_hash_cache_comments,
+                protocol_pose_data=protocol_pose_data,
             )
             # Maybe update task dictionary for next PyRosetta protocol, which gets validated and kept
             if protocol_number + 1 < kwargs["n_protocols"]:
