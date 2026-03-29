@@ -20,6 +20,19 @@ import random
 import tempfile
 import unittest
 
+try:
+    import toolz
+except ImportError:
+    print(
+        "Importing 'pyrosetta.tests.distributed.cluster.test_reproducibility_task_updates' requires the "
+        + "third-party package 'toolz' as a dependency!\n"
+        + "Please install this package into your python environment. "
+        + "For installation instructions, visit:\n"
+        + "https://pypi.org/project/toolz/\n",
+        flush=True,
+    )
+    raise
+
 from pyrosetta.distributed.cluster import (
     PyRosettaCluster,
     reproduce,
@@ -61,6 +74,11 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
         else:
             protocol_options.append("-score:weights ref2015")
         protocol_options = {str(k): v for k, v in enumerate(protocol_options, start=0)} # Make JSON-serializable
+        for k, v in toolz.dicttoolz.keymap(int, protocol_options).items():
+            self.assertFalse(
+                (v == "-beta_jan25 1") and (protocol_options.get(str(k + 1), None) == "-score:weights ref2015"),
+                msg="Cannot transport `PackedPose` objects (with Cys residues) from 'beta_jan25' to 'ref2015' scorefunction environments."
+            )
         if verbose:
             print(f"Protocol options: {protocol_options}", flush=True)
 
