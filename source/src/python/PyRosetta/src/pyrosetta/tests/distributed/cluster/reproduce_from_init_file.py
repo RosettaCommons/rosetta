@@ -5,9 +5,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
-
 
 import argparse
 import ast
@@ -20,12 +18,11 @@ import textwrap
 import types
 
 from functools import partial
-from pyrosetta import init_from_file
 from pyrosetta.distributed.cluster import get_scores_dict, reproduce
 
 sys.path.insert(0, os.path.dirname(__file__))
 try:
-    from test_reproducibility import TestReproducibilityMulti
+    from test_reproducibility_multi import TestReproducibilityMulti
 except ImportError as ex:
     raise ImportError(ex)
 test_suite = globals().get("TestReproducibilityMulti")
