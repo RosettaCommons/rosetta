@@ -168,7 +168,7 @@ class LoggingTest(unittest.TestCase):
             if verbose:
                 for log_file in (prc_log, protocol_log):
                     with open(log_file, "r") as f:
-                        print(f"Output: '{log_file}':", f.read(), sep="\n")
+                        print(f"Output: '{log_file}':", f.read(), sep="\n", flush=True)
 
             # Ensure the files populate
             self.assertTrue(os.path.exists(protocol_log), msg=f"'{protocol_log}' doesn't exist!")
