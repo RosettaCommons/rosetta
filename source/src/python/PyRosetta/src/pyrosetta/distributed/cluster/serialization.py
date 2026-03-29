@@ -221,50 +221,44 @@ class NonceCache(Generic[G]):
         """
         package = self.unpack(sealed)
         if not isinstance(package, dict) or package.get("v", None) != 1:
+            _location = "Dask worker" if NonceCache._on_worker() else "head node"
             _err_msg = (
-                "Invalid sealed package or version on {0} nonce cache! "
+                f"Invalid sealed package or version on {_location} nonce cache! "
                 + f"Received: {type(package)!r}"
             )
-            if NonceCache._on_worker():
-                raise ValueError(_err_msg.format("worker"))
-            else:
-                raise ValueError(_err_msg.format("host"))
+            raise ValueError(_err_msg)
 
         _instance_id = package["a"] # `str`: PyRosettaCluster instance identifier/App
         _data = package["d"] # `bytes`: Data bytestring
         _mac = package["m"] # `bytes`: MAC (HMAC tag)
         _nonce = package["n"] # `bytes`: Nonce
         _version = package["v"] # `int`: Version
-
         if _instance_id != self.instance_id:
             raise ValueError("PyRosettaCluster instance identifier mismatch in sealed package.")
 
         msg = self.pack([_instance_id, _data, _nonce, _version])
         _expected_mac = hmac_digest(bytes(self.prk), msg)
         if not compare_digest(_expected_mac, _mac):
+            _location = "Dask worker" if NonceCache._on_worker() else "head node"
             _err_msg = (
-                "Task HMAC verification failed during nonce cache on {0}!\n"
+                f"Task HMAC verification failed during nonce cache on {_location}!\n"
                 + f"Expected: {_expected_mac!r}\n"
                 + f"Value:    {_mac!r}\n"
             )
-            if NonceCache._on_worker():
-                raise SystemExit(_err_msg.format("worker"))
-            else:
-                raise SystemExit(_err_msg.format("host"))
+            raise SystemExit(_err_msg)
 
         if _nonce is not None:
             if _nonce in self._seen:
                 # Replay protection
+                _location = "Dask worker" if NonceCache._on_worker() else "head node"
                 _err_msg = (
-                    "PyRosettaCluster detected a repeat nonce on the {0} for the instance identifier "
+                    f"PyRosettaCluster detected a repeat nonce on the {_location} for the instance identifier "
                     + f"'{self.instance_id}', which might indicate a replay attack is in progress! "
                     + "Exiting process for security. Please ensure that `PyRosettaCluster(security=True)` "
                     + f"is enabled in future PyRosettaCluster simulations. Received: '{_nonce}'."
                 )
-                if NonceCache._on_worker():
-                    raise SystemExit(_err_msg.format("worker"))
-                else:
-                    raise SystemExit(_err_msg.format("host"))
+                raise SystemExit(_err_msg)
+
             self._seen.add(_nonce)
             self._order.append(_nonce)
             while len(self._seen) > self._order.maxlen:
@@ -279,9 +273,9 @@ class NonceCache(Generic[G]):
                     + f"Example: {sorted(self._seen)[0]}"
                 )
                 if NonceCache._on_worker():
-                    print(f"Remote worker ({get_worker().contact_address}) nonce cache: {_msg}")
+                    print(f"Remote Dask worker ({get_worker().contact_address}) nonce cache: {_msg}")
                 else:
-                    print(f"Local host nonce cache: {_msg}")
+                    print(f"Local head node nonce cache: {_msg}")
 
 
 @attr.s(kw_only=True, slots=False, frozen=False)
