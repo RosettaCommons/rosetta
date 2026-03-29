@@ -11,8 +11,8 @@ from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
 run_distributed_cluster_test_cases(
-    "test_smoke.RetriesTest.test_retries_persistent_errors",
-    "test_smoke.RetriesTest.test_retries_succeed_on_last_retry",
-    "test_smoke.RetriesTest.test_no_retries",
-    "test_smoke.RetriesTest.test_retries_api",
+    "test_retries.RetriesTest.test_retries_persistent_errors",
+    "test_retries.RetriesTest.test_retries_succeed_on_last_retry",
+    "test_retries.RetriesTest.test_no_retries",
+    "test_retries.RetriesTest.test_retries_api",
 )

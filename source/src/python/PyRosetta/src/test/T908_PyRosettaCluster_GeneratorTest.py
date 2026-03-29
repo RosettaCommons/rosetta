@@ -11,5 +11,8 @@ from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
 run_distributed_cluster_test_cases(
-    "test_reproducibility.TestReproducibilityPoseDataFrame.test_reproducibility_from_reproduce",
+    "test_generator.GeneratorTest.test_generate_builtin_clients",
+    "test_generator.GeneratorTest.test_generate_multi_user_clients",
+    "test_generator.GeneratorTest.test_generate_partition_clients",
+    "test_generator.GeneratorTest.test_generate_user_client",
 )

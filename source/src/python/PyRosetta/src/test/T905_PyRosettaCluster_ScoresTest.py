@@ -11,8 +11,8 @@ from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
 run_distributed_cluster_test_cases(
-    "test_smoke.WorkerPreemptionTest.test_disk_task_registry",
-    "test_smoke.WorkerPreemptionTest.test_memory_task_registry",
-    "test_smoke.WorkerPreemptionTest.test_disk_max_task_replicas_all",
-    "test_smoke.WorkerPreemptionTest.test_disk_max_task_replicas_int",
+    "test_scores.ScoresTest.test_detached_scores",
+    "test_scores.ScoresTest.test_detached_scores_in_protocol",
+    "test_scores.ScoresTest.test_detached_scores_with_reserve_scores",
+    "test_scores.ScoresTest.test_secure_packages_billiard",
 )

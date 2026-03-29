@@ -11,6 +11,5 @@ from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
 run_distributed_cluster_test_cases(
-    "test_smoke.SaveAllTest.test_save_all",
-    "test_smoke.SaveAllTest.test_save_all_dry_run",
+    "test_init_file_signer.TestInitFileSigner.test_init_file_signer",
 )

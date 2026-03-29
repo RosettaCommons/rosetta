@@ -11,6 +11,5 @@ from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
 run_distributed_cluster_test_cases(
-    "test_smoke.RuntimeTest.test_timing_multi_instance",
-    "test_smoke.RuntimeTest.test_timing_single_instance",
+    "test_io.IOTest.test_io",
 )

@@ -11,6 +11,8 @@ from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
 run_distributed_cluster_test_cases(
-    "test_smoke.SmokeTest.test_smoke",
-    "test_smoke.SmokeTest.test_ignore_errors",
+    "test_worker_preemption.WorkerPreemptionTest.test_disk_task_registry",
+    "test_worker_preemption.WorkerPreemptionTest.test_memory_task_registry",
+    "test_worker_preemption.WorkerPreemptionTest.test_disk_max_task_replicas_all",
+    "test_worker_preemption.WorkerPreemptionTest.test_disk_max_task_replicas_int",
 )

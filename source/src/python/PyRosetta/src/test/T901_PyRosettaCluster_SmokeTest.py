@@ -11,5 +11,7 @@ from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
 run_distributed_cluster_test_cases(
-    "test_smoke.TaskKeysTest.test_task_keys",
+    "test_smoke.SmokeTest.test_smoke",
+    "test_smoke.SmokeTest.test_invalid_tasks",
+    "test_smoke.SmokeTest.test_ignore_errors",
 )

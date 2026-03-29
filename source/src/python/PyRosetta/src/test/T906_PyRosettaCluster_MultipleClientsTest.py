@@ -11,8 +11,5 @@ from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
 run_distributed_cluster_test_cases(
-    "test_smoke.ScoresTest.test_detached_scores",
-    "test_smoke.ScoresTest.test_detached_scores_in_protocol",
-    "test_smoke.ScoresTest.test_detached_scores_with_reserve_scores",
-    "test_smoke.ScoresTest.test_secure_packages_billiard",
+    "test_clients.MultipleClientsTest.test_clients",
 )

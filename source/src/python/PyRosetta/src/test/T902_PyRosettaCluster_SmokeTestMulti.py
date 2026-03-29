@@ -11,5 +11,6 @@ from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
 run_distributed_cluster_test_cases(
-    "test_smoke.MultipleClientsTest.test_clients",
+    "test_smoke_multi.SmokeTestMulti.test_smoke_multi",
+    "test_smoke_multi.SmokeTestMulti.test_smoke_multi_from_instance",
 )

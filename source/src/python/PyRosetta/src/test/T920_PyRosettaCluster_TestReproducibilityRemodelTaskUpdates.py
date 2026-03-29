@@ -11,8 +11,5 @@ from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
 run_distributed_cluster_test_cases(
-    "test_smoke.GeneratorTest.test_generate_builtin_clients",
-    "test_smoke.GeneratorTest.test_generate_multi_user_clients",
-    "test_smoke.GeneratorTest.test_generate_partition_clients",
-    "test_smoke.GeneratorTest.test_generate_user_client",
+    "test_reproducibility_remodel_task_updates.TestReproducibilityRemodelTaskUpdates.test_reproduce_remodel_task_updates",
 )

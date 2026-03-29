@@ -11,5 +11,5 @@ from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
 run_distributed_cluster_test_cases(
-    "test_reproducibility.TestReproducibilityTaskUpdates.test_reproduce_task_updates",
+    "test_reproducibility_task_updates.TestReproducibilityTaskUpdates.test_reproduce_task_updates",
 )

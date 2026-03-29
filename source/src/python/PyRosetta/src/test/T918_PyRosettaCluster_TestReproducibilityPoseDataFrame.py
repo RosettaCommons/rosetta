@@ -11,5 +11,5 @@ from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
 run_distributed_cluster_test_cases(
-    "test_smoke.PrioritiesTest.test_priorities",
+    "test_reproducibility_pose_dataframe.TestReproducibilityPoseDataFrame.test_reproducibility_from_reproduce",
 )

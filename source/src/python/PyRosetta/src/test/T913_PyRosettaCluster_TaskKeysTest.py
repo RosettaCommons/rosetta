@@ -11,5 +11,5 @@ from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
 run_distributed_cluster_test_cases(
-    "test_smoke.TestInitFileSigner.test_init_file_signer",
+    "test_task_keys.TaskKeysTest.test_task_keys",
 )
