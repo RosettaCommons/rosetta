@@ -19,6 +19,19 @@ import random
 import tempfile
 import unittest
 
+try:
+    import toolz
+except ImportError:
+    print(
+        "Importing 'pyrosetta.tests.distributed.cluster.test_reproducibility_remodel_task_updates' requires the "
+        + "third-party package 'toolz' as a dependency!\n"
+        + "Please install this package into your python environment. "
+        + "For installation instructions, visit:\n"
+        + "https://pypi.org/project/toolz/\n",
+        flush=True,
+    )
+    raise
+
 from pyrosetta.distributed.cluster import (
     PyRosettaCluster,
     reproduce,
@@ -29,6 +42,8 @@ from pyrosetta.tests.distributed.cluster.unittest_utils import score_function_is
 
 class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
     """Test case for decoy reproducibility with user-defined task dictionary updates with RosettaRemodel."""
+
+    _dummy_seq: str = "G"
 
     def setUp(self):
         random.seed(111)
@@ -95,23 +110,13 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             set_logging_handler="logging",
         )
         _n_protocols = 3
-        _available_score_functions = set()
+        _available_score_functions = {
+            ("-score:weights", "ref2015"),
+            ("-beta_nov16", "1"),
+            ("-beta_nov16_cart", "1"),
+        }
         if score_function_is_available("beta_jan25"):
             _available_score_functions.add(("-beta_jan25", "1"))
-        else:
-            _available_score_functions.add(("-beta_nov16", "1"))
-        # Initializing more than one scorefunction across PyRosetta protocols sporadically throws the following errors from Dask workers on the Benchmark server:
-        #     `free(): invalid next size (fast)`
-        #     `munmap_chunk(): invalid pointer`
-        # This bug is not fully characterized. It may be due to multiple billiard subprocesses initializing PyRosetta with different scorefunctions
-        # across different sub-test subprocesses, sporadically causing corrupted memory deallocation (or heap corruption) at billiard subprocess shutdown.
-        # The error does not occur on a local workstation or Colab, which runs successfully using the following scorefunctions:
-        # _available_score_functions = {
-        #     ("-score:weights", "ref2015"),
-        #     ("-beta_nov16", "1"),
-        #     ("-beta_nov16_cart", "1"),
-        #     ("-beta_jan25", "1"),
-        # }
         _scorefxn_flags = sorted(map(list, _available_score_functions)) # Make JSON-serializable
         if verbose:
             print(f"Available scorefunction flags: {_scorefxn_flags}", flush=True)
@@ -202,7 +207,19 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
                     print(f"PyRosetta protocol number {protocol_number} value of 'extra_options' key:", kwargs["extra_options"], flush=True)
             # Setup PackedPose
             if packed_pose is None:
+                # Instantiate first `PackedPose` object
+                assert protocol_number == 0, f"Protocol number must be `0`. Received: {protocol_number}"
                 packed_pose = io.pose_from_sequence("AA")
+            elif "current_pose_pdbstring" in kwargs and "current_pose_pdbstring" in kwargs:
+                # Re-instantiate current `PackedPose` object from PDB format serialization
+                if verbose:
+                    print("Re-instantiating current `PackedPose` object from PDB format serialization.")
+                assert protocol_number > 0, f"Protocol number must be greater than `0`. Received: {protocol_number}"
+                assert packed_pose.pose.sequence() == TestReproducibilityRemodelTaskUpdates._dummy_seq, (
+                    f"Received `Pose` object does not have dummy sequence: {packed_pose.pose.sequence()}"
+                )
+                del packed_pose # Delete dummy `PackedPose` object (optional)
+                packed_pose = io.pose_from_pdbstring(kwargs.pop("current_pose_pdbstring")).update_scores(kwargs.pop("current_pose_cache"))
             # Make Remodel blueprint file
             n_res_cterm_ext = random.randint(3, 5)
             n_term_threshold = random.randint(2, 3)
@@ -238,6 +255,9 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
                 protocol_total_scores=protocol_total_scores,
                 protocol_n_res=protocol_n_res,
             )
+            # Maybe print
+            if verbose:
+                print(f"PyRosetta protocol number {protocol_number} Pose.cache:", packed_pose.pose.cache, flush=True)
             # Maybe update task dictionary for next PyRosetta protocol, which gets validated and kept
             if protocol_number + 1 < kwargs["n_protocols"]:
                 if verbose:
@@ -247,9 +267,21 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
                     **TestReproducibilityRemodelTaskUpdates.get_random_options(kwargs["scorefxn_flags"]),
                     **kwargs["constant_options"],
                 }
-            # Maybe print
-            if verbose:
-                print(f"PyRosetta protocol number {protocol_number} Pose.cache:", packed_pose.pose.cache, flush=True)
+                # To reliablly transition from 'beta_jan25' to 'ref2015' scorefunction environments, we transport the current `PackedPose`
+                # object between user-defined PyRosetta protocols through PDB format serialization in the user-defined task dictionary,
+                # and return an unscored dummy `PackedPose` object to bypass decoy filtering by `PyRosettaCluster`. This mechanism
+                # prevents sporadic segmentation faults due to corrupted memory deallocation (or heap corruption) at billiard subprocess
+                # shutdown after scorefunction transitions, which otherwise could result in one of the following segmentation faults:
+                #     `free(): invalid next size (normal)`
+                #     `free(): invalid next size (fast)`
+                #     `munmap_chunk(): invalid pointer`
+                #     `corrupted size vs. prev_size`
+                #     `double free or corruption (out)`
+                _reserved: set[str] = pyrosetta.Pose().cache._reserved
+                _is_not_reserved = lambda k: k not in _reserved
+                kwargs["current_pose_cache"] = toolz.dicttoolz.keyfilter(_is_not_reserved, packed_pose.pose.cache) # Save current `Pose.cache` dictionary
+                kwargs["current_pose_pdbstring"] = io.to_pdbstring(packed_pose) # Save current `PackedPose` object
+                packed_pose = io.pose_from_sequence(TestReproducibilityRemodelTaskUpdates._dummy_seq) # Dummy `PackedPose` object
 
             return packed_pose, kwargs
 
