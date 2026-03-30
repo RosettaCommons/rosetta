@@ -163,6 +163,14 @@ def get_protocols_list_of_str(
     """
     Get the user-defined PyRosetta protocols as a `list` object of `str` objects.
 
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+
+    *Warning*: This function uses the `pickle` module to deserialize pickled `pandas.DataFrame` objects. Using the
+    `pickle` module is not secure, so please only run with input files you trust. Learn more about the `pickle`
+    module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+
     Args:
         `input_file`:
             A `str` object specifying the path to the ".pdb", ".pdb.bz2", ".pkl_pose", ".pkl_pose.bz2",
@@ -279,6 +287,10 @@ def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Dict[s
     `pyrosetta.distributed.io.init_from_file <pyrosetta.distributed.io.init_from_file>`_ and
     `pyrosetta.init_from_file <pyrosetta.utility.initialization.PyRosettaInitFileParser.init_from_file>`_
     docstrings for more information).
+
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Args:
         `obj`:
@@ -400,10 +412,18 @@ def export_init_file(
     This function is used to prepend the output decoy file to the detected PyRosetta initialization file for
     facile reproduction of an output decoy of interest using the `reproduce` function.
 
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+
     Args:
         `output_file`:
             A required `str` object specifying a filesystem path to an output decoy file. The file must end in
-            either: ".pdb", ".pdb.bz2", ".pkl_pose", ".pkl_pose.bz2", ".b64_pose", or ".b64_pose.bz2".
+            either: ".pdb", ".pdb.bz2", ".pkl_pose", ".pkl_pose.bz2", ".b64_pose", or ".b64_pose.bz2". Note
+            that ".pkl_pose", ".pkl_pose.bz2", ".b64_pose", and ".b64_pose.bz2", files contain pickled `Pose`
+            objects that are deserialized using the `SecureSerializerBase` class in PyRosetta upon calling the
+            `export_init_file` function, but please still only input these file types if you know and trust
+            their source. Learn more `here <https://docs.python.org/3/library/pickle.html>`_.
 
         `output_init_file`:
             A `str` object specifying the output PyRosetta initialization file path ending with ".init". If
@@ -704,6 +724,11 @@ def _to_float(obj: float, attribute: str) -> NoReturn:
 
 @singledispatch
 def parse_input_file_to_protocols_str(obj: Any) -> NoReturn:
+    """
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+    """
     raise InputFileError(obj)
 
 
@@ -717,6 +742,11 @@ def _parse_str(obj: str) -> List[str]:
 
 @singledispatch
 def parse_input_file_to_instance_kwargs(obj: Any) -> NoReturn:
+    """
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+    """
     raise InputFileError(obj)
 
 
@@ -730,6 +760,11 @@ def _parse_str(obj: str) -> Dict[str, Any]:
 
 @singledispatch
 def parse_input_file_to_instance_metadata_kwargs(obj: Any) -> NoReturn:
+    """
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+    """
     raise InputFileError(obj)
 
 
@@ -772,6 +807,12 @@ def _from_str(obj: str) -> str:
 def _merge_and_update_scores(
     packed: PackedPose, _reserved_scores_dict: Dict[str, Any]
 ) -> PackedPose:
+    """
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects and arbitrary 
+    Python types in `Pose.cache` dictionary. Using the `pickle` module is not secure, so please only run with
+    input files you trust. Learn more about the `pickle` module and its security
+    `here <https://docs.python.org/3/library/pickle.html>`_.
+    """
     _new_scores_dict = dict(update_scores(packed).pose.cache)
     _merged_scores_dict = toolz.dicttoolz.merge(_reserved_scores_dict, _new_scores_dict)
     _reserved_scoretypes = packed.pose.cache._reserved
@@ -790,6 +831,12 @@ def _merge_and_update_scores(
 def reserve_scores_in_results(
     obj: Any, _scores_dict: Dict[Any, Any], protocol_name: str
 ) -> NoReturn:
+    """
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects and arbitrary
+    Python types in `Pose.cache` dictionary. Using the `pickle` module is not secure, so please only run with
+    input files you trust. Learn more about the `pickle` module and its security
+    `here <https://docs.python.org/3/library/pickle.html>`_.
+    """
     raise OutputError(obj)
 
 
@@ -903,6 +950,10 @@ def parse_init_file(
     """
     Return a `tuple` object of the input `PackedPose` object and the output `PackedPose` object from a ".init"
     or ".init.bz2" file, verifying `PyRosettaCluster` metadata in the ".init" or ".init.bz2" file.
+
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
     """
 
     if not was_init_called():
@@ -969,8 +1020,8 @@ def parse_init_file(
     _input_packed_pose, _output_packed_pose = get_poses_from_init_file(input_file, verify=True)
     if _output_packed_pose is None:
         raise ValueError(
-            f"The input '.init' file does not contain an output decoy from a `PyRosettaCluster` simulation: '{input_file}'. "
-            + "To reproduce from a '.init' file, please ensure that the `pyrosetta.distributed.cluster.export_init_file` "
+            "The input PyRosetta initialization file does not contain an output decoy from a `PyRosettaCluster` simulation: "
+            + f"'{input_file}'. To reproduce from a '.init' file, please ensure that the `pyrosetta.distributed.cluster.export_init_file` "
             + "function was called with the original output decoy file, or that the PyRosetta initialization file output decoy "
             + "type was enabled in the original `PyRosettaCluster` simulation (using "
             + "`PyRosettaCluster(output_decoy_types=['.init', ...])` syntax)."

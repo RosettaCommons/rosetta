@@ -40,7 +40,13 @@ G = TypeVar("G")
 
 
 class PackedPoseHasher(Generic[G]):
-    """Digest the scientific state of a `PackedPose` or `Pose` object."""
+    """
+    Digest the scientific state of a `PackedPose` or `Pose` object.
+
+    *Warning*: This class uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+    """
 
     _encoding: str = "utf-8"
     _default_bytes: bytes = (b'\x00' * 32)
@@ -53,6 +59,10 @@ class PackedPoseHasher(Generic[G]):
     ) -> None:
         """
         Initialize the `PackedPoseHasher` class.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects. Using the
+        `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+        `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
 
         Args:
             `packed_pose`:
@@ -167,18 +177,37 @@ class PackedPoseHasher(Generic[G]):
 
 
 class InitFileSigner(Generic[G]):
-    """Sign or verify PyRosetta initialization files by `PyRosettaCluster`."""
+    """
+    Sign or verify PyRosetta initialization files by `PyRosettaCluster`.
+
+    *Warning*: This class uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+    """
 
     _encoding: str = "utf-8"
     _prefix: bytes = b'PyRosettaCluster_init_file_signer'
 
     def __init__(self, input_packed_pose=None, output_packed_pose=None, metadata=None) -> None:
-        """Initialize the `InitFileSigner` class."""
+        """
+        Initialize the `InitFileSigner` class.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects. Using the
+        `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+        `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+        """
         self.inp_pkl = self._to_packed_pose_hash(input_packed_pose)
         self.out_pkl = self._to_packed_pose_hash(output_packed_pose)
         self.metadata_pkl = self._to_encoding(metadata)
 
     def _to_packed_pose_hash(self, packed_pose: Optional[PackedPose]) -> bytes:
+        """
+        Hash a `PackedPose` object with `Pose.cache` and `Pose` comments included.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects. Using the
+        `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+        `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+        """
         return PackedPoseHasher(packed_pose, include_cache=True, include_comments=True).digest()
 
     def _to_encoding(self, obj: Any) -> bytes:

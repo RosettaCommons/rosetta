@@ -86,6 +86,14 @@ def get_protocols(
     If the `protocols` keyword argument value is `None`, it is recommended to validate that the returned
     PyRosetta protocols are indeed those executed in the original `PyRosettaCluster` simulation.
 
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+
+    *Warning*: This function uses the `pickle` module to deserialize pickled `pandas.DataFrame` objects. Using
+    the `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+    `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+
     Args:
         `protocols`:
             An iterable of callable user-defined PyRosetta protocols; i.e., an iterable of objects of
@@ -206,6 +214,14 @@ def get_instance_kwargs(
     Given an input file that was written by `PyRosettaCluster`, or a scorefile with full simulation records
     that was written by `PyRosettaCluster` and a decoy name, return the `PyRosettaCluster` instance attributes
     (and optionally the "metadata" keyword arguments) needed to reproduce the decoy using `PyRosettaCluster`.
+
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+
+    *Warning*: This function uses the `pickle` module to deserialize pickled `pandas.DataFrame` objects. Using
+    the `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+    `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Args:
         `input_file`:
@@ -384,6 +400,11 @@ def reserve_scores(func: P) -> Union[P, NoReturn]:
     `PackedPose.scores` and `Pose.cache` dictionaries, and any keys and values restored to any output
     `Pose.cache` dictionaries are set as `SimpleMetrics` metrics.
 
+    *Warning*: This decorator uses the `pickle` module to deserialize pickled `Pose` objects and arbitrary
+    Python types in `Pose.cache` dictionary. Using the `pickle` module is not secure, so please only run with
+    input data you trust. Learn more about the `pickle` module and its security
+    `here <https://docs.python.org/3/library/pickle.html>`_.
+
     Example:
         >>> @reserve_scores
         ... def my_pyrosetta_protocol(packed_pose, /, **kwargs):
@@ -488,6 +509,14 @@ def reproduce(
     Given an input file (or a scorefile with full simulation records and a decoy name) that was written by
     `PyRosettaCluster` and any additional `PyRosettaCluster` class keyword arguments, execute the
     decoy reproduction simulation with a new instance of `PyRosettaCluster`.
+
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+
+    *Warning*: This function uses the `pickle` module to deserialize pickled `pandas.DataFrame` objects. Using
+    the `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+    `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Args:
         `input_file`:

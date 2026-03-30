@@ -3,6 +3,10 @@ The `PyRosettaCluster` Python class facilitates scalable and reproducible job di
 PyRosetta protocols efficiently parallelized on the user's local workstation, high-performance computing (HPC)
 cluster, or elastic cloud computing infrastructure with available compute resources.
 
+*Warning*: This class uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+
 Args:
     `tasks`:
         A `list` object of JSON-serializable `dict` objects, a callable returning an iterable of
@@ -1223,6 +1227,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         the user-customized PyRosettaCluster instance. Either arguments or the 'protocols'
         keyword argument is required. If both are provided, then the 'protocols' keyword
         argument value gets concatenated after the input arguments.
+
+        *Warning*: This method uses the `cloudpickle` and `pickle` modules to deserialize data. Using the
+        `cloudpickle` and `pickle` modules is not secure, so please only run with input data you trust. Learn
+        more about the `cloudpickle` and `pickle` modules and their security
+        `here <https://github.com/cloudpipe/cloudpickle>`_ and
+        `here <https://docs.python.org/3/library/pickle.html>`_.
 
         Examples:
 

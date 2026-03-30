@@ -165,6 +165,11 @@ class IO(Generic[G]):
         """
         Given a `Pose` or `PackedPose` object, return a `tuple` object containing the `Pose` or `PackedPose`
         object, and its PDB string, `Pose.cache` dictionary, and JSON-serializable `Pose.cache` dictionary.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects and arbitrary
+        Python types in `Pose.cache` dictionary. Using the `pickle` module is not secure, so please only run
+        with input files you trust. Learn more about the `pickle` module and its security
+        `here <https://docs.python.org/3/library/pickle.html>`_.
         """
 
         _pdbstring = io.to_pdbstring(result)
@@ -182,6 +187,11 @@ class IO(Generic[G]):
     ) -> Union[List[Tuple[str, Dict[str, Any]]], NoReturn]:
         """
         Format output results from a Dask worker.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects and arbitrary
+        Python types in `Pose.cache` dictionary. Using the `pickle` module is not secure, so please only run
+        with input files you trust. Learn more about the `pickle` module and its security
+        `here <https://docs.python.org/3/library/pickle.html>`_.
 
         Args:
             `results`:
@@ -253,7 +263,13 @@ class IO(Generic[G]):
         return kwargs
 
     def _get_init_file_json(self, packed_pose: PackedPose) -> str:
-        """Return a PyRosetta initialization file as a JSON-serialized string."""
+        """
+        Return a PyRosetta initialization file as a JSON-serialized string.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects. Using the
+        `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+        `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+        """
 
         metadata, poses = sign_init_file_metadata_and_poses(
             input_packed_pose=self.input_packed_pose,
@@ -274,7 +290,13 @@ class IO(Generic[G]):
 
     @staticmethod
     def _add_pose_comment(packed_pose: PackedPose, pdbfile_data: str) -> PackedPose:
-        """Cache simulation data as a `Pose` comment."""
+        """
+        Cache simulation data as a `Pose` comment.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects. Using the
+        `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+        `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+        """
 
         _pose = packed_pose.pose.clone()
         add_comment(
@@ -303,7 +325,14 @@ class IO(Generic[G]):
         )
 
     def _save_results(self, results: Any, kwargs: Dict[str, Any]) -> None:
-        """Write output results to disk."""
+        """
+        Write output results to disk.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects and arbitrary
+        Python types in `Pose.cache` dictionary. Using the `pickle` module is not secure, so please only run
+        with input files you trust. Learn more about the `pickle` module and its security
+        `here <https://docs.python.org/3/library/pickle.html>`_.
+        """
 
         if self.dry_run:
             logging.info(
@@ -555,7 +584,13 @@ class IO(Generic[G]):
                     f.write(self.toml)
 
     def _write_init_file(self) -> None:
-        """Maybe dump a PyRosetta initialization file."""
+        """
+        Maybe dump a PyRosetta initialization file.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects. Using the
+        `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+        `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+        """
 
         if self.output_init_file != "":
             if self.compressed and self.output_init_file.endswith(".init"):
@@ -563,7 +598,7 @@ class IO(Generic[G]):
             if not self.output_init_file.endswith((".init", ".init.bz2")):
                 raise ValueError(
                     "The output PyRosetta initialization file must end in '.init' or '.init.bz2'. "
-                    + "The current PyRosettaCluster 'output_init_file' instance attribute is set to: "
+                    + "The current `output_init_file` instance attribute of `PyRosettaCluster` is set to: "
                     + f"'{self.output_init_file}'"
                 )
             self._dump_init_file(
@@ -583,6 +618,10 @@ class IO(Generic[G]):
         """
         Dump compressed PyRosetta initialization input files and `Pose` or `PackedPose` objects to the input
         filename.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects. Using the
+        `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+        `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
         """
 
         out = RedirectToLogger(logging.INFO)
@@ -635,7 +674,13 @@ def verify_init_file(
     output_packed_pose: Optional[PackedPose],
     metadata: Dict[str, Any],
 ) -> Optional[NoReturn]:
-    """Verify that a PyRosetta initialization file was written by `PyRosettaCluster`."""
+    """
+    Verify that a PyRosetta initialization file was written by `PyRosettaCluster`.
+
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+    """
 
     @toolz.functoolz.curry
     def _verify_signer(_signer: InitFileSigner, _sha256: str, _signature: str) -> Optional[NoReturn]:
@@ -720,7 +765,13 @@ def sign_init_file_metadata_and_poses(
     input_packed_pose: Optional[PackedPose] = None,
     output_packed_pose: Optional[PackedPose] = None,
 ) -> Tuple[Dict[str, Any], List[PackedPose]]:
-    """Sign PyRosetta initialization file 'metadata' and 'poses' keys."""
+    """
+    Sign PyRosetta initialization file 'metadata' and 'poses' keys.
+
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+    """
 
     metadata = {}
     metadata["comment"] = "Generated by PyRosettaCluster"
@@ -754,8 +805,12 @@ def get_poses_from_init_file(
     verify: bool = False,
 ) -> Union[Tuple[Optional[PackedPose], Optional[PackedPose]], NoReturn]:
     """
-    Return a `tuple` object of the input `PackedPose` object and the output `PackedPose` object
-    from a '.init' file, and optionally verify `PyRosettaCluster` metadata in the '.init' file.
+    Return a `tuple` object of the input `PackedPose` object and the output `PackedPose` object from a ".init"
+    or ".init.bz2" file, and optionally verify `PyRosettaCluster` metadata in the ".init" or ".init.bz2" file.
+
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
     """
 
     @toolz.functoolz.curry
@@ -763,11 +818,11 @@ def get_poses_from_init_file(
         key: str, poses: List[str], metadata: Dict[str, str]
     ) -> Union[Optional[PackedPose], NoReturn]:
         assert isinstance(metadata, dict), (
-            "The PyRosetta initialization file 'metadata' key value must be a `dict` object. "
+            "The value of the 'metadata' key must be a `dict` object. "
             + f"Received: {type(metadata)}"
         )
         assert isinstance(poses, list), (
-            "The PyRosetta initialization file 'poses' key value must be a `list` object. "
+            "The value of the 'poses' key must be a `list` object. "
             + f"Received: {type(poses)}"
         )
         if key in metadata:
@@ -776,7 +831,7 @@ def get_poses_from_init_file(
                 return io.to_packed(io.to_pose(poses[idx]))
             else:
                 raise TypeError(
-                    f"The PyRosetta initialization file metadata '{key}' key value must be an `int` object. "
+                    f"The value of the '{key}' key in the value of the 'metadata' key must be an `int` object. "
                     + f"Received: {type(idx)}"
                 )
         else:
@@ -815,9 +870,11 @@ def secure_read_pickle(
 ) -> pandas.DataFrame:
     """
     Secure replacement for `pandas.read_pickle` for file-like objects using the `SecureSerializerBase` class
-    in PyRosetta. Usage requires adding "pandas" as a secure package to unpickle in PyRosetta, but please still
-    only input files if you know and trust their source. Learn more
-    `here <https://docs.python.org/3/library/pickle.html>`_.
+    in PyRosetta. Usage requires adding "pandas" as a secure package to unpickle in PyRosetta.
+
+    *Warning*: This function uses the `pickle` module to deserialize pickled `pandas.DataFrame` objects. Using
+    the `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+    `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Example:
         >>> pyrosetta.secure_unpickle.add_secure_package('pandas')

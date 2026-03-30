@@ -113,6 +113,10 @@ def update_scores(packed_pose: PackedPose) -> PackedPose:
     Cache scores from the `PackedPose.scores` dictionary that are not cached in the `Pose.cache` dictionary and
     do not have keys with reserved scoretypes, then return a new `PackedPose` object.
 
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+
     Args:
         `packed_pose`:
             An input `PackedPose` object in which to update scores.
@@ -371,6 +375,10 @@ class Serialization(Generic[G]):
     def with_update_scores(func: T) -> T:
         """
         Decorator that caches detached `PackedPose.scores` items into the `Pose.cache` dictionary.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects. Using the
+        `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+        `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
         """
 
         @wraps(func)
@@ -495,6 +503,10 @@ class Serialization(Generic[G]):
         Decompress a `bytes` object with the custom serialization module and secure implementation of the
         `pickle` module. If the `compressed_packed_pose` argument value is `None`, then just return `None`.
 
+        *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the
+        `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+        `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+
         Args:
             `compressed_packed_pose`:
                 An input `bytes` object to decompress. If `None`, then just return `None`.
@@ -519,7 +531,14 @@ class Serialization(Generic[G]):
         return packed_pose
 
     def loads_object(self, compressed_obj: bytes) -> Any:
-        """Unseal data and run the `cloudpickle.loads` method."""
+        """
+        Unseal data and run the `cloudpickle.loads` method.
+
+        *Warning*: This method uses the `cloudpickle` module to deserialize objects. Using the `cloudpickle`
+        module is not secure, so please only run with input data you trust. Learn more about the `cloudpickle`
+        module and its security `here <https://github.com/cloudpipe/cloudpickle>`_ and
+        `here <https://docs.python.org/3/library/pickle.html>`_.
+        """
 
         data = self._unseal(compressed_obj)
         buffer = self.decoder(data) if self.decoder else data
@@ -561,6 +580,11 @@ class Serialization(Generic[G]):
         """
         Decompress a `bytes` object with the custom serialization and `cloudpickle` modules.
 
+        *Warning*: This method uses the `cloudpickle` module to deserialize objects. Using the `cloudpickle`
+        module is not secure, so please only run with input data you trust. Learn more about the `cloudpickle`
+        module and its security `here <https://github.com/cloudpipe/cloudpickle>`_ and
+        `here <https://docs.python.org/3/library/pickle.html>`_.
+
         Args:
             `compressed_kwargs`:
                 An input `bytes` object to decompress.
@@ -601,6 +625,11 @@ class Serialization(Generic[G]):
         """
         Decompress a `bytes` object with the custom serialization and `cloudpickle` modules.
 
+        *Warning*: This method uses the `cloudpickle` module to deserialize objects. Using the `cloudpickle`
+        module is not secure, so please only run with input data you trust. Learn more about the `cloudpickle`
+        module and its security `here <https://github.com/cloudpipe/cloudpickle>`_ and
+        `here <https://docs.python.org/3/library/pickle.html>`_.
+
         Args:
             `compressed_obj`:
                 An input `bytes` object to decompress.
@@ -625,6 +654,12 @@ class Serialization(Generic[G]):
         """
         The `cloudpickle` module makes it possible to serialize Python constructs not supported by the default
         `pickle` module from the Python standard library.
+
+        *Warning*: This method uses the `cloudpickle` module to serialize and subsequently deserialize `dict`
+        objects. Using the `cloudpickle` module is not secure, so please only run with input data you trust.
+        Learn more about the `cloudpickle` module and its security
+        `here <https://github.com/cloudpipe/cloudpickle>`_ and
+        `here <https://docs.python.org/3/library/pickle.html>`_.
 
         Args:
             `kwargs`:
