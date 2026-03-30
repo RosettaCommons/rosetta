@@ -16,6 +16,7 @@ class DefaultProtocolNameFilter(logging.Filter):
     """
     Maybe set PyRosetta protocol name of third-party root log records for logging socket listener formatter.
     """
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -27,6 +28,7 @@ class DefaultProtocolNameFilter(logging.Filter):
 
 class SetProtocolNameFilter(logging.Filter):
     """Set PyRosetta protocol name for logging socket listener formatter."""
+
     def __init__(self, protocol_name: str) -> None:
         super().__init__()
         self.protocol_name = protocol_name
@@ -38,6 +40,7 @@ class SetProtocolNameFilter(logging.Filter):
 
 class DefaultSocketAddressFilter(logging.Filter):
     """Maybe set socket address of third-party root log records for logging socket listener formatter."""
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -49,6 +52,7 @@ class DefaultSocketAddressFilter(logging.Filter):
 
 class SetSocketAddressFilter(logging.Filter):
     """Set socket address for logging socket listener filter."""
+
     def __init__(self, socket_listener_address: Tuple[str, int]) -> None:
         super().__init__()
         self.socket_address = format_socket_address(socket_listener_address)
@@ -60,6 +64,7 @@ class SetSocketAddressFilter(logging.Filter):
 
 class SocketAddressFilter(logging.Filter):
     """Filter log records for the logging socket listener address."""
+
     def __init__(self, socket_listener_address: Tuple[str, int]) -> None:
         super().__init__()
         self.socket_address = format_socket_address(socket_listener_address)
@@ -70,6 +75,7 @@ class SocketAddressFilter(logging.Filter):
 
 class DefaultTaskIdFilter(logging.Filter):
     """Maybe set task ID of third-party root log records for logging socket listener formatter."""
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -81,6 +87,7 @@ class DefaultTaskIdFilter(logging.Filter):
 
 class SetTaskIdFilter(logging.Filter):
     """Set task ID for logging socket listener filter."""
+
     def __init__(self, task_id: str) -> None:
         super().__init__()
         self.task_id = task_id

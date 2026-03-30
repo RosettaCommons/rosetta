@@ -50,6 +50,7 @@ WORKER_LOGGER_NAME: str = "PyRosettaCluster_dask_worker"
 
 class SocketLoggerPlugin(WorkerPlugin):
     """Install a `MultiSocketHandler` logging handler on a Dask worker logger."""
+
     def __init__(self, logging_level: str, maxsize: int = 128) -> None:
         """Initialize the `SocketLoggerPlugin` Dask worker plugin."""
 

@@ -49,9 +49,13 @@ from pyrosetta.distributed.cluster.logging_filters import (
 
 class LogRecordRequestHandler(socketserver.StreamRequestHandler):
     """
-    Handler for a streaming logging request modified from logging cookbook recipe:
+    Handler for a streaming logging request.
+
+    This class was adapted from the Python logging cookbook recipe. See
     https://docs.python.org/3/howto/logging-cookbook.html#sending-and-receiving-logging-events-across-a-network
+    for more information.
     """
+
     def setup(self) -> None:
         """Setup socket server."""
 
@@ -109,9 +113,13 @@ class LogRecordRequestHandler(socketserver.StreamRequestHandler):
 
 class SocketListener(socketserver.ThreadingTCPServer):
     """
-    TCP socket-based logging receiver modified from logging cookbook recipe:
+    TCP socket-based logging receiver.
+
+    This class was adapted from the Python logging cookbook recipe. See
     https://docs.python.org/3/howto/logging-cookbook.html#sending-and-receiving-logging-events-across-a-network
+    for more information.
     """
+
     allow_reuse_address = True
 
     def __init__(

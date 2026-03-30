@@ -65,6 +65,7 @@ S = TypeVar("S", bound=Serialization)
 
 class TaskBase(Generic[G]):
     """Task objects underpinning `PyRosettaCluster`."""
+
     def _get_seed(self, protocols: Sized) -> Optional[str]:
         """Get the PyRosetta RNG seed for the input user-defined PyRosetta protocol."""
 

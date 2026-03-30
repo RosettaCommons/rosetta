@@ -46,6 +46,7 @@ T = TypeVar("T", bound=Callable[..., Any])
 
 class InputError(TypeError):
     """Exception raised for `PyRosettaCluster` keyword argument value errors for `str` and `int` types."""
+
     def __init__(self, obj: Any, attribute: str) -> NoReturn:
         super().__init__(
             f"The '{attribute}' keyword argument value must be of type `int` or `str`, "
@@ -55,6 +56,7 @@ class InputError(TypeError):
 
 class InputFileError(TypeError):
     """Exception raised for `PyRosettaCluster` errors for `str` types."""
+
     def __init__(self, obj: Any) -> NoReturn:
         super().__init__(
             f"The `input_file` keyword argument value must be of type `str`. Received: {type(obj)}."
@@ -63,6 +65,7 @@ class InputFileError(TypeError):
 
 class OutputError(TypeError):
     """Exception raised for user-defined PyRosetta protocol output errors."""
+
     def __init__(self, obj: Any) -> NoReturn:
         super().__init__(
             " ".join(
@@ -77,6 +80,7 @@ class OutputError(TypeError):
 
 class WorkerError(WorkerLostError):
     """Exception raised for Dask worker errors."""
+
     def __init__(self, protocol_name: str) -> NoReturn:
         super().__init__(WorkerError._msg(protocol_name))
 
@@ -104,6 +108,7 @@ class WorkerError(WorkerLostError):
 
 class TaskCancelledError(RuntimeError):
     """Exception raised for Dask `CancelledError` exceptions."""
+
     def __init__(self, key: str, extra_msg: str) -> NoReturn:
         super().__init__(
             f"Task '{key}' raised `CancelledError` upon gathering results. {extra_msg}"
@@ -144,6 +149,7 @@ def trace_protocol_exceptions(func: T) -> Union[T, NoReturn]:
 
 def trace_subprocess_exceptions(func: T) -> Union[T, NoReturn]:
     """Trace exceptions in `billiard` subprocesses."""
+
     @wraps(func)
     def wrapper(
         q: Q,

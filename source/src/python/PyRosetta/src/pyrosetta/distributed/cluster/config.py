@@ -39,6 +39,7 @@ source_domains: List[str] = [
 
 class EnvironmentConfig(Generic[G]):
     """Environment configuration management for `PyRosettaCluster`."""
+
     _ENV_VAR: str = "PYROSETTACLUSTER_ENVIRONMENT_MANAGER"
     _ENV_MANAGERS: Tuple[str, ...] = ("pixi", "uv", "mamba", "conda")
     _ENV_EXPORT_CMDS: Dict[str, str] = {

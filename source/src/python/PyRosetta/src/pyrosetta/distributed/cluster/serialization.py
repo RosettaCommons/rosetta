@@ -145,6 +145,7 @@ def update_scores(packed_pose: PackedPose) -> PackedPose:
 @attr.s(kw_only=False, slots=True, frozen=True)
 class MessagePacking(Generic[G]):
     """`MessagePack` base class for `PyRosettaCluster`."""
+
     pack = attr.ib(
         type=partial,
         default=partial(msgpack.packb, use_bin_type=True),
@@ -162,6 +163,7 @@ class MessagePacking(Generic[G]):
 @attr.s(kw_only=True, slots=False, frozen=False)
 class NonceCache(Generic[G]):
     """Nonce cache base class for `PyRosettaCluster`."""
+
     instance_id = attr.ib(
         type=str,
         validator=attr.validators.instance_of(str),
@@ -290,6 +292,7 @@ class NonceCache(Generic[G]):
 @attr.s(kw_only=True, slots=False, frozen=False)
 class Serialization(Generic[G]):
     """Serialization base class for `PyRosettaCluster`."""
+
     instance_id = attr.ib(
         type=Optional[str],
         default=None,

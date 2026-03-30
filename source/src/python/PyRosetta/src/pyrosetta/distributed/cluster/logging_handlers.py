@@ -51,6 +51,7 @@ L = TypeVar("L", bound=Callable[..., Any])
 
 class HandlerMixin:
     """Logging handler mixin class for acquiring and releasing a thread lock."""
+
     @staticmethod
     def lock(func: L) -> L:
         """A decorator for methods requiring acquire and release of a thread lock."""
@@ -76,9 +77,10 @@ class HandlerMixin:
 
 class MsgpackHmacSocketHandler(logging.handlers.SocketHandler, HandlerMixin):
     """
-    Subclass of `logging.handlers.SocketHandler` using MessagePack and hash-based message authentication codes
+    Subclass of `logging.handlers.SocketHandler` using `MessagePack` and hash-based message authentication codes
     (HMAC).
     """
+
     _supported_types = (str, int, float, bool, type(None), bytes, bytearray)
 
     def __init__(self, host: str, port: int) -> None:
@@ -123,7 +125,7 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler, HandlerMixin):
         super().close()
 
     def sanitize_record_arg(self, arg: Any) -> Any:
-        """Sanitize a single element of log record `args` for MessagePack."""
+        """Sanitize a single element of log record `args` for `MessagePack`."""
 
         try:
             return arg if isinstance(arg, MsgpackHmacSocketHandler._supported_types) else str(arg)
@@ -131,7 +133,7 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler, HandlerMixin):
             return repr(arg)
 
     def sanitize_record_args(self, args: Any) -> Any:
-        """Sanitize log record `args` for MessagePack."""
+        """Sanitize log record `args` for `MessagePack`."""
 
         if isinstance(args, dict):
             return args
@@ -143,7 +145,7 @@ class MsgpackHmacSocketHandler(logging.handlers.SocketHandler, HandlerMixin):
             return self.sanitize_record_arg(args)
 
     def makePickle(self, record: logging.LogRecord) -> bytes:
-        """Compress a logging record with MessagePack and a hash-based message authentication code (HMAC)."""
+        """Compress a logging record with `MessagePack` and a hash-based message authentication code (HMAC)."""
 
         record_dict = dict(
             msg=record.msg,
@@ -192,6 +194,7 @@ class MultiSocketHandler(logging.Handler, HandlerMixin):
     Cache mutable Dask worker logger handlers up to a maximum size, pruning least recently used (LRU) Dask
     worker loggers first.
     """
+
     def __init__(self, logging_level: Union[str, int] = logging.NOTSET, maxsize: int = 128) -> None:
         """Initialize the `MultiSocketHandler` class."""
 

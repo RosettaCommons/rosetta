@@ -58,6 +58,7 @@ G = TypeVar("G")
 
 class SchedulerManager(Generic[G]):
     """Dask utility manager for `PyRosettaCluster`."""
+
     def _setup_clients_dict(self) -> Union[Dict[int, ClientType], NoReturn]:
         """Setup Dask clients dictionary for `PyRosettaCluster`."""
 

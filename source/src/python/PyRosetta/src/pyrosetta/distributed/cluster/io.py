@@ -85,6 +85,7 @@ G = TypeVar("G")
 
 class IO(Generic[G]):
     """Input/Output methods for `PyRosettaCluster`."""
+
     DATETIME_FORMAT: str = "%Y-%m-%d %H:%M:%S.%f"
     REMARK_FORMAT: str = "REMARK PyRosettaCluster: "
 

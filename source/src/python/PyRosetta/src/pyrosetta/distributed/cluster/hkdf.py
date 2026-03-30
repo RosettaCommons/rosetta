@@ -35,6 +35,7 @@ SALT: bytes = b"PyRosettaCluster_salt"
 
 class MaskedBytes(bytes):
     """A `bytes` subclass to mask its contents if the `repr` method is called."""
+
     def __new__(cls, value: bytes) -> bytes:
         return super().__new__(cls, value)
 
