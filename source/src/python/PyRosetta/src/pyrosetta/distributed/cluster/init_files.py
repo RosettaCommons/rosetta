@@ -173,6 +173,7 @@ class InitFileSigner(Generic[G]):
     _prefix: bytes = b'PyRosettaCluster_init_file_signer'
 
     def __init__(self, input_packed_pose=None, output_packed_pose=None, metadata=None) -> None:
+        """Initialize the `InitFileSigner` class."""
         self.inp_pkl = self._to_packed_pose_hash(input_packed_pose)
         self.out_pkl = self._to_packed_pose_hash(output_packed_pose)
         self.metadata_pkl = self._to_encoding(metadata)

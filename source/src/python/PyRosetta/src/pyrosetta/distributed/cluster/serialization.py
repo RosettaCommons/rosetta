@@ -202,6 +202,7 @@ class NonceCache(Generic[G]):
     )
 
     def __attrs_pre_init__(self) -> None:
+        """Pre-initialization hook for `NonceCache`."""
         MessagePacking.__init__(self)
 
     @staticmethod
@@ -324,9 +325,12 @@ class Serialization(Generic[G]):
     )
 
     def __attrs_pre_init__(self) -> None:
+        """Pre-initialization hook for `Serialization`."""
         MessagePacking.__init__(self)
 
     def __attrs_post_init__(self) -> None:
+        """Post-initialization hook for `Serialization`."""
+
         if self.compression == "xz":
             if "lzma" not in sys.modules:
                 raise ImportError(
