@@ -41,6 +41,7 @@ G = TypeVar("G")
 
 class PackedPoseHasher(Generic[G]):
     """Digest the scientific state of a `PackedPose` or `Pose` object."""
+
     _encoding: str = "utf-8"
     _default_bytes: bytes = (b'\x00' * 32)
 
@@ -167,6 +168,7 @@ class PackedPoseHasher(Generic[G]):
 
 class InitFileSigner(Generic[G]):
     """Sign or verify PyRosetta initialization files by `PyRosettaCluster`."""
+
     _encoding: str = "utf-8"
     _prefix: bytes = b'PyRosettaCluster_init_file_signer'
 
