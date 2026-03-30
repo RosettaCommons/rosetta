@@ -99,7 +99,7 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
 
         return options
 
-    def test_reproduce_remodel_task_updates(self, verbose=False):
+    def test_reproduce_remodel_task_updates(self, verbose=True):
         """
         Test for PyRosettaCluster decoy reproducibility with updated task dictionaries
         using RosettaRemodel per user-provided PyRosetta protocol.
@@ -192,6 +192,7 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             import pyrosetta.distributed.io as io
             import random
 
+            from pyrosetta.distributed.cluster.init_files import PackedPoseHasher
             from pyrosetta.rosetta.protocols.rosetta_scripts import XmlObjects
 
             verbose = kwargs["verbose"]
@@ -244,16 +245,34 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             protocol_scorefxn_names = cache.get("protocol_scorefxn_names", None) or {}
             protocol_total_scores = cache.get("protocol_total_scores", None) or {}
             protocol_n_res = cache.get("protocol_n_res", None) or {}
+            protocol_sequence = cache.get("protocol_sequence", None) or {}
+            protocol_pose_hash = cache.get("protocol_pose_hash", None) or {}
+            protocol_pose_hash_cache = cache.get("protocol_pose_hash_cache", None) or {}
+            protocol_pose_hash_cache_comments = cache.get("protocol_pose_hash_cache_comments", None) or {}
+            protocol_seeds = cache.get("protocol_seeds", None) or {}
+            protocol_random_states = cache.get("protocol_random_states", None) or {}
             # Add current values
             scorefxn = pyrosetta.get_score_function()
             protocol_scorefxn_names[protocol_number] = scorefxn.get_name()
             protocol_total_scores[protocol_number] = scorefxn(packed_pose.pose)
             protocol_n_res[protocol_number] = packed_pose.pose.size()
+            protocol_sequence[protocol_number] = packed_pose.pose.sequence()
+            protocol_pose_hash[protocol_number] = hash(PackedPoseHasher(packed_pose, include_cache=False, include_comments=False).digest())
+            protocol_pose_hash_cache[protocol_number] = hash(PackedPoseHasher(packed_pose, include_cache=True, include_comments=False).digest())
+            protocol_pose_hash_cache_comments[protocol_number] = hash(PackedPoseHasher(packed_pose, include_cache=True, include_comments=True).digest())
+            protocol_seeds[protocol_number] = pyrosetta.rosetta.numeric.random.rg().get_seed()
+            protocol_random_states[protocol_number] = hash(str(random.getstate()))
             # Update scores
             packed_pose = packed_pose.update_scores(
                 protocol_scorefxn_names=protocol_scorefxn_names,
                 protocol_total_scores=protocol_total_scores,
                 protocol_n_res=protocol_n_res,
+                protocol_sequence=protocol_sequence,
+                protocol_pose_hash=protocol_pose_hash,
+                protocol_pose_hash_cache=protocol_pose_hash_cache,
+                protocol_pose_hash_cache_comments=protocol_pose_hash_cache_comments,
+                protocol_seeds=protocol_seeds,
+                protocol_random_states=protocol_random_states,
             )
             # Maybe print
             if verbose:
@@ -292,6 +311,8 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
         compressed = True
         protocols = [my_remodel_protocol] * _n_protocols
         for norm_task_options in (False, True):
+            if verbose:
+                print(f"Running original simulation for `norm_task_options={norm_task_options}`", flush=True)
             output_path = os.path.join(self.workdir, f"outputs_norm_task_options_{int(norm_task_options)}")
             PyRosettaCluster(
                 tasks=create_tasks,
@@ -371,6 +392,7 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
                         "cooldown_time": 2.5,
                     },
                     skip_corrections=skip_corrections,
+                    # Initialization from file does not run since PyRosetta is already initialized
                     init_from_file_kwargs=dict(
                         dry_run=None,
                         output_dir=os.path.join(self.workdir, f"reproduce_pyrosetta_init_files_{i}"),
@@ -408,17 +430,47 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
                     self.assertEqual(
                         original_record["scores"]["protocol_scorefxn_names"][protocol_number],
                         reproduce_record["scores"]["protocol_scorefxn_names"][protocol_number],
-                        msg=f"Protocol number {protocol_number} score function names differ."
+                        msg=f"Protocol number {protocol_number} score function names differ.",
                     )
                     self.assertEqual(
                         original_record["scores"]["protocol_total_scores"][protocol_number],
                         reproduce_record["scores"]["protocol_total_scores"][protocol_number],
-                        msg=f"Protocol number {protocol_number} total scores differ."
+                        msg=f"Protocol number {protocol_number} total scores differ.",
                     )
                     self.assertEqual(
                         original_record["scores"]["protocol_n_res"][protocol_number],
                         reproduce_record["scores"]["protocol_n_res"][protocol_number],
-                        msg=f"Protocol number {protocol_number} number of residues differ."
+                        msg=f"Protocol number {protocol_number} number of residues differ.",
+                    )
+                    self.assertEqual(
+                        original_record["scores"]["protocol_sequence"][protocol_number],
+                        reproduce_record["scores"]["protocol_sequence"][protocol_number],
+                        msg=f"Protocol number {protocol_number} sequences differ.",
+                    )
+                    self.assertEqual(
+                        original_record["scores"]["protocol_pose_hash"][protocol_number],
+                        reproduce_record["scores"]["protocol_pose_hash"][protocol_number],
+                        msg=f"Protocol number {protocol_number} `Pose` hashes differ.",
+                    )
+                    self.assertEqual(
+                        original_record["scores"]["protocol_pose_hash_cache"][protocol_number],
+                        reproduce_record["scores"]["protocol_pose_hash_cache"][protocol_number],
+                        msg=f"Protocol number {protocol_number} `Pose` hashes (with `Pose.cache`) differ.",
+                    )
+                    self.assertEqual(
+                        original_record["scores"]["protocol_pose_hash_cache_comments"][protocol_number],
+                        reproduce_record["scores"]["protocol_pose_hash_cache_comments"][protocol_number],
+                        msg=f"Protocol number {protocol_number} `Pose` hashes (with `Pose.cache` and `Pose` comments) differ.",
+                    )
+                    self.assertEqual(
+                        original_record["scores"]["protocol_seeds"][protocol_number],
+                        reproduce_record["scores"]["protocol_seeds"][protocol_number],
+                        msg=f"Protocol number {protocol_number} PyRosetta RNG seeds differ.",
+                    )
+                    self.assertEqual(
+                        original_record["scores"]["protocol_random_states"][protocol_number],
+                        reproduce_record["scores"]["protocol_random_states"][protocol_number],
+                        msg=f"Protocol number {protocol_number} `random` module states differ.",
                     )
                 # Assert unique scorefunction results within original/reproduce
                 for record in (original_record, reproduce_record):
