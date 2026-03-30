@@ -9,6 +9,7 @@ __author__ = "Jason C. Klima"
 
 import os
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -101,23 +102,30 @@ def print_environment_export() -> None:
             print("Printing pip environment failed with return code: {0}.".format(ex.returncode))
 
 
-def run_subprocess(cmd: str) -> int:
-    """Run a command in a subprocess."""
+def run_unittest(test_case: str) -> int:
+    """Run a test case using the unittest module in a subprocess."""
 
-    print("Executing:\n{0}".format(cmd))
+    args = [sys.executable, "-m", "unittest", test_case]
+    print("Executing:", " ".join(args), sep="\n")
     process = subprocess.Popen(
-        cmd,
-        shell=True,
+        args,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
-        text=True
+        text=True,
+        preexec_fn=os.setsid,
     )
 
     print("Output:")
-    for line in process.stdout:
-        print(line, end="")
+    try:
+        for line in process.stdout:
+            print(line, end="")
+        process.wait()
+    finally:
+        try:
+            os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+        except Exception:
+            pass
 
-    process.wait()
     status = process.returncode
     if status != 0:
         print(f"Encountered error(s) with exit code {status} while running: {cmd}\nTerminating...")
@@ -132,7 +140,7 @@ def run_test_cases(*test_cases: str) -> None:
 
     for test_case in test_cases:
         t0 = time.perf_counter()
-        run_subprocess(f"{sys.executable} -m unittest {test_case}")
+        run_unittest(test_case)
         t1 = time.perf_counter()
         dt = t1 - t0
         print(f"Finished running test in {dt:.6f} seconds: {test_case}\n")
