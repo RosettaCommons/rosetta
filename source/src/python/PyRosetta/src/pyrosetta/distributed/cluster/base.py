@@ -119,7 +119,7 @@ class TaskBase(Generic[G]):
         )
 
         return pyrosetta_init_kwargs
-    
+
     def _get_clients_index(
             self, clients_indices: List[int], protocols: List[Callable[..., Any]]
         ) -> int:
@@ -130,7 +130,7 @@ class TaskBase(Generic[G]):
         else:
             _protocols_index = len(clients_indices) - len(protocols)
             return clients_indices[_protocols_index]
-    
+
     def _get_resource(
             self,
             resources: Optional[Union[List[Dict[Any, Any]], Tuple[Dict[Any, Any], ...]]],

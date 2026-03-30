@@ -101,6 +101,7 @@ class RedirectToLogger(Generic[G]):
 
 class LoggingSupport(Generic[G]):
     """Supporting logging methods for `PyRosettaCluster`."""
+
     def __init__(self) -> None:
         """Log warnings from the warnings module."""
         logging.captureWarnings(True)

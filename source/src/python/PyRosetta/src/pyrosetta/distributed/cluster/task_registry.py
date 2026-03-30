@@ -46,6 +46,7 @@ G = TypeVar("G")
 @dataclass
 class UserArgs(Generic[G]):
     """Dataclass for the `user_spawn_thread` function argument."""
+
     protocol_name: str
     compressed_protocol: bytes
     compressed_packed_pose: bytes
@@ -60,6 +61,7 @@ class UserArgs(Generic[G]):
 @dataclass
 class TaskRecord(Generic[G]):
     """Dataclass for `PyRosettaCluster` task registry entries."""
+
     clients_index: int
     user_args: UserArgs
     submit_kwargs: Dict[str, Any]
@@ -71,6 +73,7 @@ UnpackedTaskRecord = Tuple[int, UserArgs, Dict[str, Any]]
 @attr.s(kw_only=True, slots=True, frozen=True)
 class TaskRegistryBase(Generic[G]):
     """Task registry base class for `PyRosettaCluster`."""
+
     instance_id = attr.ib(
         type=Optional[str],
         default=None,
@@ -140,6 +143,7 @@ class TaskRegistryBase(Generic[G]):
 @attr.s(kw_only=True, slots=True, frozen=True)
 class DiskTaskRegistry(TaskRegistryBase[G]):
     """Task registry for on-disk `PyRosettaCluster` task arguments."""
+
     task_registry_dir = attr.ib(
         type=str,
         validator=attr.validators.instance_of(str),
@@ -271,6 +275,7 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
 @attr.s(kw_only=True, slots=True, frozen=True)
 class MemoryTaskRegistry(TaskRegistryBase[G]):
     """Task registry for in-memory `PyRosettaCluster` task arguments."""
+
     registry = attr.ib(
         type=Dict[str, bytes],
         default=attr.Factory(dict, takes_self=False),
