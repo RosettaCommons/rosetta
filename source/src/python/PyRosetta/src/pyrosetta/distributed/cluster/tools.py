@@ -623,9 +623,15 @@ def reproduce(
             argument value), which are set in-code upon PyRosetta initialization. If the current PyRosetta build
             and Conda/Mamba/uv/Pixi environment are identical to those used for the original simulation, this
             keyword argument value may be set to `True` to enable the reproduced output decoy file to be used
-            for successive reproductions. If reproducing from a PyRosetta initialization file, it is recommended
-            to also set the value of the `skip_corrections` key from the `init_from_file_kwargs` keyword
-            argument value to the same boolean value.
+            for successive reproductions; however, some `ScoreFunction` corrections may be critical for decoy
+            reproducibility. Therefore, it may be prudent to set this keyword argument value to `False` unless
+            there is absolute certainty that `ScoreFunction` corrections may be skipped without influencing
+            decoy reroducibility. If reproducing from a PyRosetta initialization file, it is recommended to also
+            set the value of the `skip_corrections` key from the `init_from_file_kwargs` keyword argument value
+            to the same boolean value.
+
+            See https://docs.rosettacommons.org/docs/latest/full-options-list#corrections and
+            https://docs.rosettacommons.org/docs/latest/full-options-list#1-corrections for more information.
 
             Default: `False`
 
