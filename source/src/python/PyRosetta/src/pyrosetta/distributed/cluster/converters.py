@@ -864,5 +864,4 @@ def _parse_output_scorefile_types(objs: Any) -> Union[List[str], NoReturn]:
 
 def _version_tuple_to_str(version_tuple: Tuple[int, int, int]) -> str:
     """Return a version string from a version tuple."""
-
     return ".".join(map(str, version_tuple))
