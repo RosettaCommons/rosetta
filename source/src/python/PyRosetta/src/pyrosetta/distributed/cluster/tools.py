@@ -672,7 +672,7 @@ def reproduce(
 
     if not isinstance(skip_corrections, bool):
         raise TypeError(
-            "The 'skip_corrections' keyword argument value must be of type `bool`. "
+            "The `skip_corrections` keyword argument value must be of type `bool`. "
             + f"Received: {type(skip_corrections)}"
         )
 
@@ -706,11 +706,11 @@ def reproduce(
             if not was_init_called():
                 raise PyRosettaIsNotInitializedError(
                     "If providing a '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file to the 'input_file' "
-                    + "keyword argument, please ensure `pyrosetta.init()` or `pyrosetta.init_from_file()` has been "
+                    + "keyword argument, please ensure `pyrosetta.init` or `pyrosetta.init_from_file` has been "
                     + "properly called (with the same residue type set as that used to generate the original '.pkl_pose', "
-                    + "'.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file) before running the `reproduce()` function. "
+                    + "'.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file) before running the `reproduce` function. "
                     + "If an output '.init' file from the original simulation is available, it is recommended to run "
-                    + "`pyrosetta.init_from_file()` with that '.init' file before running the `reproduce()` function."
+                    + "`pyrosetta.init_from_file` with that '.init' file before running the `reproduce` function."
                 )
 
     PyRosettaCluster(
@@ -749,9 +749,7 @@ def reproduce(
 def produce(**kwargs: Any) -> Optional[NoReturn]:
     """
     A `PyRosettaCluster.distribute` method shim requiring the `protocols` keyword argument, and optionally any
-    `PyRosettaCluster` keyword arguments or the `clients_indices` keyword argument (in combination with the
-    `clients` keyword argument), the `resources` keyword argument, the `priorities` keyword argument, or the
-    `retries` keyword argument.
+    `PyRosettaCluster` keyword arguments or `PyRosettaCluster.distribute` keyword arguments.
 
     Args:
         `**kwargs`:
