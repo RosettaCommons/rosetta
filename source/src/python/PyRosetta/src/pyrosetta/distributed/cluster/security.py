@@ -53,19 +53,20 @@ G = TypeVar("G")
 
 class SecurityIO(Generic[G]):
     """Security methods for `PyRosettaCluster`."""
+
     def _setup_task_security_plugin(self, clients: Dict[int, Client]) -> None:
         """Setup task security worker plugin(s)."""
 
         prk = MaskedBytes(derive_task_key(os.urandom(32), self.instance_id))
         self._register_task_security_plugin(clients, prk)
         self.serializer.prk = prk
-        assert self.serializer.__getstate__()["prk"] is None, "Pseudo-random key is not hidden on host serializer."
+        assert self.serializer.__getstate__()["prk"] is None, "Pseudo-random key is not hidden on head node serializer."
         if self.with_nonce:
             self.nonce_cache.prk = self.serializer.prk
             # The `NonceCache.__getstate__` method must be overridden after running `self._register_task_security_plugin()`
             # since WorkerPlugin registration first pickles `NonceCache.prk` with the default `__getstate__` method:
             self.nonce_cache.__getstate__ = NonceCache._get_state.__get__(self.nonce_cache, self.nonce_cache.__class__)
-            assert self.nonce_cache.__getstate__()["prk"] is None, "Pseudo-random key is not hidden on host nonce cache."
+            assert self.nonce_cache.__getstate__()["prk"] is None, "Pseudo-random key is not hidden on head node nonce cache."
 
     def _register_task_security_plugin(self, clients: Dict[int, Client], prk: MaskedBytes) -> None:
         """Register `TaskSecurityPlugin` as a Dask worker plugin on Dask clients."""
@@ -80,11 +81,13 @@ class SecurityIO(Generic[G]):
 
     def _clients_dict_has_security(self) -> bool:
         """
-        Test if the `clients_dict` attribute has security enabled on all clients, excluding clients with
-        `LocalCluster` clusters.
+        Test if the `clients_dict` attribute has security enabled on all Dask clients, excluding Dask clients
+        with `LocalCluster` clusters.
         """
 
-        assert len(self.clients_dict) > 0, "No clients in `self.clients_dict` to test for `security` attribute setup."
+        assert len(self.clients_dict) > 0, (
+            "No Dask clients in `PyRosettaCluster.clients_dict` to test for `security` attribute setup."
+        )
         for _client in self.clients_dict.values():
             if not isinstance(_client.cluster, LocalCluster) and not isinstance(_client.security, Security):
                 _has_security = False
@@ -101,20 +104,20 @@ class SecurityIO(Generic[G]):
             with_nonce = not self._clients_dict_has_security()
             if with_nonce:
                 logging.warning(
-                    "A PyRosettaCluster input client with a remote cluster does not have security enabled, "
-                    + "so PyRosettaCluster is enabling nonce caching on the host and all worker processes. "
+                    "A `PyRosettaCluster` input client with a remote cluster does not have security enabled, "
+                    + "so `PyRosettaCluster` is enabling nonce caching on the head node and all Dask worker processes. "
                     + "Please consider setting the `PyRosettaCluster(max_nonce=...)` keyword argument "
                     + "to limit nonce cache memory usage. To silence this warning, enable dask security on all "
-                    + "PyRosettaCluster input clients that are not instances of `dask.distributed.LocalCluster`."
+                    + "`PyRosettaCluster` input clients that are not instances of `dask.distributed.LocalCluster`."
                 )
         else:
             if bool(self.scheduler):
                 with_nonce = not bool(self.security)
                 if with_nonce:
                     logging.warning(
-                        "The PyRosettaCluster instance is configured to use a remote cluster that does not have "
-                        + "security enabled, so PyRosettaCluster is enabling nonce caching on the host and all "
-                        + "worker processes. Please consider setting the `PyRosettaCluster(max_nonce=...)` keyword "
+                        "The `PyRosettaCluster` instance is configured to use a remote cluster that does not have "
+                        + "security enabled, so `PyRosettaCluster` is enabling nonce caching on the head node and all "
+                        + "Dask worker processes. Please consider setting the `PyRosettaCluster(max_nonce=...)` keyword "
                         + "argument to limit nonce cache memory usage. To silence this warning, please set "
                         + "the `PyRosettaCluster(security=...)` keyword argument to `True` or provide "
                         + "a `dask.distributed.Security()` object (see docstring for more information)."
@@ -298,66 +301,66 @@ def generate_dask_tls_security(
     # Check types
     if not isinstance(output_dir, str):
         raise TypeError(
-            "The 'output_dir' keyword argument value must be of type `str`. "
+            "The `output_dir` keyword argument value must be of type `str`. "
             + f"Received: {type(output_dir)}"
         )
     if not isinstance(common_name, str):
         raise TypeError(
-            "The 'common_name' keyword argument value must be of type `str`. "
+            "The `common_name` keyword argument value must be of type `str`. "
             f"Received: {type(common_name)}"
         )
     if not isinstance(days, int):
         raise TypeError(
-            "The 'days' keyword argument value must be of type `int`. "
+            "The `days` keyword argument value must be of type `int`. "
             + f"Received: {type(days)}"
         )
     if not isinstance(openssl_bin, str):
         raise TypeError(
-            "The 'openssl_bin' keyword argument value must be of type `str`. "
+            "The `openssl_bin` keyword argument value must be of type `str`. "
             + f"Received: {type(openssl_bin)}"
         )
     if not isinstance(overwrite, bool):
         raise TypeError(
-            "The 'overwrite' keyword argument value must be of type `bool`. "
+            "The `overwrite` keyword argument value must be of type `bool`. "
             + f"Received: {type(overwrite)}"
         )
     if san_dns is not None:
         if not isinstance(san_dns, collections.abc.Iterable):
             raise TypeError(
-                "The 'san_dns' keyword argument value must be an iterable. "
+                "The `san_dns` keyword argument value must be an iterable. "
                 + f"Received: {type(san_dns)}"
             )
         else:
             for obj in san_dns:
                 if not isinstance(obj, str):
                     raise TypeError(
-                        "The 'san_dns' keyword argument value must be an iterable of `str` objects. "
+                        "The `san_dns` keyword argument value must be an iterable of `str` objects. "
                         + f"Received: {type(obj)}"
                     )
     if san_ip is not None:
         if not isinstance(san_ip, collections.abc.Iterable):
             raise TypeError(
-                "The 'san_ip' keyword argument value must be an iterable. "
+                "The `san_ip` keyword argument value must be an iterable. "
                 + f"Received: {type(san_ip)}"
             )
         else:
             for obj in san_ip:
                 if not isinstance(obj, str):
                     raise TypeError(
-                        "The 'san_ip' keyword argument value must be an iterable of `str` objects. "
+                        "The `san_ip` keyword argument value must be an iterable of `str` objects. "
                         + f"Received: {type(obj)}"
                     )
     if not isinstance(cleanup, bool):
         raise TypeError(
-            "The 'cleanup' keyword argument value must be of type `bool`. "
+            "The `cleanup` keyword argument value must be of type `bool`. "
             + f"Received: {type(cleanup)}"
         )
 
     openssl = shutil.which(openssl_bin)
     if not openssl:
         raise FileNotFoundError(
-            f"Could not find the provided OpenSSL executable. Please install OpenSSL or pass the full "
-            + f"path to the 'openssl_bin' keyword argument. Received: '{openssl_bin}'"
+            f"Could not find the provided OpenSSL executable. Please install OpenSSL or pass the absolute "
+            + f"path to the `openssl_bin` keyword argument. Received: '{openssl_bin}'"
         )
 
     outdir = Path(os.path.expanduser(output_dir)).resolve()
@@ -491,7 +494,7 @@ def generate_dask_tls_security(
             for path in outdir.glob("[0-9]*.pem"):
                 _maybe_unlink(path)
 
-    # Return dask `Security` object configured to use the CA and the leaf certs
+    # Return `distributed.Security` object configured to use the CA and the leaf certificates
     return Security(
         tls_ca_file=str(ca_cert),
         tls_client_cert=str(leaf_crt),
