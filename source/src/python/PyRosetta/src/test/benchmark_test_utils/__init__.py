@@ -7,7 +7,9 @@
 
 __author__ = "Jason C. Klima"
 
+import functools
 import os
+import select
 import shutil
 import signal
 import subprocess
@@ -15,8 +17,19 @@ import sys
 import tempfile
 import time
 
+from io import TextIOWrapper
 from pyrosetta.utility import has_cereal
-from typing import NoReturn, Optional
+from typing import (
+    Any,
+    Callable,
+    List,
+    NoReturn,
+    Optional,
+    TypeVar,
+    cast,
+)
+
+F = TypeVar("F", bound=Callable[..., int])
 
 
 def has_pyrosetta_distributed_package_requirements() -> bool:
@@ -64,6 +77,8 @@ def exit_if_missing_pyrosetta_distributed_requirements(returncode: int = 0) -> O
 
 
 def print_environment_export() -> None:
+    """Print the active virtual environment export."""
+
     if shutil.which("pixi"):
         try:
             with tempfile.TemporaryDirectory() as tmp_dir:
@@ -102,53 +117,174 @@ def print_environment_export() -> None:
             print("Printing pip environment failed with return code: {0}.".format(ex.returncode))
 
 
-def run_unittest(test_case: str) -> int:
+def handle_status(func: F) -> F:
+    """Decorator for test timing and status reporting."""
+
+    @functools.wraps(func)
+    def wrapper(test_case: str, *args: Any, **kwargs: Any) -> int:
+        """Wrapper function for `handle_status` decorator."""
+
+        t0 = time.perf_counter()
+        status = func(test_case, *args, **kwargs)
+        t1 = time.perf_counter()
+        dt = t1 - t0
+
+        if status == 0:
+            print(f"Finished running test in {dt:.6f} seconds: {test_case}\n", flush=True)
+        else:
+            print(
+                f"Encountered error(s) with exit code {status} after {dt:.6f} seconds while running: {test_case}",
+                "Terminating...",
+                sep="\n",
+                flush=True,
+            )
+            sys.exit(1)
+
+        return status
+
+    return cast(F, wrapper)
+
+
+def terminate_process(pid: int) -> None:
+    """Terminate a process group."""
+
+    try:
+        os.killpg(os.getpgid(pid), signal.SIGTERM)
+        time.sleep(1)
+        os.killpg(os.getpgid(pid), signal.SIGKILL)
+    except Exception:
+        pass
+
+
+def drain_buffer(pipe: TextIOWrapper) -> None:
+    """Drain buffer from a pipe."""
+    try:
+        while True:
+            rlist, _, _ = select.select([pipe], [], [], 0)
+            if not rlist:
+                break
+            line = pipe.readline()
+            if not line:
+                break
+            print(line, end="", flush=True)
+    except Exception:
+        pass
+
+
+@handle_status
+def run_unittest(test_case: str, timeout: int) -> int:
     """Run a test case using the unittest module in a subprocess."""
 
-    args = [sys.executable, "-m", "unittest", test_case]
-    print("Executing:", " ".join(args), sep="\n")
+    args: List[str] = [sys.executable, "-m", "unittest", test_case]
+    print("Executing:", " ".join(args), sep="\n", flush=True)
+
     process = subprocess.Popen(
         args,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
-        text=True,
-        preexec_fn=os.setsid,
+        universal_newlines=True,
+        start_new_session=True,
+        close_fds=True,
     )
 
-    print("Output:")
     try:
-        for line in process.stdout:
-            print(line, end="")
-        process.wait()
-    finally:
         try:
-            os.killpg(os.getpgid(process.pid), signal.SIGTERM)
-        except Exception:
-            pass
+            stdout, _ = process.communicate(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            print(
+                f"Subprocess timeout after {timeout} seconds while running: {test_case}",
+                "Terminating...",
+                sep="\n",
+                flush=True,
+            )
+            terminate_process(process.pid)
+            stdout, _ = process.communicate()
+            print(stdout, end="", flush=True)
+            return 1
 
-    status = process.returncode
-    if status != 0:
-        print(f"Encountered error(s) with exit code {status} while running: {cmd}\nTerminating...")
-        sys.exit(1)
+        print("Output:", flush=True)
+        print(stdout, end="", flush=True)
+
+    finally: # Clean up in case any subprocesses are still alive
+        if process.poll() is None:
+            terminate_process(process.pid)
+
+    return process.returncode
 
 
-def run_test_cases(*test_cases: str) -> None:
+@handle_status
+def run_unittest_streaming(test_case: str, timeout: int) -> int:
+    """Run a test case using the unittest module in a subprocess with streaming standard output."""
+
+    args: List[str] = [sys.executable, "-m", "unittest", test_case]
+    print("Executing:", " ".join(args), sep="\n", flush=True)
+
+    process = subprocess.Popen(
+        args,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        universal_newlines=True,
+        start_new_session=True,
+        bufsize=1,
+        close_fds=True,
+        env={**os.environ, "PYTHONUNBUFFERED": "1"},
+    )
+    if process.stdout is None:
+        return process.wait()
+
+    start_time = time.perf_counter()
+    try:
+        print("Output:", flush=True)
+        while True:
+            # Wait for output readiness without blocking
+            rlist, _, _ = select.select([process.stdout], [], [], 0.1)
+            if rlist:
+                line = process.stdout.readline()
+                if line:
+                    print(line, end="", flush=True)
+
+            # Check timeout
+            if time.perf_counter() - start_time > timeout:
+                print(
+                    f"Subprocess timeout after {timeout} seconds while running: {test_case}",
+                    "Terminating...",
+                    sep="\n",
+                    flush=True,
+                )
+                terminate_process(process.pid)
+                time.sleep(0.1)
+                drain_buffer(process.stdout) # Drain remaining buffer
+                return 1
+
+            # Check if process has exited
+            if process.poll() is not None:
+                break
+
+        drain_buffer(process.stdout) # Drain remaining buffer after exit
+
+    finally: # Clean up in case any subprocesses are still alive
+        if process.poll() is None:
+            terminate_process(process.pid)
+
+    return process.returncode
+
+
+def run_test_cases(*test_cases: str, streaming: bool = True, timeout: int = 1800) -> None:
     """Run the input test cases using the `unittest` module."""
 
     exit_if_missing_pyrosetta_distributed_requirements()
     print_environment_export()
-
+    unittest_runner = run_unittest_streaming if streaming else run_unittest
     for test_case in test_cases:
-        t0 = time.perf_counter()
-        run_unittest(test_case)
-        t1 = time.perf_counter()
-        dt = t1 - t0
-        print(f"Finished running test in {dt:.6f} seconds: {test_case}\n")
+        unittest_runner(test_case, timeout)
 
 
-def run_distributed_cluster_test_cases(*test_cases: str) -> None:
+def run_distributed_cluster_test_cases(*test_cases: str, streaming: bool = True, timeout: int = 1800) -> None:
     """Run the input test cases (each prepended with "pyrosetta.tests.distributed.cluster.") using the `unittest` module."""
 
     prefix = "pyrosetta.tests.distributed.cluster."
-    prepend = lambda test_case: f"{prefix}{test_case}"
-    run_test_cases(*map(prepend, test_cases))
+    run_test_cases(
+        *(f"{prefix}{test_case}" for test_case in test_cases),
+        streaming=streaming,
+        timeout=timeout,
+    )
