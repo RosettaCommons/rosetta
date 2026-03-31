@@ -40,6 +40,7 @@ from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.utility.initialization import PyRosettaInitDictWriter
 from typing import (
+    AbstractSet,
     Any,
     Callable,
     Dict,
@@ -646,6 +647,11 @@ def _catch_pose_or_kwargs(
     obj: Union[Pose, PackedPose, Dict[Any, Any]], func: Callable[..., Any], attr: str
 ) -> List[Any]:
     return [func(obj, attr)]
+
+
+@to_iterable.register(set)
+def _iterate(objs: AbstractSet[Any], func: Callable[..., Any], attr: str) -> List[Any]:
+    raise TypeError(f"Unsupported unordered iterable of type `set` received via '{attr}': {objs}")
 
 
 @to_iterable.register(collections.abc.Iterable)
