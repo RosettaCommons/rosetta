@@ -14,6 +14,7 @@ from typing import List
 
 from pyrosetta.distributed.cluster.core import PyRosettaCluster
 from pyrosetta.distributed.cluster.toolkit import (
+    PackedPoseHasher,
     Serialization,
     export_init_file,
     generate_dask_tls_security,
@@ -32,6 +33,7 @@ from pyrosetta.distributed.cluster.toolkit import (
 )
 
 __all__: List[str] = [
+    "PackedPoseHasher",
     "PyRosettaCluster",
     "Serialization",
     "export_init_file",
