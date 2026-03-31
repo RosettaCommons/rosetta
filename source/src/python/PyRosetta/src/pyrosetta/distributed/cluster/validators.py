@@ -46,18 +46,6 @@ DISALLOWED_RUN_OPTIONS_NO_PREFIX: AbstractSet[str] = set(
 PYROSETTACLUSTER_KEY_PREFIX: str = "PyRosettaCluster_"
 
 
-OPTION_KEYS: AbstractSet[str] = {"options", "extra_options"}
-DISALLOWED_RUN_OPTIONS: AbstractSet[str] = set(
-    f"{prefix}{option}"
-    for prefix in ("-run::", "-run:", "-")
-    for option in ("constant_seed", "jran", "use_time_as_seed", "rng_seed_device", "seed_offset", "rng")
-)
-DISALLOWED_RUN_OPTIONS_NO_PREFIX: AbstractSet[str] = set(
-    map(lambda option: option.lstrip("-"), DISALLOWED_RUN_OPTIONS)
-)
-PYROSETTACLUSTER_KEY_PREFIX: str = "PyRosettaCluster_"
-
-
 def _validate_clients_indices(
         clients_indices: Any, _protocols: List[Callable[..., Any]], _clients_dict_keys: List[int],
     ) -> None:
