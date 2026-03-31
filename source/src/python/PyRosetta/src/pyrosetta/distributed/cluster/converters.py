@@ -34,6 +34,7 @@ import warnings
 from functools import singledispatch
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
+    AbstractSet,
     Any,
     Callable,
     Dict,
@@ -243,7 +244,7 @@ def _parse_protocols(objs: Any) -> List[Union[Callable[..., Any], Iterable[Any]]
     @singledispatch
     def converter(objs: Any) -> NoReturn:
         raise RuntimeError(
-            "The user-defined PyRosetta protocols must be an "
+            "The user-defined PyRosetta protocols must be an ordered "
             + "iterable of objects of `types.GeneratorType` and/or "
             + "`types.FunctionType` types, or an instance of type "
             + f"`types.GeneratorType` or `types.FunctionType`. Received: {type(objs)}"
@@ -259,6 +260,10 @@ def _parse_protocols(objs: Any) -> List[Union[Callable[..., Any], Iterable[Any]]
         obj: Union[Callable[..., Any], Iterable[Any]]
     ) -> List[Union[Callable[..., Any], Iterable[Any]]]:
         return [obj]
+
+    @converter.register(set)
+    def _from_set(objs: AbstractSet[Any]) -> NoReturn:
+        return converter.dispatch(object)(objs)
 
     @converter.register(collections.abc.Iterable)
     def _to_list(
