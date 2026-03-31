@@ -14,7 +14,7 @@ except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.initialization' requires the "
         + "third-party packages 'numpy' and 'toolz' as dependencies!\n"
-        + "Please install the packages into your virtual environment. "
+        + "Please install these packages into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/numpy/\n"
         + "https://pypi.org/project/toolz/\n"

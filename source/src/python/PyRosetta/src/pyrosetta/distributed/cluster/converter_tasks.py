@@ -163,13 +163,10 @@ def get_protocols_list_of_str(
     """
     Get the user-defined PyRosetta protocols as a `list` object of `str` objects.
 
-    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
-    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
-    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
-
-    *Warning*: This function uses the `pickle` module to deserialize pickled `pandas.DataFrame` objects. Using the
-    `pickle` module is not secure, so please only run with input files you trust. Learn more about the `pickle`
-    module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects and pickled
+    `pandas.DataFrame` objects. Using the `pickle` module is not secure, so please only run with input files
+    you trust. Learn more about the `pickle` module and its security
+    `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Args:
         `input_file`:
