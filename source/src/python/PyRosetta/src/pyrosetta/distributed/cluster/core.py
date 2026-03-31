@@ -1222,10 +1222,10 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         retries: Any = None,
     ) -> Generator[Tuple[PackedPose, Dict[Any, Any]], None, None]:
         """
-        Run user-provided PyRosetta protocols on a local or remote compute cluster using
-        the user-customized PyRosettaCluster instance. Either arguments or the 'protocols'
-        keyword argument is required. If both are provided, then the 'protocols' keyword
-        argument value gets concatenated after the input arguments.
+        Execute user-defined PyRosetta protocols on a local or remote compute cluster using the user-customized
+        `PyRosettaCluster` instance. Either positional arguments or the `protocols` keyword argument specifying
+        one or more user-defined PyRosetta protocols is required. If both are passed, then the `protocols`
+        keyword argument value gets concatenated after the positional arguments.
 
         *Warning*: This method uses the `cloudpickle` and `pickle` modules to serialize and deserialize `Pose`
         objects, arbitrary Python types in `Pose.cache` dictionaries, `pandas.DataFrame` objects (if
