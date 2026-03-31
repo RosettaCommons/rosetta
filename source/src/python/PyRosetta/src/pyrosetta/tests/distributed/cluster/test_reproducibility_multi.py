@@ -17,9 +17,11 @@ import pyrosetta
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
 import shlex
+import signal
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 
 from pyrosetta.distributed.cluster import (
@@ -565,17 +567,52 @@ class TestReproducibilityMulti(unittest.TestCase):
                 )
                 yield p
 
-        def run_subprocess(cmd, module_dir=None):
+        def run_subprocess(cmd, module_dir=None, timeout=900):
             print("Running command:", cmd, flush=True)
+
             if module_dir:
                 env = os.environ.copy()
                 env["PYTHONPATH"] = f"{module_dir}{os.pathsep}{os.environ.get('PYTHONPATH', '')}"
             else:
                 env = None
-            p = subprocess.run(shlex.split(cmd), env=env, check=True, shell=False, stderr=subprocess.PIPE)
-            print("Return code: {0}".format(p.returncode), flush=True)
 
-            return p.returncode
+            process = subprocess.Popen(
+                shlex.split(cmd),
+                env=env,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                universal_newlines=True,
+                start_new_session=True,
+            )
+
+            try:
+                try:
+                    stdout, stderr = process.communicate(timeout=timeout)
+                except subprocess.TimeoutExpired:
+                    print(f"Subprocess timeout! Terminating process group: {process.pid}", flush=True)
+                    os.killpg(os.getpgid(process.pid), signal.SIGKILL)
+                    stdout, stderr = process.communicate()
+                    raise RuntimeError(f"Subprocess timeout while running command: {cmd}")
+
+                print(stdout, end="", flush=True)
+                if stderr:
+                    print(stderr, end="", flush=True)
+
+                if process.returncode != 0:
+                    raise subprocess.CalledProcessError(
+                        process.returncode, cmd, output=stdout, stderr=stderr
+                    )
+
+                return process.returncode
+
+            finally:
+                if process.poll() is None:
+                    try:
+                        os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+                        time.sleep(1)
+                        os.killpg(os.getpgid(process.pid), signal.SIGKILL)
+                    except Exception:
+                        pass
 
         with tempfile.TemporaryDirectory() as workdir:
             sequence = "ACDEFGHIKLMNPQRSTVWY"
