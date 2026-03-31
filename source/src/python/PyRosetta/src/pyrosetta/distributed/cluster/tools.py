@@ -509,13 +509,13 @@ def reproduce(
     `PyRosettaCluster` and any additional `PyRosettaCluster` class keyword arguments, execute the
     decoy reproduction simulation with a new instance of `PyRosettaCluster`.
 
-    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
-    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
-    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
-
-    *Warning*: This function uses the `pickle` module to deserialize pickled `pandas.DataFrame` objects. Using
-    the `pickle` module is not secure, so please only run with input files you trust. Learn more about the
-    `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+    *Warning*: This method uses the `cloudpickle` and `pickle` modules to serialize and deserialize `Pose`
+    objects, arbitrary Python types in `Pose.cache` dictionaries, `pandas.DataFrame` objects (if configured),
+    user-defined task dictionaries, user-defined PyRosetta protocols, and other user-provided data. Using the
+    `cloudpickle` and `pickle` modules is not secure, so please only run this method with input data you fully
+    understand and trust. Learn more about the `cloudpickle` and `pickle` modules and their security
+    `here <https://github.com/cloudpipe/cloudpickle>`_ and
+    `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Args:
         `input_file`:
@@ -778,6 +778,14 @@ def produce(**kwargs: Any) -> None:
     """
     A `PyRosettaCluster.distribute` method shim requiring the `protocols` keyword argument, and optionally any
     `PyRosettaCluster` keyword arguments or `PyRosettaCluster.distribute` keyword arguments.
+
+    *Warning*: This method uses the `cloudpickle` and `pickle` modules to serialize and deserialize `Pose`
+    objects, arbitrary Python types in `Pose.cache` dictionaries, `pandas.DataFrame` objects (if configured),
+    user-defined task dictionaries, user-defined PyRosetta protocols, and other user-provided data. Using the
+    `cloudpickle` and `pickle` modules is not secure, so please only run this method with input data you fully
+    understand and trust. Learn more about the `cloudpickle` and `pickle` modules and their security
+    `here <https://github.com/cloudpipe/cloudpickle>`_ and
+    `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Args:
         `**kwargs`:

@@ -1227,10 +1227,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         keyword argument is required. If both are provided, then the 'protocols' keyword
         argument value gets concatenated after the input arguments.
 
-        *Warning*: This method uses the `cloudpickle` and `pickle` modules to deserialize data. Using the
-        `cloudpickle` and `pickle` modules is not secure, so please only run with input data you trust. Learn
-        more about the `cloudpickle` and `pickle` modules and their security
-        `here <https://github.com/cloudpipe/cloudpickle>`_ and
+        *Warning*: This method uses the `cloudpickle` and `pickle` modules to serialize and deserialize `Pose`
+        objects, arbitrary Python types in `Pose.cache` dictionaries, `pandas.DataFrame` objects (if
+        configured), user-defined task dictionaries, user-defined PyRosetta protocols, and other user-provided
+        data. Using the `cloudpickle` and `pickle` modules is not secure, so please only run this method with
+        input data you fully understand and trust. Learn more about the `cloudpickle` and `pickle` modules and
+        their security `here <https://github.com/cloudpipe/cloudpickle>`_ and
         `here <https://docs.python.org/3/library/pickle.html>`_.
 
         Examples:
