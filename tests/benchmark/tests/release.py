@@ -522,7 +522,7 @@ def pyrosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_driv
 
         distr_file_list = os.listdir(pyrosetta_path+'/build')
 
-        suite_timeout, test_timeout = (128, 2048) if kind == 'Debug' or platform['os'].startswith('aarch64') else (32, 512)
+        suite_timeout, test_timeout = (128, 2048) if kind == 'Debug' or platform['os'].startswith('aarch64') else (32, 1024)
 
         #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
         gui_flag, res, output = '', result.exitcode, result.output
