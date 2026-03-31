@@ -57,7 +57,6 @@ from typing import (
     Generic,
     Iterable,
     List,
-    NoReturn,
     Optional,
     Tuple,
     TypeVar,
@@ -184,7 +183,7 @@ class IO(Generic[G]):
             Iterable[Optional[Union[Pose, PackedPose, bytes]]],
             Optional[Union[Pose, PackedPose]],
         ],
-    ) -> Union[List[Tuple[str, Dict[str, Any]]], NoReturn]:
+    ) -> List[Tuple[str, Dict[str, Any]]]:
         """
         Format output results from a Dask worker.
 
@@ -673,7 +672,7 @@ def verify_init_file(
     input_packed_pose: Optional[PackedPose],
     output_packed_pose: Optional[PackedPose],
     metadata: Dict[str, Any],
-) -> Optional[NoReturn]:
+) -> None:
     """
     Verify that a PyRosetta initialization file was written by `PyRosettaCluster`.
 
@@ -683,7 +682,7 @@ def verify_init_file(
     """
 
     @toolz.functoolz.curry
-    def _verify_signer(_signer: InitFileSigner, _sha256: str, _signature: str) -> Optional[NoReturn]:
+    def _verify_signer(_signer: InitFileSigner, _sha256: str, _signature: str) -> None:
         """Verify that current PyRosetta and `PyRosettaCluster` versions match that dumped in the '.init' file"""
 
         _init_file_err_msg = (
@@ -803,7 +802,7 @@ def sign_init_file_metadata_and_poses(
 def get_poses_from_init_file(
     init_file: str,
     verify: bool = False,
-) -> Union[Tuple[Optional[PackedPose], Optional[PackedPose]], NoReturn]:
+) -> Tuple[Optional[PackedPose], Optional[PackedPose]]:
     """
     Return a `tuple` object of the input `PackedPose` object and the output `PackedPose` object from a ".init"
     or ".init.bz2" file, and optionally verify `PyRosettaCluster` metadata in the ".init" or ".init.bz2" file.
@@ -816,7 +815,7 @@ def get_poses_from_init_file(
     @toolz.functoolz.curry
     def _maybe_to_packed(
         key: str, poses: List[str], metadata: Dict[str, str]
-    ) -> Union[Optional[PackedPose], NoReturn]:
+    ) -> Optional[PackedPose]:
         assert isinstance(metadata, dict), (
             "The value of the 'metadata' key must be a `dict` object. "
             + f"Received: {type(metadata)}"

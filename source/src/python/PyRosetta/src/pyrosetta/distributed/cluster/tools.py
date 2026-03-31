@@ -39,7 +39,6 @@ from typing import (
     Dict,
     Generator,
     List,
-    NoReturn,
     Optional,
     Tuple,
     TypeVar,
@@ -76,7 +75,7 @@ def get_protocols(
     input_file: Optional[Union[str, Pose, PackedPose]] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
-) -> Union[List[Callable[..., Any]], NoReturn]:
+) -> List[Callable[..., Any]]:
     """
     Given an input file that was written by `PyRosettaCluster`, or a scorefile with full simulation records
     that was written by `PyRosettaCluster` and a decoy name, if an iterable of PyRosetta protocols is provided
@@ -209,7 +208,7 @@ def get_instance_kwargs(
     decoy_name: Optional[str] = None,
     skip_corrections: Optional[bool] = None,
     with_metadata_kwargs: Optional[bool] = None,
-) -> Union[Dict[str, Any], Tuple[Dict[str, Any], Dict[str, Any]], NoReturn]:
+) -> Union[Dict[str, Any], Tuple[Dict[str, Any], Dict[str, Any]]]:
     """
     Given an input file that was written by `PyRosettaCluster`, or a scorefile with full simulation records
     that was written by `PyRosettaCluster` and a decoy name, return the `PyRosettaCluster` instance attributes
@@ -385,7 +384,7 @@ def get_instance_kwargs(
         return instance_kwargs
 
 
-def reserve_scores(func: P) -> Union[P, NoReturn]:
+def reserve_scores(func: P) -> P:
     """
     A decorator for any user-defined PyRosetta protocol. If any non-scoreterm keys are present in the input
     `PackedPose` object's `Pose.cache` dictionary, and if they are deleted during execution of the decorated
@@ -504,7 +503,7 @@ def reproduce(
     retries: Optional[Union[int, List[int], Tuple[int, ...]]] = None,
     skip_corrections: bool = False,
     init_from_file_kwargs: Optional[Dict[str, Any]] = None,
-) -> Optional[NoReturn]:
+) -> None:
     """
     Given an input file (or a scorefile with full simulation records and a decoy name) that was written by
     `PyRosettaCluster` and any additional `PyRosettaCluster` class keyword arguments, execute the
@@ -775,7 +774,7 @@ def reproduce(
         _tmp_dir.cleanup()
 
 
-def produce(**kwargs: Any) -> Optional[NoReturn]:
+def produce(**kwargs: Any) -> None:
     """
     A `PyRosettaCluster.distribute` method shim requiring the `protocols` keyword argument, and optionally any
     `PyRosettaCluster` keyword arguments or `PyRosettaCluster.distribute` keyword arguments.
@@ -804,11 +803,11 @@ def produce(**kwargs: Any) -> Optional[NoReturn]:
     )
 
 
-run: Callable[..., Optional[NoReturn]] = produce
+run: Callable[..., None] = produce
 
 
 @wraps(produce, assigned=("__doc__",), updated=())
-def iterate(**kwargs: Any) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[Any, Any]], None, None]]:
+def iterate(**kwargs: Any) -> Generator[Tuple[PackedPose, Dict[Any, Any]], None, None]:
     # See assigned `iterate.__doc__` updated below
     protocols = kwargs.pop("protocols", None)
     clients_indices = kwargs.pop("clients_indices", None)

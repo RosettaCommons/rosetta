@@ -159,7 +159,7 @@ def get_protocols_list_of_str(
     input_file: Optional[Union[str, Pose, PackedPose]] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
-) -> Union[List[str], NoReturn]:
+) -> List[str]:
     """
     Get the user-defined PyRosetta protocols as a `list` object of `str` objects.
 
@@ -279,7 +279,7 @@ def get_protocols_list_of_str(
     return protocols_list_of_str
 
 
-def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Union[Dict[str, Dict[str, Any]], NoReturn]:
+def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Dict[str, Dict[str, Any]]:
     """
     Get the `PyRosettaCluster` full simulation record from an output decoy file or a `Pose` or `PackedPose`
     object from a `PyRosettaCluster` simulation. If a PyRosetta initialization file is provided, then
@@ -657,7 +657,7 @@ def _iterate(objs: Iterable[Any], func: Callable[..., Any], attr: str) -> List[A
 
 
 @singledispatch
-def to_int(obj: Any, attribute: str) -> Union[int, NoReturn]:
+def to_int(obj: Any, attribute: str) -> int:
     try:
         return int(obj)
     except:
@@ -701,7 +701,7 @@ def _none_to_packed(obj: None, protocol_name: str) -> PackedPose:
 
 
 @singledispatch
-def to_str(obj: Any, attribute: str) -> Union[str, NoReturn]:
+def to_str(obj: Any, attribute: str) -> str:
     try:
         return str(int(obj))
     except:
@@ -784,7 +784,7 @@ def parse_scorefile(obj: Any) -> NoReturn:
 
 
 @parse_scorefile.register(str)
-def _parse_str(obj: str) -> Union[str, NoReturn]:
+def _parse_str(obj: str) -> str:
     if not os.path.exists(obj):
         raise ValueError(
             f"The `scorefile` argument value must exist! Received: '{obj}'"
@@ -946,7 +946,7 @@ def parse_init_file(
     input_packed_pose: Optional[PackedPose],
     skip_corrections: bool,
     init_from_file_kwargs: Dict[str, Any],
-) -> Union[Tuple[Optional[PackedPose], PackedPose], NoReturn]:
+) -> Tuple[Optional[PackedPose], PackedPose]:
     """
     Return a `tuple` object of the input `PackedPose` object and the output `PackedPose` object from a ".init"
     or ".init.bz2" file, verifying `PyRosettaCluster` metadata in the ".init" or ".init.bz2" file.

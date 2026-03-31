@@ -528,7 +528,6 @@ from typing import (
     Dict,
     Generator,
     List,
-    NoReturn,
     Optional,
     Tuple,
     TypeVar,
@@ -1221,7 +1220,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         resources: Any = None,
         priorities: Any = None,
         retries: Any = None,
-    ) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[Any, Any]], None, None]]:
+    ) -> Generator[Tuple[PackedPose, Dict[Any, Any]], None, None]:
         """
         Run user-provided PyRosetta protocols on a local or remote compute cluster using
         the user-customized PyRosettaCluster instance. Either arguments or the 'protocols'
@@ -1539,7 +1538,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         resources: Any = None,
         priorities: Any = None,
         retries: Any = None,
-    ) -> Union[NoReturn, Generator[Tuple[PackedPose, Dict[str, Any]], None, None]]:
+    ) -> Generator[Tuple[PackedPose, Dict[str, Any]], None, None]:
         # See `generate.__doc__` explicitly set below
 
         if self.sha1 != "":
@@ -1569,7 +1568,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         resources: Any = None,
         priorities: Any = None,
         retries: Any = None,
-    ) -> Optional[NoReturn]:
+    ) -> None:
         # See `distribute.__doc__` explicitly set below
 
         self.yield_results = False

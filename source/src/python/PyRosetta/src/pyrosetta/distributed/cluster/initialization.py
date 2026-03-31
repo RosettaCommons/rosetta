@@ -33,9 +33,6 @@ from typing import (
     AbstractSet,
     Dict,
     List,
-    NoReturn,
-    Optional,
-    Union,
 )
 
 
@@ -44,7 +41,7 @@ def _get_pyrosetta_init_args() -> List[str]:
     return inspect.getfullargspec(pyrosetta.init).args
 
 
-def _get_residue_type_set_name3() -> Union[AbstractSet[str], NoReturn]:
+def _get_residue_type_set_name3() -> AbstractSet[str]:
     """
     Return a `set` of `str` of 3-letter names of residues in the PyRosetta ResidueTypeSet database.
     """
@@ -60,7 +57,7 @@ def _get_residue_type_set_name3() -> Union[AbstractSet[str], NoReturn]:
     return set(_name3_list)
 
 
-def _maybe_init_client() -> Optional[NoReturn]:
+def _maybe_init_client() -> None:
     """
     Initialize PyRosetta if it has not been initialized, otherwise confirm that PyRosetta was initialized with
     a constant seed.
@@ -95,7 +92,7 @@ def _maybe_init_client() -> Optional[NoReturn]:
 @toolz.functoolz.curry
 def _maybe_relativize(
     option_name: str, value: str, start: str, ignore_errors: bool
-) -> Union[str, NoReturn]:
+) -> str:
     """Relativize a `str` object if it exists as a filesystem path."""
 
     try:

@@ -23,7 +23,6 @@ from typing import (
     Dict,
     Generic,
     List,
-    NoReturn,
     Optional,
     Tuple,
     TypeVar,
@@ -106,7 +105,7 @@ class PackedPoseHasher(Generic[G]):
         """Encode a string object into bytes."""
         return obj.strip().encode(PackedPoseHasher._encoding)
 
-    def update_hashmod(self, obj: Any) -> Optional[NoReturn]:
+    def update_hashmod(self, obj: Any) -> None:
         """Update the hashmod with an input object."""
 
         if isinstance(obj, str):

@@ -31,7 +31,6 @@ from typing import (
     Callable,
     Dict,
     List,
-    NoReturn,
     Optional,
     Tuple,
     TypeVar,
@@ -47,7 +46,7 @@ T = TypeVar("T", bound=Callable[..., Any])
 class InputError(TypeError):
     """Exception raised for `PyRosettaCluster` keyword argument value errors for `str` and `int` types."""
 
-    def __init__(self, obj: Any, attribute: str) -> NoReturn:
+    def __init__(self, obj: Any, attribute: str) -> None:
         super().__init__(
             f"The '{attribute}' keyword argument value must be of type `int` or `str`, "
             + f"or an iterable containing `int` or `str` types. Received '{obj}' of type `{type(obj)}`."
@@ -57,7 +56,7 @@ class InputError(TypeError):
 class InputFileError(TypeError):
     """Exception raised for `PyRosettaCluster` errors for `str` types."""
 
-    def __init__(self, obj: Any) -> NoReturn:
+    def __init__(self, obj: Any) -> None:
         super().__init__(
             f"The `input_file` keyword argument value must be of type `str`. Received: {type(obj)}."
         )
@@ -66,7 +65,7 @@ class InputFileError(TypeError):
 class OutputError(TypeError):
     """Exception raised for user-defined PyRosetta protocol output errors."""
 
-    def __init__(self, obj: Any) -> NoReturn:
+    def __init__(self, obj: Any) -> None:
         super().__init__(
             " ".join(
                 "Returned object(s) should be an instance of `NoneType`, `Pose`, `PackedPose`, or `dict`; or \
@@ -81,7 +80,7 @@ class OutputError(TypeError):
 class WorkerError(WorkerLostError):
     """Exception raised for Dask worker errors."""
 
-    def __init__(self, protocol_name: str) -> NoReturn:
+    def __init__(self, protocol_name: str) -> None:
         super().__init__(WorkerError._msg(protocol_name))
 
     @staticmethod
@@ -109,13 +108,13 @@ class WorkerError(WorkerLostError):
 class TaskCancelledError(RuntimeError):
     """Exception raised for Dask `CancelledError` exceptions."""
 
-    def __init__(self, key: str, extra_msg: str) -> NoReturn:
+    def __init__(self, key: str, extra_msg: str) -> None:
         super().__init__(
             f"Task '{key}' raised `CancelledError` upon gathering results. {extra_msg}"
         )
 
 
-def trace_protocol_exceptions(func: T) -> Union[T, NoReturn]:
+def trace_protocol_exceptions(func: T) -> T:
     """Trace exceptions in user-defined PyRosetta protocols."""
 
     @wraps(func)
@@ -124,7 +123,7 @@ def trace_protocol_exceptions(func: T) -> Union[T, NoReturn]:
         protocol: Callable[..., Any],
         ignore_errors: bool,
         kwargs: Dict[str, Any],
-    ) -> Union[Any, NoReturn]:
+    ) -> Any:
         """Wrapper function for `trace_protocol_exceptions` decorator."""
 
         protocol_name = protocol.__name__
@@ -147,7 +146,7 @@ def trace_protocol_exceptions(func: T) -> Union[T, NoReturn]:
     return cast(T, wrapper)
 
 
-def trace_subprocess_exceptions(func: T) -> Union[T, NoReturn]:
+def trace_subprocess_exceptions(func: T) -> T:
     """Trace exceptions in `billiard` subprocesses."""
 
     @wraps(func)
@@ -158,7 +157,7 @@ def trace_subprocess_exceptions(func: T) -> Union[T, NoReturn]:
         protocol_name: str,
         timeout: Union[float, int],
         ignore_errors: bool,
-    ) -> Union[List[Tuple[Optional[bytes], bytes]], NoReturn]:
+    ) -> List[Tuple[Optional[bytes], bytes]]:
         """Wrapper function for `trace_subprocess_exceptions` decorator."""
 
         while True:

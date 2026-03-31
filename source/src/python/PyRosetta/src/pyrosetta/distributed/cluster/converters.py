@@ -70,7 +70,7 @@ from pyrosetta.distributed.cluster.validators import PYROSETTACLUSTER_KEY_PREFIX
 S = TypeVar("S", bound=Serialization)
 
 
-def _parse_filter_results(obj: Any) -> Union[bool, NoReturn]:
+def _parse_filter_results(obj: Any) -> bool:
     """Parse the `filter_results` keyword argument value of `PyRosettaCluster`."""
 
     _issue_future_warning = False
@@ -123,7 +123,7 @@ def _parse_empty_queue(protocol_name: str, ignore_errors: bool) -> None:
     return None
 
 
-def _parse_environment(obj: Any) -> Union[str, NoReturn]:
+def _parse_environment(obj: Any) -> str:
     """Parse the `environment` keyword argument value of `PyRosettaCluster`."""
 
     @singledispatch
@@ -183,7 +183,7 @@ def _parse_environment(obj: Any) -> Union[str, NoReturn]:
         return yml
 
     @converter.register(str)
-    def _parse_str(obj: str) -> Union[str, NoReturn]:
+    def _parse_str(obj: str) -> str:
         environment_manager = get_environment_manager()
         if obj == "":
             _warning_msg = (
@@ -237,7 +237,7 @@ def _parse_environment(obj: Any) -> Union[str, NoReturn]:
     return converter(obj)
 
 
-def _parse_protocols(objs: Any) -> Union[List[Union[Callable[..., Any], Iterable[Any]]], NoReturn]:
+def _parse_protocols(objs: Any) -> List[Union[Callable[..., Any], Iterable[Any]]]:
     """Parse the `protocols` argument values from the `PyRosettaCluster.distribute` method."""
 
     @singledispatch
@@ -263,7 +263,7 @@ def _parse_protocols(objs: Any) -> Union[List[Union[Callable[..., Any], Iterable
     @converter.register(collections.abc.Iterable)
     def _to_list(
         objs: Iterable[Any],
-    ) -> Union[List[Union[Callable[..., Any], Iterable[Any]]], NoReturn]:
+    ) -> List[Union[Callable[..., Any], Iterable[Any]]]:
         for obj in objs:
             if not isinstance(obj, (types.FunctionType, types.GeneratorType)):
                 raise TypeError(
@@ -276,7 +276,7 @@ def _parse_protocols(objs: Any) -> Union[List[Union[Callable[..., Any], Iterable
     return converter(objs)
 
 
-def _parse_yield_results(yield_results: Any) -> Union[bool, NoReturn]:
+def _parse_yield_results(yield_results: Any) -> bool:
     """Parse the `yield_results` keyword argument value of `PyRosettaCluster`."""
 
     @singledispatch
@@ -302,7 +302,7 @@ def _parse_yield_results(yield_results: Any) -> Union[bool, NoReturn]:
     return converter(yield_results)
 
 
-def _parse_norm_task_options(obj: Any) -> Union[bool, NoReturn]:
+def _parse_norm_task_options(obj: Any) -> bool:
     """Parse the `norm_task_options` keyword argument value of `PyRosettaCluster`."""
 
     _issue_future_warning = False
@@ -337,7 +337,7 @@ def _parse_norm_task_options(obj: Any) -> Union[bool, NoReturn]:
     return converter(obj)
 
 
-def _parse_pyrosetta_build(obj: Any) -> Union[str, NoReturn]:
+def _parse_pyrosetta_build(obj: Any) -> str:
     """Parse the `pyrosetta_build` keyword argument value of `PyRosettaCluster`."""
 
     _pyrosetta_version_string = pyrosetta._build_signature()
@@ -354,7 +354,7 @@ def _parse_pyrosetta_build(obj: Any) -> Union[str, NoReturn]:
         return _pyrosetta_version_string
 
     @converter.register(str)
-    def _validate_pyrosetta_version_string(obj: str) -> Union[str, NoReturn]:
+    def _validate_pyrosetta_version_string(obj: str) -> str:
         if obj == "":
             logging.warning(
                 "The input `pyrosetta_build` keyword argument value is an empty string, "
@@ -387,7 +387,7 @@ def _parse_pyrosetta_build(obj: Any) -> Union[str, NoReturn]:
     return converter(obj)
 
 
-def _parse_scratch_dir(obj: Any) -> Union[str, NoReturn]:
+def _parse_scratch_dir(obj: Any) -> str:
     """Parse the `scratch_dir` keyword argument value of `PyRosettaCluster`."""
 
     @singledispatch
@@ -417,7 +417,7 @@ def _parse_seeds(objs: Any) -> List[str]:
     return to_iterable(objs, to_str, "seeds")
 
 
-def _parse_sha1(obj: Any) -> Union[str, NoReturn]:
+def _parse_sha1(obj: Any) -> str:
     """Parse the `sha1` keyword argument value of `PyRosettaCluster`."""
 
     @singledispatch
@@ -428,7 +428,7 @@ def _parse_sha1(obj: Any) -> Union[str, NoReturn]:
         )
 
     @converter.register(str)
-    def _register_str(obj: str) -> Union[str, NoReturn]:
+    def _register_str(obj: str) -> str:
         """Parse `str` type inputs of the `sha1` keyword argument value."""
 
         try:
@@ -493,7 +493,7 @@ def _parse_sha1(obj: Any) -> Union[str, NoReturn]:
     return converter(obj)
 
 
-def _parse_system_info(obj: Any) -> Union[Dict[Any, Any], NoReturn]:
+def _parse_system_info(obj: Any) -> Dict[Any, Any]:
     """Parse the input `system_info` keyword argument value of `PyRosettaCluster`."""
 
     _sys_platform = {"sys.platform": sys.platform}
@@ -626,7 +626,7 @@ def _get_packed_poses_output_kwargs(
     result: Any,
     input_kwargs: Dict[str, Any],
     protocol_name: str,
-) -> Union[Tuple[List[PackedPose], Dict[str, Any]], NoReturn]:
+) -> Tuple[List[PackedPose], Dict[str, Any]]:
     """Bin results from a user-defined PyRosetta protocol."""
 
     packed_poses = []
@@ -721,7 +721,7 @@ def _parse_target_results(objs: List[Tuple[bytes, bytes]]) -> List[Tuple[bytes, 
     return objs
 
 
-def _parse_tasks(objs: Any) -> Union[List[Dict[Any, Any]], NoReturn]:
+def _parse_tasks(objs: Any) -> List[Dict[Any, Any]]:
     """Parse the `tasks` keyword argument value of `PyRosettaCluster`."""
 
     @singledispatch
@@ -745,7 +745,7 @@ def _parse_tasks(objs: Any) -> Union[List[Dict[Any, Any]], NoReturn]:
     @converter.register(types.FunctionType)
     def _from_function(
         obj: Callable[..., Iterable[Any]]
-    ) -> Union[List[Dict[Any, Any]], NoReturn]:
+    ) -> List[Dict[Any, Any]]:
         _tasks = []
         for obj in objs():
             if isinstance(obj, dict):
@@ -758,7 +758,7 @@ def _parse_tasks(objs: Any) -> Union[List[Dict[Any, Any]], NoReturn]:
 
     @converter.register(collections.abc.Iterable)
     @converter.register(types.GeneratorType)
-    def _from_iterable(obj: Iterable[Any]) -> Union[List[Dict[Any, Any]], NoReturn]:
+    def _from_iterable(obj: Iterable[Any]) -> List[Dict[Any, Any]]:
         _tasks = []
         for obj in objs:
             if isinstance(obj, dict):
@@ -772,7 +772,7 @@ def _parse_tasks(objs: Any) -> Union[List[Dict[Any, Any]], NoReturn]:
     return converter(objs)
 
 
-def _parse_output_decoy_types(objs: Any) -> Union[List[str], NoReturn]:
+def _parse_output_decoy_types(objs: Any) -> List[str]:
     """Parse the `output_decoy_types` keyword argument value of `PyRosettaCluster`."""
 
     _output_decoy_types = (".pdb", ".pkl_pose", ".b64_pose", ".init")
@@ -789,7 +789,7 @@ def _parse_output_decoy_types(objs: Any) -> Union[List[str], NoReturn]:
         return [_output_decoy_types[0]]
 
     @converter.register(collections.abc.Iterable)
-    def _from_iterable(objs: collections.abc.Iterable) -> Union[List[str], NoReturn]:
+    def _from_iterable(objs: collections.abc.Iterable) -> List[str]:
         _seen = set()
         _types = []
         for obj in objs:
@@ -807,7 +807,7 @@ def _parse_output_decoy_types(objs: Any) -> Union[List[str], NoReturn]:
     return converter(objs)
 
 
-def _parse_output_scorefile_types(objs: Any) -> Union[List[str], NoReturn]:
+def _parse_output_scorefile_types(objs: Any) -> List[str]:
     """Parse the `output_scorefile_types` keyword argument value of `PyRosettaCluster`."""
 
     _output_scorefile_types = (".json",)
@@ -824,7 +824,7 @@ def _parse_output_scorefile_types(objs: Any) -> Union[List[str], NoReturn]:
         return [_output_scorefile_types[0]]
 
     @converter.register(collections.abc.Iterable)
-    def _from_iterable(objs: collections.abc.Iterable) -> Union[List[str], NoReturn]:
+    def _from_iterable(objs: collections.abc.Iterable) -> List[str]:
         _seen = set()
         _types = []
         for obj in objs:

@@ -30,7 +30,6 @@ from typing import (
     Dict,
     Iterable,
     List,
-    NoReturn,
     Optional,
     Union,
 )
@@ -61,7 +60,7 @@ PYROSETTACLUSTER_KEY_PREFIX: str = "PyRosettaCluster_"
 
 def _validate_clients_indices(
         clients_indices: Any, _protocols: List[Callable[..., Any]], _clients_dict_keys: List[int],
-    ) -> Optional[NoReturn]:
+    ) -> None:
     """Validate the `clients_indices` keyword argument value for the `PyRosettaCluster.distribute` method."""
 
     if clients_indices is not None:
@@ -99,7 +98,7 @@ def _validate_clients_indices(
                 )
 
 
-def _validate_resources(resources: Any, _protocols: List[Callable[..., Any]]) -> Optional[NoReturn]:
+def _validate_resources(resources: Any, _protocols: List[Callable[..., Any]]) -> None:
     """Validate the `resources` keyword argument value for the `PyRosettaCluster.distribute` method."""
 
     if resources is not None:
@@ -122,7 +121,7 @@ def _validate_resources(resources: Any, _protocols: List[Callable[..., Any]]) ->
             )
 
 
-def _validate_priorities(priorities: Any, _protocols: List[Callable[..., Any]]) -> Optional[NoReturn]:
+def _validate_priorities(priorities: Any, _protocols: List[Callable[..., Any]]) -> None:
     """Validate the `priorities` keyword argument value for the `PyRosettaCluster.distribute` method."""
 
     if priorities is not None:
@@ -145,7 +144,7 @@ def _validate_priorities(priorities: Any, _protocols: List[Callable[..., Any]]) 
             )
 
 
-def _validate_retries(retries: Any, _protocols: List[Callable[..., Any]]) -> Optional[NoReturn]:
+def _validate_retries(retries: Any, _protocols: List[Callable[..., Any]]) -> None:
     """Validate the `retries` keyword argument value for the `PyRosettaCluster.distribute` method."""
 
     if retries is not None:
@@ -180,21 +179,21 @@ def _validate_retries(retries: Any, _protocols: List[Callable[..., Any]]) -> Opt
             )
 
 
-def _validate_scorefile_name(self, attribute: str, value: Any) -> Optional[NoReturn]:
+def _validate_scorefile_name(self, attribute: str, value: Any) -> None:
     """Validate the `scorefile_name` keyword argument value of `PyRosettaCluster`."""
 
     if not value.endswith(".json"):
         raise ValueError(f"The '{attribute}' keyword argument value must end in '.json'. Received: '{value}'")
 
 
-def _validate_output_init_file(self, attribute: str, value: Any) -> Optional[NoReturn]:
+def _validate_output_init_file(self, attribute: str, value: Any) -> None:
     """Validate the `output_init_file` keyword argument value of `PyRosettaCluster`."""
 
     if value != "" and not value.endswith(".init"):
         raise ValueError(f"The '{attribute}' keyword argument value must end in '.init'. Received: '{value}'")
 
 
-def _validate_logging_address(self, attribute: str, value: Any) -> Optional[NoReturn]:
+def _validate_logging_address(self, attribute: str, value: Any) -> None:
     """Validate the `logging_address` keyword argument value of `PyRosettaCluster`."""
 
     if not isinstance(value, str):
@@ -214,7 +213,7 @@ def _validate_logging_address(self, attribute: str, value: Any) -> Optional[NoRe
         )
 
 
-def _validate_dirs(self, attribute: str, value: Any) -> Optional[NoReturn]:
+def _validate_dirs(self, attribute: str, value: Any) -> None:
     """Validate and make the output, logging, and decoy directories."""
 
     output_dir = os.path.abspath(self.output_path)
@@ -226,7 +225,7 @@ def _validate_dirs(self, attribute: str, value: Any) -> Optional[NoReturn]:
             raise ValueError(f"`{d}` directory could not be created.")
 
 
-def _validate_dir(self, attribute: str, value: str) -> Optional[NoReturn]:
+def _validate_dir(self, attribute: str, value: str) -> None:
     """Validate the scratch directory."""
 
     if value != "":
@@ -235,7 +234,7 @@ def _validate_dir(self, attribute: str, value: str) -> Optional[NoReturn]:
             raise ValueError(f"The `{attribute}` directory {value} could not be created.")
 
 
-def _validate_int(self, attribute: str, value: int) -> Optional[NoReturn]:
+def _validate_int(self, attribute: str, value: int) -> None:
     """Validate that integers are greater than or equal to 1."""
 
     if value < 1:
@@ -244,7 +243,7 @@ def _validate_int(self, attribute: str, value: int) -> Optional[NoReturn]:
         )
     
 
-def _validate_min_len(self, attribute: str, value: Optional[List[Any]]) -> Optional[NoReturn]:
+def _validate_min_len(self, attribute: str, value: Optional[List[Any]]) -> None:
     """Optionally validate that iterables have at least one object."""
 
     if value is not None and len(value) < 1:
@@ -253,7 +252,7 @@ def _validate_min_len(self, attribute: str, value: Optional[List[Any]]) -> Optio
         )
 
 
-def _validate_max_task_replicas(self, attribute: str, value: Optional[int]) -> Optional[NoReturn]:
+def _validate_max_task_replicas(self, attribute: str, value: Optional[int]) -> None:
     """
     Validate that the value is `None` or integers are greater than or equal to 0, and that Dask's Active Memory
     Manager (AMM) policy is disabled.
@@ -283,7 +282,7 @@ def _validate_max_task_replicas(self, attribute: str, value: Optional[int]) -> O
 
 def _validate_float(
     self, attribute: str, value: Union[float, int]
-) -> Optional[NoReturn]:
+) -> None:
     """Validate that `float` or `int` objects are greater than or equal to 0."""
 
     msg = (
@@ -302,7 +301,7 @@ def _validate_protocols_seeds_decoy_ids(
     protocols: List[Union[Callable[..., Any], Iterable[Any]]],
     seeds: List[str],
     decoy_ids: List[int],
-) -> Union[List[Union[Callable[..., Any], Iterable[Any]]], NoReturn]:
+) -> List[Union[Callable[..., Any], Iterable[Any]]]:
     """
     Validate that the user-defined PyRosetta protocols, and the `seeds` and `decoy_ids` keyword argument values
     of `PyRosettaCluster` have the same size.
@@ -332,7 +331,7 @@ def _validate_protocols_seeds_decoy_ids(
 def _validate_residue_type_sets(
     _target_residue_type_set: Optional[AbstractSet[str]] = None,
     _client_residue_type_set: Optional[AbstractSet[str]] = None,
-) -> Optional[NoReturn]:
+) -> None:
     """Validate that the ResidueType set in the `billiard` subprocess equals that in the head node process."""
 
     if _target_residue_type_set != _client_residue_type_set:
@@ -348,7 +347,7 @@ def _validate_residue_type_sets(
         raise AssertionError(_msg)
 
 
-def _validate_task(task: Dict[Any, Any]) -> Optional[NoReturn]:
+def _validate_task(task: Dict[Any, Any]) -> None:
     """Validate that a task does not contain disallowed or reserved keys/values."""
 
     _msg = (

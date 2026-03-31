@@ -35,10 +35,8 @@ from typing import (
     Generic,
     Iterable,
     List,
-    NoReturn,
     Optional,
     TypeVar,
-    Union,
 )
 
 from pyrosetta.distributed.cluster.hkdf import (
@@ -137,7 +135,7 @@ def generate_dask_tls_security(
     san_dns: Optional[Iterable[str]] = None,
     san_ip: Optional[Iterable[str]] = None,
     cleanup: bool = True,
-) -> Union[Security, NoReturn]:
+) -> Security:
     """
     Create cryptographic certificates and private keys for securing a Dask cluster, and return a Dask
     `distributed.Security` object that can be passed directly to the `security` keyword argument of
@@ -270,7 +268,7 @@ def generate_dask_tls_security(
         for the Dask scheduler, workers, and client.
     """
 
-    def _run(cmd: List[str]) -> Optional[NoReturn]:
+    def _run(cmd: List[str]) -> None:
         """Run the OpenSSL command-line tool in a subprocess."""
         try:
             subprocess.run(cmd, check=True, capture_output=True, text=True)
