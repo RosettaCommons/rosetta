@@ -14,7 +14,7 @@ except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.io' requires the "
         + "third-party packages 'pandas' and 'toolz' as a dependencies!\n"
-        + "Please install these packages into your python environment. "
+        + "Please install these packages into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/toolz/\n"
         + "https://pypi.org/project/pandas/\n"

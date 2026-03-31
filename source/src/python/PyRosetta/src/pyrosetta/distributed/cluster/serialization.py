@@ -18,7 +18,7 @@ except ImportError:
         "Importing 'pyrosetta.distributed.cluster.serialization' requires the "
         + "third-party packages 'attrs', 'cloudpickle', 'distributed', 'msgpack', "
         + "and 'toolz' as dependencies!\nPlease install these packages into your "
-        + "python environment. For installation instructions, visit:\n"
+        + "virtual environment. For installation instructions, visit:\n"
         + "https://pypi.org/project/attrs/\n"
         + "https://pypi.org/project/cloudpickle/\n"
         + "https://pypi.org/project/distributed/\n"
@@ -340,7 +340,7 @@ class Serialization(Generic[G]):
                 raise ImportError(
                     (
                         "Using 'xz' for compression requires installing the 'xz' package into "
-                        + "your python environment. For installation instructions, visit:\n"
+                        + "your virtual environment. For installation instructions, visit:\n"
                         + "https://anaconda.org/anaconda/xz\n"
                         + "https://pypi.org/project/python-xz\n"
                     )

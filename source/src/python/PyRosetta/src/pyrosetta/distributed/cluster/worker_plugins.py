@@ -20,7 +20,7 @@ except ImportError:
         print(
             "Importing 'pyrosetta.distributed.cluster.worker_plugins' requires the "
             + "third-party package 'distributed' as a dependency!\n"
-            + "Please install the package into your python environment. "
+            + "Please install the package into your virtual environment. "
             + "For installation instructions, visit:\n"
             + "https://pypi.org/project/distributed/\n"
         )

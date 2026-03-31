@@ -22,7 +22,7 @@ except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.utilities' requires the "
         + "third-party packages 'dask-jobqueue', 'distributed', and 'psutil' as dependencies!\n"
-        + "Please install these packages into your python environment. "
+        + "Please install these packages into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/dask-jobqueue/\n"
         + "https://pypi.org/project/distributed/\n"

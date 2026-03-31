@@ -13,7 +13,7 @@ except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.hkdf' requires the "
         + "third-party package 'msgpack' as a dependency!\n"
-        + "Please install the package into your python environment. "
+        + "Please install the package into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/msgpack/\n"
     )

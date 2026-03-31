@@ -14,7 +14,7 @@ except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.converter_tasks' requires the "
         + "third-party packages 'distributed' and 'toolz' as dependencies!\n"
-        + "Please install these packages into your python environment. "
+        + "Please install these packages into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/distributed/\n"
         + "https://pypi.org/project/toolz/\n"

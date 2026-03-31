@@ -508,7 +508,7 @@ except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.core' requires the "
         + "third-party packages 'attrs', 'distributed', and 'toolz' as dependencies!\n"
-        + "Please install these packages into your python environment. "
+        + "Please install these packages into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/attrs/\n"
         + "https://pypi.org/project/distributed/\n"

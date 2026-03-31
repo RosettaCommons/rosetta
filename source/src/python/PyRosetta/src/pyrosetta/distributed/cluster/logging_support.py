@@ -18,7 +18,7 @@ except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.logging_support' requires the "
         + "third-party packages 'billiard' and 'distributed' as dependencies!\n"
-        + "Please install the packages into your python environment. "
+        + "Please install the packages into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/billiard/\n"
         + "https://pypi.org/project/distributed/\n"
