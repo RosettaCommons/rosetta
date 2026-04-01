@@ -16,6 +16,7 @@ import os
 import pyrosetta
 import pyrosetta.distributed
 import random
+import sys
 import tempfile
 import unittest
 
@@ -63,6 +64,11 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
         self.tmpdir.cleanup()
 
     @staticmethod
+    def format_stable_float(x):
+        dig = sys.float_info.dig # 15
+        return format(x, f".{dig}g")
+
+    @staticmethod
     def get_remodel_options():
         return {
             "-remodel:num_trajectory": "1",
@@ -72,12 +78,6 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             "-remodel:core_cutoff": str(random.randint(10, 20)),
             "-remodel:boundary_cutoff": str(random.randint(5, 15)),
             "-remodel:generic_aa": random.choice(list("ADEFGHIKLMNPQRSTVWY")),
-            "-remodel:hb_srbb": str(random.choice([0.0, 1.0])),
-            "-remodel:vdw": str(random.random()),
-            "-remodel:rama": str(random.random()),
-            "-remodel:cbeta": str(random.random()),
-            "-remodel:cenpack": str(random.random()),
-            "-remodel:rg": str(random.random()),
             "-ex1": str(random.choice([0, 1])),
             "-ex2": str(random.choice([0, 1])),
             "-ex3": str(random.choice([0, 1])),
@@ -88,6 +88,15 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
             "-ex4:level": str(random.choice([0, 1])),
             "-extrachi_cutoff": str(random.choice([0, 18])),
             "-use_input_sc": str(random.choice([0, 1])),
+            # For unit tests specifying `norm_task_options=True`, here we serialize double precision Python `float` values for roundtrip stability
+            # through Rosetta C++ double precision `core::Real` values, both of which have at most 15 digits of reliable numerical precision.
+            # This string formatting ensures that the `pyrosetta.get_init_options` function outputs precisely the same weights that are input here:
+            "-remodel:hb_srbb": TestReproducibilityRemodelTaskUpdates.format_stable_float(random.random()),
+            "-remodel:vdw": TestReproducibilityRemodelTaskUpdates.format_stable_float(random.random()),
+            "-remodel:rama": TestReproducibilityRemodelTaskUpdates.format_stable_float(random.random()),
+            "-remodel:cbeta": TestReproducibilityRemodelTaskUpdates.format_stable_float(random.random()),
+            "-remodel:cenpack": TestReproducibilityRemodelTaskUpdates.format_stable_float(random.random()),
+            "-remodel:rg": TestReproducibilityRemodelTaskUpdates.format_stable_float(random.random()),
         }
 
     @staticmethod
