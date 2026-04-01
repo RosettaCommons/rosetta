@@ -21,6 +21,7 @@ from typing import (
     Dict,
     Generator,
     List,
+    Optional,
     Tuple,
     TypeVar,
     Union,
@@ -51,9 +52,6 @@ PyRosettaProtocolResults = Union[
 ]
 """Collective output results from a user-defined PyRosetta protocol."""
 
-PyRosettaProtocol = Callable[..., PyRosettaProtocolResults]
-"""A callable user-defined PyRosetta protocol."""
-
 # Generic type abstractions:
 
 T = TypeVar("T")
@@ -70,3 +68,26 @@ FloatOrInt = Union[float, int]
 
 PoseOrPackedPose = Union[Pose, PackedPose]
 """A `Pose` or `PackedPose` object."""
+
+# Internal method type abstractions:
+
+PyRosettaProtocol = Callable[..., PyRosettaProtocolResults]
+"""A callable user-defined PyRosetta protocol."""
+
+PyRosettaProtocols = Sequence[PyRosettaProtocol]
+"""A sequence of callable user-defined PyRosetta protocols."""
+
+TaskResource = Optional[Dict[str, FloatOrInt]]
+"""An optional Dask resource constraint for an individual task."""
+
+TaskChainResource = Optional[ListOrTuple[TaskResource]]
+"""An optional container of Dask resource constraints for a task chain."""
+
+TaskChainClientIndices = Optional[ListOrTuple[int]]
+"""An optional container of Dask client indices for a task chain."""
+
+TaskChainPriorities = Optional[ListOrTuple[int]]
+"""An optional container of priorities for a task chain."""
+
+TaskChainRetries = Optional[Union[int, ListOrTuple[int]]]
+"""An optional `int` object or container of retries for a task chain."""
