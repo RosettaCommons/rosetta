@@ -749,7 +749,7 @@ def native_libc_pyrosetta_conda_release(kind, rosetta_dir, working_dir, platform
 
     TR('Running PyRosetta conda release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
-    conda = setup_conda_virtual_environment(working_dir, platform, config, packages='setuptools')
+    conda = setup_conda_virtual_environment(working_dir, platform, config, packages='setuptools pybind11-stubgen')
 
     platform_name = get_platform_release_name(platform)
     release_name = 'PyRosetta4.conda.{platform}.python{python_version}.{kind}'.format(kind=kind, platform=platform_name, python_version=platform['python'].replace('.', '') )
