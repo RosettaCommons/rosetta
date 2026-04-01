@@ -27,16 +27,6 @@ from typing import (
     Union,
 )
 
-
-class Pose(Pose):
-    """
-    Subclass of `Pose` object to coax type checkers into treating `Pose` as a proper class type instead of type
-    `Any` due to the underlying C++ bindings being opaque to type checkers.
-    """
-    def __init__(self) -> None:
-        super().__init__()
-
-
 # User-defined PyRosetta protocol type abstractions:
 
 PyRosettaProtocolResult = Union[PackedPose, Pose, Dict[str, Any], None]

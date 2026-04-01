@@ -34,7 +34,6 @@ from typing import (
 )
 
 from pyrosetta.distributed.cluster.type_defs import (
-    PyRosettaProtocols,
     TaskChainClientIndices,
     TaskChainPriorities,
     TaskChainResources,
@@ -295,10 +294,10 @@ def _validate_float(
 
 
 def _validate_protocols_seeds_decoy_ids(
-    protocols: PyRosettaProtocols,
+    protocols: Sized,
     seeds: List[str],
     decoy_ids: List[int],
-) -> PyRosettaProtocols:
+) -> Sized:
     """
     Validate that the user-defined PyRosetta protocols, and the `seeds` and `decoy_ids` keyword argument values
     of `PyRosettaCluster` have the same size.

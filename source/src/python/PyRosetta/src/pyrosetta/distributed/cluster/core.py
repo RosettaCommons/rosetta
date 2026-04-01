@@ -581,10 +581,9 @@ from pyrosetta.distributed.cluster.task_registry import (
     UserArgs,
 )
 from pyrosetta.distributed.cluster.type_defs import (
-    Callable,
     FloatOrInt,
     ListOrTuple,
-    PyRosettaProtocolResults,
+    PyRosettaProtocol,
     Sequence,
 )
 from pyrosetta.distributed.cluster.utilities import SchedulerManager
@@ -1221,8 +1220,8 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
 
     def _run(
         self,
-        *args: Callable[..., PyRosettaProtocolResults],
-        protocols: Optional[Sequence[Callable[..., PyRosettaProtocolResults]]] = None,
+        *args: PyRosettaProtocol,
+        protocols: Optional[Union[PyRosettaProtocol, Sequence[PyRosettaProtocol]]] = None,
         clients_indices: Optional[ListOrTuple[int]] = None,
         resources: Optional[ListOrTuple[Optional[Dict[str, FloatOrInt]]]] = None,
         priorities: Optional[ListOrTuple[int]] = None,
@@ -1548,8 +1547,8 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
 
     def generate(
         self,
-        *args: Callable[..., PyRosettaProtocolResults],
-        protocols: Optional[Sequence[Callable[..., PyRosettaProtocolResults]]] = None,
+        *args: PyRosettaProtocol,
+        protocols: Optional[Union[PyRosettaProtocol, Sequence[PyRosettaProtocol]]] = None,
         clients_indices: Optional[ListOrTuple[int]] = None,
         resources: Optional[ListOrTuple[Optional[Dict[str, FloatOrInt]]]] = None,
         priorities: Optional[ListOrTuple[int]] = None,
@@ -1578,8 +1577,8 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
 
     def distribute(
         self,
-        *args: Callable[..., PyRosettaProtocolResults],
-        protocols: Optional[Sequence[Callable[..., PyRosettaProtocolResults]]] = None,
+        *args: PyRosettaProtocol,
+        protocols: Optional[Union[PyRosettaProtocol, Sequence[PyRosettaProtocol]]] = None,
         clients_indices: Optional[ListOrTuple[int]] = None,
         resources: Optional[ListOrTuple[Optional[Dict[str, FloatOrInt]]]] = None,
         priorities: Optional[ListOrTuple[int]] = None,

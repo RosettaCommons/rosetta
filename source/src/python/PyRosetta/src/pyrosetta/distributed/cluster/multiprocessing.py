@@ -28,6 +28,18 @@ import tempfile
 import time
 
 from pyrosetta.distributed import requires_init
+from pyrosetta.distributed.packed_pose.core import PackedPose
+from typing import (
+    AbstractSet,
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
+
 from pyrosetta.distributed.cluster.base import (
     _get_residue_type_set,
     capture_task_metadata,
@@ -48,22 +60,13 @@ from pyrosetta.distributed.cluster.logging_support import (
 )
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.task_registry import UserArgs
+from pyrosetta.distributed.cluster.type_defs import PyRosettaProtocol
 from pyrosetta.distributed.cluster.validators import _validate_residue_type_sets
-from pyrosetta.distributed.packed_pose.core import PackedPose
-from typing import (
-    AbstractSet,
-    Any,
-    Callable,
-    Dict,
-    List,
-    Optional,
-    Tuple,
-    Union,
-)
 
 
 def _maybe_delay(dt: float, max_delay_time: Union[float, int], logger: logging.Logger) -> None:
-    """Maybe delay the user-defined PyRosetta protocol result(s)."""
+    """Maybe delay the Dask worker result."""
+
     delay_time = max_delay_time - dt
     if delay_time > 0.0:
         logger.info(f"Delaying dask worker results for {delay_time:0.6f} seconds.")
@@ -73,7 +76,7 @@ def _maybe_delay(dt: float, max_delay_time: Union[float, int], logger: logging.L
 @trace_protocol_exceptions
 def user_protocol(
     packed_pose: PackedPose,
-    protocol: Callable[..., Any],
+    protocol: PyRosettaProtocol,
     ignore_errors: bool,
     kwargs: Dict[str, Any],
 ) -> Any:
@@ -91,7 +94,7 @@ def user_protocol(
 @capture_task_metadata
 def run_protocol(
     protocol_name: str,
-    protocol: Callable[..., Any],
+    protocol: PyRosettaProtocol,
     packed_pose: PackedPose,
     datetime_format: str,
     norm_task_options: bool,
@@ -151,7 +154,7 @@ def target(
     client_repr: str,
     masked_key: Optional[bytes],
     task_id: str,
-    **pyrosetta_init_kwargs: Dict[str, Any],
+    **pyrosetta_init_kwargs: Any,
 ) -> None:
     """A wrapper function for a user-defined PyRosetta protocol."""
 
@@ -180,7 +183,8 @@ def target(
         kwargs,
     )
     _validate_residue_type_sets(
-        _get_residue_type_set(), client_residue_type_set,
+        _get_residue_type_set(),
+        client_residue_type_set,
     )
     q.put(results)
 
@@ -188,7 +192,7 @@ def target(
 @setup_worker_logging
 def user_spawn_thread(
     user_args: UserArgs,
-) -> List[Tuple[Optional[Union[PackedPose, bytes]], Union[Dict[Any, Any], bytes]]]:
+) -> List[Tuple[Optional[bytes], bytes]]:
     """Generic Dask worker task using the `billiard` module."""
 
     t0 = time.time()

@@ -102,7 +102,7 @@ def _parse_compression(obj: Any) -> Optional[Union[str, bool]]:
             return obj
 
     @converter.register(type(None))
-    def _is_none(obj: None) -> str:
+    def _is_none(obj: None) -> None:
         return obj
 
     return converter(obj)
@@ -469,7 +469,7 @@ class Serialization(Generic[G]):
 
     @with_update_scores
     @requires_compression
-    def compress_packed_pose(self, packed_pose: Any) -> Optional[bytes]:
+    def compress_packed_pose(self, packed_pose: Optional[PackedPose]) -> Optional[bytes]:
         """
         Compress a `PackedPose` object with the custom serialization module. If the 'packed_pose' argument
         value is `None`, then just return `None`.
@@ -498,7 +498,7 @@ class Serialization(Generic[G]):
         return compressed_packed_pose
 
     @requires_compression
-    def decompress_packed_pose(self, compressed_packed_pose: Any) -> Optional[PackedPose]:
+    def decompress_packed_pose(self, compressed_packed_pose: Optional[bytes]) -> Optional[PackedPose]:
         """
         Decompress a `bytes` object with the custom serialization module and secure implementation of the
         `pickle` module. If the `compressed_packed_pose` argument value is `None`, then just return `None`.
@@ -553,7 +553,7 @@ class Serialization(Generic[G]):
 
         return self._seal(buffer)
 
-    def compress_kwargs(self, kwargs: Any) -> bytes:
+    def compress_kwargs(self, kwargs: Dict[str, Any]) -> bytes:
         """
         Compress a `dict` object with the `cloudpickle` and custom serialization modules.
 
@@ -576,7 +576,7 @@ class Serialization(Generic[G]):
                 + f"Received: {type(kwargs)}"
             )
 
-    def decompress_kwargs(self, compressed_kwargs: bytes) -> Dict[Any, Any]:
+    def decompress_kwargs(self, compressed_kwargs: bytes) -> Dict[str, Any]:
         """
         Decompress a `bytes` object with the custom serialization and `cloudpickle` modules.
 
@@ -650,7 +650,7 @@ class Serialization(Generic[G]):
             )
 
     @classmethod
-    def deepcopy_kwargs(cls, kwargs: Any) -> Dict[Any, Any]:
+    def deepcopy_kwargs(cls, kwargs: Dict[str, Any]) -> Dict[str, Any]:
         """
         The `cloudpickle` module makes it possible to serialize Python constructs not supported by the default
         `pickle` module from the Python standard library.

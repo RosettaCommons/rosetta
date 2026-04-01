@@ -102,11 +102,11 @@ class LoggingSupport(Generic[G]):
     """Supporting logging methods for `PyRosettaCluster`."""
 
     def __init__(self) -> None:
-        """Log warnings from the warnings module."""
+        """Log warnings from the `warnings` module."""
         logging.captureWarnings(True)
 
     def _setup_logger(self) -> None:
-        """Open the logger for the client instance."""
+        """Open the logger for the head node process."""
 
         logger = logging.getLogger()
         logger.setLevel(self.logging_level)
@@ -139,7 +139,7 @@ class LoggingSupport(Generic[G]):
         logger.addHandler(handler)
 
     def _close_logger(self) -> None:
-        """Close the logger for the client instance."""
+        """Close the logger for the head node process."""
 
         logger = logging.getLogger()
         for handler in logger.handlers[:]:
@@ -385,7 +385,7 @@ def setup_worker_logging(func: L) -> L:
         try:
             worker = get_worker()
         except BaseException as ex:
-            raise ValueError(f"Cannot get dask worker. {ex}")
+            raise ValueError(f"Cannot get Dask worker. {ex}")
 
         protocol_name = user_args.protocol_name
         masked_key = user_args.masked_key

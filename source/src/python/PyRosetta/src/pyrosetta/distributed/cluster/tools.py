@@ -70,6 +70,7 @@ from pyrosetta.distributed.cluster.type_defs import (
     FloatOrInt,
     ListOrTuple,
     PoseOrPackedPose,
+    PyRosettaProtocol,
     PyRosettaProtocolResults,
     Sequence,
 )
@@ -78,11 +79,11 @@ P = TypeVar("P", bound=Callable[..., PyRosettaProtocolResults])
 
 
 def get_protocols(
-    protocols: Optional[Union[List[Union[Callable[..., Any], str]], Callable[..., Any]]] = None,
-    input_file: Optional[Union[str, Pose, PackedPose]] = None,
+    protocols: Optional[Union[PyRosettaProtocol, Sequence[PyRosettaProtocol]]]= None,
+    input_file: Optional[Union[str, PoseOrPackedPose]] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
-) -> List[Callable[..., Any]]:
+) -> List[PyRosettaProtocol]:
     """
     Given an input file that was written by `PyRosettaCluster`, or a scorefile with full simulation records
     that was written by `PyRosettaCluster` and a decoy name, if an iterable of PyRosetta protocols is provided
@@ -102,11 +103,11 @@ def get_protocols(
 
     Args:
         `protocols`:
-            An iterable of callable user-defined PyRosetta protocols; i.e., an iterable of objects of
-            `types.GeneratorType` and/or `types.FunctionType` types, or a single callable of type
-            `types.GeneratorType` or `types.FunctionType`, specifying an ordered sequence of PyRosetta
-            protocols. If `None`, then the PyRosetta protocols are automatically detected (by a best effort
-            only) from back two frames of the current scope.
+            An ordered iterable of callables (each of `types.GeneratorType` and/or `types.FunctionType` type) or
+            a single callable of type `types.GeneratorType` or `types.FunctionType`, specifying the user-defined
+            PyRosetta protocol(s) to execute for the reproduction simulation. If `None`, then the PyRosetta
+            protocols are automatically detected (by a best effort only) from back two frames of the current
+            scope.
 
             Default: `None`
 
@@ -210,12 +211,15 @@ def get_protocols(
 
 
 def get_instance_kwargs(
-    input_file: Optional[Union[str, Pose, PackedPose]] = None,
+    input_file: Optional[Union[str, PoseOrPackedPose]] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
     skip_corrections: Optional[bool] = None,
     with_metadata_kwargs: Optional[bool] = None,
-) -> Union[Dict[str, Any], Tuple[Dict[str, Any], Dict[str, Any]]]:
+) -> Union[
+    Dict[str, Any],
+    Tuple[Dict[str, Any], Dict[str, Any]]
+]:
     """
     Given an input file that was written by `PyRosettaCluster`, or a scorefile with full simulation records
     that was written by `PyRosettaCluster` and a decoy name, return the `PyRosettaCluster` instance attributes
@@ -479,7 +483,7 @@ def requires_packed_pose(func: P) -> P:
 
     Returns:
         The first positional-or-keyword parameter if it is an empty `PackedPose` object or `None`, otherwise
-        the produced results from the decorated protocol.
+        the produced results from the decorated user-defined PyRosetta protocol.
     """
 
     @wraps(func)
@@ -503,7 +507,7 @@ def reproduce(
     input_file: Optional[str] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
-    protocols: Optional[Sequence[Callable[..., PyRosettaProtocolResults]]] = None,
+    protocols: Optional[Union[PyRosettaProtocol, Sequence[PyRosettaProtocol]]] = None,
     client: Optional[Client] = None,
     clients: Optional[ListOrTuple[Client]] = None,
     input_packed_pose: Optional[PoseOrPackedPose] = None,
@@ -562,12 +566,11 @@ def reproduce(
             Default: `None`
 
         `protocols`:
-            An iterable of callable user-defined PyRosetta protocols; i.e., an iterable of objects of
-            `types.GeneratorType` and/or `types.FunctionType` types, or a single callable of type
-            `types.GeneratorType` or `types.FunctionType`, specifying an ordered sequence of PyRosetta
-            protocols to execute for the reproduction simulation. If `None`, the PyRosetta protocols are
-            automatically detected (by a best effort only) in the scope from which the `reproduce` function is
-            called.
+            An ordered iterable of callables (each of `types.GeneratorType` and/or `types.FunctionType` type) or
+            a single callable of type `types.GeneratorType` or `types.FunctionType`, specifying the user-defined
+            PyRosetta protocol(s) to execute for the reproduction simulation. If `None`, the PyRosetta protocols
+            are automatically detected (by a best effort only) in the scope from which the `reproduce` function
+            is called.
 
             Default: `None`
 

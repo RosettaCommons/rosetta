@@ -68,6 +68,7 @@ class TaskRecord(Generic[G]):
 
 
 UnpackedTaskRecord = Tuple[int, UserArgs, Dict[str, Any]]
+"""A container for an unpacked `PyRosettaCluster` task registry entry."""
 
 
 @attr.s(kw_only=True, slots=True, frozen=True)
