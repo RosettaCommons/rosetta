@@ -9,14 +9,14 @@ __author__ = "Jason C. Klima"
 
 try:
     import psutil
+    from dask_jobqueue import (
+        SGECluster,
+        SLURMCluster,
+    )
     from distributed import (
         Adaptive,
         Client,
         LocalCluster,
-    )
-    from dask_jobqueue import (
-        SGECluster,
-        SLURMCluster,
     )
 except ImportError:
     print(
