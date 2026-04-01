@@ -170,7 +170,7 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
 
         pyrosetta.secure_unpickle.add_secure_package("pandas")
         pyrosetta.secure_unpickle.add_secure_package("pyarrow")
-        sequence = "ACDEFGHIKLMNPQRSTVWY"
+        sequence = "ADEFGHIKLMNPQRSTVWY"
         input_pose = io.to_pose(io.pose_from_sequence(sequence))
         scorefile_name = "test_scores.json"
         compressed = True
