@@ -79,7 +79,7 @@ def not_on_worker() -> Generator[None, Any, None]:
     """A context manager for running code on the head node process."""
     try:
         get_worker()
-    except BaseException:
+    except Exception:
         yield
 
 

@@ -384,7 +384,7 @@ def setup_worker_logging(func: L) -> L:
 
         try:
             worker = get_worker()
-        except BaseException as ex:
+        except Exception as ex:
             raise ValueError(f"Cannot get Dask worker. {ex}")
 
         protocol_name = user_args.protocol_name

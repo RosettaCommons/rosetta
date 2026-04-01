@@ -226,7 +226,7 @@ class NonceCache(Generic[G]):
         try:
             _worker = get_worker()
             return True
-        except BaseException:
+        except Exception:
             return False
 
     def _cache_nonce(self, sealed: bytes) -> None:

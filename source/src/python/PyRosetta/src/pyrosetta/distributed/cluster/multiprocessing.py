@@ -32,7 +32,6 @@ from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
     AbstractSet,
     Any,
-    Callable,
     Dict,
     List,
     Optional,
@@ -225,8 +224,8 @@ def user_spawn_thread(
 
     try:
         worker = get_worker()
-    except BaseException as ex:
-        raise ValueError(f"Cannot get dask worker. {ex}")
+    except Exception as ex:
+        raise ValueError(f"Cannot get Dask worker. {ex}")
 
     plugin = worker.plugins[instance_id]
     assert plugin.__getstate__()["prk"] is None, (
