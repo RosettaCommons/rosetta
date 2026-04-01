@@ -26,12 +26,19 @@ import os
 from typing import (
     AbstractSet,
     Any,
-    Callable,
     Dict,
-    Iterable,
     List,
     Optional,
+    Sized,
     Union,
+)
+
+from pyrosetta.distributed.cluster.type_defs import (
+    PyRosettaProtocols,
+    TaskChainClientIndices,
+    TaskChainPriorities,
+    TaskChainResources,
+    TaskChainRetries,
 )
 
 OPTION_KEYS: AbstractSet[str] = {"options", "extra_options"}
@@ -47,8 +54,10 @@ PYROSETTACLUSTER_KEY_PREFIX: str = "PyRosettaCluster_"
 
 
 def _validate_clients_indices(
-        clients_indices: Any, _protocols: List[Callable[..., Any]], _clients_dict_keys: List[int],
-    ) -> None:
+    clients_indices: TaskChainClientIndices,
+    _protocols: Sized,
+    _clients_dict_keys: List[int],
+) -> None:
     """Validate the `clients_indices` keyword argument value for the `PyRosettaCluster.distribute` method."""
 
     if clients_indices is not None:
@@ -66,8 +75,8 @@ def _validate_clients_indices(
         if len(clients_indices) != len(_protocols):
             raise ValueError(
                 "The `clients_indices` keyword argument value must have the same length as the number of user-defined PyRosetta protocols!\n"
-                + f"Received `PyRosettaCluster.distribute(protocols=...)`: {_protocols}\n"
-                + f"Received `PyRosettaCluster.distribute(clients_indices=...)`: {clients_indices}\n"
+                + f"Received number of user-defined PyRosetta protocols: {len(_protocols)}\n"
+                + f"Received number of clients indices: {len(clients_indices)}\n"
             )
         if not all(x in _clients_dict_keys for x in set(clients_indices)):
             raise ValueError(
@@ -86,7 +95,7 @@ def _validate_clients_indices(
                 )
 
 
-def _validate_resources(resources: Any, _protocols: List[Callable[..., Any]]) -> None:
+def _validate_resources(resources: TaskChainResources, _protocols: Sized) -> None:
     """Validate the `resources` keyword argument value for the `PyRosettaCluster.distribute` method."""
 
     if resources is not None:
@@ -104,12 +113,12 @@ def _validate_resources(resources: Any, _protocols: List[Callable[..., Any]]) ->
         if len(resources) != len(_protocols):
             raise ValueError(
                 "The `resources` keyword argument value must have the same length as the number of user-defined PyRosetta protocols!\n"
-                + f"Received `PyRosettaCluster().distribute(protocols=...)`: {_protocols}\n"
-                + f"Received `PyRosettaCluster().distribute(resources=...)`: {resources}\n"
+                + f"Received number of user-defined PyRosetta protocols: {len(_protocols)}\n"
+                + f"Received number of resource values: {len(resources)}\n"
             )
 
 
-def _validate_priorities(priorities: Any, _protocols: List[Callable[..., Any]]) -> None:
+def _validate_priorities(priorities: TaskChainPriorities, _protocols: Sized) -> None:
     """Validate the `priorities` keyword argument value for the `PyRosettaCluster.distribute` method."""
 
     if priorities is not None:
@@ -127,12 +136,12 @@ def _validate_priorities(priorities: Any, _protocols: List[Callable[..., Any]]) 
         if len(priorities) != len(_protocols):
             raise ValueError(
                 "The `priorities` keyword argument value must have the same length as the number of user-defined PyRosetta protocols!\n"
-                + f"Received `PyRosettaCluster.distribute(protocols=...)`: {_protocols}\n"
-                + f"Received `PyRosettaCluster.distribute(priorities=...)`: {priorities}\n"
+                + f"Received number of user-defined PyRosetta protocols: {len(_protocols)}\n"
+                + f"Received number of priority values: {len(priorities)}\n"
             )
 
 
-def _validate_retries(retries: Any, _protocols: List[Callable[..., Any]]) -> None:
+def _validate_retries(retries: TaskChainRetries, _protocols: Sized) -> None:
     """Validate the `retries` keyword argument value for the `PyRosettaCluster.distribute` method."""
 
     if retries is not None:
@@ -157,8 +166,8 @@ def _validate_retries(retries: Any, _protocols: List[Callable[..., Any]]) -> Non
             if len(retries) != len(_protocols):
                 raise ValueError(
                     "The `retries` keyword argument value must have the same length as the number of user-defined PyRosetta protocols!\n"
-                    + f"Received `PyRosettaCluster.distribute(protocols=...)`: {_protocols}\n"
-                    + f"Received `PyRosettaCluster.distribute(retries=...)`: {retries}\n"
+                    + f"Received number of user-defined PyRosetta protocols: {len(_protocols)}\n"
+                    + f"Received number of retry values: {len(retries)}\n"
                 )
         else:
             raise ValueError(
@@ -286,10 +295,10 @@ def _validate_float(
 
 
 def _validate_protocols_seeds_decoy_ids(
-    protocols: List[Union[Callable[..., Any], Iterable[Any]]],
+    protocols: PyRosettaProtocols,
     seeds: List[str],
     decoy_ids: List[int],
-) -> List[Union[Callable[..., Any], Iterable[Any]]]:
+) -> PyRosettaProtocols:
     """
     Validate that the user-defined PyRosetta protocols, and the `seeds` and `decoy_ids` keyword argument values
     of `PyRosettaCluster` have the same size.
@@ -297,8 +306,7 @@ def _validate_protocols_seeds_decoy_ids(
 
     if len(protocols) < 1:
         raise RuntimeError(
-            "The user-defined PyRosetta protocols must contain at least one "
-            + "callable or generator."
+            "The user-defined PyRosetta protocols must contain at least one callable."
         )
     if seeds:
         assert len(protocols) == len(

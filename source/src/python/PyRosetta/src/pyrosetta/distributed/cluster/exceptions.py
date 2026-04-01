@@ -8,9 +8,7 @@
 __author__ = "Jason C. Klima"
 
 try:
-    import billiard
-    from billiard import Queue, WorkerLostError
-    from billiard.context import Process
+    from billiard import Process, Queue, WorkerLostError
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.exceptions' requires the "
@@ -38,6 +36,8 @@ from typing import (
     Union,
     cast,
 )
+
+from pyrosetta.distributed.cluster.type_defs import PyRosettaProtocol
 
 T = TypeVar("T", bound=Callable[..., Any])
 
@@ -119,7 +119,7 @@ def trace_protocol_exceptions(func: T) -> T:
     @wraps(func)
     def wrapper(
         packed_pose: PackedPose,
-        protocol: Callable[..., Any],
+        protocol: PyRosettaProtocol,
         ignore_errors: bool,
         kwargs: Dict[str, Any],
     ) -> Any:

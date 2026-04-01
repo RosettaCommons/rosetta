@@ -952,7 +952,7 @@ def sanitize_urls(yml_str: str) -> str:
     return yml_sanitized_str
 
 
-def _is_pandas_object_pyarrow_backed(obj: Any) -> bool:
+def _is_pandas_object_pyarrow_backed(obj: Union[pandas.DataFrame, pandas.Series]) -> bool:
     """
     Determine if a `pandas.DataFrame` or `pandas.Series` object uses Arrow-backed pandas dtypes.
 

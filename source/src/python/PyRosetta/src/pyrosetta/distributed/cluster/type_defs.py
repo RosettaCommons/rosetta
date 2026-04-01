@@ -74,13 +74,13 @@ PoseOrPackedPose = Union[Pose, PackedPose]
 PyRosettaProtocol = Callable[..., PyRosettaProtocolResults]
 """A callable user-defined PyRosetta protocol."""
 
-PyRosettaProtocols = Sequence[PyRosettaProtocol]
-"""A sequence of callable user-defined PyRosetta protocols."""
+PyRosettaProtocols = List[PyRosettaProtocol]
+"""A `list` object of callable user-defined PyRosetta protocols."""
 
 TaskResource = Optional[Dict[str, FloatOrInt]]
 """An optional Dask resource constraint for an individual task."""
 
-TaskChainResource = Optional[ListOrTuple[TaskResource]]
+TaskChainResources = Optional[ListOrTuple[TaskResource]]
 """An optional container of Dask resource constraints for a task chain."""
 
 TaskChainClientIndices = Optional[ListOrTuple[int]]

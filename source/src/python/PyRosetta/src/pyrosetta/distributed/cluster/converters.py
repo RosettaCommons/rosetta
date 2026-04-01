@@ -65,6 +65,10 @@ from pyrosetta.distributed.cluster.converter_tasks import (
     maybe_issue_environment_warnings as _maybe_issue_environment_warnings,
 )
 from pyrosetta.distributed.cluster.serialization import Serialization
+from pyrosetta.distributed.cluster.type_defs import (
+    PyRosettaProtocol,
+    PyRosettaProtocols,
+)
 from pyrosetta.distributed.cluster.validators import PYROSETTACLUSTER_KEY_PREFIX, _validate_task
 
 
@@ -235,7 +239,7 @@ def _parse_environment(obj: Any) -> str:
     return converter(obj)
 
 
-def _parse_protocols(objs: Any) -> List[Union[Callable[..., Any], Iterable[Any]]]:
+def _parse_protocols(objs: Any) -> PyRosettaProtocols:
     """Parse the `protocols` argument values from the `PyRosettaCluster.distribute` method."""
 
     @singledispatch
@@ -253,23 +257,19 @@ def _parse_protocols(objs: Any) -> List[Union[Callable[..., Any], Iterable[Any]]
 
     @converter.register(types.FunctionType)
     @converter.register(types.GeneratorType)
-    def _func_to_list(
-        obj: Union[Callable[..., Any], Iterable[Any]]
-    ) -> List[Union[Callable[..., Any], Iterable[Any]]]:
+    def _func_to_list(obj: PyRosettaProtocol) -> PyRosettaProtocols:
         return [obj]
 
     @converter.register(set)
-    def _from_set(objs: AbstractSet[Any]) -> NoReturn:
-        return converter.dispatch(object)(objs)
+    def _from_set(objs: AbstractSet[Any]) -> None:
+        converter.dispatch(object)(objs)
 
     @converter.register(collections.abc.Iterable)
-    def _to_list(
-        objs: Iterable[Any],
-    ) -> List[Union[Callable[..., Any], Iterable[Any]]]:
+    def _to_list(objs: Iterable[Any]) -> PyRosettaProtocols:
         for obj in objs:
             if not isinstance(obj, (types.FunctionType, types.GeneratorType)):
                 raise TypeError(
-                    "Each member of PyRosetta protocols must be of type "
+                    "Each member of the user-defined PyRosetta protocols must be of type "
                     + "`types.FunctionType` or `types.GeneratorType`! "
                     + f"Received: {type(obj)}"
                 )
@@ -692,7 +692,7 @@ def _get_compressed_packed_pose_kwargs_pairs_list(
 
 def _parse_protocol_results(
     result: Any,
-    input_kwargs: Dict[Any, Any],
+    input_kwargs: Dict[str, Any],
     protocol_name: str,
     protocols_key: str,
     decoy_ids: List[int],
@@ -723,7 +723,7 @@ def _parse_target_results(objs: List[Tuple[bytes, bytes]]) -> List[Tuple[bytes, 
     return objs
 
 
-def _parse_tasks(objs: Any) -> List[Dict[Any, Any]]:
+def _parse_tasks(objs: Any) -> List[Dict[str, Any]]:
     """Parse the `tasks` keyword argument value of `PyRosettaCluster`."""
 
     @singledispatch
@@ -734,11 +734,11 @@ def _parse_tasks(objs: Any) -> List[Dict[Any, Any]]:
         )
 
     @converter.register(dict)
-    def _from_dict(obj: Dict[Any, Any]) -> List[Dict[Any, Any]]:
+    def _from_dict(obj: Dict[str, Any]) -> List[Dict[str, Any]]:
         return [obj]
 
     @converter.register(type(None))
-    def _from_none(obj: None) -> List[Dict[Any, Any]]:
+    def _from_none(obj: None) -> List[Dict[str, Any]]:
         logging.warning(
             "The `tasks` keyword argument value was set to `None`! Using a default empty task."
         )
@@ -747,7 +747,7 @@ def _parse_tasks(objs: Any) -> List[Dict[Any, Any]]:
     @converter.register(types.FunctionType)
     def _from_function(
         obj: Callable[..., Iterable[Any]]
-    ) -> List[Dict[Any, Any]]:
+    ) -> List[Dict[str, Any]]:
         _tasks = []
         for obj in objs():
             if isinstance(obj, dict):
@@ -760,7 +760,7 @@ def _parse_tasks(objs: Any) -> List[Dict[Any, Any]]:
 
     @converter.register(collections.abc.Iterable)
     @converter.register(types.GeneratorType)
-    def _from_iterable(obj: Iterable[Any]) -> List[Dict[Any, Any]]:
+    def _from_iterable(obj: Iterable[Any]) -> List[Dict[str, Any]]:
         _tasks = []
         for obj in objs:
             if isinstance(obj, dict):

@@ -187,7 +187,12 @@ class InitFileSigner(Generic[G]):
     _encoding: str = "utf-8"
     _prefix: bytes = b'PyRosettaCluster_init_file_signer'
 
-    def __init__(self, input_packed_pose=None, output_packed_pose=None, metadata=None) -> None:
+    def __init__(
+        self,
+        input_packed_pose: Optional[Union[Pose, PackedPose]] = None,
+        output_packed_pose: Optional[Union[Pose, PackedPose]] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> None:
         """
         Initialize the `InitFileSigner` class.
 
@@ -199,7 +204,7 @@ class InitFileSigner(Generic[G]):
         self.out_pkl = self._to_packed_pose_hash(output_packed_pose)
         self.metadata_pkl = self._to_encoding(metadata)
 
-    def _to_packed_pose_hash(self, packed_pose: Optional[PackedPose]) -> bytes:
+    def _to_packed_pose_hash(self, packed_pose: Optional[Union[Pose, PackedPose]]) -> bytes:
         """
         Hash a `PackedPose` object with `Pose.cache` and `Pose` comments included.
 
@@ -226,7 +231,7 @@ class InitFileSigner(Generic[G]):
     def _get_pose_digest(self, pkl: bytes) -> bytes:
         return HASHMOD(pkl).digest()
 
-    def _join_bytes(self, *values: List[bytes]) -> bytes:
+    def _join_bytes(self, *values: bytes) -> bytes:
         return b'+'.join(values)
 
     def _setup_poses_pair(self, inp_pkl: bytes, out_pkl: bytes) -> bytes:

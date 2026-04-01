@@ -63,6 +63,7 @@ from pyrosetta.distributed.cluster.exceptions import (
     InputFileError,
     OutputError,
 )
+from pyrosetta.distributed.cluster.init_files import PackedPoseHasher
 from pyrosetta.distributed.cluster.io import (
     IO,
     get_poses_from_init_file,
@@ -641,13 +642,13 @@ def to_iterable(obj: Any, func: Callable[..., Any], attr: str) -> List[Any]:
 @to_iterable.register(PackedPose)
 @to_iterable.register(dict)
 def _catch_pose_or_kwargs(
-    obj: Union[Pose, PackedPose, Dict[Any, Any]], func: Callable[..., Any], attr: str
+    obj: Union[Pose, PackedPose, Dict[str, Any]], func: Callable[..., Any], attr: str
 ) -> List[Any]:
     return [func(obj, attr)]
 
 
 @to_iterable.register(set)
-def _iterate(objs: AbstractSet[Any], func: Callable[..., Any], attr: str) -> List[Any]:
+def _iterate(objs: AbstractSet[Any], func: Callable[..., Any], attr: str) -> NoReturn:
     raise TypeError(f"Unsupported unordered iterable of type `set` received via '{attr}': {objs}")
 
 
@@ -687,7 +688,9 @@ def _to_packed(obj: Pose, protocol_name: str) -> PackedPose:
 
 @to_packed.register(PackedPose)
 @to_packed.register(dict)
-def _is_packed_or_kwargs(obj: Union[PackedPose, Dict[Any, Any]], protocol_name: str) -> PackedPose:
+def _is_packed_or_kwargs(
+    obj: Union[PackedPose, Dict[str, Any]], protocol_name: str
+) -> Union[PackedPose, Dict[str, Any]]:
     return obj
 
 
@@ -718,7 +721,7 @@ def _to_int(obj: int, attribute: str) -> str:
 def _to_float(obj: float, attribute: str) -> NoReturn:
     raise NotImplementedError(
         f"The `PyRosettaCluster` '{attribute}' attribute cannot be of type `float`. "
-        + f"Received: {type(obj)}."
+        + f"Received: {type(obj)}"
     )
 
 
@@ -829,7 +832,7 @@ def _merge_and_update_scores(
 
 @singledispatch
 def reserve_scores_in_results(
-    obj: Any, _scores_dict: Dict[Any, Any], protocol_name: str
+    obj: Any, _scores_dict: Dict[str, Any], protocol_name: str
 ) -> NoReturn:
     """
     *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects and arbitrary
@@ -843,7 +846,7 @@ def reserve_scores_in_results(
 @reserve_scores_in_results.register(Pose)
 @reserve_scores_in_results.register(PackedPose)
 def _parse_packed(
-    obj: Union[Pose, PackedPose], _scores_dict: Dict[Any, Any], protocol_name: str
+    obj: Union[Pose, PackedPose], _scores_dict: Dict[str, Any], protocol_name: str
 ) -> List[PackedPose]:
     packed = to_packed(obj, protocol_name)
     packed = _merge_and_update_scores(packed, _scores_dict)
@@ -852,7 +855,7 @@ def _parse_packed(
 
 @reserve_scores_in_results.register(collections.abc.Iterable)
 def _parse_iterable(
-    objs: Iterable[Any], _scores_dict: Dict[Any, Any], protocol_name: str
+    objs: Iterable[Any], _scores_dict: Dict[str, Any], protocol_name: str
 ) -> List[PackedPose]:
     out = []
     for obj in objs:
@@ -865,7 +868,7 @@ def _parse_iterable(
 
 @reserve_scores_in_results.register(type(None))
 def _default_none(
-    obj: None, _scores_dict: Dict[Any, Any], protocol_name: str
+    obj: None, _scores_dict: Dict[str, Any], protocol_name: str
 ) -> PackedPose:
     return to_packed(obj, protocol_name)
 
@@ -912,8 +915,12 @@ def parse_instance_kwargs(obj: Any) -> NoReturn:
 
 
 @parse_instance_kwargs.register(dict)
-def _parse_dict(obj: Dict[Any, Any]) -> Dict[Any, Any]:
+def _parse_dict(obj: Dict[Any, Any]) -> Dict[str, Any]:
     for k in obj.keys():
+        if not isinstance(k, str):
+            raise TypeError(
+                f"The keyword `{k}` must be of type `str`. Received: {type(k)}"
+            )
         if k in ("client", "clients", "input_packed_pose"):
             raise NotImplementedError(
                 f"The keyword argument `{k}` must be passed directly to `reproduce`, "
@@ -937,7 +944,7 @@ def _parse_dict(obj: Dict[Any, Any]) -> Dict[Any, Any]:
 
 
 @parse_instance_kwargs.register(type(None))
-def _default_none(obj: None) -> Dict[Any, Any]:
+def _default_none(obj: None) -> Dict[str, Any]:
     return {}
 
 
@@ -1028,16 +1035,16 @@ def parse_init_file(
         )
 
     input_packed_pose = parse_input_packed_pose(input_packed_pose)
-    if input_packed_pose is not None and not identical_b64_poses(input_packed_pose, _input_packed_pose):
+    if input_packed_pose is not None and not identical_packed_pose_states(input_packed_pose, _input_packed_pose):
         _input_packed_pose_error_msg = (
             "the input `PackedPose` object from the original `PyRosettaCluster` simulation is not identical "
             "to the provided `input_packed_pose` keyword argument value of the `reproduce` function"
         ) if _input_packed_pose is not None else (
-            "the '.init' file does not contain an input `PackedPose` object from the original `PyRosettaCluster` simulation"
+            "the PyRosetta initialization file does not contain an input `PackedPose` object from the original `PyRosettaCluster` simulation"
         )
         raise TypeError(
             "Please set the `input_packed_pose` keyword argument value to `None` when "
-            + f"reproducing from a '.init' file, because {_input_packed_pose_error_msg}."
+            + f"reproducing from a PyRosetta initialization file, because {_input_packed_pose_error_msg}."
         )
 
     return (_input_packed_pose, _output_packed_pose)
@@ -1060,12 +1067,21 @@ def _from_packed(obj: PackedPose) -> bool:
     return obj.empty()
 
 
-def identical_b64_poses(
+def identical_packed_pose_states(
     packed_pose_1: Union[Pose, PackedPose],
     packed_pose_2: Union[Pose, PackedPose],
 ) -> bool:
-    """Test whether Base64-encoded pickled `Pose` objects are identical."""
-    return io.to_base64(packed_pose_1) == io.to_base64(packed_pose_2)
+    """Test whether the scientific state of two `Pose` or `PackedPose` objects are identical."""
+
+    return PackedPoseHasher(
+        packed_pose_1,
+        include_cache=True,
+        include_comments=True,
+    ).digest() == PackedPoseHasher(
+        packed_pose_2,
+        include_cache=True,
+        include_comments=True,
+    ).digest()
 
 
 def is_bytes(obj: Any) -> bool:

@@ -50,6 +50,15 @@ from pyrosetta.distributed.cluster.initialization import (
     _get_residue_type_set_name3 as _get_residue_type_set,
 )
 from pyrosetta.distributed.cluster.serialization import Serialization
+from pyrosetta.distributed.cluster.type_defs import (
+    PyRosettaProtocol,
+    PyRosettaProtocols,
+    TaskChainClientIndices,
+    TaskChainPriorities,
+    TaskChainResources,
+    TaskChainRetries,
+    TaskResource,
+)
 from pyrosetta.distributed.cluster.validators import (
     _validate_clients_indices,
     _validate_priorities,
@@ -77,8 +86,8 @@ class TaskBase(Generic[G]):
         return seed
 
     def _get_task_state(
-        self, protocols: List[Callable[..., Any]]
-    ) -> Tuple[List[Callable[..., Any]], Callable[..., Any], Optional[str]]:
+        self, protocols: PyRosettaProtocols
+    ) -> Tuple[PyRosettaProtocols, PyRosettaProtocol, Optional[str]]:
         """
         Given the current state of the PyRosetta protocols, return a `tuple` object of the updated state of the
         PyRosetta protocols, the current PyRosetta protocol, and curent PyRosetta RNG seed.
@@ -91,7 +100,7 @@ class TaskBase(Generic[G]):
 
     def _setup_initial_kwargs(
         self,
-        protocols: List[Callable[..., Any]],
+        protocols: PyRosettaProtocols,
         seed: Optional[str],
         task: Dict[str, Any],
     ) -> Tuple[bytes, Dict[str, Any]]:
@@ -120,8 +129,8 @@ class TaskBase(Generic[G]):
         return pyrosetta_init_kwargs
 
     def _get_clients_index(
-            self, clients_indices: List[int], protocols: List[Callable[..., Any]]
-        ) -> int:
+        self, clients_indices: TaskChainClientIndices, protocols: Sized
+    ) -> int:
         """Return the clients index for the current PyRosetta protocol."""
 
         if clients_indices is None:
@@ -131,10 +140,8 @@ class TaskBase(Generic[G]):
             return clients_indices[_protocols_index]
 
     def _get_resource(
-            self,
-            resources: Optional[Union[List[Dict[Any, Any]], Tuple[Dict[Any, Any], ...]]],
-            protocols: List[Callable[..., Any]],
-        ) -> Optional[Dict[Any, Any]]:
+        self, resources: TaskChainResources, protocols: Sized
+    ) -> TaskResource:
         """Return the resource for the current PyRosetta protocol."""
 
         if resources is None:
@@ -144,8 +151,8 @@ class TaskBase(Generic[G]):
             return resources[_protocols_index]
 
     def _get_priority(
-            self, priorities: Optional[Union[List[int], Tuple[int, ...]]], protocols: List[Callable[..., Any]]
-        ) -> Optional[int]:
+        self, priorities: TaskChainPriorities, protocols: Sized
+    ) -> Optional[int]:
         """Return the priority for the current PyRosetta protocol."""
 
         if priorities is None:
@@ -155,8 +162,8 @@ class TaskBase(Generic[G]):
             return priorities[_protocols_index]
 
     def _get_retry(
-            self, retries: Optional[Union[int, List[int], Tuple[int, ...]]], protocols: List[Callable[..., Any]]
-        ) -> Optional[int]:
+        self, retries: TaskChainRetries, protocols: Sized
+    ) -> Optional[int]:
         """Return the number of task retries for the current PyRosetta protocol."""
 
         if retries is None:
@@ -227,16 +234,16 @@ class TaskBase(Generic[G]):
     def _setup_kwargs(
         self,
         kwargs: Dict[str, Any],
-        clients_indices: List[int],
-        resources: Optional[Union[List[Dict[Any, Any]], Tuple[Dict[Any, Any], ...]]],
-        priorities: Optional[Union[List[int], Tuple[int, ...]]],
-        retries: Optional[Union[int, List[int], Tuple[int, ...]]],
+        clients_indices: TaskChainClientIndices,
+        resources: TaskChainResources,
+        priorities: TaskChainPriorities,
+        retries: TaskChainRetries,
     ) -> Tuple[
         bytes,
         Dict[str, Any],
-        Callable[..., Any],
+        PyRosettaProtocol,
         int,
-        Optional[Dict[Any, Any]],
+        TaskResource,
         Optional[int],
         Optional[int],
     ]:
@@ -297,10 +304,11 @@ class TaskBase(Generic[G]):
         priorities: Any,
         retries: Any,
     ) -> Tuple[
-        List[Callable[..., Any]],
-        Callable[..., Any],
-        Optional[str], int,
-        Optional[Dict[Any, Any]],
+        PyRosettaProtocols,
+        PyRosettaProtocol,
+        Optional[str],
+        int,
+        TaskResource,
         Optional[int],
         Optional[int],
     ]:
@@ -337,7 +345,7 @@ def capture_task_metadata(func: M) -> M:
     @wraps(func)
     def wrapper(
         protocol_name: str,
-        protocol: Callable[..., Any],
+        protocol: PyRosettaProtocol,
         packed_pose: PackedPose,
         datetime_format: str,
         norm_task_options: bool,
