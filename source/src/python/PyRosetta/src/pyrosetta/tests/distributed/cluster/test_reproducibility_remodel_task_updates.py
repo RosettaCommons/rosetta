@@ -286,7 +286,7 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
         protocols = [my_remodel_protocol] * _n_protocols
         output_path = os.path.join(self.workdir, f"outputs_norm_task_options_{int(norm_task_options)}")
         if verbose:
-            print(f"Running original simulation for `norm_task_options={norm_task_options}` and `with_init_file={with_init_file}`", flush=True)
+            print(f"Running original simulation for `norm_task_options={norm_task_options}` and `with_init_file={with_init_file}`.", flush=True)
         PyRosettaCluster(
             tasks=create_tasks,
             input_packed_pose=input_packed_pose,
@@ -313,7 +313,7 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
         original_record = df.iloc[0]
 
         if verbose:
-            print("Original record:", original_record["instance"], flush=True)
+            print("Original record:", original_record["instance"], sep="\n", flush=True)
         if verbose:
             logging_file = original_record["metadata"]["logging_file"]
             _logging_files = glob.glob(os.path.join(os.path.dirname(logging_file), "*"))
@@ -396,6 +396,7 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
         df_reproduce = secure_read_pickle(reproduce_scorefile_path, compression="infer")
         self.assertEqual(df_reproduce.index.size, 1)
         reproduce_record = df_reproduce.iloc[0]
+
         # Assert identical protocol results across original versus reproduction
         for protocol_number in range(len(protocols)):
             self.assertEqual(
