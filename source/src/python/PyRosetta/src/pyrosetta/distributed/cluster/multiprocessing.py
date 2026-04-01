@@ -9,6 +9,7 @@ __author__ = "Jason C. Klima"
 
 try:
     import billiard
+    from billiard import Queue, Process
     from distributed import get_worker
 except ImportError:
     print(
@@ -57,13 +58,8 @@ from typing import (
     List,
     Optional,
     Tuple,
-    TypeVar,
     Union,
 )
-
-Q = TypeVar("Q", bound=billiard.Queue)
-P = TypeVar("P", bound=billiard.context.Process)
-S = TypeVar("S", bound=Serialization)
 
 
 def _maybe_delay(dt: float, max_delay_time: Union[float, int], logger: logging.Logger) -> None:
@@ -102,7 +98,7 @@ def run_protocol(
     ignore_errors: bool,
     protocols_key: str,
     decoy_ids: List[int],
-    serializer: S,
+    serializer: Serialization,
     kwargs: Dict[str, Any],
 ) -> List[Tuple[bytes, bytes]]:
     """Parse the user-defined PyRosetta protocol results."""
@@ -115,8 +111,8 @@ def run_protocol(
 
 @trace_subprocess_exceptions
 def get_target_results_kwargs(
-    q: Q,
-    p: P,
+    q: Queue,
+    p: Process,
     compressed_kwargs: bytes,
     protocol_name: str,
     timeout: Union[float, int],
@@ -139,7 +135,7 @@ def target(
     compressed_protocol: bytes,
     compressed_packed_pose: bytes,
     compressed_kwargs: bytes,
-    q: Q,
+    q: Queue,
     logging_level: str,
     socket_listener_address: Tuple[str, int],
     datetime_format: str,

@@ -41,6 +41,7 @@ from typing import (
     Optional,
     Tuple,
     TypeVar,
+    Union,
 )
 
 from pyrosetta.distributed.cluster.config import (
@@ -48,16 +49,14 @@ from pyrosetta.distributed.cluster.config import (
     __dask_version__,
 )
 
-AdaptiveType = TypeVar("AdaptiveType", bound=Adaptive)
-ClientType = TypeVar("ClientType", bound=Client)
-ClusterType = TypeVar("ClusterType", LocalCluster, SGECluster, SLURMCluster)
+ClusterType = Union[LocalCluster, SGECluster, SLURMCluster]
 G = TypeVar("G")
 
 
 class SchedulerManager(Generic[G]):
     """Dask utility manager for `PyRosettaCluster`."""
 
-    def _setup_clients_dict(self) -> Dict[int, ClientType]:
+    def _setup_clients_dict(self) -> Dict[int, Client]:
         """Setup Dask clients dictionary for `PyRosettaCluster`."""
 
         if all(x is None for x in (self.client, self.clients)):
@@ -170,9 +169,9 @@ class SchedulerManager(Generic[G]):
     def _setup_clients_cluster_adaptive(
         self,
     ) -> Tuple[
-        Dict[int, ClientType],
+        Dict[int, Client],
         Optional[ClusterType],
-        Optional[AdaptiveType],
+        Optional[Adaptive],
     ]:
         """Given user input arguments, return the requested Dask client, cluster, and adaptive instance."""
 
@@ -194,7 +193,7 @@ class SchedulerManager(Generic[G]):
 
         return clients, cluster, adaptive
 
-    def _maybe_adapt(self, adaptive: Optional[AdaptiveType]) -> None:
+    def _maybe_adapt(self, adaptive: Optional[Adaptive]) -> None:
         """Adjust the maximum number of Dask workers."""
 
         if (
@@ -207,7 +206,7 @@ class SchedulerManager(Generic[G]):
 
     def _maybe_teardown(
         self,
-        clients: Dict[int, ClientType],
+        clients: Dict[int, Client],
         cluster: Optional[ClusterType],
     ) -> None:
         """Teardown the Dask client and cluster."""

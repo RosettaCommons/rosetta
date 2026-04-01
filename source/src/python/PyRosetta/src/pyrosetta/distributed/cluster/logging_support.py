@@ -8,7 +8,7 @@
 __author__ = "Jason C. Klima"
 
 try:
-    import billiard
+    from billiard import Queue
     from distributed import (
         Client,
         Worker,
@@ -67,7 +67,6 @@ from pyrosetta.distributed.cluster.task_registry import UserArgs
 
 G = TypeVar("G")
 L = TypeVar("L", bound=Callable[..., Any])
-Q = TypeVar("Q", bound=billiard.Queue)
 
 
 class RedirectToLogger(Generic[G]):
@@ -296,7 +295,7 @@ def setup_target_logging(func: L) -> L:
         compressed_protocol: bytes,
         compressed_packed_pose: bytes,
         compressed_kwargs: bytes,
-        q: Q,
+        q: Queue,
         logging_level: str,
         socket_listener_address: Tuple[str, int],
         datetime_format: str,

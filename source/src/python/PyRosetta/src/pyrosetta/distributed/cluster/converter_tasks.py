@@ -8,8 +8,8 @@
 __author__ = "Jason C. Klima"
 
 try:
-    import distributed
     import toolz
+    from distributed import Client, get_worker
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.converter_tasks' requires the "
@@ -50,7 +50,6 @@ from typing import (
     NoReturn,
     Optional,
     Tuple,
-    TypeVar,
     Union,
 )
 
@@ -73,14 +72,12 @@ from pyrosetta.distributed.cluster.io import (
 )
 from pyrosetta.distributed.cluster.serialization import update_scores
 
-ClientType = TypeVar("ClientType", bound=distributed.Client)
-
 
 @contextmanager
 def not_on_worker() -> Generator[None, Any, None]:
     """A context manager for running code on the head node process."""
     try:
-        distributed.get_worker()
+        get_worker()
     except BaseException:
         yield
 
@@ -881,9 +878,9 @@ def parse_client(obj: Any) -> NoReturn:
     )
 
 
-@parse_client.register(distributed.Client)
+@parse_client.register(Client)
 @parse_client.register(type(None))
-def _default(obj: Optional[ClientType]) -> Optional[ClientType]:
+def _default(obj: Optional[Client]) -> Optional[Client]:
     return obj
 
 

@@ -9,7 +9,8 @@ __author__ = "Jason C. Klima"
 
 try:
     import billiard
-    from billiard import WorkerLostError
+    from billiard import Queue, WorkerLostError
+    from billiard.context import Process
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.exceptions' requires the "
@@ -38,8 +39,6 @@ from typing import (
     cast,
 )
 
-Q = TypeVar("Q", bound=billiard.Queue)
-P = TypeVar("P", bound=billiard.context.Process)
 T = TypeVar("T", bound=Callable[..., Any])
 
 
@@ -151,8 +150,8 @@ def trace_subprocess_exceptions(func: T) -> T:
 
     @wraps(func)
     def wrapper(
-        q: Q,
-        p: P,
+        q: Queue,
+        p: Process,
         compressed_kwargs: bytes,
         protocol_name: str,
         timeout: Union[float, int],

@@ -47,7 +47,6 @@ from pyrosetta.distributed.cluster.serialization import NonceCache
 from pyrosetta.distributed.cluster.worker_plugins import TaskSecurityPlugin
 
 G = TypeVar("G")
-SecurityType = TypeVar("SecurityType", bound=Security)
 
 
 class SecurityIO(Generic[G]):
@@ -136,7 +135,7 @@ def generate_dask_tls_security(
     san_dns: Optional[Iterable[str]] = None,
     san_ip: Optional[Iterable[str]] = None,
     cleanup: bool = True,
-) -> SecurityType:
+) -> Security:
     """
     Create cryptographic certificates and private keys for securing a Dask cluster, and return a Dask
     `distributed.Security` object that can be passed directly to the `security` keyword argument of

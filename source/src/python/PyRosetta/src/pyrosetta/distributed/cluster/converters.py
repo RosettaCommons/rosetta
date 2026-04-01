@@ -44,7 +44,6 @@ from typing import (
     Optional,
     Sized,
     Tuple,
-    TypeVar,
     Union,
 )
 
@@ -67,8 +66,6 @@ from pyrosetta.distributed.cluster.converter_tasks import (
 )
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.validators import PYROSETTACLUSTER_KEY_PREFIX, _validate_task
-
-S = TypeVar("S", bound=Serialization)
 
 
 def _parse_filter_results(obj: Any) -> bool:
@@ -665,7 +662,7 @@ def _get_compressed_packed_pose_kwargs_pairs_list(
     protocol_name: str,
     protocols_key: str,
     decoy_ids: List[int],
-    serializer: S,
+    serializer: Serialization,
 ) -> List[Tuple[bytes, bytes]]:
     """Prepare results from a user-defined PyRosetta protocol to put into the queue."""
 
@@ -699,7 +696,7 @@ def _parse_protocol_results(
     protocol_name: str,
     protocols_key: str,
     decoy_ids: List[int],
-    serializer: S,
+    serializer: Serialization,
 ) -> List[Tuple[bytes, bytes]]:
     """Parse results from a user-defined PyRosetta protocol."""
 

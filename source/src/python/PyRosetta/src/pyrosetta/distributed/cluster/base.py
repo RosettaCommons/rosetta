@@ -60,7 +60,6 @@ from pyrosetta.distributed.cluster.validators import (
 
 G = TypeVar("G")
 M = TypeVar("M", bound=Callable[..., Any])
-S = TypeVar("S", bound=Serialization)
 
 
 class TaskBase(Generic[G]):
@@ -345,7 +344,7 @@ def capture_task_metadata(func: M) -> M:
         ignore_errors: bool,
         protocols_key: str,
         decoy_ids: List[int],
-        serializer: S,
+        serializer: Serialization,
         kwargs: Dict[str, Any],
     ) -> Any:
         """Wrapper function to the `capture_task_metadata` decorator."""
