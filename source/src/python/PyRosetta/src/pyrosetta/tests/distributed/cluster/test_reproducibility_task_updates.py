@@ -179,7 +179,7 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
             kwargs.pop("PyRosettaCluster_datetime_start")
             # Test updating reserved keys in current task dictionary, which get automatically reverted
             kwargs["PyRosettaCluster_protocol_name"] = "xyzzy"
-            kwargs["PyRosettaCluster_protocol_number"] = random.randbytes(14)
+            kwargs["PyRosettaCluster_protocol_number"] = random.getrandbits(14 * 8).to_bytes(14, "little")
             # Maybe print
             if kwargs["verbose"]:
                 print(f"PyRosetta protocol number {protocol_number} Pose.cache:", packed_pose.pose.cache, flush=True)
