@@ -107,7 +107,9 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
         def my_protocol(packed_pose, **kwargs):
             import pyrosetta
             import random
-            
+
+            from pyrosetta.distributed.cluster.init_files import PackedPoseHasher
+
             # Initialize seed
             seed = kwargs["PyRosettaCluster_seed"]
             random.seed(seed)
@@ -115,15 +117,36 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
             cache = packed_pose.pose.cache
             protocol_scorefxn_names = cache.get("protocol_scorefxn_names", None) or {}
             protocol_total_scores = cache.get("protocol_total_scores", None) or {}
+            protocol_n_res = cache.get("protocol_n_res", None) or {}
+            protocol_sequence = cache.get("protocol_sequence", None) or {}
+            protocol_pose_hash = cache.get("protocol_pose_hash", None) or {}
+            protocol_pose_hash_cache = cache.get("protocol_pose_hash_cache", None) or {}
+            protocol_pose_hash_cache_comments = cache.get("protocol_pose_hash_cache_comments", None) or {}
+            protocol_seeds = cache.get("protocol_seeds", None) or {}
+            protocol_random_states = cache.get("protocol_random_states", None) or {}
             # Add current values
             scorefxn = pyrosetta.get_score_function()
             protocol_number = kwargs["PyRosettaCluster_protocol_number"]
             protocol_scorefxn_names[protocol_number] = scorefxn.get_name()
             protocol_total_scores[protocol_number] = scorefxn(packed_pose.pose)
+            protocol_n_res[protocol_number] = packed_pose.pose.size()
+            protocol_sequence[protocol_number] = packed_pose.pose.sequence()
+            protocol_pose_hash[protocol_number] = hash(PackedPoseHasher(packed_pose, include_cache=False, include_comments=False).digest())
+            protocol_pose_hash_cache[protocol_number] = hash(PackedPoseHasher(packed_pose, include_cache=True, include_comments=False).digest())
+            protocol_pose_hash_cache_comments[protocol_number] = hash(PackedPoseHasher(packed_pose, include_cache=True, include_comments=True).digest())
+            protocol_seeds[protocol_number] = pyrosetta.rosetta.numeric.random.rg().get_seed()
+            protocol_random_states[protocol_number] = hash(str(random.getstate()))
             # Update scores
             packed_pose = packed_pose.update_scores(
                 protocol_scorefxn_names=protocol_scorefxn_names,
                 protocol_total_scores=protocol_total_scores,
+                protocol_n_res=protocol_n_res,
+                protocol_sequence=protocol_sequence,
+                protocol_pose_hash=protocol_pose_hash,
+                protocol_pose_hash_cache=protocol_pose_hash_cache,
+                protocol_pose_hash_cache_comments=protocol_pose_hash_cache_comments,
+                protocol_seeds=protocol_seeds,
+                protocol_random_states=protocol_random_states,
             )
             # Maybe update task dictionary for next PyRosetta protocol, which gets validated and kept
             if protocol_number + 1 < len(kwargs["protocol_options"]):
@@ -160,11 +183,6 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
             # Maybe print
             if kwargs["verbose"]:
                 print(f"PyRosetta protocol number {protocol_number} Pose.cache:", packed_pose.pose.cache, flush=True)
-
-            # Test clearing energies
-            pose = io.to_pose(packed_pose)
-            pose.energies().clear()
-            packed_pose = io.to_packed(pose)
 
             return packed_pose, kwargs
 
@@ -286,17 +304,53 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
         df_reproduce = secure_read_pickle(reproduce_scorefile_path, compression="infer")
         self.assertEqual(df_reproduce.index.size, 1)
         reproduce_record = df_reproduce.iloc[0]
-        # Assert identical scorefunction results across original versus reproduction
+
+        # Assert identical protocol results across original versus reproduction
         for protocol_number in range(len(protocols)):
             self.assertEqual(
                 original_record["scores"]["protocol_scorefxn_names"][protocol_number],
                 reproduce_record["scores"]["protocol_scorefxn_names"][protocol_number],
-                msg=f"Protocol number {protocol_number} score function names differ."
+                msg=f"Protocol number {protocol_number} score function names differ.",
             )
             self.assertEqual(
                 original_record["scores"]["protocol_total_scores"][protocol_number],
                 reproduce_record["scores"]["protocol_total_scores"][protocol_number],
-                msg=f"Protocol number {protocol_number} total scores differ."
+                msg=f"Protocol number {protocol_number} total scores differ.",
+            )
+            self.assertEqual(
+                original_record["scores"]["protocol_n_res"][protocol_number],
+                reproduce_record["scores"]["protocol_n_res"][protocol_number],
+                msg=f"Protocol number {protocol_number} number of residues differ.",
+            )
+            self.assertEqual(
+                original_record["scores"]["protocol_sequence"][protocol_number],
+                reproduce_record["scores"]["protocol_sequence"][protocol_number],
+                msg=f"Protocol number {protocol_number} sequences differ.",
+            )
+            self.assertEqual(
+                original_record["scores"]["protocol_pose_hash"][protocol_number],
+                reproduce_record["scores"]["protocol_pose_hash"][protocol_number],
+                msg=f"Protocol number {protocol_number} `Pose` hashes differ.",
+            )
+            self.assertEqual(
+                original_record["scores"]["protocol_pose_hash_cache"][protocol_number],
+                reproduce_record["scores"]["protocol_pose_hash_cache"][protocol_number],
+                msg=f"Protocol number {protocol_number} `Pose` hashes (with `Pose.cache`) differ.",
+            )
+            self.assertEqual(
+                original_record["scores"]["protocol_pose_hash_cache_comments"][protocol_number],
+                reproduce_record["scores"]["protocol_pose_hash_cache_comments"][protocol_number],
+                msg=f"Protocol number {protocol_number} `Pose` hashes (with `Pose.cache` and `Pose` comments) differ.",
+            )
+            self.assertEqual(
+                original_record["scores"]["protocol_seeds"][protocol_number],
+                reproduce_record["scores"]["protocol_seeds"][protocol_number],
+                msg=f"Protocol number {protocol_number} PyRosetta RNG seeds differ.",
+            )
+            self.assertEqual(
+                original_record["scores"]["protocol_random_states"][protocol_number],
+                reproduce_record["scores"]["protocol_random_states"][protocol_number],
+                msg=f"Protocol number {protocol_number} `random` module states differ.",
             )
         # Assert unique scorefunction results within original and reproduction
         for record in (original_record, reproduce_record):
