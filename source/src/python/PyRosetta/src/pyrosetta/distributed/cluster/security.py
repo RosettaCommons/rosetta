@@ -159,6 +159,7 @@ def generate_dask_tls_security(
 
     Example:
         Generate a new set of certificates and a configured Dask `distributed.Security` object:
+
             >>> security = generate_dask_tls_security(
             ...     output_dir="./dask_certs",
             ...     common_name="my-cluster",
@@ -180,6 +181,7 @@ def generate_dask_tls_security(
         - `index.txt`, `serial`, and `ca.cnf`: bookkeeping files used by OpenSSL (with `cleanup=False`)
 
         Then, simply use the configured Dask `distributed.Security` object with `PyRosettaCluster`:
+
             >>> PyRosettaCluster(security=security, ...).distribute(...)
 
     Additional Notes:

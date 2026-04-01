@@ -8,8 +8,8 @@
 __author__ = "Jason C. Klima"
 
 try:
-    import distributed
     import toolz
+    from distributed import Client
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.tools' requires the "
@@ -35,7 +35,6 @@ from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.rosetta.core.pose import Pose
 from typing import (
     Any,
-    Callable,
     Dict,
     Generator,
     List,
@@ -66,8 +65,16 @@ from pyrosetta.distributed.cluster.serialization import (
     Serialization,
     update_scores,
 )
+from pyrosetta.distributed.cluster.type_defs import (
+    Callable,
+    FloatOrInt,
+    ListOrTuple,
+    PoseOrPackedPose,
+    PyRosettaProtocolResults,
+    Sequence,
+)
 
-P = TypeVar("P", bound=Callable[..., Any])
+P = TypeVar("P", bound=Callable[..., PyRosettaProtocolResults])
 
 
 def get_protocols(
@@ -405,6 +412,7 @@ def reserve_scores(func: P) -> P:
     `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Example:
+
         >>> @reserve_scores
         ... def my_pyrosetta_protocol(packed_pose, /, **kwargs):
         ...     from pyrosetta import MyMover
@@ -426,7 +434,7 @@ def reserve_scores(func: P) -> P:
     import pyrosetta.distributed  # noqa
 
     @wraps(func)
-    def wrapper(packed_pose: Optional[PackedPose], **kwargs: Any) -> Any:
+    def wrapper(packed_pose: Optional[PackedPose], **kwargs: Any) -> PyRosettaProtocolResults:
         """Wrapper function for the `reserve_scores` decorator."""
 
         if packed_pose is not None:
@@ -443,7 +451,7 @@ def reserve_scores(func: P) -> P:
     return cast(P, wrapper)
 
 
-def requires_packed_pose(func: P) -> Union[PackedPose, None, P]:
+def requires_packed_pose(func: P) -> P:
     """
     A decorator for any user-defined PyRosetta protocol. If a PyRosetta protocol requires that the first
     positional-or-keyword parameter be a non-empty `PackedPose` object, then immediately return any bound empty
@@ -458,6 +466,7 @@ def requires_packed_pose(func: P) -> Union[PackedPose, None, P]:
     decorated with this decorator.
 
     Example:
+
         >>> @requires_packed_pose
         ... def my_pyrosetta_protocol(packed_pose, /, **kwargs):
         ...     assert not packed_pose.empty() or packed_pose.pose.size() > 0
@@ -472,8 +481,9 @@ def requires_packed_pose(func: P) -> Union[PackedPose, None, P]:
         The first positional-or-keyword parameter if it is an empty `PackedPose` object or `None`, otherwise
         the produced results from the decorated protocol.
     """
+
     @wraps(func)
-    def wrapper(packed_pose: Optional[PackedPose], **kwargs: Any) -> Any:
+    def wrapper(packed_pose: Optional[PackedPose], **kwargs: Any) -> PyRosettaProtocolResults:
         """Wrapper function for the `requires_packed_pose` decorator."""
 
         _msg = "User-provided PyRosetta protocol '{0}' received and is duly returning {1} object."
@@ -493,21 +503,21 @@ def reproduce(
     input_file: Optional[str] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
-    protocols: Any = None,
-    client: Optional[distributed.Client] = None,
-    clients: Optional[List[distributed.Client]] = None,
-    input_packed_pose: Optional[Union[Pose, PackedPose]] = None,
-    instance_kwargs: Optional[Dict[Any, Any]] = None,
-    clients_indices: Optional[List[int]] = None,
-    resources: Optional[Dict[Any, Any]] = None,
-    retries: Optional[Union[int, List[int], Tuple[int, ...]]] = None,
+    protocols: Optional[Sequence[Callable[..., PyRosettaProtocolResults]]] = None,
+    client: Optional[Client] = None,
+    clients: Optional[ListOrTuple[Client]] = None,
+    input_packed_pose: Optional[PoseOrPackedPose] = None,
+    instance_kwargs: Optional[Dict[str, Any]] = None,
+    clients_indices: Optional[ListOrTuple[int]] = None,
+    resources: Optional[ListOrTuple[Optional[Dict[str, FloatOrInt]]]] = None,
+    retries: Optional[Union[int, ListOrTuple[int]]] = None,
     skip_corrections: bool = False,
     init_from_file_kwargs: Optional[Dict[str, Any]] = None,
 ) -> None:
     """
     Given an input file (or a scorefile with full simulation records and a decoy name) that was written by
-    `PyRosettaCluster` and any additional `PyRosettaCluster` class keyword arguments, execute the
-    decoy reproduction simulation with a new instance of `PyRosettaCluster`.
+    `PyRosettaCluster` and any additional `PyRosettaCluster` class keyword arguments, execute the decoy
+    reproduction simulation with a new instance of `PyRosettaCluster`.
 
     *Warning*: This method uses the `cloudpickle` and `pickle` modules to serialize and deserialize `Pose`
     objects, arbitrary Python types in `Pose.cache` dictionaries, `pandas.DataFrame` objects (if configured),
@@ -815,7 +825,7 @@ run: Callable[..., None] = produce
 
 
 @wraps(produce, assigned=("__doc__",), updated=())
-def iterate(**kwargs: Any) -> Generator[Tuple[PackedPose, Dict[Any, Any]], None, None]:
+def iterate(**kwargs: Any) -> Generator[Tuple[Optional[PackedPose], Dict[str, Any]], None, None]:
     # See assigned `iterate.__doc__` updated below
     protocols = kwargs.pop("protocols", None)
     clients_indices = kwargs.pop("clients_indices", None)

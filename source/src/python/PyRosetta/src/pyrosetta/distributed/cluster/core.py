@@ -580,6 +580,13 @@ from pyrosetta.distributed.cluster.task_registry import (
     MemoryTaskRegistry,
     UserArgs,
 )
+from pyrosetta.distributed.cluster.type_defs import (
+    Callable,
+    FloatOrInt,
+    ListOrTuple,
+    PyRosettaProtocolResults,
+    Sequence,
+)
 from pyrosetta.distributed.cluster.utilities import SchedulerManager
 from pyrosetta.distributed.cluster.validators import (
     _validate_dir,
@@ -652,7 +659,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         ),
     )
     clients = attr.ib(
-        type=Optional[List[Client]],
+        type=Optional[ListOrTuple[Client]],
         default=None,
         validator=[
             attr.validators.optional(
@@ -1122,7 +1129,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
 
     def _get_submit_kwargs(
         self,
-        resources: Optional[Dict[Any, Any]] = None,
+        resources: Optional[Dict[str, FloatOrInt]] = None,
         priority: Optional[int] = None,
         retries: Optional[int] = None,
     ) -> Dict[str, Any]:
@@ -1155,7 +1162,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         pyrosetta_init_kwargs: Dict[str, Any],
         extra_args: Dict[str, Any],
         passkey: bytes,
-        resource: Optional[Dict[Any, Any]],
+        resource: Optional[Dict[str, FloatOrInt]],
         priority: Optional[int],
         retry: Optional[int],
     ) -> Future:
@@ -1214,13 +1221,13 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
 
     def _run(
         self,
-        *args: Any,
-        protocols: Any = None,
-        clients_indices: Any = None,
-        resources: Any = None,
-        priorities: Any = None,
-        retries: Any = None,
-    ) -> Generator[Tuple[PackedPose, Dict[Any, Any]], None, None]:
+        *args: Callable[..., PyRosettaProtocolResults],
+        protocols: Optional[Sequence[Callable[..., PyRosettaProtocolResults]]] = None,
+        clients_indices: Optional[ListOrTuple[int]] = None,
+        resources: Optional[ListOrTuple[Optional[Dict[str, FloatOrInt]]]] = None,
+        priorities: Optional[ListOrTuple[int]] = None,
+        retries: Optional[Union[int, ListOrTuple[int]]] = None,
+    ) -> Generator[Tuple[Optional[PackedPose], Dict[str, Any]], None, None]:
         """
         Execute user-defined PyRosetta protocols on a local or remote compute cluster using the user-customized
         `PyRosettaCluster` instance. Either positional arguments or the `protocols` keyword argument specifying
@@ -1238,6 +1245,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         Examples:
 
         Basic usage:
+
             >>> PyRosettaCluster().distribute(protocol_1)
             >>> PyRosettaCluster().distribute(protocols=protocol_1)
             >>> PyRosettaCluster().distribute(protocol_1, protocol_2, protocol_3)
@@ -1245,6 +1253,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             >>> PyRosettaCluster().distribute(protocol_1, protocol_2, protocols=[protocol_3, protocol_4])
 
         Run with two Dask clients:
+
             >>> # Run `protocol_1` on `client_1`,
             >>> # then `protocol_2` on `client_2`,
             >>> # then `protocol_3` on `client_1`,
@@ -1255,6 +1264,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             ... )
 
         Run with multiple Dask clients:
+
             >>> # Run `protocol_1` on `client_2`,
             >>> # then `protocol_2` on `client_3`,
             >>> # then `protocol_3` on `client_1`:
@@ -1264,6 +1274,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             ... )
 
         Run with one Dask client and compute resource constraints:
+
             >>> # Run `protocol_1` on `client_1` with Dask worker resource constraints "GPU=2",
             >>> # then `protocol_2` on `client_1` with Dask worker resource constraints "MEMORY=100e9",
             >>> # then `protocol_3` on `client_1` without Dask worker resource constraints:
@@ -1273,6 +1284,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             ... )
 
         Run with two Dask clients and compute resource constraints:
+
             >>> # Run `protocol_1` on `client_1` with Dask worker resource constraints "GPU=2",
             >>> # then `protocol_2` on `client_2` with Dask worker resource constraints "MEMORY=100e9":
             >>> PyRosettaCluster(clients=[client_1, client_2]).distribute(
@@ -1282,6 +1294,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             ... )
 
         Run with task priorities:
+
             >>> # Run protocols with depth-first task execution:
             >>> PyRosettaCluster().distribute(
             ...     protocols=[protocol_1, protocol_2, protocol_3, protocol_4],
@@ -1289,6 +1302,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             ... )
 
         Run with task retries:
+
             >>> # Run protocols with up to three retries per failed task during `protocol_3` and `protocol_4`:
             >>> PyRosettaCluster(ignore_errors=False).distribute(
             ...     protocols=[protocol_1, protocol_2, protocol_3, protocol_4],
@@ -1301,9 +1315,9 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
                 user-defined PyRosetta protocols in the order to be executed.
 
             `protocols`:
-                An iterable of extra callable user-defined PyRosetta protocols; i.e., an iterable of objects
-                of `types.GeneratorType` and/or `types.FunctionType` types, or a single callable of type
-                `types.GeneratorType` or `types.FunctionType`.
+                An ordered iterable of extra callable user-defined PyRosetta protocols; i.e., an ordered
+                iterable of objects of `types.GeneratorType` and/or `types.FunctionType` types, or a single
+                callable of type `types.GeneratorType` or `types.FunctionType`.
 
                 Default: `None`
 
@@ -1534,13 +1548,13 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
 
     def generate(
         self,
-        *args: Any,
-        protocols: Any = None,
-        clients_indices: Any = None,
-        resources: Any = None,
-        priorities: Any = None,
-        retries: Any = None,
-    ) -> Generator[Tuple[PackedPose, Dict[str, Any]], None, None]:
+        *args: Callable[..., PyRosettaProtocolResults],
+        protocols: Optional[Sequence[Callable[..., PyRosettaProtocolResults]]] = None,
+        clients_indices: Optional[ListOrTuple[int]] = None,
+        resources: Optional[ListOrTuple[Optional[Dict[str, FloatOrInt]]]] = None,
+        priorities: Optional[ListOrTuple[int]] = None,
+        retries: Optional[Union[int, ListOrTuple[int]]] = None,
+    ) -> Generator[Tuple[Optional[PackedPose], Dict[str, Any]], None, None]:
         # See `generate.__doc__` explicitly set below
 
         if self.sha1 != "":
@@ -1564,12 +1578,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
 
     def distribute(
         self,
-        *args: Any,
-        protocols: Any = None,
-        clients_indices: Any = None,
-        resources: Any = None,
-        priorities: Any = None,
-        retries: Any = None,
+        *args: Callable[..., PyRosettaProtocolResults],
+        protocols: Optional[Sequence[Callable[..., PyRosettaProtocolResults]]] = None,
+        clients_indices: Optional[ListOrTuple[int]] = None,
+        resources: Optional[ListOrTuple[Optional[Dict[str, FloatOrInt]]]] = None,
+        priorities: Optional[ListOrTuple[int]] = None,
+        retries: Optional[Union[int, ListOrTuple[int]]] = None,
     ) -> None:
         # See `distribute.__doc__` explicitly set below
 
@@ -1614,10 +1628,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         Extra examples:
 
         Iterate over results in real-time as they are yielded from the cluster:
+
             >>> for packed_pose, kwargs in PyRosettaCluster().generate(protocols):
             ...     ...
 
         Iterate over submissions to the same Dask client:
+
             >>> client = Client()
             >>> for packed_pose, kwargs in PyRosettaCluster(client=client).generate(protocols):
             ...     # Post-process results on head node asynchronously from results generation
@@ -1631,6 +1647,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
 
         Iterate over two PyRosettaCluster instances, each managing one Dask client, creating additional
         overhead:
+
             >>> client_1 = Client()
             >>> client_2 = Client()
             >>> for packed_pose, kwargs in PyRosettaCluster(client=client_1).generate(protocols):
@@ -1644,6 +1661,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             ...         ...
 
         Iterate over one PyRosettaCluster instance managing two Dask clients, reducing overhead:
+
             >>> # Using multiple `distributed.as_completed` iterators on the head node creates additional
             >>> # overhead. If post-processing on the head node is not required between user-defined PyRosetta
             >>> # protocols, the preferred method is to distribute PyRosetta protocols within a single
