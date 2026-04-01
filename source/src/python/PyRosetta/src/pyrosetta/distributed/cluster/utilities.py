@@ -17,6 +17,8 @@ try:
         Adaptive,
         Client,
         LocalCluster,
+        Worker,
+        get_worker,
     )
 except ImportError:
     print(
@@ -216,3 +218,12 @@ class SchedulerManager(Generic[G]):
             cluster.scale(0)
             clients[0].close()
             cluster.close()
+
+
+def get_dask_worker() -> Worker:
+    """Get the current Dask worker."""
+
+    try:
+        return get_worker()
+    except Exception as ex:
+        raise ValueError(f"Cannot get Dask worker. {ex}")

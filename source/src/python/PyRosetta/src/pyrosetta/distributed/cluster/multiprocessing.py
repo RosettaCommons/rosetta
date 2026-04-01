@@ -10,15 +10,13 @@ __author__ = "Jason C. Klima"
 try:
     import billiard
     from billiard import Queue, Process
-    from distributed import get_worker
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.multiprocessing' requires the "
-        + "third-party packages 'billiard' and 'distributed' as dependencies!\n"
-        + "Please install these packages into your virtual environment. "
+        + "third-party package 'billiard' as a dependency!\n"
+        + "Please install this package into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/billiard/\n"
-        + "https://pypi.org/project/distributed/\n"
     )
     raise
 
@@ -60,6 +58,7 @@ from pyrosetta.distributed.cluster.logging_support import (
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.task_registry import UserArgs
 from pyrosetta.distributed.cluster.type_defs import PyRosettaProtocol
+from pyrosetta.distributed.cluster.utilities import get_dask_worker
 from pyrosetta.distributed.cluster.validators import _validate_residue_type_sets
 
 
@@ -221,12 +220,7 @@ def user_spawn_thread(
     client_residue_type_set = extra_args["client_residue_type_set"]
 
     logger = get_worker_logger(protocol_name, socket_listener_address, task_id)
-
-    try:
-        worker = get_worker()
-    except Exception as ex:
-        raise ValueError(f"Cannot get Dask worker. {ex}")
-
+    worker = get_dask_worker()
     plugin = worker.plugins[instance_id]
     assert plugin.__getstate__()["prk"] is None, (
         "Pseudo-random key is not hidden on the worker nonce cache."

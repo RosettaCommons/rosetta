@@ -12,7 +12,6 @@ try:
     from distributed import (
         Client,
         Worker,
-        get_worker,
     )
 except ImportError:
     print(
@@ -64,6 +63,7 @@ from pyrosetta.distributed.cluster.logging_listeners import (
     SocketListener,
 )
 from pyrosetta.distributed.cluster.task_registry import UserArgs
+from pyrosetta.distributed.cluster.utilities import get_dask_worker
 
 G = TypeVar("G")
 L = TypeVar("L", bound=Callable[..., Any])
@@ -382,11 +382,7 @@ def setup_worker_logging(func: L) -> L:
     def wrapper(user_args: UserArgs) -> Any:
         """Wrapper function to `setup_worker_logging` decorator."""
 
-        try:
-            worker = get_worker()
-        except Exception as ex:
-            raise ValueError(f"Cannot get Dask worker. {ex}")
-
+        worker = get_dask_worker()
         protocol_name = user_args.protocol_name
         masked_key = user_args.masked_key
         task_id = user_args.task_id
