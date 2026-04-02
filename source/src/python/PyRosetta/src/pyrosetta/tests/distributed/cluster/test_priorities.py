@@ -16,6 +16,7 @@ import numpy
 import os
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
+import sys
 import tempfile
 import time
 import unittest
@@ -39,6 +40,9 @@ from pyrosetta.distributed.cluster import produce
 
 
 class PrioritiesTest(unittest.TestCase):
+    def tearDown(self):
+        sys.stdout.flush()
+
     def test_priorities(self):
         """Smoke test for the use case of priorities of tasks with PyRosettaCluster."""
         pyrosetta.distributed.init(

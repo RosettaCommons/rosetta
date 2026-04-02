@@ -23,6 +23,9 @@ from pyrosetta.distributed.cluster import (
 
 class SerializationTest(unittest.TestCase):
     """Test case for the use of serialization in PyRosettaCluster."""
+    def tearDown(self):
+        sys.stdout.flush()
+
     def test_serialization(self):
         """Smoke test for PyRosettaCluster PackedPose serialization round-trip."""
         for _compression in ("xz", "zlib", "bz2", True, False, None):

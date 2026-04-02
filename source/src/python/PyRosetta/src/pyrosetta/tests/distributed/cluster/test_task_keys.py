@@ -44,6 +44,9 @@ class TaskKeysTest(unittest.TestCase):
     def tearDownClass(cls):
         cls.workdir.cleanup()
 
+    def tearDown(self):
+        sys.stdout.flush()
+
     @staticmethod
     def positional_arbitrary_parameter_protocol(baz, /, **kwargs):
         """Test Case #1: A user-defined PyRosetta protocol with a positional-only parameter named 'baz'."""

@@ -35,6 +35,9 @@ from pyrosetta.tests.distributed.cluster.setup_inputs import get_test_params_fil
 
 
 class TestReproducibilityMulti(unittest.TestCase):
+    def tearDown(self):
+        sys.stdout.flush()
+
     def test_reproducibility_packer_nstruct_multi(self, filter_results=False):
         """
         Test for PyRosettaCluster decoy reproducibility with an nstruct of 2

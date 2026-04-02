@@ -17,6 +17,7 @@ import pyrosetta
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
 import random
+import sys
 import tempfile
 import unittest
 
@@ -51,6 +52,7 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
 
     def tearDown(self):
         self.tmpdir.cleanup()
+        sys.stdout.flush()
 
     def reproduce_task_updates(self, norm_task_options=False, with_init_file=False, verbose=False):
         """

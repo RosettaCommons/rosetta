@@ -13,6 +13,7 @@ __author__ = "Jason C. Klima"
 import os
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
+import sys
 import tempfile
 import unittest
 import uuid
@@ -35,6 +36,9 @@ from pyrosetta.distributed.cluster import produce
 
 
 class MultipleClientsTest(unittest.TestCase):
+    def tearDown(self):
+        sys.stdout.flush()
+
     def test_clients(self):
         """Smoke test for the use case of multiple clients with PyRosettaCluster."""
         pyrosetta.distributed.init(

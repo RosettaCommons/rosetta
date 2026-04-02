@@ -89,6 +89,9 @@ class SmokeTestMulti(unittest.TestCase):
                 )
             )
 
+    def tearDown(self):
+        sys.stdout.flush()
+
     def test_smoke_multi(self):
         """Smoke test for PyRosettaCluster usage with multiple protocols."""
         import pyrosetta

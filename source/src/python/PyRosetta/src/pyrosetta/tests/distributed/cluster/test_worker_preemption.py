@@ -17,6 +17,7 @@ import pyrosetta.distributed
 import pyrosetta.distributed.io as io
 import random
 import signal
+import sys
 import tempfile
 import time
 import unittest
@@ -156,6 +157,9 @@ class WorkerPreemptionTest(unittest.TestCase):
             WorkerPreemptionTest._sep,
             flush=True,
         )
+
+    def tearDown(self):
+        sys.stdout.flush()
 
     @staticmethod
     def create_tasks():

@@ -14,6 +14,7 @@ import glob
 import json
 import os
 import pyrosetta.distributed
+import sys
 import tempfile
 import unittest
 
@@ -73,6 +74,9 @@ class IOTest(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.workdir.cleanup()
+
+    def tearDown(self):
+        sys.stdout.flush()
 
     @staticmethod
     def my_pyrosetta_protocol(packed_pose, **kwargs):

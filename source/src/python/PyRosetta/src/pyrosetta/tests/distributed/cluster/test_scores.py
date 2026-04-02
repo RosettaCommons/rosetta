@@ -14,6 +14,7 @@ import glob
 import os
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
+import sys
 import tempfile
 import unittest
 import uuid
@@ -93,6 +94,9 @@ class ScoresTest(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.workdir.cleanup()
+
+    def tearDown(self):
+        sys.stdout.flush()
 
     @staticmethod
     def create_task():

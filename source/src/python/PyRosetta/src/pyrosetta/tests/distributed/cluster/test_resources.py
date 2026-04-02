@@ -14,6 +14,7 @@ import glob
 import os
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
+import sys
 import tempfile
 import unittest
 import uuid
@@ -40,6 +41,9 @@ from pyrosetta.distributed.cluster import (
 
 class ResourcesTest(unittest.TestCase):
     """Test case for specified compute resources with PyRosettaCluster."""
+    def tearDown(self):
+        sys.stdout.flush()
+
     def test_resources(self):
         """Smoke test for the use case of abstract resource constraints for dask workers with PyRosettaCluster."""
         pyrosetta.distributed.init(

@@ -15,6 +15,7 @@ import os
 import pyrosetta
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
+import sys
 import tempfile
 import time
 import unittest
@@ -42,6 +43,9 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.workdir.cleanup()
+
+    def tearDown(self):
+        sys.stdout.flush()
 
     @staticmethod
     def timeit(func):

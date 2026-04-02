@@ -18,6 +18,7 @@ import os
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
 import re
+import sys
 import tempfile
 import unittest
 
@@ -27,6 +28,9 @@ from pyrosetta.tests.distributed.cluster.setup_inputs import get_test_params_fil
 
 class LoggingTest(unittest.TestCase):
     _ansi_regex = re.compile(r"(?:\x1B[@-_]|[\x80-\x9F])[0-?]*[ -/]*[@-~]")
+
+    def tearDown(self):
+        sys.stdout.flush()
 
     def test_logging(self, verbose=False):
         """A test for capturing logging information in the distributed protocol."""

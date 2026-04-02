@@ -11,6 +11,7 @@ PyRosettaCluster smoke tests using the `unittest` framework.
 __author__ = "Jason C. Klima"
 
 import os
+import sys
 import unittest
 import uuid
 
@@ -32,6 +33,9 @@ class GeneratorTest(TestBase, unittest.TestCase):
         "extra_options": "-ex1 -multithreading:total_threads 1",
         "set_logging_handler": "logging",
         }
+
+    def tearDown(self):
+        sys.stdout.flush()
 
     @staticmethod
     def parameter_to_str(parameter):

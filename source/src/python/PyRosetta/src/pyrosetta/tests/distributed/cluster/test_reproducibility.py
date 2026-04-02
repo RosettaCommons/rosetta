@@ -15,6 +15,7 @@ import os
 import pyrosetta
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
+import sys
 import tempfile
 import unittest
 
@@ -22,6 +23,9 @@ from pyrosetta.distributed.cluster import PyRosettaCluster
 
 
 class TestReproducibility(unittest.TestCase):
+    def tearDown(self):
+        sys.stdout.flush()
+
     def test_reproducibility_packer_nstruct(self, filter_results=False):
         """Test for PyRosettaCluster decoy reproducibility with an nstruct of 2."""
         pyrosetta.distributed.init(

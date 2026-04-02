@@ -15,6 +15,7 @@ import json
 import os
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
+import sys
 import tempfile
 import unittest
 import uuid
@@ -34,6 +35,9 @@ from pyrosetta.distributed.cluster.io import (
 
 
 class SaveAllTest(unittest.TestCase):
+    def tearDown(self):
+        sys.stdout.flush()
+
     def test_save_all(self):
         """Smoke test for PyRosettaCluster usage with the save_all attribute enabled."""
         pyrosetta.distributed.init(

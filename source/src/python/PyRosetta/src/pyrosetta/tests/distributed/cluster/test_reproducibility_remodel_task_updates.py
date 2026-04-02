@@ -62,6 +62,7 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
                 print(f"Warning: RosettaRemodel output file still exists: {self.remodel_1_pdb_file}", flush=True)
         os.chdir(self.cwd)
         self.tmpdir.cleanup()
+        sys.stdout.flush()
 
     @staticmethod
     def format_stable_float(x):

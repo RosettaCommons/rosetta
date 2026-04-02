@@ -26,11 +26,15 @@ from pyrosetta.tests.distributed.cluster.unittest_utils import (
 
 class RuntimeTest(TestBase, unittest.TestCase):
     """Auxiliary runtime tests for PyRosettaCluster."""
+
     _pyrosetta_kwargs = {
         "options": "-mute all",
         "extra_options": "-ex1 -multithreading:total_threads 1",
         "set_logging_handler": "logging",
         }
+
+    def tearDown(self):
+        sys.stdout.flush()
 
     @staticmethod
     def create_simple_tasks(n_tasks=10):

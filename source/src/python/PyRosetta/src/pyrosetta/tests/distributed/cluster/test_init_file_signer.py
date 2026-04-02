@@ -14,6 +14,7 @@ import numpy
 import os
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
+import sys
 import tempfile
 import unittest
 
@@ -33,6 +34,9 @@ from pyrosetta.distributed.cluster.io import (
 
 
 class TestInitFileSigner(unittest.TestCase):
+    def tearDown(self):
+        sys.stdout.flush()
+
     def test_init_file_signer(self):
         with tempfile.TemporaryDirectory() as workdir:
             output_init_file = os.path.join(workdir, "pyrosetta.init")

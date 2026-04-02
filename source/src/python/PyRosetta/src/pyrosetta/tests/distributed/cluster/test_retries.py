@@ -14,6 +14,7 @@ import glob
 import os
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
+import sys
 import tempfile
 import time
 import unittest
@@ -130,6 +131,9 @@ class RetriesTest(unittest.TestCase):
         time.sleep(3) # Allow logging messages from worker processes to flush
         cls.workdir.cleanup()
         print(f"{RetriesTest._sep} End testing PyRosettaCluster().distribute(retries=...) {RetriesTest._sep}", flush=True)
+
+    def tearDown(self):
+        sys.stdout.flush()
 
     @staticmethod
     def create_tasks():
