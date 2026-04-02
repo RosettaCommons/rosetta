@@ -278,6 +278,7 @@ def run_test_cases(*test_cases: str, streaming: bool = True, timeout: int = 1800
     unittest_runner = run_unittest_streaming if streaming else run_unittest
     for test_case in test_cases:
         unittest_runner(test_case, timeout)
+    sys.stdout.flush()
 
 
 def run_distributed_cluster_test_cases(*test_cases: str, streaming: bool = True, timeout: int = 1800) -> None:

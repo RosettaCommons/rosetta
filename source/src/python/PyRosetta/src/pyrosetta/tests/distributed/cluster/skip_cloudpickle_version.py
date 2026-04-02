@@ -33,3 +33,5 @@ def main():
     except AttributeError as ex:
         print("Caught AttributeError in cloudpickle version {0} trying to pickle a Pose object: {1}".format(version, ex), flush=True)
         sys.exit(1)
+    finally:
+        sys.stdout.flush()

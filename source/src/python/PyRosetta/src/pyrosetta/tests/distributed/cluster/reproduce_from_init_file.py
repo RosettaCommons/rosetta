@@ -223,3 +223,4 @@ if __name__ == "__main__":
         reproduce_test(args.input_file, args.scorefile_name, args.input_init_file, True, False)
     elif args.test_case == 4:
         reproduce_test(args.input_file, args.scorefile_name, args.input_init_file, False, True)
+    sys.stdout.flush()
