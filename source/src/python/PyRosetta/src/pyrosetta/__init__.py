@@ -190,7 +190,7 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
     v.extend(args)
 
     if not silent:
-        print( version() )
+        print( version() , flush=True)
         logger.info( "\n" + version() )
     else:
         logger.debug( "\n" + version() )
