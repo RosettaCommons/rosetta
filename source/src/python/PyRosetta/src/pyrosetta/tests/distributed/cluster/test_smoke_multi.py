@@ -66,7 +66,11 @@ class SmokeTestMulti(unittest.TestCase):
     def setUpClass(cls):
         cloudpickle_version = get_package_version("cloudpickle")
         test_script = os.path.join(os.path.dirname(__file__), "skip_cloudpickle_version.py")
-        p = subprocess.run("{0} {1}".format(sys.executable, test_script), shell=True)
+        p = subprocess.run(
+            "{0} {1}".format(sys.executable, test_script),
+            shell=True,
+            env={**os.environ, "PYTHONUNBUFFERED": "1"},
+        )
         if p.returncode == 0:
             print("Running {0} tests because cloudpickle version {1} can pickle Pose objects.".format(
                     cls.__name__, cloudpickle_version
