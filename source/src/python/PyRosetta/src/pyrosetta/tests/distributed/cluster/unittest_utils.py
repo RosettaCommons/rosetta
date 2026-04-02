@@ -163,8 +163,3 @@ def score_function_is_available(name):
     db = pyrosetta.rosetta.basic.database.full_name("scoring/weights")
 
     return os.path.isfile(os.path.join(db, name))
-
-
-def pprint_flush(msg):
-    pprint(msg)
-    sys.stdout.flush()
