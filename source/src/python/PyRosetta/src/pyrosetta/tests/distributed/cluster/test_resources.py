@@ -41,11 +41,13 @@ from pyrosetta.distributed.cluster import (
 
 class ResourcesTest(unittest.TestCase):
     """Test case for specified compute resources with PyRosettaCluster."""
+
     def tearDown(self):
         sys.stdout.flush()
 
     def test_resources(self):
         """Smoke test for the use case of abstract resource constraints for dask workers with PyRosettaCluster."""
+
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
             extra_options="-out:level 200",
@@ -146,6 +148,7 @@ class ResourcesTest(unittest.TestCase):
 
     def test_resources_clients(self):
         """Smoke test for the use case of abstract resource constraints for dask workers with multiple clients in PyRosettaCluster."""
+
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
             extra_options="-out:level 200",

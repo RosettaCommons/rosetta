@@ -30,6 +30,7 @@ from pyrosetta.tests.distributed.cluster.setup_inputs import get_test_pdb_file
 
 class TestReproducibilityPoseDataFrame(unittest.TestCase):
     """Test decoy reproducibility from pickled `pandas.DataFrame` scorefiles."""
+
     @classmethod
     def setUpClass(cls):
         pyrosetta.distributed.init(
@@ -231,6 +232,7 @@ class TestReproducibilityPoseDataFrame(unittest.TestCase):
         Test for PyRosettaCluster decoy reproducibility from instance kwargs
         from '.pose' file and `pandas.DataFrame` scorefile.
         """
+
         original_output_path = os.path.join(self.workdir.name, "original_outputs")
         self.assertTrue(os.path.isfile(self.input_pdb_file))
         input_pose = io.to_pose(io.pose_from_file(self.input_pdb_file))

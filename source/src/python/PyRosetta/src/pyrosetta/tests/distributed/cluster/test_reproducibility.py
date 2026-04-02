@@ -23,11 +23,14 @@ from pyrosetta.distributed.cluster import PyRosettaCluster
 
 
 class TestReproducibility(unittest.TestCase):
+    """Test case for simple decoy reproducibility with PyRosettaCluster."""
+
     def tearDown(self):
         sys.stdout.flush()
 
     def test_reproducibility_packer_nstruct(self, filter_results=False):
         """Test for PyRosettaCluster decoy reproducibility with an nstruct of 2."""
+
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
             extra_options="-out:level 300",
@@ -120,6 +123,7 @@ class TestReproducibility(unittest.TestCase):
 
     def test_reproducibility_minimizer_nstruct(self, filter_results=False):
         """Test for PyRosettaCluster decoy reproducibility with an nstruct of 2."""
+
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
             extra_options="-out:level 300",
@@ -251,6 +255,7 @@ class TestReproducibility(unittest.TestCase):
         Test for PyRosettaCluster decoy reproducibility from two
         separate PyRosettaCluster instantiations.
         """
+
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
             extra_options="-out:level 300",

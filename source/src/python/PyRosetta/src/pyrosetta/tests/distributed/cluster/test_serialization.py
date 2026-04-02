@@ -23,11 +23,13 @@ from pyrosetta.distributed.cluster import (
 
 class SerializationTest(unittest.TestCase):
     """Test case for the use of serialization in PyRosettaCluster."""
+
     def tearDown(self):
         sys.stdout.flush()
 
     def test_serialization(self):
         """Smoke test for PyRosettaCluster PackedPose serialization round-trip."""
+
         for _compression in ("xz", "zlib", "bz2", True, False, None):
             scores = {"test_str": "foo", "test_int": 123, "test_float": numpy.pi}
             for _test_case in range(3):

@@ -46,6 +46,7 @@ from pyrosetta.tests.distributed.cluster.unittest_utils import IntentionalError
 
 class RetriesTest(unittest.TestCase):
     """Smoke tests for the use case of task retries with PyRosettaCluster."""
+
     _n_tasks: int = 3
     _n_protocols: int = 2
     _n_retries_per_protocol: int = 2  # 3 attempts total
@@ -190,6 +191,7 @@ class RetriesTest(unittest.TestCase):
 
     def test_retries_persistent_errors(self):
         """Test retries of protocols with persistent errors."""
+
         protocols = [RetriesTest.protocol_with_intentional_error] * RetriesTest._n_protocols
         output_path = os.path.join(self.workdir.name, "outputs_persistent_errors")
         prc = PyRosettaCluster(
@@ -235,6 +237,7 @@ class RetriesTest(unittest.TestCase):
 
     def test_retries_succeed_on_last_retry(self):
         """Test retries of protocols that succeed on last retry."""
+
         protocols = [RetriesTest.protocol_succeeds_on_last_retry] * RetriesTest._n_protocols
         output_path = os.path.join(self.workdir.name, "outputs_protocols_succeed_on_last_retry")
         PyRosettaCluster(
@@ -261,6 +264,7 @@ class RetriesTest(unittest.TestCase):
 
     def test_no_retries(self):
         """Test no retries of a failed protocol."""
+
         protocols = [RetriesTest.protocol_with_intentional_error] * RetriesTest._n_protocols
         output_path = os.path.join(self.workdir.name, "outputs_protocols_no_retries")
         prc = PyRosettaCluster(
@@ -294,6 +298,7 @@ class RetriesTest(unittest.TestCase):
 
     def test_retries_api(self):
         """Test retries API."""
+
         protocols = [RetriesTest.my_protocol] * RetriesTest._n_protocols
         clients_indices = [0] * RetriesTest._n_protocols
         output_path = os.path.join(self.workdir.name, "outputs_protocols_retries_api")

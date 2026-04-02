@@ -35,11 +35,14 @@ from pyrosetta.distributed.cluster.io import (
 
 
 class SaveAllTest(unittest.TestCase):
+    """Test case for saving all decoys in PyRosettaCluster."""
+
     def tearDown(self):
         sys.stdout.flush()
 
     def test_save_all(self):
         """Smoke test for PyRosettaCluster usage with the save_all attribute enabled."""
+
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
             extra_options="-out:level 200",
@@ -323,6 +326,7 @@ class SaveAllTest(unittest.TestCase):
         Smoke test for PyRosettaCluster usage with the save_all attribute and
         dry_run attribute enabled.
         """
+
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
             extra_options="-out:level 200",

@@ -35,6 +35,8 @@ from pyrosetta.tests.distributed.cluster.setup_inputs import get_test_params_fil
 
 
 class TestReproducibilityMulti(unittest.TestCase):
+    """Test case for decoy reproducibility with multiple PyRosetta protocols in PyRosettaCluster."""
+
     def tearDown(self):
         sys.stdout.flush()
 
@@ -43,6 +45,7 @@ class TestReproducibilityMulti(unittest.TestCase):
         Test for PyRosettaCluster decoy reproducibility with an nstruct of 2
         with multiple protocols.
         """
+
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
             extra_options="-out:level 300",
@@ -211,6 +214,7 @@ class TestReproducibilityMulti(unittest.TestCase):
         Test for PyRosettaCluster decoy reproducibility with an nstruct of 2
         with multiple protocols and a fixed `decoy_ids` list.
         """
+
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
             extra_options="-out:level 300",
@@ -424,6 +428,7 @@ class TestReproducibilityMulti(unittest.TestCase):
 
     def test_reproducibility_from_reproduce(self, filter_results=False, verbose=False):
         """Test for PyRosettaCluster decoy reproducibility from instance kwargs."""
+
         params_dir = tempfile.TemporaryDirectory(prefix="tmp_params_")
         params_file = get_test_params_file(params_dir.name)
         pyrosetta.distributed.init(

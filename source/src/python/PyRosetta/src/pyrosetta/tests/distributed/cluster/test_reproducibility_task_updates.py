@@ -59,6 +59,7 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
         Test for PyRosettaCluster decoy reproducibility with updated task dictionaries
         per user-provided PyRosetta protocol.
         """
+
         pyrosetta.distributed.init(
             options=f"-run:constant_seed 1 -multithreading:total_threads 1",
             extra_options="-out:level 200",

@@ -36,11 +36,14 @@ from pyrosetta.distributed.cluster import produce
 
 
 class MultipleClientsTest(unittest.TestCase):
+    """Test case for multiple clients with PyRosettaCluster."""
+
     def tearDown(self):
         sys.stdout.flush()
 
     def test_clients(self):
         """Smoke test for the use case of multiple clients with PyRosettaCluster."""
+
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
             extra_options="-out:level 200",

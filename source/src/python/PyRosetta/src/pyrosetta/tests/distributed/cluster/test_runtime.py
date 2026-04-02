@@ -91,6 +91,7 @@ class RuntimeTest(TestBase, unittest.TestCase):
 
     def test_timing_single_instance(self):
         """Runtime test with a single PyRosettaCluster instance."""
+
         _logger, _stream_handler = self.setup_logger(stream=True)
         _logger.info(f"Starting single PyRosettaCluster instance runtime test.")
         prc = PyRosettaCluster(
@@ -126,6 +127,7 @@ class RuntimeTest(TestBase, unittest.TestCase):
 
     def test_timing_multi_instance(self):
         """Runtime test for two PyRosettaCluster instances asynchronously generating results."""
+
         _logger, _stream_handler = self.setup_logger(stream=True)
         _logger.info(f"Starting multiple PyRosettaCluster instance runtime test.")
         setup_kwargs = {

@@ -30,6 +30,7 @@ from pyrosetta.distributed.cluster.multiprocessing import run_protocol, user_pro
 )
 class TaskKeysTest(unittest.TestCase):
     """Smoke tests for user-defined task dictionary keys and user-defined PyRosetta protocol input signatures."""
+
     @classmethod
     def setUpClass(cls):
         pyrosetta.distributed.init(
@@ -79,6 +80,7 @@ class TaskKeysTest(unittest.TestCase):
 
     def test_task_keys(self):
         """Test compatibility between user-defined task dictionary keys and user-defined PyRosetta protocol input signatures."""
+
         task_keys = set()
         for func in (run_protocol, user_protocol):
             sig = inspect.signature(func)

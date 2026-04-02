@@ -25,6 +25,7 @@ from pyrosetta.tests.distributed.cluster.unittest_utils import TestBase
 
 class GeneratorTest(TestBase, unittest.TestCase):
     """Smoke test for the use case of the `PyRosettaCluster().generate()` method."""
+
     _n_tasks = 2
     _n_output_packed_poses = 2
     _parameters = (0.0, 100.0) # `float` objects for `packed_pose.update_scores` values
@@ -82,6 +83,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
 
     def test_generate_builtin_clients(self):
         """Test for `PyRosettaCluster().generate()` using built-in client instantiations."""
+
         instance_kwargs_update = {
             **self.instance_kwargs,
             "tasks": self.create_tasks(parameter=GeneratorTest._parameters[0]),
@@ -154,6 +156,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
         Test for `PyRosettaCluster().generate()` with `save_all=True`,
         `dry_run=True`, and using a user-provided client.
         """
+
         instance_kwargs = {
             **self.instance_kwargs,
             "tasks": self.create_tasks(parameter=GeneratorTest._parameters[0]),
@@ -200,6 +203,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
         Test for `PyRosettaCluster().generate()` with `save_all=True`,
         `dry_run=True`, and using multiple user-provided clients.
         """
+
         clients_indices = [0, 1]
         resources = [{"FOO": 1}, {"BAR": 9e8}]
         instance_kwargs = {
@@ -251,6 +255,7 @@ class GeneratorTest(TestBase, unittest.TestCase):
         Test for `PyRosettaCluster().generate()` with `save_all=True`,
         `dry_run=True`, and partitioning user-provided clients over iterations.
         """
+
         resources = [{"BAZ": 1}, {"BAZ": 2}]
         instance_kwargs = {
             **self.instance_kwargs,

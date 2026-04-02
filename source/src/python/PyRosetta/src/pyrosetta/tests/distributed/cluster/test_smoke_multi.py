@@ -44,6 +44,7 @@ from pyrosetta.utility import get_package_version
 
 class SmokeTestMulti(unittest.TestCase):
     """Smoke test for using multiple user-provided PyRosetta protocols in PyRosettaCluster."""
+
     _ref_kwargs = {
         "test_str": "testing",
         "test_int": 100,
@@ -94,6 +95,7 @@ class SmokeTestMulti(unittest.TestCase):
 
     def test_smoke_multi(self):
         """Smoke test for PyRosettaCluster usage with multiple protocols."""
+
         import pyrosetta
         import pyrosetta.distributed
         import pyrosetta.distributed.io as io
@@ -397,6 +399,7 @@ class SmokeTestMulti(unittest.TestCase):
 
     def test_smoke_multi_from_instance(self):
         """Smoke test for PyRosettaCluster usage with multiple protocols and instances."""
+
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
             extra_options="-out:level 200",

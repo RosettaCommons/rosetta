@@ -34,10 +34,14 @@ from pyrosetta.distributed.cluster.io import (
 
 
 class TestInitFileSigner(unittest.TestCase):
+    """Test case for PyRosetta initialization file signing in PyRosettaCluster."""
+
     def tearDown(self):
         sys.stdout.flush()
 
     def test_init_file_signer(self):
+        """Smoke test for the PyRosetta initialization file signer in PyRosettaCluster."""
+
         with tempfile.TemporaryDirectory() as workdir:
             output_init_file = os.path.join(workdir, "pyrosetta.init")
             input_packed_pose = io.pose_from_sequence("START")

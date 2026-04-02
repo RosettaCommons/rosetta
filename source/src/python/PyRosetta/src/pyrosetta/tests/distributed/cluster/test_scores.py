@@ -43,6 +43,7 @@ from pyrosetta.distributed.cluster.io import _is_pandas_object_pyarrow_backed
 
 class ScoresTest(unittest.TestCase):
     """Test case for scoring `PackedPose` objects in PyRosettaCluster."""
+
     _value = 1e1
 
     @classmethod
@@ -169,6 +170,7 @@ class ScoresTest(unittest.TestCase):
 
     def test_detached_scores(self):
         """Test saving detached scores in PyRosettaCluster with/without compression."""
+
         for compression in (True, False):
             input_packed_pose = self.setup_input_packed_pose()
             input_packed_pose = self.input_packed_pose.update_scores(attached_score=ScoresTest._value)
@@ -194,6 +196,7 @@ class ScoresTest(unittest.TestCase):
 
     def test_detached_scores_with_reserve_scores(self):
         """Test saving detached scores in PyRosettaCluster with/without compression with `reserve_scores` decorator."""
+
         for compression in (True, False):
             input_packed_pose = self.setup_input_packed_pose()
             input_packed_pose = self.input_packed_pose.update_scores(attached_score=ScoresTest._value)
@@ -219,6 +222,7 @@ class ScoresTest(unittest.TestCase):
 
     def test_detached_scores_in_protocol(self):
         """Test saving detached scores in PyRosettaCluster protocol with/without compression."""
+
         for compression in (True, False):
             input_packed_pose = self.setup_input_packed_pose()
             output_path = os.path.join(self.workdir.name, f"test_detached_scores_in_protocol_{compression}")
@@ -245,6 +249,7 @@ class ScoresTest(unittest.TestCase):
         Test caching a `pandas.DataFrame` with and without adding 'pandas'
         as a secure package in the billiard subprocess.
         """
+
         pyrosetta.secure_unpickle.add_secure_package("pandas")
         df = pandas.DataFrame().from_dict({0: ["foo"], 1: ["bar"]})
         if _is_pandas_object_pyarrow_backed(df):

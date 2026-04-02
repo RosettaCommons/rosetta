@@ -33,11 +33,14 @@ from pyrosetta.distributed.cluster.exceptions import WorkerError
 
 
 class SmokeTest(unittest.TestCase):
+    """Test case for simple PyRosettaCluster simulations."""
+
     def tearDown(self):
         sys.stdout.flush()
 
     def test_smoke(self):
         """Smoke test for basic PyRosettaCluster usage."""
+
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
             extra_options="-out:level 200",
@@ -137,6 +140,7 @@ class SmokeTest(unittest.TestCase):
 
     def test_invalid_tasks(self):
         """Smoke test for catching invalid input tasks in PyRosettaCluster."""
+
         pyrosetta.distributed.init("-run:constant_seed 1 -multithreading:total_threads 1")
         with tempfile.TemporaryDirectory() as workdir:
             _invalid_run_options_values = (
@@ -184,6 +188,7 @@ class SmokeTest(unittest.TestCase):
 
     def test_ignore_errors(self):
         """Test PyRosettaCluster usage with user-provided PyRosetta protocol error."""
+
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
             extra_options="-out:level 300",

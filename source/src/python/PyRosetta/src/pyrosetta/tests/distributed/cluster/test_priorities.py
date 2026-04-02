@@ -40,11 +40,14 @@ from pyrosetta.distributed.cluster import produce
 
 
 class PrioritiesTest(unittest.TestCase):
+    """Test case for task priorities in PyRosettaCluster."""
+
     def tearDown(self):
         sys.stdout.flush()
 
     def test_priorities(self):
         """Smoke test for the use case of priorities of tasks with PyRosettaCluster."""
+
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
             extra_options="-out:level 200",

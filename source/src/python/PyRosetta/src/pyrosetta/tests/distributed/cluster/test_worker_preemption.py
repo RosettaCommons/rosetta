@@ -50,6 +50,7 @@ from pyrosetta.utility import pprint_flush
 
 class WorkerPreemptionTest(unittest.TestCase):
     """Smoke tests for preempted compute resources with PyRosettaCluster."""
+
     # `WorkerPreemptionTest._allowed_failures` must be a very large number for `WorkerPreemptionTest` unit tests,
     # otherwise task chains are terminated on client upon catching `KilledWorker` exceptions and test logic will fail.
     _allowed_failures = 9999
@@ -250,6 +251,8 @@ class WorkerPreemptionTest(unittest.TestCase):
         n_non_preemptible_workers=2, # Must be < `WorkerPreemptionTest._n_workers`
         verbose=False,
     ):
+        """Smoke test for resilience to Dask worker preemption in PyRosettaCluster."""
+
         self.assertEqual(dask.config.get("distributed.scheduler.allowed-failures"), WorkerPreemptionTest._allowed_failures)
         self.assertFalse(dask.config.get("distributed.scheduler.active-memory-manager.start"))
         # Mark some worker processes as non-preemptible to allow task chains to eventually run to completion

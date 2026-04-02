@@ -23,6 +23,8 @@ from pyrosetta.distributed.cluster.io import secure_read_pickle
 
 
 class IOTest(unittest.TestCase):
+    """Test case for decoy and scorefile I/O in PyRosettaCluster."""
+
     _my_string_value = "foo"
     _my_real_value = 12.34567890123456789
     _my_pose_value = "DATA"
@@ -107,6 +109,7 @@ class IOTest(unittest.TestCase):
 
     def test_io(self):
         """Smoke test for basic PyRosettaCluster I/O."""
+
         output_decoy_types = [".pdb", ".b64_pose"]
         output_scorefile_types = [".json", ".gz", ".bz2", ".xz", ".tar.gz", ".tar.bz2", ".tar.xz", ".zip"]
         for compressed in (True, False):

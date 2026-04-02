@@ -27,6 +27,8 @@ from pyrosetta.tests.distributed.cluster.setup_inputs import get_test_params_fil
 
 
 class LoggingTest(unittest.TestCase):
+    """Test case for Python logging in PyRosettaCluster."""
+
     _ansi_regex = re.compile(r"(?:\x1B[@-_]|[\x80-\x9F])[0-?]*[ -/]*[@-~]")
 
     def tearDown(self):
@@ -34,6 +36,7 @@ class LoggingTest(unittest.TestCase):
 
     def test_logging(self, verbose=False):
         """A test for capturing logging information in the distributed protocol."""
+
         params_dir = tempfile.TemporaryDirectory(prefix="tmp_params_")
         params_file = get_test_params_file(params_dir.name)
         pyrosetta.distributed.init(
