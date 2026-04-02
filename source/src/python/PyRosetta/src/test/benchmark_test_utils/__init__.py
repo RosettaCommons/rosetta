@@ -185,6 +185,7 @@ def run_unittest(test_case: str, timeout: int) -> int:
         universal_newlines=True,
         start_new_session=True,
         close_fds=True,
+        env={**os.environ, "PYTHONUNBUFFERED": "1"},
     )
 
     try:
