@@ -17,7 +17,6 @@ import pyrosetta.distributed
 import pyrosetta.distributed.io as io
 import random
 import signal
-import sys
 import tempfile
 import time
 import unittest
@@ -45,7 +44,7 @@ from pyrosetta.distributed.cluster import (
     iterate,
 )
 from pyrosetta.distributed.cluster.task_registry import DiskTaskRegistry, MemoryTaskRegistry
-from pyrosetta.tests.distributed.cluster.unittest_utils import pprint_flush
+from pyrosetta.utility import pprint_flush
 
 
 class WorkerPreemptionTest(unittest.TestCase):
