@@ -573,8 +573,9 @@ class TestReproducibilityMulti(unittest.TestCase):
             if module_dir:
                 env = os.environ.copy()
                 env["PYTHONPATH"] = f"{module_dir}{os.pathsep}{os.environ.get('PYTHONPATH', '')}"
+                env["PYTHONUNBUFFERED"] = "1"
             else:
-                env = None
+                env = {**os.environ, "PYTHONUNBUFFERED": "1"}
 
             process = subprocess.Popen(
                 shlex.split(cmd),
