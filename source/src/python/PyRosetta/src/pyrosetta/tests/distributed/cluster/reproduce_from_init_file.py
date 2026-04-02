@@ -101,7 +101,7 @@ def reproduce_init_from_file_test(input_file, scorefile_name, input_init_file, s
             verbose=False,
             set_logging_handler="logging",
             notebook=None,
-            silent=False,
+            silent=True,
         )
         # Instantiate original input pose
         input_pose = io.to_pose(io.pose_from_sequence(sequence))
@@ -168,7 +168,7 @@ def reproduce_test(input_file, scorefile_name, input_init_file, skip_corrections
             verbose=False,
             set_logging_handler="logging",
             notebook=None,
-            silent=False,
+            silent=True,
         )
         with LocalCluster(
             n_workers=1,
