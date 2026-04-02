@@ -19,7 +19,7 @@ def flatten(suite):
 def main(root):
     suite = unittest.defaultTestLoader.discover(root)
     test_cases = (test_case.id() for test_case in flatten(suite))
-    print(*test_cases, sep="\n")
+    print(*test_cases, sep="\n", flush=True)
 
 # if __name__ == "__main__":
 #     parser = argparse.ArgumentParser()

@@ -28,8 +28,8 @@ def main():
 
     try:
         cloudpickle.dumps(pyrosetta.Pose())
-        print("Confirmed that cloudpickle version {0} can pickle a Pose object.".format(version))
+        print("Confirmed that cloudpickle version {0} can pickle a Pose object.".format(version), flush=True)
         sys.exit(0)
     except AttributeError as ex:
-        print("Caught AttributeError in cloudpickle version {0} trying to pickle a Pose object: {1}".format(version, ex))
+        print("Caught AttributeError in cloudpickle version {0} trying to pickle a Pose object: {1}".format(version, ex), flush=True)
         sys.exit(1)

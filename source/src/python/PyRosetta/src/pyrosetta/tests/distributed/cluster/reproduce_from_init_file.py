@@ -148,6 +148,7 @@ def reproduce_test(input_file, scorefile_name, input_init_file, skip_corrections
         "Running test case:",
         f"`reproduce(skip_corrections={skip_corrections}, "
         + f"init_from_file_kwargs=dict(skip_corrections={init_from_file_skip_corrections}))`",
+        flush=True,
     )
     with tempfile.TemporaryDirectory() as tmp_dir:
         # Get protocols
@@ -204,7 +205,7 @@ def reproduce_test(input_file, scorefile_name, input_init_file, skip_corrections
 
 
 if __name__ == "__main__":
-    print("Running: {0}".format(__file__))
+    print("Running: {0}".format(__file__), flush=True)
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_file', type=str)
     parser.add_argument('--scorefile_name', type=str)
