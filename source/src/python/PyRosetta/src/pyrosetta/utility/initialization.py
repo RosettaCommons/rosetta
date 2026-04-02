@@ -28,12 +28,11 @@ import tempfile
 import warnings
 import zlib
 
-from pprint import pprint
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.exceptions import PyRosettaIsInitializedError, PyRosettaIsNotInitializedError
 from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.rosetta.core.simple_metrics.composite_metrics import ProtocolSettingsMetric
-from pyrosetta.utility import has_cereal
+from pyrosetta.utility import has_cereal, pprint_flush
 
 
 class PyRosettaInitFileParserBase(object):
@@ -525,21 +524,21 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
 
     def print_cached_files(self, output_filename, dry_run):
         if dry_run:
-            print("Dry run dump PyRosetta '{0}' file:".format(self._init_file_extension))
+            print("Dry run dump PyRosetta '{0}' file:".format(self._init_file_extension), flush=True)
         else:
-            print("Dumping PyRosetta '{0}' file to: '{1}'".format(self._init_file_extension, output_filename))
+            print("Dumping PyRosetta '{0}' file to: '{1}'".format(self._init_file_extension, output_filename), flush=True)
         if len(self.kwargs["poses"]) > 0:
-            print("Compressed {0} PyRosetta `PackedPose` object(s).".format(len(self.kwargs["poses"])))
+            print("Compressed {0} PyRosetta `PackedPose` object(s).".format(len(self.kwargs["poses"])), flush=True)
         else:
-            print("No input PyRosetta `Pose` or `PackedPose` object(s) to compress.")
+            print("No input PyRosetta `Pose` or `PackedPose` object(s) to compress.", flush=True)
         if len(self.cached_files) > 0:
-            print("Compressed {0} PyRosetta initialization input file(s):".format(len(self.cached_files)))
+            print("Compressed {0} PyRosetta initialization input file(s):".format(len(self.cached_files)), flush=True)
             for file in self.cached_files:
-                print(os.path.relpath(file, start=os.curdir))
+                print(os.path.relpath(file, start=os.curdir), flush=True)
         else:
-            print("No PyRosetta initialization input files to compress.")
+            print("No PyRosetta initialization input files to compress.", flush=True)
         if dry_run:
-            print("Skipping dumping PyRosetta initialization '{0}' file...".format(self._init_file_extension))
+            print("Skipping dumping PyRosetta initialization '{0}' file...".format(self._init_file_extension), flush=True)
 
     @staticmethod
     def write_json(data_dict, output_filename):
@@ -602,6 +601,7 @@ class PyRosettaInitFileWriter(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
                     round(os.path.getsize(self.output_filename) * 1e-6, 3),
                     "MB",
                     sep=" ",
+                    flush=True,
                 )
 
 
@@ -898,19 +898,21 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
 
     def print_results(self):
         if self.kwargs["dry_run"]:
-            print("Dry run PyRosetta initialization from file: {0}".format(self.init_file))
+            print("Dry run PyRosetta initialization from file: {0}".format(self.init_file), flush=True)
             if self.file_counter == 0:
-                print("No PyRosetta input files to decompress.")
+                print("No PyRosetta input files to decompress.", flush=True)
             else:
-                print("Decompressed {0} PyRosetta input file(s).".format(self.file_counter))
+                print("Decompressed {0} PyRosetta input file(s).".format(self.file_counter), flush=True)
         else:
-            print("Initializing PyRosetta from file: {0}".format(self.init_file))
+            print("Initializing PyRosetta from file: {0}".format(self.init_file), flush=True)
             if self.file_counter == 0:
-                print("No PyRosetta input files to decompress.")
+                print("No PyRosetta input files to decompress.", flush=True)
             else:
-                print("Decompressed {0} PyRosetta input file(s) written to: '{1}'".format(
+                print(
+                    "Decompressed {0} PyRosetta input file(s) written to: '{1}'".format(
                         self.file_counter, self.kwargs["output_dir"]
-                    )
+                    ),
+                    flush=True,
                 )
 
     def print_info(self):
@@ -927,18 +929,19 @@ class PyRosettaInitFileReader(PyRosettaInitFileParserBase, PyRosettaInitFileSeri
                 ).strftime("%b %d, %Y at %I:%M:%S %p")
             ),
             sep=os.linesep,
+            flush=True,
         )
 
     def pprint_options(self, options):
         if self.kwargs["dry_run"]:
-            print("PyRosetta initialization options from dry run:")
+            print("PyRosetta initialization options from dry run:", flush=True)
         else:
-            print("PyRosetta initialization options:")
-        pprint(options)
+            print("PyRosetta initialization options:", flush=True)
+        pprint_flush(options)
         if self.kwargs["dry_run"]:
-            print("Skipping PyRosetta initialization...")
+            print("Skipping PyRosetta initialization...", flush=True)
         else:
-            print("Running PyRosetta initialization...")
+            print("Running PyRosetta initialization...", flush=True)
 
     def init(self):
         self.validate_init_was_not_called()
@@ -982,19 +985,21 @@ class PyRosettaInitDictReader(PyRosettaInitFileReader):
 
     def print_results(self):
         if self.kwargs["dry_run"]:
-            print("Dry run PyRosetta initialization from dictionary keys: {0}".format(list(self.init_dict.keys())))
+            print("Dry run PyRosetta initialization from dictionary keys: {0}".format(list(self.init_dict.keys())), flush=True)
             if self.file_counter == 0:
-                print("No PyRosetta input files to decompress.")
+                print("No PyRosetta input files to decompress.", flush=True)
             else:
-                print("Decompressed {0} PyRosetta input file(s).".format(self.file_counter))
+                print("Decompressed {0} PyRosetta input file(s).".format(self.file_counter), flush=True)
         else:
-            print("Initializing PyRosetta from dictionary keys: {0}".format(list(self.init_dict.keys())))
+            print("Initializing PyRosetta from dictionary keys: {0}".format(list(self.init_dict.keys())), flush=True)
             if self.file_counter == 0:
-                print("No PyRosetta input files to decompress.")
+                print("No PyRosetta input files to decompress.", flush=True)
             else:
-                print("Decompressed {0} PyRosetta input file(s) written to: '{1}'".format(
+                print(
+                    "Decompressed {0} PyRosetta input file(s) written to: '{1}'".format(
                         self.file_counter, self.kwargs["output_dir"]
-                    )
+                    ),
+                    flush=True,
                 )
 
 
