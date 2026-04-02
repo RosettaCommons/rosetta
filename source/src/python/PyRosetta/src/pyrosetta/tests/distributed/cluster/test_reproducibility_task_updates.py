@@ -52,7 +52,7 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
     def tearDown(self):
         self.tmpdir.cleanup()
 
-    def reproduce_task_updates(self, norm_task_options=False, with_init_file=False, verbose=True):
+    def reproduce_task_updates(self, norm_task_options=False, with_init_file=False, verbose=False):
         """
         Test for PyRosettaCluster decoy reproducibility with updated task dictionaries
         per user-provided PyRosetta protocol.

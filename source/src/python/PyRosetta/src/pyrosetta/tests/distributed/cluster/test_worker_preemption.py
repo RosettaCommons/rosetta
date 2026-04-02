@@ -174,7 +174,7 @@ class WorkerPreemptionTest(unittest.TestCase):
     def get_current_worker_pids_map(self):
         return {k: v.pid for k, v in self.client_1.cluster.scheduler.workers.items()}
 
-    def preempt_a_worker(self, non_preemptible_worker_pids_map, max_attempts=50, verbose=True):
+    def preempt_a_worker(self, non_preemptible_worker_pids_map, max_attempts=50, verbose=False):
         """
         Randomly select and terminate a worker process and its billiard subprocesses
         to simulate compute resource preemption. Method adapted from:

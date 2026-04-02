@@ -103,7 +103,7 @@ class TestReproducibilityRemodelTaskUpdates(unittest.TestCase):
     def get_random_options():
         return TestReproducibilityRemodelTaskUpdates.get_remodel_options()
 
-    def reproduce_remodel_task_updates(self, norm_task_options=False, with_init_file=False, verbose=True):
+    def reproduce_remodel_task_updates(self, norm_task_options=False, with_init_file=False, verbose=False):
         """
         Test for PyRosettaCluster decoy reproducibility with updated task dictionaries
         using RosettaRemodel per user-provided PyRosetta protocol.
