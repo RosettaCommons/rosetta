@@ -14,7 +14,6 @@ import logging
 import os
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
-import sys
 import tempfile
 import uuid
 import warnings
@@ -32,7 +31,6 @@ except ImportError:
     )
     raise
 
-from pprint import pprint
 from pyrosetta.exceptions import PyRosettaIsNotInitializedError
 
 
