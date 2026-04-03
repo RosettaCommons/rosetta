@@ -17,7 +17,7 @@ from __future__ import print_function
 import os, os.path, sys, json, datetime, subprocess, argparse, time, glob, signal, shutil
 
 def execute(message, command_line, return_='status', until_successes=False, terminate_on_failure=True, silent=False):
-    print(message);  print(command_line)
+    print(message, flush=True);  print(command_line, flush=True)
     while True:
 
         p = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env={**os.environ, "PYTHONUNBUFFERED": "1"})
@@ -34,21 +34,21 @@ def execute(message, command_line, return_='status', until_successes=False, term
         output = output.decode('utf-8', errors="replace")
         exit_code = p.returncode
 
-        if exit_code  or  not silent: print(output)
+        if exit_code  or  not silent: print(output, flush=True)
 
         if exit_code and until_successes: pass  # Thats right - redability COUNT!
         else: break
 
-        print( "Error while executing {}: {}\n".format(message, output) )
-        print("Sleeping 60s... then I will retry...")
+        print( "Error while executing {}: {}\n".format(message, output) , flush=True)
+        print("Sleeping 60s... then I will retry...", flush=True)
         time.sleep(60)
 
     if return_ == 'tuple': return(exit_code, output)
 
     if exit_code and terminate_on_failure:
-        print("\nEncounter error while executing: " + command_line)
+        print("\nEncounter error while executing: " + command_line, flush=True)
         if return_==True: return True
-        else: print("\nEncounter error while executing: " + command_line + '\n' + output); sys.exit(1)
+        else: print("\nEncounter error while executing: " + command_line + '\n' + output, flush=True); sys.exit(1)
 
     if return_ == 'output': return output
     else: return False
@@ -78,7 +78,7 @@ def run_test(test):
 
     res, output = execute('\nExecuting %s...' % test, command_line, return_='tuple')
     run_time = '\nFinished {0} in {1}'.format(name, datetime.datetime.today() - started)
-    print(run_time)
+    print(run_time, flush=True)
 
     output += run_time
 
@@ -128,10 +128,10 @@ def main(args):
 
     tests = Options.args or sorted( get_py_files('test') + get_py_files('demo') )
 
-    print('Preparing to run:\n{}'.format('\n'.join(tests) ) )
+    print('Preparing to run:\n{}'.format('\n'.join(tests) ) , flush=True)
 
     # removing previous output files if any...
-    if os.path.isdir(_test_output_): print( 'Removing old test dir {0}...'.format(_test_output_) );  shutil.rmtree(_test_output_)  # remove old dir if any
+    if os.path.isdir(_test_output_): print( 'Removing old test dir {0}...'.format(_test_output_) , flush=True);  shutil.rmtree(_test_output_)  # remove old dir if any
     if Options.delete_tests_output: return
     os.mkdir(_test_output_)
 
@@ -139,7 +139,7 @@ def main(args):
 
     if Options.jobs>1:
         def signal_handler(signal_, f):
-            print('Ctrl-C pressed... killing child jobs...')
+            print('Ctrl-C pressed... killing child jobs...', flush=True)
             for p, _ in _jobs_:
                 try:
                     os.killpg(os.getpgid(p.pid), signal.SIGKILL)
@@ -175,7 +175,7 @@ def main(args):
                         sys.exit(1)
                     print(stdout, end="", flush=True)
                     if p.returncode != 0:
-                        print(f"Test failed: {_test_name}")
+                        print(f"Test failed: {_test_name}", flush=True)
                         sys.exit(1)
                     _jobs_.remove((p, _test_name))
                 if len(_jobs_) >= Options.jobs:
@@ -202,7 +202,7 @@ def main(args):
             sys.exit(1)
         print(stdout, end="", flush=True)
         if p.returncode != 0:
-            print(f"Test failed: {_test_name}")
+            print(f"Test failed: {_test_name}", flush=True)
             sys.exit(1)
 
 
@@ -223,19 +223,19 @@ def main(args):
     with open(json_file, 'w') as f: json.dump(dict(state=state, results=results, log=''), f, sort_keys=True, indent=2)
 
     for t in sorted(results['tests']):
-        if results['tests'][t]['state'] == 'passed': print(t, '- passed')
+        if results['tests'][t]['state'] == 'passed': print(t, '- passed', flush=True)
 
     failed_tests = [ t for t in sorted(results['tests']) if results['tests'][t]['state'] != 'passed' ]
 
     if failed_tests:
-        print('\nFollowing PyRosetta Tests FAILED:')
-        for t in failed_tests: print(t, '- FAILED')
+        print('\nFollowing PyRosetta Tests FAILED:', flush=True)
+        for t in failed_tests: print(t, '- FAILED', flush=True)
 
-    if state == 'passed': print('\nAll PyRosetta Tests passed!\n')
+    if state == 'passed': print('\nAll PyRosetta Tests passed!\n', flush=True)
     # always return with zero exit code (even if some of the unit tests has failed) and leave non-zero exit code to indicate script failure
     #else: sys.exit(1)
 
 
 if __name__ == "__main__":
-    print('{}::__main__, started at {}...'.format(sys.argv[0], datetime.datetime.now()) )
+    print('{}::__main__, started at {}...'.format(sys.argv[0], datetime.datetime.now()) , flush=True)
     main(sys.argv)
