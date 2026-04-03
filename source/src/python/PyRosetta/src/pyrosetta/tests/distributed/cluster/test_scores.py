@@ -25,7 +25,7 @@ except ImportError:
     print(
         "Importing 'pyrosetta.tests.distributed.cluster.test_scores' requires the "
         + "third-party package 'pandas' as a dependency!\n"
-        + "Please install this package into your python environment. "
+        + "Please install this package into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/pandas/\n",
         flush=True,

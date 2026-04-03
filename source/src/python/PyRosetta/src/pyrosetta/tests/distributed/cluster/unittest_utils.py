@@ -25,9 +25,10 @@ except ImportError:
     print(
         "Importing 'pyrosetta.tests.distributed.cluster.unittest_utils' requires the "
         + "third-party package 'dask' as a dependency!\n"
-        + "Please install this package into your python environment. "
+        + "Please install this package into your virtual environment. "
         + "For installation instructions, visit:\n"
-        + "https://pypi.org/project/dask/\n"
+        + "https://pypi.org/project/dask/\n",
+        flush=True,
     )
     raise
 

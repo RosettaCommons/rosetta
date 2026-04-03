@@ -26,7 +26,7 @@ except ImportError:
     print(
         "Importing 'pyrosetta.tests.distributed.cluster.test_reproducibility_remodel_task_updates' requires the "
         + "third-party package 'toolz' as a dependency!\n"
-        + "Please install this package into your python environment. "
+        + "Please install this package into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/toolz/\n",
         flush=True,

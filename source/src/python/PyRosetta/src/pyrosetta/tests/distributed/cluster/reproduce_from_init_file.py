@@ -25,7 +25,7 @@ except ImportError:
     print(
         "Importing 'pyrosetta.tests.distributed.cluster.reproduce_from_init_file' requires the "
         + "third-party packages 'dask' and 'psutil' as dependencies!\n"
-        + "Please install these packages into your python environment. "
+        + "Please install these packages into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/dask/\n"
         + "https://pypi.org/project/psutil/\n",
