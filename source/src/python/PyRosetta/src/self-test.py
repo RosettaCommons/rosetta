@@ -10,6 +10,7 @@
 ## @file   self-test.py
 ## @brief  Run bindings test and demo scrips
 ## @author Sergey Lyskov
+## @author Jason C. Klima -- added `--run-single-test` option for `launch_test_process` function
 
 from __future__ import print_function
 
@@ -19,10 +20,18 @@ def execute(message, command_line, return_='status', until_successes=False, term
     print(message);  print(command_line)
     while True:
 
-        p = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, errors = p.communicate()
+        p = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env={**os.environ, "PYTHONUNBUFFERED": "1"})
+        try:
+            output, _ = p.communicate(timeout=Options.timeout)
+        except subprocess.TimeoutExpired:
+            print(f"Timeout in execute(): killing process group...", flush=True)
+            try:
+                os.killpg(os.getpgid(p.pid), signal.SIGKILL)
+            except Exception:
+                pass
+            output, _ = p.communicate()
 
-        output = output.decode('utf-8', errors="replace") + errors.decode('utf-8', errors="replace")
+        output = output.decode('utf-8', errors="replace")
         exit_code = p.returncode
 
         if exit_code  or  not silent: print(output)
@@ -44,29 +53,10 @@ def execute(message, command_line, return_='status', until_successes=False, term
     if return_ == 'output': return output
     else: return False
 
-_jobs_ = []
-def mfork():
-    ''' Check if number of child process is below Options.jobs. And if it is - fork the new pocees and return its pid.
-    '''
-    while len(_jobs_) >= Options.jobs :
-        for p in _jobs_[:] :
-            r = os.waitpid(p, os.WNOHANG)
-            if r == (p, 0):  # process have ended without error
-                _jobs_.remove(p)
-            elif r[0] == p :  # process ended but with error, special case we will have to wait for all process to terminate and call system exit.
-                for p in _jobs_: os.waitpid(p, 0)
-                print('Some of the unit test suite terminate abnormally!')
-                sys.exit(1)
-
-        if len(_jobs_) >= Options.jobs: time.sleep(.5)
-
-    sys.stdout.flush()
-    pid = os.fork()
-    if pid: _jobs_.append(pid) # We are parent!
-    return pid
-
 
 _test_output_ = '.test.output/'  # dir to store test results
+
+_jobs_ = []
 
 def test_name(test): return os.path.basename(test)[:-3]
 
@@ -84,7 +74,7 @@ def run_test(test):
     #command_line = 'SET PYTHONPATH=%CD%;%PYTHONPATH%' if sys.platform == "win32" else 'export PYTHONPATH=`pwd`:$PYTHONPATH && ulimit -t 4096'
     #command_line = 'export PYTHONPATH=`pwd` && ulimit -t {}'.format(Options.timeout)
     command_line = 'export PYTHONPATH=`pwd` && unset __PYVENV_LAUNCHER__ && ulimit -t {}'.format(Options.timeout)
-    command_line += ' && {0} {1} '.format(sys.executable, test)
+    command_line += ' && PYTHONUNBUFFERED=1 {0} {1} '.format(sys.executable, test)
 
     res, output = execute('\nExecuting %s...' % test, command_line, return_='tuple')
     run_time = '\nFinished {0} in {1}'.format(name, datetime.datetime.today() - started)
@@ -121,11 +111,16 @@ def main(args):
         default = False,
         action = "store_true")
 
+    parser.add_argument("--run-single-test", type=str, default=None)
+
     parser.add_argument('args', nargs=argparse.REMAINDER)
 
     global Options;
     Options = parser.parse_args(args=args[1:])
 
+    if Options.run_single_test:
+        run_test(Options.run_single_test)
+        sys.exit(0)
 
     def get_py_files(dir_):
         return [dir_ + '/' + f for f in os.listdir(dir_) if f.endswith('.py')  and  f!='__init__.py'  and  \
@@ -145,29 +140,83 @@ def main(args):
     if Options.jobs>1:
         def signal_handler(signal_, f):
             print('Ctrl-C pressed... killing child jobs...')
-            for j in _jobs_:
-                os.killpg(os.getpgid(j), signal.SIGKILL)
-
+            for p, _ in _jobs_:
+                try:
+                    os.killpg(os.getpgid(p.pid), signal.SIGKILL)
+                except Exception:
+                    pass
         signal.signal(signal.SIGINT, signal_handler)
 
+    def launch_test_process(test):
+        return subprocess.Popen(
+            [sys.executable, __file__, "--run-single-test", test],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            universal_newlines=True,
+            env={**os.environ, "PYTHONUNBUFFERED": "1"},
+            start_new_session=True,
+            close_fds=True,
+        )
 
     for t in tests:
         if Options.jobs > 1:
-            pid = mfork()
-            if not pid:  # we are child process
-                run_test(t)
-                sys.exit(0)
+            while len(_jobs_) >= Options.jobs:
+                for p, test_name in _jobs_[:]:
+                    try:
+                        stdout, _ = p.communicate(timeout=Options.timeout)
+                    except subprocess.TimeoutExpired:
+                        print(f"Test timeout: {test_name}. Killing subprocess...", flush=True)
+                        try:
+                            os.killpg(os.getpgid(p.pid), signal.SIGKILL)
+                        except Exception:
+                            pass
+                        stdout, _ = p.communicate()
+                        print(stdout, end="", flush=True)
+                        sys.exit(1)
+                    print(stdout, end="", flush=True)
+                    if p.returncode != 0:
+                        print(f"Test failed: {test_name}")
+                        sys.exit(1)
+                    _jobs_.remove((p, test_name))
+                if len(_jobs_) >= Options.jobs:
+                    time.sleep(0.5)
+
+            p = launch_test_process(t)
+            _jobs_.append((p, t))
 
         else:
             run_test(t)
 
-    for p in _jobs_: os.waitpid(p, 0)  # waiting for all child process to termintate...
+    # Wait for remaining jobs
+    for p, test_name in _jobs_:
+        try:
+            stdout, _ = p.communicate(timeout=Options.timeout)
+        except subprocess.TimeoutExpired:
+            print(f"Test timeout: {test_name}. Killing subprocess...", flush=True)
+            try:
+                os.killpg(os.getpgid(p.pid), signal.SIGKILL)
+            except Exception:
+                pass
+            stdout, _ = p.communicate()
+            print(stdout, end="", flush=True)
+            sys.exit(1)
+        print(stdout, end="", flush=True)
+        if p.returncode != 0:
+            print(f"Test failed: {test_name}")
+            sys.exit(1)
 
 
     results = dict(tests={})
     state = 'passed'
     for t in tests:
-        test_results = json.load( open( json_file_name(t) ) )
+        for _ in range(10):
+            try:
+                test_results = json.load(open(json_file_name(t)))
+                break
+            except Exception:
+                time.sleep(0.5)
+        else:
+            raise RuntimeError(f"Failed to read results for {t}")
         if 'state' not in test_results[ test_name(t) ]  or  test_results[ test_name(t) ]['state']!= 'passed': state = 'failed'
         results['tests'].update(test_results)
 
