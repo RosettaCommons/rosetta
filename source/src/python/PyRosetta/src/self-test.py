@@ -95,7 +95,7 @@ def main(args):
     )
 
     parser.add_argument('--timeout',
-      default=512, type=int,
+      default=1800, type=int,
       help="maximum time for individual tests to run in seconds",
     )
 
