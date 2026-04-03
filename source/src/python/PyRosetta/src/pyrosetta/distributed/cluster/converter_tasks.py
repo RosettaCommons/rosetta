@@ -473,7 +473,8 @@ def export_init_file(
                         f.write(init_file_json)
                 print(
                     f"Exported PyRosettaCluster decoy output file '{output_file}' to "
-                    + f"PyRosetta initialization file: '{output_init_file}'"
+                    + f"PyRosetta initialization file: '{output_init_file}'",
+                    flush=True,
                 )
             else:
                 raise ValueError(
