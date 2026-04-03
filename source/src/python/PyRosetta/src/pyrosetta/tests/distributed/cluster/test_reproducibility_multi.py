@@ -575,7 +575,8 @@ class TestReproducibilityMulti(unittest.TestCase):
                 )
                 yield p
 
-        def run_subprocess(cmd, module_dir=None, timeout=900):
+        def run_subprocess(args, module_dir=None, timeout=900):
+            cmd = " ".join(args)
             print("Running command:", cmd, flush=True)
 
             if module_dir:
@@ -586,12 +587,13 @@ class TestReproducibilityMulti(unittest.TestCase):
                 env = {**os.environ, "PYTHONUNBUFFERED": "1"}
 
             process = subprocess.Popen(
-                shlex.split(cmd),
+                args,
                 env=env,
                 stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
                 universal_newlines=True,
                 start_new_session=True,
+                close_fds=True,
             )
 
             try:
@@ -622,6 +624,7 @@ class TestReproducibilityMulti(unittest.TestCase):
                         os.killpg(os.getpgid(process.pid), signal.SIGKILL)
                     except Exception:
                         pass
+                sys.stdout.flush()
 
         with tempfile.TemporaryDirectory() as workdir:
             sequence = "ACDEFGHIKLMNPQRSTVWY"
@@ -867,16 +870,16 @@ class TestReproducibilityMulti(unittest.TestCase):
             module = os.path.splitext(os.path.basename(test_script))[0]
             for test_case in range(5):
                 reproduce3_scorefile_name = f"reproduce_test_scores_init_file_{test_case}.json"
-                cmd = "{0} -m {1} --input_file '{2}' --scorefile_name '{3}' --input_init_file '{4}' --sequence '{5}' --test_case {6}".format(
+                args = [
                     sys.executable,
-                    module,
-                    input_file,
-                    reproduce3_scorefile_name,
-                    default_output_init_file,
-                    sequence,
-                    test_case,
-                )
-                returncode = run_subprocess(cmd, module_dir=os.path.dirname(test_script))
+                    "-m", module,
+                    "--input_file", input_file,
+                    "--scorefile_name", reproduce3_scorefile_name,
+                    "--input_init_file", default_output_init_file,
+                    "--sequence", sequence,
+                    "--test_case", str(test_case),
+                ]
+                returncode = run_subprocess(args, module_dir=os.path.dirname(test_script))
                 self.assertEqual(returncode, 0, msg=f"Test script failed: {test_script}")
 
                 reproduce3_scorefile_path = os.path.join(
