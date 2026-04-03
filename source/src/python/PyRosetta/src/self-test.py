@@ -161,11 +161,11 @@ def main(args):
     for t in tests:
         if Options.jobs > 1:
             while len(_jobs_) >= Options.jobs:
-                for p, test_name in _jobs_[:]:
+                for p, _test_name in _jobs_[:]:
                     try:
                         stdout, _ = p.communicate(timeout=Options.timeout)
                     except subprocess.TimeoutExpired:
-                        print(f"Test timeout: {test_name}. Killing subprocess...", flush=True)
+                        print(f"Test timeout: {_test_name}. Killing subprocess...", flush=True)
                         try:
                             os.killpg(os.getpgid(p.pid), signal.SIGKILL)
                         except Exception:
@@ -175,9 +175,9 @@ def main(args):
                         sys.exit(1)
                     print(stdout, end="", flush=True)
                     if p.returncode != 0:
-                        print(f"Test failed: {test_name}")
+                        print(f"Test failed: {_test_name}")
                         sys.exit(1)
-                    _jobs_.remove((p, test_name))
+                    _jobs_.remove((p, _test_name))
                 if len(_jobs_) >= Options.jobs:
                     time.sleep(0.5)
 
@@ -188,11 +188,11 @@ def main(args):
             run_test(t)
 
     # Wait for remaining jobs
-    for p, test_name in _jobs_:
+    for p, _test_name in _jobs_:
         try:
             stdout, _ = p.communicate(timeout=Options.timeout)
         except subprocess.TimeoutExpired:
-            print(f"Test timeout: {test_name}. Killing subprocess...", flush=True)
+            print(f"Test timeout: {_test_name}. Killing subprocess...", flush=True)
             try:
                 os.killpg(os.getpgid(p.pid), signal.SIGKILL)
             except Exception:
@@ -202,7 +202,7 @@ def main(args):
             sys.exit(1)
         print(stdout, end="", flush=True)
         if p.returncode != 0:
-            print(f"Test failed: {test_name}")
+            print(f"Test failed: {_test_name}")
             sys.exit(1)
 
 
