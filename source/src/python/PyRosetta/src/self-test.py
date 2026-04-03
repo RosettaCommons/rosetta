@@ -19,7 +19,7 @@ def execute(message, command_line, return_='status', until_successes=False, term
     print(message);  print(command_line)
     while True:
 
-        p = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env={**os.environ, "PYTHONUNBUFFERED": "1"})
         output, errors = p.communicate()
 
         output = output.decode('utf-8', errors="replace") + errors.decode('utf-8', errors="replace")
@@ -84,7 +84,7 @@ def run_test(test):
     #command_line = 'SET PYTHONPATH=%CD%;%PYTHONPATH%' if sys.platform == "win32" else 'export PYTHONPATH=`pwd`:$PYTHONPATH && ulimit -t 4096'
     #command_line = 'export PYTHONPATH=`pwd` && ulimit -t {}'.format(Options.timeout)
     command_line = 'export PYTHONPATH=`pwd` && unset __PYVENV_LAUNCHER__ && ulimit -t {}'.format(Options.timeout)
-    command_line += ' && {0} {1} '.format(sys.executable, test)
+    command_line += ' && PYTHONUNBUFFERED=1 {0} {1} '.format(sys.executable, test)
 
     res, output = execute('\nExecuting %s...' % test, command_line, return_='tuple')
     run_time = '\nFinished {0} in {1}'.format(name, datetime.datetime.today() - started)
