@@ -678,33 +678,33 @@ def reproduce(
         `init_from_file_kwargs`:
             A `dict` object to override the default `pyrosetta.init_from_file` keyword arguments if the
             `input_file` keyword argument value is a path to a PyRosetta initialization file, otherwise it is
-            has no effect. See the `pyrosetta.init_from_file <pyrosetta.utility.initialization.PyRosettaInitFileParser.init_from_file>`_
+            has no effect. See the
+            `pyrosetta.init_from_file <pyrosetta.utility.initialization.PyRosettaInitFileParser.init_from_file>`_
             docstring for more information.
 
-            Default: A `dict` object with the following entries by default:
-
-                `output_dir`: `os.path.join(tempfile.TemporaryDirectory().name, "pyrosetta_init_input_files")`
-
-                `skip_corrections`: `skip_corrections` # Defaults to the `skip_corrections` keyword argument
-                value from the `reproduce` function.
-
-                `relative_paths: `True`
-
-                `dry_run`: `False`
-
-                `max_decompressed_bytes`: `pow(2, 30)` # 1 GiB.
-
-                `restore_rg_state`: `True`
-
-                `database`: `None`
-
-                `verbose`: `True`
-
-                `set_logging_handler`: "logging"
-
-                `notebook`: `None`
-
-                `silent`: `False`
+            Default: A `dict` object with the following entries:
+                `output_dir`:
+                    Default: `os.path.join(tempfile.TemporaryDirectory(prefix="PyRosettaCluster_reproduce_").name, "pyrosetta_init_input_files")`
+                `skip_corrections`:
+                    Default: The `skip_corrections` keyword argument value from the `reproduce` function.
+                `relative_paths`:
+                    Default: `True`
+                `dry_run`:
+                    Default: `False`
+                `max_decompressed_bytes`:
+                    Default: `pow(2, 30)` or 1 GiB.
+                `restore_rg_state`:
+                    Default: `True`
+                `database`:
+                    Default: `None`
+                `verbose`:
+                    Default: `True`
+                `set_logging_handler`:
+                    Default: `"logging"`
+                `notebook`:
+                    Default: `None`
+                `silent`:
+                    Default: `False`
 
     Returns:
         `None`
