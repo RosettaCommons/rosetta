@@ -51,7 +51,7 @@ __all__: List[str] = [
     "run",
     "update_scores",
 ]
-__version__: str = "4.2.0"
+__version__: str = "5.0.0"
 
 with warnings.catch_warnings() and suppress(NameError):
     warnings.simplefilter("ignore", category=UserWarning)
