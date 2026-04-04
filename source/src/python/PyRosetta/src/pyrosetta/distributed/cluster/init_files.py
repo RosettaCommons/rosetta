@@ -22,7 +22,6 @@ from typing import (
     Any,
     Dict,
     Generic,
-    List,
     Optional,
     Tuple,
     TypeVar,
