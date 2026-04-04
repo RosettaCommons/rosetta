@@ -72,14 +72,13 @@ from pyrosetta.distributed.cluster.type_defs import (
     PoseOrPackedPose,
     PyRosettaProtocol,
     PyRosettaProtocolResults,
-    Sequence,
 )
 
 P = TypeVar("P", bound=Callable[..., PyRosettaProtocolResults])
 
 
 def get_protocols(
-    protocols: Optional[Union[PyRosettaProtocol, Sequence[PyRosettaProtocol]]]= None,
+    protocols: Optional[Union[PyRosettaProtocol, ListOrTuple[PyRosettaProtocol]]]= None,
     input_file: Optional[Union[str, PoseOrPackedPose]] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
@@ -507,7 +506,7 @@ def reproduce(
     input_file: Optional[str] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
-    protocols: Optional[Union[PyRosettaProtocol, Sequence[PyRosettaProtocol]]] = None,
+    protocols: Optional[Union[PyRosettaProtocol, ListOrTuple[PyRosettaProtocol]]] = None,
     client: Optional[Client] = None,
     clients: Optional[ListOrTuple[Client]] = None,
     input_packed_pose: Optional[PoseOrPackedPose] = None,

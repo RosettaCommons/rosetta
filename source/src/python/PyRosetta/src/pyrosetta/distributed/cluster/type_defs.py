@@ -10,9 +10,9 @@ __author__ = "Jason C. Klima"
 import sys
 
 if sys.version_info[:2] < (3, 9):
-    from typing import Callable, Sequence
+    from typing import Callable
 else:
-    from collections.abc import Callable, Sequence
+    from collections.abc import Callable
 
 from pyrosetta import Pose
 from pyrosetta.distributed.packed_pose.core import PackedPose
@@ -26,21 +26,6 @@ from typing import (
     TypeVar,
     Union,
 )
-
-# User-defined PyRosetta protocol type abstractions:
-
-PyRosettaProtocolResult = Union[PackedPose, Pose, Dict[str, Any], None]
-"""An individual output result from a user-defined PyRosetta protocol."""
-
-PyRosettaProtocolGenerator = Generator[PyRosettaProtocolResult, None, None]
-"""A generator yielding `PyRosettaProtocolResult` objects."""
-
-PyRosettaProtocolResults = Union[
-    PyRosettaProtocolResult,
-    Sequence[PyRosettaProtocolResult],
-    PyRosettaProtocolGenerator,
-]
-"""Collective output results from a user-defined PyRosetta protocol."""
 
 # Generic type abstractions:
 
@@ -59,10 +44,25 @@ FloatOrInt = Union[float, int]
 PoseOrPackedPose = Union[Pose, PackedPose]
 """A `Pose` or `PackedPose` object."""
 
-# Internal method type abstractions:
+# User-defined PyRosetta protocol type abstractions:
+
+PyRosettaProtocolResult = Union[PoseOrPackedPose, Dict[str, Any], None]
+"""An individual output result from a user-defined PyRosetta protocol."""
+
+PyRosettaProtocolGenerator = Generator[PyRosettaProtocolResult, None, None]
+"""A generator yielding `PyRosettaProtocolResult` objects."""
+
+PyRosettaProtocolResults = Union[
+    PyRosettaProtocolResult,
+    ListOrTuple[PyRosettaProtocolResult],
+    PyRosettaProtocolGenerator,
+]
+"""Collective output results from a user-defined PyRosetta protocol."""
 
 PyRosettaProtocol = Callable[..., PyRosettaProtocolResults]
 """A callable user-defined PyRosetta protocol."""
+
+# Internal method type abstractions:
 
 PyRosettaProtocols = List[PyRosettaProtocol]
 """A `list` object of callable user-defined PyRosetta protocols."""

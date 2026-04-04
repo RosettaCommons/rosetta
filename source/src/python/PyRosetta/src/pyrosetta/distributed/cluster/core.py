@@ -584,7 +584,6 @@ from pyrosetta.distributed.cluster.type_defs import (
     FloatOrInt,
     ListOrTuple,
     PyRosettaProtocol,
-    Sequence,
 )
 from pyrosetta.distributed.cluster.utilities import SchedulerManager
 from pyrosetta.distributed.cluster.validators import (
@@ -1221,7 +1220,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
     def _run(
         self,
         *args: PyRosettaProtocol,
-        protocols: Optional[Union[PyRosettaProtocol, Sequence[PyRosettaProtocol]]] = None,
+        protocols: Optional[Union[PyRosettaProtocol, ListOrTuple[PyRosettaProtocol]]] = None,
         clients_indices: Optional[ListOrTuple[int]] = None,
         resources: Optional[ListOrTuple[Optional[Dict[str, FloatOrInt]]]] = None,
         priorities: Optional[ListOrTuple[int]] = None,
@@ -1548,7 +1547,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
     def generate(
         self,
         *args: PyRosettaProtocol,
-        protocols: Optional[Union[PyRosettaProtocol, Sequence[PyRosettaProtocol]]] = None,
+        protocols: Optional[Union[PyRosettaProtocol, ListOrTuple[PyRosettaProtocol]]] = None,
         clients_indices: Optional[ListOrTuple[int]] = None,
         resources: Optional[ListOrTuple[Optional[Dict[str, FloatOrInt]]]] = None,
         priorities: Optional[ListOrTuple[int]] = None,
@@ -1578,7 +1577,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
     def distribute(
         self,
         *args: PyRosettaProtocol,
-        protocols: Optional[Union[PyRosettaProtocol, Sequence[PyRosettaProtocol]]] = None,
+        protocols: Optional[Union[PyRosettaProtocol, ListOrTuple[PyRosettaProtocol]]] = None,
         clients_indices: Optional[ListOrTuple[int]] = None,
         resources: Optional[ListOrTuple[Optional[Dict[str, FloatOrInt]]]] = None,
         priorities: Optional[ListOrTuple[int]] = None,
