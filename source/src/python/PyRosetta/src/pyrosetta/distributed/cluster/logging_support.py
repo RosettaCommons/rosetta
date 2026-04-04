@@ -36,7 +36,6 @@ from typing import (
     Any,
     Callable,
     Dict,
-    Generic,
     List,
     Optional,
     Tuple,
@@ -65,11 +64,10 @@ from pyrosetta.distributed.cluster.logging_listeners import (
 from pyrosetta.distributed.cluster.task_registry import UserArgs
 from pyrosetta.distributed.cluster.utilities import get_dask_worker
 
-G = TypeVar("G")
 L = TypeVar("L", bound=Callable[..., Any])
 
 
-class RedirectToLogger(Generic[G]):
+class RedirectToLogger:
     """Redirect stdout and stderr to a logging sink."""
     def __init__(self, level: int) -> None:
         """Instantiate buffer for the root logger and a logging level."""
@@ -98,7 +96,7 @@ class RedirectToLogger(Generic[G]):
             self.buffer = ""
 
 
-class LoggingSupport(Generic[G]):
+class LoggingSupport:
     """Supporting logging methods for `PyRosettaCluster`."""
 
     def __init__(self) -> None:

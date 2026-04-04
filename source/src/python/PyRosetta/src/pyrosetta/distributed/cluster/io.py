@@ -54,12 +54,10 @@ from pyrosetta.utility.initialization import (
 from typing import (
     Any,
     Dict,
-    Generic,
     Iterable,
     List,
     Optional,
     Tuple,
-    TypeVar,
     Union,
 )
 from urllib.parse import (
@@ -79,10 +77,8 @@ from pyrosetta.distributed.cluster.serialization import (
 METADATA_INPUT_DECOY_KEY: str = "idx_poses_input"
 METADATA_OUTPUT_DECOY_KEY: str = "idx_poses_output"
 
-G = TypeVar("G")
 
-
-class IO(Generic[G]):
+class IO:
     """Input/Output methods for `PyRosettaCluster`."""
 
     DATETIME_FORMAT: str = "%Y-%m-%d %H:%M:%S.%f"

@@ -39,10 +39,8 @@ import warnings
 
 from typing import (
     Dict,
-    Generic,
     Optional,
     Tuple,
-    TypeVar,
     Union,
 )
 
@@ -52,10 +50,9 @@ from pyrosetta.distributed.cluster.config import (
 )
 
 ClusterType = Union[LocalCluster, SGECluster, SLURMCluster]
-G = TypeVar("G")
 
 
-class SchedulerManager(Generic[G]):
+class SchedulerManager:
     """Dask utility manager for `PyRosettaCluster`."""
 
     def _setup_clients_dict(self) -> Dict[int, Client]:

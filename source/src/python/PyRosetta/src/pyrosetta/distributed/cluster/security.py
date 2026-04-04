@@ -32,11 +32,9 @@ import subprocess
 from pathlib import Path
 from typing import (
     Dict,
-    Generic,
     Iterable,
     List,
     Optional,
-    TypeVar,
 )
 
 from pyrosetta.distributed.cluster.hkdf import (
@@ -46,10 +44,8 @@ from pyrosetta.distributed.cluster.hkdf import (
 from pyrosetta.distributed.cluster.serialization import NonceCache
 from pyrosetta.distributed.cluster.worker_plugins import TaskSecurityPlugin
 
-G = TypeVar("G")
 
-
-class SecurityIO(Generic[G]):
+class SecurityIO:
     """Security methods for `PyRosettaCluster`."""
 
     def _setup_task_security_plugin(self, clients: Dict[int, Client]) -> None:

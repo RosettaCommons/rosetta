@@ -600,11 +600,9 @@ from pyrosetta.distributed.cluster.validators import (
     _validate_tasks,
 )
 
-G = TypeVar("G")
-
 
 @attr.define(kw_only=True, slots=True, frozen=False, auto_attribs=True, on_setattr=attr.setters.NO_OP)
-class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO[G], TaskBase[G]):
+class PyRosettaCluster(IO, LoggingSupport, SchedulerManager, SecurityIO, TaskBase):
     tasks: List[Dict[str, Any]] = attr.field(
         default=[{}],
         validator=[

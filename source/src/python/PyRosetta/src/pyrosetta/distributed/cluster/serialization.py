@@ -54,7 +54,6 @@ from typing import (
     Deque,
     Dict,
     Callable,
-    Generic,
     NoReturn,
     Optional,
     TypeVar,
@@ -69,7 +68,6 @@ from pyrosetta.distributed.cluster.hkdf import (
 )
 
 T = TypeVar("T", bound=Callable[..., Any])
-G = TypeVar("G")
 
 
 def _parse_compression(obj: Any) -> Optional[Union[str, bool]]:
@@ -149,7 +147,7 @@ def update_scores(packed_pose: PackedPose) -> PackedPose:
 
 
 @attr.define(kw_only=False, slots=True, frozen=True, auto_attribs=True)
-class MessagePacking(Generic[G]):
+class MessagePacking:
     """`MessagePack` base class for `PyRosettaCluster`."""
 
     pack: partial = attr.field(
@@ -165,7 +163,7 @@ class MessagePacking(Generic[G]):
 
 
 @attr.define(kw_only=True, slots=False, frozen=False, auto_attribs=True)
-class NonceCache(Generic[G]):
+class NonceCache:
     """Nonce cache base class for `PyRosettaCluster`."""
 
     instance_id: str = attr.field(
@@ -289,7 +287,7 @@ class NonceCache(Generic[G]):
 
 
 @attr.define(kw_only=True, slots=False, frozen=False, auto_attribs=True)
-class Serialization(Generic[G]):
+class Serialization:
     """Serialization base class for `PyRosettaCluster`."""
 
     instance_id: Optional[str] = attr.field(

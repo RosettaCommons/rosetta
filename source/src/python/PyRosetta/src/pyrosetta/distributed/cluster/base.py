@@ -30,7 +30,6 @@ from typing import (
     Any,
     Callable,
     Dict,
-    Generic,
     List,
     Optional,
     Sized,
@@ -66,11 +65,10 @@ from pyrosetta.distributed.cluster.validators import (
     _validate_retries,
 )
 
-G = TypeVar("G")
 M = TypeVar("M", bound=Callable[..., Any])
 
 
-class TaskBase(Generic[G]):
+class TaskBase:
     """Task objects underpinning `PyRosettaCluster`."""
 
     def _get_seed(self, protocols: Sized) -> Optional[str]:

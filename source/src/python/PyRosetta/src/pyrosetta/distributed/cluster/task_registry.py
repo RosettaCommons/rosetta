@@ -27,23 +27,19 @@ from typing import (
     AbstractSet,
     Any,
     Dict,
-    Generic,
     Iterator,
     List,
     Optional,
     Tuple,
-    TypeVar,
     Union,
 )
 
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.type_defs import FloatOrInt
 
-G = TypeVar("G")
-
 
 @attr.define(kw_only=True, slots=True, frozen=True, auto_attribs=True)
-class ExtraArgs(Generic[G]):
+class ExtraArgs:
     """Class for the value of the `extra_args` key in the `UserArgs` class."""
 
     decoy_ids: Optional[List[int]]
@@ -62,7 +58,7 @@ class ExtraArgs(Generic[G]):
 
 
 @attr.define(kw_only=True, slots=True, frozen=True, auto_attribs=True)
-class UserArgs(Generic[G]):
+class UserArgs:
     """Class for the `user_spawn_thread` function argument."""
 
     protocol_name: str
@@ -77,7 +73,7 @@ class UserArgs(Generic[G]):
 
 
 @attr.define(kw_only=True, slots=True, frozen=True, auto_attribs=True)
-class TaskRecord(Generic[G]):
+class TaskRecord:
     """Class for `PyRosettaCluster` task registry entries."""
 
     clients_index: int
@@ -90,7 +86,7 @@ UnpackedTaskRecord = Tuple[int, UserArgs, Dict[str, Any]]
 
 
 @attr.define(kw_only=True, slots=True, frozen=True, auto_attribs=True)
-class TaskRegistryBase(Generic[G]):
+class TaskRegistryBase:
     """Task registry base class for `PyRosettaCluster`."""
 
     instance_id: Optional[str] = attr.field(
@@ -161,7 +157,7 @@ class TaskRegistryBase(Generic[G]):
 
 
 @attr.define(kw_only=True, slots=True, frozen=True, auto_attribs=True)
-class DiskTaskRegistry(TaskRegistryBase[G]):
+class DiskTaskRegistry(TaskRegistryBase):
     """Task registry for on-disk `PyRosettaCluster` task arguments."""
 
     task_registry_dir: str = attr.field(
@@ -291,7 +287,7 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
 
 
 @attr.define(kw_only=True, slots=True, frozen=True, auto_attribs=True)
-class MemoryTaskRegistry(TaskRegistryBase[G]):
+class MemoryTaskRegistry(TaskRegistryBase):
     """Task registry for in-memory `PyRosettaCluster` task arguments."""
 
     registry: Dict[str, bytes] = attr.field(

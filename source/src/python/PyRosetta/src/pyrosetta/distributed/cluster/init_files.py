@@ -21,10 +21,8 @@ from pyrosetta.rosetta.core.pose import (
 from typing import (
     Any,
     Dict,
-    Generic,
     Optional,
     Tuple,
-    TypeVar,
     Union,
 )
 
@@ -34,10 +32,8 @@ from pyrosetta.distributed.cluster.hkdf import (
     derive_init_key,
 )
 
-G = TypeVar("G")
 
-
-class PackedPoseHasher(Generic[G]):
+class PackedPoseHasher:
     """
     Digest the scientific state of a `PackedPose` or `Pose` object.
 
@@ -174,7 +170,7 @@ class PackedPoseHasher(Generic[G]):
             self.update_hashmod(value)
 
 
-class InitFileSigner(Generic[G]):
+class InitFileSigner:
     """
     Sign or verify PyRosetta initialization files by `PyRosettaCluster`.
 

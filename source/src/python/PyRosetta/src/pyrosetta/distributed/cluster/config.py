@@ -17,16 +17,12 @@ from functools import lru_cache
 from pyrosetta.utility import get_package_version
 from typing import (
     Dict,
-    Generic,
     List,
     Tuple,
-    TypeVar,
 )
 
 __dask_version__: Tuple[int, int, int] = get_package_version("dask")
 __dask_jobqueue_version__: Tuple[int, int, int] = get_package_version("dask-jobqueue")
-
-G = TypeVar("G")
 
 # Conda channels and/or source domains (potentially containing credentials)
 # to be sanitized from environment file strings.
@@ -37,7 +33,7 @@ source_domains: List[str] = [
 ]
 
 
-class EnvironmentConfig(Generic[G]):
+class EnvironmentConfig:
     """Environment configuration management for `PyRosettaCluster`."""
 
     _ENV_VAR: str = "PYROSETTACLUSTER_ENVIRONMENT_MANAGER"
