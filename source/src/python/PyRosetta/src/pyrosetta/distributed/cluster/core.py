@@ -577,6 +577,7 @@ from pyrosetta.distributed.cluster.serialization import (
 )
 from pyrosetta.distributed.cluster.task_registry import (
     DiskTaskRegistry,
+    ExtraArgs,
     MemoryTaskRegistry,
     UserArgs,
 )
@@ -602,10 +603,9 @@ from pyrosetta.distributed.cluster.validators import (
 G = TypeVar("G")
 
 
-@attr.s(kw_only=True, slots=True, frozen=False)
+@attr.define(kw_only=True, slots=True, frozen=False, auto_attribs=True, on_setattr=attr.setters.NO_OP)
 class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO[G], TaskBase[G]):
-    tasks: List[Dict[str, Any]] = attr.ib(
-        type=List[Dict[str, Any]],
+    tasks: List[Dict[str, Any]] = attr.field(
         default=[{}],
         validator=[
             attr.validators.deep_iterable(
@@ -616,14 +616,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         ],
         converter=_parse_tasks,
     )
-    nstruct: int = attr.ib(
-        type=int,
+    nstruct: int = attr.field(
         default=1,
         validator=[_validate_int, attr.validators.instance_of(int)],
         converter=attr.converters.default_if_none(default=1),
     )
-    tasks_size: int = attr.ib(
-        type=int,
+    tasks_size: int = attr.field(
         default=attr.Factory(
             lambda self: toolz.itertoolz.count(self.tasks) * self.nstruct,
             takes_self=True,
@@ -631,33 +629,28 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         init=False,
         validator=attr.validators.instance_of(int),
     )
-    input_packed_pose: Optional[PackedPose] = attr.ib(
-        type=Optional[PackedPose],
+    input_packed_pose: Optional[PackedPose] = attr.field(
         default=None,
         validator=attr.validators.optional(attr.validators.instance_of(PackedPose)),
         converter=_parse_input_packed_pose,
     )
-    seeds: Optional[List[str]] = attr.ib(
-        type=Optional[List[str]],
+    seeds: Optional[List[str]] = attr.field(
         default=None,
         validator=attr.validators.optional(attr.validators.instance_of(list)),
         converter=attr.converters.optional(_parse_seeds),
     )
-    decoy_ids: Optional[List[int]] = attr.ib(
-        type=Optional[List[int]],
+    decoy_ids: Optional[List[int]] = attr.field(
         default=None,
         validator=attr.validators.optional(attr.validators.instance_of(list)),
         converter=attr.converters.optional(_parse_decoy_ids),
     )
-    client: Optional[Client] = attr.ib(
-        type=Optional[Client],
+    client: Optional[Client] = attr.field(
         default=None,
         validator=attr.validators.optional(
             attr.validators.instance_of(Client)
         ),
     )
-    clients: Optional[ListOrTuple[Client]] = attr.ib(
-        type=Optional[ListOrTuple[Client]],
+    clients: Optional[ListOrTuple[Client]] = attr.field(
         default=None,
         validator=[
             attr.validators.optional(
@@ -669,51 +662,43 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
             _validate_min_len,
         ],
     )
-    scheduler: Optional[str] = attr.ib(
-        type=Optional[str],
+    scheduler: Optional[str] = attr.field(
         default=None,
         validator=attr.validators.optional(
             [attr.validators.in_(["sge", "slurm"]), attr.validators.instance_of(str),],
         ),
     )
-    cores: int = attr.ib(
-        type=int,
+    cores: int = attr.field(
         default=1,
         validator=[_validate_int, attr.validators.instance_of(int)],
         converter=attr.converters.default_if_none(default=1),
     )
-    processes: int = attr.ib(
-        type=int,
+    processes: int = attr.field(
         default=1,
         validator=[_validate_int, attr.validators.instance_of(int)],
         converter=attr.converters.default_if_none(default=1),
     )
-    memory: str = attr.ib(
-        type=str,
+    memory: str = attr.field(
         default="4g",
         validator=attr.validators.optional(attr.validators.instance_of(str)),
         converter=attr.converters.default_if_none(default="4g"),
     )
-    scratch_dir: str = attr.ib(
-        type=str,
+    scratch_dir: str = attr.field(
         default=None,
         validator=[_validate_dir, attr.validators.instance_of(str)],
         converter=_parse_scratch_dir,
     )
-    adapt_threshold: int = attr.ib(
-        type=int,
+    adapt_threshold: int = attr.field(
         default=1000,
         init=False,
         validator=[_validate_int, attr.validators.instance_of(int)],
     )
-    min_workers: int = attr.ib(
-        type=int,
+    min_workers: int = attr.field(
         default=1,
         validator=[_validate_int, attr.validators.instance_of(int)],
         converter=attr.converters.default_if_none(default=1),
     )
-    max_workers: int = attr.ib(
-        type=int,
+    max_workers: int = attr.field(
         default=attr.Factory(
             lambda self: self.adapt_threshold if (self.tasks_size < self.adapt_threshold) else self.tasks_size,
             takes_self=True,
@@ -721,34 +706,29 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         validator=[_validate_int, attr.validators.instance_of(int)],
         converter=attr.converters.default_if_none(default=1000),
     )
-    dashboard_address: str = attr.ib(
-        type=str,
+    dashboard_address: str = attr.field(
         default=":8787",
         validator=attr.validators.instance_of(str),
         converter=attr.converters.default_if_none(default=":8787"),
     )
-    project_name: str = attr.ib(
-        type=str,
+    project_name: str = attr.field(
         default=datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f"),
         validator=attr.validators.instance_of(str),
         converter=attr.converters.default_if_none(default="PyRosettaCluster"),
     )
-    simulation_name: str = attr.ib(
-        type=str,
+    simulation_name: str = attr.field(
         default=attr.Factory(lambda self: self.project_name, takes_self=True),
         validator=attr.validators.instance_of(str),
         converter=attr.converters.default_if_none(default="PyRosettaCluster"),
     )
-    output_path: str = attr.ib(
-        type=str,
+    output_path: str = attr.field(
         default=os.path.abspath(os.path.join(os.getcwd(), "outputs")),
         validator=[_validate_dirs, attr.validators.instance_of(str)],
         converter=attr.converters.default_if_none(
             default=os.path.abspath(os.path.join(os.getcwd(), "outputs"))
         ),
     )
-    output_decoy_types: List[str] = attr.ib(
-        type=List[str],
+    output_decoy_types: List[str] = attr.field(
         default=None,
         validator=[
             attr.validators.deep_iterable(
@@ -759,8 +739,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         ],
         converter=_parse_output_decoy_types,
     )
-    output_scorefile_types: List[str] = attr.ib(
-        type=List[str],
+    output_scorefile_types: List[str] = attr.field(
         default=None,
         validator=[
             attr.validators.deep_iterable(
@@ -771,14 +750,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         ],
         converter=_parse_output_scorefile_types,
     )
-    scorefile_name: str = attr.ib(
-        type=str,
+    scorefile_name: str = attr.field(
         default="scores.json",
         validator=[attr.validators.instance_of(str), _validate_scorefile_name],
         converter=attr.converters.default_if_none(default="scores.json"),
     )
-    scorefile_path: str = attr.ib(
-        type=str,
+    scorefile_path: str = attr.field(
         default=attr.Factory(
             lambda self: os.path.abspath(
                 os.path.join(self.output_path, self.scorefile_name)
@@ -788,20 +765,17 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         init=False,
         validator=attr.validators.instance_of(str),
     )
-    simulation_records_in_scorefile: bool = attr.ib(
-        type=bool,
+    simulation_records_in_scorefile: bool = attr.field(
         default=False,
         validator=attr.validators.instance_of(bool),
         converter=attr.converters.default_if_none(default=False),
     )
-    decoy_dir_name: str = attr.ib(
-        type=str,
+    decoy_dir_name: str = attr.field(
         default="decoys",
         validator=attr.validators.instance_of(str),
         converter=attr.converters.default_if_none(default="decoys"),
     )
-    decoy_path: str = attr.ib(
-        type=str,
+    decoy_path: str = attr.field(
         default=attr.Factory(
             lambda self: os.path.abspath(
                 os.path.join(self.output_path, self.decoy_dir_name)
@@ -811,14 +785,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         init=False,
         validator=attr.validators.instance_of(str),
     )
-    logs_dir_name: str = attr.ib(
-        type=str,
+    logs_dir_name: str = attr.field(
         default="logs",
         validator=attr.validators.instance_of(str),
         converter=attr.converters.default_if_none(default="logs"),
     )
-    logs_path: str = attr.ib(
-        type=str,
+    logs_path: str = attr.field(
         default=attr.Factory(
             lambda self: os.path.abspath(
                 os.path.join(self.output_path, self.logs_dir_name)
@@ -828,8 +800,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         init=False,
         validator=attr.validators.instance_of(str),
     )
-    logging_level: str = attr.ib(
-        type=str,
+    logging_level: str = attr.field(
         default="INFO",
         validator=[
             attr.validators.in_(
@@ -839,8 +810,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         ],
         converter=attr.converters.default_if_none(default="NOTSET"),
     )
-    logging_file: str = attr.ib(
-        type=str,
+    logging_file: str = attr.field(
         default=attr.Factory(
             lambda self: os.path.join(
                 self.logs_path,
@@ -856,119 +826,100 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         init=False,
         validator=attr.validators.instance_of(str),
     )
-    logging_address: str = attr.ib(
-        type=str,
+    logging_address: str = attr.field(
         default=attr.Factory(_parse_logging_address, takes_self=True),
         validator=[_validate_logging_address, attr.validators.instance_of(str)],
     )
-    compressed: bool = attr.ib(
-        type=bool,
+    compressed: bool = attr.field(
         default=True,
         validator=attr.validators.instance_of(bool),
         converter=attr.converters.default_if_none(default=True),
     )
-    compression: Optional[Union[str, bool]] = attr.ib(
-        type=Optional[Union[str, bool]],
+    compression: Optional[Union[str, bool]] = attr.field(
         default=True,
         validator=attr.validators.optional(attr.validators.instance_of((bool, str))),
     )
-    sha1: str = attr.ib(
-        type=str,
+    sha1: str = attr.field(
         default="",
         validator=attr.validators.instance_of(str),
         converter=_parse_sha1,
     )
-    ignore_errors: bool = attr.ib(
-        type=bool,
+    ignore_errors: bool = attr.field(
         default=False,
         validator=attr.validators.instance_of(bool),
         converter=attr.converters.default_if_none(default=False),
     )
-    timeout: FloatOrInt = attr.ib(
-        type=FloatOrInt,
+    timeout: FloatOrInt = attr.field(
         default=0.5,
         validator=[_validate_float, attr.validators.instance_of((float, int))],
         converter=attr.converters.default_if_none(default=0.5),
     )
-    max_delay_time: FloatOrInt = attr.ib(
-        type=FloatOrInt,
+    max_delay_time: FloatOrInt = attr.field(
         default=3.0,
         validator=[_validate_float, attr.validators.instance_of((float, int))],
         converter=attr.converters.default_if_none(default=3.0),
     )
-    filter_results: bool = attr.ib(
-        type=bool,
+    filter_results: bool = attr.field(
         default=None,
         validator=attr.validators.instance_of(bool),
         converter=_parse_filter_results,
     )
-    save_all: bool = attr.ib(
-        type=bool,
+    save_all: bool = attr.field(
         default=False,
         validator=attr.validators.instance_of(bool),
         converter=attr.converters.default_if_none(default=False),
     )
-    dry_run: bool = attr.ib(
-        type=bool,
+    dry_run: bool = attr.field(
         default=False,
         validator=attr.validators.instance_of(bool),
         converter=attr.converters.default_if_none(False),
     )
-    norm_task_options: bool = attr.ib(
-        type=bool,
+    norm_task_options: bool = attr.field(
         default=None,
         validator=attr.validators.instance_of(bool),
         converter=_parse_norm_task_options,
     )
-    max_task_replicas: Optional[int] = attr.ib(
-        type=Optional[int],
+    max_task_replicas: Optional[int] = attr.field(
         default=0,
         validator=[
             _validate_max_task_replicas,
             attr.validators.optional(attr.validators.instance_of(int))
         ],
     )
-    task_registry: Optional[str] = attr.ib(
-        type=Optional[str],
+    task_registry: Optional[str] = attr.field(
         default=None,
         validator=[
             attr.validators.optional(attr.validators.instance_of(str)),
             attr.validators.in_([None, "disk", "memory"]),
         ],
     )
-    yield_results: bool = attr.ib(
-        type=bool,
+    yield_results: bool = attr.field(
         init=False,
         default=False,
         validator=attr.validators.instance_of(bool),
         converter=_parse_yield_results,
     )
-    cooldown_time: FloatOrInt = attr.ib(
-        type=FloatOrInt,
+    cooldown_time: FloatOrInt = attr.field(
         default=0.5,
         validator=[_validate_float, attr.validators.instance_of((float, int))],
         converter=attr.converters.default_if_none(default=0.5),
     )
-    protocols_key: str = attr.ib(
-        type=str,
+    protocols_key: str = attr.field(
         default="PyRosettaCluster_protocols_container",
         init=False,
         validator=attr.validators.instance_of(str),
     )
-    system_info: Dict[Any, Any] = attr.ib(
-        type=Dict[Any, Any],
+    system_info: Dict[Any, Any] = attr.field(
         default=None,
         validator=attr.validators.instance_of(dict),
         converter=_parse_system_info,
     )
-    pyrosetta_build: str = attr.ib(
-        type=str,
+    pyrosetta_build: str = attr.field(
         default=None,
         validator=attr.validators.instance_of(str),
         converter=_parse_pyrosetta_build,
     )
-    security: Union[bool, Security] = attr.ib(
-        type=Union[bool, Security],
+    security: Union[bool, Security] = attr.field(
         default=attr.Factory(
             lambda self: bool(self.scheduler),
             takes_self=True,
@@ -976,8 +927,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         validator=attr.validators.instance_of((bool, Security)),
         converter=attr.converters.default_if_none(default=True),
     )
-    instance_id: str = attr.ib(
-        type=str,
+    instance_id: str = attr.field(
         default=attr.Factory(
             lambda: f"PyRosettaCluster_instance_id_{uuid.uuid4().hex}",
             takes_self=False,
@@ -985,37 +935,31 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         init=False,
         validator=attr.validators.instance_of(str),
     )
-    max_nonce: int = attr.ib(
-        type=int,
+    max_nonce: int = attr.field(
         default=4096,
         validator=[attr.validators.instance_of(int), _validate_int],
     )
-    environment: str = attr.ib(
-        type=str,
+    environment: str = attr.field(
         default=None,
         validator=attr.validators.instance_of(str),
         converter=_parse_environment,
     )
-    author: str = attr.ib(
-        type=str,
+    author: str = attr.field(
         default=None,
         validator=attr.validators.instance_of(str),
         converter=attr.converters.default_if_none(""),
     )
-    email: str = attr.ib(
-        type=str,
+    email: str = attr.field(
         default=None,
         validator=attr.validators.instance_of(str),
         converter=attr.converters.default_if_none(""),
     )
-    license: str = attr.ib(
-        type=str,
+    license: str = attr.field(
         default=None,
         validator=attr.validators.instance_of(str),
         converter=attr.converters.default_if_none(""),
     )
-    output_init_file: str = attr.ib(
-        type=str,
+    output_init_file: str = attr.field(
         default=attr.Factory(
             lambda self: os.path.join(
                 self.output_path,
@@ -1032,8 +976,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         validator=[attr.validators.instance_of(str), _validate_output_init_file],
         converter=attr.converters.default_if_none(""),
     )
-    environment_manager: str = attr.ib(
-        type=str,
+    environment_manager: str = attr.field(
         default=attr.Factory(
             get_environment_manager,
             takes_self=False,
@@ -1041,8 +984,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         init=False,
         validator=attr.validators.instance_of(str),
     )
-    environment_file: str = attr.ib(
-        type=str,
+    environment_file: str = attr.field(
         default=attr.Factory(
             lambda self: os.path.join(
                 self.output_path,
@@ -1065,8 +1007,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         init=False,
         validator=attr.validators.instance_of(str),
     )
-    task_registry_dir: Optional[str] = attr.ib(
-        type=Optional[str],
+    task_registry_dir: Optional[str] = attr.field(
         default=attr.Factory(
             lambda self: (
                 os.path.join(self.scratch_dir, f"task_registry-{self.instance_id}")
@@ -1078,8 +1019,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         init=False,
         validator=attr.validators.optional(attr.validators.instance_of(str)),
     )
-    pyrosetta_init_args: List[str] = attr.ib(
-        type=List[str],
+    pyrosetta_init_args: List[str] = attr.field(
         default=attr.Factory(_get_pyrosetta_init_args),
         init=False,
         validator=attr.validators.deep_iterable(
@@ -1158,7 +1098,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         compressed_packed_pose: bytes,
         compressed_kwargs: bytes,
         pyrosetta_init_kwargs: Dict[str, Any],
-        extra_args: Dict[str, Any],
+        extra_args: ExtraArgs,
         passkey: bytes,
         resource: Optional[Dict[str, FloatOrInt]],
         priority: Optional[int],
@@ -1420,7 +1360,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], SecurityIO
         protocol_name = protocol.__name__
         compressed_protocol = self.serializer.compress_object(protocol)
         client_residue_type_set = _get_residue_type_set()
-        extra_args = dict(
+        extra_args = ExtraArgs(
             decoy_ids=self.decoy_ids,
             protocols_key=self.protocols_key,
             timeout=self.timeout,

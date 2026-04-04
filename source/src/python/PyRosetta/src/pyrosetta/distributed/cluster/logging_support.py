@@ -386,7 +386,7 @@ def setup_worker_logging(func: L) -> L:
         protocol_name = user_args.protocol_name
         masked_key = user_args.masked_key
         task_id = user_args.task_id
-        socket_listener_address = user_args.extra_args["socket_listener_address"]
+        socket_listener_address = user_args.extra_args.socket_listener_address
 
         plugin = worker.plugins[SOCKET_LOGGER_PLUGIN_NAME]
         router = plugin.router

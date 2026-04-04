@@ -205,19 +205,19 @@ def user_spawn_thread(
     masked_key = user_args.masked_key
     task_id = user_args.task_id
 
-    decoy_ids = extra_args["decoy_ids"]
-    protocols_key = extra_args["protocols_key"]
-    timeout = extra_args["timeout"]
-    ignore_errors = extra_args["ignore_errors"]
-    datetime_format = extra_args["datetime_format"]
-    instance_id = extra_args["instance_id"]
-    compression = extra_args["compression"]
-    with_nonce = extra_args["with_nonce"]
-    norm_task_options = extra_args["norm_task_options"]
-    max_delay_time = extra_args["max_delay_time"]
-    logging_level = extra_args["logging_level"]
-    socket_listener_address = extra_args["socket_listener_address"]
-    client_residue_type_set = extra_args["client_residue_type_set"]
+    decoy_ids = extra_args.decoy_ids
+    protocols_key = extra_args.protocols_key
+    timeout = extra_args.timeout
+    ignore_errors = extra_args.ignore_errors
+    datetime_format = extra_args.datetime_format
+    instance_id = extra_args.instance_id
+    compression = extra_args.compression
+    with_nonce = extra_args.with_nonce
+    norm_task_options = extra_args.norm_task_options
+    max_delay_time = extra_args.max_delay_time
+    logging_level = extra_args.logging_level
+    socket_listener_address = extra_args.socket_listener_address
+    client_residue_type_set = extra_args.client_residue_type_set
 
     logger = get_worker_logger(protocol_name, socket_listener_address, task_id)
     worker = get_dask_worker()

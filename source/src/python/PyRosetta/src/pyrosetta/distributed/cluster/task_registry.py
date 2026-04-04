@@ -23,15 +23,13 @@ import logging
 import os
 import sys
 
-from dataclasses import (
-    asdict,
-    dataclass,
-)
 from typing import (
+    AbstractSet,
     Any,
     Dict,
     Generic,
     Iterator,
+    List,
     Optional,
     Tuple,
     TypeVar,
@@ -39,13 +37,33 @@ from typing import (
 )
 
 from pyrosetta.distributed.cluster.serialization import Serialization
+from pyrosetta.distributed.cluster.type_defs import FloatOrInt
 
 G = TypeVar("G")
 
 
-@dataclass
+@attr.define(kw_only=True, slots=True, frozen=True, auto_attribs=True)
+class ExtraArgs(Generic[G]):
+    """Class for the value of the `extra_args` key in the `UserArgs` class."""
+
+    decoy_ids: Optional[List[int]]
+    protocols_key: str
+    timeout: FloatOrInt
+    ignore_errors: bool
+    datetime_format: str
+    instance_id: str
+    compression: Optional[Union[str, bool]]
+    with_nonce: bool
+    norm_task_options: bool
+    max_delay_time: FloatOrInt
+    logging_level: str
+    socket_listener_address: Tuple[str, int]
+    client_residue_type_set: AbstractSet[str]
+
+
+@attr.define(kw_only=True, slots=True, frozen=True, auto_attribs=True)
 class UserArgs(Generic[G]):
-    """Dataclass for the `user_spawn_thread` function argument."""
+    """Class for the `user_spawn_thread` function argument."""
 
     protocol_name: str
     compressed_protocol: bytes
@@ -53,14 +71,14 @@ class UserArgs(Generic[G]):
     compressed_kwargs: bytes
     pyrosetta_init_kwargs: Dict[str, Any]
     client_repr: str
-    extra_args: Dict[str, Any]
+    extra_args: ExtraArgs
     masked_key: bytes
     task_id: str
 
 
-@dataclass
+@attr.define(kw_only=True, slots=True, frozen=True, auto_attribs=True)
 class TaskRecord(Generic[G]):
-    """Dataclass for `PyRosettaCluster` task registry entries."""
+    """Class for `PyRosettaCluster` task registry entries."""
 
     clients_index: int
     user_args: UserArgs
@@ -71,22 +89,19 @@ UnpackedTaskRecord = Tuple[int, UserArgs, Dict[str, Any]]
 """A container for an unpacked `PyRosettaCluster` task registry entry."""
 
 
-@attr.s(kw_only=True, slots=True, frozen=True)
+@attr.define(kw_only=True, slots=True, frozen=True, auto_attribs=True)
 class TaskRegistryBase(Generic[G]):
     """Task registry base class for `PyRosettaCluster`."""
 
-    instance_id: Optional[str] = attr.ib(
-        type=Optional[str],
+    instance_id: Optional[str] = attr.field(
         default=None,
         validator=attr.validators.optional(attr.validators.instance_of(str)),
     )
-    compression: Optional[Union[str, bool]] = attr.ib(
-        type=Optional[Union[str, bool]],
+    compression: Optional[Union[str, bool]] = attr.field(
         default="xz",
         validator=attr.validators.optional(attr.validators.instance_of((str, bool))),
     )
-    serializer: Serialization = attr.ib(
-        type=Serialization,
+    serializer: Serialization = attr.field(
         default=attr.Factory(
             lambda self: Serialization(
                 instance_id=self.instance_id,
@@ -121,7 +136,11 @@ class TaskRegistryBase(Generic[G]):
         Deep copy a `UserArgs` dataclass to break in-memory references to any objects that keep `billiard`
         subprocesses alive.
         """
-        return UserArgs(**self.serializer.deepcopy_kwargs(asdict(user_args)))
+
+        user_args_dict = self.serializer.deepcopy_kwargs(attr.asdict(user_args, recurse=True, retain_collection_types=True))
+        user_args_dict["extra_args"] = ExtraArgs(**user_args_dict["extra_args"])
+
+        return UserArgs(**user_args_dict)
 
     def create_task_record(
         self,
@@ -141,16 +160,14 @@ class TaskRegistryBase(Generic[G]):
         return task_record.clients_index, task_record.user_args, task_record.submit_kwargs
 
 
-@attr.s(kw_only=True, slots=True, frozen=True)
+@attr.define(kw_only=True, slots=True, frozen=True, auto_attribs=True)
 class DiskTaskRegistry(TaskRegistryBase[G]):
     """Task registry for on-disk `PyRosettaCluster` task arguments."""
 
-    task_registry_dir: str = attr.ib(
-        type=str,
+    task_registry_dir: str = attr.field(
         validator=attr.validators.instance_of(str),
     )
-    file_ext: str = attr.ib(
-        type=str,
+    file_ext: str = attr.field(
         default=attr.Factory(
             lambda self: (
                 f".pkl.{self.serializer.compression}"
@@ -273,12 +290,11 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
             logging.info(f"{total_size} remaining task records in the on-disk task registry.")
 
 
-@attr.s(kw_only=True, slots=True, frozen=True)
+@attr.define(kw_only=True, slots=True, frozen=True, auto_attribs=True)
 class MemoryTaskRegistry(TaskRegistryBase[G]):
     """Task registry for in-memory `PyRosettaCluster` task arguments."""
 
-    registry: Dict[str, bytes] = attr.ib(
-        type=Dict[str, bytes],
+    registry: Dict[str, bytes] = attr.field(
         default=attr.Factory(dict, takes_self=False),
         validator=attr.validators.instance_of(dict),
         init=False,

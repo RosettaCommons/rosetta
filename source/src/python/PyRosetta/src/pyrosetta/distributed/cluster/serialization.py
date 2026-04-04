@@ -148,51 +148,44 @@ def update_scores(packed_pose: PackedPose) -> PackedPose:
     return packed_pose.update_scores(_filtered_scores)
 
 
-@attr.s(kw_only=False, slots=True, frozen=True)
+@attr.define(kw_only=False, slots=True, frozen=True, auto_attribs=True)
 class MessagePacking(Generic[G]):
     """`MessagePack` base class for `PyRosettaCluster`."""
 
-    pack: partial = attr.ib(
-        type=partial,
+    pack: partial = attr.field(
         default=partial(msgpack.packb, use_bin_type=True),
         init=False,
         validator=attr.validators.instance_of(partial),
     )
-    unpack: partial = attr.ib(
-        type=partial,
+    unpack: partial = attr.field(
         default=partial(msgpack.unpackb, raw=False),
         init=False,
         validator=attr.validators.instance_of(partial),
     )
 
 
-@attr.s(kw_only=True, slots=False, frozen=False)
+@attr.define(kw_only=True, slots=False, frozen=False, auto_attribs=True)
 class NonceCache(Generic[G]):
     """Nonce cache base class for `PyRosettaCluster`."""
 
-    instance_id: str = attr.ib(
-        type=str,
+    instance_id: str = attr.field(
         validator=attr.validators.instance_of(str),
     )
-    prk: Optional[bytes] = attr.ib(
-        type=Optional[bytes],
+    prk: Optional[bytes] = attr.field(
         default=None,
         repr=False,
         converter=lambda k: MaskedBytes(k) if isinstance(k, bytes) else k,
         validator=attr.validators.optional(attr.validators.instance_of(MaskedBytes)),
     )
-    max_nonce: int = attr.ib(
-        type=int,
+    max_nonce: int = attr.field(
         validator=attr.validators.instance_of(int),
     )
-    _seen: AbstractSet = attr.ib(
-        type=AbstractSet,
+    _seen: AbstractSet = attr.field(
         default=attr.Factory(set, takes_self=False),
         init=False,
         validator=attr.validators.instance_of(set),
     )
-    _order: Deque[bytes] = attr.ib(
-        type=Deque[bytes],
+    _order: Deque[bytes] = attr.field(
         default=attr.Factory(
             lambda self: deque(maxlen=self.max_nonce),
             takes_self=True,
@@ -200,8 +193,7 @@ class NonceCache(Generic[G]):
         init=False,
         validator=attr.validators.instance_of(deque),
     )
-    _debug: bool = attr.ib(
-        type=bool,
+    _debug: bool = attr.field(
         default=False,
         init=False,
         validator=attr.validators.instance_of(bool),
@@ -296,35 +288,30 @@ class NonceCache(Generic[G]):
                     print(f"Local head node nonce cache: {_msg}")
 
 
-@attr.s(kw_only=True, slots=False, frozen=False)
+@attr.define(kw_only=True, slots=False, frozen=False, auto_attribs=True)
 class Serialization(Generic[G]):
     """Serialization base class for `PyRosettaCluster`."""
 
-    instance_id: Optional[str] = attr.ib(
-        type=Optional[str],
+    instance_id: Optional[str] = attr.field(
         default=None,
         validator=attr.validators.optional(attr.validators.instance_of(str)),
     )
-    prk: Optional[bytes] = attr.ib(
-        type=Optional[bytes],
+    prk: Optional[bytes] = attr.field(
         default=None,
         repr=False,
         converter=lambda k: MaskedBytes(k) if isinstance(k, bytes) else k,
         validator=attr.validators.optional(attr.validators.instance_of(MaskedBytes)),
     )
-    compression: Optional[Union[str, bool]] = attr.ib(
-        type=Optional[Union[str, bool]],
+    compression: Optional[Union[str, bool]] = attr.field(
         default="xz",
         validator=attr.validators.optional(attr.validators.instance_of((str, bool))),
         converter=_parse_compression,
     )
-    with_nonce: bool = attr.ib(
-        type=bool,
+    with_nonce: bool = attr.field(
         default=False,
         validator=attr.validators.instance_of(bool),
     )
-    _nonce_size: int = attr.ib(
-        type=int,
+    _nonce_size: int = attr.field(
         default=32, # bytes
         init=False,
         validator=attr.validators.instance_of(int),

@@ -43,7 +43,7 @@ def _get_pyrosetta_init_args() -> List[str]:
 
 def _get_residue_type_set_name3() -> AbstractSet[str]:
     """
-    Return a `set` of `str` of 3-letter names of residues in the PyRosetta ResidueTypeSet database.
+    Return a `set` object of `str` objects for the 3-letter names of residues currently loaded in Rosetta.
     """
 
     if was_init_called():
