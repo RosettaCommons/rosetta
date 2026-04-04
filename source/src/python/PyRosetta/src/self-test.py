@@ -127,8 +127,8 @@ def main(args):
                 ( f.startswith('G') if Options.gui_only else ( True if Options.enable_gui else not f.startswith('G')) )  ]
 
     tests = Options.args or sorted(
-        sorted( get_py_files('test') + get_py_files('demo') ),
-        key=lambda f: 0 if f.startswith("test/T9") else 1, # Prioritize T900-series of tests to fail quickly
+        get_py_files('test') + get_py_files('demo'),
+        key=lambda f: (0 if f.startswith('test/T9') else 1, f), # Prioritize T900-series of tests to fail quickly
     )
     print('Preparing to run:\n{}'.format('\n'.join(tests) ) , flush=True)
 
@@ -164,8 +164,8 @@ def main(args):
         return {
             "process": p,
             "stdout": p.stdout,
-            "start_time": time.perf_counter(),
-            "test_name": test,
+            "deadline": time.perf_counter() + Options.timeout,
+            "test": test,
         }
 
     def terminate_process(pid):
@@ -190,20 +190,27 @@ def main(args):
             pass
 
     def process_jobs(jobs):
+        now = time.perf_counter()
         for job in jobs[:]:
             p = job["process"]
             pipe = job["stdout"]
-            start_time = job["start_time"]
-            name = job["test_name"]
+            deadline = job["deadline"]
+            test = job["test"]
+            # Timeout check
+            if now > deadline:
+                print(f"Test timeout: {test}. Killing subprocess...", flush=True)
+                terminate_process(p.pid)
+                if pipe:
+                    drain_buffer(pipe)
+                sys.exit(1)
             # Stream output without blocking
             if pipe and p.poll() is None:
                 try:
                     rlist, _, _ = select.select([pipe], [], [], 0)
-                    while rlist:  # Print all ready lines
+                    if rlist:
                         line = pipe.readline()
                         if line:
                             print(line, end="", flush=True)
-                        rlist, _, _ = select.select([pipe], [], [], 0)
                 except Exception:
                     pass
             # Completion check
@@ -211,19 +218,11 @@ def main(args):
                 if pipe:
                     drain_buffer(pipe)
                 if p.returncode != 0:
-                    print(f"Test failed: {name}", flush=True)
+                    print(f"Test failed: {test}", flush=True)
                     sys.exit(1)
                 jobs.remove(job)
-                continue # Skip timeout check
-            # Timeout check
-            if (time.perf_counter() - start_time) > Options.timeout:
-                print(f"Test timeout: {name}. Killing subprocess...", flush=True)
-                terminate_process(p.pid)
-                if pipe:
-                    drain_buffer(pipe)
-                sys.exit(1)
 
-    wait_time = 0.5
+    wait_time = 0.25
     # Launch jobs
     for t in tests:
         if Options.jobs > 1:
