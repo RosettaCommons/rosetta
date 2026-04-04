@@ -11,10 +11,14 @@ from benchmark_test_utils import run_distributed_cluster_test_cases
 
 
 run_distributed_cluster_test_cases(
-    "test_reproducibility_multi.TestReproducibilityMulti.test_reproducibility_from_reproduce",
-    "test_reproducibility_multi.TestReproducibilityMulti.test_reproducibility_from_reproduce_filter_results",
     "test_reproducibility_multi.TestReproducibilityMulti.test_reproducibility_packer_nstruct_multi",
     "test_reproducibility_multi.TestReproducibilityMulti.test_reproducibility_packer_nstruct_multi_filter_results",
     "test_reproducibility_multi.TestReproducibilityMulti.test_reproducibility_packer_nstruct_multi_decoy_ids",
     "test_reproducibility_multi.TestReproducibilityMulti.test_reproducibility_packer_nstruct_multi_decoy_ids_filter_results",
+    streaming=True,
+)
+run_distributed_cluster_test_cases(
+    "test_reproducibility_multi.TestReproducibilityMulti.test_reproducibility_from_reproduce",
+    "test_reproducibility_multi.TestReproducibilityMulti.test_reproducibility_from_reproduce_filter_results",
+    streaming=False,
 )
