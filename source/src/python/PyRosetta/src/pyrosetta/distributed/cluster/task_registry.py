@@ -75,17 +75,17 @@ UnpackedTaskRecord = Tuple[int, UserArgs, Dict[str, Any]]
 class TaskRegistryBase(Generic[G]):
     """Task registry base class for `PyRosettaCluster`."""
 
-    instance_id = attr.ib(
+    instance_id: Optional[str] = attr.ib(
         type=Optional[str],
         default=None,
         validator=attr.validators.optional(attr.validators.instance_of(str)),
     )
-    compression = attr.ib(
+    compression: Optional[Union[str, bool]] = attr.ib(
         type=Optional[Union[str, bool]],
         default="xz",
         validator=attr.validators.optional(attr.validators.instance_of((str, bool))),
     )
-    serializer = attr.ib(
+    serializer: Serialization = attr.ib(
         type=Serialization,
         default=attr.Factory(
             lambda self: Serialization(
@@ -145,11 +145,11 @@ class TaskRegistryBase(Generic[G]):
 class DiskTaskRegistry(TaskRegistryBase[G]):
     """Task registry for on-disk `PyRosettaCluster` task arguments."""
 
-    task_registry_dir = attr.ib(
+    task_registry_dir: str = attr.ib(
         type=str,
         validator=attr.validators.instance_of(str),
     )
-    file_ext = attr.ib(
+    file_ext: str = attr.ib(
         type=str,
         default=attr.Factory(
             lambda self: (
@@ -277,7 +277,7 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
 class MemoryTaskRegistry(TaskRegistryBase[G]):
     """Task registry for in-memory `PyRosettaCluster` task arguments."""
 
-    registry = attr.ib(
+    registry: Dict[str, bytes] = attr.ib(
         type=Dict[str, bytes],
         default=attr.Factory(dict, takes_self=False),
         validator=attr.validators.instance_of(dict),
