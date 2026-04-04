@@ -31,6 +31,9 @@ from typing import (
 
 F = TypeVar("F", bound=Callable[..., int])
 
+TIMEOUT: int = 1800
+STREAMING: bool = True
+
 
 def has_pyrosetta_distributed_package_requirements() -> bool:
     """Test if `pyrosetta.distributed` framework packages are installed in the virtual environment."""
@@ -270,7 +273,7 @@ def run_unittest_streaming(test_case: str, timeout: int) -> int:
     return process.returncode
 
 
-def run_test_cases(*test_cases: str, streaming: bool = True, timeout: int = 1800) -> None:
+def run_test_cases(*test_cases: str, streaming: bool = STREAMING, timeout: int = TIMEOUT) -> None:
     """Run the input test cases using the `unittest` module."""
 
     exit_if_missing_pyrosetta_distributed_requirements()
@@ -281,7 +284,7 @@ def run_test_cases(*test_cases: str, streaming: bool = True, timeout: int = 1800
     sys.stdout.flush()
 
 
-def run_distributed_cluster_test_cases(*test_cases: str, streaming: bool = True, timeout: int = 1800) -> None:
+def run_distributed_cluster_test_cases(*test_cases: str, streaming: bool = STREAMING, timeout: int = TIMEOUT) -> None:
     """Run the input test cases (each prepended with "pyrosetta.tests.distributed.cluster.") using the `unittest` module."""
 
     prefix = "pyrosetta.tests.distributed.cluster."
