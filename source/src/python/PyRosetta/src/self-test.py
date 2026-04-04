@@ -126,8 +126,10 @@ def main(args):
         return [dir_ + '/' + f for f in os.listdir(dir_) if f.endswith('.py')  and  f!='__init__.py'  and  \
                 ( f.startswith('G') if Options.gui_only else ( True if Options.enable_gui else not f.startswith('G')) )  ]
 
-    tests = Options.args or sorted( get_py_files('test') + get_py_files('demo') )
-
+    tests = Options.args or sorted(
+        sorted( get_py_files('test') + get_py_files('demo') ),
+        key=lambda f: 0 if f.startswith("test/T9") else 1, # Prioritize T900-series of tests to fail quickly
+    )
     print('Preparing to run:\n{}'.format('\n'.join(tests) ) , flush=True)
 
     # removing previous output files if any...
