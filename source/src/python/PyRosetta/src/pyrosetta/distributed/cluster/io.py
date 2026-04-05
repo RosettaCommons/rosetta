@@ -176,10 +176,7 @@ class IO:
 
     def _parse_results(
         self,
-        results: Union[
-            Iterable[Optional[Union[PoseOrPackedPose, bytes]]],
-            Optional[PoseOrPackedPose],
-        ],
+        results: Optional[Union[bytes, PoseOrPackedPose, Iterable[Union[bytes, PoseOrPackedPose]]]],
     ) -> List[Tuple[str, Dict[str, Any]]]:
         """
         Format output results from a Dask worker.
@@ -320,7 +317,7 @@ class IO:
             sort_keys=False,
         )
 
-    def _save_results(self, results: Any, kwargs: Dict[str, Any]) -> None:
+    def _save_results(self, results: Optional[bytes], kwargs: Dict[str, Any]) -> None:
         """
         Write output results to disk.
 
