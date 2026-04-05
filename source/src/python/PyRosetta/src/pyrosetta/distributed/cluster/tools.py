@@ -49,10 +49,7 @@ from pyrosetta.distributed.cluster.converter_tasks import (
 )
 from pyrosetta.distributed.cluster.core import PyRosettaCluster
 from pyrosetta.distributed.cluster.io import secure_read_pickle
-from pyrosetta.distributed.cluster.serialization import (
-    Serialization,
-    update_scores,
-)
+from pyrosetta.distributed.cluster.serialization import update_scores
 from pyrosetta.distributed.cluster.type_defs import (
     Any,
     Callable,

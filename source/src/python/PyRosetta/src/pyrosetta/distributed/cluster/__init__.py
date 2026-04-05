@@ -28,6 +28,7 @@ from pyrosetta.distributed.cluster.toolkit import (
     requires_packed_pose,
     reserve_scores,
     run,
+    secure_read_pickle,
     update_scores,
 )
 from pyrosetta.distributed.cluster.type_defs import List
@@ -49,6 +50,7 @@ __all__: List[str] = [
     "requires_packed_pose",
     "reserve_scores",
     "run",
+    "secure_read_pickle",
     "update_scores",
 ]
 __version__: str = "5.0.0"

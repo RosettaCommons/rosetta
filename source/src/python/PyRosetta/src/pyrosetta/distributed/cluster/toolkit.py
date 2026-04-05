@@ -14,9 +14,13 @@ from pyrosetta.distributed.cluster.converter_tasks import (
     get_yml,
 )
 from pyrosetta.distributed.cluster.init_files import PackedPoseHasher
+from pyrosetta.distributed.cluster.io import secure_read_pickle
 from pyrosetta.distributed.cluster.security import generate_dask_tls_security
-from pyrosetta.distributed.cluster.tools import (
+from pyrosetta.distributed.cluster.serialization import (
     Serialization,
+    update_scores,
+)
+from pyrosetta.distributed.cluster.tools import (
     get_instance_kwargs,
     get_protocols,
     iterate,
@@ -25,5 +29,4 @@ from pyrosetta.distributed.cluster.tools import (
     requires_packed_pose,
     reserve_scores,
     run,
-    update_scores,
 )
