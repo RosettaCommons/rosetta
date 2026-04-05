@@ -32,28 +32,25 @@ from contextlib import (
 from functools import wraps
 from typing import (
     Any,
-    Callable,
     Dict,
     Generator,
     Optional,
     OrderedDict,
     Tuple,
-    TypeVar,
     Union,
     cast,
 )
 
 from pyrosetta.distributed.cluster.hkdf import hmac_digest
 from pyrosetta.distributed.cluster.logging_filters import split_socket_address
-
-L = TypeVar("L", bound=Callable[..., Any])
+from pyrosetta.distributed.cluster.type_defs import CallableType
 
 
 class HandlerMixin:
     """Logging handler mixin class for acquiring and releasing a thread lock."""
 
     @staticmethod
-    def lock(func: L) -> L:
+    def lock(func: CallableType) -> CallableType:
         """A decorator for methods requiring acquire and release of a thread lock."""
         @wraps(func)
         def wrapper(self, *args, **kwargs) -> Any:
@@ -63,7 +60,7 @@ class HandlerMixin:
             finally:
                 self.release()
 
-        return cast(L, wrapper)
+        return cast(CallableType, wrapper)
 
     @contextmanager
     def _locked(self) -> Generator[Any, Any, Any]:

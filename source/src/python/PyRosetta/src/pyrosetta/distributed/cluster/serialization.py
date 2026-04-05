@@ -66,8 +66,7 @@ from pyrosetta.distributed.cluster.hkdf import (
     compare_digest,
     hmac_digest,
 )
-
-T = TypeVar("T", bound=Callable[..., Any])
+from pyrosetta.distributed.cluster.type_defs import CallableType
 
 
 def _parse_compression(obj: Any) -> Optional[Union[str, bool]]:
@@ -359,7 +358,7 @@ class Serialization:
         """Compress an object with `zlib` level 9."""
         return zlib.compress(obj, 9)
 
-    def with_update_scores(func: T) -> T:
+    def with_update_scores(func: CallableType) -> CallableType:
         """
         Decorator that caches detached `PackedPose.scores` items into the `Pose.cache` dictionary.
 
@@ -376,9 +375,9 @@ class Serialization:
                 obj = update_scores(obj)
             return func(self, obj)
 
-        return cast(T, wrapper)
+        return cast(CallableType, wrapper)
 
-    def requires_compression(func: T) -> T:
+    def requires_compression(func: CallableType) -> CallableType:
         """
         Decorator testing if compression is enabled, and skips compression if it is disabled.
         """
@@ -393,7 +392,7 @@ class Serialization:
                 logging.debug("Compression/decompression is disabled.")
                 return obj
 
-        return cast(T, wrapper)
+        return cast(CallableType, wrapper)
 
     def _seal(self, data: bytes) -> bytes:
         """Seal data with `MessagePack`."""

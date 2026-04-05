@@ -30,7 +30,10 @@ from typing import (
 # Generic type abstractions:
 
 T = TypeVar("T")
-"""An arbitrary type."""
+"""An arbitrary type variable."""
+
+CallableType = TypeVar("CallableType", bound=Callable[..., Any])
+"""An arbitrary callable type variable."""
 
 ListOrTuple = Union[List[T], Tuple[T, ...]]
 """

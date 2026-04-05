@@ -27,19 +27,18 @@ from pyrosetta.distributed.packed_pose.core import PackedPose
 from queue import Empty
 from typing import (
     Any,
-    Callable,
     Dict,
     List,
     Optional,
     Tuple,
-    TypeVar,
     Union,
     cast,
 )
 
-from pyrosetta.distributed.cluster.type_defs import PyRosettaProtocol
-
-T = TypeVar("T", bound=Callable[..., Any])
+from pyrosetta.distributed.cluster.type_defs import (
+    CallableType,
+    PyRosettaProtocol,
+)
 
 
 class InputError(TypeError):
@@ -113,7 +112,7 @@ class TaskCancelledError(RuntimeError):
         )
 
 
-def trace_protocol_exceptions(func: T) -> T:
+def trace_protocol_exceptions(func: CallableType) -> CallableType:
     """Trace exceptions in user-defined PyRosetta protocols."""
 
     @wraps(func)
@@ -142,10 +141,10 @@ def trace_protocol_exceptions(func: T) -> T:
 
         return result
 
-    return cast(T, wrapper)
+    return cast(CallableType, wrapper)
 
 
-def trace_subprocess_exceptions(func: T) -> T:
+def trace_subprocess_exceptions(func: CallableType) -> CallableType:
     """Trace exceptions in `billiard` subprocesses."""
 
     @wraps(func)
@@ -178,4 +177,4 @@ def trace_subprocess_exceptions(func: T) -> T:
 
         return _results
 
-    return cast(T, wrapper)
+    return cast(CallableType, wrapper)

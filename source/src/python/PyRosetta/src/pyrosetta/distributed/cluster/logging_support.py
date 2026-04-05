@@ -34,12 +34,10 @@ from functools import wraps
 from typing import (
     AbstractSet,
     Any,
-    Callable,
     Dict,
     List,
     Optional,
     Tuple,
-    TypeVar,
     Union,
     cast,
 )
@@ -62,9 +60,8 @@ from pyrosetta.distributed.cluster.logging_listeners import (
     SocketListener,
 )
 from pyrosetta.distributed.cluster.task_registry import UserArgs
+from pyrosetta.distributed.cluster.type_defs import CallableType
 from pyrosetta.distributed.cluster.utilities import get_dask_worker
-
-L = TypeVar("L", bound=Callable[..., Any])
 
 
 class RedirectToLogger:
@@ -284,7 +281,7 @@ def close_target_logger(
         socket_handler.close()
 
 
-def setup_target_logging(func: L) -> L:
+def setup_target_logging(func: CallableType) -> CallableType:
     """Support logging from a `billiard` subprocess."""
 
     @wraps(func)
@@ -353,7 +350,7 @@ def setup_target_logging(func: L) -> L:
             del prk
             close_target_logger(logger, socket_handler, filters)
 
-    return cast(L, wrapper)
+    return cast(CallableType, wrapper)
 
 
 def get_worker_logger(
@@ -373,7 +370,7 @@ def get_worker_logger(
     )
 
 
-def setup_worker_logging(func: L) -> L:
+def setup_worker_logging(func: CallableType) -> CallableType:
     """Support logging from a Dask worker."""
 
     @wraps(func)
@@ -404,4 +401,4 @@ def setup_worker_logging(func: L) -> L:
             del masked_key
             router.pop_masked_key(socket_listener_address, task_id)
 
-    return cast(L, wrapper)
+    return cast(CallableType, wrapper)

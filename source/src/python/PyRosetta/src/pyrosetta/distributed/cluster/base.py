@@ -49,6 +49,7 @@ from pyrosetta.distributed.cluster.initialization import (
 )
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.type_defs import (
+    CallableType,
     PyRosettaProtocol,
     PyRosettaProtocols,
     TaskChainClientIndices,
@@ -64,8 +65,6 @@ from pyrosetta.distributed.cluster.validators import (
     _validate_resources,
     _validate_retries,
 )
-
-M = TypeVar("M", bound=Callable[..., Any])
 
 
 class TaskBase:
@@ -336,7 +335,7 @@ class TaskBase:
         )
 
 
-def capture_task_metadata(func: M) -> M:
+def capture_task_metadata(func: CallableType) -> CallableType:
     """Capture metadata into the user-defined task dictionary."""
 
     @wraps(func)
@@ -395,4 +394,4 @@ def capture_task_metadata(func: M) -> M:
             kwargs,
         )
 
-    return cast(M, wrapper)
+    return cast(CallableType, wrapper)
