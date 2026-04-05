@@ -29,11 +29,6 @@ import traceback
 import warnings
 
 from functools import partial
-from typing import (
-    Any,
-    Dict,
-    Union,
-)
 
 from pyrosetta.distributed.cluster.hkdf import (
     MaskedBytes,
@@ -44,6 +39,11 @@ from pyrosetta.distributed.cluster.hkdf import (
 from pyrosetta.distributed.cluster.logging_filters import (
     SocketAddressFilter,
     split_socket_address,
+)
+from pyrosetta.distributed.cluster.type_defs import (
+    Any,
+    Dict,
+    Union,
 )
 
 

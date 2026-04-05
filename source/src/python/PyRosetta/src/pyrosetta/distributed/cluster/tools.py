@@ -32,17 +32,6 @@ from functools import wraps
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.exceptions import PyRosettaIsNotInitializedError
 from pyrosetta.rosetta.basic import was_init_called
-from pyrosetta.rosetta.core.pose import Pose
-from typing import (
-    Any,
-    Dict,
-    Generator,
-    List,
-    Optional,
-    Tuple,
-    Union,
-    cast,
-)
 
 from pyrosetta.distributed.cluster.converters import _parse_protocols
 from pyrosetta.distributed.cluster.converter_tasks import (
@@ -65,13 +54,21 @@ from pyrosetta.distributed.cluster.serialization import (
     update_scores,
 )
 from pyrosetta.distributed.cluster.type_defs import (
+    Any,
     Callable,
+    Dict,
     FloatOrInt,
+    Generator,
+    List,
     ListOrTuple,
+    Optional,
     PoseOrPackedPose,
     PyRosettaProtocol,
     PyRosettaProtocolResults,
-    PyRosettaProtocolType,
+    PyRosettaProtocolType,    
+    Tuple,
+    Union,
+    cast,
 )
 
 

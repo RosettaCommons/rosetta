@@ -33,17 +33,6 @@ import warnings
 
 from functools import singledispatch
 from pyrosetta.distributed.packed_pose.core import PackedPose
-from typing import (
-    Any,
-    Dict,
-    Iterable,
-    List,
-    NoReturn,
-    Optional,
-    Sized,
-    Tuple,
-    Union,
-)
 
 from pyrosetta.distributed.cluster.config import (
     get_environment_cmd,
@@ -65,9 +54,18 @@ from pyrosetta.distributed.cluster.converter_tasks import (
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.type_defs import (
     AbstractSet,
+    Any,
     Callable,
+    Dict,
+    Iterable,
+    List,
+    NoReturn,
+    Optional,
     PyRosettaProtocol,
     PyRosettaProtocols,
+    Sized,
+    Tuple,
+    Union,
 )
 from pyrosetta.distributed.cluster.validators import PYROSETTACLUSTER_KEY_PREFIX, _validate_task
 

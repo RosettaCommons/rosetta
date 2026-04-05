@@ -48,14 +48,6 @@ from functools import (
 )
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.secure_unpickle import SecureSerializerBase
-from typing import (
-    Any,
-    Dict,
-    NoReturn,
-    Optional,
-    Union,
-    cast,
-)
 
 from pyrosetta.distributed.cluster.hkdf import (
     MaskedBytes,
@@ -64,8 +56,14 @@ from pyrosetta.distributed.cluster.hkdf import (
 )
 from pyrosetta.distributed.cluster.type_defs import (
     AbstractSet,
+    Any,
     CallableType,
     Deque,
+    Dict,
+    NoReturn,
+    Optional,
+    Union,
+    cast,
 )
 
 

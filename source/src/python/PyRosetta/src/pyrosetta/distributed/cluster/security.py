@@ -30,18 +30,18 @@ import shutil
 import subprocess
 
 from pathlib import Path
-from typing import (
-    Dict,
-    Iterable,
-    List,
-    Optional,
-)
 
 from pyrosetta.distributed.cluster.hkdf import (
     MaskedBytes,
     derive_task_key,
 )
 from pyrosetta.distributed.cluster.serialization import NonceCache
+from pyrosetta.distributed.cluster.type_defs import (
+    Dict,
+    Iterable,
+    List,
+    Optional,
+)
 from pyrosetta.distributed.cluster.worker_plugins import TaskSecurityPlugin
 
 

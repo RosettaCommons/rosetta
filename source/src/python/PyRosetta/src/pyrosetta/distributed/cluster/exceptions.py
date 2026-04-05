@@ -25,19 +25,17 @@ import traceback
 from functools import wraps
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from queue import Empty
-from typing import (
+
+from pyrosetta.distributed.cluster.type_defs import (
     Any,
+    CallableType,
     Dict,
     List,
     Optional,
+    PyRosettaProtocol,
     Tuple,
     Union,
     cast,
-)
-
-from pyrosetta.distributed.cluster.type_defs import (
-    CallableType,
-    PyRosettaProtocol,
 )
 
 

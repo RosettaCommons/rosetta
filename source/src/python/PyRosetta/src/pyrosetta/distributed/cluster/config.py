@@ -15,7 +15,8 @@ import warnings
 
 from functools import lru_cache
 from pyrosetta.utility import get_package_version
-from typing import (
+
+from pyrosetta.distributed.cluster.type_defs import (
     Dict,
     List,
     Tuple,

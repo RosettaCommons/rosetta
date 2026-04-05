@@ -523,16 +523,6 @@ import uuid
 from concurrent.futures import CancelledError
 from datetime import datetime
 from pyrosetta.distributed.packed_pose.core import PackedPose
-from typing import (
-    Any,
-    Dict,
-    Generator,
-    List,
-    Optional,
-    Tuple,
-    TypeVar,
-    Union,
-)
 
 from pyrosetta.distributed.cluster.base import (
     TaskBase,
@@ -582,9 +572,16 @@ from pyrosetta.distributed.cluster.task_registry import (
     UserArgs,
 )
 from pyrosetta.distributed.cluster.type_defs import (
+    Any,
+    Dict,
     FloatOrInt,
+    Generator,
+    List,
     ListOrTuple,
+    Optional,
     PyRosettaProtocol,
+    Tuple,
+    Union,
 )
 from pyrosetta.distributed.cluster.utilities import SchedulerManager
 from pyrosetta.distributed.cluster.validators import (

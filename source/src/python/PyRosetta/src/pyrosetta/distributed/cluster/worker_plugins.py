@@ -29,7 +29,6 @@ except ImportError:
 import logging
 
 from contextlib import suppress
-from typing import Optional
 
 from pyrosetta.distributed.cluster.hkdf import MaskedBytes
 from pyrosetta.distributed.cluster.logging_handlers import MultiSocketHandler
@@ -39,6 +38,7 @@ from pyrosetta.distributed.cluster.logging_filters import (
     DefaultTaskIdFilter,
 )
 from pyrosetta.distributed.cluster.serialization import NonceCache
+from pyrosetta.distributed.cluster.type_defs import Optional
 
 SOCKET_LOGGER_PLUGIN_NAME: str = "PyRosettaCluster_socket_logger_plugin"
 WORKER_LOGGER_NAME: str = "PyRosettaCluster_dask_worker"

@@ -23,7 +23,7 @@ import hashlib
 import hmac
 import types
 
-from typing import (
+from pyrosetta.distributed.cluster.type_defs import (
     Optional,
     Union,
 )

@@ -51,15 +51,6 @@ from pyrosetta.utility.initialization import (
     PyRosettaInitDictWriter,
     PyRosettaInitFileReader,
 )
-from typing import (
-    Any,
-    Dict,
-    Iterable,
-    List,
-    Optional,
-    Tuple,
-    Union,
-)
 from urllib.parse import (
     urlparse,
     urlunparse,
@@ -72,6 +63,15 @@ from pyrosetta.distributed.cluster.logging_support import RedirectToLogger
 from pyrosetta.distributed.cluster.serialization import (
     Serialization,
     update_scores,
+)
+from pyrosetta.distributed.cluster.type_defs import (
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Tuple,
+    Union,
 )
 
 METADATA_INPUT_DECOY_KEY: str = "idx_poses_input"

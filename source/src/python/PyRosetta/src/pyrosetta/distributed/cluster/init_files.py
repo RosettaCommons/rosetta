@@ -18,18 +18,18 @@ from pyrosetta.rosetta.core.pose import (
     Pose,
     get_all_comments,
 )
-from typing import (
-    Any,
-    Dict,
-    Optional,
-    Tuple,
-    Union,
-)
 
 from pyrosetta.distributed.cluster.hkdf import (
     HASHMOD,
     compare_digest,
     derive_init_key,
+)
+from pyrosetta.distributed.cluster.type_defs import (
+    Any,
+    Dict,
+    Optional,
+    Tuple,
+    Union,
 )
 
 

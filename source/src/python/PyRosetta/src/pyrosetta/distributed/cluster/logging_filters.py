@@ -9,7 +9,7 @@ __author__ = "Jason C. Klima"
 
 import logging
 
-from typing import Tuple
+from pyrosetta.distributed.cluster.type_defs import Tuple
 
 
 class DefaultProtocolNameFilter(logging.Filter):

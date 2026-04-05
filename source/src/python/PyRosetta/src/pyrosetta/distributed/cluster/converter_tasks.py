@@ -39,17 +39,6 @@ from pyrosetta.exceptions import PyRosettaIsNotInitializedError
 from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.utility.initialization import PyRosettaInitDictWriter
-from typing import (
-    Any,
-    Dict,
-    Generator,
-    Iterable,
-    List,
-    NoReturn,
-    Optional,
-    Tuple,
-    Union,
-)
 
 from pyrosetta.distributed.cluster.config import (
     get_environment_cmd,
@@ -72,7 +61,16 @@ from pyrosetta.distributed.cluster.io import (
 from pyrosetta.distributed.cluster.serialization import update_scores
 from pyrosetta.distributed.cluster.type_defs import (
     AbstractSet,
+    Any,
     Callable,
+    Dict,
+    Generator,
+    Iterable,
+    List,
+    NoReturn,
+    Optional,
+    Tuple,
+    Union,
 )
 
 

@@ -10,7 +10,6 @@ __author__ = "Jason C. Klima"
 import warnings
 
 from contextlib import suppress
-from typing import List
 
 from pyrosetta.distributed.cluster.core import PyRosettaCluster
 from pyrosetta.distributed.cluster.toolkit import (
@@ -31,6 +30,7 @@ from pyrosetta.distributed.cluster.toolkit import (
     run,
     update_scores,
 )
+from pyrosetta.distributed.cluster.type_defs import List
 
 __all__: List[str] = [
     "PackedPoseHasher",

@@ -30,8 +30,12 @@ from contextlib import (
     suppress,
 )
 from functools import wraps
-from typing import (
+
+from pyrosetta.distributed.cluster.hkdf import hmac_digest
+from pyrosetta.distributed.cluster.logging_filters import split_socket_address
+from pyrosetta.distributed.cluster.type_defs import (
     Any,
+    CallableType,
     Dict,
     Generator,
     Optional,
@@ -40,10 +44,6 @@ from typing import (
     Union,
     cast,
 )
-
-from pyrosetta.distributed.cluster.hkdf import hmac_digest
-from pyrosetta.distributed.cluster.logging_filters import split_socket_address
-from pyrosetta.distributed.cluster.type_defs import CallableType
 
 
 class HandlerMixin:

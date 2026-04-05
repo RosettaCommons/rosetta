@@ -23,20 +23,17 @@ import logging
 import os
 import sys
 
-from typing import (
+from pyrosetta.distributed.cluster.serialization import Serialization
+from pyrosetta.distributed.cluster.type_defs import (
+    AbstractSet,
     Any,
     Dict,
+    FloatOrInt,
     Iterator,
     List,
     Optional,
     Tuple,
     Union,
-)
-
-from pyrosetta.distributed.cluster.serialization import Serialization
-from pyrosetta.distributed.cluster.type_defs import (
-    AbstractSet,
-    FloatOrInt,
 )
 
 

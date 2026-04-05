@@ -23,21 +23,18 @@ import json
 import logging
 import os
 
-from typing import (
+from pyrosetta.distributed.cluster.type_defs import (
+    AbstractSet,
     Any,
     Dict,
     List,
     Optional,
     Sized,
-    Union,
-)
-
-from pyrosetta.distributed.cluster.type_defs import (
-    AbstractSet,
     TaskChainClientIndices,
     TaskChainPriorities,
     TaskChainResources,
     TaskChainRetries,
+    Union,
 )
 
 OPTION_KEYS: AbstractSet[str] = {"options", "extra_options"}

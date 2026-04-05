@@ -37,16 +37,15 @@ import os
 import sys
 import warnings
 
-from typing import (
+from pyrosetta.distributed.cluster.config import (
+    __dask_jobqueue_version__,
+    __dask_version__,
+)
+from pyrosetta.distributed.cluster.type_defs import (
     Dict,
     Optional,
     Tuple,
     Union,
-)
-
-from pyrosetta.distributed.cluster.config import (
-    __dask_jobqueue_version__,
-    __dask_version__,
 )
 
 ClusterType = Union[LocalCluster, SGECluster, SLURMCluster]

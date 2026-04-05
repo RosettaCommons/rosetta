@@ -27,14 +27,6 @@ import time
 
 from pyrosetta.distributed import requires_init
 from pyrosetta.distributed.packed_pose.core import PackedPose
-from typing import (
-    Any,
-    Dict,
-    List,
-    Optional,
-    Tuple,
-    Union,
-)
 
 from pyrosetta.distributed.cluster.base import (
     _get_residue_type_set,
@@ -58,7 +50,13 @@ from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.task_registry import UserArgs
 from pyrosetta.distributed.cluster.type_defs import (
     AbstractSet,
+    Any,
+    Dict,
+    List,
+    Optional,
     PyRosettaProtocol,
+    Tuple,
+    Union,
 )
 from pyrosetta.distributed.cluster.utilities import get_dask_worker
 from pyrosetta.distributed.cluster.validators import _validate_residue_type_sets

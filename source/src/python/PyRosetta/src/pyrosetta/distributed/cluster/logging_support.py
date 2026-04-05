@@ -31,21 +31,7 @@ import warnings
 
 from contextlib import suppress
 from functools import wraps
-from typing import (
-    Any,
-    Dict,
-    List,
-    Optional,
-    Tuple,
-    Union,
-    cast,
-)
 
-from pyrosetta.distributed.cluster.worker_plugins import (
-    SocketLoggerPlugin,
-    SOCKET_LOGGER_PLUGIN_NAME,
-    WORKER_LOGGER_NAME,
-)
 from pyrosetta.distributed.cluster.logging_filters import (
     SetProtocolNameFilter,
     SetSocketAddressFilter,
@@ -61,9 +47,21 @@ from pyrosetta.distributed.cluster.logging_listeners import (
 from pyrosetta.distributed.cluster.task_registry import UserArgs
 from pyrosetta.distributed.cluster.type_defs import (
     AbstractSet,
+    Any,
     CallableType,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Union,
+    cast,
 )
 from pyrosetta.distributed.cluster.utilities import get_dask_worker
+from pyrosetta.distributed.cluster.worker_plugins import (
+    SocketLoggerPlugin,
+    SOCKET_LOGGER_PLUGIN_NAME,
+    WORKER_LOGGER_NAME,
+)
 
 
 class RedirectToLogger:
