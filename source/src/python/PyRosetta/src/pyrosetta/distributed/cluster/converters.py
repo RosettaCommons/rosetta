@@ -263,7 +263,7 @@ def _parse_protocols(objs: Any) -> PyRosettaProtocols:
         converter.dispatch(object)(objs)
 
     @converter.register(collections.abc.Iterable)
-    def _to_list(objs: Iterable[Any]) -> PyRosettaProtocols:
+    def _to_list(objs: Iterable[PyRosettaProtocol]) -> PyRosettaProtocols:
         for obj in objs:
             if not isinstance(obj, (types.FunctionType, types.GeneratorType)):
                 raise TypeError(
@@ -789,7 +789,7 @@ def _parse_output_decoy_types(objs: Any) -> List[str]:
         return [_output_decoy_types[0]]
 
     @converter.register(collections.abc.Iterable)
-    def _from_iterable(objs: collections.abc.Iterable) -> List[str]:
+    def _from_iterable(objs: Iterable[str]) -> List[str]:
         _seen = set()
         _types = []
         for obj in objs:
@@ -824,7 +824,7 @@ def _parse_output_scorefile_types(objs: Any) -> List[str]:
         return [_output_scorefile_types[0]]
 
     @converter.register(collections.abc.Iterable)
-    def _from_iterable(objs: collections.abc.Iterable) -> List[str]:
+    def _from_iterable(objs: Iterable[str]) -> List[str]:
         _seen = set()
         _types = []
         for obj in objs:
