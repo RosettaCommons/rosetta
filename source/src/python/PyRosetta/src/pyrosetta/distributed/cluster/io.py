@@ -70,6 +70,7 @@ from pyrosetta.distributed.cluster.type_defs import (
     Iterable,
     List,
     Optional,
+    PoseOrPackedPose,
     Tuple,
     Union,
 )
@@ -155,7 +156,7 @@ class IO:
         return scores_dict
 
     def _format_result(
-        self, result: Union[Pose, PackedPose]
+        self, result: PoseOrPackedPose
     ) -> Tuple[PackedPose, str, Dict[str, Any], Dict[str, Any]]:
         """
         Given a `Pose` or `PackedPose` object, return a `tuple` object containing the `Pose` or `PackedPose`
@@ -176,8 +177,8 @@ class IO:
     def _parse_results(
         self,
         results: Union[
-            Iterable[Optional[Union[Pose, PackedPose, bytes]]],
-            Optional[Union[Pose, PackedPose]],
+            Iterable[Optional[Union[PoseOrPackedPose, bytes]]],
+            Optional[PoseOrPackedPose],
         ],
     ) -> List[Tuple[str, Dict[str, Any]]]:
         """

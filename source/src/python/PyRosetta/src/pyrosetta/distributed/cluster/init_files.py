@@ -28,6 +28,7 @@ from pyrosetta.distributed.cluster.type_defs import (
     Any,
     Dict,
     Optional,
+    PoseOrPackedPose,
     Tuple,
     Union,
 )
@@ -184,8 +185,8 @@ class InitFileSigner:
 
     def __init__(
         self,
-        input_packed_pose: Optional[Union[Pose, PackedPose]] = None,
-        output_packed_pose: Optional[Union[Pose, PackedPose]] = None,
+        input_packed_pose: Optional[PoseOrPackedPose] = None,
+        output_packed_pose: Optional[PoseOrPackedPose] = None,
         metadata: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
@@ -199,7 +200,7 @@ class InitFileSigner:
         self.out_pkl = self._to_packed_pose_hash(output_packed_pose)
         self.metadata_pkl = self._to_encoding(metadata)
 
-    def _to_packed_pose_hash(self, packed_pose: Optional[Union[Pose, PackedPose]]) -> bytes:
+    def _to_packed_pose_hash(self, packed_pose: Optional[PoseOrPackedPose]) -> bytes:
         """
         Hash a `PackedPose` object with `Pose.cache` and `Pose` comments included.
 

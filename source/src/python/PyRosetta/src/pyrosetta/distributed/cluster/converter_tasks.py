@@ -69,6 +69,7 @@ from pyrosetta.distributed.cluster.type_defs import (
     List,
     NoReturn,
     Optional,
+    PoseOrPackedPose,
     Tuple,
     Union,
 )
@@ -155,7 +156,7 @@ def maybe_issue_environment_warnings() -> None:
 
 
 def get_protocols_list_of_str(
-    input_file: Optional[Union[str, Pose, PackedPose]] = None,
+    input_file: Optional[Union[str, PoseOrPackedPose]] = None,
     scorefile: Optional[str] = None,
     decoy_name: Optional[str] = None,
 ) -> List[str]:
@@ -275,7 +276,7 @@ def get_protocols_list_of_str(
     return protocols_list_of_str
 
 
-def get_scores_dict(obj: Union[str, Pose, PackedPose]) -> Dict[str, Dict[str, Any]]:
+def get_scores_dict(obj: Union[str, PoseOrPackedPose]) -> Dict[str, Dict[str, Any]]:
     """
     Get the `PyRosettaCluster` full simulation record from an output decoy file or a `Pose` or `PackedPose`
     object from a `PyRosettaCluster` simulation. If a PyRosetta initialization file is provided, then
@@ -642,7 +643,7 @@ def to_iterable(obj: Any, func: Callable[..., Any], attr: str) -> List[Any]:
 @to_iterable.register(PackedPose)
 @to_iterable.register(dict)
 def _catch_pose_or_kwargs(
-    obj: Union[Pose, PackedPose, Dict[str, Any]], func: Callable[..., Any], attr: str
+    obj: Union[PoseOrPackedPose, Dict[str, Any]], func: Callable[..., Any], attr: str
 ) -> List[Any]:
     return [func(obj, attr)]
 
@@ -846,7 +847,7 @@ def reserve_scores_in_results(
 @reserve_scores_in_results.register(Pose)
 @reserve_scores_in_results.register(PackedPose)
 def _parse_packed(
-    obj: Union[Pose, PackedPose], _scores_dict: Dict[str, Any], protocol_name: str
+    obj: PoseOrPackedPose, _scores_dict: Dict[str, Any], protocol_name: str
 ) -> List[PackedPose]:
     packed = to_packed(obj, protocol_name)
     packed = _merge_and_update_scores(packed, _scores_dict)
@@ -1069,8 +1070,8 @@ def _from_packed(obj: PackedPose) -> bool:
 
 
 def identical_packed_pose_states(
-    packed_pose_1: Union[Pose, PackedPose],
-    packed_pose_2: Union[Pose, PackedPose],
+    packed_pose_1: PoseOrPackedPose,
+    packed_pose_2: PoseOrPackedPose,
 ) -> bool:
     """Test whether the scientific state of two `Pose` or `PackedPose` objects are identical."""
 
