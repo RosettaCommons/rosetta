@@ -40,7 +40,6 @@ from typing import (
     List,
     Optional,
     Tuple,
-    TypeVar,
     Union,
     cast,
 )
