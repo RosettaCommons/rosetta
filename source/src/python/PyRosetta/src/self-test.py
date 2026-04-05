@@ -10,11 +10,11 @@
 ## @file   self-test.py
 ## @brief  Run bindings test and demo scrips
 ## @author Sergey Lyskov
-## @author Jason C. Klima -- added `--run-single-test` option and non-blocking `process_jobs` function
+## @author Jason C. Klima -- added `--run-single-test` option for `launch_test_process` function
 
 from __future__ import print_function
 
-import os, os.path, sys, json, datetime, subprocess, argparse, time, signal, shutil, select
+import os, os.path, sys, json, datetime, subprocess, argparse, time, glob, signal, shutil
 
 def execute(message, command_line, return_='status', until_successes=False, terminate_on_failure=True, silent=False):
     print(message, flush=True);  print(command_line, flush=True)
@@ -126,10 +126,8 @@ def main(args):
         return [dir_ + '/' + f for f in os.listdir(dir_) if f.endswith('.py')  and  f!='__init__.py'  and  \
                 ( f.startswith('G') if Options.gui_only else ( True if Options.enable_gui else not f.startswith('G')) )  ]
 
-    tests = Options.args or sorted(
-        get_py_files('test') + get_py_files('demo'),
-        key=lambda f: (0 if f.startswith('test/T9') else 1, f), # Prioritize T900-series of tests to fail quickly
-    )
+    tests = Options.args or sorted( get_py_files('test') + get_py_files('demo') )
+
     print('Preparing to run:\n{}'.format('\n'.join(tests) ) , flush=True)
 
     # removing previous output files if any...
@@ -142,103 +140,70 @@ def main(args):
     if Options.jobs>1:
         def signal_handler(signal_, f):
             print('Ctrl-C pressed... killing child jobs...', flush=True)
-            for job in _jobs_:
+            for p, _ in _jobs_:
                 try:
-                    os.killpg(os.getpgid(job["process"].pid), signal.SIGKILL)
+                    os.killpg(os.getpgid(p.pid), signal.SIGKILL)
                 except Exception:
                     pass
         signal.signal(signal.SIGINT, signal_handler)
 
     def launch_test_process(test):
-        p = subprocess.Popen(
+        return subprocess.Popen(
             [sys.executable, __file__, "--run-single-test", test],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             universal_newlines=True,
-            bufsize=1,
             env={**os.environ, "PYTHONUNBUFFERED": "1"},
             start_new_session=True,
             close_fds=True,
         )
 
-        return {
-            "process": p,
-            "stdout": p.stdout,
-            "deadline": time.perf_counter() + Options.timeout,
-            "test": test,
-        }
-
-    def terminate_process(pid):
-        try:
-            os.killpg(os.getpgid(pid), signal.SIGTERM)
-            time.sleep(0.5)
-            os.killpg(os.getpgid(pid), signal.SIGKILL)
-        except Exception:
-            pass
-
-    def drain_buffer(pipe):
-        try:
-            while True:
-                rlist, _, _ = select.select([pipe], [], [], 0)
-                if not rlist:
-                    break
-                line = pipe.readline()
-                if not line:
-                    break
-                print(line, end="", flush=True)
-        except Exception:
-            pass
-
-    def process_jobs(jobs):
-        now = time.perf_counter()
-        for job in jobs[:]:
-            p = job["process"]
-            pipe = job["stdout"]
-            deadline = job["deadline"]
-            test = job["test"]
-            # Timeout check
-            if now > deadline:
-                print(f"Test timeout: {test}. Killing subprocess...", flush=True)
-                terminate_process(p.pid)
-                if pipe:
-                    drain_buffer(pipe)
-                sys.exit(1)
-            # Stream output without blocking
-            if pipe and p.poll() is None:
-                try:
-                    rlist, _, _ = select.select([pipe], [], [], 0)
-                    if rlist:
-                        line = pipe.readline()
-                        if line:
-                            print(line, end="", flush=True)
-                except Exception:
-                    pass
-            # Completion check
-            if p.poll() is not None:
-                if pipe:
-                    drain_buffer(pipe)
-                if p.returncode != 0:
-                    print(f"Test failed: {test}", flush=True)
-                    sys.exit(1)
-                jobs.remove(job)
-
-    wait_time = 0.25
-    # Launch jobs
     for t in tests:
         if Options.jobs > 1:
             while len(_jobs_) >= Options.jobs:
-                process_jobs(_jobs_)
+                for p, _test_name in _jobs_[:]:
+                    try:
+                        stdout, _ = p.communicate(timeout=Options.timeout)
+                    except subprocess.TimeoutExpired:
+                        print(f"Test timeout: {_test_name}. Killing subprocess...", flush=True)
+                        try:
+                            os.killpg(os.getpgid(p.pid), signal.SIGKILL)
+                        except Exception:
+                            pass
+                        stdout, _ = p.communicate()
+                        print(stdout, end="", flush=True)
+                        sys.exit(1)
+                    print(stdout, end="", flush=True)
+                    if p.returncode != 0:
+                        print(f"Test failed: {_test_name}", flush=True)
+                        sys.exit(1)
+                    _jobs_.remove((p, _test_name))
                 if len(_jobs_) >= Options.jobs:
-                    time.sleep(wait_time)
-            _jobs_.append(launch_test_process(t))
+                    time.sleep(0.5)
+
+            p = launch_test_process(t)
+            _jobs_.append((p, t))
+
         else:
             run_test(t)
 
     # Wait for remaining jobs
-    while _jobs_:
-        process_jobs(_jobs_)
-        if _jobs_:
-            time.sleep(wait_time)
+    for p, _test_name in _jobs_:
+        try:
+            stdout, _ = p.communicate(timeout=Options.timeout)
+        except subprocess.TimeoutExpired:
+            print(f"Test timeout: {_test_name}. Killing subprocess...", flush=True)
+            try:
+                os.killpg(os.getpgid(p.pid), signal.SIGKILL)
+            except Exception:
+                pass
+            stdout, _ = p.communicate()
+            print(stdout, end="", flush=True)
+            sys.exit(1)
+        print(stdout, end="", flush=True)
+        if p.returncode != 0:
+            print(f"Test failed: {_test_name}", flush=True)
+            sys.exit(1)
 
 
     results = dict(tests={})
@@ -246,8 +211,7 @@ def main(args):
     for t in tests:
         for _ in range(10):
             try:
-                with open(json_file_name(t)) as f:
-                    test_results = json.load(f)
+                test_results = json.load(open(json_file_name(t)))
                 break
             except Exception:
                 time.sleep(0.5)
