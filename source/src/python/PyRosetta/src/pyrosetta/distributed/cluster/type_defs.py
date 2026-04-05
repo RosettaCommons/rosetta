@@ -73,6 +73,9 @@ PyRosettaProtocolResults = Union[
 PyRosettaProtocol = Callable[..., PyRosettaProtocolResults]
 """A callable user-defined PyRosetta protocol."""
 
+PyRosettaProtocolType = TypeVar("PyRosettaProtocolType", bound=Callable[..., PyRosettaProtocolResults])
+"""A user-defined PyRosetta protocol type variable."""
+
 # Internal method type abstractions:
 
 PyRosettaProtocols = List[PyRosettaProtocol]

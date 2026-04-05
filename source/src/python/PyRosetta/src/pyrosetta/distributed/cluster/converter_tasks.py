@@ -858,7 +858,7 @@ def _parse_packed(
 @reserve_scores_in_results.register(collections.abc.Iterable)
 def _parse_iterable(
     objs: Iterable[Any], _scores_dict: Dict[str, Any], protocol_name: str
-) -> List[PackedPose]:
+) -> List[Union[PackedPose, Dict[str, Any]]]:
     out = []
     for obj in objs:
         packed = to_packed(obj, protocol_name)
@@ -868,10 +868,11 @@ def _parse_iterable(
     return out
 
 
+@reserve_scores_in_results.register(dict)
 @reserve_scores_in_results.register(type(None))
-def _default_none(
-    obj: None, _scores_dict: Dict[str, Any], protocol_name: str
-) -> PackedPose:
+def _default_none_or_dict(
+    obj: Optional[Dict[str, Any]], _scores_dict: Dict[str, Any], protocol_name: str
+) -> Union[PackedPose, Dict[str, Any]]:
     return to_packed(obj, protocol_name)
 
 

@@ -72,9 +72,8 @@ from pyrosetta.distributed.cluster.type_defs import (
     PoseOrPackedPose,
     PyRosettaProtocol,
     PyRosettaProtocolResults,
+    PyRosettaProtocolType,
 )
-
-P = TypeVar("P", bound=Callable[..., PyRosettaProtocolResults])
 
 
 def get_protocols(
@@ -394,7 +393,7 @@ def get_instance_kwargs(
         return instance_kwargs
 
 
-def reserve_scores(func: P) -> P:
+def reserve_scores(func: PyRosettaProtocolType) -> PyRosettaProtocolType:
     """
     A decorator for any user-defined PyRosetta protocol. If any non-scoreterm keys are present in the input
     `PackedPose` object's `Pose.cache` dictionary, and if they are deleted during execution of the decorated
@@ -451,10 +450,10 @@ def reserve_scores(func: P) -> P:
 
         return reserve_scores_in_results(_output, _scores_dict, func.__name__)
 
-    return cast(P, wrapper)
+    return cast(PyRosettaProtocolType, wrapper)
 
 
-def requires_packed_pose(func: P) -> P:
+def requires_packed_pose(func: PyRosettaProtocolType) -> PyRosettaProtocolType:
     """
     A decorator for any user-defined PyRosetta protocol. If a PyRosetta protocol requires that the first
     positional-or-keyword parameter be a non-empty `PackedPose` object, then immediately return any bound empty
@@ -499,7 +498,7 @@ def requires_packed_pose(func: P) -> P:
         else:
             return func(packed_pose, **kwargs)
 
-    return cast(P, wrapper)
+    return cast(PyRosettaProtocolType, wrapper)
 
 
 def reproduce(
