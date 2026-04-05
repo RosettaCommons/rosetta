@@ -24,7 +24,6 @@ import logging
 import os
 
 from typing import (
-    AbstractSet,
     Any,
     Dict,
     List,
@@ -34,6 +33,7 @@ from typing import (
 )
 
 from pyrosetta.distributed.cluster.type_defs import (
+    AbstractSet,
     TaskChainClientIndices,
     TaskChainPriorities,
     TaskChainResources,

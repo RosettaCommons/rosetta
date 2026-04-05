@@ -49,14 +49,10 @@ from functools import (
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.secure_unpickle import SecureSerializerBase
 from typing import (
-    AbstractSet,
     Any,
-    Deque,
     Dict,
-    Callable,
     NoReturn,
     Optional,
-    TypeVar,
     Union,
     cast,
 )
@@ -66,7 +62,11 @@ from pyrosetta.distributed.cluster.hkdf import (
     compare_digest,
     hmac_digest,
 )
-from pyrosetta.distributed.cluster.type_defs import CallableType
+from pyrosetta.distributed.cluster.type_defs import (
+    AbstractSet,
+    CallableType,
+    Deque,
+)
 
 
 def _parse_compression(obj: Any) -> Optional[Union[str, bool]]:

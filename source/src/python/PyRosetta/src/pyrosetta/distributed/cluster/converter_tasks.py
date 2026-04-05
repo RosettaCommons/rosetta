@@ -40,9 +40,7 @@ from pyrosetta.rosetta.basic import was_init_called
 from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.utility.initialization import PyRosettaInitDictWriter
 from typing import (
-    AbstractSet,
     Any,
-    Callable,
     Dict,
     Generator,
     Iterable,
@@ -72,6 +70,10 @@ from pyrosetta.distributed.cluster.io import (
     sign_init_file_metadata_and_poses,
 )
 from pyrosetta.distributed.cluster.serialization import update_scores
+from pyrosetta.distributed.cluster.type_defs import (
+    AbstractSet,
+    Callable,
+)
 
 
 @contextmanager

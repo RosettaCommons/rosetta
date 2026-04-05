@@ -32,7 +32,6 @@ import warnings
 from contextlib import suppress
 from functools import wraps
 from typing import (
-    AbstractSet,
     Any,
     Dict,
     List,
@@ -60,7 +59,10 @@ from pyrosetta.distributed.cluster.logging_listeners import (
     SocketListener,
 )
 from pyrosetta.distributed.cluster.task_registry import UserArgs
-from pyrosetta.distributed.cluster.type_defs import CallableType
+from pyrosetta.distributed.cluster.type_defs import (
+    AbstractSet,
+    CallableType,
+)
 from pyrosetta.distributed.cluster.utilities import get_dask_worker
 
 

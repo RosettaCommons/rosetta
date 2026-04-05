@@ -10,9 +10,17 @@ __author__ = "Jason C. Klima"
 import sys
 
 if sys.version_info[:2] < (3, 9):
-    from typing import Callable
+    from typing import (
+        AbstractSet,
+        Callable,
+        Deque,
+    )
 else:
-    from collections.abc import Callable
+    from collections import deque as Deque
+    from collections.abc import (
+        Callable,
+        Set as AbstractSet,
+    )
 
 from pyrosetta import Pose
 from pyrosetta.distributed.packed_pose.core import PackedPose

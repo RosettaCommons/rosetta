@@ -34,9 +34,7 @@ import warnings
 from functools import singledispatch
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
-    AbstractSet,
     Any,
-    Callable,
     Dict,
     Iterable,
     List,
@@ -66,6 +64,8 @@ from pyrosetta.distributed.cluster.converter_tasks import (
 )
 from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.type_defs import (
+    AbstractSet,
+    Callable,
     PyRosettaProtocol,
     PyRosettaProtocols,
 )

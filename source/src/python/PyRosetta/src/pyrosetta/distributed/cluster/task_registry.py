@@ -24,7 +24,6 @@ import os
 import sys
 
 from typing import (
-    AbstractSet,
     Any,
     Dict,
     Iterator,
@@ -35,7 +34,10 @@ from typing import (
 )
 
 from pyrosetta.distributed.cluster.serialization import Serialization
-from pyrosetta.distributed.cluster.type_defs import FloatOrInt
+from pyrosetta.distributed.cluster.type_defs import (
+    AbstractSet,
+    FloatOrInt,
+)
 
 
 @attr.define(kw_only=True, slots=True, frozen=True, auto_attribs=True)

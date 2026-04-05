@@ -30,10 +30,11 @@ import pyrosetta.distributed
 from pyrosetta.exceptions import PyRosettaIsNotInitializedError
 from pyrosetta.rosetta.basic import was_init_called
 from typing import (
-    AbstractSet,
     Dict,
     List,
 )
+
+from pyrosetta.distributed.cluster.type_defs import AbstractSet
 
 
 def _get_pyrosetta_init_args() -> List[str]:
