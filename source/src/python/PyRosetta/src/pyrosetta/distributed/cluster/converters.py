@@ -744,7 +744,7 @@ def _parse_tasks(objs: Any) -> List[Dict[str, Any]]:
 
     @converter.register(types.FunctionType)
     def _from_function(
-        obj: Callable[..., Iterable[Any]]
+        obj: Callable[..., Iterable[Dict[str, Any]]]
     ) -> List[Dict[str, Any]]:
         _tasks = []
         for obj in objs():
@@ -758,7 +758,7 @@ def _parse_tasks(objs: Any) -> List[Dict[str, Any]]:
 
     @converter.register(collections.abc.Iterable)
     @converter.register(types.GeneratorType)
-    def _from_iterable(obj: Iterable[Any]) -> List[Dict[str, Any]]:
+    def _from_iterable(obj: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
         _tasks = []
         for obj in objs:
             if isinstance(obj, dict):
