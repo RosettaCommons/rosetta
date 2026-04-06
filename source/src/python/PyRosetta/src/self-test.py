@@ -214,7 +214,8 @@ def main(args):
     for t in tests:
         for _ in range(10):
             try:
-                test_results = json.load(open(json_file_name(t)))
+                with open(json_file_name(t), "r") as f:
+                    test_results = json.load(f)
                 break
             except Exception:
                 time.sleep(0.5)
