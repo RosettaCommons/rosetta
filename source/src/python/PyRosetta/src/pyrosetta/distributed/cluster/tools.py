@@ -653,7 +653,7 @@ def reproduce(
             for successive reproductions; however, some `ScoreFunction` corrections may be critical for decoy
             reproducibility. Therefore, it may be prudent to set this keyword argument value to `False` unless
             there is absolute certainty that `ScoreFunction` corrections may be skipped without influencing
-            decoy reroducibility. If reproducing from a PyRosetta initialization file, it is recommended to also
+            decoy reproducibility. If reproducing from a PyRosetta initialization file, it is recommended to also
             set the value of the `skip_corrections` key from the `init_from_file_kwargs` keyword argument value
             to the same boolean value.
 
