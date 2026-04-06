@@ -862,15 +862,29 @@ def secure_read_pickle(
     storage_options: Optional[Dict[str, Any]] = None,
 ) -> pandas.DataFrame:
     """
-    Secure replacement for `pandas.read_pickle` for file-like objects using the `SecureSerializerBase` class
-    in PyRosetta. Usage requires adding "pandas" as a secure package to unpickle in PyRosetta.
+    Proxy for `pandas.read_pickle` for file-like objects using the `SecureSerializerBase` class in PyRosetta.
+    Usage requires adding "pandas" as a secure package to unpickle in PyRosetta.
 
     *Warning*: This function uses the `pickle` module to deserialize pickled `pandas.DataFrame` objects. Using
     the `pickle` module is not secure, so please only run with input files you trust. Learn more about the
     `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
 
+    Args:
+        `filepath_or_buffer`: `str`
+            See `pandas.read_pickle <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_pickle.html>`_.
+
+        `compression`: `str | dict[str, Any] | None`
+            See `pandas.read_pickle <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_pickle.html>`_.
+
+            Default: `"infer"`
+
+        `storage_options`: `dict[str, Any] | None`
+            See `pandas.read_pickle <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_pickle.html>`_.
+
+            Default: `None`
+
     Example:
-        >>> pyrosetta.secure_unpickle.add_secure_package('pandas')
+        >>> pyrosetta.secure_unpickle.add_secure_package("pandas")
         >>> secure_read_pickle("/path/to/my/scorefile.gz")
 
     Note:
@@ -955,7 +969,8 @@ def _is_pandas_object_pyarrow_backed(obj: Union[pandas.DataFrame, pandas.Series]
     for more information.
 
     Args:
-        obj: An input `pandas.DataFrame` or `pandas.Series` object to test.
+        `obj`: `pandas.DataFrame | pandas.Series`
+            An input `pandas.DataFrame` or `pandas.Series` object to test.
 
     Returns:
         A `bool` object.

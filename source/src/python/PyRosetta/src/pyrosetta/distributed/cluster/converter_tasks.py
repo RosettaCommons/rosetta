@@ -169,7 +169,7 @@ def get_protocols_list_of_str(
     `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Args:
-        `input_file`:
+        `input_file`: `str | Pose | PackedPose | None`
             A `str` object specifying the path to the ".pdb", ".pdb.bz2", ".pkl_pose", ".pkl_pose.bz2",
             ".b64_pose", ".b64_pose.bz2", ".init" or ".init.bz2" file from which to extract `PyRosettaCluster`
             instance attributes. If `input_file` is provided, then ignore the `scorefile` and `decoy_name`
@@ -181,9 +181,9 @@ def get_protocols_list_of_str(
 
             Default: `None`
 
-        `scorefile`:
+        `scorefile`: `str | None`
             A `str` object specifying the path to a JSON Lines (JSONL)-formatted scorefile or pickled
-            `pandas.DataFrame` scorefile from a PyRosettaCluster simulation from which to extract
+            `pandas.DataFrame` scorefile from a `PyRosettaCluster` simulation from which to extract
             `PyRosettaCluster` instance attributes. If `scorefile` is provided, then `decoy_name` must also be
             provided. In order to use a scorefile, it must contain full simulation records from the original
             `PyRosettaCluster` simulation; i.e., the `simulation_records_in_scorefile` keyword argument value
@@ -194,7 +194,7 @@ def get_protocols_list_of_str(
 
             Default: `None`
 
-        `decoy_name`:
+        `decoy_name`: `str | None`
             A `str` object specifying the decoy name for which to extract `PyRosettaCluster` instance
             attributes. If `decoy_name` is provided, then `scorefile` must also be provided.
 
@@ -290,7 +290,7 @@ def get_scores_dict(obj: Union[str, PoseOrPackedPose]) -> Dict[str, Dict[str, An
     and its security `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Args:
-        `obj`:
+        `obj`: `str | Pose | PackedPose`
             A required `str` object specifying the path to the ".pdb", ".pdb.bz2", ".pkl_pose",
             ".pkl_pose.bz2", ".b64_pose", ".b64_pose.bz2", ".init" or ".init.bz2" file from which to extract
             `PyRosettaCluster` instance attributes. If `input_file` is provided, then ignore the `scorefile`
@@ -414,7 +414,7 @@ def export_init_file(
     and its security `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Args:
-        `output_file`:
+        `output_file`: `str`
             A required `str` object specifying a filesystem path to an output decoy file. The file must end in
             either: ".pdb", ".pdb.bz2", ".pkl_pose", ".pkl_pose.bz2", ".b64_pose", or ".b64_pose.bz2". Note
             that ".pkl_pose", ".pkl_pose.bz2", ".b64_pose", and ".b64_pose.bz2", files contain pickled `Pose`
@@ -422,7 +422,7 @@ def export_init_file(
             `export_init_file` function, but please still only input these file types if you know and trust
             their source. Learn more `here <https://docs.python.org/3/library/pickle.html>`_.
 
-        `output_init_file`:
+        `output_init_file`: `str | None`
             A `str` object specifying the output PyRosetta initialization file path ending with ".init". If
             `None` is provided, then the PyRosetta initialization file path is derived from the `output_file`
             argument value by replacing the file extension with ".init" (or ".init.bz2" when the `compressed`
@@ -430,7 +430,7 @@ def export_init_file(
 
             Default: `None`
 
-        `compressed`:
+        `compressed`: `bool | None`
             A `bool` object specifying whether or not to compress the output PyRosetta initialization file
             with the `bzip2` library, resulting in an output PyRosetta initialization file with a ".init.bz2"
             filename extension. If `None`, then `False`.
@@ -527,7 +527,8 @@ def export_init_file(
                         f.write(init_file_json)
                 print(
                     f"Exported `PyRosettaCluster` output decoy file '{output_file}' to "
-                    + f"PyRosetta initialization file: '{output_init_file}'"
+                    + f"PyRosetta initialization file: '{output_init_file}'",
+                    flush=True,
                 )
             else:
                 raise ValueError(

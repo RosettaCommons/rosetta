@@ -48,7 +48,7 @@ class PackedPoseHasher:
 
     def __init__(
         self,
-        packed_pose: Optional[Union[PackedPose, Pose]] = None,
+        packed_pose: Optional[PoseOrPackedPose] = None,
         include_cache: bool = False,
         include_comments: bool = False,
     ) -> None:
@@ -60,18 +60,18 @@ class PackedPoseHasher:
         `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
 
         Args:
-            `packed_pose`:
+            `packed_pose`: `Pose | PackedPose | None`
                 A `PackedPose` or `Pose` object to hash. If `None`, then other keyword arguments have no effect
                 and a constant hash is returned from the `PackedPoseHasher.digest` method.
 
                 Default: `None`
 
-            `include_cache`:
+            `include_cache`: `bool`
                 A `bool` object specifying whether or not to include the `Pose.cache` entries.
 
                 Default: `False`
 
-             `include_comments`:
+             `include_comments`: `bool`
                 A `bool` object specifying whether or not to include the `Pose` comments entries.
 
                 Default: `False`

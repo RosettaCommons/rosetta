@@ -93,7 +93,7 @@ def get_protocols(
     `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Args:
-        `protocols`:
+        `protocols`: `PyRosettaProtocol | list[PyRosettaProtocol] | tuple[PyRosettaProtocol, ...] | None`
             An ordered iterable of callables (each of `types.GeneratorType` and/or `types.FunctionType` type) or
             a single callable of type `types.GeneratorType` or `types.FunctionType`, specifying the user-defined
             PyRosetta protocol(s) to execute for the reproduction simulation. If `None`, then the PyRosetta
@@ -102,7 +102,7 @@ def get_protocols(
 
             Default: `None`
 
-        `input_file`:
+        `input_file`: `str | Pose | PackedPose | None`
             A `str` object specifying the path to the ".pdb", ".pdb.bz2", ".pkl_pose", ".pkl_pose.bz2",
             ".b64_pose", ".b64_pose.bz2", ".init" or ".init.bz2" file from which to extract `PyRosettaCluster`
             instance attributes. If `input_file` is provided, then ignore the `scorefile` and `decoy_name`
@@ -114,9 +114,9 @@ def get_protocols(
 
             Default: `None`
 
-        `scorefile`:
+        `scorefile`: `str | None`
             A `str` object specifying the path to a JSON Lines (JSONL)-formatted scorefile or pickled
-            `pandas.DataFrame` scorefile from a PyRosettaCluster simulation from which to extract
+            `pandas.DataFrame` scorefile from a `PyRosettaCluster` simulation from which to extract
             `PyRosettaCluster` instance attributes. If `scorefile` is provided, then `decoy_name` must also be
             provided. In order to use a scorefile, it must contain full simulation records from the original
             `PyRosettaCluster` simulation; i.e., the `simulation_records_in_scorefile` keyword argument value
@@ -127,7 +127,7 @@ def get_protocols(
 
             Default: `None`
 
-        `decoy_name`:
+        `decoy_name`: `str | None`
             A `str` object specifying the decoy name for which to extract `PyRosettaCluster` instance
             attributes. If `decoy_name` is provided, then `scorefile` must also be provided.
 
@@ -225,7 +225,7 @@ def get_instance_kwargs(
     `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Args:
-        `input_file`:
+        `input_file`: `str | Pose | PackedPose | None`
             A `str` object specifying the path to the ".pdb", ".pdb.bz2", ".pkl_pose", ".pkl_pose.bz2",
             ".b64_pose", ".b64_pose.bz2", ".init" or ".init.bz2" file from which to extract `PyRosettaCluster`
             instance attributes. If `input_file` is provided, then ignore the `scorefile` and `decoy_name`
@@ -237,9 +237,9 @@ def get_instance_kwargs(
 
             Default: `None`
 
-        `scorefile`:
+        `scorefile`: `str | None`
             A `str` object specifying the path to a JSON Lines (JSONL)-formatted scorefile or pickled
-            `pandas.DataFrame` scorefile from a PyRosettaCluster simulation from which to extract
+            `pandas.DataFrame` scorefile from a `PyRosettaCluster` simulation from which to extract
             `PyRosettaCluster` instance attributes. If `scorefile` is provided, then `decoy_name` must also be
             provided. In order to use a scorefile, it must contain full simulation records from the original
             `PyRosettaCluster` simulation; i.e., the `simulation_records_in_scorefile` keyword argument value
@@ -250,20 +250,20 @@ def get_instance_kwargs(
 
             Default: `None`
 
-        `decoy_name`:
+        `decoy_name`: `str | None`
             A `str` object specifying the decoy name for which to extract `PyRosettaCluster` instance
             attributes. If `decoy_name` is provided, then `scorefile` must also be provided.
 
             Default: `None`
 
-        `skip_corrections`:
+        `skip_corrections`: `bool | None`
             A `bool` object specifying whether or not to skip any `ScoreFunction` corrections specified in the
             `PyRosettaCluster` task's PyRosetta initialization options (extracted from the full simulation
             record in the `input_file` or `scorefile` keyword argument value). If `None`, then `False`.
 
             Default: `None`
 
-        `with_metadata_kwargs`:
+        `with_metadata_kwargs`: `bool | None`
             A `bool` object specifying whether or not to return a `tuple` object with the `PyRosettaCluster`
             instance attributes as the first element and the "metadata" keyword arguments as the second element.
             If `None`, then `False`.
@@ -412,11 +412,11 @@ def reserve_scores(func: PyRosettaProtocolType) -> PyRosettaProtocolType:
         ... def my_pyrosetta_protocol(packed_pose, /, **kwargs):
         ...     from pyrosetta import MyMover
         ...     pose = packed_pose.pose
-        ...     MyMover().apply(pose)
+        ...     MyMover().apply(pose) # Deletes scores
         ...     return pose
 
     Args:
-        `func`:
+        `func`: `PyRosettaProtocol`
             A callable of type `types.GeneratorType` or `types.FunctionType` representing a user-defined
             PyRosetta protocol.
 
@@ -468,7 +468,7 @@ def requires_packed_pose(func: PyRosettaProtocolType) -> PyRosettaProtocolType:
         ...     return packed_pose
 
     Args:
-        `func`:
+        `func`: `PyRosettaProtocol`
             A callable of type `types.GeneratorType` or `types.FunctionType` representing a user-defined
             PyRosetta protocol.
 
@@ -523,7 +523,7 @@ def reproduce(
     `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Args:
-        `input_file`:
+        `input_file`: `str | None`
             A `str` object specifying the path to the ".pdb", ".pdb.bz2", ".pkl_pose", ".pkl_pose.bz2",
             ".b64_pose", ".b64_pose.bz2", ".init" or ".init.bz2" file from which to extract `PyRosettaCluster`
             instance attributes. If `input_file` is provided, then ignore the `scorefile` and `decoy_name`
@@ -537,9 +537,9 @@ def reproduce(
 
             Default: `None`
 
-        `scorefile`:
+        `scorefile`: `str | None`
             A `str` object specifying the path to a JSON Lines (JSONL)-formatted scorefile or pickled
-            `pandas.DataFrame` scorefile from a PyRosettaCluster simulation from which to extract
+            `pandas.DataFrame` scorefile from a `PyRosettaCluster` simulation from which to extract
             `PyRosettaCluster` instance attributes. If `scorefile` is provided, then `decoy_name` must also be
             provided. In order to use a scorefile, it must contain full simulation records from the original
             `PyRosettaCluster` simulation; i.e., the `simulation_records_in_scorefile` keyword argument value
@@ -550,13 +550,13 @@ def reproduce(
 
             Default: `None`
 
-        `decoy_name`:
+        `decoy_name`: `str | None`
             A `str` object specifying the decoy name for which to extract `PyRosettaCluster` instance
             attributes. If `decoy_name` is provided, then `scorefile` must also be provided.
 
             Default: `None`
 
-        `protocols`:
+        `protocols`: `PyRosettaProtocol | list[PyRosettaProtocol] | tuple[PyRosettaProtocol, ...] | None`
             An ordered iterable of callables (each of `types.GeneratorType` and/or `types.FunctionType` type) or
             a single callable of type `types.GeneratorType` or `types.FunctionType`, specifying the user-defined
             PyRosetta protocol(s) to execute for the reproduction simulation. If `None`, the PyRosetta protocols
@@ -565,7 +565,7 @@ def reproduce(
 
             Default: `None`
 
-        `client`:
+        `client`: `distributed.Client | None`
             An initialized Dask `distributed.Client` object to be used as the Dask client interface to the local
             or remote Dask cluster. If `None`, then `PyRosettaCluster` initializes its own Dask client based on
             the `scheduler` keyword argument value (see `instance_kwargs` keyword argument). Deprecated by the
@@ -574,7 +574,7 @@ def reproduce(
 
             Default: `None`
 
-        `clients`:
+        `clients`: `list[distributed.Client] | tuple[distributed.Client, ...] | None`
             A `list` or `tuple` object of initialized Dask `distributed.Client` objects to be used as the Dask
             client interface(s) to the local or remote Dask cluster(s). If `None`, then `PyRosettaCluster`
             initializes its own Dask client based on the `scheduler` keyword argument value (see
@@ -584,19 +584,20 @@ def reproduce(
 
             Default: `None`
 
-        `input_packed_pose`:
+        `input_packed_pose`: `Pose | PackedPose | None`
             An input `PackedPose` object that is accessible via the first positional-or-keyword parameter of the
             first user-defined PyRosetta protocol.
+
             Default: `None`
 
-        `instance_kwargs`:
+        `instance_kwargs`: `dict[str, Any] | None`
             A `dict` object of valid `PyRosettaCluster` keyword arguments which will override any
             `PyRosettaCluster` instance attributes that were used to generate the original decoy and that were
             stored in the full simulation record.
 
             Default: `None`
 
-        `clients_indices`:
+        `clients_indices`: `list[int] | tuple[int, ...] | None`
             A `list` or `tuple` object of `int` objects, where each `int` object represents a zero-based index
             corresponding to the initialized Dask `distributed.Client` object(s) passed to the `clients`
             keyword argument value. If not `None`, then the length of the `clients_indices` object must equal
@@ -604,7 +605,7 @@ def reproduce(
 
             Default: `None`
 
-        `resources`:
+        `resources`: `list[dict[str, float | int] | None] | tuple[dict[str, float | int] | None, ...] | None`
             A `list` or `tuple` object of `dict` objects, where each `dict` object represents an abstract,
             arbitrary resource to constrain which Dask workers execute the user-defined PyRosetta protocols. If
             `None`, then do not impose resource constaints on any PyRosetta protocols. If not `None`, then the
@@ -622,7 +623,7 @@ def reproduce(
 
             Default: `None`
 
-        `retries`:
+        `retries`: `list[int] | tuple[int, ...] | int | None`
             A `list` or `tuple` of `int` objects, where each `int` object (≥0) sets the number of allowed
             automatic retries of each failed task that was applied to the corresponding user-defined PyRosetta
             protocol (i.e., indexed the same as `client_indices` keyword argument value). If an `int` object
@@ -648,7 +649,7 @@ def reproduce(
 
             Default: `None`
 
-        `skip_corrections`:
+        `skip_corrections`: `bool`
             A `bool` object specifying whether or not to skip any `ScoreFunction` corrections specified in the
             values of the `"options"` or `"extra_options"` keys from task dictionary of the original simulation.
             (extracted from the full simulation record from either the `input_file` or `scorefile` keyword
@@ -667,7 +668,7 @@ def reproduce(
 
             Default: `False`
 
-        `init_from_file_kwargs`:
+        `init_from_file_kwargs`: `dict[str, Any] | None`
             A `dict` object to override the default `pyrosetta.init_from_file` keyword arguments if the
             `input_file` keyword argument value is a path to a PyRosetta initialization file, otherwise it is
             has no effect. See the
@@ -792,7 +793,7 @@ def produce(**kwargs: Any) -> None:
     `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Args:
-        `**kwargs`:
+        `**kwargs`: `Any`
             See the `PyRosettaCluster` docstring. The keyword arguments must also include `protocols`, an
             iterable object of callable or generator function objects specifying an ordered sequence of
             user-defined PyRosetta protocols to execute for the simulation (see `PyRosettaCluster.distribute`

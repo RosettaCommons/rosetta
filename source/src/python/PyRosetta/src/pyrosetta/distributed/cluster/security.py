@@ -205,7 +205,7 @@ def generate_dask_tls_security(
           so they can be safely deleted after the leaf certificate has been issued.
 
     Args:
-        `output_dir`:
+        `output_dir`: `str`
             A `str` object representing the directory where all certificate and key files will be written. The
             directory will be created if it does not exist. All generated files (CA certificate, leaf
             certificate, leaf private key, and optional bookkeeping files) are output to this single directory.
@@ -215,46 +215,46 @@ def generate_dask_tls_security(
 
             Default: `"."`
 
-        `common_name`:
+        `common_name`: `str`
             A `str` object representing the "Common Name" placed inside the leaf certificate. This is a
             human-readable identifier that typically names the system or service to which the certificate
             belongs.
 
             Default: `"dask_tls_security"`
 
-        `days`:
+        `days`: `int`
             An `int` object representing the number of days the certificates will be valid before expiring.
 
             Default: `365`
 
-        `openssl_bin`:
+        `openssl_bin`: `str`
             A `str` object representing the path or name of the `openssl` executable. If the OpenSSL executable
             is not in the system "PATH" environment variable, then the full path must be provided.
 
             Default: `"openssl"`
 
-        `overwrite`:
+        `overwrite`: `bool`
             A `bool` object specifying whether or not to overwrite existing files in 'output_dir' keyword
             argument value. If `True` is provided, the same filenames will be deleted and replaced with newly
             generated ones. If `False` is provided, then existing files are re-used.
 
             Default: `False`
 
-        `san_dns`:
+        `san_dns`: `Iterable[str] | None`
             An optional iterable of `str` object representing a list of hostnames (e.g., 
             `["localhost", "cluster.example.com"]`) that should be accepted when verifying the certificate.
             These are included in an extension field called "Subject Alternative Names".
 
             Default: `None`
 
-        `san_ip`:
+        `san_ip`: `Iterable[str] | None`
             An optional iterable of `str` object representing a list of IP addresses (e.g.,
             `["127.0.0.1", "111.111.111.1"]`) that should be accepted when verifying the certificate. These are
             also included in the "Subject Alternative Names" field.
 
             Default: `None`
 
-        `cleanup`:
+        `cleanup`: `bool`
             An optional `bool` object specifying whether or not to delete the `index.txt` and `serial`
             bookkeeping files used by OpenSSL.
 
