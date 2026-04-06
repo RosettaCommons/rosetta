@@ -448,11 +448,11 @@ def requires_packed_pose(func: PyRosettaProtocolType) -> PyRosettaProtocolType:
     PyRosetta protocol. If using `PyRosettaCluster(filter_results=False)` and the preceding PyRosetta protocol
     produces either `None`, an empty `Pose` object, or an empty `PackedPose` object, then an empty `PackedPose`
     object is distributed to the next PyRosetta protocol, in which case the next protocol and/or any downstream
-    protocols are skipped if they are decorated with this decorator. If using
+    PyRosetta protocols are skipped if they are decorated with this decorator. If using
     `PyRosettaCluster(ignore_errors=True)` and a standard Python exception is raised or a Rosetta segmentation
     fault is thrown in the preceding PyRosetta protocol, then `None` is distributed to the next PyRosetta
-    protocol, in which case the next PyRosetta protocol and/or any downstream protocols are skipped if they are
-    decorated with this decorator.
+    protocol, in which case the next PyRosetta protocol and/or any downstream PyRosetta protocols are skipped if
+    they are decorated with this decorator.
 
     Example:
 
