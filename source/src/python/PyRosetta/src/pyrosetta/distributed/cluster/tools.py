@@ -84,13 +84,10 @@ def get_protocols(
     If the `protocols` keyword argument value is `None`, it is recommended to validate that the returned
     PyRosetta protocols are indeed those executed in the original `PyRosettaCluster` simulation.
 
-    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
-    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
-    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
-
-    *Warning*: This function uses the `pickle` module to deserialize pickled `pandas.DataFrame` objects. Using
-    the `pickle` module is not secure, so please only run with input files you trust. Learn more about the
-    `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects and pickled
+    `pandas.DataFrame` objects. Using the `pickle` module is not secure, so please only run with input files
+    you trust. Learn more about the `pickle` module and its security
+    `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Args:
         `protocols`: `PyRosettaProtocol | list[PyRosettaProtocol] | tuple[PyRosettaProtocol, ...] | None`
@@ -216,13 +213,10 @@ def get_instance_kwargs(
     that was written by `PyRosettaCluster` and a decoy name, return the `PyRosettaCluster` instance attributes
     (and optionally the "metadata" keyword arguments) needed to reproduce the decoy using `PyRosettaCluster`.
 
-    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
-    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
-    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
-
-    *Warning*: This function uses the `pickle` module to deserialize pickled `pandas.DataFrame` objects. Using
-    the `pickle` module is not secure, so please only run with input files you trust. Learn more about the
-    `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects and pickled
+    `pandas.DataFrame` objects. Using the `pickle` module is not secure, so please only run with input files
+    you trust. Learn more about the `pickle` module and its security
+    `here <https://docs.python.org/3/library/pickle.html>`_.
 
     Args:
         `input_file`: `str | Pose | PackedPose | None`
