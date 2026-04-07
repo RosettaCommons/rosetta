@@ -13,7 +13,7 @@ try:
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.io' requires the "
-        + "third-party packages 'pandas' and 'toolz' as a dependencies!\n"
+        + "third-party packages 'pandas' and 'toolz' as dependencies!\n"
         + "Please install these packages into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/toolz/\n"
@@ -187,7 +187,7 @@ class IO:
         `here <https://docs.python.org/3/library/pickle.html>`_.
 
         Args:
-            `results`:
+            `results`: `Pose | PackedPose | bytes | Iterable[Pose | PackedPose | bytes] | None`
                 An `Pose`, `PackedPose`, `bytes` or `None` object, or an iterable of `Pose`, `PackedPose`,
                 or `bytes` objects.
 
@@ -759,7 +759,7 @@ def sign_init_file_metadata_and_poses(
     output_packed_pose: Optional[PackedPose] = None,
 ) -> Tuple[Dict[str, Any], List[PackedPose]]:
     """
-    Sign PyRosetta initialization file 'metadata' and 'poses' keys.
+    Sign PyRosetta initialization file "metadata" and "poses" keys.
 
     *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
     module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
