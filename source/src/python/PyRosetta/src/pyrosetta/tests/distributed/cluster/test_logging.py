@@ -192,10 +192,10 @@ class LoggingTest(unittest.TestCase):
                 lines = f.readlines()
                 key = "PyRosettaCluster_foo"
                 expected_msg = (
-                    f"User-provided PyRosetta protocol 'my_pyrosetta_protocol_1' returned one object of type `dict`, "
+                    f"User-defined PyRosetta protocol 'my_pyrosetta_protocol_1' returned one object of type `dict`, "
                     + f"but a key starting with 'PyRosettaCluster_' was added: '{key}'. "
-                    + f"Task keys starting with 'PyRosettaCluster_' are reserved for PyRosettaCluster! "
-                    + f"Automatically ignoring the '{key}' key from the returned task."
+                    + f"Task keys starting with 'PyRosettaCluster_' are reserved for `PyRosettaCluster`! "
+                    + f"Automatically ignoring the '{key}' key from the returned task dictionary."
                 )
                 warning_msgs = []
                 for line in lines:
@@ -215,9 +215,9 @@ class LoggingTest(unittest.TestCase):
                 for key, class_name in score_key_class_name_dict.items():
                     expected_msg = (
                         f"Removing score key '{key}' with value of type '<class '{class_name}'>' before "
-                        "saving PyRosettaCluster result! Only JSON-serializable score values can be written to output files. "
-                        "Consider custom serializing the value to save this score or removing the key from the `pose.cache` "
-                        "dictionary to remove this warning message."
+                        "saving `PyRosettaCluster` result! Only JSON-serializable scoring data can be written to output decoy files "
+                        "and scorefiles. Consider custom serializing the value to save this score or removing the key from the `Pose.cache` "
+                        "dictionary to silence this warning message."
                     )
                     self.assertIn(expected_msg, warning_msgs)
             with open(prc_log, "r") as f:
