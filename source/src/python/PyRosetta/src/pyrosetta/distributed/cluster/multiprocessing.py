@@ -9,7 +9,10 @@ __author__ = "Jason C. Klima"
 
 try:
     import billiard
-    from billiard import Queue, Process
+    from billiard import (
+        Queue,
+        Process,
+    )
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.multiprocessing' requires the "
@@ -29,8 +32,8 @@ from pyrosetta.distributed import requires_init
 from pyrosetta.distributed.packed_pose.core import PackedPose
 
 from pyrosetta.distributed.cluster.base import (
-    _get_residue_type_set,
     capture_task_metadata,
+    _get_residue_type_set,
 )
 from pyrosetta.distributed.cluster.converters import (
     _parse_empty_queue,
@@ -52,6 +55,7 @@ from pyrosetta.distributed.cluster.type_defs import (
     AbstractSet,
     Any,
     Dict,
+    FloatOrInt,
     List,
     Optional,
     PyRosettaProtocol,
@@ -62,12 +66,12 @@ from pyrosetta.distributed.cluster.utilities import get_dask_worker
 from pyrosetta.distributed.cluster.validators import _validate_residue_type_sets
 
 
-def _maybe_delay(dt: float, max_delay_time: Union[float, int], logger: logging.Logger) -> None:
+def _maybe_delay(dt: float, max_delay_time: FloatOrInt, logger: logging.Logger) -> None:
     """Maybe delay the Dask worker result."""
 
     delay_time = max_delay_time - dt
     if delay_time > 0.0:
-        logger.info(f"Delaying dask worker results for {delay_time:0.6f} seconds.")
+        logger.info(f"Delaying Dask worker results for {delay_time:0.6f} seconds.")
         time.sleep(delay_time)
 
 

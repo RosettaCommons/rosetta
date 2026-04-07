@@ -67,7 +67,10 @@ from pyrosetta.distributed.cluster.type_defs import (
     Tuple,
     Union,
 )
-from pyrosetta.distributed.cluster.validators import PYROSETTACLUSTER_KEY_PREFIX, _validate_task
+from pyrosetta.distributed.cluster.validators import (
+    PYROSETTACLUSTER_KEY_PREFIX,
+    _validate_task,
+)
 
 
 def _parse_filter_results(obj: Any) -> bool:

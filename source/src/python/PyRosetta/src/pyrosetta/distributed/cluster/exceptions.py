@@ -8,7 +8,11 @@
 __author__ = "Jason C. Klima"
 
 try:
-    from billiard import Process, Queue, WorkerLostError
+    from billiard import (
+        Process,
+        Queue,
+        WorkerLostError,
+    )
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.exceptions' requires the "

@@ -31,12 +31,12 @@ import logging
 from contextlib import suppress
 
 from pyrosetta.distributed.cluster.hkdf import MaskedBytes
-from pyrosetta.distributed.cluster.logging_handlers import MultiSocketHandler
 from pyrosetta.distributed.cluster.logging_filters import (
     DefaultProtocolNameFilter,
     DefaultSocketAddressFilter,
     DefaultTaskIdFilter,
 )
+from pyrosetta.distributed.cluster.logging_handlers import MultiSocketHandler
 from pyrosetta.distributed.cluster.serialization import NonceCache
 from pyrosetta.distributed.cluster.type_defs import Optional
 

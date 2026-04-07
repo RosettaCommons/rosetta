@@ -13,7 +13,6 @@ import pyrosetta
 import pyrosetta.distributed.io as io
 import struct
 
-from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.rosetta.core.pose import (
     Pose,
     get_all_comments,
@@ -30,7 +29,6 @@ from pyrosetta.distributed.cluster.type_defs import (
     Optional,
     PoseOrPackedPose,
     Tuple,
-    Union,
 )
 
 
