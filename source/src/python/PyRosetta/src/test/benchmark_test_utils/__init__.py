@@ -32,7 +32,7 @@ from typing import (
 F = TypeVar("F", bound=Callable[..., int])
 
 TIMEOUT: int = 1800
-STREAMING: bool = True
+STREAMING: bool = False
 
 
 def has_pyrosetta_distributed_package_requirements() -> bool:
