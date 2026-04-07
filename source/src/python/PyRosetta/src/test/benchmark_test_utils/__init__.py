@@ -175,6 +175,22 @@ def drain_buffer(pipe: TextIOWrapper) -> None:
 
 
 @handle_status
+def run_unittest_getstatusoutput(test_case: str) -> int:
+    """Run a test case using the unittest module with `subprocess.getstatusoutput`."""
+
+    args: List[str] = [sys.executable, "-m", "unittest", test_case]
+    cmd: str = " ".join(args)
+    print("Executing:", cmd, sep="\n", flush=True)
+
+    status, output = subprocess.getstatusoutput(cmd)
+
+    print("Output:", flush=True)
+    print(output, end="", flush=True)
+
+    return status
+
+
+@handle_status
 def run_unittest(test_case: str, timeout: int) -> int:
     """Run a test case using the unittest module in a subprocess."""
 
@@ -278,9 +294,12 @@ def run_test_cases(*test_cases: str, streaming: bool = STREAMING, timeout: int =
 
     exit_if_missing_pyrosetta_distributed_requirements()
     print_environment_export()
-    unittest_runner = run_unittest_streaming if streaming else run_unittest
-    for test_case in test_cases:
-        unittest_runner(test_case, timeout)
+    if streaming:
+        for test_case in test_cases:
+            run_unittest_streaming(test_case, timeout)
+    else:
+        for test_case in test_cases:
+            run_unittest_getstatusoutput(test_case)
     sys.stdout.flush()
 
 
