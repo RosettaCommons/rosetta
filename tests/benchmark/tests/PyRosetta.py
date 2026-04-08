@@ -87,7 +87,8 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
         #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
         gui_flag, res, output = '', result.exitcode, result.output
-        command_line = f'{python_virtual_environment.activate} && cd {result.pyrosetta_path}/build && {python_virtual_environment.python} {rosetta_dir}/source/test/timelimit.py 128 PYTHONUNBUFFERED=1 {python_virtual_environment.python} self-test.py {gui_flag} -j{jobs}{additional_flags}'
+        timelimit = 128 * int(jobs)
+        command_line = f'{python_virtual_environment.activate} && cd {result.pyrosetta_path}/build && {python_virtual_environment.python} {rosetta_dir}/source/test/timelimit.py {timelimit} PYTHONUNBUFFERED=1 {python_virtual_environment.python} self-test.py {gui_flag} -j1{additional_flags}'
         output += '\nRunning PyRosetta tests: ' + command_line + '\n'
 
         res, o = execute('Running PyRosetta tests...', command_line, return_='tuple')
@@ -158,7 +159,8 @@ def run_unit_tests_in_pixi(rosetta_dir, working_dir, platform, config, hpc_drive
 
         # execute('running PyRosetta unit tests inside Pixi...', f'cd {working_dir} && {pixi} run bash -c "cd {build.pyrosetta_path} && {rosetta_dir}/source/test/timelimit.py 128 && python self-test.py -j{jobs} --timeout 4096"')
         # command_line = f'{python_virtual_environment.activate} && cd {result.pyrosetta_path}/build && {python_virtual_environment.python} {rosetta_dir}/source/test/timelimit.py 128 {python_virtual_environment.python} self-test.py {gui_flag} -j{jobs}{additional_flags}'
-        command_line = f'cd {working_dir} && {pixi} run bash -c "cd {result.pyrosetta_path}/build && python {rosetta_dir}/source/test/timelimit.py 128 PYTHONUNBUFFERED=1 python self-test.py {gui_flag} -j{jobs}{additional_flags}"'
+        timelimit = 128 * int(jobs)
+        command_line = f'cd {working_dir} && {pixi} run bash -c "cd {result.pyrosetta_path}/build && python {rosetta_dir}/source/test/timelimit.py {timelimit} PYTHONUNBUFFERED=1 python self-test.py {gui_flag} -j1{additional_flags}"'
 
         output += '\nRunning PyRosetta tests: ' + command_line + '\n'
 
