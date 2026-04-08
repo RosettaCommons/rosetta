@@ -17,11 +17,9 @@ import pyrosetta
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
 import shlex
-import signal
 import subprocess
 import sys
 import tempfile
-import time
 import unittest
 
 from pyrosetta.distributed.cluster import (
@@ -575,56 +573,17 @@ class TestReproducibilityMulti(unittest.TestCase):
                 )
                 yield p
 
-        def run_subprocess(args, module_dir=None, timeout=900):
-            cmd = " ".join(args)
-            print("Running command:", cmd, flush=True)
-
+        def run_subprocess(cmd, module_dir=None):
+            print("Running command:", cmd)
             if module_dir:
                 env = os.environ.copy()
                 env["PYTHONPATH"] = f"{module_dir}{os.pathsep}{os.environ.get('PYTHONPATH', '')}"
-                env["PYTHONUNBUFFERED"] = "1"
             else:
-                env = {**os.environ, "PYTHONUNBUFFERED": "1"}
+                env = None
+            p = subprocess.run(shlex.split(cmd), env=env, check=True, shell=False, stderr=subprocess.PIPE)
+            print("Return code: {0}".format(p.returncode))
 
-            process = subprocess.Popen(
-                args,
-                env=env,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                universal_newlines=True,
-                start_new_session=True,
-                close_fds=True,
-            )
-
-            try:
-                try:
-                    stdout, stderr = process.communicate(timeout=timeout)
-                except subprocess.TimeoutExpired:
-                    print(f"Subprocess timeout! Terminating process group: {process.pid}", flush=True)
-                    os.killpg(os.getpgid(process.pid), signal.SIGKILL)
-                    stdout, stderr = process.communicate()
-                    raise RuntimeError(f"Subprocess timeout while running command: {cmd}")
-
-                print(stdout, end="", flush=True)
-                if stderr:
-                    print(stderr, end="", flush=True)
-
-                if process.returncode != 0:
-                    raise subprocess.CalledProcessError(
-                        process.returncode, cmd, output=stdout, stderr=stderr
-                    )
-
-                return process.returncode
-
-            finally:
-                if process.poll() is None:
-                    try:
-                        os.killpg(os.getpgid(process.pid), signal.SIGTERM)
-                        time.sleep(1)
-                        os.killpg(os.getpgid(process.pid), signal.SIGKILL)
-                    except Exception:
-                        pass
-                sys.stdout.flush()
+            return p.returncode
 
         with tempfile.TemporaryDirectory() as workdir:
             sequence = "ACDEFGHIKLMNPQRSTVWY"
@@ -870,16 +829,16 @@ class TestReproducibilityMulti(unittest.TestCase):
             module = os.path.splitext(os.path.basename(test_script))[0]
             for test_case in range(5):
                 reproduce3_scorefile_name = f"reproduce_test_scores_init_file_{test_case}.json"
-                args = [
+                cmd = "{0} -m {1} --input_file '{2}' --scorefile_name '{3}' --input_init_file '{4}' --sequence '{5}' --test_case {6}".format(
                     sys.executable,
-                    "-m", module,
-                    "--input_file", input_file,
-                    "--scorefile_name", reproduce3_scorefile_name,
-                    "--input_init_file", default_output_init_file,
-                    "--sequence", sequence,
-                    "--test_case", str(test_case),
-                ]
-                returncode = run_subprocess(args, module_dir=os.path.dirname(test_script))
+                    module,
+                    input_file,
+                    reproduce3_scorefile_name,
+                    default_output_init_file,
+                    sequence,
+                    test_case,
+                )
+                returncode = run_subprocess(cmd, module_dir=os.path.dirname(test_script))
                 self.assertEqual(returncode, 0, msg=f"Test script failed: {test_script}")
 
                 reproduce3_scorefile_path = os.path.join(
