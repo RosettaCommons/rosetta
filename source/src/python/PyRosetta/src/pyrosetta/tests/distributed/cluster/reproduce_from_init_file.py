@@ -25,7 +25,7 @@ from pyrosetta.distributed.cluster import get_scores_dict, reproduce
 
 sys.path.insert(0, os.path.dirname(__file__))
 try:
-    from test_reproducibility import TestReproducibilityMulti
+    from test_reproducibility_multi import TestReproducibilityMulti
 except ImportError as ex:
     raise ImportError(ex)
 test_suite = globals().get("TestReproducibilityMulti")
