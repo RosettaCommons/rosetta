@@ -20,7 +20,6 @@ import textwrap
 import types
 
 from functools import partial
-from pyrosetta import init_from_file
 from pyrosetta.distributed.cluster import get_scores_dict, reproduce
 
 sys.path.insert(0, os.path.dirname(__file__))
@@ -64,7 +63,7 @@ def reproduce_init_from_file_test(input_file, scorefile_name, input_init_file, s
             max_decompressed_bytes=100_000,
             restore_rg_state=True,
             database=None,
-            verbose=True,
+            verbose=False,
             set_logging_handler="logging",
             notebook=None,
             silent=False,
@@ -121,7 +120,7 @@ def reproduce_test(input_file, scorefile_name, input_init_file, skip_corrections
             max_decompressed_bytes=100_000,
             restore_rg_state=True,
             database=None,
-            verbose=True,
+            verbose=False,
             set_logging_handler="logging",
             notebook=None,
             silent=False,
