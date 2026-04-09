@@ -405,7 +405,7 @@ def parse_args() -> argparse.Namespace:
 
     parser = argparse.ArgumentParser(
         description=(
-            "Run tests with wait enabled and without streaming standard output or timeout by default, "
+            "Run tests with wait enabled and without streaming standard output or a timeout by default, "
             "overridden by the `--stream` or `--no-stream` flags and configured by the `--timeout` flag."
         ),
     )
@@ -426,11 +426,11 @@ def parse_args() -> argparse.Namespace:
         "--timeout",
         type=int,
         default=TIMEOUT,
-        help=f"Timeout in seconds if either the `--stream` or `--no-stream` flag is passed.",
+        help=f"Timeout in seconds if either the `--stream` or `--no-stream` flag is passed. Default: {TIMEOUT}",
     )
     args = parser.parse_args()
 
-    # Detect if user explicitly passes `--stream` or `--no-stream` flags to override `--wait` flag
+    # Detect if user explicitly passes `--stream` or `--no-stream` flags
     stream_flags = {"--stream", "--no-stream"}
     was_stream_flag_passed = any(flag in sys.argv for flag in stream_flags)
     if was_stream_flag_passed:
