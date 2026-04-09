@@ -45,7 +45,7 @@ from pyrosetta.distributed.cluster import (
     iterate,
 )
 from pyrosetta.distributed.cluster.task_registry import DiskTaskRegistry, MemoryTaskRegistry
-from pyrosetta.utility import pprint_flush
+from pyrosetta.tests.distributed.cluster.unittest_utils import pprint_flush
 
 
 class WorkerPreemptionTest(unittest.TestCase):
