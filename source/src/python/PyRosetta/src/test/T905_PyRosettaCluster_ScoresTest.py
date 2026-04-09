@@ -7,12 +7,20 @@
 
 __author__ = "Jason C. Klima"
 
-from utils.distributed import run_distributed_cluster_test_cases
+from utils.distributed import parse_args, run_distributed_cluster_test_cases
 
 
-run_distributed_cluster_test_cases(
-    "test_scores.ScoresTest.test_detached_scores",
-    "test_scores.ScoresTest.test_detached_scores_in_protocol",
-    "test_scores.ScoresTest.test_detached_scores_with_reserve_scores",
-    "test_scores.ScoresTest.test_secure_packages_billiard",
-)
+def main(wait: bool, streaming: bool, timeout: int) -> None:
+    run_distributed_cluster_test_cases(
+        "test_scores.ScoresTest.test_detached_scores",
+        "test_scores.ScoresTest.test_detached_scores_in_protocol",
+        "test_scores.ScoresTest.test_detached_scores_with_reserve_scores",
+        "test_scores.ScoresTest.test_secure_packages_billiard",
+        wait=wait,
+        streaming=streaming,
+        timeout=timeout,
+    )
+
+if __name__ == "__main__":
+    args = parse_args()
+    main(args.wait, args.streaming, args.timeout)

@@ -7,16 +7,24 @@
 
 __author__ = "Jason C. Klima"
 
-from utils.distributed import run_test_cases
+from utils.distributed import parse_args, run_test_cases
 
 
-run_test_cases(
-    "pyrosetta.tests.bindings.init.test_init_files",
-    "pyrosetta.tests.bindings.core.test_pose",
-    "pyrosetta.tests.distributed.test_concurrency",
-    "pyrosetta.tests.distributed.test_dask",
-    "pyrosetta.tests.distributed.test_gil",
-    "pyrosetta.tests.distributed.test_smoke",
-    "pyrosetta.tests.distributed.test_viewer",
-    "pyrosetta.tests.numeric.test_alignment",
-)
+def main(wait: bool, streaming: bool, timeout: int) -> None:
+    run_test_cases(
+        "pyrosetta.tests.bindings.init.test_init_files",
+        "pyrosetta.tests.bindings.core.test_pose",
+        "pyrosetta.tests.distributed.test_concurrency",
+        "pyrosetta.tests.distributed.test_dask",
+        "pyrosetta.tests.distributed.test_gil",
+        "pyrosetta.tests.distributed.test_smoke",
+        "pyrosetta.tests.distributed.test_viewer",
+        "pyrosetta.tests.numeric.test_alignment",
+        wait=wait,
+        streaming=streaming,
+        timeout=timeout,
+    )
+
+if __name__ == "__main__":
+    args = parse_args()
+    main(args.wait, args.streaming, args.timeout)

@@ -7,9 +7,17 @@
 
 __author__ = "Jason C. Klima"
 
-from utils.distributed import run_distributed_cluster_test_cases
+from utils.distributed import parse_args, run_distributed_cluster_test_cases
 
 
-run_distributed_cluster_test_cases(
-    "test_io.IOTest.test_io",
-)
+def main(wait: bool, streaming: bool, timeout: int) -> None:
+    run_distributed_cluster_test_cases(
+        "test_io.IOTest.test_io",
+        wait=wait,
+        streaming=streaming,
+        timeout=timeout,
+    )
+
+if __name__ == "__main__":
+    args = parse_args()
+    main(args.wait, args.streaming, args.timeout)

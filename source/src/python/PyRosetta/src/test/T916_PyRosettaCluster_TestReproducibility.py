@@ -7,14 +7,22 @@
 
 __author__ = "Jason C. Klima"
 
-from utils.distributed import run_distributed_cluster_test_cases
+from utils.distributed import parse_args, run_distributed_cluster_test_cases
 
 
-run_distributed_cluster_test_cases(
-    "test_reproducibility.TestReproducibility.test_reproducibility_minimizer_nstruct",
-    "test_reproducibility.TestReproducibility.test_reproducibility_minimizer_nstruct_filter_results",
-    "test_reproducibility.TestReproducibility.test_reproducibility_packer_nstruct",
-    "test_reproducibility.TestReproducibility.test_reproducibility_packer_nstruct_filter_results",
-    "test_reproducibility.TestReproducibility.test_reproducibility_packer_separate",
-    "test_reproducibility.TestReproducibility.test_reproducibility_packer_separate_filter_results",
-)
+def main(wait: bool, streaming: bool, timeout: int) -> None:
+    run_distributed_cluster_test_cases(
+        "test_reproducibility.TestReproducibility.test_reproducibility_minimizer_nstruct",
+        "test_reproducibility.TestReproducibility.test_reproducibility_minimizer_nstruct_filter_results",
+        "test_reproducibility.TestReproducibility.test_reproducibility_packer_nstruct",
+        "test_reproducibility.TestReproducibility.test_reproducibility_packer_nstruct_filter_results",
+        "test_reproducibility.TestReproducibility.test_reproducibility_packer_separate",
+        "test_reproducibility.TestReproducibility.test_reproducibility_packer_separate_filter_results",
+        wait=wait,
+        streaming=streaming,
+        timeout=timeout,
+    )
+
+if __name__ == "__main__":
+    args = parse_args()
+    main(args.wait, args.streaming, args.timeout)

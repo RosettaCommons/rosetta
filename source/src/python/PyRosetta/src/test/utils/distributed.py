@@ -7,6 +7,7 @@
 
 __author__ = "Jason C. Klima"
 
+import argparse
 import functools
 import os
 import select
@@ -31,8 +32,9 @@ from typing import (
 
 F = TypeVar("F", bound=Callable[..., int])
 
-TIMEOUT: int = 1800 # seconds
+WAIT: bool = True
 STREAMING: bool = False
+TIMEOUT: int = 1800 # seconds
 
 
 def has_pyrosetta_distributed_package_requirements() -> bool:
@@ -133,10 +135,10 @@ def handle_status(func: F) -> F:
         dt = t1 - t0
 
         if status == 0:
-            print(f"Finished running test in {dt:.6f} seconds: {test_case}\n", flush=True)
+            print(f"\nFinished running test in {dt:.6f} seconds: {test_case}\n", flush=True)
         else:
             print(
-                f"Encountered error(s) with exit code {status} after {dt:.6f} seconds while running: {test_case}",
+                f"\nEncountered error(s) with exit code {status} after {dt:.6f} seconds while running: {test_case}",
                 "Terminating...",
                 sep="\n",
                 flush=True,
@@ -174,8 +176,13 @@ def drain_buffer(pipe: TextIOWrapper) -> None:
         pass
 
 
+def get_unittest_args(test_case: str) -> List[str]:
+    """Get command-line arguments for running the `unittest` module."""
+    return [sys.executable, "-m", "unittest", test_case]
+
+
 @handle_status
-def run_unittest_getstatusoutput(test_case: str) -> int:
+def run_unittest_wait(test_case: str) -> int:
     """
     Run a test case using the `unittest` module with `subprocess.getstatusoutput`.
 
@@ -187,7 +194,7 @@ def run_unittest_getstatusoutput(test_case: str) -> int:
         An `int` object representing the return code.
     """
 
-    args: List[str] = [sys.executable, "-m", "unittest", test_case]
+    args: List[str] = get_unittest_args(test_case)
     cmd: str = " ".join(args)
     print("Executing:", cmd, sep="\n", flush=True)
 
@@ -215,7 +222,7 @@ def run_unittest(test_case: str, timeout: int) -> int:
         An `int` object representing the return code.
     """
 
-    args: List[str] = [sys.executable, "-m", "unittest", test_case]
+    args: List[str] = get_unittest_args(test_case)
     print("Executing:", " ".join(args), sep="\n", flush=True)
 
     process = subprocess.Popen(
@@ -269,7 +276,7 @@ def run_unittest_streaming(test_case: str, timeout: int) -> int:
         An `int` object representing the return code.
     """
 
-    args: List[str] = [sys.executable, "-m", "unittest", test_case]
+    args: List[str] = get_unittest_args(test_case)
     print("Executing:", " ".join(args), sep="\n", flush=True)
 
     process = subprocess.Popen(
@@ -322,13 +329,20 @@ def run_unittest_streaming(test_case: str, timeout: int) -> int:
     return process.returncode
 
 
-def run_test_cases(*test_cases: str, streaming: bool = STREAMING, timeout: int = TIMEOUT) -> None:
+def run_test_cases(
+    *test_cases: str, wait: bool = WAIT, streaming: bool = STREAMING, timeout: int = TIMEOUT
+) -> None:
     """
     Run the input test cases using the `unittest` module.
 
     Args:
         `*test_cases`: `str`
             The test modules to run.
+
+        `wait`: `bool`
+            Whether or not to run the test modules without a timeout and without streaming using the
+            legacy `subprocess.getstatusoutput` function. If `True`, then the values of the `streaming`
+            and `timeout` keyword arguments have no effect.
 
         `streaming`: `bool`
             Whether or not to run the test modules with streaming standard output.
@@ -342,22 +356,30 @@ def run_test_cases(*test_cases: str, streaming: bool = STREAMING, timeout: int =
 
     exit_if_missing_pyrosetta_distributed_requirements()
     print_environment_export()
-    if streaming:
+    if wait:
         for test_case in test_cases:
-            run_unittest_streaming(test_case, timeout)
+            run_unittest_wait(test_case)
     else:
+        unittest_runner = run_unittest_streaming if streaming else run_unittest
         for test_case in test_cases:
-            run_unittest_getstatusoutput(test_case)
+            unittest_runner(test_case, timeout)
     sys.stdout.flush()
 
 
-def run_distributed_cluster_test_cases(*test_cases: str, streaming: bool = STREAMING, timeout: int = TIMEOUT) -> None:
+def run_distributed_cluster_test_cases(
+    *test_cases: str, wait: bool = WAIT, streaming: bool = STREAMING, timeout: int = TIMEOUT
+) -> None:
     """
     Run the input test cases (each prepended with "pyrosetta.tests.distributed.cluster.") using the `unittest` module.
 
     Args:
         `*test_cases`: `str`
             The test modules to run (each prepended with "pyrosetta.tests.distributed.cluster.")
+
+        `wait`: `bool`
+            Whether or not to run the test modules without a timeout and without streaming using the
+            legacy `subprocess.getstatusoutput` function. If `True`, then the values of the `streaming`
+            and `timeout` keyword arguments have no effect.
 
         `streaming`: `bool`
             Whether or not to run the test modules with streaming standard output.
@@ -372,6 +394,46 @@ def run_distributed_cluster_test_cases(*test_cases: str, streaming: bool = STREA
     prefix = "pyrosetta.tests.distributed.cluster."
     run_test_cases(
         *(f"{prefix}{test_case}" for test_case in test_cases),
+        wait=wait,
         streaming=streaming,
         timeout=timeout,
     )
+
+
+def parse_args() -> argparse.Namespace:
+    """Parse input command-line arguments."""
+
+    parser = argparse.ArgumentParser(
+        description=(
+            "Run tests with wait enabled and without streaming standard output or timeout by default, "
+            "overridden by the `--stream` or `--no-stream` flags and configured by the `--timeout` flag."
+        ),
+    )
+    parser.add_argument(
+        "--stream",
+        dest="streaming",
+        action="store_true",
+        help="Enable streaming standard output with timeout.",
+    )
+    parser.add_argument(
+        "--no-stream",
+        dest="streaming",
+        action="store_false",
+        help="Disable streaming standard output with timeout.",
+    )
+    parser.set_defaults(wait=True, streaming=STREAMING)
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        default=TIMEOUT,
+        help=f"Timeout in seconds if either the `--stream` or `--no-stream` flag is passed.",
+    )
+    args = parser.parse_args()
+
+    # Detect if user explicitly passes `--stream` or `--no-stream` flags to override `--wait` flag
+    stream_flags = {"--stream", "--no-stream"}
+    was_stream_flag_passed = any(flag in sys.argv for flag in stream_flags)
+    if was_stream_flag_passed:
+        args.wait = False
+
+    return args

@@ -7,12 +7,20 @@
 
 __author__ = "Jason C. Klima"
 
-from utils.distributed import run_distributed_cluster_test_cases
+from utils.distributed import parse_args, run_distributed_cluster_test_cases
 
 
-run_distributed_cluster_test_cases(
-    "test_generator.GeneratorTest.test_generate_builtin_clients",
-    "test_generator.GeneratorTest.test_generate_multi_user_clients",
-    "test_generator.GeneratorTest.test_generate_partition_clients",
-    "test_generator.GeneratorTest.test_generate_user_client",
-)
+def main(wait: bool, streaming: bool, timeout: int) -> None:
+    run_distributed_cluster_test_cases(
+        "test_generator.GeneratorTest.test_generate_builtin_clients",
+        "test_generator.GeneratorTest.test_generate_multi_user_clients",
+        "test_generator.GeneratorTest.test_generate_partition_clients",
+        "test_generator.GeneratorTest.test_generate_user_client",
+        wait=wait,
+        streaming=streaming,
+        timeout=timeout,
+    )
+
+if __name__ == "__main__":
+    args = parse_args()
+    main(args.wait, args.streaming, args.timeout)
