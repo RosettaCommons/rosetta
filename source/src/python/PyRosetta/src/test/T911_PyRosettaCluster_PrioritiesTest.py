@@ -7,7 +7,7 @@
 
 __author__ = "Jason C. Klima"
 
-from benchmark_test_utils import run_distributed_cluster_test_cases
+from utils.distributed import run_distributed_cluster_test_cases
 
 
 run_distributed_cluster_test_cases(
