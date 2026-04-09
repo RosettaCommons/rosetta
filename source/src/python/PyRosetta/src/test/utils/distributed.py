@@ -31,7 +31,7 @@ from typing import (
 
 F = TypeVar("F", bound=Callable[..., int])
 
-TIMEOUT: int = 1800
+TIMEOUT: int = 1800 # seconds
 STREAMING: bool = False
 
 
@@ -176,7 +176,16 @@ def drain_buffer(pipe: TextIOWrapper) -> None:
 
 @handle_status
 def run_unittest_getstatusoutput(test_case: str) -> int:
-    """Run a test case using the unittest module with `subprocess.getstatusoutput`."""
+    """
+    Run a test case using the `unittest` module with `subprocess.getstatusoutput`.
+
+    Args:
+        `test_case`: `str`
+            The test module to run.
+
+    Returns:
+        An `int` object representing the return code.
+    """
 
     args: List[str] = [sys.executable, "-m", "unittest", test_case]
     cmd: str = " ".join(args)
@@ -192,7 +201,19 @@ def run_unittest_getstatusoutput(test_case: str) -> int:
 
 @handle_status
 def run_unittest(test_case: str, timeout: int) -> int:
-    """Run a test case using the unittest module in a subprocess."""
+    """
+    Run a test case using the `unittest` module in a subprocess.
+
+    Args:
+        `test_case`: `str`
+            The test module to run.
+
+        `timeout`: `int`
+            The timeout in seconds.
+
+    Returns:
+        An `int` object representing the return code.
+    """
 
     args: List[str] = [sys.executable, "-m", "unittest", test_case]
     print("Executing:", " ".join(args), sep="\n", flush=True)
@@ -234,7 +255,19 @@ def run_unittest(test_case: str, timeout: int) -> int:
 
 @handle_status
 def run_unittest_streaming(test_case: str, timeout: int) -> int:
-    """Run a test case using the unittest module in a subprocess with streaming standard output."""
+    """
+    Run a test case using the `unittest` module in a subprocess with streaming standard output.
+
+    Args:
+        `test_case`: `str`
+            The test module to run.
+
+        `timeout`: `int`
+            The timeout in seconds.
+
+    Returns:
+        An `int` object representing the return code.
+    """
 
     args: List[str] = [sys.executable, "-m", "unittest", test_case]
     print("Executing:", " ".join(args), sep="\n", flush=True)
@@ -290,7 +323,22 @@ def run_unittest_streaming(test_case: str, timeout: int) -> int:
 
 
 def run_test_cases(*test_cases: str, streaming: bool = STREAMING, timeout: int = TIMEOUT) -> None:
-    """Run the input test cases using the `unittest` module."""
+    """
+    Run the input test cases using the `unittest` module.
+
+    Args:
+        `*test_cases`: `str`
+            The test modules to run.
+
+        `streaming`: `bool`
+            Whether or not to run the test modules with streaming standard output.
+
+        `timeout`: `int`
+            The timeout in seconds for each test module.
+
+    Returns:
+        `None`
+    """
 
     exit_if_missing_pyrosetta_distributed_requirements()
     print_environment_export()
@@ -304,7 +352,22 @@ def run_test_cases(*test_cases: str, streaming: bool = STREAMING, timeout: int =
 
 
 def run_distributed_cluster_test_cases(*test_cases: str, streaming: bool = STREAMING, timeout: int = TIMEOUT) -> None:
-    """Run the input test cases (each prepended with "pyrosetta.tests.distributed.cluster.") using the `unittest` module."""
+    """
+    Run the input test cases (each prepended with "pyrosetta.tests.distributed.cluster.") using the `unittest` module.
+
+    Args:
+        `*test_cases`: `str`
+            The test modules to run (each prepended with "pyrosetta.tests.distributed.cluster.")
+
+        `streaming`: `bool`
+            Whether or not to run the test modules with streaming standard output.
+
+        `timeout`: `int`
+            The timeout in seconds for each test module.
+
+    Returns:
+        `None`
+    """
 
     prefix = "pyrosetta.tests.distributed.cluster."
     run_test_cases(
