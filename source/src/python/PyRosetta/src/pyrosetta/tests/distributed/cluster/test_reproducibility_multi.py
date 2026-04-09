@@ -580,10 +580,31 @@ class TestReproducibilityMulti(unittest.TestCase):
                 env["PYTHONPATH"] = f"{module_dir}{os.pathsep}{os.environ.get('PYTHONPATH', '')}"
             else:
                 env = None
-            p = subprocess.run(shlex.split(cmd), env=env, check=True, shell=False, stderr=subprocess.PIPE)
-            print("Return code: {0}".format(p.returncode))
+            try:
+                p = subprocess.run(
+                    shlex.split(cmd),
+                    env=env,
+                    check=True,
+                    shell=False,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    close_fds=True,
+                    text=True,
+                )
+                returncode = p.returncode
+                stdout = p.stdout
+                stderr = p.stderr
+            except subprocess.CalledProcessError as ex:
+                returncode = ex.returncode
+                stdout = ex.stdout
+                stderr = ex.stderr
+            print(f"Return code: {returncode}", flush=True)
+            if stdout:
+                print(stdout, flush=True)
+            if stderr:
+                print(stderr, flush=True)
 
-            return p.returncode
+            return returncode
 
         with tempfile.TemporaryDirectory() as workdir:
             sequence = "ACDEFGHIKLMNPQRSTVWY"
