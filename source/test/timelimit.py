@@ -31,7 +31,7 @@ def main(argv):
     # explicitly creating a new process group and set current process as leader, that way we can later terminate whole group on timeout
     os.setpgrp()
 
-    proc = subprocess.Popen(["bash", "-c", commline], env={**os.environ, "PYTHONUNBUFFERED": "1"})
+    proc = subprocess.Popen(["bash", "-c", commline])
     start = time.time()
     retcode = None
 

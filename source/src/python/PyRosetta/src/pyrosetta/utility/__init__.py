@@ -8,13 +8,11 @@
 
 __author__ = "Jason C. Klima"
 
-import sys
-
-from functools import singledispatch
-from pprint import pprint
-
 
 def get_package_version(distribution_name):
+    import sys
+
+    from functools import singledispatch
 
     @singledispatch
     def to_tuple(v):
@@ -73,8 +71,3 @@ def has_cereal():
         return True
     except AssertionError:
         return False
-
-
-def pprint_flush(msg):
-    pprint(msg)
-    sys.stdout.flush()
