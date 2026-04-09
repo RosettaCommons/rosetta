@@ -5,64 +5,30 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+
 __author__ = "Jason C. Klima"
+
 
 import argparse
 import ast
 import inspect
 import os
 import pyrosetta.distributed.io as io
-import signal
 import sys
 import tempfile
 import textwrap
 import types
 
-try:
-    import psutil
-    from dask.distributed import Client, LocalCluster
-except ImportError:
-    print(
-        "Importing 'pyrosetta.tests.distributed.cluster.reproduce_from_init_file' requires the "
-        + "third-party packages 'dask' and 'psutil' as dependencies!\n"
-        + "Please install these packages into your virtual environment. "
-        + "For installation instructions, visit:\n"
-        + "https://pypi.org/project/dask/\n"
-        + "https://pypi.org/project/psutil/\n",
-        flush=True,
-    )
-    raise
-
 from functools import partial
+from pyrosetta import init_from_file
 from pyrosetta.distributed.cluster import get_scores_dict, reproduce
 
 sys.path.insert(0, os.path.dirname(__file__))
 try:
-    from test_reproducibility_multi import TestReproducibilityMulti
+    from test_reproducibility import TestReproducibilityMulti
 except ImportError as ex:
     raise ImportError(ex)
 test_suite = globals().get("TestReproducibilityMulti")
-
-
-def _get_current_worker_pids_map(client):
-    return {k: v.pid for k, v in client.cluster.scheduler.workers.items()}
-
-
-def _terminate_process_tree(pid, sig=signal.SIGTERM):
-    try:
-        parent = psutil.Process(pid)
-    except psutil.NoSuchProcess:
-        return False
-    for child in parent.children(recursive=True):
-        try:
-            child.send_signal(sig)
-        except psutil.NoSuchProcess:
-            pass
-    try:
-        parent.send_signal(sig)
-        return True
-    except psutil.NoSuchProcess:
-        return False
 
 
 def get_protocols(scores_dict):
@@ -98,10 +64,10 @@ def reproduce_init_from_file_test(input_file, scorefile_name, input_init_file, s
             max_decompressed_bytes=100_000,
             restore_rg_state=True,
             database=None,
-            verbose=False,
+            verbose=True,
             set_logging_handler="logging",
             notebook=None,
-            silent=True,
+            silent=False,
         )
         # Instantiate original input pose
         input_pose = io.to_pose(io.pose_from_sequence(sequence))
@@ -111,31 +77,22 @@ def reproduce_init_from_file_test(input_file, scorefile_name, input_init_file, s
         # Reproduce
         output_init_file = os.path.join(tmp_dir, "pyrosetta.init")
         compressed = False
-        with LocalCluster(
-            n_workers=1,
-            threads_per_worker=1,
-        ) as cluster, Client(cluster) as client:
-            reproduce(
-                input_file=input_file,
-                scorefile=None,
-                decoy_name=None,
-                protocols=protocols,
-                input_packed_pose=input_pose,
-                client=client,
-                clients=None,
-                instance_kwargs={
-                    "sha1": None,
-                    "scorefile_name": scorefile_name,
-                    "output_init_file": output_init_file, # Test `IO._dump_init_file` with custom path
-                    "compressed": compressed,
-                },
-                skip_corrections=skip_corrections,
-                init_from_file_kwargs={},
-            )
-            _worker_pids_map = _get_current_worker_pids_map(client)
-        # Clean up Dask worker subprocess trees
-        for _pid in _worker_pids_map.values():
-            _terminate_process_tree(_pid)
+        reproduce(
+            input_file=input_file,
+            scorefile=None,
+            decoy_name=None,
+            protocols=protocols,
+            input_packed_pose=input_pose,
+            clients=None,
+            instance_kwargs={
+                "sha1": None,
+                "scorefile_name": scorefile_name,
+                "output_init_file": output_init_file, # Test `IO._dump_init_file` with custom path
+                "compressed": compressed,
+            },
+            skip_corrections=skip_corrections,
+            init_from_file_kwargs={},
+        )
         # Test output '.init' file compression
         if compressed:
             output_init_file += ".bz2"
@@ -148,7 +105,6 @@ def reproduce_test(input_file, scorefile_name, input_init_file, skip_corrections
         "Running test case:",
         f"`reproduce(skip_corrections={skip_corrections}, "
         + f"init_from_file_kwargs=dict(skip_corrections={init_from_file_skip_corrections}))`",
-        flush=True,
     )
     with tempfile.TemporaryDirectory() as tmp_dir:
         # Get protocols
@@ -165,36 +121,27 @@ def reproduce_test(input_file, scorefile_name, input_init_file, skip_corrections
             max_decompressed_bytes=100_000,
             restore_rg_state=True,
             database=None,
-            verbose=False,
+            verbose=True,
             set_logging_handler="logging",
             notebook=None,
-            silent=True,
+            silent=False,
         )
-        with LocalCluster(
-            n_workers=1,
-            threads_per_worker=1,
-        ) as cluster, Client(cluster) as client:
-            reproduce(
-                input_file=input_init_file,
-                scorefile=None,
-                decoy_name=None,
-                protocols=protocols,
-                input_packed_pose=None,
-                client=client,
-                clients=None,
-                instance_kwargs={
-                    "sha1": None,
-                    "scorefile_name": scorefile_name,
-                    "output_init_file": output_init_file, # Test `IO._dump_init_file` with custom path
-                    "compressed": compressed,
-                },
-                skip_corrections=skip_corrections,
-                init_from_file_kwargs=init_from_file_kwargs,
-            )
-            _worker_pids_map = _get_current_worker_pids_map(client)
-        # Clean up Dask worker subprocess trees
-        for _pid in _worker_pids_map.values():
-            _terminate_process_tree(_pid)
+        reproduce(
+            input_file=input_init_file,
+            scorefile=None,
+            decoy_name=None,
+            protocols=protocols,
+            input_packed_pose=None,
+            clients=None,
+            instance_kwargs={
+                "sha1": None,
+                "scorefile_name": scorefile_name,
+                "output_init_file": output_init_file, # Test `IO._dump_init_file` with custom path
+                "compressed": compressed,
+            },
+            skip_corrections=skip_corrections,
+            init_from_file_kwargs=init_from_file_kwargs,
+        )
         # Test `get_scores_dict()` with '.init' file syntax after PyRosetta initialization
         _scores_dict = get_scores_dict(input_init_file)
         assert scores_dict == _scores_dict, f"Scores dictionaries differ: {scores_dict} != {_scores_dict}"
@@ -205,7 +152,7 @@ def reproduce_test(input_file, scorefile_name, input_init_file, skip_corrections
 
 
 if __name__ == "__main__":
-    print("Running: {0}".format(__file__), flush=True)
+    print("Running: {0}".format(__file__))
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_file', type=str)
     parser.add_argument('--scorefile_name', type=str)
@@ -223,4 +170,3 @@ if __name__ == "__main__":
         reproduce_test(args.input_file, args.scorefile_name, args.input_init_file, True, False)
     elif args.test_case == 4:
         reproduce_test(args.input_file, args.scorefile_name, args.input_init_file, False, True)
-    sys.stdout.flush()
