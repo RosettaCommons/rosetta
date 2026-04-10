@@ -5,9 +5,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
-
 
 try:
     import attr
@@ -15,7 +13,7 @@ except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.task_registry' requires the "
         + "third-party package 'attrs' as a dependency!\n"
-        + "Please install this package into your python environment. "
+        + "Please install this package into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/attrs/\n"
     )
@@ -25,64 +23,80 @@ import logging
 import os
 import sys
 
-from dataclasses import asdict, dataclass
-from typing import (
+from pyrosetta.distributed.cluster.serialization import Serialization
+from pyrosetta.distributed.cluster.type_defs import (
+    AbstractSet,
     Any,
     Dict,
-    Generic,
+    FloatOrInt,
     Iterator,
+    List,
     Optional,
     Tuple,
-    TypeVar,
     Union,
 )
 
-from pyrosetta.distributed.cluster.serialization import Serialization
+
+@attr.define(kw_only=True, slots=True, frozen=True, auto_attribs=True)
+class ExtraArgs:
+    """Class for the value of the `extra_args` key in the `UserArgs` class."""
+
+    decoy_ids: Optional[List[int]]
+    protocols_key: str
+    timeout: FloatOrInt
+    ignore_errors: bool
+    datetime_format: str
+    instance_id: str
+    compression: Optional[Union[str, bool]]
+    with_nonce: bool
+    norm_task_options: bool
+    max_delay_time: FloatOrInt
+    logging_level: str
+    socket_listener_address: Tuple[str, int]
+    client_residue_type_set: AbstractSet[str]
 
 
-G = TypeVar("G")
+@attr.define(kw_only=True, slots=True, frozen=True, auto_attribs=True)
+class UserArgs:
+    """Class for the `user_spawn_thread` function argument."""
 
-
-@dataclass
-class UserArgs(Generic[G]):
-    """Dataclass for the `user_spawn_thread` function argument."""
     protocol_name: str
     compressed_protocol: bytes
     compressed_packed_pose: bytes
     compressed_kwargs: bytes
     pyrosetta_init_kwargs: Dict[str, Any]
     client_repr: str
-    extra_args: Dict[str, Any]
+    extra_args: ExtraArgs
     masked_key: bytes
     task_id: str
 
 
-@dataclass
-class TaskRecord(Generic[G]):
-    """Dataclass for PyRosettaCluster task registry entries."""
+@attr.define(kw_only=True, slots=True, frozen=True, auto_attribs=True)
+class TaskRecord:
+    """Class for `PyRosettaCluster` task registry entries."""
+
     clients_index: int
     user_args: UserArgs
     submit_kwargs: Dict[str, Any]
 
 
 UnpackedTaskRecord = Tuple[int, UserArgs, Dict[str, Any]]
+"""A container for an unpacked `PyRosettaCluster` task registry entry."""
 
 
-@attr.s(kw_only=True, slots=True, frozen=True)
-class TaskRegistryBase(Generic[G]):
-    """PyRosettaCluster task registry base class."""
-    instance_id = attr.ib(
-        type=Optional[str],
+@attr.define(kw_only=True, slots=True, frozen=True, auto_attribs=True)
+class TaskRegistryBase:
+    """Task registry base class for `PyRosettaCluster`."""
+
+    instance_id: Optional[str] = attr.field(
         default=None,
         validator=attr.validators.optional(attr.validators.instance_of(str)),
     )
-    compression = attr.ib(
-        type=Optional[Union[str, bool]],
+    compression: Optional[Union[str, bool]] = attr.field(
         default="xz",
         validator=attr.validators.optional(attr.validators.instance_of((str, bool))),
     )
-    serializer = attr.ib(
-        type=Serialization,
+    serializer: Serialization = attr.field(
         default=attr.Factory(
             lambda self: Serialization(
                 instance_id=self.instance_id,
@@ -98,6 +112,7 @@ class TaskRegistryBase(Generic[G]):
 
     def seal(self, task_record: TaskRecord) -> bytes:
         """Compress a task registry entry."""
+
         packed = self.serializer.compress_object(task_record)
         buffer = self.serializer.encoder(packed) if self.serializer.encoder else packed
 
@@ -105,6 +120,7 @@ class TaskRegistryBase(Generic[G]):
 
     def unseal(self, buffer: bytes) -> TaskRecord:
         """Decompress a task registry entry."""
+
         packed = self.serializer.decoder(buffer) if self.serializer.decoder else buffer
         task_record = self.serializer.decompress_object(packed)
 
@@ -112,10 +128,14 @@ class TaskRegistryBase(Generic[G]):
 
     def deepcopy_user_args(self, user_args: UserArgs) -> UserArgs:
         """
-        Deep copy a `UserArgs` dataclass to break in-memory references to any objects
-        that keep billiard subprocesses alive.
+        Deep copy a `UserArgs` dataclass to break in-memory references to any objects that keep `billiard`
+        subprocesses alive.
         """
-        return UserArgs(**self.serializer.deepcopy_kwargs(asdict(user_args)))
+
+        user_args_dict = self.serializer.deepcopy_kwargs(attr.asdict(user_args, recurse=True, retain_collection_types=True))
+        user_args_dict["extra_args"] = ExtraArgs(**user_args_dict["extra_args"])
+
+        return UserArgs(**user_args_dict)
 
     def create_task_record(
         self,
@@ -135,15 +155,14 @@ class TaskRegistryBase(Generic[G]):
         return task_record.clients_index, task_record.user_args, task_record.submit_kwargs
 
 
-@attr.s(kw_only=True, slots=True, frozen=True)
-class DiskTaskRegistry(TaskRegistryBase[G]):
-    """Task registry for on-disk PyRosettaCluster task arguments."""
-    task_registry_dir = attr.ib(
-        type=str,
+@attr.define(kw_only=True, slots=True, frozen=True, auto_attribs=True)
+class DiskTaskRegistry(TaskRegistryBase):
+    """Task registry for on-disk `PyRosettaCluster` task arguments."""
+
+    task_registry_dir: str = attr.field(
         validator=attr.validators.instance_of(str),
     )
-    file_ext = attr.ib(
-        type=str,
+    file_ext: str = attr.field(
         default=attr.Factory(
             lambda self: (
                 f".pkl.{self.serializer.compression}"
@@ -180,6 +199,7 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
 
     def _shard_key(self, key: str) -> str:
         """Shard a Dask future key for a subdirectory name."""
+
         key_split = key.split("-")
         if len(key_split) > 1:
             return key_split[1][:2].ljust(2, "_")
@@ -188,6 +208,7 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
 
     def _get_task_file(self, key: str, makedirs: bool = False) -> str:
         """Get a filename for a task record."""
+
         cache_dir = os.path.join(self.task_registry_dir, self._shard_key(key))
         if makedirs:
             os.makedirs(cache_dir, exist_ok=True)
@@ -196,6 +217,7 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
 
     def total_size(self) -> int:
         """Return the total size of the on-disk task registry (in bytes)."""
+
         total_size = 0
         for root, _dirs, files in os.walk(self.task_registry_dir):
             for file in files:
@@ -209,6 +231,7 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
 
     def set(self, key: str, **kwargs: Any) -> None:
         """Set a task record into the on-disk task registry."""
+
         task_file = self._get_task_file(key, makedirs=True)
         if os.path.isfile(task_file):
             logging.warning(f"Task future key already exists in the on-disk task registry: '{key}'")
@@ -217,6 +240,7 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
 
     def get(self, key: str, default: None = None) -> Optional[UnpackedTaskRecord]:
         """Get an unpacked task record from the on-disk task registry."""
+
         task_file = self._get_task_file(key, makedirs=False)
         if not os.path.isfile(task_file):
             logging.error(f"Task future key was not found in the on-disk task registry: '{key}'")
@@ -232,6 +256,7 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
 
     def pop(self, key: str) -> None:
         """Remove a task record from the on-disk task registry."""
+
         task_file = self._get_task_file(key, makedirs=False)
         if os.path.isfile(task_file):
             if os.path.basename(task_file).startswith("user_spawn_thread-"):
@@ -249,6 +274,7 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
 
     def clear(self) -> None:
         """Clear all task records from the on-disk task registry."""
+
         keys = list(self)
         total_size = len(keys)
         if total_size > 0:
@@ -259,11 +285,11 @@ class DiskTaskRegistry(TaskRegistryBase[G]):
             logging.info(f"{total_size} remaining task records in the on-disk task registry.")
 
 
-@attr.s(kw_only=True, slots=True, frozen=True)
-class MemoryTaskRegistry(TaskRegistryBase[G]):
-    """Task registry for in-memory PyRosettaCluster task arguments."""
-    registry = attr.ib(
-        type=Dict[str, bytes],
+@attr.define(kw_only=True, slots=True, frozen=True, auto_attribs=True)
+class MemoryTaskRegistry(TaskRegistryBase):
+    """Task registry for in-memory `PyRosettaCluster` task arguments."""
+
+    registry: Dict[str, bytes] = attr.field(
         default=attr.Factory(dict, takes_self=False),
         validator=attr.validators.instance_of(dict),
         init=False,
@@ -280,6 +306,7 @@ class MemoryTaskRegistry(TaskRegistryBase[G]):
 
     def total_size(self) -> int:
         """Return the total size of the in-memory task registry (in bytes)."""
+
         total_size = sys.getsizeof(self.registry)
         total_size += sum(
             sys.getsizeof(k) + sys.getsizeof(v)
@@ -290,12 +317,14 @@ class MemoryTaskRegistry(TaskRegistryBase[G]):
 
     def set(self, key: str, **kwargs: Any) -> None:
         """Set a task record into the in-memory task registry."""
+
         if key in self.registry:
             logging.warning(f"Task future key already exists in the in-memory task registry: '{key}'")
         self.registry[key] = self.seal(self.create_task_record(**kwargs))
 
     def get(self, key: str, default: None = None) -> Optional[UnpackedTaskRecord]:
         """Get an unpacked task record from the in-memory task registry."""
+
         if key not in self.registry:
             logging.error(f"Task future key was not found in the in-memory task registry: '{key}'")
             return default
@@ -311,6 +340,7 @@ class MemoryTaskRegistry(TaskRegistryBase[G]):
 
     def clear(self) -> None:
         """Clear all task records from the in-memory task registry."""
+
         total_size = len(self)
         if total_size > 0:
             logging.warning(f"Clearing {total_size} task records from the in-memory task registry.")

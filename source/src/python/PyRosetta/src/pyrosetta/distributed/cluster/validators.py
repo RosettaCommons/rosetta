@@ -5,9 +5,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
-
 
 try:
     import dask
@@ -15,7 +13,7 @@ except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.validators' requires the "
         + "third-party package 'dask' as a dependency!\n"
-        + "Please install this package into your python environment. "
+        + "Please install this package into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/dask/\n"
     )
@@ -25,18 +23,19 @@ import json
 import logging
 import os
 
-from typing import (
+from pyrosetta.distributed.cluster.type_defs import (
     AbstractSet,
     Any,
-    Callable,
     Dict,
-    Iterable,
     List,
-    NoReturn,
     Optional,
+    Sized,
+    TaskChainClientIndices,
+    TaskChainPriorities,
+    TaskChainResources,
+    TaskChainRetries,
     Union,
 )
-
 
 OPTION_KEYS: AbstractSet[str] = {"options", "extra_options"}
 DISALLOWED_RUN_OPTIONS: AbstractSet[str] = set(
@@ -51,146 +50,164 @@ PYROSETTACLUSTER_KEY_PREFIX: str = "PyRosettaCluster_"
 
 
 def _validate_clients_indices(
-        clients_indices: Any, _protocols: List[Callable[..., Any]], _clients_dict_keys: List[int],
-    ) -> Optional[NoReturn]:
-    """Validate the `clients_indices` keyword argument parameter."""
+    clients_indices: TaskChainClientIndices,
+    _protocols: Sized,
+    _clients_dict_keys: List[int],
+) -> None:
+    """Validate the `clients_indices` keyword argument value for the `PyRosettaCluster.distribute` method."""
+
     if clients_indices is not None:
         if not isinstance(clients_indices, (tuple, list)):
             raise ValueError(
-                "The `clients_indices` keyword argument parameter must be of type `list` or `tuple`.\n"
+                "The `clients_indices` keyword argument value must be of type `list` or `tuple`.\n"
                 + f"Received: {type(clients_indices)}\n"
             )
         for i in clients_indices:
             if not isinstance(i, int):
                 raise ValueError(
-                    "Each item of the `clients_indices` keyword argument parameter must be of type `int`.\n"
+                    "Each item of the `clients_indices` keyword argument value must be of type `int`.\n"
                     + f"Received: {type(i)}\n"
                 )
         if len(clients_indices) != len(_protocols):
             raise ValueError(
-                "The `clients_indices` keyword argument parameter must have the same length as the number of user-defined PyRosetta protocols!\n"
-                + f"Received `PyRosettaCluster().distribute(protocols=...)`: {_protocols}\n"
-                + f"Received `PyRosettaCluster().distribute(clients_indices=...)`: {clients_indices}\n"
+                "The `clients_indices` keyword argument value must have the same length as the number of user-defined PyRosetta protocols!\n"
+                + f"Received number of user-defined PyRosetta protocols: {len(_protocols)}\n"
+                + f"Received number of clients indices: {len(clients_indices)}\n"
             )
         if not all(x in _clients_dict_keys for x in set(clients_indices)):
             raise ValueError(
-                "Each item of the `clients_indices` keyword argument parameter must correspond to an index passed to the `PyRosettaCluster(clients=...)` class attribute.\n"
-                + f"Available clients indices based on the `PyRosettaCluster(clients=...)` class attribute: {_clients_dict_keys}\n"
-                + f"Received `PyRosettaCluster().distribute(clients_indices=...)`: {clients_indices}\n"
+                "Each item of the `clients_indices` keyword argument value must correspond to an index passed to the `PyRosettaCluster(clients=...)` keyword argument value.\n"
+                + f"Available clients indices based on the `PyRosettaCluster(clients=...)` instance attribute: {_clients_dict_keys}\n"
+                + f"Received `PyRosettaCluster.distribute(clients_indices=...)`: {clients_indices}\n"
             )
         for i in _clients_dict_keys:
             if clients_indices.count(i) == 0:
                 logging.warning(
-                    f"The `Client` object at index {i} of the `PyRosettaCluster(clients=...)` class attribute will not be used in the simulation "
-                    + "because it was not added as an index in the `PyRosettaCluster().distribute(clients_indices=...)` keyword argument parameter!\n"
-                    + f"Available clients indices based on the `PyRosettaCluster(clients=...)` class attribute: {_clients_dict_keys}\n"
+                    f"The `Client` object at index {i} of the `PyRosettaCluster(clients=...)` instance attribute will not be used in the simulation "
+                    + "because it was not added as an index in the `PyRosettaCluster().distribute(clients_indices=...)` keyword argument value!\n"
+                    + f"Available clients indices based on the `PyRosettaCluster(clients=...)` instance attribute: {_clients_dict_keys}\n"
                     + f"Received `PyRosettaCluster().distribute(clients_indices=...)`: {clients_indices}\n"
                     + "Continuing with the simulation.\n"
                 )
 
 
-def _validate_resources(resources: Any, _protocols: List[Callable[..., Any]]) -> Optional[NoReturn]:
-    """Validate the `resources` keyword argument parameter."""
+def _validate_resources(resources: TaskChainResources, _protocols: Sized) -> None:
+    """Validate the `resources` keyword argument value for the `PyRosettaCluster.distribute` method."""
+
     if resources is not None:
         if not isinstance(resources, (tuple, list)):
             raise ValueError(
-                "The `resources` keyword argument parameter must be of type `list` or `tuple`.\n"
-                + f"Received: {type(resources)}\n"
+                "The `resources` keyword argument value must be of type `list` or `tuple`. "
+                + f"Received: {type(resources)}"
             )
         for obj in resources:
             if not isinstance(obj, (dict, type(None))):
                 raise ValueError(
-                    "Each item of the `resources` keyword argument parameter must be of type `dict` or `NoneType`.\n"
-                    + f"Received: {type(obj)}\n"
+                    "Each item of the `resources` keyword argument value must be of type `dict` or `NoneType`. "
+                    + f"Received: {type(obj)}"
                 )
         if len(resources) != len(_protocols):
             raise ValueError(
-                "The `resources` keyword argument parameter must have the same length as the number of user-defined PyRosetta protocols!\n"
-                + f"Received `PyRosettaCluster().distribute(protocols=...)`: {_protocols}\n"
-                + f"Received `PyRosettaCluster().distribute(resources=...)`: {resources}\n"
+                "The `resources` keyword argument value must have the same length as the number of user-defined PyRosetta protocols!\n"
+                + f"Received number of user-defined PyRosetta protocols: {len(_protocols)}\n"
+                + f"Received number of resource values: {len(resources)}\n"
             )
 
 
-def _validate_priorities(priorities: Any, _protocols: List[Callable[..., Any]]) -> Optional[NoReturn]:
-    """Validate the `priorities` keyword argument parameter."""
+def _validate_priorities(priorities: TaskChainPriorities, _protocols: Sized) -> None:
+    """Validate the `priorities` keyword argument value for the `PyRosettaCluster.distribute` method."""
+
     if priorities is not None:
         if not isinstance(priorities, (tuple, list)):
             raise ValueError(
-                "The `priorities` keyword argument parameter must be of type `list` or `tuple`.\n"
-                + f"Received: {type(priorities)}\n"
+                "The `priorities` keyword argument value must be of type `list` or `tuple`. "
+                + f"Received: {type(priorities)}"
             )
         for obj in priorities:
             if not isinstance(obj, int):
                 raise ValueError(
-                    "Each item of the `priorities` keyword argument parameter must be of type `int`.\n"
-                    + f"Received: {type(obj)}\n"
+                    "Each item of the `priorities` keyword argument value must be of type `int`. "
+                    + f"Received: {type(obj)}"
                 )
         if len(priorities) != len(_protocols):
             raise ValueError(
-                "The `priorities` keyword argument parameter must have the same length as the number of user-defined PyRosetta protocols!\n"
-                + f"Received `PyRosettaCluster().distribute(protocols=...)`: {_protocols}\n"
-                + f"Received `PyRosettaCluster().distribute(priorities=...)`: {priorities}\n"
+                "The `priorities` keyword argument value must have the same length as the number of user-defined PyRosetta protocols!\n"
+                + f"Received number of user-defined PyRosetta protocols: {len(_protocols)}\n"
+                + f"Received number of priority values: {len(priorities)}\n"
             )
 
 
-def _validate_retries(retries: Any, _protocols: List[Callable[..., Any]]) -> Optional[NoReturn]:
-    """Validate the `retries` keyword argument parameter."""
+def _validate_retries(retries: TaskChainRetries, _protocols: Sized) -> None:
+    """Validate the `retries` keyword argument value for the `PyRosettaCluster.distribute` method."""
+
     if retries is not None:
         if isinstance(retries, int):
             if retries < 0:
                 raise ValueError(
-                    "If the `retries` keyword argument parameter is of type `int`, it must be greater than or equal to 0.\n"
+                    "If the `retries` keyword argument value is of type `int`, it must be greater than or equal to 0.\n"
                     + f"Received: {retries}\n"
                 )
         elif isinstance(retries, (tuple, list)):
             for obj in retries:
                 if not isinstance(obj, int):
                     raise ValueError(
-                        "Each item of the `retries` keyword argument parameter must be of type `int`.\n"
-                        + f"Received: {type(obj)}\n"
+                        "Each item of the `retries` keyword argument value must be of type `int`. "
+                        + f"Received: {type(obj)}"
                     )
                 if obj < 0:
                     raise ValueError(
-                        "Each item of the `retries` keyword argument parameter must be greater than or equal to 0.\n"
-                        + f"Received: {obj}\n"
+                        "Each item of the `retries` keyword argument value must be greater than or equal to 0. "
+                        + f"Received: {obj}"
                     )
             if len(retries) != len(_protocols):
                 raise ValueError(
-                    "The `retries` keyword argument parameter must have the same length as the number of user-defined PyRosetta protocols!\n"
-                    + f"Received `PyRosettaCluster().distribute(protocols=...)`: {_protocols}\n"
-                    + f"Received `PyRosettaCluster().distribute(retries=...)`: {retries}\n"
+                    "The `retries` keyword argument value must have the same length as the number of user-defined PyRosetta protocols!\n"
+                    + f"Received number of user-defined PyRosetta protocols: {len(_protocols)}\n"
+                    + f"Received number of retry values: {len(retries)}\n"
                 )
         else:
             raise ValueError(
-                "The `retries` keyword argument parameter must be of type `int`, `list`, or `tuple`.\n"
+                "The `retries` keyword argument value must be of type `int`, `list`, or `tuple`. "
                 + f"Received: {type(retries)}\n"
             )
 
 
-def _validate_scorefile_name(self, attribute: str, value: Any) -> Optional[NoReturn]:
+def _validate_scorefile_name(self, attribute: str, value: Any) -> None:
+    """Validate the `scorefile_name` keyword argument value of `PyRosettaCluster`."""
+
     if not value.endswith(".json"):
-        raise ValueError(f"The '{attribute}' keyword argument parameter must end in '.json'.")
+        raise ValueError(f"The '{attribute}' keyword argument value must end in '.json'. Received: '{value}'")
 
 
-def _validate_output_init_file(self, attribute: str, value: Any) -> Optional[NoReturn]:
+def _validate_output_init_file(self, attribute: str, value: Any) -> None:
+    """Validate the `output_init_file` keyword argument value of `PyRosettaCluster`."""
+
     if value != "" and not value.endswith(".init"):
-        raise ValueError(f"The '{attribute}' keyword argument parameter must end in '.init'.")
+        raise ValueError(f"The '{attribute}' keyword argument value must end in '.init'. Received: '{value}'")
 
 
-def _validate_logging_address(self, attribute: str, value: Any) -> Optional[NoReturn]:
+def _validate_logging_address(self, attribute: str, value: Any) -> None:
+    """Validate the `logging_address` keyword argument value of `PyRosettaCluster`."""
+
     if not isinstance(value, str):
-        raise ValueError(f"`{attribute}` must be of type `str`. Received: '{type(value)}'")
+        raise ValueError(f"The `{attribute}` keyword argument value must be of type `str`. Received: {type(value)}")
     if value.count(":") != 1:
-        raise ValueError(f"`{attribute}` must contain one colon. Received: '{value}'")
+        raise ValueError(f"The `{attribute}` keyword argument value must contain one colon. Received: '{value}'")
     _host, _port = tuple(s.strip() for s in value.split(":"))
     if not _host:
-        raise ValueError(f"`{attribute}` must contain a value before the colon representing the host. Received: '{value}'")
+        raise ValueError(
+            f"The `{attribute}` keyword argument value must contain a value before the colon representing the host. "
+            + f"Received: '{value}'"
+        )
     if not _port.isdigit():
-        raise ValueError(f"`{attribute}` must contain a digit after the colon representing the port. Received: '{value}'")
+        raise ValueError(
+            f"The `{attribute}` keyword argument value must contain a digit after the colon representing the port. "
+            + f"Received: '{value}'"
+        )
 
 
-def _validate_dirs(self, attribute: str, value: Any) -> Optional[NoReturn]:
-    """Validate the output, logging, and decoy directories."""
+def _validate_dirs(self, attribute: str, value: Any) -> None:
+    """Validate and make the output, logging, and decoy directories."""
 
     output_dir = os.path.abspath(self.output_path)
     decoy_dir = os.path.join(output_dir, self.decoy_dir_name)
@@ -201,36 +218,37 @@ def _validate_dirs(self, attribute: str, value: Any) -> Optional[NoReturn]:
             raise ValueError(f"`{d}` directory could not be created.")
 
 
-def _validate_dir(self, attribute: str, value: str) -> Optional[NoReturn]:
+def _validate_dir(self, attribute: str, value: str) -> None:
     """Validate the scratch directory."""
+
     if value != "":
         os.makedirs(value, exist_ok=True)
         if not os.path.isdir(value):
-            raise ValueError(f"`{attribute}` directory {value} could not be created.")
+            raise ValueError(f"The `{attribute}` directory {value} could not be created.")
 
 
-def _validate_int(self, attribute: str, value: int) -> Optional[NoReturn]:
+def _validate_int(self, attribute: str, value: int) -> None:
     """Validate that integers are greater than or equal to 1."""
 
     if value < 1:
         raise ValueError(
-            f"`{attribute}` must be a positive integer greater than or equal to 1."
+            f"The `{attribute}` must be a positive integer greater than or equal to 1."
         )
     
 
-def _validate_min_len(self, attribute: str, value: Optional[List[Any]]) -> Optional[NoReturn]:
+def _validate_min_len(self, attribute: str, value: Optional[List[Any]]) -> None:
     """Optionally validate that iterables have at least one object."""
 
     if value is not None and len(value) < 1:
         raise ValueError(
-            f"`{attribute}` must have at least one item if not `None`."
+            f"The `{attribute}` must have at least one item if not `None`."
         )
 
 
-def _validate_max_task_replicas(self, attribute: str, value: Optional[int]) -> Optional[NoReturn]:
+def _validate_max_task_replicas(self, attribute: str, value: Optional[int]) -> None:
     """
-    Validate that the value is `None` or integers are greater than or equal to 0,
-    and that Dask's Active Memory Manager (AMM) policy is disabled.
+    Validate that the value is `None` or integers are greater than or equal to 0, and that Dask's Active Memory
+    Manager (AMM) policy is disabled.
     """
 
     if not (value is None or (isinstance(value, int) and value >= 0)):
@@ -257,10 +275,13 @@ def _validate_max_task_replicas(self, attribute: str, value: Optional[int]) -> O
 
 def _validate_float(
     self, attribute: str, value: Union[float, int]
-) -> Optional[NoReturn]:
-    """Validate that floats are greater than or equal to 0.0"""
+) -> None:
+    """Validate that `float` or `int` objects are greater than or equal to 0."""
 
-    msg = f"`{attribute}` must be a positive `float` or `int` value greater than or equal to 0."
+    msg = (
+        f"The `{attribute}` keyword argument value must be a positive `float` or `int` value greater than "
+        f"or equal to 0. Received: {value}"
+    )
     try:
         float(value)
     except:
@@ -270,18 +291,18 @@ def _validate_float(
 
 
 def _validate_protocols_seeds_decoy_ids(
-    protocols: List[Union[Callable[..., Any], Iterable[Any]]],
+    protocols: Sized,
     seeds: List[str],
     decoy_ids: List[int],
-) -> Union[List[Union[Callable[..., Any], Iterable[Any]]], NoReturn]:
+) -> Sized:
     """
-    Validate that the user-provided PyRosetta protocols and PyRosettaCluster
-    `seeds` and `decoy_ids` attributes have the same size.
+    Validate that the user-defined PyRosetta protocols, and the `seeds` and `decoy_ids` keyword argument values
+    of `PyRosettaCluster` have the same size.
     """
+
     if len(protocols) < 1:
         raise RuntimeError(
-            "The user-provided PyRosetta protocols must contain at least one "
-            + "function or generator."
+            "The user-defined PyRosetta protocols must contain at least one callable."
         )
     if seeds:
         assert len(protocols) == len(
@@ -302,31 +323,28 @@ def _validate_protocols_seeds_decoy_ids(
 def _validate_residue_type_sets(
     _target_residue_type_set: Optional[AbstractSet[str]] = None,
     _client_residue_type_set: Optional[AbstractSet[str]] = None,
-) -> Optional[NoReturn]:
-    """
-    Validate that the compute instance (distributed worker) ResidueType set equals
-    client instance (local host) ResidueType set.
-    """
+) -> None:
+    """Validate that the ResidueType set in the `billiard` subprocess equals that in the head node process."""
 
     if _target_residue_type_set != _client_residue_type_set:
         _msg = (
-            "The compute instance (distributed worker) ResidueType set does not equal "
-            + "the client instance (local host) ResidueType set! Please ensure that the "
-            + "compute instance (distributed worker) and client instance (local host) have "
-            + "initialized PyRosetta with identical '-extra_res_fa' and '-extra_res_cen' options.\n"
-            + f"Compute instance unique ResidueTypes: {_target_residue_type_set.difference(_client_residue_type_set)}\n"
-            + f"Client instance unique ResidueTypes: {_client_residue_type_set.difference(_target_residue_type_set)}\n"
+            "The spawned subprocess ResidueType set does not equal the head node process ResidueType set! "
+            "Please ensure that the spawned subprocess and the head node process have initialized PyRosetta "
+            "with identical '-extra_res_fa', '-extra_res_cen', '-extra_patch_fa' and '-extra_patch_cen' "
+            "Rosetta command-line options.\n"
+            f"Spawned subprocess unique ResidueTypes: {_target_residue_type_set.difference(_client_residue_type_set)}\n"
+            f"Head node process unique ResidueTypes: {_client_residue_type_set.difference(_target_residue_type_set)}\n"
         )
         logging.error(_msg)
         raise AssertionError(_msg)
 
 
-def _validate_task(task: Dict[Any, Any]) -> Optional[NoReturn]:
+def _validate_task(task: Dict[Any, Any]) -> None:
     """Validate that a task does not contain disallowed or reserved keys/values."""
 
     _msg = (
         "Disallowed Rosetta command-line option '{option}' in the value of the '{key}' key of task: {task}\n"
-        "PyRosettaCluster handles seeding automatically. Please remove this Rosetta command-line option to continue."
+        "`PyRosettaCluster` handles seeding automatically. Please remove this Rosetta command-line option to continue."
     )
     for k, v in task.items():
         if not isinstance(k, str):

@@ -5,9 +5,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
-
 
 try:
     import msgpack
@@ -15,7 +13,7 @@ except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.logging_listeners' requires the "
         + "third-party package 'msgpack' as a dependency!\n"
-        + "Please install the package into your python environment. "
+        + "Please install this package into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/msgpack/\n"
     )
@@ -31,31 +29,42 @@ import traceback
 import warnings
 
 from functools import partial
-from typing import (
+
+from pyrosetta.distributed.cluster.hkdf import (
+    MaskedBytes,
+    compare_digest,
+    derive_task_key,
+    hmac_digest,
+)
+from pyrosetta.distributed.cluster.logging_filters import (
+    SocketAddressFilter,
+    split_socket_address,
+)
+from pyrosetta.distributed.cluster.type_defs import (
     Any,
     Dict,
     Union,
 )
 
-from pyrosetta.distributed.cluster.hkdf import MaskedBytes, compare_digest, derive_task_key, hmac_digest
-from pyrosetta.distributed.cluster.logging_filters import (
-    SocketAddressFilter,
-    split_socket_address,
-)
-
 
 class LogRecordRequestHandler(socketserver.StreamRequestHandler):
     """
-    Handler for a streaming logging request modified from logging cookbook recipe:
+    Handler for a streaming logging request.
+
+    This class was adapted from the Python logging cookbook recipe. See
     https://docs.python.org/3/howto/logging-cookbook.html#sending-and-receiving-logging-events-across-a-network
+    for more information.
     """
+
     def setup(self) -> None:
         """Setup socket server."""
+
         super().setup()
         self.unpack: partial = partial(msgpack.unpackb, raw=False)
 
     def handle(self) -> None:
         """Handle raw logging message and make log record."""
+
         while True:
             header = self.connection.recv(4)
             if len(header) < 4:
@@ -79,8 +88,10 @@ class LogRecordRequestHandler(socketserver.StreamRequestHandler):
 
     def unPickle(self, msg: bytes) -> Dict[str, Any]:
         """
-        Log record decompress method override using MessagePack and hash-based message authentication codes (HMAC).
+        Log record decompress method override using MessagePack and hash-based message authentication codes
+        (HMAC).
         """
+
         packet = self.unpack(msg)
         signature = packet["signature"]
         packed_frame = packet["packed_frame"]
@@ -102,9 +113,13 @@ class LogRecordRequestHandler(socketserver.StreamRequestHandler):
 
 class SocketListener(socketserver.ThreadingTCPServer):
     """
-    TCP socket-based logging receiver modified from logging cookbook recipe:
+    TCP socket-based logging receiver.
+
+    This class was adapted from the Python logging cookbook recipe. See
     https://docs.python.org/3/howto/logging-cookbook.html#sending-and-receiving-logging-events-across-a-network
+    for more information.
     """
+
     allow_reuse_address = True
 
     def __init__(
@@ -115,6 +130,8 @@ class SocketListener(socketserver.ThreadingTCPServer):
         timeout: Union[float, int],
         ignore_errors: bool,
     ) -> None:
+        """Initialize the `SocketListener` class."""
+
         _host, _port = split_socket_address(logging_address)
         super().__init__((_host, _port), LogRecordRequestHandler)
         self.socket_listener_address = self.socket.getsockname()
@@ -128,6 +145,7 @@ class SocketListener(socketserver.ThreadingTCPServer):
 
     def setup_handler(self, logging_file: str, logging_level: str) -> logging.FileHandler:
         """Setup logging file handler for logging socket listener."""
+
         handler = logging.FileHandler(logging_file, mode="a")
         handler.setLevel(logging_level)
         handler.addFilter(SocketAddressFilter(self.socket_listener_address))
@@ -148,11 +166,13 @@ class SocketListener(socketserver.ThreadingTCPServer):
 
     def start(self) -> None:
         """Start logging socket listener."""
+
         self._thread = threading.Thread(target=self.serve_forever, daemon=True)
         self._thread.start()
 
     def stop(self) -> None:
         """Stop logging socket listener."""
+
         self.shutdown()
         self.server_close()
         if self._thread:
@@ -160,6 +180,7 @@ class SocketListener(socketserver.ThreadingTCPServer):
 
     def serve_until_stopped(self) -> None:
         """Run logging socket listener until aborted."""
+
         abort = 0
         while not abort:
             _read_ready, _, _ = select.select([self.socket.fileno()], [], [], self.timeout)
