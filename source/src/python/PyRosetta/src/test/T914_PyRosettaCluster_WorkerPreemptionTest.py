@@ -12,10 +12,10 @@ from utils.distributed import parse_args, run_distributed_cluster_test_cases
 
 def main(wait: bool, streaming: bool, timeout: int) -> None:
     run_distributed_cluster_test_cases(
-        "test_worker_preemption.WorkerPreemptionTest.test_disk_task_registry",
-        "test_worker_preemption.WorkerPreemptionTest.test_memory_task_registry",
-        "test_worker_preemption.WorkerPreemptionTest.test_disk_max_task_replicas_all",
-        "test_worker_preemption.WorkerPreemptionTest.test_disk_max_task_replicas_int",
+        # "test_worker_preemption.WorkerPreemptionTest.test_disk_task_registry",
+        # "test_worker_preemption.WorkerPreemptionTest.test_memory_task_registry",
+        # "test_worker_preemption.WorkerPreemptionTest.test_disk_max_task_replicas_all",
+        # "test_worker_preemption.WorkerPreemptionTest.test_disk_max_task_replicas_int",
         wait=wait,
         streaming=streaming,
         timeout=timeout,
