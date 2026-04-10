@@ -58,7 +58,7 @@ class WorkerPreemptionTest(unittest.TestCase):
     # `WorkerPreemptionTest._sleep_time` must be sufficient to allow Dask to have enough time to reschedule lost tasks on alive workers
     # before the next worker preemption. Empirically, the required sleep time depends on: the number of tasks in flight, the scheduler
     # heartbeat, PyRosettaCluster overhead time (e.g., serializing data), etc.
-    _sleep_time = 3
+    _sleep_time = 8
     _n_tasks = 4
     _n_protocols = 2
     _sep = "*" * 60
@@ -149,8 +149,16 @@ class WorkerPreemptionTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.client_1.close()
-        cls.cluster_1.close()
+        try:
+            cls.client_1.close(timeout=3)
+            print("Dask client successfully closed.", flush=True)
+        except Exception:
+            print("Dask client failed to close.", flush=True)
+        try:
+            cls.cluster_1.close(timeout=3)
+            print("Dask cluster successfully closed.", flush=True)
+        except Exception:
+            print("Dask cluster failed to close.", flush=True)
         cls.workdir.cleanup()
         print(
             WorkerPreemptionTest._sep,
