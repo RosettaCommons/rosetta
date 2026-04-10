@@ -5,7 +5,6 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
 
 try:
@@ -14,8 +13,8 @@ try:
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.io' requires the "
-        + "third-party packages 'pandas' and 'toolz' as a dependencies!\n"
-        + "Please install these packages into your python environment. "
+        + "third-party packages 'pandas' and 'toolz' as dependencies!\n"
+        + "Please install these packages into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/toolz/\n"
         + "https://pypi.org/project/pandas/\n"
@@ -34,9 +33,16 @@ import re
 import uuid
 import warnings
 
-from contextlib import redirect_stdout, redirect_stderr
+from contextlib import (
+    redirect_stdout,
+    redirect_stderr,
+)
 from datetime import datetime
-from pyrosetta.rosetta.core.pose import Pose, add_comment, get_all_comments
+from pyrosetta.rosetta.core.pose import (
+    Pose,
+    add_comment,
+    get_all_comments,
+)
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.exceptions import PyRosettaIsNotInitializedError
 from pyrosetta.rosetta.basic import was_init_called
@@ -45,35 +51,36 @@ from pyrosetta.utility.initialization import (
     PyRosettaInitDictWriter,
     PyRosettaInitFileReader,
 )
-from typing import (
-    Any,
-    Dict,
-    Generic,
-    Iterable,
-    List,
-    NoReturn,
-    Optional,
-    Tuple,
-    TypeVar,
-    Union,
+from urllib.parse import (
+    urlparse,
+    urlunparse,
 )
-from urllib.parse import urlparse, urlunparse
 
 from pyrosetta.distributed.cluster.config import source_domains
 from pyrosetta.distributed.cluster.exceptions import OutputError
 from pyrosetta.distributed.cluster.init_files import InitFileSigner
 from pyrosetta.distributed.cluster.logging_support import RedirectToLogger
-from pyrosetta.distributed.cluster.serialization import Serialization, update_scores
-
+from pyrosetta.distributed.cluster.serialization import (
+    Serialization,
+    update_scores,
+)
+from pyrosetta.distributed.cluster.type_defs import (
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    PoseOrPackedPose,
+    Tuple,
+    Union,
+)
 
 METADATA_INPUT_DECOY_KEY: str = "idx_poses_input"
 METADATA_OUTPUT_DECOY_KEY: str = "idx_poses_output"
 
-G = TypeVar("G")
 
-
-class IO(Generic[G]):
-    """Input/Output methods for PyRosettaCluster."""
+class IO:
+    """Input/Output methods for `PyRosettaCluster`."""
 
     DATETIME_FORMAT: str = "%Y-%m-%d %H:%M:%S.%f"
     REMARK_FORMAT: str = "REMARK PyRosettaCluster: "
@@ -82,8 +89,8 @@ class IO(Generic[G]):
         self, kwargs: Dict[str, Any]
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
-        Get the current state of the PyRosettaCluster instance, and split the
-        kwargs into the PyRosettaCluster instance kwargs and ancillary metadata.
+        Get the current state of the `PyRosettaCluster` instance, and split the input keyword arguments into
+        the `PyRosettaCluster` instance attributes and ancillary metadata.
         """
 
         instance_state = self.__getstate__()
@@ -132,26 +139,33 @@ class IO(Generic[G]):
 
     @staticmethod
     def _filter_scores_dict(scores_dict: Dict[str, Any]) -> Dict[str, Any]:
+        """Filter for JSON-serializable scoring data."""
+
         for key in list(scores_dict.keys()):
             try:
                 IO._dump_json(scores_dict[key])
             except:
                 logging.warning(
-                    f"Removing score key '{key}' with value of type '{type(scores_dict[key])}' before "
-                    + "saving PyRosettaCluster result! Only JSON-serializable score values can be written to "
-                    + "output files. Consider custom serializing the value to save this score or removing the "
-                    + "key from the `pose.cache` dictionary to remove this warning message."
+                    f"Removing score key '{key}' with value of type '{type(scores_dict[key])}' before saving "
+                    + "`PyRosettaCluster` result! Only JSON-serializable scoring data can be written to output "
+                    + "decoy files and scorefiles. Consider custom serializing the value to save this score "
+                    + "or removing the key from the `Pose.cache` dictionary to silence this warning message."
                 )
                 scores_dict.pop(key, None)
 
         return scores_dict
 
     def _format_result(
-        self, result: Union[Pose, PackedPose]
+        self, result: PoseOrPackedPose
     ) -> Tuple[PackedPose, str, Dict[str, Any], Dict[str, Any]]:
         """
-        Given a `Pose` or `PackedPose` object, return a tuple containing
-        the pdb string and a scores dictionary.
+        Given a `Pose` or `PackedPose` object, return a `tuple` object containing the `Pose` or `PackedPose`
+        object, and its PDB string, `Pose.cache` dictionary, and JSON-serializable `Pose.cache` dictionary.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects and arbitrary
+        Python types in `Pose.cache` dictionary. Using the `pickle` module is not secure, so please only run
+        with input files you trust. Learn more about the `pickle` module and its security
+        `here <https://docs.python.org/3/library/pickle.html>`_.
         """
 
         _pdbstring = io.to_pdbstring(result)
@@ -162,17 +176,26 @@ class IO(Generic[G]):
 
     def _parse_results(
         self,
-        results: Union[
-            Iterable[Optional[Union[Pose, PackedPose, bytes]]],
-            Optional[Union[Pose, PackedPose]],
-        ],
-    ) -> Union[List[Tuple[str, Dict[str, Any]]], NoReturn]:
+        results: Optional[Union[bytes, PoseOrPackedPose, Iterable[Union[bytes, PoseOrPackedPose]]]],
+    ) -> List[Tuple[str, Dict[str, Any]]]:
         """
-        Format output results on distributed worker. Input argument `results` can be a
-        `Pose`, `PackedPose`, or `None` object, or a `list` or `tuple` of `Pose` and/or `PackedPose`
-        objects, or an empty `list` or `tuple`. Returns a list of tuples, each tuple
-        containing the pdb string and a scores dictionary.
+        Format output results from a Dask worker.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects and arbitrary
+        Python types in `Pose.cache` dictionary. Using the `pickle` module is not secure, so please only run
+        with input files you trust. Learn more about the `pickle` module and its security
+        `here <https://docs.python.org/3/library/pickle.html>`_.
+
+        Args:
+            `results`: `Pose | PackedPose | bytes | Iterable[Pose | PackedPose | bytes] | None`
+                An `Pose`, `PackedPose`, `bytes` or `None` object, or an iterable of `Pose`, `PackedPose`,
+                or `bytes` objects.
+
+        Returns:
+            A `list` object of `tuple` objects, where each `tuple` object contains a PDB string, `Pose.cache`
+            dictionary, and JSON-serializable `Pose.cache` dictionary.
         """
+
         if isinstance(results, bytes):
             results = self.serializer.decompress_packed_pose(results)
 
@@ -199,10 +222,7 @@ class IO(Generic[G]):
         return out
 
     def _process_kwargs(self, kwargs: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Remove seed specification from 'extra_options' or 'options',
-        and remove protocols_key from kwargs.
-        """
+        """Parse a returned task dictionary."""
 
         for k in list(kwargs.keys()):
             if not k.startswith("PyRosettaCluster_"):
@@ -236,7 +256,13 @@ class IO(Generic[G]):
         return kwargs
 
     def _get_init_file_json(self, packed_pose: PackedPose) -> str:
-        """Return a PyRosetta initialization file as a JSON-serialized string."""
+        """
+        Return a PyRosetta initialization file as a JSON-serialized string.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects. Using the
+        `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+        `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+        """
 
         metadata, poses = sign_init_file_metadata_and_poses(
             input_packed_pose=self.input_packed_pose,
@@ -257,7 +283,13 @@ class IO(Generic[G]):
 
     @staticmethod
     def _add_pose_comment(packed_pose: PackedPose, pdbfile_data: str) -> PackedPose:
-        """Cache simulation data as a pose comment."""
+        """
+        Cache simulation data as a `Pose` comment.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects. Using the
+        `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+        `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+        """
 
         _pose = packed_pose.pose.clone()
         add_comment(
@@ -285,12 +317,19 @@ class IO(Generic[G]):
             sort_keys=False,
         )
 
-    def _save_results(self, results: Any, kwargs: Dict[str, Any]) -> None:
-        """Write results and kwargs to disk."""
+    def _save_results(self, results: Optional[bytes], kwargs: Dict[str, Any]) -> None:
+        """
+        Write output results to disk.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects and arbitrary
+        Python types in `Pose.cache` dictionary. Using the `pickle` module is not secure, so please only run
+        with input files you trust. Learn more about the `pickle` module and its security
+        `here <https://docs.python.org/3/library/pickle.html>`_.
+        """
 
         if self.dry_run:
             logging.info(
-                "PyRosettaCluster `dry_run` attribute is enabled. Skipping saving!"
+                "The `dry_run` instance attribute is set to `True`. Skipping saving!"
             )
             return
 
@@ -434,7 +473,7 @@ class IO(Generic[G]):
                     df.to_pickle(_scorefile_path, compression="infer", protocol=SecureSerializerBase._pickle_protocol)
 
     def _cache_toml(self) -> None:
-        """Cache the pixi/uv TOML file string and TOML file format."""
+        """Cache the Pixi/uv TOML file string and TOML file format."""
 
         if self.environment_manager == "pixi":
             # https://pixi.sh/dev/reference/environment_variables/#environment-variables-set-by-pixi
@@ -447,10 +486,10 @@ class IO(Generic[G]):
                 else:
                     logging.warning(
                         (
-                            "PyRosettaCluster detected the set 'PIXI_PROJECT_MANIFEST' "
-                            "environment variable, but the pixi manifest file does not exist! "
-                            "It is recommended to commit the pixi manifest file to the "
-                            "git repository to reproduce the pixi project later."
+                            "`PyRosettaCluster` detected the set 'PIXI_PROJECT_MANIFEST' "
+                            "environment variable, but the Pixi manifest file does not exist! "
+                            "It is recommended to commit the Pixi manifest file to the "
+                            "Git repository to reproduce the Pixi project later."
                         )
                     )
                     self.toml = ""
@@ -467,9 +506,9 @@ class IO(Generic[G]):
                 else:
                     logging.warning(
                         (
-                            "PyRosettaCluster could not detect the pixi manifest file! "
-                            "It is recommended to commit the pixi manifest file to the "
-                            "git repository to reproduce the pixi project later."
+                            "`PyRosettaCluster` could not detect the Pixi manifest file! "
+                            "It is recommended to commit the Pixi manifest file to the "
+                            "Git repository to reproduce the Pixi project later."
                         )
                     )
                     self.toml = ""
@@ -486,10 +525,10 @@ class IO(Generic[G]):
                 else:
                     logging.warning(
                         (
-                            "PyRosettaCluster detected the set 'UV_PROJECT' "
+                            "`PyRosettaCluster` detected the set 'UV_PROJECT' "
                             "environment variable, but the uv `pyproject.toml` file does not exist! "
                             "It is recommended to commit the uv `pyproject.toml` file to the "
-                            "git repository to reproduce the uv project later."
+                            "Git repository to reproduce the uv project later."
                         )
                     )
                     self.toml = ""
@@ -503,13 +542,13 @@ class IO(Generic[G]):
                 else:
                     logging.warning(
                         (
-                            "PyRosettaCluster could not detect the uv `pyproject.toml` file! "
+                            "`PyRosettaCluster` could not detect the uv `pyproject.toml` file! "
                             "The 'UV_PROJECT' environment variable is not set, and a `pyproject.toml` "
                             "file does not exist in the current working directory. For environment "
                             "reproducibility, please set the 'UV_PROJECT' environment variable "
                             "to the uv project root directory, or run the simulation from the uv project "
                             "root directory. If continuing with this simulation, it is recommended to commit the "
-                            "uv `pyproject.toml` file to the git repository to reproduce the uv project later."
+                            "uv `pyproject.toml` file to the Git repository to reproduce the uv project later."
                         )
                     )
                     self.toml = ""
@@ -520,8 +559,8 @@ class IO(Generic[G]):
 
     def _write_environment_file(self, filename: str) -> None:
         """
-        Write the conda/mamba YML or uv/pixi lock file string to the input filename.
-        If pixi/uv is used as the environment manager, also write the TOML file string to a separate filename.
+        Write the Conda/Mamba YML or uv/Pixi lock file string to the input filename. If Pixi/uv is used as the
+        environment manager, also write the TOML file string to a separate filename.
         """
 
         if (
@@ -538,7 +577,13 @@ class IO(Generic[G]):
                     f.write(self.toml)
 
     def _write_init_file(self) -> None:
-        """Maybe write PyRosetta initialization file to the input filename."""
+        """
+        Maybe dump a PyRosetta initialization file.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects. Using the
+        `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+        `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+        """
 
         if self.output_init_file != "":
             if self.compressed and self.output_init_file.endswith(".init"):
@@ -546,7 +591,7 @@ class IO(Generic[G]):
             if not self.output_init_file.endswith((".init", ".init.bz2")):
                 raise ValueError(
                     "The output PyRosetta initialization file must end in '.init' or '.init.bz2'. "
-                    + "The current PyRosettaCluster 'output_init_file' instance attribute is: "
+                    + "The current `output_init_file` instance attribute of `PyRosettaCluster` is set to: "
                     + f"'{self.output_init_file}'"
                 )
             self._dump_init_file(
@@ -563,7 +608,14 @@ class IO(Generic[G]):
         output_packed_pose: Optional[PackedPose] = None,
         verbose: bool = True,
     ) -> None:
-        """Dump compressed PyRosetta initialization input files and poses to the input filename."""
+        """
+        Dump compressed PyRosetta initialization input files and `Pose` or `PackedPose` objects to the input
+        filename.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects. Using the
+        `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+        `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+        """
 
         out = RedirectToLogger(logging.INFO)
         err = RedirectToLogger(logging.ERROR)
@@ -584,9 +636,9 @@ class IO(Generic[G]):
             )
             _logging_debug_msg = "Successfully ran `{0}` on the host node."
             _logging_error_msg = (
-                "{0}: {1}. `{2}` did not run successfully, so PyRosetta initialization input data may not "
-                "be saved! It is recommended to run `pyrosetta.dump_init_file()` to reproduce PyRosetta "
-                "initialization options on the host node later."
+                "{0}: {1}. `{2}` did not run successfully, so PyRosetta initialization input files may not "
+                "be saved! It is recommended to run `pyrosetta.dump_init_file` to reproduce PyRosetta "
+                "initialization options on the head node later."
             )
             if self.compressed:
                 try:
@@ -596,15 +648,15 @@ class IO(Generic[G]):
                         writer.print_cached_files(filename, dump_init_file_kwargs["dry_run"])
                     with open(filename, "wb") as f:
                         f.write(bz2.compress(str.encode(init_file_json)))
-                    logging.debug(_logging_debug_msg.format("PyRosettaInitDictWriter().get_json()"))
+                    logging.debug(_logging_debug_msg.format("PyRosettaInitDictWriter.get_json"))
                 except Exception as ex:
-                    logging.error(_logging_error_msg.format(type(ex).__name__, ex, "PyRosettaInitDictWriter().get_json()"))
+                    logging.error(_logging_error_msg.format(type(ex).__name__, ex, "PyRosettaInitDictWriter.get_json"))
             else:
                 try:
                     pyrosetta.dump_init_file(filename, **dump_init_file_kwargs)
-                    logging.debug(_logging_debug_msg.format("pyrosetta.dump_init_file()"))
+                    logging.debug(_logging_debug_msg.format("pyrosetta.dump_init_file"))
                 except Exception as ex:
-                    logging.error(_logging_error_msg.format(type(ex).__name__, ex, "pyrosetta.dump_init_file()"))
+                    logging.error(_logging_error_msg.format(type(ex).__name__, ex, "pyrosetta.dump_init_file"))
         out.flush()
         err.flush()
 
@@ -614,12 +666,18 @@ def verify_init_file(
     input_packed_pose: Optional[PackedPose],
     output_packed_pose: Optional[PackedPose],
     metadata: Dict[str, Any],
-) -> Optional[NoReturn]:
-    """Verify a PyRosetta initialization file."""
+) -> None:
+    """
+    Verify that a PyRosetta initialization file was written by `PyRosettaCluster`.
+
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+    """
 
     @toolz.functoolz.curry
-    def _verify_signer(_signer: InitFileSigner, _sha256: str, _signature: str) -> Optional[NoReturn]:
-        """Verify that current PyRosetta and PyRosettaCluster versions match that dumped in the '.init' file"""
+    def _verify_signer(_signer: InitFileSigner, _sha256: str, _signature: str) -> None:
+        """Verify that current PyRosetta and `PyRosettaCluster` versions match that dumped in the '.init' file"""
 
         _init_file_err_msg = (
             f"Failed to verify data integrity of the input PyRosetta initialization file: '{init_file}'"
@@ -700,7 +758,13 @@ def sign_init_file_metadata_and_poses(
     input_packed_pose: Optional[PackedPose] = None,
     output_packed_pose: Optional[PackedPose] = None,
 ) -> Tuple[Dict[str, Any], List[PackedPose]]:
-    """Sign PyRosetta initialization file 'metadata' and 'poses' keys."""
+    """
+    Sign PyRosetta initialization file "metadata" and "poses" keys.
+
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+    """
 
     metadata = {}
     metadata["comment"] = "Generated by PyRosettaCluster"
@@ -711,7 +775,7 @@ def sign_init_file_metadata_and_poses(
         _key = IO.REMARK_FORMAT.rstrip() # Remove extra space since `add_comment` adds a space
         if _key not in _comments.keys():
             raise NotImplementedError(
-                "Signing '.init' file metadata and poses when PyRosettaCluster simulation data is not "
+                "Signing '.init' file metadata and poses when `PyRosettaCluster` simulation data is not "
                 + f"cached in the output `PackedPose` object comments is not supported: {_comments}"
             )
         poses.append(output_packed_pose)
@@ -732,22 +796,26 @@ def sign_init_file_metadata_and_poses(
 def get_poses_from_init_file(
     init_file: str,
     verify: bool = False,
-) -> Union[Tuple[Optional[PackedPose], Optional[PackedPose]], NoReturn]:
+) -> Tuple[Optional[PackedPose], Optional[PackedPose]]:
     """
-    Return a `tuple` object of the input `PackedPose` object and the output `PackedPose` object
-    from a '.init' file, and optionally verify PyRosettaCluster metadata in the '.init' file.
+    Return a `tuple` object of the input `PackedPose` object and the output `PackedPose` object from a ".init"
+    or ".init.bz2" file, and optionally verify `PyRosettaCluster` metadata in the ".init" or ".init.bz2" file.
+
+    *Warning*: This function uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
     """
 
     @toolz.functoolz.curry
     def _maybe_to_packed(
         key: str, poses: List[str], metadata: Dict[str, str]
-    ) -> Union[Optional[PackedPose], NoReturn]:
+    ) -> Optional[PackedPose]:
         assert isinstance(metadata, dict), (
-            "The PyRosetta initialization file 'metadata' key value must be a `dict` object. "
+            "The value of the 'metadata' key must be a `dict` object. "
             + f"Received: {type(metadata)}"
         )
         assert isinstance(poses, list), (
-            "The PyRosetta initialization file 'poses' key value must be a `list` object. "
+            "The value of the 'poses' key must be a `list` object. "
             + f"Received: {type(poses)}"
         )
         if key in metadata:
@@ -756,7 +824,7 @@ def get_poses_from_init_file(
                 return io.to_packed(io.to_pose(poses[idx]))
             else:
                 raise TypeError(
-                    f"The PyRosetta initialization file metadata '{key}' key value must be an `int` object. "
+                    f"The value of the '{key}' key in the value of the 'metadata' key must be an `int` object. "
                     + f"Received: {type(idx)}"
                 )
         else:
@@ -764,17 +832,17 @@ def get_poses_from_init_file(
 
     if not was_init_called():
         raise PyRosettaIsNotInitializedError(
-            f"Please first initialize PyRosetta with the 'init_file' argument parameter: '{init_file}'"
+            f"Please first initialize PyRosetta with the 'init_file' argument value: '{init_file}'"
         )
     if not isinstance(init_file, str):
-        raise TypeError(f"The 'init_file' argument parameter must be a `str` object. Received: {type(init_file)}")
+        raise TypeError(f"The 'init_file' argument value must be a `str` object. Received: {type(init_file)}")
     if init_file.endswith(".init.bz2"):
         with open(init_file, "rb") as fbz2:
             init_dict = PyRosettaInitFileReader.from_json(bz2.decompress(fbz2.read()).decode())
     elif init_file.endswith(".init"):
         init_dict = PyRosettaInitFileReader.read_json(init_file)
     else:
-        raise ValueError("The 'init_file' argument parameter must end with '.init' or '.init.bz2'.")
+        raise ValueError("The 'init_file' argument value must end with '.init' or '.init.bz2'.")
 
     metadata = init_dict["metadata"]
     poses = init_dict["poses"]
@@ -794,10 +862,40 @@ def secure_read_pickle(
     storage_options: Optional[Dict[str, Any]] = None,
 ) -> pandas.DataFrame:
     """
-    Secure replacement for `pandas.read_pickle()` for file-like objects.
+    Proxy for `pandas.read_pickle` for file-like objects using the `SecureSerializerBase` class in PyRosetta.
+    Usage requires adding "pandas" as a secure package to unpickle in PyRosetta.
 
-    Usage requires adding 'pandas' as a secure package to unpickle in PyRosetta:
-    `pyrosetta.secure_unpickle.add_secure_package('pandas')`
+    *Warning*: This function uses the `pickle` module to deserialize pickled `pandas.DataFrame` objects. Using
+    the `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+    `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+
+    Args:
+        `filepath_or_buffer`: `str`
+            See `pandas.read_pickle <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_pickle.html>`_.
+
+        `compression`: `str | dict[str, Any] | None`
+            See `pandas.read_pickle <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_pickle.html>`_.
+
+            Default: `"infer"`
+
+        `storage_options`: `dict[str, Any] | None`
+            See `pandas.read_pickle <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_pickle.html>`_.
+
+            Default: `None`
+
+    Example:
+        >>> pyrosetta.secure_unpickle.add_secure_package("pandas")
+        >>> secure_read_pickle("/path/to/my/scorefile.gz")
+
+    Note:
+        If using `pandas` version `>=3.0.0`, PyArrow-backed datatypes may be enabled by default; in this case,
+        please ensure that `pyrosetta.secure_unpickle.add_secure_package("pyarrow")` has also first been run.
+
+        See https://pandas.pydata.org/pdeps/0010-required-pyarrow-dependency.html and
+        https://pandas.pydata.org/pdeps/0014-string-dtype.html for more information.
+
+    Returns:
+        A deserialized `pandas.DataFrame` object.
     """
     with pandas.io.common.get_handle(
         filepath_or_buffer,
@@ -811,12 +909,13 @@ def secure_read_pickle(
 
 def sanitize_urls(yml_str: str) -> str:
     """
-    Scan the input string and sanitize any URLs that include
-    credentials for source domains, returning the updated string.
+    Scan the input string and sanitize any URLs that include credentials for source domains, returning the
+    updated string.
     """
 
     def sanitize_url(url: str) -> str:
         """Remove username and password from URLs pointing to source domains."""
+
         parsed = urlparse(url)
 
         # No credentials present
@@ -838,9 +937,9 @@ def sanitize_urls(yml_str: str) -> str:
         # Warn without leaking credentials
         warnings.warn(
             (
-                "PyRosettaCluster automatically removed embedded credentials from the "
-                f"conda channel '{host_domain}' while processing the environment file. "
-                "These credentials are no longer required by this conda channel. "
+                "`PyRosettaCluster` automatically removed embedded credentials from the "
+                f"Conda channel '{host_domain}' while processing the environment file. "
+                "These credentials are no longer required by this Conda channel. "
                 "Please remove them from your configuration to silence this warning."
             ),
             UserWarning,
@@ -861,7 +960,7 @@ def sanitize_urls(yml_str: str) -> str:
     return yml_sanitized_str
 
 
-def _is_pandas_object_pyarrow_backed(obj: Any) -> bool:
+def _is_pandas_object_pyarrow_backed(obj: Union[pandas.DataFrame, pandas.Series]) -> bool:
     """
     Determine if a `pandas.DataFrame` or `pandas.Series` object uses Arrow-backed pandas dtypes.
 
@@ -870,11 +969,13 @@ def _is_pandas_object_pyarrow_backed(obj: Any) -> bool:
     for more information.
 
     Args:
-        obj: An input `pandas.DataFrame` or `pandas.Series` object to test.
+        `obj`: `pandas.DataFrame | pandas.Series`
+            An input `pandas.DataFrame` or `pandas.Series` object to test.
 
     Returns:
         A `bool` object.
     """
+
     def _is_arrow_dtype(dtype: Any) -> bool:
         return dtype.__class__.__name__ == "ArrowDtype"
 

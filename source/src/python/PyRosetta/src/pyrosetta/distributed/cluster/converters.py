@@ -5,7 +5,6 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
 
 try:
@@ -16,7 +15,7 @@ except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.converters' requires the "
         + "third-party packages 'dask', 'gitpython' and 'toolz' as dependencies!\n"
-        + "Please install these packages into your python environment. "
+        + "Please install these packages into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/dask/\n"
         + "https://gitpython.readthedocs.io/en/stable/intro.html\n"
@@ -34,19 +33,6 @@ import warnings
 
 from functools import singledispatch
 from pyrosetta.distributed.packed_pose.core import PackedPose
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Iterable,
-    List,
-    NoReturn,
-    Optional,
-    Sized,
-    Tuple,
-    TypeVar,
-    Union,
-)
 
 from pyrosetta.distributed.cluster.config import (
     get_environment_cmd,
@@ -66,31 +52,50 @@ from pyrosetta.distributed.cluster.converter_tasks import (
     maybe_issue_environment_warnings as _maybe_issue_environment_warnings,
 )
 from pyrosetta.distributed.cluster.serialization import Serialization
-from pyrosetta.distributed.cluster.validators import PYROSETTACLUSTER_KEY_PREFIX, _validate_task
+from pyrosetta.distributed.cluster.type_defs import (
+    AbstractSet,
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    NoReturn,
+    Optional,
+    PyRosettaProtocol,
+    PyRosettaProtocols,
+    Sized,
+    Tuple,
+    Union,
+)
+from pyrosetta.distributed.cluster.validators import (
+    PYROSETTACLUSTER_KEY_PREFIX,
+    _validate_task,
+)
 
 
-S = TypeVar("S", bound=Serialization)
+def _parse_filter_results(obj: Any) -> bool:
+    """Parse the `filter_results` keyword argument value of `PyRosettaCluster`."""
 
-
-def _parse_filter_results(obj: Any) -> Union[bool, NoReturn]:
-    """Parse the input `filter_results` attribute of PyRosettaCluster."""
     _issue_future_warning = False
 
     @singledispatch
     def converter(obj: Any) -> NoReturn:
-        raise ValueError("'filter_results' must be of type `bool` or `NoneType`!")
+        raise ValueError(
+            "The `filter_results` keyword argument value must be of type `bool` or `NoneType`. "
+            + f"Received: {type(obj)}"
+        )
 
     @converter.register(type(None))
     def _parse_none(obj: None) -> bool:
         if _issue_future_warning:
             warnings.warn(
                 (
-                    "As of PyRosettaCluster version 2.1.0, the 'filter_results' instance attribute "
-                    "is enabled by default, which automatically filters empty `PackedPose` objects between "
+                    "As of `PyRosettaCluster` version 2.1.0, the `filter_results` keyword argument value is "
+                    "set to `True` by default, which automatically filters empty `PackedPose` objects between "
                     "user-provided PyRosetta protocols to help reduce compute overhead. Please explicitly set "
                     "either `filter_results=True` (the currently enabled, new setting) or `filter_results=False` "
                     "(to revert to legacy behavior before version 2.1.0) to silence this notice. This notice "
-                    "will disappear in a future version of PyRosettaCluster."
+                    "will disappear in a future version of `PyRosettaCluster`."
                 ),
                 FutureWarning,
                 stacklevel=5,
@@ -105,28 +110,31 @@ def _parse_filter_results(obj: Any) -> Union[bool, NoReturn]:
 
 
 def _parse_decoy_ids(objs: Any) -> List[int]:
-    """
-    Normalize user-provided PyRosetta 'decoy_ids' to a `list` object containing `int` objects.
-    """
-
+    """Parse the `decoy_ids` keyword argument value of `PyRosettaCluster`."""
     return to_iterable(objs, to_int, "decoy_ids")
 
 
 def _parse_empty_queue(protocol_name: str, ignore_errors: bool) -> None:
-    """Return a `None` object when a protocol results in an error with `ignore_errors=True`."""
+    """
+    Return `None` when a PyRosetta protocol raises an exception and the `ignore_errors` instance attribute of
+    `PyRosettaCluster` is set to `True`.
+    """
     logging.warning(
-        f"User-provided PyRosetta protocol '{protocol_name}' resulted in an empty queue with `ignore_errors={ignore_errors}`! "
-        + "Putting a `None` object into the queue."
+        f"User-provided PyRosetta protocol '{protocol_name}' resulted in an empty queue with "
+        + f"`ignore_errors={ignore_errors}`! Putting `None` into the queue."
     )
     return None
 
 
-def _parse_environment(obj: Any) -> Union[str, NoReturn]:
-    """Parse the input `environment` attribute of PyRosettaCluster."""
+def _parse_environment(obj: Any) -> str:
+    """Parse the `environment` keyword argument value of `PyRosettaCluster`."""
 
     @singledispatch
     def converter(obj: Any) -> NoReturn:
-        raise ValueError("The 'environment' instance attribute must be of type `str` or `NoneType`!")
+        raise ValueError(
+            "The `environment` keyword argument value must be of type `str` or `NoneType`! "
+            + f"Received: {type(obj)}"
+        )
 
     @converter.register(type(None))
     def _parse_none(obj: None) -> str:
@@ -174,14 +182,15 @@ def _parse_environment(obj: Any) -> Union[str, NoReturn]:
                 )
             else:
                 raise RuntimeError(f"Unsupported environment manager: {environment_manager}")
+
         return yml
 
     @converter.register(str)
-    def _parse_str(obj: str) -> Union[str, NoReturn]:
+    def _parse_str(obj: str) -> str:
         environment_manager = get_environment_manager()
         if obj == "":
             _warning_msg = (
-                "The input 'environment' parameter argument is an empty string, "
+                "The `environment` keyword argument value is an empty string, "
                 "which is not a valid {0} file string capturing the active {1}! "
                 "Reproduction simulations may not necessarily reproduce "
                 "the original decoy(s)! Please verify that your active "
@@ -199,14 +208,15 @@ def _parse_environment(obj: Any) -> Union[str, NoReturn]:
                 logging.warning(_warning_msg.format("YML", "conda environment"))
             else:
                 raise RuntimeError(f"Unsupported environment manager: {environment_manager}")
+
             return obj
         else:
             if obj != get_yml():
                 _err_msg = (
-                    "The 'environment' parameter argument is not equivalent to the {0} file string "
-                    "generated by the active {1}, and therefore the original "
-                    "decoy may not necessarily be reproduced. Please set the 'environment' parameter "
-                    "argument to an empty string ('') to bypass {1} validation and run the simulation."
+                    "The `environment` keyword argument value is not equivalent to the {0} file string "
+                    "generated by the active {1}, and therefore the original decoy may not "
+                    "necessarily be reproduced. Please set the `environment` keyword argument "
+                    "value to an empty string ('') to bypass {1} validation and run the simulation."
                 )
                 if environment_manager == "pixi":
                     raise AssertionError(_err_msg.format("pixi lock", "pixi project"))
@@ -217,31 +227,29 @@ def _parse_environment(obj: Any) -> Union[str, NoReturn]:
                 elif environment_manager == "conda":
                     raise AssertionError(_err_msg.format("YML", "conda environment"))
                 else:
-                    raise RuntimeError(f"Unsupported environment manager: {environment_manager}")
+                    raise RuntimeError(f"Unsupported environment manager: '{environment_manager}'")
             else:
-                _debug_msg = "The 'environment' parameter argument correctly validated against the active {0}!"
+                _debug_msg = "The `environment` keyword argument value correctly validated against the active {0}!"
                 if environment_manager in ("pixi", "uv"):
                     logging.debug(_debug_msg.format(f"{environment_manager} project"))
                 else:
                     logging.debug(_debug_msg.format(f"{environment_manager} environment"))
+
                 return obj
 
     return converter(obj)
 
 
-def _parse_protocols(objs: Any) -> Union[List[Union[Callable[..., Any], Iterable[Any]]], NoReturn]:
-    """
-    Parse the `protocols` argument parameters from the PyRosettaCluster().distribute() method.
-    """
+def _parse_protocols(objs: Any) -> PyRosettaProtocols:
+    """Parse the `protocols` argument values from the `PyRosettaCluster.distribute` method."""
 
     @singledispatch
     def converter(objs: Any) -> NoReturn:
         raise RuntimeError(
-            "The user-provided PyRosetta protocols must be an "
+            "The user-defined PyRosetta protocols must be an ordered "
             + "iterable of objects of `types.GeneratorType` and/or "
             + "`types.FunctionType` types, or an instance of type "
-            + "`types.GeneratorType` or `types.FunctionType`, not of type "
-            + f"{type(objs)}!"
+            + f"`types.GeneratorType` or `types.FunctionType`. Received: {type(objs)}"
         )
 
     @converter.register(type(None))
@@ -250,19 +258,19 @@ def _parse_protocols(objs: Any) -> Union[List[Union[Callable[..., Any], Iterable
 
     @converter.register(types.FunctionType)
     @converter.register(types.GeneratorType)
-    def _func_to_list(
-        obj: Union[Callable[..., Any], Iterable[Any]]
-    ) -> List[Union[Callable[..., Any], Iterable[Any]]]:
+    def _func_to_list(obj: PyRosettaProtocol) -> PyRosettaProtocols:
         return [obj]
 
+    @converter.register(set)
+    def _from_set(objs: AbstractSet[Any]) -> None:
+        converter.dispatch(object)(objs)
+
     @converter.register(collections.abc.Iterable)
-    def _to_list(
-        objs: Iterable[Any],
-    ) -> Union[List[Union[Callable[..., Any], Iterable[Any]]], NoReturn]:
+    def _to_list(objs: Iterable[PyRosettaProtocol]) -> PyRosettaProtocols:
         for obj in objs:
             if not isinstance(obj, (types.FunctionType, types.GeneratorType)):
                 raise TypeError(
-                    "Each member of PyRosetta protocols must be of type "
+                    "Each member of the user-defined PyRosetta protocols must be of type "
                     + "`types.FunctionType` or `types.GeneratorType`! "
                     + f"Received: {type(obj)}"
                 )
@@ -271,46 +279,54 @@ def _parse_protocols(objs: Any) -> Union[List[Union[Callable[..., Any], Iterable
     return converter(objs)
 
 
-def _parse_yield_results(yield_results: Any) -> Union[bool, NoReturn]:
+def _parse_yield_results(yield_results: Any) -> bool:
+    """Parse the `yield_results` keyword argument value of `PyRosettaCluster`."""
+
     @singledispatch
     def converter(objs: Any) -> NoReturn:
-        raise ValueError("'yield_results' parameter must be of type `bool`.")
-    
+        raise ValueError(
+            f"The `yield_results` argument value must be of type `bool`. Received: {type(objs)}"
+        )
+
     @converter.register(bool)
     def _to_bool(objs: bool) -> bool:
         return objs
-    
+
     @converter.register(int)
     @converter.register(float)
     @converter.register(str)
     def _int_to_bool(objs: Union[int, float, str]) -> bool:
         return bool(objs)
-    
+
     @converter.register(type(None))
     def _none_to_bool(objs: None) -> bool:
         return False
-    
+
     return converter(yield_results)
 
 
-def _parse_norm_task_options(obj: Any) -> Union[bool, NoReturn]:
-    """Parse the input `norm_task_options` attribute of PyRosettaCluster."""
+def _parse_norm_task_options(obj: Any) -> bool:
+    """Parse the `norm_task_options` keyword argument value of `PyRosettaCluster`."""
+
     _issue_future_warning = False
 
     @singledispatch
     def converter(obj: Any) -> NoReturn:
-        raise ValueError("'norm_task_options' must be of type `bool` or `NoneType`!")
+        raise ValueError(
+            "The `norm_task_options` keyword argument value must be of type `bool` or `NoneType`. "
+            + f"Received: {type(obj)}"
+        )
 
     @converter.register(type(None))
     def _parse_none(obj: None) -> bool:
         if _issue_future_warning:
             warnings.warn(
                 (
-                    "As of PyRosettaCluster version 2.3.0, the 'norm_task_options' instance attribute is enabled by "
-                    "default, which automatically normalizes the task 'options' and 'extra_options' keyword arguments "
-                    "for facile reproducibility. Please explicitly set either `norm_task_options=True` (the currently "
+                    "As of `PyRosettaCluster` version 2.3.0, the 'norm_task_options' keyword argument value is set to `True` "
+                    "by default, which automatically normalizes the task 'options' and 'extra_options' keyword arguments of the first "
+                    "PyRosetta protocol for facile reproducibility. Please explicitly set either `norm_task_options=True` (the currently "
                     "enabled, new setting) or `norm_task_options=False` (to revert to legacy behavior before version 2.3.0) "
-                    "to silence this notice. This notice will disappear in a future version of PyRosettaCluster."
+                    "to silence this notice. This notice will disappear in a future version of `PyRosettaCluster`."
                 ),
                 FutureWarning,
                 stacklevel=5,
@@ -324,59 +340,63 @@ def _parse_norm_task_options(obj: Any) -> Union[bool, NoReturn]:
     return converter(obj)
 
 
-def _parse_pyrosetta_build(obj: Any) -> Union[str, NoReturn]:
-    """Parse the PyRosetta build string."""
+def _parse_pyrosetta_build(obj: Any) -> str:
+    """Parse the `pyrosetta_build` keyword argument value of `PyRosettaCluster`."""
 
     _pyrosetta_version_string = pyrosetta._build_signature()
 
     @singledispatch
     def converter(obj: Any) -> NoReturn:
-        raise ValueError("'pyrosetta_build' must be of type `str` or `NoneType`!")
+        raise ValueError(
+            "The `pyrosetta_build` keyword argument value must be of type `str` or `NoneType`. "
+            + f"Received: {type(obj)}"
+        )
 
     @converter.register(type(None))
     def _default_none(obj: None) -> str:
         return _pyrosetta_version_string
 
     @converter.register(str)
-    def _validate_pyrosetta_version_string(obj: str) -> Union[str, NoReturn]:
+    def _validate_pyrosetta_version_string(obj: str) -> str:
         if obj == "":
             logging.warning(
-                "The input 'pyrosetta_build' keyword argument parameter is an empty string, "
-                + "which is not a valid PyRosetta build string capturing the original PyRosetta "
-                + "version! Reproduction simulations may not necessarily reproduce "
-                + "the original decoy(s)! Please verify that your PyRosetta build "
-                + "is identical to the original PyRosetta build that "
+                "The input `pyrosetta_build` keyword argument value is an empty string, "
+                + "which is not a valid value capturing the original PyRosetta "
+                + "build signature! Reproduction simulations may not necessarily reproduce "
+                + "the original decoy(s)! Please verify that your PyRosetta build signature "
+                + "is identical to the original PyRosetta build signature that "
                 + "generated the decoy(s) you wish to reproduce!"
-                + "\nBypassing PyRosetta build validation...\n"
+                + "\nBypassing PyRosetta build signature validation...\n"
             )
             return obj
         else:
             if obj != _pyrosetta_version_string:
                 raise AssertionError(
-                    f"The user-provided PyRosetta build string '{obj}' is not equal "
-                    + f"to the currently used PyRosetta build string '{_pyrosetta_version_string}'! "
+                    f"The input `pyrosetta_build` keyword argument value '{obj}' is not equal "
+                    + f"to the currently used PyRosetta build signature '{_pyrosetta_version_string}'! "
                     + "Therefore, the original decoy may not necessarily be reproduced! "
-                    + "Using different PyRosetta builds can lead to different outputs. "
-                    + "Please consider running this simulation using the PyRosetta build that "
-                    + "was used with the original simulation run. Please set the 'pyrosetta_build' keyword "
-                    + "argument parameter to an empty string ('') to bypass PyRosetta build validation."
+                    + "Using different PyRosetta build signatures can lead to different outputs. "
+                    + "Please consider running this simulation using the PyRosetta build signature that "
+                    + "was used with the original simulation. Please set the `pyrosetta_build` keyword "
+                    + "argument value to an empty string ('') to bypass PyRosetta build signature validation."
                 )
             else:
                 logging.debug(
-                    "The 'pyrosetta_build' keyword argument parameter correctly validated against the original PyRosetta build!"
+                    "The `pyrosetta_build` keyword argument value correctly validated against the original "
+                    + "PyRosetta build signature!"
                 )
                 return obj
 
     return converter(obj)
 
 
-def _parse_scratch_dir(obj: Any) -> Union[str, NoReturn]:
-    """Parse the input `scratch_dir` attribute of PyRosettaCluster."""
+def _parse_scratch_dir(obj: Any) -> str:
+    """Parse the `scratch_dir` keyword argument value of `PyRosettaCluster`."""
 
     @singledispatch
     def converter(obj: Any) -> NoReturn:
         raise ValueError(
-            f"'scratch_dir' directory {obj} could not be created or found!"
+            f"The `scratch_dir` keyword argument value '{obj}' could not be created or found!"
         )
 
     @converter.register(str)
@@ -396,32 +416,32 @@ def _parse_scratch_dir(obj: Any) -> Union[str, NoReturn]:
 
 
 def _parse_seeds(objs: Any) -> List[str]:
-    """
-    Normalize user-provided PyRosetta 'seeds' to a `list` object containing `str` objects.
-    """
-
+    """Parse the `seeds` keyword argument value of `PyRosettaCluster`."""
     return to_iterable(objs, to_str, "seeds")
 
 
-def _parse_sha1(obj: Any) -> Union[str, NoReturn]:
-    """Parse the input `sha1` attribute of PyRosettaCluster."""
+def _parse_sha1(obj: Any) -> str:
+    """Parse the `sha1` keyword argument value of `PyRosettaCluster`."""
 
     @singledispatch
     def converter(obj: Any) -> NoReturn:
-        raise ValueError(f"'sha1' attribute must be of type `str` or `NoneType`!")
+        raise ValueError(
+            "The `sha1` keyword argument value must be of type `str` or `NoneType`. "
+            + f"Received: {type(obj)}"
+        )
 
     @converter.register(str)
-    def _register_str(obj: str) -> Union[str, NoReturn]:
-        """Parse `str` type inputs to the 'sha1' attribute."""
+    def _register_str(obj: str) -> str:
+        """Parse `str` type inputs of the `sha1` keyword argument value."""
 
         try:
             repo = git.Repo(".", search_parent_directories=True)
         except git.InvalidGitRepositoryError as ex:
             raise git.InvalidGitRepositoryError(
-                f"{ex}\nThe script being executed is not in a git repository! "
+                f"{ex}\nThe script being executed is not in a Git repository! "
                 + "It is strongly recommended to use version control for your "
                 + "scripts. To continue without using version control, set the "
-                + "`sha1` attribute of PyRosettaCluster to `None`."
+                + "`sha1` keyword argument value of `PyRosettaCluster` to `None`."
             )
         # Path to and name of the git repository
         git_root = repo.git.rev_parse("--show-toplevel")
@@ -430,58 +450,63 @@ def _parse_sha1(obj: Any) -> Union[str, NoReturn]:
             commit = repo.head.commit
         except ValueError as ex:
             raise git.InvalidGitRepositoryError(
-                f"{ex}\nNo HEAD commit present! Is this a repository with no commits?"
+                f"{ex}\nNo `HEAD` commit present! Is this a Git repository with no commits?"
             )
         if obj == "":
             # Ensure that everything in the work directory is included in the repository
             if len(repo.untracked_files):
                 raise git.InvalidGitRepositoryError(
-                    "There are untracked files in your git repository! "
+                    "There are untracked files in your Git repository! "
                     + "If these are important for the simulation, you will not "
                     + "be able to reproduce your work! Commit the changes if "
-                    + "appropriate, or add untracked files to your .gitignore file "
-                    + "before running PyRosettaCluster!"
+                    + "appropriate, or add untracked files to your '.gitignore' file "
+                    + "before running `PyRosettaCluster`!"
                 )
             # Ensure that all changes to tracked files are committed
             if repo.is_dirty(untracked_files=True):
                 raise git.InvalidGitRepositoryError(
-                    "The working directory is dirty! "
+                    "The current working directory is dirty! "
                     + "Commit local changes to ensure reproducibility."
                 )
+
             return commit.hexsha
         else:
             # A sha1 was provided. Validate that it is HEAD
             if not commit.hexsha.startswith(obj):
                 logging.error(
-                    "A `sha1` attribute was provided to PyRosettaCluster, "
+                    "A `sha1` keyword argument value was provided to `PyRosettaCluster`, "
                     + "but it appears that you have not checked out this revision!"
                     + f"Please run on the command line:\n`git checkout {obj}`\n"
                     + "and then re-execute this script."
                 )
                 raise RuntimeError(
-                    "The `sha1` attribute provided to PyRosettaCluster "
+                    "The `sha1` keyword argument value provided to `PyRosettaCluster` "
                     + "does not match the current `HEAD`! "
                     + "See log files for details on resolving the issue."
                 )
+
             return obj
 
     @converter.register(type(None))
     def _default_none(obj: None) -> str:
-        """If the user provides `None` to the `sha1` attribute, return an empty string."""
+        """If the user provides `None` to the `sha1` keyword argument value, then return an empty string."""
 
         return ""
 
     return converter(obj)
 
 
-def _parse_system_info(obj: Any) -> Union[Dict[Any, Any], NoReturn]:
-    """Parse the input `system_info` attribute of PyRosettaCluster."""
+def _parse_system_info(obj: Any) -> Dict[Any, Any]:
+    """Parse the input `system_info` keyword argument value of `PyRosettaCluster`."""
 
     _sys_platform = {"sys.platform": sys.platform}
 
     @singledispatch
     def converter(obj: Any) -> NoReturn:
-        raise ValueError("'system_info' must be of type `dict` or `NoneType`!")
+        raise ValueError(
+            "The `system_info` keyword argument value must be of type `dict` or `NoneType`. "
+            + f"Received: {type(obj)}"
+        )
 
     @converter.register(type(None))
     def _default_none(obj: None) -> Dict[str, str]:
@@ -494,22 +519,25 @@ def _parse_system_info(obj: Any) -> Union[Dict[Any, Any], NoReturn]:
             _curr_sys_platform = _sys_platform["sys.platform"]
             if _obj_sys_platform != _curr_sys_platform:
                 logging.warning(
-                    "The dictionary key 'sys.platform' of the PyRosettaCluster "
-                    + "'system_info' attribute indicates a previously used system "
+                    "The dictionary key 'sys.platform' of the `PyRosettaCluster` "
+                    + "`system_info` instance attribute indicates a previously used system "
                     + f"platform '{_obj_sys_platform}', but the currently used "
                     + f"system platform is '{_curr_sys_platform}'! Therefore, the original "
                     + "decoy may not necessarily be reproduced! Platform-specific "
                     + "information can lead to different outputs. Please consider "
-                    + "running this simulation in a Docker container with the same "
+                    + "running this simulation in a Docker/Apptainer container with the same "
                     + "system platform as the original simulation run, or switching "
                     + "to the original system platform before reproducing this simulation."
                 )
+
         return toolz.dicttoolz.merge(obj, _sys_platform)
 
     return converter(obj)
 
 
 def _parse_logging_address(self) -> str:
+    """Parse the input `logging_address` keyword argument value of `PyRosettaCluster`."""
+
     _default_local = "localhost:0"
     _default_remote = "0.0.0.0:0"
 
@@ -532,7 +560,7 @@ def _parse_logging_address(self) -> str:
 
 
 def _get_decoy_id(protocols: Sized, decoy_ids: List[int]) -> Optional[int]:
-    """Get the decoy number given the user-provided PyRosetta protocols."""
+    """Return the decoy identification number given the user-defined PyRosetta protocols."""
 
     if decoy_ids:
         decoy_id_index = (len(decoy_ids) - len(protocols)) - 1
@@ -544,14 +572,14 @@ def _get_decoy_id(protocols: Sized, decoy_ids: List[int]) -> Optional[int]:
 
 
 def _is_reserved_key(key: Any) -> bool:
-    """Test if a task dictionary key is a PyRosettaCluster reserved key."""
+    """Test if a task dictionary key is a `PyRosettaCluster` reserved key."""
     return isinstance(key, str) and key.startswith(PYROSETTACLUSTER_KEY_PREFIX)
 
 
 def _parse_output_kwargs(
     output_kwargs: Dict[str, Any], input_kwargs: Dict[str, Any], protocol_name: str
 ) -> Dict[str, Any]:
-    """Parse a returned task dictionary from a user-provided PyRosetta protocol."""
+    """Parse a returned task dictionary from a user-defined PyRosetta protocol."""
 
     prc_kwargs = toolz.dicttoolz.keyfilter(_is_reserved_key, input_kwargs)
     task_kwargs = {}
@@ -559,16 +587,16 @@ def _parse_output_kwargs(
     for key, value in output_kwargs.items():
         if not isinstance(key, str):
             raise ValueError(
-                f"User-provided PyRosetta protocol '{protocol_name}' returned one object of type `dict`, "
-                + f"but the keys must be of type `str`. Received: '{type(key)}'"
+                f"User-defined PyRosetta protocol '{protocol_name}' returned one object of type `dict`, "
+                + f"but the keys must be of type `str`. Received: {type(key)}"
             )
         elif _is_reserved_key(key): # Do not validate since it contains reserved keys
             if key not in prc_kwargs:
                 logging.warning(
-                    f"User-provided PyRosetta protocol '{protocol_name}' returned one object of type `dict`, "
+                    f"User-defined PyRosetta protocol '{protocol_name}' returned one object of type `dict`, "
                     + f"but a key starting with '{PYROSETTACLUSTER_KEY_PREFIX}' was added: '{key}'. "
-                    + f"Task keys starting with '{PYROSETTACLUSTER_KEY_PREFIX}' are reserved for PyRosettaCluster! "
-                    + f"Automatically ignoring the '{key}' key from the returned task."
+                    + f"Task keys starting with '{PYROSETTACLUSTER_KEY_PREFIX}' are reserved for `PyRosettaCluster`! "
+                    + f"Automatically ignoring the '{key}' key from the returned task dictionary."
                 )
             continue
         elif key in input_kwargs:
@@ -577,7 +605,7 @@ def _parse_output_kwargs(
                 is_equal = (value == input_value)
             except Exception:
                 logging.debug(
-                    f"Equality check failed for key '{key}' while parsing the output task dictionary from user-provided "
+                    f"Equality check failed for key '{key}' while parsing the output task dictionary from user-defined "
                     + f"PyRosetta protocol '{protocol_name}' -- treating value as updated and validating value: '{value}'"
                 )
                 is_equal = False
@@ -602,6 +630,8 @@ def _get_packed_poses_output_kwargs(
     input_kwargs: Dict[str, Any],
     protocol_name: str,
 ) -> Tuple[List[PackedPose], Dict[str, Any]]:
+    """Bin results from a user-defined PyRosetta protocol."""
+
     packed_poses = []
     protocol_kwargs = []
     for obj in to_iterable(result, to_packed, protocol_name):
@@ -633,8 +663,10 @@ def _get_compressed_packed_pose_kwargs_pairs_list(
     protocol_name: str,
     protocols_key: str,
     decoy_ids: List[int],
-    serializer: S,
+    serializer: Serialization,
 ) -> List[Tuple[bytes, bytes]]:
+    """Prepare results from a user-defined PyRosetta protocol to put into the queue."""
+
     decoy_id = _get_decoy_id(output_kwargs[protocols_key], decoy_ids)
     compressed_packed_pose_kwargs_pairs_list = []
     for i, packed_pose in enumerate(packed_poses):
@@ -661,13 +693,14 @@ def _get_compressed_packed_pose_kwargs_pairs_list(
 
 def _parse_protocol_results(
     result: Any,
-    input_kwargs: Dict[Any, Any],
+    input_kwargs: Dict[str, Any],
     protocol_name: str,
     protocols_key: str,
     decoy_ids: List[int],
-    serializer: S,
+    serializer: Serialization,
 ) -> List[Tuple[bytes, bytes]]:
-    """Parse results from the user-provided PyRosetta protocol."""
+    """Parse results from a user-defined PyRosetta protocol."""
+
     packed_poses, output_kwargs = _get_packed_poses_output_kwargs(result, input_kwargs, protocol_name)
     compressed_packed_pose_kwargs_pairs_list = _get_compressed_packed_pose_kwargs_pairs_list(
         packed_poses, output_kwargs, protocol_name, protocols_key, decoy_ids, serializer
@@ -677,7 +710,7 @@ def _parse_protocol_results(
 
 
 def _parse_target_results(objs: List[Tuple[bytes, bytes]]) -> List[Tuple[bytes, bytes]]:
-    """Parse results returned from the spawned thread."""
+    """Validate results returned from the `billiard` subprocess."""
 
     ids = set()
     n_obj = 0
@@ -691,65 +724,67 @@ def _parse_target_results(objs: List[Tuple[bytes, bytes]]) -> List[Tuple[bytes, 
     return objs
 
 
-def _parse_tasks(objs: Any) -> Union[List[Dict[Any, Any]], NoReturn]:
-    """Parse the input `tasks` attribute of PyRosettaCluster."""
+def _parse_tasks(objs: Any) -> List[Dict[str, Any]]:
+    """Parse the `tasks` keyword argument value of `PyRosettaCluster`."""
 
     @singledispatch
     def converter(objs: Any) -> NoReturn:
         raise ValueError(
-            "Parameter passed to 'tasks' argument must be an iterable, a function, a generator, or None!"
+            "The `tasks` keyword argument value must be an iterable, a callable, a generator, or `None`. "
+            + f"Received: {type(objs)}"
         )
 
     @converter.register(dict)
-    def _from_dict(obj: Dict[Any, Any]) -> List[Dict[Any, Any]]:
+    def _from_dict(obj: Dict[str, Any]) -> List[Dict[str, Any]]:
         return [obj]
 
     @converter.register(type(None))
-    def _from_none(obj: None) -> List[Dict[Any, Any]]:
+    def _from_none(obj: None) -> List[Dict[str, Any]]:
         logging.warning(
-            "PyRosettaCluster `tasks` attribute was set to `None`! Using a default empty task."
+            "The `tasks` keyword argument value was set to `None`! Using a default empty task."
         )
         return [{}]
 
     @converter.register(types.FunctionType)
     def _from_function(
-        obj: Callable[..., Iterable[Any]]
-    ) -> Union[List[Dict[Any, Any]], NoReturn]:
+        obj: Callable[..., Iterable[Dict[str, Any]]]
+    ) -> List[Dict[str, Any]]:
         _tasks = []
         for obj in objs():
             if isinstance(obj, dict):
                 _tasks.append(obj)
             else:
                 raise TypeError(
-                    f"Each task must be of type `dict`. Received '{obj}' of type `{type(obj)}`."
+                    f"Each task must be of type `dict`. Received: {type(obj)}."
                 )
         return _tasks
 
     @converter.register(collections.abc.Iterable)
     @converter.register(types.GeneratorType)
-    def _from_iterable(obj: Iterable[Any]) -> Union[List[Dict[Any, Any]], NoReturn]:
+    def _from_iterable(obj: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
         _tasks = []
         for obj in objs:
             if isinstance(obj, dict):
                 _tasks.append(obj)
             else:
                 raise TypeError(
-                    f"Each task must be of type `dict`. Received '{obj}' of type `{type(obj)}`."
+                    f"Each task must be of type `dict`. Received: {type(obj)}."
                 )
         return _tasks
 
     return converter(objs)
 
 
-def _parse_output_decoy_types(objs: Any) -> Union[List[str], NoReturn]:
-    """Parse the input `output_decoy_types` attribute of PyRosettaCluster."""
+def _parse_output_decoy_types(objs: Any) -> List[str]:
+    """Parse the `output_decoy_types` keyword argument value of `PyRosettaCluster`."""
+
     _output_decoy_types = (".pdb", ".pkl_pose", ".b64_pose", ".init")
 
     @singledispatch
     def converter(objs: Any) -> NoReturn:
         raise ValueError(
-            "Parameter passed to 'output_decoy_types' argument must be "
-            + "an iterable of `str` objects, or `None`."
+            "The `output_decoy_types` keyword argument value must be "
+            + f"an iterable of `str` objects, or `None`. Received: {type(objs)}"
         )
 
     @converter.register(type(None))
@@ -757,7 +792,7 @@ def _parse_output_decoy_types(objs: Any) -> Union[List[str], NoReturn]:
         return [_output_decoy_types[0]]
 
     @converter.register(collections.abc.Iterable)
-    def _from_iterable(objs: collections.abc.Iterable) -> Union[List[str], NoReturn]:
+    def _from_iterable(objs: Iterable[str]) -> List[str]:
         _seen = set()
         _types = []
         for obj in objs:
@@ -775,15 +810,16 @@ def _parse_output_decoy_types(objs: Any) -> Union[List[str], NoReturn]:
     return converter(objs)
 
 
-def _parse_output_scorefile_types(objs: Any) -> Union[List[str], NoReturn]:
-    """Parse the input `output_scorefile_types` attribute of PyRosettaCluster."""
+def _parse_output_scorefile_types(objs: Any) -> List[str]:
+    """Parse the `output_scorefile_types` keyword argument value of `PyRosettaCluster`."""
+
     _output_scorefile_types = (".json",)
 
     @singledispatch
     def converter(objs: Any) -> NoReturn:
         raise ValueError(
-            "Parameter passed to 'output_scorefile_types' argument must be "
-            + "an iterable of `str` objects, or `None`."
+            "The `output_scorefile_types` keyword argument value must be "
+            + f"an iterable of `str` objects, or `None`. Received: {type(objs)}"
         )
 
     @converter.register(type(None))
@@ -791,15 +827,15 @@ def _parse_output_scorefile_types(objs: Any) -> Union[List[str], NoReturn]:
         return [_output_scorefile_types[0]]
 
     @converter.register(collections.abc.Iterable)
-    def _from_iterable(objs: collections.abc.Iterable) -> Union[List[str], NoReturn]:
+    def _from_iterable(objs: Iterable[str]) -> List[str]:
         _seen = set()
         _types = []
         for obj in objs:
             if isinstance(obj, str) and obj not in _seen:
                 if not obj.startswith("."):
                     raise ValueError(
-                        f"The element '{obj}' in the 'output_scorefile_types' keyword argument "
-                        "parameter must start with '.' to be a valid filename extension."
+                        f"The element '{obj}' in the `output_scorefile_types` keyword argument "
+                        "value must start with '.' to be a valid filename extension."
                     )
                 _types.append(obj)
                 _seen.add(obj)
@@ -815,10 +851,14 @@ def _parse_output_scorefile_types(objs: Any) -> Union[List[str], NoReturn]:
             _compressions[-1] = f"and {_compressions[-1]}"
         _compression_msg = ", ".join(_compressions) if len(_compressions) > 2 else " ".join(_compressions)
         _msg = (
-            f"In order to save PyRosettaCluster scorefiles with {_compression_msg} file type compression, "
-            + "the output `pandas.DataFrame()` objects must be securely unpicklable. In order to securely "
-            + "unpickle `pandas.DataFrame()` objects in PyRosetta, please add 'pandas' as a secure package "
-            + "using `pyrosetta.secure_unpickle.add_secure_package('pandas')`, then try again!"
+            f"In order to save `PyRosettaCluster` scorefiles with {_compression_msg} file type compression, "
+            "the output `pandas.DataFrame` objects must be securely unpicklable. In order to securely "
+            "unpickle `pandas.DataFrame` objects in PyRosetta, please add 'pandas' as a secure package "
+            "using `pyrosetta.secure_unpickle.add_secure_package('pandas')`, then try again! "
+            "If using `pandas` version `>=3.0.0`, PyArrow-backed datatypes may be enabled by default; "
+            "in this case, please ensure that `pyrosetta.secure_unpickle.add_secure_package('pyarrow')` "
+            "has also been run. See https://pandas.pydata.org/pdeps/0010-required-pyarrow-dependency.html "
+            "and https://pandas.pydata.org/pdeps/0014-string-dtype.html for more information."
         )
         raise AssertionError(_msg)
 

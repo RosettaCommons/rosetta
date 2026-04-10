@@ -5,9 +5,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
-
 
 import logging
 import os
@@ -17,23 +15,28 @@ import warnings
 
 from functools import lru_cache
 from pyrosetta.utility import get_package_version
-from typing import (
+
+from pyrosetta.distributed.cluster.type_defs import (
     Dict,
-    Generic,
     List,
     Tuple,
-    TypeVar,
 )
-
 
 __dask_version__: Tuple[int, int, int] = get_package_version("dask")
 __dask_jobqueue_version__: Tuple[int, int, int] = get_package_version("dask-jobqueue")
 
+# Conda channels and/or source domains (potentially containing credentials)
+# to be sanitized from environment file strings.
+source_domains: List[str] = [
+    "conda.graylab.jhu.edu",
+    "west.rosettacommons.org",
+    "conda.rosettacommons.org",
+]
 
-G = TypeVar("G")
 
+class EnvironmentConfig:
+    """Environment configuration management for `PyRosettaCluster`."""
 
-class EnvironmentConfig(Generic[G]):
     _ENV_VAR: str = "PYROSETTACLUSTER_ENVIRONMENT_MANAGER"
     _ENV_MANAGERS: Tuple[str, ...] = ("pixi", "uv", "mamba", "conda")
     _ENV_EXPORT_CMDS: Dict[str, str] = {
@@ -48,7 +51,7 @@ class EnvironmentConfig(Generic[G]):
         if _env_var_manager:
             self.environment_manager = _env_var_manager
             logging.debug(
-                "Configuring environment manager for PyRosettaCluster from operating system "
+                "Configuring environment manager for `PyRosettaCluster` from operating system "
                 + f"environment variable: {EnvironmentConfig._ENV_VAR}={self.environment_manager}"
             )
             if self.environment_manager not in EnvironmentConfig._ENV_MANAGERS:
@@ -63,12 +66,12 @@ class EnvironmentConfig(Generic[G]):
             for _manager in EnvironmentConfig._ENV_MANAGERS:
                 if shutil.which(_manager):
                     self.environment_manager = _manager
-                    logging.debug(f"Configuring environment manager for PyRosettaCluster: '{_manager}'")
+                    logging.debug(f"Configuring environment manager for `PyRosettaCluster`: '{_manager}'")
                     break
             else:
                 self.environment_manager = "conda"
                 warnings.warn(
-                    f"Warning: could not configure an environment manager for PyRosettaCluster. "
+                    f"Warning: could not configure an environment manager for `PyRosettaCluster`. "
                     + "Please ensure that either of 'pixi', 'uv', 'mamba', or 'conda' is installed. "
                     + "Using 'conda' as the default environment manager.",
                     UserWarning,
@@ -78,10 +81,11 @@ class EnvironmentConfig(Generic[G]):
     @property
     def env_export_cmd(self) -> str:
         """
-        Return the appropriate environment export command for the given environment manager.
-        This method automatically adjusts for pixi and uv when a manifest path or project path
-        is set via environment variables.
+        Return the appropriate environment export command for the given environment manager. This method
+        automatically adjusts for Pixi or uv when a manifest path or project path, respectively, is set via
+        environment variables.
         """
+
         # Update pixi environment command if `$PIXI_PROJECT_MANIFEST` is set
         if self.environment_manager == "pixi":
             # https://pixi.sh/dev/reference/environment_variables/#environment-variables-set-by-pixi
@@ -118,7 +122,7 @@ class EnvironmentConfig(Generic[G]):
 
 @lru_cache(maxsize=1)
 def get_environment_config() -> EnvironmentConfig:
-    """Return an instance of the `EnvironmentConfig` class on the host process."""
+    """Return an instance of the `EnvironmentConfig` class on the head node process."""
     return EnvironmentConfig()
 
 
@@ -133,12 +137,5 @@ def get_environment_cmd() -> str:
 
 
 def get_environment_var() -> str:
-    """Get the PyRosettaCluster operating system environment variable name."""
+    """Get the `PyRosettaCluster` operating system environment variable name."""
     return EnvironmentConfig._ENV_VAR
-
-
-source_domains: List[str] = [
-    "conda.graylab.jhu.edu",
-    "west.rosettacommons.org",
-    "conda.rosettacommons.org",
-]  # Conda channels and/or source domains (potentially containing PyRosetta usernames/passwords) to be sanitized from environment file strings.

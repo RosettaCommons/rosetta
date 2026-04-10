@@ -5,14 +5,15 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
 
 import warnings
 
 from contextlib import suppress
+
 from pyrosetta.distributed.cluster.core import PyRosettaCluster
 from pyrosetta.distributed.cluster.toolkit import (
+    PackedPoseHasher,
     Serialization,
     export_init_file,
     generate_dask_tls_security,
@@ -27,12 +28,13 @@ from pyrosetta.distributed.cluster.toolkit import (
     requires_packed_pose,
     reserve_scores,
     run,
+    secure_read_pickle,
     update_scores,
 )
-from typing import List
-
+from pyrosetta.distributed.cluster.type_defs import List
 
 __all__: List[str] = [
+    "PackedPoseHasher",
     "PyRosettaCluster",
     "Serialization",
     "export_init_file",
@@ -48,10 +50,10 @@ __all__: List[str] = [
     "requires_packed_pose",
     "reserve_scores",
     "run",
+    "secure_read_pickle",
     "update_scores",
 ]
-__version__: str = "4.1.0"
-
+__version__: str = "5.0.0"
 
 with warnings.catch_warnings() and suppress(NameError):
     warnings.simplefilter("ignore", category=UserWarning)

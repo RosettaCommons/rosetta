@@ -5,9 +5,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
-
 
 import json
 import hmac
@@ -15,45 +13,78 @@ import pyrosetta
 import pyrosetta.distributed.io as io
 import struct
 
-from pyrosetta.distributed.packed_pose.core import PackedPose
-from pyrosetta.rosetta.core.pose import Pose, get_all_comments
-
-from typing import (
-    Any,
-    Dict,
-    Generic,
-    List,
-    NoReturn,
-    Optional,
-    Tuple,
-    TypeVar,
+from pyrosetta.rosetta.core.pose import (
+    Pose,
+    get_all_comments,
 )
 
-from pyrosetta.distributed.cluster.hkdf import HASHMOD, compare_digest, derive_init_key
+from pyrosetta.distributed.cluster.hkdf import (
+    HASHMOD,
+    compare_digest,
+    derive_init_key,
+)
+from pyrosetta.distributed.cluster.type_defs import (
+    Any,
+    Dict,
+    Optional,
+    PoseOrPackedPose,
+    Tuple,
+)
 
 
-G = TypeVar("G")
+class PackedPoseHasher:
+    """
+    Digest the scientific state of a `PackedPose` or `Pose` object.
 
-
-class PackedPoseHasher(Generic[G]):
-    """Digest the scientific state of a `PackedPose` object."""
+    *Warning*: This class uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+    """
 
     _encoding: str = "utf-8"
     _default_bytes: bytes = (b'\x00' * 32)
 
     def __init__(
         self,
-        packed_pose: Optional[PackedPose] = None,
+        packed_pose: Optional[PoseOrPackedPose] = None,
         include_cache: bool = False,
         include_comments: bool = False,
     ) -> None:
+        """
+        Initialize the `PackedPoseHasher` class.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects. Using the
+        `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+        `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+
+        Args:
+            `packed_pose`: `Pose | PackedPose | None`
+                A `PackedPose` or `Pose` object to hash. If `None`, then other keyword arguments have no effect
+                and a constant hash is returned from the `PackedPoseHasher.digest` method.
+
+                Default: `None`
+
+            `include_cache`: `bool`
+                A `bool` object specifying whether or not to include the `Pose.cache` entries.
+
+                Default: `False`
+
+             `include_comments`: `bool`
+                A `bool` object specifying whether or not to include the `Pose` comments entries.
+
+                Default: `False`
+
+        Returns:
+            `None`
+        """
         self.pose = io.to_pose(packed_pose)
         self.include_cache = include_cache
         self.include_comments = include_comments
         self.hashmod = HASHMOD()
 
     def digest(self) -> bytes:
-        """Digest the `PackedPose` object, otherwise return a default value."""
+        """Digest the `PackedPose` or `Pose` object, otherwise return a default value."""
+
         if isinstance(self.pose, Pose):
             self.add_coordinates()
             if self.include_cache:
@@ -68,8 +99,9 @@ class PackedPoseHasher(Generic[G]):
         """Encode a string object into bytes."""
         return obj.strip().encode(PackedPoseHasher._encoding)
 
-    def update_hashmod(self, obj: Any) -> Optional[NoReturn]:
+    def update_hashmod(self, obj: Any) -> None:
         """Update the hashmod with an input object."""
+
         if isinstance(obj, str):
             self.hashmod.update(self.encode_string(obj))
         elif isinstance(obj, int):
@@ -85,9 +117,10 @@ class PackedPoseHasher(Generic[G]):
 
     def add_coordinates(self) -> None:
         """
-        Update hashmod with residue numbers, atom numbers, atom names,
-        and double precision atomic coordinates of the `Pose` object.
+        Update hashmod with residue numbers, residue names, atom numbers, atom names, and double precision
+        atomic coordinate components of the `Pose` object.
         """
+
         for res in range(1, self.pose.size() + 1):
             residue = self.pose.residue(res)
             # Add residue number
@@ -105,7 +138,8 @@ class PackedPoseHasher(Generic[G]):
                     self.update_hashmod(getattr(xyz, axis))
 
     def add_cache(self) -> None:
-        """Update hashmod with raw `Pose.cache` dictionary entries."""
+        """Update hashmod with serialized `Pose.cache` dictionary entries."""
+
         for entry in (
             self.pose.cache.energies.all,
             self.pose.cache.extra.string.all,
@@ -128,24 +162,50 @@ class PackedPoseHasher(Generic[G]):
 
     def add_comments(self) -> None:
         """Update hashmod with raw `Pose` comments."""
+
         comments = dict(get_all_comments(self.pose))
         for key, value in sorted(comments.items()):
             self.update_hashmod(key)
             self.update_hashmod(value)
 
 
-class InitFileSigner(Generic[G]):
-    """Sign or verify PyRosetta initialization files by PyRosettaCluster."""
+class InitFileSigner:
+    """
+    Sign or verify PyRosetta initialization files by `PyRosettaCluster`.
+
+    *Warning*: This class uses the `pickle` module to deserialize pickled `Pose` objects. Using the `pickle`
+    module is not secure, so please only run with input files you trust. Learn more about the `pickle` module
+    and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+    """
 
     _encoding: str = "utf-8"
     _prefix: bytes = b'PyRosettaCluster_init_file_signer'
 
-    def __init__(self, input_packed_pose=None, output_packed_pose=None, metadata=None) -> None:
+    def __init__(
+        self,
+        input_packed_pose: Optional[PoseOrPackedPose] = None,
+        output_packed_pose: Optional[PoseOrPackedPose] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        """
+        Initialize the `InitFileSigner` class.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects. Using the
+        `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+        `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+        """
         self.inp_pkl = self._to_packed_pose_hash(input_packed_pose)
         self.out_pkl = self._to_packed_pose_hash(output_packed_pose)
         self.metadata_pkl = self._to_encoding(metadata)
 
-    def _to_packed_pose_hash(self, packed_pose: Optional[PackedPose]) -> bytes:
+    def _to_packed_pose_hash(self, packed_pose: Optional[PoseOrPackedPose]) -> bytes:
+        """
+        Hash a `PackedPose` object with `Pose.cache` and `Pose` comments included.
+
+        *Warning*: This method uses the `pickle` module to deserialize pickled `Pose` objects. Using the
+        `pickle` module is not secure, so please only run with input files you trust. Learn more about the
+        `pickle` module and its security `here <https://docs.python.org/3/library/pickle.html>`_.
+        """
         return PackedPoseHasher(packed_pose, include_cache=True, include_comments=True).digest()
 
     def _to_encoding(self, obj: Any) -> bytes:
@@ -165,7 +225,7 @@ class InitFileSigner(Generic[G]):
     def _get_pose_digest(self, pkl: bytes) -> bytes:
         return HASHMOD(pkl).digest()
 
-    def _join_bytes(self, *values: List[bytes]) -> bytes:
+    def _join_bytes(self, *values: bytes) -> bytes:
         return b'+'.join(values)
 
     def _setup_poses_pair(self, inp_pkl: bytes, out_pkl: bytes) -> bytes:

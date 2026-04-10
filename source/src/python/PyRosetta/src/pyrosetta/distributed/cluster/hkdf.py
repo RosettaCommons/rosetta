@@ -5,9 +5,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
-
 
 try:
     import msgpack
@@ -15,7 +13,7 @@ except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.hkdf' requires the "
         + "third-party package 'msgpack' as a dependency!\n"
-        + "Please install the package into your python environment. "
+        + "Please install this package into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/msgpack/\n"
     )
@@ -25,8 +23,10 @@ import hashlib
 import hmac
 import types
 
-from typing import Optional, Union
-
+from pyrosetta.distributed.cluster.type_defs import (
+    Optional,
+    Union,
+)
 
 HASHMOD: types.BuiltinFunctionType = hashlib.sha256
 DERIVED_KEY_LEN: int = 32
@@ -35,6 +35,7 @@ SALT: bytes = b"PyRosettaCluster_salt"
 
 class MaskedBytes(bytes):
     """A `bytes` subclass to mask its contents if the `repr` method is called."""
+
     def __new__(cls, value: bytes) -> bytes:
         return super().__new__(cls, value)
 
@@ -57,6 +58,7 @@ def hkdf_extract(ikm: bytes, salt: Optional[bytes]) -> bytes:
     Extract method for hash-based message authentication code (HMAC)-based key derivation
     function (HKDF), taking input keying material (IKM) and optional salt.
     """
+
     if salt is None:
         salt = b"\x00" * HASHMOD().digest_size
 
@@ -68,6 +70,7 @@ def hkdf_expand(prk: bytes, info: bytes) -> bytes:
     Expand method for hash-based message authentication code (HMAC)-based key derivation
     function (HKDF), taking a pseudorandom key (PRK) and application-specific info.
     """
+
     okm = b"" 
     prev_block = b""
     hash_len = HASHMOD().digest_size
@@ -86,6 +89,7 @@ def derive_task_key(passkey: bytes, task_id: str) -> bytes:
     Derive a per-task secret key using the extract-and-expand hash-based message
     authentication code (HMAC)-based key derivation function (HKDF).
     """
+
     info = msgpack.packb(["PyRosettaCluster", task_id], use_bin_type=True)
     prk = hkdf_extract(passkey, salt=SALT)
 
@@ -97,6 +101,7 @@ def derive_instance_key(key: bytes, instance_id: str) -> bytes:
     Derive a per-instance secret key using the extract-and-expand hash-based message
     authentication code (HMAC)-based key derivation function (HKDF).
     """
+
     info = msgpack.packb(["PyRosettaCluster.instance_id", instance_id], use_bin_type=True)
     prk = hkdf_extract(key, salt=SALT)
 
@@ -108,6 +113,7 @@ def derive_init_key(key: bytes, data: bytes) -> bytes:
     Derive a PyRosetta initialization file secret key using the extract-and-expand
     hash-based message authentication code (HMAC)-based key derivation function (HKDF).
     """
+
     info = msgpack.packb([b"PyRosettaInitFile", data], use_bin_type=True)
     prk = hkdf_extract(key, salt=SALT)
 

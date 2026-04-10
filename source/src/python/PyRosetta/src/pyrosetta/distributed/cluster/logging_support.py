@@ -5,18 +5,19 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
 
-
 try:
-    import billiard
-    from distributed import Client, Worker, get_worker
+    from billiard import Queue
+    from distributed import (
+        Client,
+        Worker,
+    )
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.logging_support' requires the "
         + "third-party packages 'billiard' and 'distributed' as dependencies!\n"
-        + "Please install the packages into your python environment. "
+        + "Please install these packages into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/billiard/\n"
         + "https://pypi.org/project/distributed/\n"
@@ -30,25 +31,7 @@ import warnings
 
 from contextlib import suppress
 from functools import wraps
-from typing import (
-    AbstractSet,
-    Any,
-    Callable,
-    Dict,
-    Generic,
-    List,
-    Optional,
-    Tuple,
-    TypeVar,
-    Union,
-    cast,
-)
 
-from pyrosetta.distributed.cluster.worker_plugins import (
-    SocketLoggerPlugin,
-    SOCKET_LOGGER_PLUGIN_NAME,
-    WORKER_LOGGER_NAME,
-)
 from pyrosetta.distributed.cluster.logging_filters import (
     SetProtocolNameFilter,
     SetSocketAddressFilter,
@@ -57,25 +40,42 @@ from pyrosetta.distributed.cluster.logging_filters import (
     split_socket_address,
 )
 from pyrosetta.distributed.cluster.logging_handlers import MsgpackHmacSocketHandler
-from pyrosetta.distributed.cluster.logging_listeners import MaskedBytes, SocketListener
+from pyrosetta.distributed.cluster.logging_listeners import (
+    MaskedBytes,
+    SocketListener,
+)
 from pyrosetta.distributed.cluster.task_registry import UserArgs
+from pyrosetta.distributed.cluster.type_defs import (
+    AbstractSet,
+    Any,
+    CallableType,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Union,
+    cast,
+)
+from pyrosetta.distributed.cluster.utilities import get_dask_worker
+from pyrosetta.distributed.cluster.worker_plugins import (
+    SocketLoggerPlugin,
+    SOCKET_LOGGER_PLUGIN_NAME,
+    WORKER_LOGGER_NAME,
+)
 
 
-G = TypeVar("G")
-L = TypeVar("L", bound=Callable[..., Any])
-Q = TypeVar("Q", bound=billiard.Queue)
-
-
-class RedirectToLogger(Generic[G]):
+class RedirectToLogger:
     """Redirect stdout and stderr to a logging sink."""
     def __init__(self, level: int) -> None:
         """Instantiate buffer for the root logger and a logging level."""
+
         self.logger = logging.getLogger()
         self.level = level
         self.buffer = ""
 
     def write(self, msg: str) -> int:
         """Write logging buffer."""
+
         self.buffer += msg
         while "\n" in self.buffer:
             line, self.buffer = self.buffer.split("\n", 1)
@@ -87,19 +87,22 @@ class RedirectToLogger(Generic[G]):
 
     def flush(self) -> None:
         """Flush logging buffer."""
+
         if self.buffer:
             self.logger.log(self.level, self.buffer)
             self.buffer = ""
 
 
-class LoggingSupport(Generic[G]):
-    """Supporting logging methods for PyRosettaCluster."""
+class LoggingSupport:
+    """Supporting logging methods for `PyRosettaCluster`."""
+
     def __init__(self) -> None:
-        """Log warnings from the warnings module."""
+        """Log warnings from the `warnings` module."""
         logging.captureWarnings(True)
 
     def _setup_logger(self) -> None:
-        """Open the logger for the client instance."""
+        """Open the logger for the head node process."""
+
         logger = logging.getLogger()
         logger.setLevel(self.logging_level)
         for handler in logger.handlers[:]:
@@ -131,7 +134,8 @@ class LoggingSupport(Generic[G]):
         logger.addHandler(handler)
 
     def _close_logger(self) -> None:
-        """Close the logger for the client instance."""
+        """Close the logger for the head node process."""
+
         logger = logging.getLogger()
         for handler in logger.handlers[:]:
             logger.removeHandler(handler)
@@ -142,6 +146,7 @@ class LoggingSupport(Generic[G]):
 
     def _setup_socket_listener(self, clients: Dict[int, Client]) -> Tuple[Tuple[str, int], bytes]:
         """Setup logging socket listener."""
+
         logs_path = os.path.dirname(self.logging_file)
         if not os.path.isdir(logs_path):
             warnings.warn(
@@ -169,6 +174,7 @@ class LoggingSupport(Generic[G]):
 
     def _register_socket_logger_plugin(self, clients: Dict[int, Client]) -> None:
         """Register `SocketLoggerPlugin` as a dask worker plugin on dask clients."""
+
         for client in clients.values():
             plugin = SocketLoggerPlugin(self.logging_level, maxsize=64)
             plugin.idempotent = True # Never re-register plugin
@@ -179,6 +185,7 @@ class LoggingSupport(Generic[G]):
 
     def _close_socket_listener(self, clients: Dict[int, Client]) -> None:
         """Close logging socket listener."""
+
         self._close_socket_logger_plugins(clients)
         self.socket_listener.stop()
         handler = self.socket_listener.handler
@@ -189,6 +196,7 @@ class LoggingSupport(Generic[G]):
 
     def _close_socket_logger_plugins(self, clients: Dict[int, Client]) -> None:
         """Purge cached logging socket addresses on all dask workers."""
+
         socket_listener_address = self.socket_listener.socket_listener_address
         for client in clients.values():
             results = client.run(
@@ -206,6 +214,7 @@ class LoggingSupport(Generic[G]):
                     )
 
     def _cooldown(self) -> None:
+        """Sleep based on the `cooldown_time` instance attribute."""
         time.sleep(self.cooldown_time)
 
 
@@ -214,6 +223,7 @@ def purge_socket_logger_plugin_address(
     dask_worker: Worker,
 ) -> None:
     """Close and remove an item from the worker logger plugin router."""
+
     plugin = dask_worker.plugins[SOCKET_LOGGER_PLUGIN_NAME]
     router = plugin.router
     with suppress(Exception):
@@ -228,6 +238,7 @@ def setup_target_logger(
     logging_level: str,
 ) -> Tuple[logging.RootLogger, logging.handlers.SocketHandler, List[logging.Filter]]:
     """Setup socket logging handler."""
+
     logger = logging.getLogger()
     logger.setLevel(logging_level)
     for _handler in logger.handlers[:]:
@@ -261,6 +272,7 @@ def close_target_logger(
     filters: List[logging.Filter],
 ) -> None:
     """Teardown socket logging handler."""
+
     socket_handler.flush()
     for _filter in filters:
         socket_handler.removeFilter(_filter)
@@ -269,15 +281,16 @@ def close_target_logger(
         socket_handler.close()
 
 
-def setup_target_logging(func: L) -> L:
-    """Support logging within the billiard spawned thread."""
+def setup_target_logging(func: CallableType) -> CallableType:
+    """Support logging from a `billiard` subprocess."""
+
     @wraps(func)
     def wrapper(
         protocol_name: str,
         compressed_protocol: bytes,
         compressed_packed_pose: bytes,
         compressed_kwargs: bytes,
-        q: Q,
+        q: Queue,
         logging_level: str,
         socket_listener_address: Tuple[str, int],
         datetime_format: str,
@@ -295,7 +308,8 @@ def setup_target_logging(func: L) -> L:
         task_id: str,
         **pyrosetta_init_kwargs: Dict[str, Any],
     ) -> Any:
-        """Wrapper function to setup_target_logging."""
+        """Wrapper function to `setup_target_logging` decorator."""
+
         logger, socket_handler, filters = setup_target_logger(
             protocol_name, socket_listener_address, masked_key, task_id, logging_level
         )
@@ -336,7 +350,7 @@ def setup_target_logging(func: L) -> L:
             del prk
             close_target_logger(logger, socket_handler, filters)
 
-    return cast(L, wrapper)
+    return cast(CallableType, wrapper)
 
 
 def get_worker_logger(
@@ -344,6 +358,8 @@ def get_worker_logger(
     socket_listener_address: Tuple[str, int],
     task_id: str,
 ) -> logging.LoggerAdapter:
+    """Get a Dask worker logger adapter."""
+
     return logging.LoggerAdapter(
         logger=logging.getLogger(WORKER_LOGGER_NAME),
         extra=dict(
@@ -354,18 +370,18 @@ def get_worker_logger(
     )
 
 
-def setup_worker_logging(func: L) -> L:
+def setup_worker_logging(func: CallableType) -> CallableType:
+    """Support logging from a Dask worker."""
+
     @wraps(func)
     def wrapper(user_args: UserArgs) -> Any:
-        try:
-            worker = get_worker()
-        except BaseException as ex:
-            raise ValueError(f"Cannot get dask worker. {ex}")
+        """Wrapper function to `setup_worker_logging` decorator."""
 
+        worker = get_dask_worker()
         protocol_name = user_args.protocol_name
         masked_key = user_args.masked_key
         task_id = user_args.task_id
-        socket_listener_address = user_args.extra_args["socket_listener_address"]
+        socket_listener_address = user_args.extra_args.socket_listener_address
 
         plugin = worker.plugins[SOCKET_LOGGER_PLUGIN_NAME]
         router = plugin.router
@@ -385,4 +401,4 @@ def setup_worker_logging(func: L) -> L:
             del masked_key
             router.pop_masked_key(socket_listener_address, task_id)
 
-    return cast(L, wrapper)
+    return cast(CallableType, wrapper)
