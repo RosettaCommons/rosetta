@@ -295,9 +295,9 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
                 reproduce(**reproduce_kwargs)
             self.assertTrue(
                 str(cm.warning).startswith(
-                    "Skipping ScoreFunction corrections for the PyRosettaCluster task"
+                    "Skipping `ScoreFunction` corrections for the `PyRosettaCluster` task"
                     if skip_corrections
-                    else "Preserving ScoreFunction corrections for the PyRosettaCluster task"
+                    else "Preserving `ScoreFunction` corrections for the `PyRosettaCluster` task"
                 )
             )
         else:
