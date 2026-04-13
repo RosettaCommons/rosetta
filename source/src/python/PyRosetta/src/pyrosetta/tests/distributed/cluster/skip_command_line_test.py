@@ -11,12 +11,16 @@ __author__ = "Jason C. Klima"
 import os  # noqa
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io  # noqa
+import sys
 import unittest
 
 from pyrosetta.distributed.cluster import PyRosettaCluster  # noqa
 
 
 class BasicTest(unittest.TestCase):
+    def tearDown(self):
+        sys.stdout.flush()
+
     def test_basic(self):
         def create_tasks():
             yield {

@@ -7,19 +7,15 @@
 
 __author__ = "Jason C. Klima"
 
-from utils.distributed import parse_args, run_test_cases
+from utils.distributed import parse_args, run_distributed_cluster_test_cases
 
 
 def main(wait: bool, streaming: bool, timeout: int) -> None:
-    run_test_cases(
-        "pyrosetta.tests.bindings.init.test_init_files",
-        "pyrosetta.tests.bindings.core.test_pose",
-        "pyrosetta.tests.distributed.test_concurrency",
-        "pyrosetta.tests.distributed.test_dask",
-        "pyrosetta.tests.distributed.test_gil",
-        "pyrosetta.tests.distributed.test_smoke",
-        "pyrosetta.tests.distributed.test_viewer",
-        "pyrosetta.tests.numeric.test_alignment",
+    run_distributed_cluster_test_cases(
+        "test_scores.ScoresTest.test_detached_scores",
+        "test_scores.ScoresTest.test_detached_scores_in_protocol",
+        "test_scores.ScoresTest.test_detached_scores_with_reserve_scores",
+        "test_scores.ScoresTest.test_secure_packages_billiard",
         wait=wait,
         streaming=streaming,
         timeout=timeout,
