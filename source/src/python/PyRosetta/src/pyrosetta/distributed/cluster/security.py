@@ -33,7 +33,7 @@ from pathlib import Path
 
 from pyrosetta.distributed.cluster.hkdf import (
     MaskedBytes,
-    derive_task_key,
+    derive_instance_key,
 )
 from pyrosetta.distributed.cluster.serialization import NonceCache
 from pyrosetta.distributed.cluster.type_defs import (
@@ -51,7 +51,7 @@ class SecurityIO:
     def _setup_task_security_plugin(self, clients: Dict[int, Client]) -> None:
         """Setup task security worker plugin(s)."""
 
-        prk = MaskedBytes(derive_task_key(os.urandom(32), self.instance_id))
+        prk = MaskedBytes(derive_instance_key(os.urandom(32), self.instance_id))
         self._register_task_security_plugin(clients, prk)
         self.serializer.prk = prk
         assert self.serializer.__getstate__()["prk"] is None, "Pseudo-random key is not hidden on head node serializer."
