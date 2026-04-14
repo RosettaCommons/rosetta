@@ -18,6 +18,7 @@ import os
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
 import re
+import sys
 import tempfile
 import unittest
 
@@ -26,10 +27,16 @@ from pyrosetta.tests.distributed.cluster.setup_inputs import get_test_params_fil
 
 
 class LoggingTest(unittest.TestCase):
+    """Test case for Python logging in PyRosettaCluster."""
+
     _ansi_regex = re.compile(r"(?:\x1B[@-_]|[\x80-\x9F])[0-?]*[ -/]*[@-~]")
 
-    def test_logging(self, verbose=True):
+    def tearDown(self):
+        sys.stdout.flush()
+
+    def test_logging(self, verbose=False):
         """A test for capturing logging information in the distributed protocol."""
+
         params_dir = tempfile.TemporaryDirectory(prefix="tmp_params_")
         params_file = get_test_params_file(params_dir.name)
         pyrosetta.distributed.init(
@@ -168,7 +175,7 @@ class LoggingTest(unittest.TestCase):
             if verbose:
                 for log_file in (prc_log, protocol_log):
                     with open(log_file, "r") as f:
-                        print(f"Output: '{log_file}':", f.read(), sep="\n")
+                        print(f"Output: '{log_file}':", f.read(), sep="\n", flush=True)
 
             # Ensure the files populate
             self.assertTrue(os.path.exists(protocol_log), msg=f"'{protocol_log}' doesn't exist!")

@@ -704,73 +704,76 @@ def reproduce(
         )
 
     _tmp_dir = None
-    if isinstance(input_file, str):
-        if input_file.endswith((".init", ".init.bz2")):
-            _tmp_dir = tempfile.TemporaryDirectory(prefix="PyRosettaCluster_reproduce_")
-            default_init_from_file_kwargs = dict(
-                output_dir=os.path.join(_tmp_dir.name, "pyrosetta_init_input_files"),
-                skip_corrections=skip_corrections,
-                relative_paths=True,
-                dry_run=False,
-                max_decompressed_bytes=pow(2, 30), # 1 GiB
-                restore_rg_state=True,
-                database=None,
-                verbose=True,
-                set_logging_handler="logging",
-                notebook=None,
-                silent=False,
-            )
-            input_packed_pose, input_file = parse_init_file(
-                input_file,
-                input_packed_pose,
-                skip_corrections,
-                toolz.dicttoolz.merge(
-                    default_init_from_file_kwargs,
-                    init_from_file_kwargs if is_dict(init_from_file_kwargs) else {},
-                ),
-            )
-        elif input_file.endswith((".pkl_pose", ".pkl_pose.bz2", ".b64_pose", ".b64_pose.bz2")):
-            if not was_init_called():
-                raise PyRosettaIsNotInitializedError(
-                    "If providing a '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file to the 'input_file' "
-                    + "keyword argument, please ensure `pyrosetta.init` or `pyrosetta.init_from_file` has been "
-                    + "properly called (with the same residue type set as that used to generate the original '.pkl_pose', "
-                    + "'.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file) before running the `reproduce` function. "
-                    + "If an output '.init' file from the original simulation is available, it is recommended to run "
-                    + "`pyrosetta.init_from_file` with that '.init' file before running the `reproduce` function."
-                )
-
-    PyRosettaCluster(
-        **toolz.dicttoolz.keyfilter(
-            lambda a: a not in ["client", "clients", "input_packed_pose"],
-            toolz.dicttoolz.merge(
-                get_instance_kwargs(
-                    input_file=input_file,
-                    scorefile=scorefile,
-                    decoy_name=decoy_name,
+    try:
+        if isinstance(input_file, str):
+            if input_file.endswith((".init", ".init.bz2")):
+                _tmp_dir = tempfile.TemporaryDirectory(prefix="PyRosettaCluster_reproduce_")
+                default_init_from_file_kwargs = dict(
+                    output_dir=os.path.join(_tmp_dir.name, "pyrosetta_init_input_files"),
                     skip_corrections=skip_corrections,
-                    with_metadata_kwargs=False,
+                    relative_paths=True,
+                    dry_run=False,
+                    max_decompressed_bytes=pow(2, 30), # 1 GiB
+                    restore_rg_state=True,
+                    database=None,
+                    verbose=True,
+                    set_logging_handler="logging",
+                    notebook=None,
+                    silent=False,
+                )
+                input_packed_pose, input_file = parse_init_file(
+                    input_file,
+                    input_packed_pose,
+                    skip_corrections,
+                    toolz.dicttoolz.merge(
+                        default_init_from_file_kwargs,
+                        init_from_file_kwargs if is_dict(init_from_file_kwargs) else {},
+                    ),
+                )
+            elif input_file.endswith((".pkl_pose", ".pkl_pose.bz2", ".b64_pose", ".b64_pose.bz2")):
+                if not was_init_called():
+                    raise PyRosettaIsNotInitializedError(
+                        "If providing a '.pkl_pose', '.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file to the 'input_file' "
+                        + "keyword argument parameter, please ensure `pyrosetta.init()` or `pyrosetta.init_from_file()` has been "
+                        + "properly called (with the same residue type set as that used to generate the original '.pkl_pose', "
+                        + "'.pkl_pose.bz2', '.b64_pose', or '.b64_pose.bz2' file) before running the `reproduce()` function. "
+                        + "If an output '.init' file from the original simulation is available, it is recommended to run "
+                        + "`pyrosetta.init_from_file()` with that '.init' file before running the `reproduce()` function."
+                    )
+
+        PyRosettaCluster(
+            **toolz.dicttoolz.keyfilter(
+                lambda a: a not in ["client", "clients", "input_packed_pose"],
+                toolz.dicttoolz.merge(
+                    get_instance_kwargs(
+                        input_file=input_file,
+                        scorefile=scorefile,
+                        decoy_name=decoy_name,
+                        skip_corrections=skip_corrections,
+                        with_metadata_kwargs=False,
+                    ),
+                    parse_instance_kwargs(instance_kwargs),
                 ),
-                parse_instance_kwargs(instance_kwargs),
             ),
-        ),
-        client=parse_client(client),
-        clients=clients,
-        input_packed_pose=input_packed_pose,
-    ).distribute(
-        protocols=get_protocols(
-            protocols=protocols,
-            input_file=input_file,
-            scorefile=scorefile,
-            decoy_name=decoy_name,
-        ),
-        clients_indices=clients_indices,
-        resources=resources,
-        priorities=None,
-        retries=retries,
-    )
-    if isinstance(_tmp_dir, tempfile.TemporaryDirectory):
-        _tmp_dir.cleanup()
+            client=parse_client(client),
+            clients=clients,
+            input_packed_pose=input_packed_pose,
+        ).distribute(
+            protocols=get_protocols(
+                protocols=protocols,
+                input_file=input_file,
+                scorefile=scorefile,
+                decoy_name=decoy_name,
+            ),
+            clients_indices=clients_indices,
+            resources=resources,
+            priorities=None,
+            retries=retries,
+        )
+
+    finally:
+        if _tmp_dir:
+            _tmp_dir.cleanup()
 
 
 def produce(**kwargs: Any) -> None:
