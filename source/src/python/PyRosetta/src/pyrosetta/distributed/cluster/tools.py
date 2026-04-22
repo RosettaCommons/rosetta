@@ -666,31 +666,31 @@ def reproduce(
             A `dict` object to override the default `pyrosetta.init_from_file` keyword arguments if the
             `input_file` keyword argument value is a path to a PyRosetta initialization file, otherwise it is
             has no effect. See the
-            `pyrosetta.init_from_file <pyrosetta.utility.initialization.PyRosettaInitFileParser.init_from_file>`_
+            `pyrosetta.init_from_file <https://graylab.jhu.edu/PyRosetta.documentation/pyrosetta.utility.initialization.html#pyrosetta.utility.initialization.PyRosettaInitFileParser.init_from_file>`_
             docstring for more information.
 
             Default: A `dict` object with the following entries:
-                `output_dir`:
+                `output_dir`: `str`
                     Default: `os.path.join(tempfile.TemporaryDirectory(prefix="PyRosettaCluster_reproduce_").name, "pyrosetta_init_input_files")`
-                `skip_corrections`:
+                `skip_corrections`: `bool`
                     Default: The `skip_corrections` keyword argument value from the `reproduce` function.
-                `relative_paths`:
+                `relative_paths`: `bool`
                     Default: `True`
-                `dry_run`:
+                `dry_run`: `bool`
                     Default: `False`
-                `max_decompressed_bytes`:
+                `max_decompressed_bytes`: `int`
                     Default: `pow(2, 30)` or 1 GiB.
-                `restore_rg_state`:
+                `restore_rg_state`: `bool`
                     Default: `True`
-                `database`:
+                `database`: `str | None`
                     Default: `None`
-                `verbose`:
+                `verbose`: `bool`
                     Default: `True`
-                `set_logging_handler`:
+                `set_logging_handler`: `str | bool | None`
                     Default: `"logging"`
-                `notebook`:
+                `notebook`: `None`
                     Default: `None`
-                `silent`:
+                `silent`: `bool`
                     Default: `False`
 
     Returns:
