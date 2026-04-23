@@ -141,6 +141,9 @@ def setup_from_options(options):
 
     if options.skip_compile is not None: config['skip_compile'] = options.skip_compile
 
+    if options.branch is not None: config['branch'] = options.branch
+
+
     #print(f'Results path: {config["results_root"]}')
     #print('Config:{}, Platform:{}'.format(json.dumps(config, sort_keys=True, indent=2), Platform))
 
@@ -397,6 +400,8 @@ def main(args):
     parser.add_argument("--merge-base", default='origin/master', help="Specify SHA1/branch-name that will be used for `merge-base` value when simulating PR testing" )
 
     parser.add_argument("--mount", action="append", help="Specify one of the mount points, like: --mount release_root:/some/path. This option could be used multiple times if needed" )
+
+    parser.add_argument("--branch", default=None, help="Specify git `branch` that should be set in config when running tests" )
 
 
     parser.add_argument('args', nargs=argparse.REMAINDER)

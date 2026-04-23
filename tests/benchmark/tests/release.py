@@ -31,6 +31,8 @@ _number_of_rosetta_binary_revisions_to_keep_in_git_ = 1
 _number_of_py_rosetta_revisions_to_keep_in_git_ = 1
 _number_of_archive_files_to_keep_ = 8
 _latest_html_ = 'latest.html'
+_release_branches_with_limited_retention_ = 'main commits benchmark release'.split()
+_release_branches_with_persistent_wheel_archives_ = 'release-quarterly'.split()
 
 download_template = '''\
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
@@ -42,10 +44,10 @@ download_template = '''\
 
 def get_platform_release_name(platform):
     addon = dict(linux='.CentOS', ubuntu='.Ubuntu', mac='', m1='', aarch64='.aarch64.Ubuntu')
-    return '.'.join([platform['os']]+platform['extras']) + addon[ platform['os'] ]
+    return '.'.join([platform['os']]+platform['extras']) + addon[ platform['os'].partition('-')[0] ]
 
 
-def release(name, package_name, package_dir, working_dir, platform, config, release_as_git_repository=True, file=None, use_rosetta_versioning=True):
+def release(name, package_name, package_dir, working_dir, platform, config, release_as_git_repository=True, file=None, use_rosetta_versioning=True, package_build_kind='unknown'):
     ''' Create a release packge: tar.bz2 + git repository
         name - must be a name of what is released without any suffices: rosetta, PyRosetta etc
         package_name - base name for archive (without tar.bz2) that should include name, os, revision, branch + other relevant platform info
@@ -57,8 +59,9 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
 
     branch = config['branch']
     release_root = config['release_root']
+    release_revision = config['revision']
 
-    package_versioning_name = '{package_name}.{branch}-{revision}'.format(package_name=package_name, branch=config['branch'], revision=config['revision'])
+    package_versioning_name = f'{package_name}.{branch}-{release_revision}'
 
     if package_dir:
         TR('Creating tar.bz2 for {name} as {package_versioning_name}...'.format( **vars() ) )
@@ -74,36 +77,97 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
         assert archive.endswith('.tar.bz2')
 
 
-    release_path = f'{release_root}/{name}/archive/{branch}/{package_name}'
+    if archive.endswith('.whl') and branch in _release_branches_with_persistent_wheel_archives_:
+        release_path = f'{release_root}/{name}/archive/{branch}/{package_build_kind}'
+    else:
+        release_path = f'{release_root}/{name}/archive/{branch}/{package_name}'
+
     if not os.path.isdir(release_path): os.makedirs(release_path)
 
     with FileLock( f'{release_path}/.release.lock' ):
-        if use_rosetta_versioning: shutil.move(archive, release_path + '/' + package_versioning_name + '.tar.bz2')
-        else: shutil.move(archive, release_path + '/' + os.path.basename(archive) )
+
+        if use_rosetta_versioning:
+            shutil.move(archive, release_path + '/' + package_versioning_name + '.tar.bz2')
+
+        else:
+
+            if archive.endswith('.whl'):
+
+                # if branch in _release_branches_with_persistent_wheel_archives_:
+                #     pass
+                #     # wheel_archives_release_path = f'{release_root}/{name}/archive/{branch}/wheels/{package_build_kind}'
+                #     # if not os.path.isdir(wheel_archives_release_path): os.makedirs(wheel_archives_release_path)
+                #     # shutil.move(archive, wheel_archives_release_path + '/' + os.path.basename(archive) )
+                #
+                # else:
+                #     wheel_archives_latest_path = f'{release_root}/{name}/archive/{branch}/latest.{package_build_kind}'
+                #
+                #     if not os.path.isdir(wheel_archives_latest_path): os.makedirs(wheel_archives_latest_path)
+                #
+                #     dst = wheel_archives_latest_path + '/' + os.path.basename(archive)
+                #     src = f'../{package_name}/' + os.path.basename(archive)
+                #
+                #     if os.path.lexists(dst):
+                #             os.unlink(dst)
+                #     os.symlink(src, dst)
+
+                shutil.move(archive, release_path + '/' + os.path.basename(archive) )
+
+
+                # creating a local symlink with simple `latest` ie: `pyrosetta-latest-cp39-cp39-macosx_12_0_arm64.whl` --> to exact version from `pyrosetta-2025.41+release.de3cc17d50-cp39-cp39-macosx_12_0_arm64.whl`
+                symlink_frst_parition = os.path.basename(archive).partition('-')
+                symlink_path = release_path + '/' + symlink_frst_parition[0] + '-0-cp' + symlink_frst_parition[2].partition('-cp')[2]
+
+                if os.path.islink(symlink_path): os.unlink(symlink_path)
+                os.symlink(os.path.basename(archive), symlink_path)
+
+
+
 
         # removing old archives and adjusting _latest_html_
         files = [f for f in os.listdir(release_path) if f != _latest_html_  and  f[0] != '.' ]
         files.sort(key=lambda f: os.path.getmtime(release_path+'/'+f))
-        for f in files[:-_number_of_archive_files_to_keep_]: os.remove(release_path+'/'+f)
+
+
+        if branch in _release_branches_with_limited_retention_:
+            for f in files[:-_number_of_archive_files_to_keep_]:
+                os.remove(release_path+'/'+f)
+
         if files:
             package_file = files[-1]
 
             with open(release_path+'/'+_latest_html_, 'w') as h: h.write(download_template.format(distr=name, link=package_file))
 
+
             htaccess_file_path = f'{release_path}/.htaccess'
 
-            if os.path.isfile(htaccess_file_path):
-                with open(htaccess_file_path) as f: htaccess = f.read()
+            # # OLD version with substitution, deprecated for now
+            # if os.path.isfile(htaccess_file_path):
+            #     with open(htaccess_file_path) as f: htaccess = f.read()
+            # else:
+            #     htaccess = ''
+            #
+            # redirect_start = 'RedirectMatch 302 (.*).latest$'
+            # redirect_line = redirect_start + ' $1' + package_file
+            # htaccess = re_module.sub(re_module.escape(redirect_start) + '(.*)', redirect_line, htaccess)
+            # if redirect_line not in htaccess: htaccess += '\n' + redirect_line + '\n'
+
+            htaccess = f'RedirectMatch 302 (.*)\\.latest$ $1{package_file}\n'
+
+            if package_file.endswith('.tar.bz2'):
+                # replace PyRosetta4.Release.python39.m1.cxx11thread.serialization.release-410.tar.bz2 with PyRosetta4.Release.python39.m1.cxx11thread.serialization.release-latest.tar.bz2
+                redirect_handle = package_file.partition('-')[0] + '-latest.tar.bz2'
+            elif package_file.endswith('.whl'):
+                # replacing exact version from `pyrosetta-2025.41+release.de3cc17d50-cp39-cp39-macosx_12_0_arm64.whl` with simple `latest` --> `pyrosetta-latest-cp39-cp39-macosx_12_0_arm64.whl`
+                frst_parition = package_file.partition('-')
+                redirect_handle = frst_parition[0] + '-latest-cp' + frst_parition[2].partition('-cp')[2]
             else:
-                htaccess = ''
+                redirect_handle = None
 
-            redirect_start = 'RedirectMatch 302 (.*).latest$'
-            redirect_line = redirect_start + ' $1' + package_file
-            htaccess = re_module.sub(re_module.escape(redirect_start) + '(.*)', redirect_line, htaccess)
+            if redirect_handle:
+                htaccess += f'RedirectMatch 302 (.*){redirect_handle}$ $1{package_file}\n'
+
             print(f'htaccess: {htaccess}')
-
-            if redirect_line not in htaccess: htaccess += '\n' + redirect_line + '\n'
-
             with open(htaccess_file_path, 'w') as f: f.write(htaccess)
 
 
@@ -432,7 +496,9 @@ def pyrosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_driv
     # return results
     # ----------------------------------
 
-    release_name = 'PyRosetta4.{kind}.python{python_version}.{platform}'.format(kind=kind, platform='.'.join([platform['os']]+platform['extras']), python_version=platform['python'].replace('.', '') )
+    platform_os = 'ubuntu' if platform['os'].startswith('ubuntu') else platform['os']
+
+    release_name = 'PyRosetta4.{kind}.python{python_version}.{suffix}'.format(kind=kind, suffix='.'.join([platform_os]+platform['extras']), python_version=platform['python'].replace('.', '') )
 
     version_file = working_dir + '/version.json'
     generate_version_information(rosetta_dir, branch=config['branch'], revision=config['revision'], package=release_name, url='http://www.pyrosetta.org', file_name=version_file)  # date=datetime.datetime.now(), avoid setting date and instead use date from Git commit
@@ -505,7 +571,8 @@ def pyrosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_driv
 
             execute('Creating PyRosetta distribution package...', '{build_command_line} -sd --create-package {package_dir}'.format(**vars()))
 
-            release('PyRosetta4', release_name, package_dir, working_dir, platform, config, release_as_git_repository = True if kind in [] else False )
+            if config['branch'] not in _release_branches_with_persistent_wheel_archives_:
+                release('PyRosetta4', release_name, package_dir, working_dir, platform, config, release_as_git_repository = True if kind in [] else False )
 
             # releasing PyMOL-RosettaServer scripts
             release('PyMOL-RosettaServer', 'PyMOL-RosettaServer.python2',        package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=f'{package_dir}/PyMOL-RosettaServer.py',                use_rosetta_versioning=False)
@@ -521,7 +588,16 @@ def pyrosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_driv
 
                 execute('Creating PyRosetta distribution Wheel package...', f'{whell_environment.activate} && cd {package_dir}/setup && python setup.py sdist bdist_wheel')
                 wheel_file_name = [ f for f in os.listdir( f'{package_dir}/setup/dist' ) if f.endswith('.whl') ][0]
-                release('PyRosetta4', release_name+'.wheel', package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=f'{package_dir}/setup/dist/{wheel_file_name}', use_rosetta_versioning=False)
+                release('PyRosetta4',
+                        release_name+'.wheel',
+                        package_dir=None, working_dir=working_dir,
+                        platform=platform,
+                        config=config,
+                        release_as_git_repository=False,
+                        file=f'{package_dir}/setup/dist/{wheel_file_name}',
+                        use_rosetta_versioning=False,
+                        package_build_kind = '.'.join( [kind] + platform['extras'] ).lower()
+                        )
 
             if os.path.isdir(package_dir): shutil.rmtree(package_dir)  # removing package to keep size of database small
 
@@ -553,8 +629,11 @@ def pyrosetta_documentation(kind, rosetta_dir, working_dir, platform, config, hp
 
     result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, skip_compile=debug, version=version_file)
 
-    packages: str = get_required_pyrosetta_python_packages_for_testing(platform) + ' sphinx==5.2.3'
-    python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
+    packages: str = get_required_pyrosetta_python_packages_for_testing(platform, static_versions=False) + ' sphinx==5.2.3'
+    # packages: str = ' '.join(get_required_pyrosetta_python_packages_for_release_package(platform, static_versions=False, distributed_packages=False) + ['sphinx==5.2.3'] )
+
+    # python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
+    python_virtual_environment = setup_python_virtual_environment(f'{working_dir}/.venv', result.python_environment, packages)
 
     res = result.exitcode
     output = result.output
@@ -583,10 +662,11 @@ def pyrosetta_documentation(kind, rosetta_dir, working_dir, platform, config, hp
             with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
 
         else:
+            release_documentation_root = f'{release_root}/PyRosetta4/documentation'
+            if not os.path.isdir(release_documentation_root): os.makedirs(release_documentation_root)
+            with FileLock( f'{release_documentation_root}/.release.lock' ):
 
-            with FileLock( f'{release_root}/PyRosetta4/documentation/.release.lock' ):
-
-                release_path = '{release_root}/PyRosetta4/documentation/PyRosetta-4.documentation.{branch}.{kind}.python{python_version}.{os}'.format(branch=config['branch'], os=platform['os'], python_version=platform['python'].replace('.', ''), **vars())
+                release_path = '{release_documentation_root}/PyRosetta-4.documentation.{branch}.{kind}.python{python_version}.{os}'.format(branch=config['branch'], os=platform['os'], python_version=platform['python'].replace('.', ''), **vars())
 
                 if os.path.isdir(release_path): shutil.rmtree(release_path)
                 shutil.move(documentation_dir, release_path)
@@ -669,7 +749,7 @@ def native_libc_pyrosetta_conda_release(kind, rosetta_dir, working_dir, platform
 
     TR('Running PyRosetta conda release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
-    conda = setup_conda_virtual_environment(working_dir, platform, config, packages='setuptools')
+    conda = setup_conda_virtual_environment(working_dir, platform, config, packages='setuptools pybind11-stubgen')
 
     platform_name = get_platform_release_name(platform)
     release_name = 'PyRosetta4.conda.{platform}.python{python_version}.{kind}'.format(kind=kind, platform=platform_name, python_version=platform['python'].replace('.', '') )
@@ -749,7 +829,7 @@ def native_libc_pyrosetta_conda_release(kind, rosetta_dir, working_dir, platform
                     build = [f'python {platform["python"]}'],
                     host  = [f'python {platform["python"]}', 'setuptools', 'zlib'],
                     #run   = [f'python =={platform["python"]}', "{{ pin_compatible('numpy') }}", 'zlib', 'pandas >=0.18', 'scipy >=1.0', 'traitlets', 'python-blosc'],
-                    run   = [f'python {platform["python"]}', 'zlib', ] + get_required_pyrosetta_python_packages_for_release_package(platform, conda=True),
+                    run   = [f'python {platform["python"]}', 'zlib', ] + get_required_pyrosetta_python_packages_for_release_package(platform, conda=True, static_versions=False),
                 ),
 
                 about = dict(

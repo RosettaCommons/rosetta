@@ -16,7 +16,7 @@
 #include <protocols/ligand_docking/Transform.hh>
 
 #include <protocols/ligand_docking/grid_functions.hh>
-#include <protocols/jd2/util.hh>
+#include <protocols/ligand_docking/util.hh>
 #include <protocols/qsar/scoring_grid/GridManager.hh>
 #include <protocols/qsar/scoring_grid/GridSet.hh>
 #include <protocols/qsar/scoring_grid/schema_util.hh>
@@ -432,12 +432,12 @@ void Transform::apply(core::pose::Pose & pose)
 		}
 	}
 
-	protocols::jd2::add_string_real_pair_to_current_job("Transform_accept_ratio", accept_ratio);
-
 	//Set pose to best scored model - report score of a single grid (the best one) if using multiple poses
 	best_score = convert_to_full_pose(pose, best_ligand, chain_id);
+
+	add_string_real_pair( pose, "Transform_accept_ratio", accept_ratio);
 	TR << "Accepted pose with grid score: " << best_score << std::endl;
-	protocols::jd2::add_string_real_pair_to_current_job("Grid_score", best_score);
+	add_string_real_pair( pose, "Grid_score", best_score);
 }
 
 

@@ -238,5 +238,5 @@ void LigandAreaLoaderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinit
 }
 
 
-} //namespace jd2
+} //namespace ligand_docking
 } //namespace protocols

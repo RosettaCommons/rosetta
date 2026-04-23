@@ -121,17 +121,6 @@ HighResDocker::HighResDocker(
 	initialize_from_options();
 }
 
-HighResDocker::HighResDocker(HighResDocker const & that):
-	//utility::VirtualBase(),
-	protocols::moves::Mover( that ),
-	num_cycles_(that.num_cycles_),
-	repack_every_Nth_(that.repack_every_Nth_),
-	score_fxn_(that.score_fxn_),
-	movemap_builder_(that.movemap_builder_)
-{
-	initialize_from_options();
-}
-
 HighResDocker::~HighResDocker() = default;
 
 protocols::moves::MoverOP HighResDocker::clone() const {
@@ -145,9 +134,9 @@ protocols::moves::MoverOP HighResDocker::fresh_instance() const {
 /// @brief function to be called by constructors to assign values to allow_minimization_, allow_repacking, and all_residues
 void
 HighResDocker::initialize_from_options(){
-	bool allow_minimization_ = basic::options::option[ basic::options::OptionKeys::motifs::highresdocker_allow_minimization ];
-	bool allow_repacking_ = basic::options::option[ basic::options::OptionKeys::motifs::highresdocker_allow_repacking ];
-	bool all_residues_ = basic::options::option[ basic::options::OptionKeys::motifs::highresdocker_use_all_residues ];
+	allow_minimization_ = basic::options::option[ basic::options::OptionKeys::motifs::highresdocker_allow_minimization ];
+	allow_repacking_ = basic::options::option[ basic::options::OptionKeys::motifs::highresdocker_allow_repacking ];
+	all_residues_ = basic::options::option[ basic::options::OptionKeys::motifs::highresdocker_use_all_residues ];
 	TR << "Initializing options: " << std::endl;
 	TR << "allow_minimization_: " << allow_minimization_ << std::endl;
 	TR << "allow_repacking_: " << allow_repacking_ << std::endl;

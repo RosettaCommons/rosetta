@@ -5,50 +5,58 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
 
 try:
     import psutil
-    from dask.distributed import Adaptive, Client, LocalCluster
-    from dask_jobqueue import SGECluster, SLURMCluster
+    from dask_jobqueue import (
+        SGECluster,
+        SLURMCluster,
+    )
+    from distributed import (
+        Adaptive,
+        Client,
+        LocalCluster,
+        Worker,
+        get_worker,
+    )
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.utilities' requires the "
-        + "third-party packages 'dask', 'dask-jobqueue', and 'psutil' as dependencies!\n"
-        + "Please install these packages into your python environment. "
+        + "third-party packages 'dask-jobqueue', 'distributed', and 'psutil' as dependencies!\n"
+        + "Please install these packages into your virtual environment. "
         + "For installation instructions, visit:\n"
-        + "https://pypi.org/project/dask/\n"
         + "https://pypi.org/project/dask-jobqueue/\n"
+        + "https://pypi.org/project/distributed/\n"
         + "https://pypi.org/project/psutil/\n"
     )
     raise
 
 import logging
 import os
+import sys
 import warnings
 
-from typing import (
+from pyrosetta.distributed.cluster.config import (
+    __dask_jobqueue_version__,
+    __dask_version__,
+)
+from pyrosetta.distributed.cluster.type_defs import (
     Dict,
-    Generic,
-    NoReturn,
     Optional,
     Tuple,
-    TypeVar,
     Union,
 )
 
-from pyrosetta.distributed.cluster.config import __dask_version__, __dask_jobqueue_version__
+ClusterType = Union[LocalCluster, SGECluster, SLURMCluster]
 
 
-AdaptiveType = TypeVar("AdaptiveType", bound=Adaptive)
-ClientType = TypeVar("ClientType", bound=Client)
-ClusterType = TypeVar("ClusterType", LocalCluster, SGECluster, SLURMCluster)
-G = TypeVar("G")
+class SchedulerManager:
+    """Dask utility manager for `PyRosettaCluster`."""
 
+    def _setup_clients_dict(self) -> Dict[int, Client]:
+        """Setup Dask clients dictionary for `PyRosettaCluster`."""
 
-class SchedulerManager(Generic[G]):
-    def _setup_clients_dict(self) -> Union[Dict[int, ClientType], NoReturn]:
         if all(x is None for x in (self.client, self.clients)):
             return {}
         elif isinstance(self.client, Client) and self.clients is None:
@@ -57,13 +65,13 @@ class SchedulerManager(Generic[G]):
             return dict(enumerate(self.clients, start=0))
         else:
             raise ValueError(
-                "The PyRosettaCluster `client` and `clients` attribute parameters may not both be set. Received:\n" 
-                + f"PyRosettaCluster().client: {self.client}\n"
-                + f"PyRosettaCluster().clients: {self.clients}\n"
+                "The `client` and `clients` keyword arguments may not both be set. Received:\n"
+                + f"`PyRosettaCluster.client`: {self.client}\n"
+                + f"`PyRosettaCluster.clients`: {self.clients}\n"
             )
 
     def _get_cluster(self) -> ClusterType:
-        """Given user input arguments, return the requested cluster instance."""
+        """Given user input argument values, return the requested Dask cluster instance."""
 
         if not self.scheduler:
             _cpu_count = psutil.cpu_count()
@@ -83,9 +91,21 @@ class SchedulerManager(Generic[G]):
                     dashboard_address=self.dashboard_address,
                     local_directory=self.scratch_dir,
                 )
+                if self.security:
+                    _cluster_kwargs["security"] = self.security
+                    if self.security is True:
+                        logging.info("Using the 'cryptography' package to generate a Dask `Security.temporary()` object...")
                 if __dask_version__ <= (2, 1, 0):
                     _cluster_kwargs["local_dir"] = _cluster_kwargs.pop("local_directory", self.scratch_dir)
-                cluster = LocalCluster(**_cluster_kwargs)
+                if self.security is True:
+                    try:  # Uses `cryptography` package: https://distributed.dask.org/en/latest/_modules/distributed/security.html#Security.temporary
+                        cluster = LocalCluster(**_cluster_kwargs)
+                    except ImportError as ex:
+                        raise ImportError(
+                            f"Use of `PyRosettaCluster(security=True)` implements `Security.temporary` from the 'dask' package. {ex}"
+                        )
+                else:
+                    cluster = LocalCluster(**_cluster_kwargs)
         else:
             if self.scheduler == "sge":
                 cluster_func = SGECluster
@@ -104,11 +124,42 @@ class SchedulerManager(Generic[G]):
                 death_timeout=9999,
                 dashboard_address=self.dashboard_address,
             )
+            if self.security:
+                _cluster_kwargs["security"] = self.security
+                if self.security is True:
+                    _cluster_kwargs["shared_temp_directory"] = self.output_path
+                    logging.info("Using the 'cryptography' package to generate a Dask `Security.temporary()` object...")
             if __dask_version__ <= (2, 1, 0):
                 _cluster_kwargs["local_dir"] = _cluster_kwargs.pop("local_directory", self.scratch_dir)
             if __dask_jobqueue_version__ < (0, 8, 0):
                 _cluster_kwargs["job_extra"] = _cluster_kwargs.pop("job_extra_directives", _job_extra_directives)
-            cluster = cluster_func(**_cluster_kwargs)
+            if self.security is True:
+                if sys.version_info[:2] <= (3, 7):
+                    logging.warning(
+                        "Use of `PyRosettaCluster(security=True)` may require Python version 3.8 or higher to use the "
+                        + "'cryptography' package. Please upgrade your python version, or otherwise provide a Dask "
+                        + "`distributed.Security` object (recommended) or `False` (not recommended unless using a firewall) "
+                        + "to the PyRosettaCluster `security` keyword argument."
+                    )
+                try:  # Uses `cryptography` package: https://distributed.dask.org/en/latest/_modules/distributed/security.html#Security.temporary
+                    cluster = cluster_func(**_cluster_kwargs)
+                except ImportError as ex:
+                    raise ImportError(
+                        f"Use of `PyRosettaCluster(security=True)` implements `Security.temporary` from the 'dask' package. {ex}"
+                    )
+            else:
+                if self.security is False:
+                    logging.warning(
+                        "Warning! Dask TLS communication is not enabled while using a remote compute cluster! "
+                        + "`PyRosettaCluster` uses the `cloudpickle` module to serialize user-defined PyRosetta "
+                        + "protocols and user-defined task dictionaries, which requires unpickling of the data received "
+                        + "over the network. If not using a firewall, it is recommended to pass a Dask `distributed.Security` "
+                        + "object (or `True` to automatically generate one with the 'cryptography' package) to the "
+                        + "`security` keyword argument of `PyRosettaCluster`. Alternatively, in order to generate a "
+                        + "`distributed.Security` object with OpenSSL, the `pyrosetta.distributed.cluster.generate_dask_tls_security` "
+                        + "function may also be used (see docstring for more information)."
+                    )
+                cluster = cluster_func(**_cluster_kwargs)
         logging.info(f"Dashboard link: {cluster.dashboard_link}")
 
         return cluster
@@ -116,12 +167,12 @@ class SchedulerManager(Generic[G]):
     def _setup_clients_cluster_adaptive(
         self,
     ) -> Tuple[
-        Dict[int, ClientType], Optional[ClusterType], Optional[AdaptiveType],
+        Dict[int, Client],
+        Optional[ClusterType],
+        Optional[Adaptive],
     ]:
-        """
-        Given user input arguments, return the requested client, cluster,
-        and adaptive instance.
-        """
+        """Given user input arguments, return the requested Dask client, cluster, and adaptive instance."""
+
         if self.clients_dict:
             clients = self.clients_dict
             cluster = None
@@ -140,8 +191,8 @@ class SchedulerManager(Generic[G]):
 
         return clients, cluster, adaptive
 
-    def _maybe_adapt(self, adaptive: Optional[AdaptiveType]) -> None:
-        """Adjust max_workers."""
+    def _maybe_adapt(self, adaptive: Optional[Adaptive]) -> None:
+        """Adjust the maximum number of Dask workers."""
 
         if (
             not self.clients_dict
@@ -152,12 +203,23 @@ class SchedulerManager(Generic[G]):
             adaptive.maximum = self.tasks_size
 
     def _maybe_teardown(
-        self, clients: Dict[int, ClientType], cluster: Optional[ClusterType],
+        self,
+        clients: Dict[int, Client],
+        cluster: Optional[ClusterType],
     ) -> None:
-        """Teardown client and cluster."""
+        """Teardown the Dask client and cluster."""
 
         logging.info("PyRosettaCluster simulation complete!")
         if not self.clients_dict and cluster:
             cluster.scale(0)
             clients[0].close()
             cluster.close()
+
+
+def get_dask_worker() -> Worker:
+    """Get the current Dask worker."""
+
+    try:
+        return get_worker()
+    except Exception as ex:
+        raise ValueError(f"Cannot get Dask worker. {ex}")
