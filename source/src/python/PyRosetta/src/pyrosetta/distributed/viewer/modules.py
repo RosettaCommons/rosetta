@@ -14,6 +14,8 @@ import pyrosetta
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
 
+from pyrosetta.rosetta.core.pose import Pose
+
 from pyrosetta.rosetta.core.select import get_residues_from_subset
 from pyrosetta.rosetta.core.pose.full_model_info import (
     get_res_num_from_pdb_info,
@@ -87,7 +89,7 @@ class setDisulfides:
     @pyrosetta.distributed.requires_init
     def apply(self, viewer, pose, pdbstring):
 
-        if not pose:
+        if not isinstance(pose, Pose):
             pose = _pdbstring_to_pose(pdbstring, self.__class__.__name__)
 
         cys_res = []
@@ -155,7 +157,7 @@ class setHydrogenBonds:
     @pyrosetta.distributed.requires_init
     def apply(self, viewer, pose, pdbstring):
 
-        if not pose:
+        if not isinstance(pose, Pose):
             pose = _pdbstring_to_pose(pdbstring, self.__class__.__name__)
 
         hbond_set = pose.get_hbonds()
@@ -238,7 +240,7 @@ class setHydrogens:
             )
             return _viewer
 
-        if not pose:
+        if not isinstance(pose, Pose):
             pose = _pdbstring_to_pose(pdbstring, self.__class__.__name__)
 
         if pose.is_fullatom():
@@ -402,7 +404,7 @@ class setStyle:
                 raise ValueError("setStyle argument 'command' should be an instance of tuple or dict.")
         else: 
             if self.residue_selector:
-                if not pose:
+                if not isinstance(pose, Pose):
                     pose = _pdbstring_to_pose(pdbstring, self.__class__.__name__)
                 
                 resi, chain = _pose_to_residue_chain_tuples(pose, self.residue_selector)
@@ -530,7 +532,7 @@ class setSurface:
     @pyrosetta.distributed.requires_init
     def apply(self, viewer, pose, pdbstring):
 
-        if not pose:
+        if not isinstance(pose, Pose):
             pose = _pdbstring_to_pose(pdbstring, self.__class__.__name__)
             
         resi, chain = _pose_to_residue_chain_tuples(pose, self.residue_selector)
@@ -616,7 +618,7 @@ class setZoomTo:
     @pyrosetta.distributed.requires_init
     def apply(self, viewer, pose, pdbstring):
 
-        if not pose:
+        if not isinstance(pose, Pose):
             pose = _pdbstring_to_pose(pdbstring, self.__class__.__name__)
         
         resi, chain = _pose_to_residue_chain_tuples(pose, self.residue_selector)

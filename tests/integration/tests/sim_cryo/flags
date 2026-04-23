@@ -1,0 +1,9 @@
+-NR 50
+-gauss_multiplier 0.4
+-resolution 7
+-pixel_size 1
+-box_size_multiplier 2.25
+-s inputs/1e6v.pdb
+-ignore_zero_occupancy false
+-ignore_unrecognized_res
+-particle_wt_offset 0.2

@@ -32,13 +32,13 @@ get_designable_residues( core::pose::Pose & pose, std::string resfile );
 
 /// @brief Based on a pose and the indices of all designable residues, get a
 /// string of all designable AAs concatenated
-std::string
+utility::vector1< std::string >
 get_designable_sequence ( core::pose::Pose & pose, utility::vector1< core::Size > designable_residues );
 
 /// @brief Based on a list of sequences from poses, get all the AAs present at
 /// the position given by position_no
 utility::vector1< std::string > get_candidate_AAs(
-	utility::vector1< std::string > other_pose_sequences,
+	utility::vector1< utility::vector1< std::string > > const & other_pose_sequences,
 	core::Size position_no );
 
 /// @brief Given a list of poses, find the index of a particular pose

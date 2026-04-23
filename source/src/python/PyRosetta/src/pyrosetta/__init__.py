@@ -29,48 +29,49 @@ import logging
 logger = logging.getLogger("pyrosetta.rosetta")
 
 import pyrosetta.logging_support as logging_support
-# this try/except black should be removed after the decorator module
-# is installed on the test server.
+
+# this try/except block is due to decorator-module requirement of the Distributed framework
 try:
     from pyrosetta.distributed.utility.log import LoggingContext
 except:
     pass
 
 from pyrosetta.toolbox import etable_atom_pair_energies, PyJobDistributor
+from pyrosetta.utility.initialization import PyRosettaInitFileParser
+from pyrosetta.exceptions import PyRosettaException, PythonPyExitCallback
 
 # PyRosetta-3 comapatability
 # WARNING WARNING WARNING: do not add anything extra imports/names here! If you feel strongly that something needs to be added please contact author first!
 from pyrosetta.rosetta.core.kinematics import FoldTree, MoveMap
-from pyrosetta.rosetta.core.io.pdb import dump_pdb
 from pyrosetta.rosetta.core.id import AtomID
 from pyrosetta.rosetta.core.scoring import ScoreFunction
 
 from pyrosetta.rosetta.protocols.moves import PyMOLMover, SequenceMover, RepeatMover, TrialMover, MonteCarlo
 from pyrosetta.rosetta.protocols.simple_moves import SwitchResidueTypeSetMover
-from pyrosetta.rosetta.protocols.loops import get_fa_scorefxn
 
-from pyrosetta.io import pose_from_pdb, pose_from_file, poses_from_files, pose_from_sequence, poses_from_sequences, poses_from_silent, poses_to_silent, Pose
-
-from pyrosetta.rosetta.core.scoring import get_score_function
-create_score_function = pyrosetta.rosetta.core.scoring.ScoreFunctionFactory.create_score_function
+from pyrosetta.io import (
+    pose_from_pdb,
+    pose_from_file,
+    poses_from_files,
+    pose_from_sequence,
+    poses_from_sequences,
+    poses_from_silent,
+    poses_from_multimodel_pdb,
+    poses_to_silent,
+    dump_file,
+    dump_scored_pdb,
+    dump_pdb,
+    dump_multimodel_pdb,
+    dump_cif,
+    dump_mmtf,
+    create_score_function,
+    get_fa_scorefxn,
+    get_score_function,
+    Pose,
+)
 
 ###############################################################################
-# Exception handling.
-class PyRosettaException(Exception):
-    def __str__(self):
-        return 'PyRosettaException'
 
-
-class PythonPyExitCallback(rosetta.utility.py.PyExitCallback):
-    def __init__(self):
-        rosetta.utility.py.PyExitCallback.__init__(self)
-
-    def exit_callback(self):
-        raise PyRosettaException()
-
-
-###############################################################################
-#
 def _rosetta_database_from_env():
     """Read rosetta database directory from environment or standard install locations.
 
@@ -158,7 +159,7 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
         set_logging_handler = "interactive"
     elif notebook is not None:
         warnings.warn(
-            "pyrosetta.init 'notebook' argument is deprecated and may be removed in 2018. "
+            "pyrosetta.init 'notebook' argument is deprecated and may be removed in a future release. "
             "See set_logging_handler='interactive'.",
             stacklevel=2
         )
@@ -188,11 +189,19 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
     v = rosetta.utility.vector1_string()
     v.extend(args)
 
-    if not silent: print( version() )
-    logger.info( version() )
+    if not silent:
+        print( version() )
+        logger.info( "\n" + version() )
+    else:
+        logger.debug( "\n" + version() )
     rosetta.protocols.init.init(v)
     pyrosetta.protocols.h5_fragment_store_provider.init_H5FragmentStoreProvider()
     pyrosetta.protocols.h5_structure_store_provider.init_H5StructureStoreProvider()
+
+init_from_file = PyRosettaInitFileParser.init_from_file
+dump_init_file = PyRosettaInitFileParser.dump_init_file
+get_init_options_from_file = PyRosettaInitFileParser.get_init_options_from_file
+get_init_options = PyRosettaInitFileParser.get_init_options
 
 # FIXME: create 'version' struct in utility instead
 def _version_string():
@@ -204,16 +213,24 @@ def _version_string():
     return rosetta.utility.Version.package() + " " + ".".join(version)
 
 
+def _build_signature():
+    extras = "+".join(sorted(rosetta.utility.Version.extras()))
+    extras_string = f"[extras:{extras}]"
+    version_list = _version_string().split()
+    version_list.insert(1, extras_string)
+    return "".join(version_list)
+
+
 def version():
     return (
-        '┌──────────────────────────────────────────────────────────────────────────────┐\n'
-        '│                                 PyRosetta-4                                  │\n'
-        '│              Created in JHU by Sergey Lyskov and PyRosetta Team              │\n'
-        '│              (C) Copyright Rosetta Commons Member Institutions               │\n'
-        '│                                                                              │\n'
-        '│ NOTE: USE OF PyRosetta FOR COMMERCIAL PURPOSES REQUIRE PURCHASE OF A LICENSE │\n'
-        '│         See LICENSE.PyRosetta.md or email license@uw.edu for details         │\n'
-        '└──────────────────────────────────────────────────────────────────────────────┘\n'
+        '┌───────────────────────────────────────────────────────────────────────────────┐\n'
+        '│                                  PyRosetta-4                                  │\n'
+        '│               Created in JHU by Sergey Lyskov and PyRosetta Team              │\n'
+        '│               (C) Copyright Rosetta Commons Member Institutions               │\n'
+        '│                                                                               │\n'
+        '│ NOTE: USE OF PyRosetta FOR COMMERCIAL PURPOSES REQUIRES PURCHASE OF A LICENSE │\n'
+        '│          See LICENSE.PyRosetta.md or email license@uw.edu for details         │\n'
+        '└───────────────────────────────────────────────────────────────────────────────┘\n'
     ) + \
     'PyRosetta-4 ' + rosetta.utility.Version.date().split('-').pop(0) + \
     ' [Rosetta ' + _version_string() + ' ' + rosetta.utility.Version.date() + \

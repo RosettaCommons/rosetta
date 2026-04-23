@@ -74,10 +74,11 @@ class IZStreamTests : public CxxTest::TestSuite {
 		utility::vector1< std::string > current_alternative_paths(
 			izstream::get_alternative_search_paths());
 
-		utility::vector1< std::string > alternative_paths;
-		alternative_paths.push_back("bla/bla/bla");
-		alternative_paths.push_back("utility/io");
-		alternative_paths.push_back("alb/alb/alb");
+		utility::vector1< std::string > alternative_paths {
+			"bla/bla/bla",
+			"utility/io",
+			"alb/alb/alb"
+		};
 
 		izstream::set_alternative_search_paths(alternative_paths);
 

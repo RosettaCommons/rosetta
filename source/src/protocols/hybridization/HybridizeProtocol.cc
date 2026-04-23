@@ -79,6 +79,7 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
+#include <core/conformation/carbohydrates/util.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -1292,12 +1293,48 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			for ( core::Size ires=1; ires <= templates_[initial_template_index]->size(); ++ires ) {
 				if ( templates_[initial_template_index]->pdb_info()->number(ires) > (int)nres_tgt ) {
 					TR.Debug << "Insert hetero residue: " << templates_[initial_template_index]->residue(ires).name3() << std::endl;
-					if ( templates_[initial_template_index]->residue(ires).is_polymer()
+					if ( templates_[initial_template_index]->residue(ires).is_carbohydrate() ) {
+						if ( !templates_[initial_template_index]->residue(ires).is_lower_terminus() ) {
+							core::Size offset = pose.size() + 1 - ires;
+							core::Size parent_res_seqpos( conformation::carbohydrates::find_seqpos_of_saccharides_parent_residue( templates_[initial_template_index]->residue(ires) ) );
+							int self_lower=0;
+							int parent_upper=0;
+							//self_lower = templates_[initial_template_index]->residue(ires).lower_connect_id();
+							//parent_upper = templates_[initial_template_index]->residue(parent_res_seqpos).connect_atom( templates_[initial_template_index]->residue(ires) );
+							for ( core::Size i(1); i <= templates_[initial_template_index]->residue(ires).connect_map_size(); ++i ) {
+								TR.Debug<<"     "<<i<<" "<<templates_[initial_template_index]->residue(ires).residue_connection_partner(i)<<" "<<templates_[initial_template_index]->residue(ires).residue_connection_conn_id(i)<<std::endl;
+								if ( templates_[initial_template_index]->residue(ires).connect_map( i ).resid() == parent_res_seqpos ) {
+									//self_lower = templates_[initial_template_index]->residue(ires).connect_map( i ).connid();
+									self_lower = i;
+									parent_upper=templates_[initial_template_index]->residue(ires).connect_map( i ).connid();
+									//parent_upper=templates_[initial_template_index]->residue(ires).residue_connection_conn_id(i);
+								}
+							}
+							parent_res_seqpos += offset;
+							TR.Debug <<"  appending by bond "<<pose.size()+1<<" lower "<<self_lower<<" anchor "<<parent_res_seqpos<<" parent upper "<<parent_upper<<std::endl;
+							pose.append_residue_by_bond(templates_[initial_template_index]->residue(ires), false, self_lower, parent_res_seqpos, parent_upper, false, false);
+						} else {
+							TR.Debug <<"  appending by jump "<<ires<<" is Polymer "<<templates_[initial_template_index]->residue(ires).is_polymer()<<" is Lower "<<templates_[initial_template_index]->residue(ires).is_lower_terminus()<<" is Upper "<<pose.residue(pose.size()).is_upper_terminus()<<std::endl;
+							for ( core::Size i(1); i <= templates_[initial_template_index]->residue(ires).connect_map_size(); ++i ) {
+								TR.Debug<<"     "<<i<<" "<<templates_[initial_template_index]->residue(ires).residue_connection_partner(i)<<" "<<templates_[initial_template_index]->residue(ires).residue_connection_conn_id(i)<<std::endl;
+							}
+							pose.append_residue_by_jump(templates_[initial_template_index]->residue(ires), 1);
+
+						}
+					} else if ( templates_[initial_template_index]->residue(ires).is_polymer()
 							&& !templates_[initial_template_index]->residue(ires).is_lower_terminus()
 							&& !pose.residue(pose.size()).is_upper_terminus() ) {
+						TR.Debug <<"  appending by bond "<<ires<<std::endl;
 						pose.append_residue_by_bond(templates_[initial_template_index]->residue(ires));
+						for ( core::Size i(1); i <= templates_[initial_template_index]->residue(ires).connect_map_size(); ++i ) {
+							TR.Debug<<"     "<<i<<" "<<templates_[initial_template_index]->residue(ires).residue_connection_partner(i)<<" "<<templates_[initial_template_index]->residue(ires).residue_connection_conn_id(i)<<std::endl;
+						}
 					} else {
+						TR.Debug <<"  appending by jump "<<ires<<" is Polymer "<<templates_[initial_template_index]->residue(ires).is_polymer()<<" is Lower "<<templates_[initial_template_index]->residue(ires).is_lower_terminus()<<" is Upper "<<pose.residue(pose.size()).is_upper_terminus()<<std::endl;
 						pose.append_residue_by_jump(templates_[initial_template_index]->residue(ires), 1);
+						for ( core::Size i(1); i <= templates_[initial_template_index]->residue(ires).connect_map_size(); ++i ) {
+							TR.Debug<<"     "<<i<<" "<<templates_[initial_template_index]->residue(ires).residue_connection_partner(i)<<" "<<templates_[initial_template_index]->residue(ires).residue_connection_conn_id(i)<<std::endl;
+						}
 					}
 					hetatms.push_back( std::make_pair( ires, pose.size() ) );
 				}

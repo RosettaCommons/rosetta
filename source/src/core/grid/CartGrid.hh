@@ -459,28 +459,6 @@ public:
 
 	}
 
-	void sum(utility::vector0<utility::pointer::shared_ptr<CartGrid<T> > > const & list_grids) {
-		core::Size ngrids = list_grids.size();
-
-		this->zero();
-		T curr_value, new_value;
-		for ( core::Size i=0; i < ngrids; i++ ) {
-			if ( !this->equalDimensions(*(list_grids[i])) ) {
-				return;
-			}
-			if ( !this->equalBase(*(list_grids[i])) ) {
-				return;
-			}
-
-			for ( core::Size j=0; j < this->its_npoints; j++ ) {
-				curr_value = this->getValue(j);
-				new_value = list_grids[i]->getValue(j);
-				curr_value += new_value;
-				this->setValue(j,curr_value);
-			}
-		}
-	}
-
 	void expand(int expansion) {
 		this->bX_ -= this->lX_*core::Real(expansion);
 		this->bY_ -= this->lY_*core::Real(expansion);

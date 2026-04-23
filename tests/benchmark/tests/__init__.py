@@ -12,7 +12,7 @@
 ## @brief  Common constats and types for all test types
 ## @author Sergey Lyskov
 
-import os, time, sys, shutil, codecs, urllib.request, subprocess, json, hashlib  # urllib.error, urllib.parse,
+import os, time, sys, shutil, codecs, urllib.request, subprocess, json, hashlib, copy  # urllib.error, urllib.parse,
 import platform as  platform_module
 import types as types_module
 
@@ -62,6 +62,29 @@ PyRosetta_unix_unit_test_memory_requirement_per_cpu = 3.0  # Memory per sub-proc
 PRE_COMPILE_SETUP_SCRIPTS = [ "./update_options.sh", "./update_submodules.sh", "./update_ResidueType_enum_files.sh", "python version.py" ]
 
 DEFAULT_PYTHON_VERSION='3.9'
+
+# Default package names (keys) and versions (values) from The Python Package Index (PyPI), not from conda channels
+# Versions must start with either '==', '<=', or '>='
+DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED = {
+    "attrs": ">=19.3.0",
+    "billiard": ">=3.6.3.0",
+    "blosc": ">=1.8.3",
+    "cloudpickle": ">=1.5.0",
+    "cryptography": ">=2.8",
+    "dask": ">=2.16.0",
+    "dask-jobqueue": ">=0.7.0",
+    "distributed": ">=2.16.0",
+    "gitpython": ">=3.1.1",
+    "jupyter": ">=1.0.0",
+    "numpy": ">=1.17.3",
+    "pandas": ">=0.25.2",
+    "py3Dmol": ">=0.8.0",
+    "python-xz": ">=0.4.0",
+    "scipy": ">=1.4.1",
+    "traitlets": ">=4.3.3",
+}
+assert all(any(v.startswith(operator) for operator in ('==', '<=', '>=')) for v in DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED.values()), \
+    "Default package version values must start with either '==', '<=', or '>='."
 
 # Standard funtions and classes below ---------------------------------------------------------------------------------
 
@@ -175,25 +198,35 @@ def execute_through_pty(command_line):
 
     if sys.platform == "darwin":
 
-        master, slave = pty.openpty()
-        p = subprocess.Popen(command_line, shell=True, stdout=slave, stdin=slave,
-                             stderr=subprocess.STDOUT, close_fds=True)
-
-        buffer = []
-        while True:
+        try:
+            master, slave = pty.openpty()
+        except OSError:
+            time.sleep(60) # Wait a bit and see if a PTY opens up.
             try:
-                if select.select([master], [], [], 0.2)[0]:  # has something to read
-                    data = os.read(master, 1 << 22)
-                    if data: buffer.append(data)
+                master, slave = pty.openpty()
+            except OSError:
+                print("ERROR - can't open PTY -- falling back on regular subprocess approach.")
+                return execute_through_subprocess(command_line)
 
-                elif (p.poll() is not None)  and  (not select.select([master], [], [], 0.2)[0] ): break  # process is finished and output buffer if fully read
+        try:
+            p = subprocess.Popen(command_line, shell=True, stdout=slave, stdin=slave,
+                                 stderr=subprocess.STDOUT, close_fds=True)
 
-            except OSError: break  # OSError will be raised when child process close PTY descriptior
+            buffer = []
+            while True:
+                try:
+                    if select.select([master], [], [], 0.2)[0]:  # has something to read
+                        data = os.read(master, 1 << 22)
+                        if data: buffer.append(data)
 
-        output = b''.join(buffer).decode(encoding='utf-8', errors='backslashreplace')
+                    elif (p.poll() is not None)  and  (not select.select([master], [], [], 0.2)[0] ): break  # process is finished and output buffer if fully read
 
-        os.close(master)
-        os.close(slave)
+                except OSError: break  # OSError will be raised when child process close PTY descriptior
+
+            output = b''.join(buffer).decode(encoding='utf-8', errors='backslashreplace')
+        finally:
+            os.close(master)
+            os.close(slave)
 
         p.wait()
         exit_code = p.returncode
@@ -223,22 +256,34 @@ def execute_through_pty(command_line):
 
     else:
 
-        master, slave = pty.openpty()
-        p = subprocess.Popen(command_line, shell=True, stdout=slave, stdin=slave,
-                             stderr=subprocess.STDOUT, close_fds=True)
-
-        os.close(slave)
-
-        buffer = []
-        while True:
+        try:
+            master, slave = pty.openpty()
+        except OSError:
+            time.sleep(60) # Wait a bit and see if a PTY opens up.
             try:
-                data = os.read(master, 1 << 22)
-                if data: buffer.append(data)
-            except OSError: break  # OSError will be raised when child process close PTY descriptior
+                master, slave = pty.openpty()
+            except OSError:
+                print("ERROR - can't open PTY -- falling back on regular subprocess approach.")
+                return execute_through_subprocess(command_line)
 
-        output = b''.join(buffer).decode(encoding='utf-8', errors='backslashreplace')
+        try:
+            try:
+                p = subprocess.Popen(command_line, shell=True, stdout=slave, stdin=slave,
+                                 stderr=subprocess.STDOUT, close_fds=True)
+            finally:
+                os.close(slave)
 
-        os.close(master)
+            buffer = []
+            while True:
+                try:
+                    data = os.read(master, 1 << 22)
+                    if data: buffer.append(data)
+                except OSError: break  # OSError will be raised when child process close PTY descriptior
+
+            output = b''.join(buffer).decode(encoding='utf-8', errors='backslashreplace')
+
+        finally:
+            os.close(master)
 
         p.wait()
         exit_code = p.returncode
@@ -340,8 +385,10 @@ def platform_to_pretty_string(platform):
     ''' Take platform as json object and return normalized human-readable string '''
     return '{}.{}{}{}'.format(platform['os'], platform['compiler'], ('.'+'.'.join(platform['extras']) if 'extras' in platform  and  platform['extras'] else ''), ('.python'+platform['python'] if 'python' in platform else ''))
 
+
 def setup_for_compile(rosetta_dir):
     execute('Updating options, ResidueTypes and version info...', f'cd {rosetta_dir}/source && ' + ' && '.join(PRE_COMPILE_SETUP_SCRIPTS) )
+
 
 def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=False, verbose=False):
     ''' Compile Rosetta binaries on a given platform return (res, output, build_command_line) '''
@@ -370,46 +417,107 @@ def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=Fals
     return res, output, build_command_line
 
 
+def remove_package_versions_for_python_packages(packages, keep=None):
+    ''' Remove all pinned package versions, except for package names in the 'keep' keyword argument. '''
+    for k in list(packages.keys()):
+        if keep and k not in keep:
+            packages[k] = ""
+    return packages
 
-def get_required_pyrosetta_python_packages_for_testing(platform):
-    ''' return list of Python packages that is required to run PyRosetta for given platform
+
+def set_static_versions_for_python_packages(packages):
+    ''' Replace '>=' and '<=' with '==' for static package version installation. '''
+    for k in list(packages.keys()):
+        packages[k] = packages[k].replace(">=", "==").replace("<=", "==")
+    return packages
+
+
+def validate_packages_for_python_packages(packages):
+    ''' Validate that packages have correct version formatting. '''
+    if not all(v == "" or any(v.startswith(operator) for operator in ("==", "<=", ">=")) for v in packages.values()):
+        raise ValueError(
+            "Package version values must be empty strings or start with either '==', '<=', or '>='. Received: {0}".format(packages)
+        )
+
+
+def get_packages_str_for_python_packages(packages):
+    ''' Return a str of sorted packages. '''
+    validate_packages_for_python_packages(packages)
+    return " ".join(k + v for k, v in sorted(packages.items()))
+
+
+def get_packages_list_for_python_packages(packages):
+    ''' Return a list of sorted packages. '''
+    validate_packages_for_python_packages(packages)
+    return list(k + v for k, v in sorted(packages.items()))
+
+
+def update_packages_for_python_version(packages, python_version):
+    ''' Update package versions given the Python version. '''
+    if python_version >= (3, 13):
+        # Allow the latest python version to install the latest compatible third-party dependencies
+        packages = remove_package_versions_for_python_packages(packages, keep=None)
+        packages["numpy"] = ">=2.1"
+    elif python_version == (3, 12):
+        packages["numpy"] = ">=1.26.0"
+    elif python_version == (3, 11):
+        packages["numpy"] = ">=1.23.5"
+    elif python_version == (3, 10):
+        packages["numpy"] = ">=1.22.3"
+    elif python_version == (3, 9):
+        packages["numpy"] = ">=1.20.2"
+    elif python_version == (3, 8):
+        packages = remove_package_versions_for_python_packages(packages, keep=["cloudpickle"])
+    elif python_version == (3, 7):
+        packages["cloudpickle"] = "<=0.7.0"
+    elif python_version == (3, 6):
+        # Allow the oldest python version to install the oldest compatible third-party dependencies
+        packages = remove_package_versions_for_python_packages(packages, keep=None)
+        packages["cloudpickle"] = "<=0.7.0"
+
+    return packages
+
+
+def update_packages_for_conda(packages, conda):
+    ''' Update package versions if installation uses conda. '''
+    if conda:
+        # See python-blosc on conda-forge channel: https://anaconda.org/conda-forge/python-blosc
+        packages["python-blosc"] = packages.pop("blosc", DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED["blosc"])
+
+        # See xz on conda-forge channel: https://anaconda.org/conda-forge/xz
+        packages["xz"] = packages.pop("python-xz", DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED["python-xz"])
+
+        # See py3dmol on conda-forge channel: https://anaconda.org/conda-forge/py3dmol
+        packages["py3dmol"] = packages.pop("py3Dmol", DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED["py3Dmol"])
+
+    return packages
+
+
+def get_required_pyrosetta_python_packages_for_testing(platform, conda=False, static_versions=True):
+    ''' return str of Python packages that is required to run PyRosetta for given platform
 
         IMPORTANT: each package should have version specification in it by either using ==, >= or <=
         so we can have reproducible test enviroment
 
         IMPORTANT: there should be no spaces between package name and version number
     '''
-    # not available in standard Conda channels:
-    #    blosc==1.8.3         \
-    #    py3Dmol>=0.8.0       \
-
     python_version = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
+    packages = copy.deepcopy(DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED)
 
-    if python_version <= (3, 8):
-        packages = 'attrs>=19.3.0 billiard>=3.6.3.0 cloudpickle>=1.4.1 dask>=2.16.0 dask-jobqueue>=0.7.0 distributed>=2.16.0 gitpython>=3.1.1 jupyter>=1.0.0 traitlets>=4.3.3 blosc>=1.8.3 numpy>=1.17.3 pandas>=0.25.2 scipy>=1.4.1 python-xz>=0.4.0'
-        if python_version == (3, 7): packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p, packages.split()))
-        elif python_version == (3, 6): packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p.split(">=")[0], packages.split()))
+    packages = update_packages_for_python_version(packages, python_version)
+    packages = update_packages_for_conda(packages, conda)
 
-    elif python_version == (3, 9): packages = 'numpy>=1.20.2'
-    elif python_version == (3, 10): packages = 'numpy>=1.22.3'
-    elif python_version == (3, 11): packages = 'numpy>=1.23.5'
-    elif python_version == (3, 12): packages = 'numpy>=1.26.0'
-    else: packages = 'numpy>=1.23'
+    if platform['os'] == 'mac' and python_version >= (3, 7):
+        packages['python-blosc' if conda else 'blosc'] = '>=1.10.6'
 
-    if platform['os'] == 'mac' and python_version == (3, 7): packages = packages.replace('blosc>=1.8.3', 'blosc>=1.10.6')
-    if platform['os'] == 'mac' and python_version == (3, 8): packages = packages.replace('blosc>=1.8.3', 'blosc>=1.10.6')
+    if static_versions:
+        packages = set_static_versions_for_python_packages(packages)
 
-    packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else []
-
-    if python_version >= (3, 7):
-        for p in packages: assert '=' in p
-
-    return packages
+    return get_packages_str_for_python_packages(packages) if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else ''
 
 
-
-def get_required_pyrosetta_python_packages_for_release_package(platform, conda):
+def get_required_pyrosetta_python_packages_for_release_package(platform, conda=True, static_versions=True, distributed_packages=False):
     ''' return list of Python packages that is required to run PyRosetta for given platform
 
         IMPORTANT: each package should have version specification in it by either using ==, >= or <=
@@ -422,37 +530,19 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda):
 
     python_version = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
-    if python_version < (3, 9):
-        packages = '\
-        blosc>=1.8.3         \
-        cloudpickle>=1.4.1   \
-        dask>=2.16.0         \
-        dask-jobqueue>=0.7.0 \
-        distributed>=2.16.0  \
-        jupyter>=1.0.0       \
-        numpy>=1.17.3        \
-        pandas>=0.25.2       \
-        python-xz>=0.4.0     \
-        scipy>=1.4.1         \
-        traitlets>=4.3.3     \
-        '
-        if python_version == (3, 7): packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p, packages.split()))
-        elif python_version == (3, 6): packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p.split(">=")[0], packages.split()))
+    packages = copy.deepcopy(DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED)
+    packages = update_packages_for_python_version(packages, python_version)
+    packages = update_packages_for_conda(packages, conda)
 
-    else:
-        #packages = 'numpy>=1.19.2' if platform['os'] == 'mac' else 'numpy>=1.19.2'
-        packages = 'numpy>=1.20.2'
+    if not distributed_packages:
+        # Keep packages list lean by removing extra dependencies
+        if python_version >= (3, 9) or ( platform['os'] == 'mac' and python_version >= (3, 8) ):
+            packages = {'numpy': packages.get('numpy', DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED['numpy'])}
 
-    if conda:
-        packages = packages.replace('blosc', 'python-blosc')
-        packages = " ".join(map(lambda p: "xz" if p.startswith("python-xz") else p, packages.split()))
+    if static_versions:
+        packages = set_static_versions_for_python_packages(packages)
 
-    packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else []
-
-    if not conda:
-        for p in packages: assert '=' in p
-
-    return packages
+    return get_packages_list_for_python_packages(packages) if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else []
 
 
 def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', options='', conda=None, verbose=False, skip_compile=False, version=None):
@@ -460,12 +550,23 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', opti
 
     #binder = install_llvm_tool('binder', source_location='{}/source/src/python/PyRosetta/binder'.format(rosetta_dir), config=config)
 
-    py_env = conda if conda else local_python_install(platform, config)
+    py_env = conda if conda else local_python_install(platform, config, packages='pybind11-stubgen')
+
+    # if conda:
+    #     py_env = conda
+    # else:
+    #     # py_env = local_python_install(platform, config, packages='pybind11-stubgen')
+    #     py_env = setup_persistent_python_virtual_environment(local_python_install(platform, config), 'pybind11-stubgen')
+
 
     #print(sysconfig.get_config_vars())
     #CONFINCLUDEPY
 
-    extra = ' --python-include-dir={py_env.python_include_dir} --python-lib={py_env.python_lib_dir}'.format(**vars())
+    extra = f' --python-include-dir={py_env.python_include_dir} --python-lib={py_env.python_lib_dir}'
+
+    python_version = platform.get('python', DEFAULT_PYTHON_VERSION)
+    if not (python_version in ['3.8'] and conda): extra += ' --stubs'
+
     # if platform['os'] == 'mac'  and  platform['python'].startswith('python3'):
     #     python_prefix = execute('Getting {} prefix path...'.format(platform['python']), '{}-config --prefix'.format(platform['python']), return_='output')
     #     extra += ' --python-include-dir={0}/include/python3.5m --python-lib={0}/lib/libpython3.5.dylib'.format(python_prefix)
@@ -478,6 +579,7 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', opti
     if version: extra += " --version '{version}'".format(**vars())
 
     command_line = f'cd {rosetta_dir}/source/src/python/PyRosetta && {py_env.python} build.py -j{jobs} --compiler {platform["compiler"]} --type {mode}{extra} {options}'
+    # command_line = f'{py_env.activate} && cd {rosetta_dir}/source/src/python/PyRosetta && python build.py -j{jobs} --compiler {platform["compiler"]} --type {mode}{extra} {options}'
 
     pyrosetta_path = execute('Getting PyRosetta build path...', command_line + ' --print-build-root', return_='output').split()[-1]
 
@@ -719,7 +821,7 @@ def remove_pip_and_easy_install(prefix_root_path):
 
 
 
-def local_python_install(platform, config):
+def local_python_install(platform, config, *, packages=None):
     ''' Perform local install of given Python version and return path-to-python-interpreter, python_include_dir, python_lib_dir
         If previous install is detected skip installiation.
         Provided Python install will _persistent_ and _immutable_
@@ -761,8 +863,10 @@ def local_python_install(platform, config):
         '3.8'  : 'https://www.python.org/ftp/python/3.8.14/Python-3.8.14.tgz',
         '3.9'  : 'https://www.python.org/ftp/python/3.9.14/Python-3.9.14.tgz',
         '3.10' : 'https://www.python.org/ftp/python/3.10.10/Python-3.10.10.tgz',
-        '3.11' : 'https://www.python.org/ftp/python/3.11.2/Python-3.11.2.tgz',
+        '3.11' : 'https://www.python.org/ftp/python/3.11.12/Python-3.11.12.tgz',
         '3.12' : 'https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz',
+        '3.13' : 'https://www.python.org/ftp/python/3.13.0/Python-3.13.0.tgz',
+        '3.14' : 'https://www.python.org/ftp/python/3.14.0/Python-3.14.0.tgz',
     }
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')
@@ -774,7 +878,7 @@ def local_python_install(platform, config):
     }
 
     #packages = '' if (python_version[0] == '2' or  python_version == '3.5' ) and  platform['os'] == 'mac' else 'pip setuptools wheel' # 2.7 is now deprecated on Mac so some packages could not be installed
-    packages = 'setuptools'
+    packages = 'setuptools' + ( (' ' + packages) if packages else '')
 
     url = python_sources[python_version]
 
@@ -852,7 +956,9 @@ def local_python_install(platform, config):
         # if 'certifi' not in packages:
         #     packages += ' certifi'
 
-        if packages: execute( f'Installing packages {packages}...', f'cd {root} && unset __PYVENV_LAUNCHER__ && {root}/bin/pip{python_version} install --upgrade {packages}' )
+        if packages:
+            execute( f'Installing packages {packages}...', f'cd {root} && unset __PYVENV_LAUNCHER__ && {root}/bin/pip{python_version} install --no-cache-dir --upgrade pip' )
+            execute( f'Installing packages {packages}...', f'cd {root} && unset __PYVENV_LAUNCHER__ && {root}/bin/pip{python_version} install --no-cache-dir --upgrade {packages}' )
         #if packages: execute( f'Installing packages {packages}...', f'cd {root} && unset __PYVENV_LAUNCHER__ && {executable} -m pip install --upgrade {packages}' )
 
         remove_pip_and_easy_install(root)  # removing all pip's and easy_install's to make sure that environment is immutable
@@ -889,8 +995,10 @@ def setup_python_virtual_environment(working_dir, python_environment, packages='
 
     bin=working_dir+'/bin'
 
-    if packages: execute('Installing packages: {}...'.format(packages), 'unset __PYVENV_LAUNCHER__ && {bin}/python {bin}/pip install --upgrade pip setuptools && {bin}/python {bin}/pip install --progress-bar off {packages}'.format(**vars()) )
-    #if packages: execute('Installing packages: {}...'.format(packages), '{bin}/pip{python_environment.version} install {packages}'.format(**vars()) )
+    #if packages: execute('Installing packages: {}...'.format(packages), 'unset __PYVENV_LAUNCHER__ && {bin}/python {bin}/pip install --no-cache-dir --upgrade pip setuptools && {bin}/python {bin}/pip install --no-cache-dir --progress-bar off {packages}'.format(**vars()) )
+    if packages:
+        packages = ' '.join( f"'{p}'" for p in packages.split() )
+        execute('Installing packages: {}...'.format(packages), '{activate} && {bin}/pip install --no-cache-dir --upgrade pip setuptools && {bin}/pip install --no-cache-dir --progress-bar off {packages}'.format(**vars()) )
 
     return NT(activate = activate, python = bin + '/python', root = working_dir, bin = bin)
 
@@ -908,7 +1016,7 @@ def setup_persistent_python_virtual_environment(python_environment, packages):
         #if 'certifi' not in packages: packages += ' certifi'
 
         h = hashlib.md5()
-        h.update(f'v1.0.0 platform: {python_environment.platform} python_source_url: {python_environment.url} python-hash: {python_environment.hash} packages: {packages}'.encode('utf-8', errors='backslashreplace') )
+        h.update(f'v1.1.0 platform: {python_environment.platform} python_source_url: {python_environment.url} python-hash: {python_environment.hash} packages: {packages}'.encode('utf-8', errors='backslashreplace') )
         hash = h.hexdigest()
 
         prefix = calculate_unique_prefix_path(python_environment.platform, python_environment.config)
@@ -927,7 +1035,7 @@ def setup_persistent_python_virtual_environment(python_environment, packages):
             remove_pip_and_easy_install(root)  # removing all pip's and easy_install's to make sure that environment is immutable
             with open(signature_file_name, 'w') as f: f.write(signature)
 
-        return NT(activate = activate, python = bin + '/python', root = root, bin = bin, hash = hash)
+        return NT(activate = activate, python = bin + '/python', root = root, bin = bin, hash = hash, python_include_dir= python_environment.python_include_dir, python_lib_dir=python_environment.python_lib_dir)
 
 
 
@@ -950,6 +1058,8 @@ def _get_path_to_conda_root(platform, config):
     ''' Perform local (prefix) install of miniconda and return NT(activate, conda_root_dir, conda)
         this function is for inner use only, - to setup custom conda environment inside your test use `setup_conda_virtual_environment` defined below
     '''
+    assert False, 'DO NOT USE, DEPRECATED'
+
     miniconda_sources = {
         'mac'    : 'https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh',
         'linux'  : 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh',
@@ -973,8 +1083,9 @@ def _get_path_to_conda_root(platform, config):
 
     url = miniconda_sources[platform_os]
 
-    version = '1'
-    channels = ''  # conda-forge
+    version = '1.0.1'
+    # https://stackoverflow.com/questions/67695893/how-do-i-completely-purge-and-disable-the-default-channel-in-anaconda-and-switch
+    channels = 'conda-forge nodefaults'.split()
 
     #packages = ['conda-build gcc libgcc', 'libgcc=5.2.0'] # libgcc installs is workaround for "Anaconda libstdc++.so.6: version `GLIBCXX_3.4.20' not found", see: https://stackoverflow.com/questions/48453497/anaconda-libstdc-so-6-version-glibcxx-3-4-20-not-found
     #packages = ['conda-build gcc'] # libgcc installs is workaround for "Anaconda libstdc++.so.6: version `GLIBCXX_3.4.20' not found", see: https://stackoverflow.com/questions/48453497/anaconda-libstdc-so-6-version-glibcxx-3-4-20-not-found
@@ -1016,7 +1127,16 @@ def _get_path_to_conda_root(platform, config):
 
         # conda update --yes --quiet -n base -c defaults conda
 
-        if channels: execute(f'Adding extra channles {channels}...', f'cd {build_prefix} && {activate} && conda config --add channels {channels}' )
+        #execute(f'Removing `defaults` channel...', f'cd {build_prefix} && {activate} && conda config --remove channels defaults || echo' )
+
+        o = execute(f'Removing `defaults` channel...', f'cd {build_prefix} && {activate} && conda config --show channels || echo', return_='output' )
+        current_channels = o.partition('channels:')[2]
+        for c in current_channels.split('\n'):
+            c = c.strip().partition('- ')[2]
+            if c:
+                execute(f'Removing channel {c!r}...', f'cd {build_prefix} && {activate} && conda config --remove channels {c} || echo' )
+
+        for c in channels: execute(f'Adding extra channel {c!r}...', f'cd {build_prefix} && {activate} && conda config --add channels {c}' )
 
         for p in packages: execute(f'Installing conda packages: {p}...', f'cd {build_prefix} && {activate} && conda install --quiet --yes {p}' )
 
@@ -1031,10 +1151,100 @@ def _get_path_to_conda_root(platform, config):
 
 
 
+def _get_path_to_miniforge_root(platform, config):
+    ''' Perform local (prefix) install of miniconda and return NT(activate, conda_root_dir, conda)
+        this function is for inner use only, - to setup custom conda environment inside your test use `setup_conda_virtual_environment` defined below
+    '''
+    miniforge_source_suffixes = {
+        'mac'    : 'MacOSX-x86_64.sh',
+        'linux'  : 'Linux-x86_64.sh',
+        'aarch64': 'Linux-aarch64.sh',
+        'ubuntu' : 'Linux-x86_64.sh',
+        'm1'     : 'MacOSX-arm64.sh',
+    }
+    platform_os = platform['os']
+    for o in 'alpine centos ubuntu'.split():
+        if platform_os.startswith(o): platform_os = 'linux'
+
+    url = 'https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-' + miniforge_source_suffixes[platform_os]
+
+    version = 'miniforge-0.0.1'
+    channels = 'conda-forge'.split()
+
+    # packages = ['conda-build anaconda-client conda-verify',]
+    packages = ['conda-build',]
+
+    signature = f'url: {url}\nversion: {version}\nchannels: {channels}\npackages: {packages}\n'
+
+    root = calculate_unique_prefix_path(platform, config) + '/miniforge'
+
+    signature_file_name = root + '/.signature'
+
+    # presense of __PYVENV_LAUNCHER__,PYTHONHOME, PYTHONPATH sometimes confuse Python so we have to unset them
+    unset = 'unset __PYVENV_LAUNCHER__ && unset PYTHONHOME && unset PYTHONPATH'
+    activate = unset + ' && . ' + root + '/bin/activate'
+
+    executable = root + '/bin/conda'
+
+    if os.path.isfile(signature_file_name) and open(signature_file_name).read() == signature:
+        print( f'Install for MiniForge is detected, skipping installation procedure...' )
+
+    else:
+        print( f'Installing MiniForge, using {url}...' )
+
+        if os.path.isdir(root): shutil.rmtree(root)
+
+        dot_conda_rc = os.path.expanduser('~/.condarc')
+        if os.path.isfile(dot_conda_rc):
+            os.replace(dot_conda_rc, f'{dot_conda_rc}.{datetime.datetime.now(datetime.timezone.utc).isoformat()}')
+            # os.remove(dot_conda_rc)
+
+        build_prefix = os.path.abspath(root + f'/../build-miniforge' )
+
+        #if not os.path.isdir(root): os.makedirs(root)
+        if not os.path.isdir(build_prefix): os.makedirs(build_prefix)
+
+        archive = build_prefix + '/' + url.split('/')[-1]
+
+        with open(archive, 'wb') as f:
+            response = urllib.request.urlopen(url)
+            f.write( response.read() )
+
+        execute('Installing miniforge...', f'cd {build_prefix} && {unset} && bash {archive} -b -p {root}' )
+
+        # conda update --yes --quiet -n base -c defaults conda
+
+        #execute(f'Removing `defaults` channel...', f'cd {build_prefix} && {activate} && conda config --remove channels defaults || echo' )
+
+        execute(f'Disabling auto-activation...', f'cd {build_prefix} && {activate} && conda config --set auto_activate_base false')
+
+        # o = execute(f'Removing `defaults` channel...', f'cd {build_prefix} && {activate} && conda config --show channels || echo', return_='output' )
+        # current_channels = o.partition('channels:')[2]
+        # for c in current_channels.split('\n'):
+        #     c = c.strip().partition('- ')[2]
+        #     if c:
+        #         execute(f'Removing channel {c!r}...', f'cd {build_prefix} && {activate} && conda config --remove channels {c} || echo' )
+
+        for c in channels: execute(f'Adding extra channel {c!r}...', f'cd {build_prefix} && {activate} && conda config --add channels {c}' )
+
+        for p in packages: execute(f'Installing conda packages: {p}...', f'cd {build_prefix} && {activate} && conda install --quiet --yes {p}' )
+
+        shutil.rmtree(build_prefix)
+
+        with open(signature_file_name, 'w') as f: f.write(signature)
+
+        print( f'Installing MiniForge, using {url}... Done.' )
+
+    execute(f'Updating conda base...', f'{activate} && conda update --all --yes' )
+    return NT(conda=executable, root=root, activate=activate, url=url)
+
+
+
 def setup_conda_virtual_environment(working_dir, platform, config, packages=''):
     ''' Deploy Conda virtual environment at working_dir
     '''
-    conda_root_env = _get_path_to_conda_root(platform, config)
+    #conda_root_env = _get_path_to_conda_root(platform, config)
+    conda_root_env = _get_path_to_miniforge_root(platform, config)
     activate = conda_root_env.activate
 
     python_version = platform.get('python', DEFAULT_PYTHON_VERSION)
@@ -1065,6 +1275,20 @@ def setup_conda_virtual_environment(working_dir, platform, config, packages=''):
         platform=platform,
         config=config,
     )
+
+
+def setup_pixi(working_dir):
+    ''' Setup Pixi package manager in working_dir/.pixi-root and return path to pixi executable
+    '''
+    pixi_root = f'{working_dir}/.pixi-root'
+
+    execute('Setting up Pixi...', f'cd {working_dir} && export PIXI_HOME={pixi_root} && curl -fsSL https://pixi.sh/install.sh | sh')
+
+    return f'{pixi_root}/bin/pixi'
+
+
+def setup_pixi_environment(pixi, working_dir, packages):
+    execute('Setting up Pixi environment...', f'cd {working_dir} && {pixi} init {working_dir} && {pixi} add {packages}')
 
 
 

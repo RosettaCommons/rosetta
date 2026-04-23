@@ -18,8 +18,9 @@ import benchmark
 import energy_landscape_metrics
 import combiningfiles
 from benchmark.util import quality_measures as qm
+import pandas as pd
 
-benchmark.load_variables()  # Python black magic: load all variables saved by previous script into 	s
+benchmark.load_variables()  # Python black magic: load all variables saved by previous script into     s
 config = benchmark.config()
 
 results = {}
@@ -39,7 +40,7 @@ folder=[]
 folder.extend( [f'{working_dir}/output'] )
 
 #print(folder[0])
-combiningfiles.combiningallfiles(folder[0], targets)
+combiningfiles.combiningallfiles(folder[0], targets, partitions) # Partitions from saved 1.submit.py variables
 # Get a list of files containing energy landscapes for each target
 energy_landscapes.extend( [ f'{working_dir}/output/{t}/{t}_franklin2019_landscape.dat' for t in targets ] )
 
@@ -51,7 +52,7 @@ cutoffs_anglemin = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{pr
 cutoffs_zexp = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $5}'" ).splitlines()
 cutoffs_angleexp = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $6}'" ).splitlines()
 
-cutoffs_ddG_ins = map( float, cutoffs_ddG_ins ) 
+cutoffs_ddG_ins = map( float, cutoffs_ddG_ins )
 cutoffs_zmin = map( float, cutoffs_zmin )
 cutoffs_anglemin = map( float, cutoffs_anglemin )
 cutoffs_zexp = map( float, cutoffs_zexp )
@@ -67,87 +68,77 @@ cutoffs_angleexp_dict.update( dict( zip( protein, cutoffs_angleexp )))
 f = open( outfile, "w" )
 f.write( "target\tdG\tzmin\tz_exp\tanglemin\tangle_exp" )
 # go through the energy landscape files for each target
-for i in range( 0, len( energy_landscapes ) ): 
+for i in range( 0, len( energy_landscapes ) ):
 
-	target_results = {}
+    target_results = {}
 
-	# Read in the energy landscape file
-	if ( not os.path.isfile( energy_landscapes[i] ) ): 
-		sys.exit( "Output data file " + energy_landscapes[i] + " not found!" )
+    # Read in the energy landscape file
+    if ( not os.path.isfile( energy_landscapes[i] ) ):
+        sys.exit( "Output data file " + energy_landscapes[i] + " not found!" )
 
-	with open( energy_landscapes[i], 'rt' ) as g: 
-		contents = g.readlines()
-		contents = [ x.strip() for x in contents ]
-		contents = [ x.split(" ") for x in contents ]
+    contents = pd.read_csv(energy_landscapes[i], delimiter=" ")
 
-	zcoords = []
-	angles = []
-	total_scores = []
+    zcoords_arr = contents['zcoord'].to_numpy()
+    angles_arr = contents['angle'].to_numpy()
+    total_scores_arr = contents['total_score'].to_numpy()
 
-	for x in range(1, len(contents)): 
-		zcoords.append( float( contents[x][0] ) )
-		angles.append( float( contents[x][1] ))
-		total_scores.append( float( contents[x][3] ))
+    # Calculate the ddG of insertion and the minimum energy orientations
+    dG_transfer = energy_landscape_metrics.compute_dG_transfer_energy( zcoords_arr, angles_arr, total_scores_arr )
+    if dG_transfer == 999999:
+        print("WARNING: Issue with computing dG_transfer for", energy_landscapes[i])
+    zmin, anglemin = energy_landscape_metrics.compute_minimum_energy_orientation( zcoords_arr, angles_arr, total_scores_arr )
 
-	zcoords_arr = np.asarray( zcoords )
-	angles_arr = np.asarray( angles )
-	total_scores_arr = np.asarray( total_scores )
+    # Is the ddG_ins within +/- 1 REU of the previously established value?
+    f.write( "\n" + targets[i] + "\t" )
+    f.write( str(dG_transfer) + "\t" )
+    val_cutoff = cutoffs_ddG_ins_dict[targets[i]]
+    target_results.update( dG_transfer = dG_transfer )
 
-	# Calculate the ddG of insertion and the minimum energy orientations
-	dG_transfer = energy_landscape_metrics.compute_dG_transfer_energy( zcoords_arr, angles_arr, total_scores_arr )
-	zmin, anglemin = energy_landscape_metrics.compute_minimum_energy_orientation( zcoords_arr, angles_arr, total_scores_arr )
+    if ( not ( dG_transfer <= (val_cutoff+1) and dG_transfer >= (val_cutoff-1) ) ) or dG_transfer == 999999:
 
-	# Is the ddG_ins within +/- 1 REU of the previously established value?
-	f.write( "\n" + targets[i] + "\t" )
-	f.write( str(dG_transfer) + "\t" )
-	val_cutoff = cutoffs_ddG_ins_dict[targets[i]]
-	target_results.update( dG_transfer = dG_transfer )
+        if ( targets[i] not in failures ):
+            failures.append( targets[i] )
+        failures.append( "dG is:" + str(round(dG_transfer,2)) )
 
-	if ( not ( dG_transfer <= (val_cutoff+1) and dG_transfer >= (val_cutoff-1) ) ):
+    # Is the mimimum energy orinetation within +/- 2angstrom and +/- 10 degrees of the previously estabished value?
+    f.write( str(round(zmin,3)) + "\t" )
+    val_cutoff = cutoffs_zmin_dict[targets[i]]
+    f.write( str(round(cutoffs_zexp_dict[targets[i]],3)) + "\t" )
+    #RS changing the cutoff based on the experimental values instead of previously established values from simulation.
+    target_results.update( zmin = zmin )
 
-		if ( targets[i] not in failures ):
-			failures.append( targets[i] )
-		failures.append( "dG is:" + str(round(dG_transfer,2)) )
+    #if ( not ( zmin <= (val_cutoff+2) and zmin >= (val_cutoff-2) ) ):
 
-	# Is the mimimum energy orinetation within +/- 2angstrom and +/- 10 degrees of the previously estabished value? 
-	f.write( str(round(zmin,3)) + "\t" )
-	val_cutoff = cutoffs_zmin_dict[targets[i]]
-	f.write( str(round(cutoffs_zexp_dict[targets[i]],3)) + "\t" )
-	#RS changing the cutoff based on the experimental values instead of previously established values from simulation. 
-	target_results.update( zmin = zmin )
+    #for simulation, extracellular and intracellular means the same, cutoff factor should be based on abs(depth) values
+    if ( not ( (abs(zmin) - abs(val_cutoff) >= -2) and (abs(zmin) - abs(val_cutoff) <= 2) ) ):
 
-	#if ( not ( zmin <= (val_cutoff+2) and zmin >= (val_cutoff-2) ) ):
+        if ( targets[i] not in failures ):
+            failures.append( targets[i] )
+        failures.append( "simulation depth is:" + str(round(zmin,2)) + " and benchmark depth was:" + str(round(val_cutoff,2)))
+    val_cutoff = cutoffs_anglemin_dict[targets[i]]
 
-	#for simulation, extracellular and intracellular means the same, cutoff factor should be based on abs(depth) values
-	if ( not ( (abs(zmin) - abs(val_cutoff) >= -2) and (abs(zmin) - abs(val_cutoff) <= 2) ) ):
+    #changing the minimum angle to first phase; results are symmetrical about the z-axis which is 0 and 180 degrees.
 
-		if ( targets[i] not in failures ):
-			failures.append( targets[i] )
-		failures.append( "simulation depth is:" + str(round(zmin,2)) + " and benchmark depth was:" + str(round(val_cutoff,2)))
-	val_cutoff = cutoffs_anglemin_dict[targets[i]]
+    if( anglemin>90 and anglemin<=180 ):
+        anglemin = 180 - anglemin
+    elif( anglemin>180 and anglemin<=270 ):
+        anglemin = anglemin - 180
+    elif( anglemin>270 and anglemin<=360 ):
+        anglemin = 360 - anglemin
 
-	#changing the minimum angle to first phase; results are symmetrical about the z-axis which is 0 and 180 degrees. 
+    #RS changing the cutoff based on the experimental values instead of previously established values from simulation.
+    target_results.update( anglemin = anglemin )
 
-	if( anglemin>90 and anglemin<=180 ):
-		anglemin = 180 - anglemin
-	elif( anglemin>180 and anglemin<=270 ):
-		anglemin = anglemin - 180
-	elif( anglemin>270 and anglemin<=360 ):
-		anglemin = 360 - anglemin
+    # test for angle_min
+    f.write( str(anglemin) + "\t" )
+    f.write( str(round(cutoffs_angleexp_dict[targets[i]],3)) + "\t" )
 
-	#RS changing the cutoff based on the experimental values instead of previously established values from simulation.
-	target_results.update( anglemin = anglemin )
+    if ( not ( anglemin <= (val_cutoff+10) and anglemin >= (val_cutoff-10) ) ):
 
-	# test for angle_min
-	f.write( str(anglemin) + "\t" )
-	f.write( str(round(cutoffs_angleexp_dict[targets[i]],3)) + "\t" )
-
-	if ( not ( anglemin <= (val_cutoff+10) and anglemin >= (val_cutoff-10) ) ):
-
-		if ( targets[i] not in failures ):
-			failures.append( targets[i] )
-		failures.append( "simulation tilt is:" + str(round(anglemin,2)) + "and benchmark tilt was:" + str(round(val_cutoff,2)) )
-	results.update( {targets[i] : target_results} )
+        if ( targets[i] not in failures ):
+            failures.append( targets[i] )
+        failures.append( "simulation tilt is:" + str(round(anglemin,2)) + "and benchmark tilt was:" + str(round(val_cutoff,2)) )
+    results.update( {targets[i] : target_results} )
 
 f.close()
 

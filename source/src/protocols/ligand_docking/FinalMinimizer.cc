@@ -102,6 +102,7 @@ FinalMinimizer::parse_my_tag(
 	movemap_builder_= datamap.get_ptr<protocols::ligand_docking::MoveMapBuilder>( "movemap_builders", movemap_builder_name);
 
 	remove_bb_constraints_ = tag->getOption<bool>("remove_constraints", false);
+	cartesian_ = tag->getOption<bool>("cartesian", false);
 
 }
 
@@ -145,14 +146,24 @@ FinalMinimizer::get_final_min_mover(core::pose::Pose const & pose, bool backbone
 	core::kinematics::MoveMapOP movemap= movemap_builder_->build(pose);
 	core::scoring::ScoreFunctionCOP scorefxn( score_fxn_ );
 	if ( backbone && scorefxn->get_weight( core::scoring::chainbreak ) == 0 ) {
-		TR.Warning << "Warning: FinalMinimizer with backbone minimization used without chainbreak scoreterm - setting chainbreak to 1" << std::endl;
+		TR.Warning << "FinalMinimizer with backbone minimization used without chainbreak scoreterm - setting chainbreak to 1" << std::endl;
 		core::scoring::ScoreFunctionOP new_scorefxn( scorefxn->clone() );
 		new_scorefxn->set_weight( core::scoring::chainbreak, 1.0 );
 		scorefxn = new_scorefxn;
 	}
+	if ( cartesian_ && scorefxn->get_weight( core::scoring::cart_bonded ) == 0 ) {
+		min_type = "lbfgs_armijo_nonmonotone"; // Recommended type for cartesian minimization.
+		TR.Warning << "FinalMinimizer with Cartesian min used without cart_bonded scoreterm - setting cart_bonded to 1" << std::endl;
+		core::scoring::ScoreFunctionOP new_scorefxn( scorefxn->clone() );
+		new_scorefxn->set_weight( core::scoring::cart_bonded, 1.0 );
+		new_scorefxn->set_weight( core::scoring::pro_close, 0.0 );
+		scorefxn = new_scorefxn;
+	}
 	movemap->show(TR.Debug, pose.size());
 	TR.Debug << std::endl;
-	return utility::pointer::make_shared< protocols::minimization_packing::MinMover >(movemap, scorefxn, min_type, tolerance, use_nb_list);
+	auto min_mover = utility::pointer::make_shared< protocols::minimization_packing::MinMover >(movemap, scorefxn, min_type, tolerance, use_nb_list);
+	min_mover->cartesian(cartesian_);
+	return min_mover;
 }
 
 std::string FinalMinimizer::get_name() const {
@@ -170,7 +181,8 @@ void FinalMinimizer::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 	attlist
 		+ XMLSchemaAttribute::required_attribute("scorefxn", xs_string, "Used scorefunction. Required.")
 		+ XMLSchemaAttribute::required_attribute("movemap_builder", xs_string, "Name of a previously defined MoveMapBuilder. Required.")
-		+ XMLSchemaAttribute::attribute_w_default("remove_constraints", xsct_rosetta_bool, "Remove any added constraints after minimization.", "false" );
+		+ XMLSchemaAttribute::attribute_w_default("remove_constraints", xsct_rosetta_bool, "Remove any added constraints after minimization.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default("cartesian", xsct_rosetta_bool, "Use Cartesian minimization.", "false" );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Do a gradient based minimization of the final docked pose.", attlist );
 }
 

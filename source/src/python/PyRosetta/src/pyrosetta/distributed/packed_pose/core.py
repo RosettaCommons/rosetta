@@ -7,13 +7,49 @@ if sys.version_info.major >= 3:
 else:
     from pkgutil import simplegeneric as singledispatch
 
-import pickle
 import base64
-
 import pyrosetta.rosetta.core.pose as pose
 import pyrosetta.distributed
+import warnings
 
-__all__ = ["pack_result", "to_packed", "to_pose", "to_dict", "PackedPose"]
+from pyrosetta.secure_unpickle import SecureSerializerBase
+
+
+__all__ = ["pack_result", "pose_result", "to_packed", "to_pose", "to_dict", "to_base64", "to_pickle", "PackedPose"]
+
+
+class _ScoresDict(dict):
+    def __init__(self, *args, _all_keys=(), **kwargs):
+        super().__init__(*args, **kwargs)
+        self._all_keys = set(_all_keys)
+        self._msg = (
+            "The key '{key}' is not found in `PackedPose.scores` dictionary! "
+            "Automatic duplication of `Pose.cache` dictionary entries into the "
+            "`PackedPose.scores` dictionary has been deprecated. However, the '{key}' key "
+            "exists in the `Pose.cache` dictionary. Did you mean to access `PackedPose.pose.cache`?"
+        )
+
+    def __repr__(self):
+        return super().__repr__()
+
+    def __getitem__(self, key):
+        try:
+            return super().__getitem__(key)
+        except KeyError:
+            if key in self._all_keys:
+                raise KeyError(self._msg.format(key=key)) from None
+            raise
+
+    def get(self, key, default=None):
+        if key in self:
+            return super().get(key, default)
+        if key in self._all_keys:
+            warnings.warn(
+                self._msg.format(key=key),
+                DeprecationWarning,
+                stacklevel=2,
+            )
+        return default
 
 
 class PackedPose:
@@ -38,8 +74,8 @@ class PackedPose:
     def __init__(self, pose_or_pack):
         """Create a packed pose from pose, pack, or pickled bytes."""
         if isinstance(pose_or_pack, pose.Pose):
-            self.pickled_pose = pickle.dumps(pose_or_pack)
-            self.scores = dict(pose_or_pack.scores)
+            self.pickled_pose = SecureSerializerBase.to_pickle(pose_or_pack)
+            self.scores = _ScoresDict(_all_keys=pose_or_pack.cache.all_keys)
 
         elif isinstance(pose_or_pack, PackedPose):
             self.pickled_pose = pose_or_pack.pickled_pose
@@ -55,7 +91,13 @@ class PackedPose:
     @property
     @pyrosetta.distributed.requires_init
     def pose(self):
-        return pickle.loads(self.pickled_pose)
+        """
+        *Warning*: This method uses the pickle module to deserialize the `PackedPose` object.
+        Using the pickle module is not secure, so please only run with `PackedPose` objects you trust.
+
+        Deserialize the `PackedPose` object.
+        """
+        return SecureSerializerBase.secure_loads(self.pickled_pose)
 
     def update_scores(self, *score_dicts, **score_kwargs):
         new_scores = {}
@@ -65,15 +107,33 @@ class PackedPose:
 
         work_pose = self.pose
         for k, v in new_scores.items():
-            work_pose.scores[k] = v
+            work_pose.cache[k] = v
 
         return PackedPose(work_pose)
+
+    def clone(self):
+        result = PackedPose(self.pose)
+        result.scores = SecureSerializerBase.secure_loads(
+            SecureSerializerBase.to_pickle(self.scores)
+        )
+        return result
+
+    def empty(self):
+        return self.pose.empty()
 
 
 def pack_result(func):
     @functools.wraps(func)
     def wrap(*args, **kwargs):
         return to_packed(func(*args, **kwargs))
+
+    return wrap
+
+
+def pose_result(func):
+    @functools.wraps(func)
+    def wrap(*args, **kwargs):
+        return to_pose(func(*args, **kwargs))
 
     return wrap
 
@@ -142,6 +202,28 @@ def none_to_dict(none):
     return None
 
 
+@singledispatch
+def to_base64(inp):
+    """Takes a `Pose` or `PackedPose` object and returns a base64-encoded string.
+    """
+    return to_dict(inp)["pickled_pose"]
+
+@to_base64.register(type(None))
+def none_to_base64(none):
+    return None
+
+
+@singledispatch
+def to_pickle(inp):
+    """Takes a `Pose` or `PackedPose` object and returns a pickle-encoded bytestring.
+    """
+    return to_packed(inp).pickled_pose
+
+@to_pickle.register(type(None))
+def none_to_pickle(none):
+    return None
+
+
 def register_builtin_container_traversal(generic_func, dict_func):
     @generic_func.register(dict)
     def dict_traversal(maybe_packed_dict):
@@ -153,7 +235,7 @@ def register_builtin_container_traversal(generic_func, dict_func):
     @generic_func.register(list)
     @generic_func.register(tuple)
     @generic_func.register(set)
-    def container_traveral(container):
+    def container_traversal(container):
         return container.__class__(map(generic_func, container))
 
     if sys.version_info.major >= 3:

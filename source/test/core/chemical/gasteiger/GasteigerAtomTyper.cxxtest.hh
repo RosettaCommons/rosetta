@@ -26,6 +26,9 @@
 #include <core/chemical/Patch.hh>
 #include <core/chemical/residue_io.hh>
 
+#include <core/chemical/Elements.hh>
+#include <core/chemical/Element.hh>
+
 #include <core/types.hh>
 
 #include <basic/Tracer.hh>
@@ -366,8 +369,33 @@ public:
 		TS_ASSERT_EQUALS( azo_test->atom("N5").gasteiger_atom_type()->get_name(), "N_DiDiPiPi" ); // -[N-]-*[N+]*#N
 		TS_ASSERT_EQUALS( azo_test->atom("N6").gasteiger_atom_type()->get_name(), "N_Di2DiPiPi" ); // -[N-]-[N+]#*N*
 
+		//  for( core::Size ii(1); ii <= nitr_test->natoms(); ++ii ) {
+		//   TR << ii << "Atom " << nitr_test->atom_name(ii);
+		//   if( nitr_test->atom(ii).gasteiger_atom_type() ) {
+		//    TR << nitr_test->atom(ii).gasteiger_atom_type()->get_name() << std::endl;
+		//   } else {
+		//    TR << " unassigned" << std::endl;
+		//   }
+		//  }
+
 	}
 
+	void test_foldit_ligand() {
+		using namespace core::chemical;
+		ChemicalManager * cm(ChemicalManager::get_instance());
+		ResidueTypeSetCOP rsd_types( cm->residue_type_set(FA_STANDARD) );
+
+		core::chemical::MutableResidueTypeOP test = read_topology_file("core/chemical/modifications/foldit_ligand.params", rsd_types );
+
+		core::chemical::gasteiger::assign_gasteiger_atom_types( *test, atom_type_set_, /*keep_existing=*/ false );
+
+		TS_ASSERT_EQUALS( test->atom("O1").gasteiger_atom_type()->get_name(), "O_Te2Te2TeTe" );
+		//TS_ASSERT_EQUALS( test->atom("N1").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" ); // Should this be N_Te2TeTeTe ?
+		//TS_ASSERT_EQUALS( test->atom("N2").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" ); // Should this be N_Te2TeTeTe ?
+		TS_ASSERT_EQUALS( test->atom("C3").gasteiger_atom_type()->get_name(), "C_TeTeTeTe" );
+		TS_ASSERT_EQUALS( test->atom("C6").gasteiger_atom_type()->get_name(), "C_TeTeTeTe" );
+
+	}
 
 	// Test various oxides, particularly in the case of formal charge separation
 	void test_oxides() {

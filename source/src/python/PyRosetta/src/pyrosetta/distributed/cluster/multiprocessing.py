@@ -5,29 +5,35 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
 
 try:
     import billiard
-    from dask.distributed import get_client
+    from billiard import (
+        Queue,
+        Process,
+    )
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.multiprocessing' requires the "
-        + "third-party packages 'billiard' and 'dask.distributed' as a dependencies!\n"
-        + "Please install the package into your python environment. "
+        + "third-party package 'billiard' as a dependency!\n"
+        + "Please install this package into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/billiard/\n"
-        + "https://pypi.org/project/distributed/\n"
     )
     raise
 
+import inspect
+import logging
 import tempfile
+import time
 
 from pyrosetta.distributed import requires_init
+from pyrosetta.distributed.packed_pose.core import PackedPose
+
 from pyrosetta.distributed.cluster.base import (
-    _get_residue_type_set,
     capture_task_metadata,
+    _get_residue_type_set,
 )
 from pyrosetta.distributed.cluster.converters import (
     _parse_empty_queue,
@@ -38,78 +44,89 @@ from pyrosetta.distributed.cluster.exceptions import (
     trace_protocol_exceptions,
     trace_subprocess_exceptions,
 )
-from pyrosetta.distributed.cluster.logging_support import setup_target_logging
+from pyrosetta.distributed.cluster.logging_support import (
+    get_worker_logger,
+    setup_target_logging,
+    setup_worker_logging,
+)
 from pyrosetta.distributed.cluster.serialization import Serialization
-from pyrosetta.distributed.cluster.validators import _validate_residue_type_sets
-
-from pyrosetta.distributed.packed_pose.core import PackedPose
-from typing import (
+from pyrosetta.distributed.cluster.task_registry import UserArgs
+from pyrosetta.distributed.cluster.type_defs import (
     AbstractSet,
     Any,
-    Callable,
     Dict,
+    FloatOrInt,
     List,
     Optional,
+    PyRosettaProtocol,
     Tuple,
-    TypeVar,
     Union,
 )
+from pyrosetta.distributed.cluster.utilities import get_dask_worker
+from pyrosetta.distributed.cluster.validators import _validate_residue_type_sets
 
 
-Q = TypeVar("Q", bound=billiard.Queue)
-P = TypeVar("P", bound=billiard.context.Process)
-S = TypeVar("S", bound=Serialization)
+def _maybe_delay(dt: float, max_delay_time: FloatOrInt, logger: logging.Logger) -> None:
+    """Maybe delay the Dask worker result."""
+
+    delay_time = max_delay_time - dt
+    if delay_time > 0.0:
+        logger.info(f"Delaying Dask worker results for {delay_time:0.6f} seconds.")
+        time.sleep(delay_time)
 
 
 @trace_protocol_exceptions
 def user_protocol(
     packed_pose: PackedPose,
-    protocol: Callable[..., Any],
+    protocol: PyRosettaProtocol,
     ignore_errors: bool,
-    **kwargs: Dict[Any, Any],
+    kwargs: Dict[str, Any],
 ) -> Any:
-    """Run the user-provided PyRosetta protocol."""
+    """Run the user-defined PyRosetta protocol."""
+
     with tempfile.TemporaryDirectory() as tmp_path:
         kwargs["PyRosettaCluster_tmp_path"] = tmp_path
         result = protocol(packed_pose, **kwargs)
+        if inspect.isgenerator(result):
+            result = list(result)
 
     return result
 
 
 @capture_task_metadata
 def run_protocol(
-    protocol: Callable[..., Any],
+    protocol_name: str,
+    protocol: PyRosettaProtocol,
     packed_pose: PackedPose,
-    DATETIME_FORMAT: str,
+    datetime_format: str,
+    norm_task_options: bool,
     ignore_errors: bool,
     protocols_key: str,
     decoy_ids: List[int],
-    serializer: S,
-    **kwargs: Dict[Any, Any],
+    serializer: Serialization,
+    kwargs: Dict[str, Any],
 ) -> List[Tuple[bytes, bytes]]:
-    """Parse the user-provided PyRosetta protocol results."""
+    """Parse the user-defined PyRosetta protocol results."""
 
-    result = user_protocol(packed_pose, protocol, ignore_errors, **kwargs)
-    results = _parse_protocol_results(result, kwargs, protocol.__name__, protocols_key, decoy_ids, serializer)
+    result = user_protocol(packed_pose, protocol, ignore_errors, kwargs)
+    results = _parse_protocol_results(result, kwargs, protocol_name, protocols_key, decoy_ids, serializer)
 
     return results
 
 
 @trace_subprocess_exceptions
 def get_target_results_kwargs(
-    q: Q,
-    p: P,
+    q: Queue,
+    p: Process,
     compressed_kwargs: bytes,
     protocol_name: str,
     timeout: Union[float, int],
     ignore_errors: bool,
 ) -> List[Tuple[Optional[bytes], bytes]]:
-    """Get and parse the billiard subprocess results."""
+    """Get and parse the `billiard` subprocess results."""
 
     if p.is_alive():
-        return _parse_target_results(
-            [obj for obj in iter(q.get(block=True, timeout=timeout))]
-        )
+        return _parse_target_results(q.get(block=True, timeout=timeout))
     else:
         return [
             (_parse_empty_queue(protocol_name, ignore_errors), compressed_kwargs),
@@ -119,77 +136,139 @@ def get_target_results_kwargs(
 @setup_target_logging
 @requires_init
 def target(
-    protocol: Callable[..., Any],
+    protocol_name: str,
+    compressed_protocol: bytes,
     compressed_packed_pose: bytes,
     compressed_kwargs: bytes,
-    q: Q,
-    logging_file: str,
+    q: Queue,
     logging_level: str,
-    DATETIME_FORMAT: str,
+    socket_listener_address: Tuple[str, int],
+    datetime_format: str,
+    norm_task_options: bool,
     ignore_errors: bool,
     protocols_key: str,
     decoy_ids: List[int],
+    instance_id: str,
+    prk: bytes,
     compression: Optional[Union[str, bool]],
+    with_nonce: bool,
     client_residue_type_set: AbstractSet[str],
     client_repr: str,
-    **pyrosetta_init_kwargs: Dict[str, Any],
+    masked_key: Optional[bytes],
+    task_id: str,
+    **pyrosetta_init_kwargs: Any,
 ) -> None:
-    """A wrapper function for a user-provided PyRosetta protocol."""
-    serializer = Serialization(compression=compression)
+    """A wrapper function for a user-defined PyRosetta protocol."""
+
+    serializer = Serialization(
+        instance_id=instance_id,
+        prk=prk,
+        compression=compression,
+        with_nonce=with_nonce,
+    )
+    del prk
+    protocol = serializer.decompress_object(compressed_protocol)
     packed_pose = serializer.decompress_packed_pose(compressed_packed_pose)
     kwargs = serializer.decompress_kwargs(compressed_kwargs)
+
     kwargs["PyRosettaCluster_client_repr"] = client_repr
     results = run_protocol(
-        protocol, packed_pose, DATETIME_FORMAT, ignore_errors, protocols_key, decoy_ids, serializer, **kwargs
+        protocol_name,
+        protocol,
+        packed_pose,
+        datetime_format,
+        norm_task_options,
+        ignore_errors,
+        protocols_key,
+        decoy_ids,
+        serializer,
+        kwargs,
     )
     _validate_residue_type_sets(
-        _get_residue_type_set(), client_residue_type_set,
+        _get_residue_type_set(),
+        client_residue_type_set,
     )
     q.put(results)
 
 
+@setup_worker_logging
 def user_spawn_thread(
-    protocol: Callable[..., Any],
-    compressed_packed_pose: bytes,
-    compressed_kwargs: bytes,
-    pyrosetta_init_kwargs: Dict[str, Any],
-    decoy_ids: List[int],
-    protocols_key: str,
-    timeout: Union[float, int],
-    ignore_errors: bool,
-    logging_file: str,
-    logging_level: str,
-    DATETIME_FORMAT: str,
-    compression: Optional[Union[str, bool]],
-    client_residue_type_set: AbstractSet[str],
-) -> List[Tuple[Optional[Union[PackedPose, bytes]], Union[Dict[Any, Any], bytes]]]:
-    """Generic worker task using the billiard multiprocessing module."""
-    client_repr = repr(get_client())
+    user_args: UserArgs,
+) -> List[Tuple[Optional[bytes], bytes]]:
+    """Generic Dask worker task using the `billiard` module."""
 
-    q = billiard.Queue()
-    p = billiard.context.Process(
+    t0 = time.time()
+
+    protocol_name = user_args.protocol_name
+    compressed_protocol = user_args.compressed_protocol
+    compressed_packed_pose = user_args.compressed_packed_pose
+    compressed_kwargs = user_args.compressed_kwargs
+    pyrosetta_init_kwargs = user_args.pyrosetta_init_kwargs
+    client_repr = user_args.client_repr
+    extra_args = user_args.extra_args
+    masked_key = user_args.masked_key
+    task_id = user_args.task_id
+
+    decoy_ids = extra_args.decoy_ids
+    protocols_key = extra_args.protocols_key
+    timeout = extra_args.timeout
+    ignore_errors = extra_args.ignore_errors
+    datetime_format = extra_args.datetime_format
+    instance_id = extra_args.instance_id
+    compression = extra_args.compression
+    with_nonce = extra_args.with_nonce
+    norm_task_options = extra_args.norm_task_options
+    max_delay_time = extra_args.max_delay_time
+    logging_level = extra_args.logging_level
+    socket_listener_address = extra_args.socket_listener_address
+    client_residue_type_set = extra_args.client_residue_type_set
+
+    logger = get_worker_logger(protocol_name, socket_listener_address, task_id)
+    worker = get_dask_worker()
+    plugin = worker.plugins[instance_id]
+    assert plugin.__getstate__()["prk"] is None, (
+        "Pseudo-random key is not hidden on the worker nonce cache."
+    )
+    plugin._cache_nonce(compressed_kwargs)
+
+    # Set the start method to 'spawn' to prevent subprocesses from
+    # inheriting PyRosetta's already initialized static singletons
+    context = billiard.get_context("spawn")
+    q = context.Queue()
+    p = context.Process(
         target=target,
         args=(
-            protocol,
+            protocol_name,
+            compressed_protocol,
             compressed_packed_pose,
             compressed_kwargs,
             q,
-            logging_file,
             logging_level,
-            DATETIME_FORMAT,
+            socket_listener_address,
+            datetime_format,
+            norm_task_options,
             ignore_errors,
             protocols_key,
             decoy_ids,
+            instance_id,
+            plugin.prk,
             compression,
+            with_nonce,
             client_residue_type_set,
             client_repr,
+            masked_key,
+            task_id,
         ),
         kwargs=pyrosetta_init_kwargs,
     )
+    del masked_key
     p.start()
     results = get_target_results_kwargs(
-        q, p, compressed_kwargs, protocol.__name__, timeout, ignore_errors
+        q, p, compressed_kwargs, protocol_name, timeout, ignore_errors
     )
     p.join()
+
+    dt = time.time() - t0
+    _maybe_delay(dt, max_delay_time, logger)
 
     return results

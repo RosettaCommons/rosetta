@@ -121,7 +121,6 @@ public:
 		TR << "properly.  Such strings must be of the form \"refpose(<refpose_name>,<residue_number>)\"" << std::endl;
 		TR << "or \"refpose(<refpose_name>,<residue_number>)+/-<offset_value>\"." << std::endl;
 
-		utility::vector1<std::string> str;
 		utility::vector1<bool> result;
 		utility::vector1<std::string> result_refpose_name;
 		result_refpose_name.resize(6,"");
@@ -130,12 +129,14 @@ public:
 		result_resnum.resize(6,0);
 		result_offset.resize(6,0);
 
-		str.push_back( "Bad_input." ); //Bad string
-		str.push_back( "refpose(badinput" ); //Bad string
-		str.push_back( "refpose(refpose1,)" ); //Bad string
-		str.push_back( "refpose(refpose2,9)" ); //Good string
-		str.push_back( "refpose(,10)" ); //Bad string
-		str.push_back( "refpose(refpose3,11)-3" ); //Good string
+		utility::vector1<std::string> str {
+			"Bad_input.", //Bad string
+			"refpose(badinput", //Bad string
+			"refpose(refpose1,)", //Bad string
+			"refpose(refpose2,9)", //Good string
+			"refpose(,10)", //Bad string
+			"refpose(refpose3,11)-3" //Good string
+			};
 
 		TR << "Input_string\tGood_string?\tRefpose_name\tRef_number\tRef_offset" << std::endl;
 		for ( core::Size i=1; i<=6; ++i ) {

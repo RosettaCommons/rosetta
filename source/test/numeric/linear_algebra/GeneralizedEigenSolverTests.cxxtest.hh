@@ -427,6 +427,9 @@ public:
 		double expected_1, double expected_2,
 		double expected_3, double expected_4) {
 
+		TS_ASSERT( solver.eigenvectors_are_valid() );
+		if ( ! solver.eigenvectors_are_valid() ) return; // Handle compiler errors/warnings
+
 		double actual_1 = solver.eigenvectors()(0, index).real();
 		double actual_2 = solver.eigenvectors()(1, index).real();
 		double actual_3 = solver.eigenvectors()(2, index).real();

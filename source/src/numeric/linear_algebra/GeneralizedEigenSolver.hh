@@ -194,6 +194,11 @@ public:
 		return eigenvalues_;
 	}
 
+	/// @brief Return if there are valid eigenvectors to return
+	bool eigenvectors_are_valid() const {
+		return eigenvectors_were_computed_;
+	}
+
 	/// @brief Return the calculated (possibly complex) eigenvectors.
 	///
 	/// @details The returned eigenvectors will be normalized.  This method can

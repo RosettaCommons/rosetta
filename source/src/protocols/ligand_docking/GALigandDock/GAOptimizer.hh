@@ -91,6 +91,8 @@ public:
 	void set_rot_energy_cutoff( core::Real newval ) { rot_energy_cutoff_ = newval; }
 	void set_favor_native( core::Real newval ) { favor_native_ = newval; }
 	void set_align_reference_atom_ids( utility::vector1< core::id::AtomID > newval ){ align_reference_atom_ids_ = newval; }
+	void set_altcrossover ( bool newval ) { altcrossover_ = newval; }
+	void set_single_mutation ( bool newval ) { single_mutation_ = newval; }
 
 private:
 	//// HELPER FUNCTIONS
@@ -124,6 +126,8 @@ private:
 	utility::vector1< PlaceableRotamers > rotamer_data_;
 	RotamerPairEnergies rotamer_energies_;
 	utility::vector1< core::id::AtomID > align_reference_atom_ids_;
+	bool altcrossover_ = false;
+	bool single_mutation_ = false;
 };
 
 typedef utility::pointer::shared_ptr< GAOptimizer > GAOptimizerOP;

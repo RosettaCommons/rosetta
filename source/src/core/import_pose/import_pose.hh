@@ -71,6 +71,14 @@ extension_from_filetype(
 	FileType const filetype
 );
 
+
+/// @brief Given a filename, attempt to determine which type it is from the extension.
+/// @details Pass the whole name, not just the extension.
+FileType
+filetype_from_extension(
+	std::string const & filename
+);
+
 void
 read_all_poses(
 	utility::vector1< std::string > const & filenames,

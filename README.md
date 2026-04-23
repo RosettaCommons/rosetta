@@ -3,13 +3,13 @@ Rosetta Biomolecular Modeling Library
 
 The Rosetta software suite includes algorithms for computational modeling and analysis of protein structures. It has enabled notable scientific advances in computational biology, including de novo protein design, enzyme design, ligand docking, and structure prediction of biological macromolecules and macromolecular complexes.
 
-Rosetta is maintained by the RosettaCommons, a collaboration of 50+ academic research groups, who have been developing Rosetta for over 20 years.
+Rosetta is maintained by the RosettaCommons, a collaboration of 100+ academic research groups who have been developing Rosetta for over 20 years, and is available by license from the University of Washington.
 See <https://www.rosettacommons.org> for more information about Rosetta and the RosettaCommons.
 
 Rosetta Code
 ============
 
-While the Rosetta source code is published on GitHub, it is not "Open Source" (according to the OSI definition). Most notably, use for commercial purposes requires purchase of a separate license. See LICENSE.md for further information.
+While the Rosetta source code is published on GitHub, it is not "Open Source" (according to the OSI definition). Most notably, use for commercial purposes requires purchase of a separate license. See LICENSE.md for further information regarding licensing for both commercial and non-commercial use.
 
 The main GitHub repository on https://github.com/RosettaCommons/rosetta integrates all the Rosetta-associated code base.
 It should be noted that many parts of Rosetta are structured as separate GitHub repositories, which the main repository conveniently presents as submodules.
@@ -41,6 +41,28 @@ You may also conveniently inspect the Dockerfiles
 as a templated for the Rosetta installation on your local system.
 
 Questions about how to use Rosetta are best directed to the RosettaCommons forums <https://www.rosettacommons.org/forum>
+
+Installing using Conda
+----------------------
+
+Rosetta binaries are avaliable as a `rosetta` Conda package in the **RosettaCommons Conda Channel**. All binaries are built using `serialization` and `cxx11thread` extras. Currently RosettaCommons has two mirrors of this channel. To use them please edit `~/.condarc` and add snippets for either East or West mirrors:
+
+Example `~/.condarc` for US WEST coast (if unsure use this mirror): 
+
+```
+channels: 
+- https://conda.rosettacommons.org
+- conda-forge
+```
+
+Example `~/.condarc` for US EAST coast:
+
+```
+channels: 
+- https://conda.graylab.jhu.edu
+- conda-forge
+```
+
 
 Compiling Rosetta
 -----------------
@@ -135,3 +157,4 @@ To obtain the contents of submodules which aren't currently cloned:
 or if you want to get all the submodules
 
     git submodule update --init --recursive
+

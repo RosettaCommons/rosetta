@@ -198,7 +198,7 @@ VIP_Mover::cull_mutatable_residues(){
 
 	utility::vector1<core::Size> mutatable_residues;
 	for ( core::Size i = 1; i <= void_neighbors.size(); i+=2 ) {
-		if ( (initial_pose.residue(void_neighbors[i]).is_surface() == false) &&
+		if ( (initial_pose.residue_type(void_neighbors[i]).properties().has_property( core::chemical::SURFACE ) == false) &&
 				(initial_pose.residue(void_neighbors[i]).is_polar() == false) &&
 				(std::find( excluded_positions.begin(), excluded_positions.end(), void_neighbors[i]) == excluded_positions.end() ) &&
 				(initial_pose.residue(void_neighbors[i]).aa() < core::chemical::num_canonical_aas ) && // Don't try amino acid if APOLAR will choke on it

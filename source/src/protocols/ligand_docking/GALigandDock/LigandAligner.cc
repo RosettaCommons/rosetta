@@ -58,7 +58,8 @@
 #include <utility/vector1.hh>
 
 #include <basic/Tracer.hh>
-
+#include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // C++ headers
 #include <fstream>
@@ -1504,7 +1505,6 @@ LigandAligner::randomize_lig(
 	utility::vector1< core::Size > ligids,
 	numeric::xyzVector<core::Real> const &T
 ) {
-
 	for ( auto ligid : ligids ) {
 		core::Size nchi = pose.residue_type(ligid).nchi();
 		for ( core::Size ichi_src=1; ichi_src<=nchi; ++ichi_src ) {
@@ -1522,6 +1522,7 @@ LigandAligner::randomize_lig(
 			}
 			pose.set_chi( ichi_src, ligid, angle_i );
 		}
+
 		if ( pose.residue_type(ligid).is_protein() ) {
 			core::Real phi_i = 360.0 * numeric::random::rg().uniform();
 			core::Real psi_i = 360.0 * numeric::random::rg().uniform();
@@ -1664,9 +1665,231 @@ LigandAligner::estimate_nstruct_sample(
 	return nsample;
 }
 
+//density detection with multiple skeletons. Useful for ligands with many torsions
+void
+LigandAligner::advanced_select_points( core::pose::Pose const & pose, core::Size const ligid, core::Real radius, core::Real skeleton_threshold_const, core::Size neighborhood_size, core::Size pool_size ) {
+
+	ObjexxFCL::FArray3D< float > const & densdata = core::scoring::electron_density::getDensityMap().get_data();
+
+	//calculate center of mass for ligand; probably a Rosetta function that does this
+	core::conformation::Residue const &lig( pose.residue( ligid ) );
+	core::Vector lig_com( 0.0 );
+	for ( core::Size iatm = 1; iatm <= lig.nheavyatoms(); ++iatm ) {
+		lig_com += lig.xyz( iatm );
+	}
+	lig_com /= lig.nheavyatoms();
+	TR.Debug << "Ligand center of mass: " << lig_com[0] << " " << lig_com[1] << " " << lig_com[2] << std::endl;
+
+	// sort points and store if within 10 units of ligand center of mass
+	core::Real distance_to_com = 0;
+	utility::vector1< std::pair< numeric::xyzVector< core::Real >, core::Real > > point_score_pairs; //voxel location and density value
+	for ( int z=1; z<=(int)densdata.u3(); z+=gridStep_ ) {
+		for ( int y=1; y<=(int)densdata.u2(); y+=gridStep_ ) {
+			for ( int x=1; x<=(int)densdata.u1(); x+=gridStep_ ) {
+				numeric::xyzVector< core::Real > x_idx(x,y,z);
+				numeric::xyzVector< core::Real > x_cart( x_idx[0], x_idx[1], x_idx[2] );
+				core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
+				core::Real dens_value = -densdata(x,y,z);
+				std::pair< numeric::xyzVector< core::Real >, core::Real > point_score_pair = std::make_pair(x_idx, dens_value);
+				distance_to_com = sqrt( pow( x_cart[0] - lig_com[0], 2 ) + pow( x_cart[1] - lig_com[1], 2 ) + pow( x_cart[2] - lig_com[2], 2 ) );
+
+				if ( distance_to_com <= radius ) { //10.0 ) { //default 10.0
+					point_score_pairs.push_back(point_score_pair);
+				}
+			}
+		}
+	}
+
+	std::sort(point_score_pairs.begin(), point_score_pairs.end(), PointScoreComparator()); //sorts by density value
+	utility::vector1< std::pair< numeric::xyzVector< core::Real >, core::Real > > points_to_erode;
+	double voxel_volume = core::scoring::electron_density::getDensityMap().get_voxel_volume();
+
+	TR.Debug << "Number of heavy atoms: " << lig.nheavyatoms() << std::endl;
+	TR.Debug << "Voxel volume: " << voxel_volume << std::endl;
+
+	for ( core::Size i=1; i<=point_score_pairs.size(); i++ ) {
+		numeric::xyzVector< core::Real > x_idx = point_score_pairs[i].first;
+		numeric::xyzVector< core::Real > x_cart(x_idx[0],x_idx[1],x_idx[2]);
+		core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
+
+		//outputs all points in PDB format
+		TR.Debug << "HETATM" << std::setw(5) << utility::to_string(i) << " " <<  std::setw(4) << std::left << "O1" << " " <<  std::setw(3) << std::right << "ALA" << " A" << std::setw(4) << utility::to_string(i) << "    " << std::setw(8) << x_cart[0] << std::setw(8) << x_cart[1] << std::setw(8) << x_cart[2] << std::setw(6) << "1.00" << std::setw(6) << std::fixed << std::setprecision(2) << point_score_pairs[i].second << std::endl;
+
+		//finds points that are not occupied and saves them to search
+		if ( !check_voxel_distance_to_receptor( x_cart, pose, ligid ) && points_to_erode.size() < skeleton_threshold_const * lig.nheavyatoms() / voxel_volume ) {
+			points_to_erode.push_back( point_score_pairs[i] );
+		}
+
+	}
+
+	//prints points before erosion could go inside debug condition
+	if ( TR.Debug.visible() ) {
+		for ( core::Size i = 1; i <= points_to_erode.size(); i++ ) {
+			numeric::xyzVector< core::Real > x_idx = points_to_erode[i].first;
+			numeric::xyzVector< core::Real > x_cart(x_idx[0],x_idx[1],x_idx[2]);
+			core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
+
+			TR.Debug << "HETATM" << std::setw(5) << utility::to_string(i) << " " <<  std::setw(4) << std::left << "O1" << " " <<  std::setw(3) << std::right << "ALA" << " A" << std::setw(4) << utility::to_string(i) << "    " << std::setw(8) << x_cart[0] << std::setw(8) << x_cart[1] << std::setw(8) << x_cart[2] << std::setw(6) << "1.00" << std::setw(6) << std::fixed << std::setprecision(2) << "20.00" << std::endl;
+
+		}
+	}
+
+	std::sort( points_to_erode.begin(), points_to_erode.end(), PointScoreComparator());
+	utility::vector1 < utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > > networks;
+
+	for ( core::Size ipoint = 1; ipoint <= points_to_erode.size(); ++ipoint ) {
+		//if a point is not in a network, make a new network and find all the points in the network
+		if ( !(is_point_in_network( points_to_erode[ipoint].first, networks ) ) ) {
+			utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > network;
+			network.push_back( points_to_erode[ipoint] );
+
+			network = find_network( points_to_erode[ipoint].first, network, points_to_erode, 1.5 );
+			networks.push_back( network );
+		}
+	}
+
+	//scores networks as bases or satellites
+	//Bases are used as cores for skeletons
+	//Satellines may or may not be added to bases
+	utility::vector1 < utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > > bases;
+	utility::vector1 < utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > > satellites;
+	utility::vector1 < core::Real > base_scores;
+	for ( core::Size inetwork = 1; inetwork <= networks.size(); ++inetwork ) {
+		TR.Debug << "Network " << inetwork << ":" << std::endl;
+		if ( is_base_blob( networks[inetwork], lig ) ) {
+			TR.Debug << "Network " << inetwork << " is a base blob" << std::endl;
+			bases.push_back( networks[inetwork] );
+
+			core::Real base_score = score_base_blob( networks[inetwork], pose, lig );
+			base_scores.push_back( base_score );
+		} else {
+			TR.Debug << "Network " << inetwork << " is a satellite blob" << std::endl;
+			satellites.push_back( networks[inetwork] );
+		}
+		for ( core ::Size ipoint = 1; ipoint <= networks[inetwork].size(); ++ipoint ) {
+			numeric::xyzVector < core::Real > point_to_print = networks[inetwork][ipoint].first;
+			numeric::xyzVector< core::Real > x_cart(point_to_print[0],point_to_print[1],point_to_print[2]);
+			core::scoring::electron_density::getDensityMap().idx2cart( point_to_print, x_cart );
+
+			//prints out networks
+			TR.Debug << "HETATM" << std::setw(5) << utility::to_string(ipoint) << " " <<  std::setw(4) << std::left << "O1" << " " <<  std::setw(3) << std::right << "ALA" << " A" << std::setw(4) << utility::to_string(ipoint) << "    " << std::setw(8) << x_cart[0] << std::setw(8) << x_cart[1] << std::setw(8) << x_cart[2] << std::setw(6) << "1.00" << std::setw(6) << std::fixed << std::setprecision(2) << "20.00" << std::endl;
+		}
+
+	}
+
+	//if no base blob exists, choose the largest satellite blob as the base
+	if ( bases.size() == 0 ) {
+		core::Size satellite_index = 0;
+		core::Size satellite_size = 0;
+		for ( core::Real isatellite = 1; isatellite <= satellites.size(); ++isatellite ) {
+			if ( satellites[isatellite].size() > satellite_size ) {
+				satellite_index = isatellite;
+				satellite_size = satellites[isatellite].size();
+			}
+		}
+		bases.push_back( satellites[satellite_index] );
+		TR.Debug << "Moved satellite " << satellite_index << " to a base" << std::endl;
+		satellites.erase( satellites.begin() + satellite_index - 1 );
+	}
+
+	utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > base_blob;
+
+	utility::vector1< utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > > blobs_for_erosion;
+	for ( core::Size i = 1; i <= pool_size; ++i ) {
+
+		if ( bases.size() == 1 ) {
+			base_blob = bases[1];
+		} else {
+			core::Real min_blob_prob = 1.0;
+			for ( core::Size iblob = 1; iblob <= bases.size(); ++iblob ) {
+				core::Real base_prob = base_scores[iblob];
+				if ( base_prob < min_blob_prob ) {
+					min_blob_prob = base_prob;
+				}
+			}
+
+			core::Real normalize_divisor = 1.0;
+			for ( core::Size iblob = 1; iblob <= base_scores.size(); ++iblob ) {
+				normalize_divisor += base_scores[iblob] / min_blob_prob;
+			}
+
+			core::Real minimum_normalized_probability = 1.0 / normalize_divisor;
+
+			utility::vector1< core::Real > normalized_probabilities;
+			core::Real normalized_probability_sum = 0.0;
+			for ( core::Size iblob = 1; iblob <= base_scores.size(); ++iblob ) {
+				normalized_probabilities.push_back( ( base_scores[iblob] / min_blob_prob ) * minimum_normalized_probability + normalized_probability_sum);
+				normalized_probability_sum += ( base_scores[iblob] / min_blob_prob ) * minimum_normalized_probability;
+			}
+
+			core::Real random_probability = numeric::random::rg().uniform();
+			core::Real probability_counter = 0.0;
+			for ( core::Size iblob = 1; iblob <= bases.size(); ++iblob ) {
+				if ( random_probability <= normalized_probabilities[iblob] + probability_counter && random_probability > probability_counter ) {
+					base_blob = bases[iblob];
+				}
+				probability_counter += normalized_probabilities[iblob];
+			}
+		}
+
+		satellites = sort_satellite_blobs ( satellites, base_blob );
+
+		for ( core::Size isatellite = 1; isatellite <= satellites.size(); ++isatellite ) {
+			TR.Debug << "Scores for satellite " << isatellite << std::endl;
+			core::Real p_satellite = score_satellite_blob( base_blob, satellites[isatellite], pose, lig );
+
+			if ( numeric::random::rg().uniform() < p_satellite ) {
+				base_blob.insert( base_blob.end(), satellites[isatellite].begin(), satellites[isatellite].end() );
+			}
+		}
+
+		blobs_for_erosion.push_back( base_blob );
+	}
+
+	//Erodes blobs into a skeleton
+	for ( core::Size iblob = 1; iblob <= blobs_for_erosion.size(); ++iblob ) {
+		utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > eroded_points = erode_points( blobs_for_erosion[iblob], neighborhood_size );
+
+		utility::vector1< numeric::xyzVector< core::Real > > skeleton;
+		if ( iblob <= 10 ) {
+			TR.Debug << "Final skeleton number " << iblob << std::endl;
+		}
+		for ( core::Size i = 1; i <= eroded_points.size(); i++ ) {
+			numeric::xyzVector< core::Real > x_idx = eroded_points[i].first;
+			numeric::xyzVector< core::Real > x_cart(x_idx[0],x_idx[1],x_idx[2]);
+			core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
+
+			skeleton.push_back( x_cart );
+
+			if ( iblob <= 10 ) {
+				TR.Debug << "HETATM" << std::setw(5) << utility::to_string(i) << " " <<  std::setw(4) << std::left << "O1" << " " <<  std::setw(3) << std::right << "ALA" << " A" << std::setw(4) << utility::to_string(i) << "    " << std::setw(8) << x_cart[0] << std::setw(8) << x_cart[1] << std::setw(8) << x_cart[2] << std::setw(6) << "1.00" << std::setw(6) << std::fixed << std::setprecision(2) << "20.00" << std::endl;
+			}
+
+		}
+
+		points_to_search_.push_back( skeleton );
+	}
+
+	if ( print_skeletons_ ) {
+		for ( core::Size iskeleton = 1; iskeleton <= points_to_search_.size(); ++iskeleton ) {
+			std::ofstream skeleton_file;
+			std::string prefix( basic::options::option[ basic::options::OptionKeys::out::prefix ]() );
+			skeleton_file.open( prefix + "_skeleton_in_pool_" + utility::to_string(iskeleton) + ".pdb");
+			for ( core::Size i = 1; i <= points_to_search_[iskeleton].size(); ++i ) {
+				numeric::xyzVector< core::Real > voxel = points_to_search_[iskeleton][i];
+
+				skeleton_file << "HETATM" << std::setw(5) << utility::to_string(i) << " " <<  std::setw(4) << std::left << "O1" << " " <<  std::setw(3) << std::right << "ALA" << " A" << std::setw(4) << utility::to_string(i) << "    " << std::setw(8) << voxel[0] << std::setw(8) << voxel[1] << std::setw(8) << voxel[2] << std::setw(6) << "1.00" << std::setw(6) << std::fixed << std::setprecision(2) << "20.00" << std::endl;
+
+			}
+			skeleton_file.close();
+		}
+	}
+
+}
+
 //skeletonizes the density and stores the skeleton in points_to_search_
 void
-LigandAligner::select_points( core::pose::Pose const & pose, core::Size const ligid, core::Real skeleton_threshold_const, core::Size neighborhood_size ) {
+LigandAligner::select_points( core::pose::Pose const & pose, core::Size const ligid, core::Real radius, core::Real skeleton_threshold_const, core::Size neighborhood_size ) {
 
 	ObjexxFCL::FArray3D< float > const & densdata = core::scoring::electron_density::getDensityMap().get_data();
 
@@ -1694,7 +1917,7 @@ LigandAligner::select_points( core::pose::Pose const & pose, core::Size const li
 				std::pair< numeric::xyzVector< core::Real >, core::Real > point_score_pair = std::make_pair(x_idx, dens_value);
 				distance_to_com = sqrt( pow( x_cart[0] - lig_com[0], 2 ) + pow( x_cart[1] - lig_com[1], 2 ) + pow( x_cart[2] - lig_com[2], 2 ) );
 
-				if ( distance_to_com <= 10.0 ) { //default 10.0
+				if ( distance_to_com <= radius ) { //10.0 ) { //default 10.0
 					point_score_pairs.push_back(point_score_pair);
 				}
 			}
@@ -1735,22 +1958,250 @@ LigandAligner::select_points( core::pose::Pose const & pose, core::Size const li
 
 	}
 
+	std::sort( points_to_erode.begin(), points_to_erode.end(), PointScoreComparator());
+	utility::vector1 < utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > > networks;
+
+	for ( core::Size ipoint = 1; ipoint <= points_to_erode.size(); ++ipoint ) {
+		//if a point is not in a network, make a new network and find all the points in the network
+		if ( !(is_point_in_network( points_to_erode[ipoint].first, networks ) ) ) {
+			utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > network;
+			network.push_back( points_to_erode[ipoint] );
+
+			network = find_network( points_to_erode[ipoint].first, network, points_to_erode, 1.5 );
+			networks.push_back( network );
+		}
+	}
+
 	//first pass erosion with small neighborhood
 	utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > eroded_points = erode_points( points_to_erode, neighborhood_size );
+
+	if ( print_skeletons_ ) {
+		std::ofstream skeleton_file;
+		std::string prefix( basic::options::option[ basic::options::OptionKeys::out::prefix ]() );
+		skeleton_file.open( prefix + "_after_erosion1.pdb");
+		for ( core::Size i = 1; i <= eroded_points.size(); ++i ) {
+			numeric::xyzVector< core::Real > voxel = eroded_points[i].first;
+			numeric::xyzVector< core::Real > x_cart(voxel[0],voxel[1],voxel[2]);
+			core::scoring::electron_density::getDensityMap().idx2cart( voxel, x_cart );
+
+			skeleton_file << "HETATM" << std::setw(5) << utility::to_string(i) << " " <<  std::setw(4) << std::left << "O1" << " " <<  std::setw(3) << std::right << "ALA" << " A" << std::setw(4) << utility::to_string(i) << "    " << std::setw(8) << x_cart[0] << std::setw(8) << x_cart[1] << std::setw(8) << x_cart[2] << std::setw(6) << "1.00" << std::setw(6) << std::fixed << std::setprecision(2) << "20.00" << std::endl;
+
+		}
+		skeleton_file.close();
+	}
+
 	//gets largest connection of points
 	eroded_points = find_biggest_skeleton( eroded_points );
 	//erodes again with larger neighborhood
 	eroded_points = erode_points( eroded_points, 19 );
 
-	TR.Debug << "Done eroding" << std::endl;
+	if ( print_skeletons_ ) {
+		std::ofstream skeleton_file;
+		std::string prefix( basic::options::option[ basic::options::OptionKeys::out::prefix ]() );
+		skeleton_file.open( prefix + "_after_erosion2.pdb");
+		for ( core::Size i = 1; i <= eroded_points.size(); ++i ) {
+			numeric::xyzVector< core::Real > voxel = eroded_points[i].first;
+			numeric::xyzVector< core::Real > x_cart(voxel[0],voxel[1],voxel[2]);
+			core::scoring::electron_density::getDensityMap().idx2cart( voxel, x_cart );
+
+			skeleton_file << "HETATM" << std::setw(5) << utility::to_string(i) << " " <<  std::setw(4) << std::left << "O1" << " " <<  std::setw(3) << std::right << "ALA" << " A" << std::setw(4) << utility::to_string(i) << "    " << std::setw(8) << x_cart[0] << std::setw(8) << x_cart[1] << std::setw(8) << x_cart[2] << std::setw(6) << "1.00" << std::setw(6) << std::fixed << std::setprecision(2) << "20.00" << std::endl;
+
+		}
+		skeleton_file.close();
+	}
+
+	TR << "Done eroding" << std::endl;
+
+	utility::vector1< numeric::xyzVector< core::Real > > skeleton;
 	for ( core::Size i = 1; i <= eroded_points.size(); i++ ) {
 		numeric::xyzVector< core::Real > x_idx = eroded_points[i].first;
 		numeric::xyzVector< core::Real > x_cart(x_idx[0],x_idx[1],x_idx[2]);
 		core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
 
-		points_to_search_.push_back( x_cart );
+		skeleton.push_back( x_cart );
 
 	}
+
+	points_to_search_.push_back( skeleton );
+
+}
+
+bool
+LigandAligner::is_base_blob( utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > network, core::conformation::Residue const lig ) {
+
+	core::Size heavy_atoms = lig.nheavyatoms();
+	core::Real estimated_blob_size = 6.67 * heavy_atoms - 45.114;
+
+	if ( network.size() > 0.6 * estimated_blob_size ) {
+		return true;
+	} else {
+		return false;
+	}
+
+}
+
+core::Real
+LigandAligner::score_base_blob ( utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > network, core::pose::Pose const & pose, core::conformation::Residue const lig ) {
+
+	core::Size heavy_atoms = lig.nheavyatoms();
+	core::Real estimated_blob_size = 6.67 * heavy_atoms - 45.114;
+
+	core::Real blob_size = network.size();
+	core::Real size_ratio = blob_size/estimated_blob_size;
+	core::Real size_score;
+	if ( size_ratio <= 1.0 ) { size_score = size_ratio; }
+	else { size_score = 2.0-size_ratio; }
+
+	core::Real min_distance_total = 0.0;
+	for ( core::Size ipoint = 1; ipoint <= network.size(); ++ipoint ) {
+		numeric::xyzVector < core::Real > point = network[ipoint].first;
+		numeric::xyzVector< core::Real > x_cart(point[0],point[1],point[2]);
+		core::scoring::electron_density::getDensityMap().idx2cart( point, x_cart );
+
+		core::Real min_distance = 20.0;
+		for ( core::Size ires = 1; ires <= pose.size(); ++ires ) {
+			core::conformation::Residue resi = pose.residue( ires );
+			//if res is protein
+			if ( resi.is_protein() || resi.is_NA() ) {
+
+				//loop through and get minimum distance to the receptor for each point
+				for ( core::Size iatm = 1; iatm <= resi.nheavyatoms(); ++iatm ) {
+					core::Real distance = resi.xyz(iatm).distance(x_cart);
+					if ( distance < min_distance ) {
+						min_distance = distance;
+					}
+				}
+			}
+		}
+
+		min_distance_total += min_distance;
+	}
+
+	core::Real average_blob_distance = min_distance_total/blob_size;
+	core::Real proximity_score = 1.0 - exp(-1.0 * pow( (average_blob_distance - 5.0), 2 ) );
+	if ( average_blob_distance > 5.0 ) {
+		proximity_score = 0.0;
+	}
+	TR.Debug << "Average blob distance: " << average_blob_distance << std::endl;
+	TR.Debug << "Proximity score: " << proximity_score << std::endl;
+	TR.Debug << "Size score: " << size_score << std::endl;
+
+	core::Real base_blob_score = ( proximity_score + size_score ) / 2.0;
+	TR.Debug << "Base blob score: " << base_blob_score << std::endl;
+	return base_blob_score;
+}
+
+utility::vector1 < utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > >
+LigandAligner::sort_satellite_blobs ( utility::vector1 < utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > > satellites, utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > base_blob ) {
+
+	utility::vector1 < utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > > sorted_satellites;
+	utility::vector1 < std::pair < core::Real, utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > > > min_distance_maps;
+
+	for ( core::Size isatellite = 1; isatellite <= satellites.size(); ++isatellite ) {
+		utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > satellite_blob = satellites[isatellite];
+
+		core::Real min_base_distance = 20.0;
+		for ( core::Size ipoint = 1; ipoint <= satellite_blob.size(); ++ipoint ) {
+			numeric::xyzVector < core::Real > point = satellite_blob[ipoint].first;
+			numeric::xyzVector< core::Real > x_cart(point[0],point[1],point[2]);
+			core::scoring::electron_density::getDensityMap().idx2cart( point, x_cart );
+
+			for ( core::Size ibase_point = 1; ibase_point <= base_blob.size(); ++ibase_point ) {
+				numeric::xyzVector < core::Real > base_point = base_blob[ibase_point].first;
+				numeric::xyzVector< core::Real > base_cart(base_point[0],base_point[1],base_point[2]);
+				core::scoring::electron_density::getDensityMap().idx2cart( base_point, base_cart );
+
+				core::Real distance = base_cart.distance( x_cart );
+				if ( distance < min_base_distance ) {
+					min_base_distance = distance;
+				}
+			}
+
+		}
+
+		min_distance_maps.push_back( std::make_pair( min_base_distance, satellite_blob ) );
+	}
+
+	std::sort( min_distance_maps.begin(), min_distance_maps.end() );
+
+
+	for ( core::Size isatellite = 1; isatellite <= min_distance_maps.size(); ++isatellite ) {
+
+		sorted_satellites.push_back( min_distance_maps[ isatellite ].second );
+
+	}
+
+	return sorted_satellites;
+}
+
+core::Real
+LigandAligner::score_satellite_blob ( utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > base_blob, utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > satellite_blob, core::pose::Pose const & pose, core::conformation::Residue const lig ) {
+
+	core::Real min_receptor_distance_total = 0.0;
+	core::Real min_base_distance = 20.0;
+	for ( core::Size ipoint = 1; ipoint <= satellite_blob.size(); ++ipoint ) {
+		numeric::xyzVector < core::Real > point = satellite_blob[ipoint].first;
+		numeric::xyzVector< core::Real > x_cart(point[0],point[1],point[2]);
+		core::scoring::electron_density::getDensityMap().idx2cart( point, x_cart );
+
+		core::Real min_receptor_distance = 20.0;
+		for ( core::Size ires = 1; ires <= pose.size(); ++ires ) {
+			core::conformation::Residue resi = pose.residue( ires );
+			//if res is protein
+			if ( resi.is_protein() || resi.is_NA() ) {
+
+				//loop through and get minimum distance to the receptor for each point
+				for ( core::Size iatm = 1; iatm <= resi.nheavyatoms(); ++iatm ) {
+					core::Real distance = resi.xyz(iatm).distance(x_cart);
+					if ( distance < min_receptor_distance ) {
+						min_receptor_distance = distance;
+					}
+				}
+			}
+		}
+
+		min_receptor_distance_total += min_receptor_distance;
+
+
+		for ( core::Size ibase_point = 1; ibase_point <= base_blob.size(); ++ibase_point ) {
+			numeric::xyzVector < core::Real > base_point = base_blob[ibase_point].first;
+			numeric::xyzVector< core::Real > base_cart(base_point[0],base_point[1],base_point[2]);
+			core::scoring::electron_density::getDensityMap().idx2cart( base_point, base_cart );
+
+			core::Real distance = base_cart.distance( x_cart );
+			if ( distance < min_base_distance ) {
+				min_base_distance = distance;
+			}
+		}
+	}
+
+	core::Real average_receptor_distance = min_receptor_distance_total / satellite_blob.size();
+	core::Real receptor_proximity_score = 1.0 - exp(-1.0 * pow( (average_receptor_distance - 5.0), 2 ) );
+	if ( average_receptor_distance > 5.0 ) {
+		receptor_proximity_score = 0.0;
+	}
+	TR.Debug << "Average blob distance: " << average_receptor_distance << std::endl;
+	TR.Debug << "Proximity score: " << receptor_proximity_score << std::endl;
+
+	core::Real base_proximity_score = 1.0 - exp(-1.0 * pow( (min_base_distance - 7.5), 2 ) / 16 );
+	if ( min_base_distance > 7.5 ) {
+		base_proximity_score = 0.0;
+	}
+
+	TR.Debug << "Base proximity score: " << base_proximity_score << std::endl;
+
+	core::Size heavy_atoms = lig.nheavyatoms();
+	core::Real estimated_blob_size = 6.67 * heavy_atoms - 45.114;
+
+	core::Real blob_size = base_blob.size();
+	core::Real size_ratio = blob_size/estimated_blob_size;
+	core::Real size_score = 1.2 - size_ratio;
+	if ( size_score < 0.0 ) { size_score = 0.0; }
+	TR.Debug << "Base blob size score: " << size_score << std::endl;
+
+	core::Real satellite_blob_score = ( receptor_proximity_score * base_proximity_score * size_score ); // 4.0;
+	TR.Debug << "satellite blob score: " << satellite_blob_score << std::endl;
+	return satellite_blob_score;
 
 }
 
@@ -1870,11 +2321,18 @@ bool LigandAligner::is_point_in_network ( numeric::xyzVector< core::Real > point
 
 //creates the network of points from a single head point
 utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > >
-LigandAligner::find_network ( numeric::xyzVector< core::Real > start_point, utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > network, utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > eroded_points ) {
+LigandAligner::find_network ( numeric::xyzVector< core::Real > start_point, utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > network, utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > eroded_points, core::Real distance_cutoff ) {
 
+	numeric::xyzVector< core::Real > start_point_cart(start_point[0],start_point[1],start_point[2]);
+	core::scoring::electron_density::getDensityMap().idx2cart( start_point, start_point_cart );
+	TR.Debug << distance_cutoff << std::endl;
 	for ( core::Size ipoint = 1; ipoint <= eroded_points.size(); ++ipoint ) {
+
 		numeric::xyzVector < core::Real > point_to_compare = eroded_points[ipoint].first;
 		bool is_in_network = false;
+
+		numeric::xyzVector< core::Real > point_to_compare_cart(point_to_compare[0],point_to_compare[1],point_to_compare[2]);
+		core::scoring::electron_density::getDensityMap().idx2cart( point_to_compare, point_to_compare_cart );
 
 		for ( core::Size inetwork_point = 1; inetwork_point <= network.size(); ++inetwork_point ) {
 			numeric::xyzVector < core::Real > point_from_network = network[inetwork_point].first;
@@ -1888,11 +2346,11 @@ LigandAligner::find_network ( numeric::xyzVector< core::Real > start_point, util
 		//if the point is less than two single C bonds away, include it in the network
 		//expand the network with that point
 		if ( !is_in_network ) {
-			core::Real distance = sqrt( pow( start_point[0] - point_to_compare[0], 2 ) + pow( start_point[1] - point_to_compare[1], 2 ) + pow( start_point[2] - point_to_compare[2], 2 ) );
+			core::Real distance = sqrt( pow( start_point_cart[0] - point_to_compare_cart[0], 2 ) + pow( start_point_cart[1] - point_to_compare_cart[1], 2 ) + pow( start_point_cart[2] - point_to_compare_cart[2], 2 ) );
 
-			if ( distance < 3.1 ) {
+			if ( distance < distance_cutoff ) { //3.1 ) {
 				network.push_back(eroded_points[ipoint]);
-				network = find_network ( point_to_compare, network, eroded_points );
+				network = find_network ( point_to_compare, network, eroded_points, distance_cutoff );
 			}
 		}
 	}
@@ -2140,8 +2598,8 @@ LigandAligner::apply(
 			// multiple cstgen+min cycles
 			for ( core::Size rpt=1; rpt<=repeats1; ++rpt ) {
 				// setup constraints + min; use pharmacophore info if provided for prior match at stage1
+				core::conformation::Residue resi = minipose->residue(ligids[1]);
 				set_constraints(*minipose, ligids, marked_pairs, w_prior, SrcPriorIDs, TgtPriorIDs );
-
 				// the minimizer call
 				min_map.copy_dofs_from_pose( *minipose, dofs );
 				min_short.run( dofs );
@@ -2272,3 +2730,4 @@ LigandAligner::apply(
 }
 }
 }
+

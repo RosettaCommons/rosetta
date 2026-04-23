@@ -56,11 +56,10 @@ projects = {
 		"zlib",
 		"cppdb",  # Must come before sqlite3 for static build
 		"sqlite3",
-		"cifparse",
 		"libxml2",
 		"libzmq",
 		"rdkit",
-    "bcl", # Fine to have here, just make sure bcl.external.settings has extras qualifier
+		"bcl", # Fine to have here, just make sure bcl.external.settings has extras qualifier
 		"cmaes",
 	]
 }

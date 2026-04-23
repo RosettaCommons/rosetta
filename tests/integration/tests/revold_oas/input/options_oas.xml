@@ -1,0 +1,29 @@
+
+
+<!--This is a comment-->
+
+<Population main_selector="std_tournament" supported_size="4"/>
+<PopulationInit init_type="random" size="2"/>
+<PopulationInit init_type="best_loaded" size="3" selection="5"/>
+
+<Scorer similarity_penalty="0.5" similarity_penalty_threshold="0.95"/>
+
+<Selector name="remove_elitist" type="elitist" size="1" remove="True"/>
+<Selector name="std_tournament" type="tournament" size="2" remove="False" tournament_size="5" acceptance_chance="0.75"/>
+<Selector name="std_roulette" type="roulette" size="2" remove="False" consider_positive="True"/>
+
+<Factory name="std_mutator" type="mutator" size="1" reaction_weight="1.0" reagent_weight="2.0" min_similarity="0.6" max_similarity="0.99"/>
+<Factory name="drastic_mutator" type="mutator" size="1" reaction_weight="0.0" reagent_weight="1.0" min_similarity="0.0" max_similarity="0.25"/>
+<Factory name="reaction_mutator" type="mutator" size="1" reaction_weight="1.0" reagent_weight="0.0" min_similarity="0.6" max_similarity="0.99"/>
+<Factory name="large_crossover" type="crossover" size="1"/>
+<Factory name="std_identity" type="identity" size="1"/>
+
+<!--order is important here-->
+<!--If a single EvolutionProtocol tag is defined, all default entries are deleted and only the specified protocol is used-->
+<EvolutionProtocol selector="std_roulette" factory="std_mutator"/>
+<EvolutionProtocol selector="std_roulette" factory="large_crossover"/>
+<EvolutionProtocol selector="std_roulette" factory="drastic_mutator"/>
+<EvolutionProtocol selector="std_roulette" factory="reaction_mutator"/>
+<EvolutionProtocol selector="remove_elitist" factory="std_identity"/>
+<EvolutionProtocol selector="std_roulette" factory="std_mutator"/>
+<EvolutionProtocol selector="std_roulette" factory="large_crossover"/>

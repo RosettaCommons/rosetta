@@ -41,6 +41,7 @@ _T_slurm_mpi_job_template_ = '''\
 #SBATCH --chdir={working_dir}
 #
 #SBATCH --ntasks={ntasks}
+#SBATCH --nodes=1
 
 mpirun {executable} {arguments}
 '''
@@ -148,11 +149,14 @@ class Slurm_HPC_Driver(HPC_Driver):
         else: return slurm_job_id
 
 
-    def submit_mpi_hpc_job(self, name, executable, arguments, working_dir, log_dir, ntasks, memory=3900, time=12, block=True, shell_wrapper=False):
+    def submit_mpi_hpc_job(self, name, executable, arguments, working_dir, log_dir, ntasks, memory=3900, time=48, block=True, shell_wrapper=False):
         ''' submit jobs as MPI job
         '''
         arguments = arguments.format(process='0')
         time = int( math.ceil(time*60) )
+        if ntasks > 64:
+            print(f'WARNING: MPI job with ntasks={ntasks} requested, running with ntasks=64 instead...')
+            ntasks = 64
 
         if shell_wrapper:
             shell_wrapper_sh = os.path.abspath(self.working_dir + f'/hpc.{name}.shell_wrapper.sh')

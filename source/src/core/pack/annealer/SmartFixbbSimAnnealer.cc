@@ -41,6 +41,7 @@
 #include <numeric/random/random.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <unordered_map>
+#include <array>
 
 #include <tensorflow/c/c_api.h>
 #include <basic/tensorflow_manager/RosettaTensorflowManager.hh>

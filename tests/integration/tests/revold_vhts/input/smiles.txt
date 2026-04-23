@@ -1,0 +1,4 @@
+COc1ccc2[nH]c3c(NCc4cn(-c5ccc(Cl)cc5)nn4)cc4[nH]ncc4c3c2c1
+c1ccc(-c2ccc3c(c2)CN(c2cccc(NCc4nnc5n4CCCCC5)c2)Cc2cnnn2-3)cc1
+c1cc(NCc2ccc3cccnc3n2)cc(-c2nc3cc4ccccc4cc3[nH]2)c1
+COc1ccc2[nH]c3c(NCc4cn(-c5ccc(O)cc5)nn4)cc4[nH]ncc4c3c2c1

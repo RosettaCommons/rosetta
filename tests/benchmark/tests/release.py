@@ -31,6 +31,8 @@ _number_of_rosetta_binary_revisions_to_keep_in_git_ = 1
 _number_of_py_rosetta_revisions_to_keep_in_git_ = 1
 _number_of_archive_files_to_keep_ = 8
 _latest_html_ = 'latest.html'
+_release_branches_with_limited_retention_ = 'main commits benchmark release'.split()
+_release_branches_with_persistent_wheel_archives_ = 'release-quarterly'.split()
 
 download_template = '''\
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
@@ -42,10 +44,10 @@ download_template = '''\
 
 def get_platform_release_name(platform):
     addon = dict(linux='.CentOS', ubuntu='.Ubuntu', mac='', m1='', aarch64='.aarch64.Ubuntu')
-    return '.'.join([platform['os']]+platform['extras']) + addon[ platform['os'] ]
+    return '.'.join([platform['os']]+platform['extras']) + addon[ platform['os'].partition('-')[0] ]
 
 
-def release(name, package_name, package_dir, working_dir, platform, config, release_as_git_repository=True, file=None, use_rosetta_versioning=True):
+def release(name, package_name, package_dir, working_dir, platform, config, release_as_git_repository=True, file=None, use_rosetta_versioning=True, package_build_kind='unknown'):
     ''' Create a release packge: tar.bz2 + git repository
         name - must be a name of what is released without any suffices: rosetta, PyRosetta etc
         package_name - base name for archive (without tar.bz2) that should include name, os, revision, branch + other relevant platform info
@@ -57,8 +59,9 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
 
     branch = config['branch']
     release_root = config['release_root']
+    release_revision = config['revision']
 
-    package_versioning_name = '{package_name}.{branch}-{revision}'.format(package_name=package_name, branch=config['branch'], revision=config['revision'])
+    package_versioning_name = f'{package_name}.{branch}-{release_revision}'
 
     if package_dir:
         TR('Creating tar.bz2 for {name} as {package_versioning_name}...'.format( **vars() ) )
@@ -74,36 +77,97 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
         assert archive.endswith('.tar.bz2')
 
 
-    release_path = f'{release_root}/{name}/archive/{branch}/{package_name}'
+    if archive.endswith('.whl') and branch in _release_branches_with_persistent_wheel_archives_:
+        release_path = f'{release_root}/{name}/archive/{branch}/{package_build_kind}'
+    else:
+        release_path = f'{release_root}/{name}/archive/{branch}/{package_name}'
+
     if not os.path.isdir(release_path): os.makedirs(release_path)
 
     with FileLock( f'{release_path}/.release.lock' ):
-        if use_rosetta_versioning: shutil.move(archive, release_path + '/' + package_versioning_name + '.tar.bz2')
-        else: shutil.move(archive, release_path + '/' + os.path.basename(archive) )
+
+        if use_rosetta_versioning:
+            shutil.move(archive, release_path + '/' + package_versioning_name + '.tar.bz2')
+
+        else:
+
+            if archive.endswith('.whl'):
+
+                # if branch in _release_branches_with_persistent_wheel_archives_:
+                #     pass
+                #     # wheel_archives_release_path = f'{release_root}/{name}/archive/{branch}/wheels/{package_build_kind}'
+                #     # if not os.path.isdir(wheel_archives_release_path): os.makedirs(wheel_archives_release_path)
+                #     # shutil.move(archive, wheel_archives_release_path + '/' + os.path.basename(archive) )
+                #
+                # else:
+                #     wheel_archives_latest_path = f'{release_root}/{name}/archive/{branch}/latest.{package_build_kind}'
+                #
+                #     if not os.path.isdir(wheel_archives_latest_path): os.makedirs(wheel_archives_latest_path)
+                #
+                #     dst = wheel_archives_latest_path + '/' + os.path.basename(archive)
+                #     src = f'../{package_name}/' + os.path.basename(archive)
+                #
+                #     if os.path.lexists(dst):
+                #             os.unlink(dst)
+                #     os.symlink(src, dst)
+
+                shutil.move(archive, release_path + '/' + os.path.basename(archive) )
+
+
+                # creating a local symlink with simple `latest` ie: `pyrosetta-latest-cp39-cp39-macosx_12_0_arm64.whl` --> to exact version from `pyrosetta-2025.41+release.de3cc17d50-cp39-cp39-macosx_12_0_arm64.whl`
+                symlink_frst_parition = os.path.basename(archive).partition('-')
+                symlink_path = release_path + '/' + symlink_frst_parition[0] + '-0-cp' + symlink_frst_parition[2].partition('-cp')[2]
+
+                if os.path.islink(symlink_path): os.unlink(symlink_path)
+                os.symlink(os.path.basename(archive), symlink_path)
+
+
+
 
         # removing old archives and adjusting _latest_html_
         files = [f for f in os.listdir(release_path) if f != _latest_html_  and  f[0] != '.' ]
         files.sort(key=lambda f: os.path.getmtime(release_path+'/'+f))
-        for f in files[:-_number_of_archive_files_to_keep_]: os.remove(release_path+'/'+f)
+
+
+        if branch in _release_branches_with_limited_retention_:
+            for f in files[:-_number_of_archive_files_to_keep_]:
+                os.remove(release_path+'/'+f)
+
         if files:
             package_file = files[-1]
 
             with open(release_path+'/'+_latest_html_, 'w') as h: h.write(download_template.format(distr=name, link=package_file))
 
+
             htaccess_file_path = f'{release_path}/.htaccess'
 
-            if os.path.isfile(htaccess_file_path):
-                with open(htaccess_file_path) as f: htaccess = f.read()
+            # # OLD version with substitution, deprecated for now
+            # if os.path.isfile(htaccess_file_path):
+            #     with open(htaccess_file_path) as f: htaccess = f.read()
+            # else:
+            #     htaccess = ''
+            #
+            # redirect_start = 'RedirectMatch 302 (.*).latest$'
+            # redirect_line = redirect_start + ' $1' + package_file
+            # htaccess = re_module.sub(re_module.escape(redirect_start) + '(.*)', redirect_line, htaccess)
+            # if redirect_line not in htaccess: htaccess += '\n' + redirect_line + '\n'
+
+            htaccess = f'RedirectMatch 302 (.*)\\.latest$ $1{package_file}\n'
+
+            if package_file.endswith('.tar.bz2'):
+                # replace PyRosetta4.Release.python39.m1.cxx11thread.serialization.release-410.tar.bz2 with PyRosetta4.Release.python39.m1.cxx11thread.serialization.release-latest.tar.bz2
+                redirect_handle = package_file.partition('-')[0] + '-latest.tar.bz2'
+            elif package_file.endswith('.whl'):
+                # replacing exact version from `pyrosetta-2025.41+release.de3cc17d50-cp39-cp39-macosx_12_0_arm64.whl` with simple `latest` --> `pyrosetta-latest-cp39-cp39-macosx_12_0_arm64.whl`
+                frst_parition = package_file.partition('-')
+                redirect_handle = frst_parition[0] + '-latest-cp' + frst_parition[2].partition('-cp')[2]
             else:
-                htaccess = ''
+                redirect_handle = None
 
-            redirect_start = 'RedirectMatch 302 (.*).latest$'
-            redirect_line = redirect_start + ' $1' + package_file
-            htaccess = re_module.sub(re_module.escape(redirect_start) + '(.*)', redirect_line, htaccess)
+            if redirect_handle:
+                htaccess += f'RedirectMatch 302 (.*){redirect_handle}$ $1{package_file}\n'
+
             print(f'htaccess: {htaccess}')
-
-            if redirect_line not in htaccess: htaccess += '\n' + redirect_line + '\n'
-
             with open(htaccess_file_path, 'w') as f: f.write(htaccess)
 
 
@@ -403,13 +467,13 @@ def rosetta_documentation(repository_root, working_dir, platform, config, hpc_dr
 
 
 
-def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+def pyrosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     memory = config['memory'];  jobs = config['cpu_count']
     if platform['os'] != 'windows': jobs = jobs if memory/jobs >= PyRosetta_unix_memory_requirement_per_cpu else max(1, int(memory/PyRosetta_unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
 
     TR = Tracer(True)
 
-    TR('Running PyRosetta4 release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
+    TR('Running PyRosetta release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
     # 'release' debug ----------------------------------
     # output = 'dummy\n'
@@ -432,7 +496,9 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
     # return results
     # ----------------------------------
 
-    release_name = 'PyRosetta4.{kind}.python{python_version}.{platform}'.format(kind=kind, platform='.'.join([platform['os']]+platform['extras']), python_version=platform['python'].replace('.', '') )
+    platform_os = 'ubuntu' if platform['os'].startswith('ubuntu') else platform['os']
+
+    release_name = 'PyRosetta4.{kind}.python{python_version}.{suffix}'.format(kind=kind, suffix='.'.join([platform_os]+platform['extras']), python_version=platform['python'].replace('.', '') )
 
     version_file = working_dir + '/version.json'
     generate_version_information(rosetta_dir, branch=config['branch'], revision=config['revision'], package=release_name, url='http://www.pyrosetta.org', file_name=version_file)  # date=datetime.datetime.now(), avoid setting date and instead use date from Git commit
@@ -464,7 +530,7 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
         #if debug: res, output = 0, 'Release script was invoked with `--debug` flag, - skipping PyRosetta unit tests run...\n'
         if False  and  kind == 'Debug': res, output = 0, 'Debug build, skipping PyRosetta unit tests run...\n'
         else:
-            packages = ' '.join( get_required_pyrosetta_python_packages_for_testing(platform) ).replace('>', '=').replace('<', '=')
+            packages: str = ' '.join( get_required_pyrosetta_python_packages_for_release_package(platform, conda=False) )
             python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
 
             command_line = f'{python_virtual_environment.activate} && cd {result.pyrosetta_path}/build && {python_virtual_environment.python} {rosetta_dir}/source/test/timelimit.py {suite_timeout} {python_virtual_environment.python} self-test.py {gui_flag} -j{jobs} --timeout {test_timeout}'
@@ -503,9 +569,10 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
 
             package_dir = working_dir + '/' + release_name
 
-            execute('Creating PyRosetta4 distribution package...', '{build_command_line} -sd --create-package {package_dir}'.format(**vars()))
+            execute('Creating PyRosetta distribution package...', '{build_command_line} -sd --create-package {package_dir}'.format(**vars()))
 
-            release('PyRosetta4', release_name, package_dir, working_dir, platform, config, release_as_git_repository = True if kind in [] else False )
+            if config['branch'] not in _release_branches_with_persistent_wheel_archives_:
+                release('PyRosetta4', release_name, package_dir, working_dir, platform, config, release_as_git_repository = True if kind in [] else False )
 
             # releasing PyMOL-RosettaServer scripts
             release('PyMOL-RosettaServer', 'PyMOL-RosettaServer.python2',        package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=f'{package_dir}/PyMOL-RosettaServer.py',                use_rosetta_versioning=False)
@@ -519,9 +586,18 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
             else:
                 whell_environment = setup_persistent_python_virtual_environment(result.python_environment, 'setuptools wheel')
 
-                execute('Creating PyRosetta4 distribution Wheel package...', f'{whell_environment.activate} && cd {package_dir}/setup && python setup.py sdist bdist_wheel')
+                execute('Creating PyRosetta distribution Wheel package...', f'{whell_environment.activate} && cd {package_dir}/setup && python setup.py sdist bdist_wheel')
                 wheel_file_name = [ f for f in os.listdir( f'{package_dir}/setup/dist' ) if f.endswith('.whl') ][0]
-                release('PyRosetta4', release_name+'.wheel', package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=f'{package_dir}/setup/dist/{wheel_file_name}', use_rosetta_versioning=False)
+                release('PyRosetta4',
+                        release_name+'.wheel',
+                        package_dir=None, working_dir=working_dir,
+                        platform=platform,
+                        config=config,
+                        release_as_git_repository=False,
+                        file=f'{package_dir}/setup/dist/{wheel_file_name}',
+                        use_rosetta_versioning=False,
+                        package_build_kind = '.'.join( [kind] + platform['extras'] ).lower()
+                        )
 
             if os.path.isdir(package_dir): shutil.rmtree(package_dir)  # removing package to keep size of database small
 
@@ -535,13 +611,13 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
 
 
 
-def py_rosetta4_documentation(kind, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+def pyrosetta_documentation(kind, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     memory = config['memory'];  jobs = config['cpu_count']
     #if platform['os'] != 'windows': jobs = jobs if memory/jobs >= PyRosetta_unix_memory_requirement_per_cpu else max(1, int(memory/PyRosetta_unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
 
     TR = Tracer(True)
 
-    TR('Running PyRosetta4-documentation release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
+    TR('Running PyRosetta-documentation release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
     release_root = config['release_root']
 
@@ -553,8 +629,11 @@ def py_rosetta4_documentation(kind, rosetta_dir, working_dir, platform, config, 
 
     result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, skip_compile=debug, version=version_file)
 
-    packages = ' '.join( get_required_pyrosetta_python_packages_for_testing(platform) ).replace('>', '=').replace('<', '=') + ' sphinx==5.2.3'
-    python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
+    packages: str = get_required_pyrosetta_python_packages_for_testing(platform, static_versions=False) + ' sphinx==5.2.3'
+    # packages: str = ' '.join(get_required_pyrosetta_python_packages_for_release_package(platform, static_versions=False, distributed_packages=False) + ['sphinx==5.2.3'] )
+
+    # python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
+    python_virtual_environment = setup_python_virtual_environment(f'{working_dir}/.venv', result.python_environment, packages)
 
     res = result.exitcode
     output = result.output
@@ -583,10 +662,11 @@ def py_rosetta4_documentation(kind, rosetta_dir, working_dir, platform, config, 
             with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
 
         else:
+            release_documentation_root = f'{release_root}/PyRosetta4/documentation'
+            if not os.path.isdir(release_documentation_root): os.makedirs(release_documentation_root)
+            with FileLock( f'{release_documentation_root}/.release.lock' ):
 
-            with FileLock( f'{release_root}/PyRosetta4/documentation/.release.lock' ):
-
-                release_path = '{release_root}/PyRosetta4/documentation/PyRosetta-4.documentation.{branch}.{kind}.python{python_version}.{os}'.format(branch=config['branch'], os=platform['os'], python_version=platform['python'].replace('.', ''), **vars())
+                release_path = '{release_documentation_root}/PyRosetta-4.documentation.{branch}.{kind}.python{python_version}.{os}'.format(branch=config['branch'], os=platform['os'], python_version=platform['python'].replace('.', ''), **vars())
 
                 if os.path.isdir(release_path): shutil.rmtree(release_path)
                 shutil.move(documentation_dir, release_path)
@@ -629,7 +709,7 @@ _index_html_template_ = '''\
 '''
 
 
-_conda_setup_only_build_sh_template_ = '''\
+_conda_pyrosetta_setup_only_build_sh_template_ = '''\
 #Configure!/bin/bash
 #http://redsymbol.net/articles/unofficial-bash-strict-mode/
 
@@ -659,17 +739,17 @@ popd
 echo "-------------------------------- Installing PyRosetta Python package... Done."
 '''
 
-def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+def native_libc_pyrosetta_conda_release(kind, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     memory = config['memory'];  jobs = config['cpu_count']
     if platform['os'] != 'windows': jobs = jobs if memory/jobs >= PyRosetta_unix_memory_requirement_per_cpu else max(1, int(memory/PyRosetta_unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
 
-    if 'cxx11thread' not in platform['extras']  or  'serialization' not in platform['extras']: raise BenchmarkError( f'Running native_libc_py_rosetta4_conda_release: on platform with extras={platform["extras"]}, however Conda build on platform without cxx11thread or serialization is not supported!' )
+    if 'cxx11thread' not in platform['extras']  or  'serialization' not in platform['extras']: raise BenchmarkError( f'Running native_libc_pyrosetta_conda_release: on platform with extras={platform["extras"]}, however Conda build on platform without cxx11thread or serialization is not supported!' )
 
     TR = Tracer(True)
 
-    TR('Running PyRosetta4 conda release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
+    TR('Running PyRosetta conda release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
-    conda = setup_conda_virtual_environment(working_dir, platform, config, packages='setuptools')
+    conda = setup_conda_virtual_environment(working_dir, platform, config, packages='setuptools pybind11-stubgen')
 
     platform_name = get_platform_release_name(platform)
     release_name = 'PyRosetta4.conda.{platform}.python{python_version}.{kind}'.format(kind=kind, platform=platform_name, python_version=platform['python'].replace('.', '') )
@@ -701,7 +781,7 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
         else:
             distr_file_list = os.listdir(pyrosetta_path+'/build')
 
-            packages = ' '.join( get_required_pyrosetta_python_packages_for_testing(platform) ).replace('>', '=').replace('<', '=')
+            packages: str = ' '.join( get_required_pyrosetta_python_packages_for_release_package(platform, conda=False) )
 
             local_python = local_python_install(platform, config)
             python_virtual_environment = setup_persistent_python_virtual_environment(local_python, packages)
@@ -730,11 +810,11 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
             with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
         else:
 
-            TR('Running PyRosetta4 release test: Build and Unit tests passged! Now creating PyRosetta package...')
+            TR('Running PyRosetta release test: Build and Unit tests passged! Now creating PyRosetta package...')
 
             package_dir = working_dir + '/' + release_name
 
-            execute( f'Creating PyRosetta4 distribution package...', f'{build_command_line} -sd --create-package {package_dir}' )
+            execute( f'Creating PyRosetta distribution package...', f'{build_command_line} -sd --create-package {package_dir}' )
 
             python_version_as_tuple = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
@@ -749,7 +829,7 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
                     build = [f'python {platform["python"]}'],
                     host  = [f'python {platform["python"]}', 'setuptools', 'zlib'],
                     #run   = [f'python =={platform["python"]}', "{{ pin_compatible('numpy') }}", 'zlib', 'pandas >=0.18', 'scipy >=1.0', 'traitlets', 'python-blosc'],
-                    run   = [f'python {platform["python"]}', 'zlib', ] + get_required_pyrosetta_python_packages_for_release_package(platform, conda=True),
+                    run   = [f'python {platform["python"]}', 'zlib', ] + get_required_pyrosetta_python_packages_for_release_package(platform, conda=True, static_versions=False),
                 ),
 
                 about = dict(
@@ -770,7 +850,7 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
 
             with open( recipe_dir + '/meta.yaml', 'w' ) as f: json.dump(recipe, f, sort_keys=True, indent=2)
 
-            with open( recipe_dir + '/build.sh', 'w' ) as f: f.write( _conda_setup_only_build_sh_template_.format(**locals()) )
+            with open( recipe_dir + '/build.sh', 'w' ) as f: f.write( _conda_pyrosetta_setup_only_build_sh_template_.format(**locals()) )
 
             # --output              Output the conda package filename which would have been created
             # --output-folder OUTPUT_FOLDER folder to dump output package to. Package are moved here if build or test succeeds. Destination folder must exist prior to using this.
@@ -786,9 +866,16 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
                 conda_build_command_line = f'{conda.activate_base} && conda build purge && conda build --no-locking --quiet {recipe_dir} --output-folder {working_dir_release_path}' # --channel conda-forge
                 conda_package_output = execute('Getting Conda package name...', f'{conda_build_command_line} --output', return_='output', silent=True)
 
-                m = re_module.search(r"pyrosetta-.*\.tar\.bz2", conda_package_output, re_module.MULTILINE)
+                with open(f'{working_dir}/conda_package_output_folder.log', 'w') as f: f.write(conda_package_output)
+
+                # m = re_module.search(r"pyrosetta-.*\.tar\.bz2", conda_package_output, re_module.MULTILINE)
+                # .tar.bz2 is no longer when `--output-folder` option is used
+                m = re_module.search(r"pyrosetta-.*\.(tar\.bz2|conda)", conda_package_output, re_module.MULTILINE)
+
                 conda_package = m.group(0) if m else 'unknown'
-                conda_package_dir = re_module.search(r"/([^/]*)/pyrosetta-.*\.tar\.bz2", conda_package_output, re_module.MULTILINE).group(1)
+                # conda_package_dir = re_module.search(r"/([^/]*)/pyrosetta-.*\.tar\.bz2", conda_package_output, re_module.MULTILINE).group(1)
+                # .tar.bz2 is no longer when `--output-folder` option is used
+                conda_package_dir = re_module.search(r"/([^/]*)/pyrosetta-.*\.(tar\.bz2|conda)", conda_package_output, re_module.MULTILINE).group(1)
 
                 TR(f'Building Conda package: {conda_package}...')
                 res, conda_log = execute('Creating Conda package...', conda_build_command_line, return_='tuple', add_message_and_command_line_to_output=True)
@@ -934,7 +1021,7 @@ ${{PREFIX}}/bin/python setup.py install --single-version-externally-managed --re
 popd
 echo "-------------------------------- Installing PyRosetta Python package... Done."
 '''
-def conda_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+def conda_libc_pyrosetta_conda_release(kind, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     ''' Build PyRosetta package using Conda build tools so it will be linked to Conda provided libc
     '''
     memory = config['memory'];  jobs = config['cpu_count']
@@ -942,7 +1029,7 @@ def conda_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfor
 
     TR = Tracer(True)
 
-    TR('Running PyRosetta4 conda release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
+    TR('Running PyRosetta conda release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
     conda = setup_conda_virtual_environment(working_dir, platform, config, packages='gcc')  # gcc cmake ninja
 
@@ -1003,6 +1090,171 @@ def conda_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfor
 
     return results
 
+
+
+_conda_rosetta_build_sh_template_ = '''\
+#Configure!/bin/bash
+#http://redsymbol.net/articles/unofficial-bash-strict-mode/
+
+set -euo pipefail
+IFS=$'\n\t'
+
+set -x
+
+echo "--- Build"
+echo "PWD: `pwd`"
+echo "PREFIX: ${{PREFIX}}"
+
+
+echo "-------------------------------- Installing Rosetta..."
+
+cp -r {payload_dir}/* ${{PREFIX}}/
+
+
+#cat ../version.json
+
+# Run initial test to pre-build databases and minimal sanity check
+${{PREFIX}}/bin/score -no_scorefile -s ${{PREFIX}}/database/sampling/rna/submotif/srl/GUA_GA_430d.pdb
+
+
+echo "-------------------------------- Installing Rosetta package... Done."
+'''
+
+
+def native_libc_rosetta_conda_release(kind, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    memory = config['memory'];  jobs = config['cpu_count']
+    if platform['os'] != 'windows': jobs = jobs if memory/jobs >= PyRosetta_unix_memory_requirement_per_cpu else max(1, int(memory/PyRosetta_unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
+
+    #if 'cxx11thread' not in platform['extras']  or  'serialization' not in platform['extras']: raise BenchmarkError( f'Running native_libc_pyrosetta_conda_release: on platform with extras={platform["extras"]}, however Conda build on platform without cxx11thread or serialization is not supported!' )
+
+    TR = Tracer(True)
+
+    TR(f'Running Rosetta conda release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...')
+
+    conda = setup_conda_virtual_environment(working_dir, platform, config, packages='setuptools')
+
+    platform_name = get_platform_release_name(platform)
+    release_name = 'Rosetta.conda.{platform}.python{python_version}.{kind}'.format(kind=kind, platform=platform_name, python_version=platform['python'].replace('.', '') )
+
+    version_file = working_dir + '/version.json'
+    version = generate_version_information(rosetta_dir, branch=config['branch'], revision=config['revision'], package=release_name, url='https://github.com/RosettaCommons/rosetta', file_name=version_file)  # date=datetime.datetime.now(), avoid setting date and instead use date from Git commit
+
+    res, build_output, build_command_line = build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=False, verbose=False)
+
+    if res:
+        res_code = _S_build_failed_
+        results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : build_output }
+        with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
+        return results
+
+    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='backslashreplace').write(build_output)
+
+    full_log = build_output
+
+    platform_prefix_command_line = f'cd {rosetta_dir}/source && ' + build_command_line + ' log=platform unit_test_platform_only'
+    exit_code, prefix_output = execute('getting build platform info...', command_line=platform_prefix_command_line, return_='tuple')
+
+    for line in prefix_output.split('\n'):
+        if 'Platform' in line:
+            platform_prefix = line.split()[1]
+    TR(f'Platform prefix: {platform_prefix!r}')
+
+    extension = calculate_extension(platform, mode='release')
+
+    full_log += '\nRosetta binaries platform prefix: ' + platform_prefix + '\n'
+
+    payload_dir = working_dir + '/payload';  os.makedirs(payload_dir)
+    payload_bin_dir = payload_dir + '/bin';  os.makedirs(payload_bin_dir)
+    payload_database_dir = payload_dir + '/database';  os.makedirs(payload_database_dir)
+
+    TR(f'Copying build results...')
+    for part in 'external src'.split():
+        prefix = f'{rosetta_dir}/source/build/{part}/{platform_prefix}/'
+        for f in os.listdir(prefix):
+            if os.path.isfile(prefix + f):
+                shutil.copy(prefix + f, f'{payload_bin_dir}/{f}')
+                if f.endswith('.'+extension): os.symlink(f, f'{payload_bin_dir}/' + f[:-1-len(extension)])
+                elif f.endswith(extension): os.symlink(f, f'{payload_bin_dir}/' + f.partition('.default')[0])
+
+    TR(f'Copying Rosetta database...')
+    dir_util_module.copy_tree(f'{rosetta_dir}/database', payload_database_dir, update=False)
+
+    TR('Creating Rosetta package...')
+
+    results = {_StateKey_ : _S_passed_,  _ResultsKey_ : {},  _LogKey_ : full_log}
+    with open(working_dir+'/output.json', 'w') as f: json.dump(results, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+
+    recipe_dir = working_dir + '/recipe';  os.makedirs(recipe_dir)
+
+    recipe = dict(
+        package = dict(
+            name    = 'rosetta',
+            version = version['version'],
+        ),
+        requirements = dict(
+            build = [f'python {platform["python"]}'],
+            host  = [f'python {platform["python"]}', 'zlib'],
+            run   = ['zlib'],
+        ),
+
+        about = dict(
+            home    = 'https://github.com/RosettaCommons/rosetta',
+            license = 'Rosetta license',
+            license_file = f'{rosetta_dir}/LICENSE.md',
+            summary = 'Rosetta, biomolecular modeling software package',
+            description = 'The Rosetta software suite includes algorithms for computational modeling and analysis of protein structures. It has enabled notable scientific advances in computational biology, including de novo protein design, enzyme design, ligand docking, and structure prediction of biological macromolecules and macromolecular complexes.',
+        ),
+    )
+
+    with open( recipe_dir + '/meta.yaml', 'w' ) as f: json.dump(recipe, f, sort_keys=True, indent=2)
+
+    with open( recipe_dir + '/build.sh', 'w' ) as f: f.write( _conda_rosetta_build_sh_template_.format(**locals()) )
+
+    release_kind = 'release' if config['branch'] == 'release' else 'devel'
+    conda_release_path = '{release_dir}/PyRosetta4/conda/{release_kind}'.format(release_dir=config['release_root'], release_kind = release_kind) # note that we intentionally using `PyRosetta4` path so all our releases is in the same channel
+    if not os.path.isdir(conda_release_path): os.makedirs(conda_release_path)
+
+    with FileLock( '{conda_release_path}/.{os}.rosetta.python{python_version}.release.lock'.format(os=platform['os'], python_version=platform['python'].replace('.', ''), **vars()) ):
+        working_dir_release_path = f'{working_dir}/conda-release'
+        os.makedirs(working_dir_release_path)
+
+        conda_build_command_line = f'{conda.activate_base} && conda build purge && conda build --no-locking --quiet {recipe_dir} --output-folder {working_dir_release_path}' # --channel conda-forge
+        #if platform['os'] == 'm1': conda_build_command_line += ' --prefix-length 80'
+        conda_package_output = execute('Getting Conda package name...', f'{conda_build_command_line} --output', return_='output', silent=True)
+
+        with open(f'{working_dir}/conda_package_output_folder.log', 'w') as f: f.write(conda_package_output)
+
+        m = re_module.search(r"rosetta-.*\.(tar\.bz2|conda)", conda_package_output, re_module.MULTILINE)
+        conda_package = m.group(0) if m else 'unknown'
+        conda_package_dir = re_module.search(r"/([^/]*)/rosetta-.*\.(tar\.bz2|conda)", conda_package_output, re_module.MULTILINE).group(1)
+
+        TR(f'Building Conda package: {conda_package}...')
+        res, conda_log = execute('Creating Conda package...', conda_build_command_line, return_='tuple', add_message_and_command_line_to_output=True)
+
+        results[_LogKey_]  += f'Got package name from conda build command line `{conda_build_command_line}` : {conda_package}\n' + conda_log
+        with open(working_dir+'/conda-build-log.txt', 'w') as f: f.write( to_unicode(conda_log) )
+
+        if not os.path.isdir(f'{conda_release_path}/{conda_package_dir}'): os.makedirs(f'{conda_release_path}/{conda_package_dir}')
+        shutil.move(f'{working_dir_release_path}/{conda_package_dir}/{conda_package}', f'{conda_release_path}/{conda_package_dir}/{conda_package}')
+
+    if res:
+        results[_StateKey_] = _S_script_failed_
+        results[_LogKey_]  += conda_log
+    else:
+        with FileLock( f'{conda_release_path}/.release.lock' ):
+            if platform['os'] not in ['mac', 'm1']: execute('Regenerating Conda package index...', f'{conda.activate_base} && cd {conda_release_path} && conda index .')
+
+        conda_package_version = conda_package.split('/')[-1].partition('-')[2]
+        print(f'Determent conda_package_version for package {conda_package!r}: {conda_package_version!r}...')
+        with open(f'{working_dir}/index.html', 'w') as f: f.write( _index_html_template_.format(**vars() ) )
+
+
+    if not debug:
+        for d in [conda.root, working_dir_release_path, payload_dir]: shutil.rmtree(d)  # removing packages to keep size of Benchmark database small
+
+    with open(working_dir+'/output.json', 'w') as f: json.dump(results, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+
+    return results
 
 
 
@@ -1091,9 +1343,11 @@ def self_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, ve
 
 
 
+def rosetta_conda_release(*args, **kwargs): return native_libc_rosetta_conda_release(*args, **kwargs)
 
-def py_rosetta4_conda_release(*args, **kwargs): return native_libc_py_rosetta4_conda_release(*args, **kwargs)
-#def py_rosetta4_conda_release(*args, **kwargs): return conda_libc_py_rosetta4_conda_release(*args, **kwargs)
+
+def pyrosetta_conda_release(*args, **kwargs): return native_libc_pyrosetta_conda_release(*args, **kwargs)
+#def pyrosetta_conda_release(*args, **kwargs): return conda_libc_pyrosetta_conda_release(*args, **kwargs)
 
 
 def run(test, repository_root, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
@@ -1109,17 +1363,19 @@ def run(test, repository_root, working_dir, platform, config, hpc_driver=None, v
 
     elif test =='rosetta.documentation':  return rosetta_documentation(repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
-    elif test =='PyRosetta.Debug':          return py_rosetta4_release('Debug',          repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta.Release':        return py_rosetta4_release('Release',        repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta.MinSizeRel':     return py_rosetta4_release('MinSizeRel',     repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta.RelWithDebInfo': return py_rosetta4_release('RelWithDebInfo', repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='rosetta.conda.release':  return rosetta_conda_release('Release', repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
-    elif test =='PyRosetta.conda.Debug':          return py_rosetta4_conda_release('Debug',          repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta.conda.Release':        return py_rosetta4_conda_release('Release',        repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta.conda.MinSizeRel':     return py_rosetta4_conda_release('MinSizeRel',     repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta.conda.RelWithDebInfo': return py_rosetta4_conda_release('RelWithDebInfo', repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.Debug':          return pyrosetta_release('Debug',          repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.Release':        return pyrosetta_release('Release',        repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.MinSizeRel':     return pyrosetta_release('MinSizeRel',     repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.RelWithDebInfo': return pyrosetta_release('RelWithDebInfo', repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
-    elif test =='PyRosetta.documentation':  return py_rosetta4_documentation('MinSizeRel', repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.conda.Debug':          return pyrosetta_conda_release('Debug',          repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.conda.Release':        return pyrosetta_conda_release('Release',        repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.conda.MinSizeRel':     return pyrosetta_conda_release('MinSizeRel',     repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.conda.RelWithDebInfo': return pyrosetta_conda_release('RelWithDebInfo', repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+
+    elif test =='PyRosetta.documentation':  return pyrosetta_documentation('MinSizeRel', repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
     elif test =='ui': return ui_release(repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 

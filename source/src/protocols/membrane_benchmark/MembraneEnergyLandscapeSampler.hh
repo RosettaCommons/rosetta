@@ -177,6 +177,7 @@ private: // data
 	core::Real azimuthal_delta_=30;
 	bool repack_=false;
 	bool pH_mode_=false;
+	bool dump_structures_=false;
 };
 
 std::ostream &

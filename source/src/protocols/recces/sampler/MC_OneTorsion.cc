@@ -23,6 +23,8 @@
 // Numeric Headers
 #include <numeric/random/random.hh>
 
+#include <cmath>
+
 using namespace core;
 static basic::Tracer TR( "protocols.recces.sampler.MC_OneTorsion" );
 

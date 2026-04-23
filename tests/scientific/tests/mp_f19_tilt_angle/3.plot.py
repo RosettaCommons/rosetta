@@ -60,67 +60,71 @@ cutoffs_angleexp_dict.update( dict( zip( protein, cutoffs_angleexp )))
 # go through energy landscapes
 for i in range( 0, len( energy_landscapes ) ):
 
-	# Read in the energy landscape file
-	if ( not os.path.isfile( energy_landscapes[i] ) ): 
-		sys.exit( "Output data file " + energy_landscapes[i] + " not found!" )
+    # Read in the energy landscape file
+    if ( not os.path.isfile( energy_landscapes[i] ) ):
+        sys.exit( "Output data file " + energy_landscapes[i] + " not found!" )
 
-	with open( energy_landscapes[i], 'rt' ) as g: 
-		contents = g.readlines()
-		contents = [ x.strip() for x in contents ]
-		contents = [ x.split(" ") for x in contents ]
+    with open( energy_landscapes[i], 'rt' ) as g:
+        contents = g.readlines()
+        contents = [ x.strip() for x in contents ]
+        contents = [ x.split(" ") for x in contents ]
 
-	zcoords = []
-	angles = []
-	total_scores = []
+    zcoords = []
+    angles = []
+    total_scores = []
 
-	for x in range(1, len(contents)): 
-		zcoords.append( float( contents[x][0] ) )
-		angles.append( float( contents[x][1] ) )
-		total_scores.append( float( contents[x][3] ) )
+    for x in range(1, len(contents)):
+        zcoords.append( float( contents[x][0] ) )
+        angles.append( float( contents[x][1] ) )
+        total_scores.append( float( contents[x][3] ) )
 
-	zcoords_arr = np.asarray( zcoords )
-	angles_arr = np.asarray( angles )
-	total_scores_arr = np.asarray( total_scores )
+    zcoords_arr = np.asarray( zcoords )
+    angles_arr = np.asarray( angles )
+    total_scores_arr = np.asarray( total_scores )
 
-	# create subplot
-	ax = plt.subplot( nrows, ncols, i+1 )
-	
-	# x and y labels
-	plt.xlabel( "Angle (degrees)" )
-	plt.ylabel( "Membrane Depth (Angstroms)" )
-	plt.title( targets[i] )
-	
-	# energy landscape plot of the data
-	X, Y = np.mgrid[ angles_arr.min():angles_arr.max(), zcoords_arr.min():zcoords_arr.max()]
-	points = np.c_[X.ravel(), Y.ravel()]
-	Z = interpolate.griddata(np.c_[angles_arr, zcoords_arr], total_scores_arr, points).reshape(X.shape)
+    # create subplot
+    ax = plt.subplot( nrows, ncols, i+1 )
 
-	#RS: adding contours to have a sense of error bars in the energy landscape. 
-	contours = plt.contour( X, Y, Z, 10, colors='black')
-	plt.clabel(contours, inline=True, fontsize=8, colors='red')
+    # x and y labels
+    plt.xlabel( "Angle (degrees)" )
+    plt.ylabel( "Membrane Depth (Angstroms)" )
+    plt.title( targets[i] )
 
-	cmap = cm.get_cmap('viridis', 256)
-	im = ax.pcolormesh( X,Y,Z, cmap=cmap)
-	cbar = plt.colorbar(im)
+    # energy landscape plot of the data
+    X, Y = np.mgrid[ angles_arr.min():angles_arr.max(), zcoords_arr.min():zcoords_arr.max()]
+    points = np.c_[X.ravel(), Y.ravel()]
+    try:
+        Z = interpolate.griddata(np.c_[angles_arr, zcoords_arr], total_scores_arr, points).reshape(X.shape)
+    except:
+        print("ERROR - unable to interpolate data for", energy_landscapes[i])
+        continue
 
-	# Calculate the minimum energy point
-	zmin, anglemin = energy_landscape_metrics.compute_minimum_energy_orientation( zcoords_arr, angles_arr, total_scores_arr )
-	#changing the minimum angle to first phase; results are symmetrical about the z-axis which is 0 and 180 degrees. 
+    #RS: adding contours to have a sense of error bars in the energy landscape.
+    contours = plt.contour( X, Y, Z, 10, colors='black')
+    plt.clabel(contours, inline=True, fontsize=8, colors='red')
 
-	if( anglemin>90 and anglemin<=180 ):
-		anglemin = 180 - anglemin
-	elif( anglemin>180 and anglemin<=270 ):
-		anglemin = anglemin - 180
-	elif( anglemin>270 and anglemin<=360 ):
-		anglemin = 360 - anglemin
-	plt.plot( anglemin, zmin, 'wo', markersize=12 )
+    cmap = cm.get_cmap('viridis', 256)
+    im = ax.pcolormesh( X,Y,Z, cmap=cmap)
+    cbar = plt.colorbar(im)
 
-	# Plot experimental values as red open squares
-	plt.plot( cutoffs_angleexp_dict[targets[i]], cutoffs_zexp_dict[targets[i]], '^r', fillstyle='none', markeredgewidth=5, markersize=20 )
+    # Calculate the minimum energy point
+    zmin, anglemin = energy_landscape_metrics.compute_minimum_energy_orientation( zcoords_arr, angles_arr, total_scores_arr )
+    #changing the minimum angle to first phase; results are symmetrical about the z-axis which is 0 and 180 degrees.
 
-	#changing the value of ticks in the x-axis
-	plt.xticks(np.arange(0, 180, 45))
-	
+    if( anglemin>90 and anglemin<=180 ):
+        anglemin = 180 - anglemin
+    elif( anglemin>180 and anglemin<=270 ):
+        anglemin = anglemin - 180
+    elif( anglemin>270 and anglemin<=360 ):
+        anglemin = 360 - anglemin
+    plt.plot( anglemin, zmin, 'wo', markersize=12 )
+
+    # Plot experimental values as red open squares
+    plt.plot( cutoffs_angleexp_dict[targets[i]], cutoffs_zexp_dict[targets[i]], '^r', fillstyle='none', markeredgewidth=5, markersize=20 )
+
+    #changing the value of ticks in the x-axis
+    plt.xticks(np.arange(0, 180, 45))
+
 #save figure
 plt.tight_layout()
 plt.savefig( outfile )

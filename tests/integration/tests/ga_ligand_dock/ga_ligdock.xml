@@ -1,9 +1,9 @@
 <ROSETTASCRIPTS>
   <SCOREFXNS>
-    <ScoreFunction name="dockscore" weights="beta_cart">
+    <ScoreFunction name="dockscore" weights="beta_genpot_cart">
       <Reweight scoretype="fa_rep" weight="0.2"/>
     </ScoreFunction>
-    <ScoreFunction name="relaxscore" weights="beta_cart"/>
+    <ScoreFunction name="relaxscore" weights="beta_genpot_cart"/>
   </SCOREFXNS>
 
   <TASKOPERATIONS>

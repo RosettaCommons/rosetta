@@ -1,55 +1,30 @@
-from __future__ import print_function
-import sys
+# :noTabs=true:
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+
+__author__ = "Jason C. Klima"
+
+from utils.distributed import parse_args, run_test_cases
 
 
-if tuple(sys.version_info) < (3, 5):
-    print("Unsupported python version for pyrosetta.distributed: %s" % str( sys.version_info ) )
-    sys.exit(0)
+def main(wait: bool, streaming: bool, timeout: int) -> None:
+    run_test_cases(
+        "pyrosetta.tests.bindings.init.test_init_files",
+        "pyrosetta.tests.bindings.core.test_pose",
+        "pyrosetta.tests.distributed.test_concurrency",
+        "pyrosetta.tests.distributed.test_dask",
+        "pyrosetta.tests.distributed.test_gil",
+        "pyrosetta.tests.distributed.test_smoke",
+        "pyrosetta.tests.distributed.test_viewer",
+        "pyrosetta.tests.numeric.test_alignment",
+        wait=wait,
+        streaming=streaming,
+        timeout=timeout,
+    )
 
-elif tuple(sys.version_info) > (3, 8):
-    print("Unsupported python version for pyrosetta.distributed: %s" % str( sys.version_info ) )
-    sys.exit(0)
-
-else:
-    print("sys.version_info: {0}".format(sys.version_info))
-
-
-import pyrosetta.rosetta
-import subprocess
-
-if not hasattr(pyrosetta.rosetta, "cereal"):
-    print("Unsupported non-serialization build for pyrosetta.distributed.")
-    sys.exit(0)
-
-
-def e(cmd):
-    print("Executing:\n{0}".format(cmd))
-    status, output = subprocess.getstatusoutput(cmd)
-    print("Output:\n{0}".format(output))
-    if status != 0:
-        print(
-            "Encountered error(s) with exit code {0} while running: {1}\nTerminating...".format(
-                status, cmd
-            )
-        )
-        sys.exit(1)
-
-
-test_suites = [
-    "pyrosetta.tests.bindings.core.test_pose",
-    "pyrosetta.tests.distributed.cluster.test_logging",
-    "pyrosetta.tests.distributed.cluster.test_reproducibility",
-    "pyrosetta.tests.distributed.cluster.test_smoke",
-    "pyrosetta.tests.distributed.test_concurrency",
-    "pyrosetta.tests.distributed.test_dask",
-    "pyrosetta.tests.distributed.test_gil",
-    "pyrosetta.tests.distributed.test_smoke",
-    "pyrosetta.tests.distributed.test_viewer",
-    "pyrosetta.tests.numeric.test_alignment",
-]
-
-
-for test_suite in test_suites:
-    e("{python} -m unittest {test_suite}".format(python=sys.executable, test_suite=test_suite))
-    #import unittest
-    #unittest.main(test_suite)
+if __name__ == "__main__":
+    args = parse_args()
+    main(args.wait, args.streaming, args.timeout)

@@ -118,7 +118,7 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
 
 ##Test util
  echo test_util
- %(python)s %(template_dir)s/generate_templates.py --test --type util --brief "testing templates" --namespace protocols test_templates >> util_log 2>&1
+ %(python)s %(template_dir)s/generate_templates.py --test --type util --class_name util --brief "testing templates" --namespace protocols test_templates >> util_log 2>&1
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
