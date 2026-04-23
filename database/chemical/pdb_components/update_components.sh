@@ -1,5 +1,6 @@
 #!/bin/bash
 
-curl -o ./components.cif ftp://ftp.wwpdb.org/pub/pdb/data/monomers/components.cif
+curl -o ./components.cif.gz https://files.wwpdb.org/pub/pdb/data/monomers/components.cif.gz 
+gunzip components.cif.gz
 python split_components.py
 rm components.cif
