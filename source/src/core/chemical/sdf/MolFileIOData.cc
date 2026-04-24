@@ -114,6 +114,20 @@ MolFileIOMolecule::atom_index( core::Size index ) {
 	return molgraph_[ index_atom_map_[index] ];
 }
 
+MolFileIOAtomOP
+MolFileIOMolecule::atom( std::string const & name ) {
+	MolFileIOGraph::vertex_iterator aiter, aiter_end;
+	for ( boost::tie( aiter, aiter_end ) = boost::vertices( molgraph_ ); aiter != aiter_end; ++aiter ) {
+		debug_assert( has( molgraph_, *aiter ) );
+		MolFileIOAtomOP atom( molgraph_[*aiter] );
+		debug_assert( atom );
+		if (atom->name() == name) {
+			return atom;
+		}
+	}
+	return nullptr;
+}
+
 void
 MolFileIOMolecule::add_atom( MolFileIOAtomOP atom ) {
 	// This call has both a "side effect" with the add_vertex, as well as the storage effect

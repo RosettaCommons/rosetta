@@ -283,7 +283,7 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 	// one. We can't add its coordinates yet, though, since only the residue type
 	// knows where LOWER is. Hey, actually, LOWER needs to be assigned in the
 	// list too!
-	if ( is_peptide_linking ) {
+	if ( is_peptide_linking && molecule->atom("H") == nullptr ) {
 		sdf::MolFileIOAtomOP H_atom( new sdf::MolFileIOAtom());
 		//atom id is whatever the number we are on +1, because we dont do 0 based index
 		H_atom->index( index );

@@ -150,6 +150,9 @@ public:
 	/// @brief Retrieve a modifiable atom by index
 	MolFileIOAtomOP atom_index( AtomIndex index );
 
+	/// @brief Retrieve a modifiable atom by name (returns nullpointer if not found);
+	MolFileIOAtomOP atom( std::string const & name );
+
 	/// @brief Add an atom (takes possession of object)
 	void add_atom( MolFileIOAtomOP atom );
 	/// @brief Add a bond (takes possession of object)
