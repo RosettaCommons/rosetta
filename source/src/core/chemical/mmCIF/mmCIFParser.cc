@@ -102,11 +102,6 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 		TR.Error << "Cannot parse CIF file. No atom block (chem_comp_atom) found for " << block.name << std::endl;
 		return molecule;
 	}
-
-	// There's another possible issue. to pre-pick about. We absolutely NEED N,
-	// because we need to be very specific about adding and deleting atoms.
-	// also... residue types without N are very likely to be a poor representative
-	// of "L-PEPTIDE LINKING"
 	gemmi::cif::Table atom_comp = block.find_mmcif_category("_chem_comp_atom");
 	if ( atom_comp.size() == 0 ) {
 		TR.Error << "Cannot parse CIF file. Empty atom block (chem_comp_atom) found for " << block.name << std::endl;
@@ -136,106 +131,49 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 		return molecule;
 	}
 
-	// A map of atom names to their chemical symbols
+	// A map of atom names to their chemical symbols -- includes ignored atoms
 	std::map< std::string, std::string > name_to_element_map;
 
-	bool N_found = false;
-	bool P_found = false;
-	bool is_peptide_linking = true;
-	bool is_nucleic_linking = true;
 	for ( Size ii = 0; ii < atom_comp.size(); ++ii ) {
 		gemmi::cif::Table::Row row = atom_comp[ii];
 
 		//set atom name
 		std::string atom_name = as_string( row[atom_name_id] );
 		name_to_element_map[ atom_name ] = as_string( row[type_symbol] );
-
-		if ( atom_name == "N" ) N_found = true;
-		if ( atom_name == "P" ) P_found = true;
-	}
-	if ( ! N_found ) is_peptide_linking = false;
-	if ( ! P_found ) is_nucleic_linking = false;
-
-	// It's not nucleic linking if we can't establish that the phosphate P is bonded to
-	// O5'. There are some 'reversed' types -- that plausibly we might choose later to
-	// read in (AMW TODO) as patched base types -- like T3P that we should USUALLY treat
-	// as ligands instead.
-	if ( is_nucleic_linking ) {
-		bool P_O5P_bond_found = false;
-		gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2"} );
-		for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
-			std::string source = as_string( bond_comp[ii][0] ); //atom 1
-			std::string target = as_string( bond_comp[ii][1] ); //atom 2
-
-			// Could imagine getting 'all Hs' by finding, instead, the
-			// names that match H[number] -- but why not wait, for now.
-			if ( ( source == "P" && target == "O5'" ) || ( source == "O5'" && target == "P" ) ) {
-				P_O5P_bond_found = true;
-			}
-		}
-		if ( !P_O5P_bond_found ) {
-			is_nucleic_linking = false;
-		}
 	}
 
-
-	// It's possible (NA8 is one example) that a peptide linking residue will have an
-	// atom bonded to OXT that is not named C. Catch this.
-	std::string rename_to_C = "C";
-	if ( is_peptide_linking ) {
-		gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2"} );
-		for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
-			std::string source = as_string( bond_comp[ii][0] ); //atom 1
-			std::string target = as_string( bond_comp[ii][1] ); //atom 2
-
-			// If we already have a "C", then don't rename something else to it (even if our 'C' isn't bonded to OXT)
-			if ( source == "C" || target == "C" ) {
-				rename_to_C = "C";
-				break;
-			}
-
-			// We only want to rename carbons. Ignore any hydrogens attached, or any non-carbon atoms
-			if ( source == "OXT" && name_to_element_map[ target ] == "C" ) {
-				rename_to_C = target;
-			} else if ( target == "OXT" && name_to_element_map[ source ] == "C" ) {
-				rename_to_C = source;
-			}
-		}
-	}
-
-
-	// Get the chem_comp table first, because this will help us
-	// look out for extraneous atoms common in CIF entries -- extra nitrogen H
-	// and OH terminus on C
+	// Pick up if we need/want to treat this as a polymeric type
+	bool is_peptide_linking = false;
+	bool is_nucleic_linking = false;
 	gemmi::cif::Table chem_comp = block.find( "_chem_comp.", {"type"} );
 	if ( chem_comp.size() > 0 ) {
 		std::string type = as_string(chem_comp[0][0]);
-		if ( type == "L-PEPTIDE LINKING" && is_peptide_linking ) {
+		if ( type == "L-PEPTIDE LINKING" ) {
 			TR.Debug << "Found L-peptide RT" << std::endl;// named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "PROTEIN POLYMER L_AA" );
 			is_peptide_linking = true;
 			is_nucleic_linking = false;
-		} else if ( type == "D-PEPTIDE LINKING" && is_peptide_linking ) {
+		} else if ( type == "D-PEPTIDE LINKING" ) {
 			TR.Debug << "Found D-peptide RT" << std::endl;//named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "PROTEIN POLYMER D_AA" );
 			is_peptide_linking = true;
 			is_nucleic_linking = false;
-		} else if ( type == "RNA LINKING" && is_nucleic_linking ) {
+		} else if ( type == "RNA LINKING" ) {
 			TR.Debug << "Found D-RNA RT" << std::endl;//named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "RNA POLYMER D_RNA" );
 			is_peptide_linking = false;
 			is_nucleic_linking = true;
-		} else if ( type == "L-RNA LINKING" && is_nucleic_linking ) {
+		} else if ( type == "L-RNA LINKING" ) {
 			TR.Debug << "Found L-RNA RT" << std::endl;//named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "RNA POLYMER L_RNA" );
 			is_peptide_linking = false;
 			is_nucleic_linking = true;
-		}  else if ( type == "DNA LINKING" && is_nucleic_linking ) {
+		}  else if ( type == "DNA LINKING" ) {
 			TR.Debug << "Found D-DNA RT" << std::endl;//named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "DNA POLYMER" );
 			is_peptide_linking = false;
 			is_nucleic_linking = true;
-		} else if ( type == "L-DNA LINKING" && is_nucleic_linking ) {
+		} else if ( type == "L-DNA LINKING" ) {
 			TR.Debug << "Found L-DNA RT" << std::endl;//named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "DNA POLYMER" );
 			is_peptide_linking = false;
@@ -243,153 +181,6 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 		} else {
 			is_peptide_linking = false;
 			is_nucleic_linking = false;
-		}
-	}
-
-	// Sometimes OP3/O3P is used for non-term-deletable phosphate oxygens. (THX)
-	//bool interesting_upper_behavior = false;
-
-	utility::vector1< std::string > O3P_connected;
-
-	// Before we actually LOOK at the atoms (or bonds) for real, we need to know
-	// what atoms are bonded to the polymeric termini or to to-be-deleted
-	// atoms -- so we can ignore them too as appropriate
-	utility::vector1< std::string > possible_atoms_to_skip;
-	if ( is_peptide_linking ) {
-		gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2"} );
-		for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
-			std::string source = as_string( bond_comp[ii][0] ); //atom 1
-			std::string target = as_string( bond_comp[ii][1] ); //atom 2
-
-			if ( source == rename_to_C ) source = "C";
-			if ( target == rename_to_C ) target = "C";
-
-			// Could imagine getting 'all Hs' by finding, instead, the
-			// names that match H[number] -- but why not wait, for now.
-			if ( source == "OXT" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to OXT " << std::endl;
-				possible_atoms_to_skip.push_back( target );
-			}
-			if ( target == "OXT" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to OXT " << std::endl;
-				possible_atoms_to_skip.push_back( source );
-			}
-			if ( source == "N" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to N " << std::endl;
-				possible_atoms_to_skip.push_back( target );
-			}
-			if ( target == "N" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to N " << std::endl;
-				possible_atoms_to_skip.push_back( source );
-			}
-		}
-	} else if ( is_nucleic_linking ) {
-		gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2"} );
-		for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
-			std::string source = as_string( bond_comp[ii][0] ); //atom 1
-			std::string target = as_string( bond_comp[ii][1] ); //atom 2
-
-			if ( source == "P" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  P" << std::endl;
-				possible_atoms_to_skip.push_back( target );
-			}
-			if ( target == "P" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  P" << std::endl;
-				possible_atoms_to_skip.push_back( source );
-			}
-
-			if ( source == "O3'" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  O3'" << std::endl;
-				possible_atoms_to_skip.push_back( target );
-			}
-			if ( target == "O3'" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  O3'" << std::endl;
-				possible_atoms_to_skip.push_back( source );
-			}
-
-			if ( source == "OP3" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  OP3" << std::endl;
-				possible_atoms_to_skip.push_back( target );
-				O3P_connected.push_back( target );
-			}
-			if ( target == "OP3" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  OP3" << std::endl;
-				possible_atoms_to_skip.push_back( source );
-				O3P_connected.push_back( source );
-			}
-			if ( source == "O3P" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  O3P" << std::endl;
-				possible_atoms_to_skip.push_back( target );
-				O3P_connected.push_back( target );
-			}
-			if ( target == "O3P" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  O3P" << std::endl;
-				possible_atoms_to_skip.push_back( source );
-				O3P_connected.push_back( source );
-			}
-			if ( source == "OP2" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  OP2" << std::endl;
-				possible_atoms_to_skip.push_back( target );
-			}
-			if ( target == "OP2" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  OP2" << std::endl;
-				possible_atoms_to_skip.push_back( source );
-			}
-			if ( target == "O2P" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  O2P" << std::endl;
-				possible_atoms_to_skip.push_back( source );
-			}
-			if ( source == "O2P" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  O2P" << std::endl;
-				possible_atoms_to_skip.push_back( target );
-			}
-			if ( source == "OP1" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  OP1" << std::endl;
-				possible_atoms_to_skip.push_back( target );
-			}
-			if ( target == "OP1" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  OP1" << std::endl;
-				possible_atoms_to_skip.push_back( source );
-			}
-			if ( source == "O1P" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  O1P" << std::endl;
-				possible_atoms_to_skip.push_back( target );
-			}
-			if ( target == "O1P" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  O1P" << std::endl;
-				possible_atoms_to_skip.push_back( source );
-			}
-		}
-	} else {
-		gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2"} );
-		for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
-			std::string source = as_string( bond_comp[ii][0] ); //atom 1
-			std::string target = as_string( bond_comp[ii][1] ); //atom 2
-
-			if ( source == "O2A" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to O2A " << std::endl;
-				possible_atoms_to_skip.push_back( target );
-			}
-			if ( target == "O2A" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to O2A " << std::endl;
-				possible_atoms_to_skip.push_back( source );
-			}
-			if ( source == "O2B" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to O2B " << std::endl;
-				possible_atoms_to_skip.push_back( target );
-			}
-			if ( target == "O2B" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to O2B " << std::endl;
-				possible_atoms_to_skip.push_back( source );
-			}
-			if ( source == "O3B" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to O3B " << std::endl;
-				possible_atoms_to_skip.push_back( target );
-			}
-			if ( target == "O3B" ) {
-				TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to O3B " << std::endl;
-				possible_atoms_to_skip.push_back( source );
-			}
 		}
 	}
 
@@ -408,24 +199,10 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 		utility_exit_with_message( "No usable coordinates for mmCIF file for " + block.name );
 	}
 
-	// Loop over atom block and check to see if any heavyatoms are bound to OP3/O3P
-	bool interesting_pendant = false;
-	for ( Size ii = 0; ii < atom_comp.size(); ++ii ) {
-		std::string atom_name = as_string( atom_comp[ ii ][ atom_name_id ] );
-		std::string element = as_string( atom_comp[ii][ type_symbol ] );
-		if ( O3P_connected.contains( atom_name ) ) {
-			if ( element != "H" && atom_name != "P" ) {
-				TR.Trace << "There is an OP3-bonded heavyatom: " << atom_name << std::endl;
-				interesting_pendant = true;
-				break;
-			}
-		}
-	}
+	std::set< std::string > atoms_to_ignore = get_atoms_to_ignore(block, atom_name_id, name_to_element_map, is_peptide_linking, is_nucleic_linking );
 
-	utility::vector1< std::string > actual_atoms_to_skip;
 	//start atom block
 	Size index = 1;
-	TR.Trace << "possible_atoms_to_skip: " << possible_atoms_to_skip << std::endl;
 	for ( Size ii = 0; ii < atom_comp.size(); ++ii ) {
 		sdf::MolFileIOAtomOP atom( new sdf::MolFileIOAtom());
 		//atom id is whatever the number we are on +1
@@ -437,11 +214,10 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 		//set atom name
 		std::string atom_name = as_string( atom_comp[ ii][ atom_name_id ] );
 		TR.Trace << "Examining atom entry " << atom_name << std::endl;
-		if ( is_peptide_linking && atom_name == "OXT" ) continue;
-		if ( is_nucleic_linking && !interesting_pendant && atom_name == "OP3" ) continue;
-		if ( is_nucleic_linking && !interesting_pendant && atom_name == "O3P" ) continue;
-
-		if ( atom_name == rename_to_C ) atom_name = "C";
+		if ( atoms_to_ignore.count( atom_name ) ) {
+			TR.Trace << "Ignoring." << std::endl;
+			continue;
+		}
 
 		atom->name( atom_name );
 
@@ -449,14 +225,6 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 		atom_name_to_id[ atom_name ] = index;
 		//set element name
 		atom->element( as_string( atom_comp[ii][type_symbol] ) );
-
-		TR.Trace << "Type symbol for atom  " << atom_name << " is " <<  as_string(atom_comp[ii][type_symbol]) << std::endl;
-		if ( possible_atoms_to_skip.contains( atom_name ) && atom->element() == "H" ) {
-			actual_atoms_to_skip.push_back( atom_name );
-			continue;
-		}
-
-		TR.Trace << "Keeping atom entry " << atom_name << std::endl;
 
 		//get the xyz cordinates
 		core::Real x = as_number( atom_comp[ii][ x_id ] );
@@ -476,13 +244,11 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 		index++;
 	}
 
-	TR.Trace << "actual_atoms_to_skip: " << actual_atoms_to_skip << std::endl;
-
-	// pdb_BVP messes with this logic because it names H3' "H1" and HO3' H3'.
-	// So we need to place an additional requirement for H skipping.
-	// This is actually a very hard problem.
-
 	gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2","value_order"} );
+	if ( bond_comp.size() == 0 && atom_comp.size() > 1 ) {
+		TR.Error << "Cannot parse CIF file. No bond block (chem_comp_bond) found for multi-atom entry " << block.name << std::endl;
+	} // else one atom entry without bond block
+
 	for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
 		std::string source = as_string( bond_comp[ii][0] ); //atom 1
 		std::string target = as_string( bond_comp[ii][1] ); //atom 2
@@ -490,17 +256,11 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 
 		sdf::MolFileIOBondOP bond( new sdf::MolFileIOBond() );
 
-		if ( source == rename_to_C ) source = "C";
-		if ( target == rename_to_C ) target = "C";
-
 		TR.Trace << "Examining bond entry " << source << " " << target << std::endl;
 
-		if ( is_peptide_linking && source == "OXT" ) continue;
-		if ( is_peptide_linking && target == "OXT" ) continue;
-		if ( is_nucleic_linking && !interesting_pendant && ( source == "OP3" || source == "O3P" ) ) continue;
-		if ( is_nucleic_linking && !interesting_pendant && ( target == "OP3" || target == "O3P" ) ) continue;
-		if ( actual_atoms_to_skip.contains( source ) ) continue;
-		if ( actual_atoms_to_skip.contains( target ) ) continue;
+		if ( atoms_to_ignore.count(source) > 0 || atoms_to_ignore.count(target) > 0 ) {
+			continue;
+		}
 
 		TR.Trace << "Keeping bond entry " << source << " " << target << std::endl;
 
@@ -511,9 +271,6 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 
 		molecule->add_bond( bond);
 	}
-	if ( bond_comp.size() == 0 && atom_comp.size() > 1 ) {
-		TR.Error << "Cannot parse CIF file. No bond block (chem_comp_bond) found for multi-atom entry " << block.name << std::endl;
-	} // else one atom entry without bond block
 
 	// Note, for polymer generalization we may want to find the block here that
 	// describes polymeric connections, polymer type, et cetera -- and use it
@@ -548,6 +305,127 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 	return molecule;
 }
 
+std::set< std::string >
+mmCIFParser::get_atoms_to_ignore(
+	gemmi::cif::Block& block,
+	int atom_name_id,
+	std::map< std::string, std::string > const & name_to_element_map,
+	bool is_peptide_linking,
+	bool is_nucleic_linking
+) {
+	using gemmi::cif::as_string; // Takes care of unquoting, use even if it's a simple string (e.g. atom names can have odd characters)
+
+	std::set< std::string > atoms_to_ignore;
+	if ( !is_peptide_linking && !is_nucleic_linking) {
+		// Ligands keep all the atoms
+		return atoms_to_ignore;
+	}
+
+	gemmi::cif::Table atom_comp = block.find_mmcif_category("_chem_comp_atom");
+	int leaving_flag = find_gemmi_column(atom_comp,"pdbx_leaving_atom_flag");
+	if ( leaving_flag >= 0 ) {
+		for ( Size ii = 0; ii < atom_comp.size(); ++ii ) {
+			gemmi::cif::Table::Row row = atom_comp[ii];
+
+			if ( as_string(row[leaving_flag]) == "Y" ) {
+				std::string atom_name = as_string(row[atom_name_id]);
+				TR.Trace << "Ignoring " << atom_name << " as it's flagged as a leaving atom." << std::endl;
+				atoms_to_ignore.insert( atom_name );
+			}
+		}
+		// If the annotation is valid, trust it
+		return atoms_to_ignore;
+	}
+
+	////////////////////////////////////////
+	// Now we're into fall-back heuristics
+
+	gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2"} );
+
+	if ( is_peptide_linking ) {
+		TR << "Using fall-back heuristics for ignored peptide atoms" << std::endl;
+		std::set< std::string > no_hydro = {"OXT", "N" };
+		core::Size n_heavy_to_OXT = 0;
+
+		for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
+			std::string source = as_string( bond_comp[ii][0] ); //atom 1
+			std::string target = as_string( bond_comp[ii][1] ); //atom 2
+
+			if ( no_hydro.count(source) > 0  ) {
+				if ( name_to_element_map.at(target) == "H" ) {
+					TR.Trace << "Ignoring hydrogen " << target << " due to its bond to " << source << std::endl;
+					atoms_to_ignore.insert( target );
+				}
+			}
+			if ( no_hydro.count(target) > 0  ) {
+				if ( name_to_element_map.at(source) == "H" ) {
+					TR.Trace << "Ignoring hydrogen " << source << " due to its bond to " << target << std::endl;
+					atoms_to_ignore.insert( source );
+				}
+			}
+
+			if ( source == "OXT" ) {
+				if ( name_to_element_map.at(target) != "H" ) {
+					n_heavy_to_OXT += 1;
+				}
+			} else if ( target == "OP3" || target == "O3P" ) {
+				if ( name_to_element_map.at(source) != "H" ) {
+					n_heavy_to_OXT += 1;
+				}
+			}
+		}
+
+		if ( n_heavy_to_OXT < 2	) {
+			atoms_to_ignore.insert( "OXT" );
+		} else {
+			TR.Trace << "Not ignoring OXT, as it contains a pendant group." << std::endl;
+		}
+	}
+
+	if ( is_nucleic_linking ) {
+		TR << "Using fall-back heuristics for ignored nucleotide atoms" << std::endl;
+		std::set< std::string > no_hydro = {"P", "O3'", "OP3", "O3P", "OP2", "O2P", "OP1", "O1P"  };
+
+		core::Size n_heavy_to_O3P = 0;
+
+		for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
+			std::string source = as_string( bond_comp[ii][0] ); //atom 1
+			std::string target = as_string( bond_comp[ii][1] ); //atom 2
+
+			if ( no_hydro.count(source) > 0 ) {
+				if ( name_to_element_map.at(target) == "H" ) {
+					TR.Trace << "Ignoring hydrogen " << target << " due to its bond to " << source << std::endl;
+					atoms_to_ignore.insert( target );
+				}
+			}
+			if ( no_hydro.count(target) > 0 ) {
+				if ( name_to_element_map.at(source) == "H" ) {
+					TR.Trace << "Ignoring hydrogen " << target << " due to its bond to " << target << std::endl;
+					atoms_to_ignore.insert( source );
+				}
+			}
+
+			if ( source == "OP3" || source == "O3P" ) {
+				if ( name_to_element_map.at(target) != "H" ) {
+					n_heavy_to_O3P += 1;
+				}
+			} else if ( target == "OP3" || target == "O3P" ) {
+				if ( name_to_element_map.at(source) != "H" ) {
+					n_heavy_to_O3P += 1;
+				}
+			}
+		}
+
+		if ( n_heavy_to_O3P < 2	) {
+			atoms_to_ignore.insert( "OP3" );
+			atoms_to_ignore.insert( "O3P" );
+		} else {
+			TR.Trace << "Not ignoring OP3/O3P, as it contains a pendant group." << std::endl;
+		}
+	}
+
+	return atoms_to_ignore;
+}
 
 }
 }

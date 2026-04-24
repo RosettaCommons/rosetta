@@ -37,11 +37,13 @@
 
 #include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
-#include <map>
 #include <core/types.hh>
 #include <core/chemical/sdf/MolFileIOData.fwd.hh>
 
 #include <utility/gemmi_util.fwd.hh>
+
+#include <map>
+#include <set>
 
 namespace core {
 namespace chemical {
@@ -71,6 +73,16 @@ protected:
 	/// return a MolFileIOMolecule
 	sdf::MolFileIOMoleculeOP
 	get_molfile_molecule(gemmi::cif::Block& block);
+
+	/// @brief Get atoms which should be ignored
+	std::set< std::string >
+	get_atoms_to_ignore(
+		gemmi::cif::Block& block,
+		int atom_name_id,
+		std::map< std::string, std::string > const & name_to_element_map,
+		bool is_peptide_linking,
+		bool is_nucleic_linking
+	);
 
 private:
 	/// @brief When you are lazy, create a map of strings and sizes to convert the string
