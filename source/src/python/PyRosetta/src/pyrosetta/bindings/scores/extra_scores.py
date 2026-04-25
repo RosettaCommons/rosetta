@@ -75,6 +75,16 @@ class ExtraScoresAccessorBase(PoseCacheAccessorBase, MutableMapping):
             )
         clearPoseExtraScore(self.pose, key)
 
+    def items(self):
+        data = self.all
+        for k, v in data.items():
+            yield k, self.maybe_decode(v)
+
+    def values(self):
+        data = self.all
+        for v in data.values():
+            yield self.maybe_decode(v)
+
     def clear(self):
         for key in self.all.keys():
             clearPoseExtraScore(self.pose, key)
@@ -147,11 +157,11 @@ class ExtraScoresAccessor(ExtraScoresAccessorBase):
             2. `ScoreMap.get_arbitrary_score_data_from_pose(pose)`
             3. `ScoreMap.get_arbitrary_string_data_from_pose(pose)`
         """
-        extra_string_scores = self.string
-        extra_float_scores = self.real
+        extra_string_scores = dict(self.string.all)
+        extra_float_scores = dict(self.real.all)
 
-        for k in extra_float_scores.keys():
-            if k in extra_string_scores.keys():
+        for k in extra_float_scores:
+            if k in extra_string_scores:
                 self._clobber_warning(
                     "Arbitrary extra float score key is clobbering arbitrary extra string score key: '{0}'".format(k)
                 )

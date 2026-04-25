@@ -811,6 +811,20 @@ class TestPoseCacheAccessor(unittest.TestCase):
             self.assertDictEqual(dict(data), {})
         self.assertFalse(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
 
+        # Test `Pose.cache` bulk setters
+        pose = pyrosetta.io.pose_from_sequence("EMPTY/DATA/CACHE")
+        N = 10000
+        pose.cache.metrics.real.set_mappable({f"real_{i}": float(i) for i in range(N)})
+        pose.cache.metrics.string.set_mappable({f"string_{i}": str(i) for i in range(N)})
+        self.assertEqual(len(dict(pose.cache.metrics.items())), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(dict(pose.cache.items())), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(list(pose.cache.metrics.values())), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(list(pose.cache.values())), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(pose.cache.metrics.all), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(pose.cache.all), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(list(pose.cache.metrics)), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(list(pose.cache)), N * 2, msg="Bulk `Pose.cache` setter failed.")
+
 class TestPoseResidueLabelAccessor(unittest.TestCase):
 
     def test_labels(self):

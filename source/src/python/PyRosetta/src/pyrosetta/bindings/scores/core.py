@@ -43,10 +43,10 @@ class PoseCacheAccessor(PoseCacheAccessorBase, MutableMapping):
     arbitrary python objects to/from base64-encoded pickled byte streams, and stores/retrieves `float` and `str`
     objects without serialization.
 
-    **Warning**: ONLY LOAD DATA YOU TRUST. The pose.cache dictionary uses the pickle module to serialze and deserialize arbitrary scores in the Pose object. 
-    When depickling (deserializing) is performed arbitrary code can be executed, learn more `here <https://docs.python.org/3/library/pickle.html>`_.
-    The pose.cache object is only stored in memory, so this is only a risk if these objects are sent to a user in memory over a network
-    such as a socket, queue, shared cache, etc. If you need to retrieve a pose.cache dictionary this way please make sure it is from a trusted source.
+    **Warning**: ONLY LOAD DATA YOU TRUST. The `Pose.cache` dictionary uses the `pickle` module to serialze and deserialize arbitrary scores in the `Pose` object.
+    When depickling (deserializing) is performed, arbitrary code can be executed. Learn more `here <https://docs.python.org/3/library/pickle.html>`_.
+    The `Pose.cache` object is only stored in memory, so this is only a risk if these objects are sent to a user in memory over a network
+    such as a socket, queue, shared cache, etc. If you need to retrieve a `Pose.cache` dictionary this way, please make sure it is from a trusted source.
 
     Examples:
 
@@ -220,21 +220,21 @@ class PoseCacheAccessor(PoseCacheAccessorBase, MutableMapping):
             1. SimpleMetric data
             2. Arbitrary extra string scores
         """
-        extra = self.extra
-        metrics = self.metrics
-        energies = self.energies
+        extra = dict(self.extra.all)
+        metrics = dict(self.metrics.all)
+        energies = dict(self.energies.all)
 
-        for k in extra.keys():
-            if k in metrics.keys():
+        for k in extra:
+            if k in metrics:
                 self._clobber_warning(
                     "SimpleMetrics data key is clobbering arbitrary extra scores data key: '{0}'".format(k)
                 )
-            if k in energies.keys():
+            if k in energies:
                 self._clobber_warning(
                     "Active total energies key is clobbering arbitrary extra scores data key: '{0}'".format(k)
                 )
-        for k in metrics.keys():
-            if k in energies.keys():
+        for k in metrics:
+            if k in energies:
                 self._clobber_warning(
                     "Active total energies key is clobbering SimpleMetrics data key: '{0}'".format(k)
                 )
@@ -277,8 +277,18 @@ class PoseCacheAccessor(PoseCacheAccessorBase, MutableMapping):
         else:
             raise KeyError(key)
 
+    def items(self):
+        data = self.all
+        for k, v in data.items():
+            yield k, v
+
+    def values(self):
+        data = self.all
+        for v in data.values():
+            yield v
+
     def clear(self):
         """Clear pose energies, extra scores, and SimpleMetric data."""
-        self.pose.energies().clear()
+        self.energies.clear()
         clearPoseExtraScores(self.pose)
         clear_sm_data(self.pose)

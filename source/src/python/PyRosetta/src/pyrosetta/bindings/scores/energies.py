@@ -47,6 +47,16 @@ class EnergiesAccessor(PoseCacheAccessorBase, MutableMapping):
             "Cannot delete an item from pose energies. Consider using `pose.energies.clear()`."
         )
 
+    def items(self):
+        data = self.all
+        for k, v in data.items():
+            yield k, v
+
+    def values(self):
+        data = self.all
+        for v in data.values():
+            yield v
+
     def clear(self):
         """Clear pose energies."""
         self.pose.energies().clear()
