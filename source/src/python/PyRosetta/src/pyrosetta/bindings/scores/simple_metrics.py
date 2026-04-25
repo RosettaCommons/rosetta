@@ -31,9 +31,6 @@ class SimpleMetricDataAccessorBase(PoseCacheAccessorBase, MutableMapping):
     def __init__(self, pose):
         super().__init__(pose)
 
-    def __getitem__(self, key):
-        return self.maybe_decode(self.all[key])
-
     def __setitem__(self, key, value):
         self._validate_set(key)
         if isinstance(value, float):
@@ -92,16 +89,6 @@ class SimpleMetricDataAccessorBase(PoseCacheAccessorBase, MutableMapping):
             {'my_metric_1': {'ALA': 0.0125, 'ASN': 0.0, ...}, 'my_metric_2': ...}
         """
         return self._format_metric(raw_data, as_dict=True)
-
-    def items(self):
-        data = self.all
-        for k, v in data.items():
-            yield k, self.maybe_decode(v)
-
-    def values(self):
-        data = self.all
-        for v in data.values():
-            yield self.maybe_decode(v)
 
     def clear(self):
         self._maybe_delete_keys_from_sm_data(

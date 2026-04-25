@@ -34,9 +34,6 @@ class EnergiesAccessor(PoseCacheAccessorBase, MutableMapping):
             dict(self.pose.energies().active_total_energies().items())
         )
 
-    def __getitem__(self, key):
-        return self.all[key]
-
     def __setitem__(self, key, value):
         raise NotImplementedError(
             "Cannot set an item to pose energies. Consider scoring the pose with a score function."
@@ -46,16 +43,6 @@ class EnergiesAccessor(PoseCacheAccessorBase, MutableMapping):
         raise NotImplementedError(
             "Cannot delete an item from pose energies. Consider using `pose.energies.clear()`."
         )
-
-    def items(self):
-        data = self.all
-        for k, v in data.items():
-            yield k, v
-
-    def values(self):
-        data = self.all
-        for v in data.values():
-            yield v
 
     def clear(self):
         """Clear pose energies."""

@@ -41,6 +41,14 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
         metric.set_value(self.maybe_encode(value))
         metric.apply(out_label=key, pose=self.pose, override_existing_data=True)
 
+    def fast_items(self):
+        for k, v in self.all.items():
+            yield k, self.maybe_decode(v)
+
+    def fast_values(self):
+        for v in self.all.values():
+            yield self.maybe_decode(v)
+
     @property
     def _reserved_custom_metric_keys(self):
         """Reserved scoretype keys for SimpleMetrics that cannot be set or deleted."""
@@ -74,7 +82,7 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
 
     def _get_sm_data_dict(self, attributes):
         return {
-            _attr: dict(getattr(self.pose.cache.metrics, _attr).all)
+            _attr: dict(getattr(self.pose.cache.metrics, _attr).fast_items())
             for _attr in attributes
         }
 
@@ -190,6 +198,10 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
         if key in self._reserved:
             raise KeyError("Cannot delete a key with a reserved name: {0}".format(key))
 
+    def __getitem__(self, key):
+        """Get a value from a key in the `Pose.cache` dictionary."""
+        return self.maybe_decode(self.all[key])
+
     def __len__(self):
         return len(self.all)
 
@@ -197,8 +209,8 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
         return iter(self.all)
 
     def __str__(self):
-        return str(dict(self))
+        return str(dict(self.fast_items()))
 
     def _repr_pretty_(self, p, cycle):
         """IPython-display representation."""
-        p.pretty(dict(self))
+        p.pretty(dict(self.fast_items()))

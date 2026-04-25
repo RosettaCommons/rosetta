@@ -41,9 +41,6 @@ class ExtraScoresAccessorBase(PoseCacheAccessorBase, MutableMapping):
     def __init__(self, pose):
         super().__init__(pose)
 
-    def __getitem__(self, key):
-        return self.maybe_decode(self.all[key])
-
     def __setitem__(self, key, value):
         self._validate_set(key)
         value = self.maybe_encode(value)
@@ -74,16 +71,6 @@ class ExtraScoresAccessorBase(PoseCacheAccessorBase, MutableMapping):
                 "Key is not in arbitrary extra string scores or arbitrary extra float scores: {0}".format(key)
             )
         clearPoseExtraScore(self.pose, key)
-
-    def items(self):
-        data = self.all
-        for k, v in data.items():
-            yield k, self.maybe_decode(v)
-
-    def values(self):
-        data = self.all
-        for v in data.values():
-            yield self.maybe_decode(v)
 
     def clear(self):
         for key in self.all.keys():

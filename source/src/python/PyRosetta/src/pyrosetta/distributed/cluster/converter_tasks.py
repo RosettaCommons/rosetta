@@ -818,7 +818,7 @@ def _merge_and_update_scores(
     input files you trust. Learn more about the `pickle` module and its security
     `here <https://docs.python.org/3/library/pickle.html>`_.
     """
-    _new_scores_dict = dict(update_scores(packed).pose.cache.items())
+    _new_scores_dict = dict(update_scores(packed).pose.cache.fast_items())
     _merged_scores_dict = toolz.dicttoolz.merge(_reserved_scores_dict, _new_scores_dict)
     _reserved_scoretypes = packed.pose.cache._reserved
     _resolved_scores_dict = toolz.dicttoolz.keyfilter(
