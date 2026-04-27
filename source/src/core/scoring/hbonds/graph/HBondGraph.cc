@@ -25,9 +25,6 @@ namespace scoring {
 namespace hbonds {
 namespace graph {
 
-
-
-
 //dummy! please do not call these
 HBondNode::HBondNode() :
 	utility::graph::LowMemNode( 0 ),

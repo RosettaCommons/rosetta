@@ -48,7 +48,6 @@ using RotamerIDSize = utility::StrongSize< struct RotamerIDSize_ >;
 //using MResIDSize = utility::NamedType< core::Size, struct MResIDSize_ >;
 //using RotamerIDSize = utility::NamedType< core::Size, struct RotamerIDSize_ >;
 
-
 ///@brief Each HBondNode represents a rotamer from the RotamerSets object
 class HBondNode : public utility::graph::LowMemNode {
 
