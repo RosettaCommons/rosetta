@@ -1931,8 +1931,9 @@ MutableResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples )
 	utility::vector1< core::Size > proton_chis; // Not the member variable as set_proton_chi modifies that.
 
 	if ( is_protein() ) {
-
 		utility::vector1<VDs> true_chis; // filtered and ordered from found_chis.
+		// We'll pull off chis from found_chis, as we push them to true_chis.
+
 		// Note that this algorithm to get down to the 'real' chis is pretty
 		// gross, but when N is < 10 most reasonable big-Os are fine, right?
 
@@ -1941,8 +1942,9 @@ MutableResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples )
 		for ( VDs const & chi : found_chis ) {
 			TR.Trace << "looking at found chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
 			if ( atom_name( chi[ 1 ] ) == "N" && atom_name( chi[ 3 ] ) != "C" ) {
+				TR.Trace << "Selecting" << std::endl;
 				true_chis.push_back( chi );
-
+				found_chis.pop( chi ); // Modifying what we're iterating over, but that's okay as we're breaking immediately afterwards.
 				break;
 			}
 		}
@@ -1954,16 +1956,17 @@ MutableResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples )
 		std::string target_first_atom;
 		if ( true_chis.size() > 0 )  target_first_atom = atom_name( true_chis[ 1 ][ 2 ] );
 		while ( true ) {
-
 			// this extra loop is to future-proof a bit against branching: multiple
 			// chis per pass may start with the target_first_atom and therefore
 			// we don't want to update it right away.
 
 			std::string candidate_new_atom = target_first_atom;
-			for ( VDs const & found_chi : found_chis ) {
+			for ( VDs const & found_chi : utility::vector1<VDs>(found_chis) ) { // Make a copy so we can modify the original
 				TR.Trace << "looking at found chi: " << atom_name( found_chi[1] ) << " " << atom_name( found_chi[2] ) << " " << atom_name( found_chi[3] ) << " " << atom_name( found_chi[4] ) << std::endl;
 				if ( atom_name( found_chi[ 1 ] ) == target_first_atom ) {
+					TR.Trace << "Selecting" << std::endl;
 					true_chis.push_back( found_chi );
+					found_chis.pop( found_chi );
 					candidate_new_atom = atom_name( found_chi[ 2 ] );
 				}
 
