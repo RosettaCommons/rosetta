@@ -97,10 +97,8 @@ public: // Creation
 	}
 
 
-	/// @brief Copy constructor: deleted (streams are not copyable)
+	/// @brief Non-copyable: owns a file handle and decompression state that cannot be shared.
 	izstream( izstream const & ) = delete;
-
-	/// @brief Copy assignment: deleted (streams are not copyable)
 	izstream & operator =( izstream const & ) = delete;
 
 	/// @brief Destructor
