@@ -11,6 +11,7 @@ PyRosettaCluster reproducibility unit test suite using the `unittest` framework.
 __author__ = "Jason C. Klima"
 
 import glob
+import hashlib
 import itertools
 import os
 import pyrosetta
@@ -134,11 +135,11 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
             protocol_total_scores[protocol_number] = scorefxn(packed_pose.pose)
             protocol_n_res[protocol_number] = packed_pose.pose.size()
             protocol_sequence[protocol_number] = packed_pose.pose.sequence()
-            protocol_pose_hash[protocol_number] = hash(PackedPoseHasher(packed_pose, include_cache=False, include_comments=False).digest())
-            protocol_pose_hash_cache[protocol_number] = hash(PackedPoseHasher(packed_pose, include_cache=True, include_comments=False).digest())
-            protocol_pose_hash_cache_comments[protocol_number] = hash(PackedPoseHasher(packed_pose, include_cache=True, include_comments=True).digest())
+            protocol_pose_hash[protocol_number] = PackedPoseHasher(packed_pose, include_cache=False, include_comments=False).digest()
+            protocol_pose_hash_cache[protocol_number] = PackedPoseHasher(packed_pose, include_cache=True, include_comments=False).digest()
+            protocol_pose_hash_cache_comments[protocol_number] = PackedPoseHasher(packed_pose, include_cache=True, include_comments=True).digest()
             protocol_seeds[protocol_number] = pyrosetta.rosetta.numeric.random.rg().get_seed()
-            protocol_random_states[protocol_number] = hash(str(random.getstate()))
+            protocol_random_states[protocol_number] = hashlib.sha256(str(random.getstate()).encode("utf-8")).hexdigest()
             # Update scores
             packed_pose = packed_pose.update_scores(
                 protocol_scorefxn_names=protocol_scorefxn_names,
@@ -171,7 +172,9 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
                         hash_data.append(getattr(xyz, axis))
             if verbose:
                 print(f"Protocol number {protocol_number} Pose hash data:\n{hash_data}\n")
-                print(f"Protocol number {protocol_number} PDB string:\n{io.to_pdbstring(pose)}\n")
+                digest = packed_pose.pose.cache["protocol_pose_hash"][protocol_number]
+                print(f"Protocol number {protocol_number} Pose digest:\n{digest}\n")
+                print(f"Protocol number {protocol_number} Pose hash:\n{hash(digest)}\n")
 
             # Maybe update task dictionary for next PyRosetta protocol, which gets validated and kept
             if protocol_number + 1 < len(kwargs["protocol_options"]):
