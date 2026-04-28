@@ -445,13 +445,63 @@ MolFileIOMolecule::handle_polymeric_assignments(MutableResidueTypeOP restype) {
 
 	// Some RTs -- DOC is an example -- is upper terminal and lacks upper
 	if ( lower_atom_.empty() || upper_atom_.empty() ) {
-		TR.Warning << "Missing connection point for nominally polymeric residue. LOWER: `" << lower_atom_ << "` UPPER: `" << upper_atom_ << "`" << std::endl;
+		TR.Warning << "Missing connection point for nominally polymeric residue" << name_ << " LOWER: `" << lower_atom_ << "` UPPER: `" << upper_atom_ << "`" << std::endl;
 	}
 	if ( !lower_atom_.empty() ) {
 		restype->set_lower_connect_atom( lower_atom_ );
 	}
 	if ( !upper_atom_.empty() ) {
 		restype->set_upper_connect_atom( upper_atom_ );
+	}
+
+	utility::vector1< VD > mainchain_vec = mainchain_path(*restype);
+	if ( !mainchain_vec.empty() ) {
+		restype->set_mainchain_atoms( mainchain_vec );
+	}
+	if ( mainchain_vec.size() < 3 ) {
+		// We're either missing an upper/lower (which results in an empty vector), or we're too short of a backbone.
+		// Attempt to find usable atoms such that the ICOOR code below works.
+		mainchain_vec.resize(6); // 1-3 is N-term entries, 4-6 is C-term. Not 100% correct from an absolute perspective, but works in the context of this function.
+		if ( restype->lower_connect_id() != 0 ) {
+			mainchain_vec[1] = restype->lower_connect_atom();
+			mainchain_vec[2] = restype->atom_base( mainchain_vec[1] );
+			mainchain_vec[3] = restype->atom_base( mainchain_vec[2] );
+
+			// Note this probably won't work, as the base is redundant
+			runtime_assert( mainchain_vec[1] != mainchain_vec[2] );
+			runtime_assert( mainchain_vec[3] != mainchain_vec[3] );
+			runtime_assert( mainchain_vec[1] != mainchain_vec[3] );
+
+			/// FOLLOWING FOR TEMPORARY TESTING PURPOSES ONLY
+			if ( restype->is_RNA() || restype->is_DNA() ) {
+				if ( restype->atom_name(mainchain_vec[2]) != "O5'" ) {
+					TR << "Found " << restype->atom_name(mainchain_vec[2]) << " instead of O5' for mainchain atom 2" << std::endl;
+				}
+				if ( restype->atom_name(mainchain_vec[3]) != "C5'" ) {
+					TR << "Found " << restype->atom_name(mainchain_vec[3]) << " instead of C5' for mainchain atom 3" << std::endl;
+				}
+			}
+		}
+		if ( restype->upper_connect_id() != 0 ) {
+			mainchain_vec[6] = restype->upper_connect_atom();
+			mainchain_vec[5] = restype->atom_base( restype->upper_connect_atom() );
+			mainchain_vec[4] = restype->atom_base( mainchain_vec[5] );
+
+			runtime_assert( mainchain_vec[6] != mainchain_vec[5] );
+			runtime_assert( mainchain_vec[5] != mainchain_vec[4] );
+			runtime_assert( mainchain_vec[6] != mainchain_vec[4] );
+
+			/// FOLLOWING FOR TEMPORARY TESTING PURPOSES ONLY
+			if ( restype->is_RNA() || restype->is_DNA() ) {
+				if ( restype->atom_name(mainchain_vec[5]) != "C3'" ) {
+					TR << "Found " << restype->atom_name(mainchain_vec[5]) << " instead of C3' for mainchain atom 5" << std::endl;
+				}
+				// Some residues are missing C4' (4JA)
+				if ( restype->atom_name(mainchain_vec[4]) != "C4'" && restype->atom_name(mainchain_vec[4]) != "C5'" ) {
+					TR << "Found " << restype->atom_name(mainchain_vec[3]) << " instead of C4'/C5' for mainchain atom 3" << std::endl;
+				}
+			}
+		}
 	}
 
 	if ( restype->is_protein() ) {
@@ -462,9 +512,6 @@ MolFileIOMolecule::handle_polymeric_assignments(MutableResidueTypeOP restype) {
 			restype->add_property( "PHOSPHONATE" );
 		}
 
-		// TODO: Figure out how to handle capping residues
-		auto mainchain_vec = mainchain_path( *restype );
-		runtime_assert_msg( mainchain_vec.size() >= 3, "Insufficient mainchain atoms for residue " + name_ );
 		if ( mainchain_vec.size() == 3 ) {
 			restype->add_property( "ALPHA_AA" );
 		} else if ( mainchain_vec.size() == 4 ) {
@@ -523,16 +570,20 @@ MolFileIOMolecule::handle_polymeric_assignments(MutableResidueTypeOP restype) {
 			std::string OP2_name = restype->has( "OP2" ) ? "OP2" :
 				( restype->has( "O2P" ) ? "O2P" :
 				( restype->has( "S2P" ) ? "S2P" : "N4'" ) );
-			restype->set_icoor( "LOWER", radians(chiral*-60.259000), radians(76.024713), 1.607355, "P", "O5'", "C5'" );
+			restype->set_icoor( "LOWER", radians(chiral*-60.259000), radians(76.024713), 1.607355,
+				restype->atom_name( mainchain_vec[1] ), // the lower atom itself
+				restype->atom_name( mainchain_vec[2] ),
+				restype->atom_name( mainchain_vec[3] ) );
 			restype->set_icoor( OP2_name, radians(chiral*-114.600417), radians(72.020306), 1.484470, "P", "O5'", "LOWER" );
 		} else {
 			TR.Debug << "Labeling nucleic residue " << restype->name() << " as lower terminus, due to lack of lower connect." << std::endl;
 			restype->add_property( "LOWER_TERMINUS" );
 		}
 		if ( restype->upper_connect_id() != 0 ) {
-			// If restype has C4', use; else skip to C4' (4JA)
-			std::string third_atom = restype->has( "C4'" ) ? "C4'" : "C5'";
-			restype->set_icoor( "UPPER", radians(chiral*-139.954848), radians(59.821530), 1.607226, upper_atom_, "C3'", "C4'" );
+			restype->set_icoor( "UPPER", radians(chiral*-139.954848), radians(59.821530), 1.607226,
+				restype->atom_name( mainchain_vec[mainchain_vec.size()] ), // the upper atom itself
+				restype->atom_name( mainchain_vec[mainchain_vec.size() - 1] ),
+				restype->atom_name( mainchain_vec[mainchain_vec.size() - 2] ) );
 		} else {
 			restype->add_property( "UPPER_TERMINUS" );
 			TR.Debug << "Labeling nucleic residue " << restype->name() << " as upper terminus, due to lack of lower connect." << std::endl;
