@@ -30,10 +30,9 @@ void Inline_File_Provider::init_static_inputs(){
 }
 
 void Inline_File_Provider::add_input_file( const std::string &filename, const std::string &contents ){
-	auto *newstream = new std::stringstream(contents);
 	std::string filtered_filename( standardise_filename( filename ) );
 	std::cout << "Creating inline input file: '" << filename << "' = (" << filtered_filename << ")" << std::endl;
-	input_files.emplace_back( filtered_filename, newstream );
+	input_files.emplace_back( filtered_filename, std::unique_ptr<std::stringstream>(new std::stringstream(contents)) );
 }
 
 void Inline_File_Provider::add_black_listed_file( const std::string &filename ){
@@ -45,7 +44,7 @@ class predicate_cmp_filename
 public:
 	explicit predicate_cmp_filename( std::string const & filename ): filename_(filename) {}
 
-	bool operator() ( std::pair < std::string, std::stringstream* > &a ) const
+	bool operator() ( std::pair < std::string, std::unique_ptr<std::stringstream> > &a ) const
 	{
 		return a.first == filename_;
 	}
@@ -60,7 +59,7 @@ void Inline_File_Provider::clear_input_files(){
 
 void Inline_File_Provider::remove_input_file( const std::string &filename ){
 
-	std::vector < std::pair < std::string, std::stringstream* > >::iterator found;
+	std::vector < std::pair < std::string, std::unique_ptr<std::stringstream> > >::iterator found;
 
 	predicate_cmp_filename pred(filename);
 
@@ -123,12 +122,10 @@ bool Inline_File_Provider::file_exists( const std::string& filename )
 
 bool Inline_File_Provider::get_ostream( const std::string& filename, std::ostream **the_stream )
 {
-	auto *newstream = new std::stringstream( );
-
 	std::string filtered_filename( standardise_filename( filename ) );
 	std::cout << "Creating inline output file: '" << filename << "' = (" << filtered_filename << ")" << std::endl;
-	output_files.emplace_back( filtered_filename, newstream );
-	(*the_stream) = newstream;
+	output_files.emplace_back( filtered_filename, std::unique_ptr<std::stringstream>(new std::stringstream()) );
+	(*the_stream) = output_files.back().second.get();
 	return true;
 }
 
@@ -187,7 +184,7 @@ bool Inline_File_Provider::get_istream( const std::string& filename, std::istrea
 	return false;
 }
 
-bool Inline_File_Provider::find_sstream( std::vector < std::pair < std::string, std::stringstream* > > &file_catalog, const std::string& filename, std::stringstream **the_stream ){
+bool Inline_File_Provider::find_sstream( std::vector < std::pair < std::string, std::unique_ptr<std::stringstream> > > &file_catalog, const std::string& filename, std::stringstream **the_stream ){
 	auto it = file_catalog.begin();
 	for ( ; it != file_catalog.end(); ++it ) {
 		if ( it->first == filename ) {
@@ -195,7 +192,7 @@ bool Inline_File_Provider::find_sstream( std::vector < std::pair < std::string, 
 		}
 	}
 	if ( it != file_catalog.end() ) {
-		(*the_stream) = it->second;
+		(*the_stream) = it->second.get();
 		return true;
 	}
 	return false;
