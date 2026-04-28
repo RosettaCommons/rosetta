@@ -84,6 +84,17 @@ protected:
 		bool is_nucleic_linking
 	);
 
+	void
+	annotate_polymeric_connections(
+		sdf::MolFileIOMolecule & molecule,
+		gemmi::cif::Block& block,
+		int atom_name_id,
+		std::map< std::string, std::string > const & name_to_element_map,
+		bool is_peptide_linking,
+		bool is_nucleic_linking
+	);
+
+
 private:
 	/// @brief When you are lazy, create a map of strings and sizes to convert the string
 	/// for bonds found in the mmCIF file to the sdf version

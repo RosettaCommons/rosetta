@@ -163,6 +163,19 @@ public:
 		return molecule_string_data_;
 	};
 
+	bool is_polymeric() const;
+	bool is_peptidic() const;
+	bool is_nucleic() const;
+
+	void set_lower_atom(std::string const & a ) { lower_atom_ = a; }
+	void set_upper_atom(std::string const & a ) { upper_atom_ = a; }
+
+	std::string const & get_lower_atom() const { return lower_atom_; }
+	std::string const & get_upper_atom() const { return upper_atom_; }
+
+	/// @brief Find a free atom index.
+	AtomIndex get_free_index() const;
+
 	/// @brief Generate data for potentially missing fields.
 	void normalize();
 
@@ -190,6 +203,18 @@ public:
 
 private:
 
+	/// @brief Helper function for convert_to_ResidueType -- determine connection points, if necessary.
+	void
+	determine_polymeric_connections();
+
+	/// @brief Helper function for convert_to_ResidueType -- Do polymeric assignments, if necessary.
+	void
+	handle_polymeric_assignments(MutableResidueTypeOP restype);
+
+	/// @brief Helper function for convert_to_ResidueType -- Do rotamer handling
+	void
+	handle_rotamers(MutableResidueTypeOP restype);
+
 	/// @brief From the str/str data in MolFile, additional information
 	/// Specifically, it's the overall atom and bond information.
 	void set_from_extra_data(MutableResidueType & restype, std::map< mioAD, core::chemical::VD > & restype_from_mio);
@@ -212,6 +237,10 @@ private:
 	std::map< AtomIndex, mioAD > index_atom_map_;
 	StrStrMap molecule_string_data_;
 	//StrRealMap molecule_real_data_;
+
+	std::string lower_atom_; // The atom connected to the LOWER connect, if not empty
+	std::string upper_atom_;
+
 };
 
 }

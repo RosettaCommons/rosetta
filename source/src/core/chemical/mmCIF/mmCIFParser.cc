@@ -148,6 +148,7 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 	gemmi::cif::Table chem_comp = block.find( "_chem_comp.", {"type"} );
 	if ( chem_comp.size() > 0 ) {
 		std::string type = as_string(chem_comp[0][0]);
+		// TODO: Need better handling of variants (e.g. 1ZN)
 		if ( type == "L-PEPTIDE LINKING" ) {
 			TR.Debug << "Found L-peptide RT" << std::endl;// named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "PROTEIN POLYMER L_AA" );
@@ -272,35 +273,8 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 		molecule->add_bond( bond);
 	}
 
-	// Note, for polymer generalization we may want to find the block here that
-	// describes polymeric connections, polymer type, et cetera -- and use it
-	// to add UPPER and LOWER entries. Otherwise, we may need/want to do so
-	// using molfile comments records... let's see, when we look at the parser,
-	// how possible that will be.
-
-	//ICOOR_INTERNAL    H   -180.000000   60.849998    1.010000   N     CA  LOWER
-	// Since we deleted ALL hydrogens attached to N, we should add back in an ideal
-	// one. We can't add its coordinates yet, though, since only the residue type
-	// knows where LOWER is. Hey, actually, LOWER needs to be assigned in the
-	// list too!
-	if ( is_peptide_linking && molecule->atom("H") == nullptr && atom_name_to_id[ "N" ] != 0 ) {
-		sdf::MolFileIOAtomOP H_atom( new sdf::MolFileIOAtom());
-		//atom id is whatever the number we are on +1, because we dont do 0 based index
-		H_atom->index( index );
-		H_atom->name( "H" );
-		atom_name_to_id[ "H" ] = index;
-		H_atom->element( "H" );
-		// faked xyz cordinates
-		H_atom->position( core::Vector( 0, 0, 0 ) );
-		H_atom->formal_charge( 0 );
-		molecule->add_atom( H_atom );
-
-		sdf::MolFileIOBondOP H_bond( new sdf::MolFileIOBond() );
-		H_bond->atom1( atom_name_to_id[ "H" ] );
-		H_bond->atom2( atom_name_to_id[ "N" ] );
-		H_bond->sdf_type( 1 ); //bond order
-		molecule->add_bond( H_bond );
-	}
+	annotate_polymeric_connections(*molecule, block, atom_name_id, name_to_element_map, is_peptide_linking, is_nucleic_linking);
+	TR.Debug << "LOWER: `" << molecule->get_lower_atom() << "` UPPER: `" << molecule->get_upper_atom() << "`" << std::endl;
 
 	return molecule;
 }
@@ -426,6 +400,267 @@ mmCIFParser::get_atoms_to_ignore(
 
 	return atoms_to_ignore;
 }
+
+/// Utilities for annotate_polymeric_connections()
+
+template< class C >
+utility::vector1< std::string >
+find_elements( C const & container, std::string const & elem, std::map< std::string, std::string > const & name_to_element_map ) {
+	utility::vector1< std::string > found;
+	for ( std::string const & atm: container ) {
+		if ( name_to_element_map.at(atm) == elem ) {
+			found.push_back( atm );
+		}
+	}
+	return found;
+}
+
+template< class C >
+utility::vector1< std::string >
+find_heavy( C const & container, std::map< std::string, std::string > const & name_to_element_map ) {
+	utility::vector1< std::string > found;
+	for ( std::string const & atm: container ) {
+		if ( name_to_element_map.at(atm) != "H" ) {
+			found.push_back( atm );
+		}
+	}
+	return found;
+}
+
+utility::vector1< std::string >
+get_attached_atoms( std::string const & atm, gemmi::cif::Block& block ) {
+	utility::vector1< std::string > found;
+	gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2"} );
+	for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
+		std::string source = gemmi::cif::as_string( bond_comp[ii][0] ); //atom 1
+		std::string target = gemmi::cif::as_string( bond_comp[ii][1] ); //atom 2
+		if ( source == atm ) {
+			found.push_back( target );
+		}
+		if ( target == atm ) {
+			found.push_back( source );
+		}
+	}
+	return found;
+}
+
+void
+mmCIFParser::annotate_polymeric_connections(
+	sdf::MolFileIOMolecule & molecule,
+	gemmi::cif::Block& block,
+	int atom_name_id,
+	std::map< std::string, std::string > const & name_to_element_map,
+	bool is_peptide_linking,
+	bool is_nucleic_linking
+) {
+	if ( !is_peptide_linking && !is_nucleic_linking ) {
+		return; // non-polymeric, return early
+	}
+
+	using gemmi::cif::as_string; // Takes care of unquoting, use even if it's a simple string (e.g. atom names can have odd characters)
+
+	std::set< std::string > leaving, backbone, n_term, c_term;
+	gemmi::cif::Table atom_comp = block.find_mmcif_category("_chem_comp_atom");
+	int leaving_flag = find_gemmi_column(atom_comp,"pdbx_leaving_atom_flag");
+	int backbone_flag = find_gemmi_column(atom_comp,"pdbx_backbone_atom_flag");
+	int n_term_flag = find_gemmi_column(atom_comp,"pdbx_n_terminal_atom_flag");
+	int c_term_flag = find_gemmi_column(atom_comp,"pdbx_c_terminal_atom_flag");
+
+	for ( Size ii = 0; ii < atom_comp.size(); ++ii ) {
+		gemmi::cif::Table::Row row = atom_comp[ii];
+
+		if ( leaving_flag >= 0 && as_string(row[leaving_flag]) == "Y" ) {
+			leaving.insert( as_string(row[atom_name_id]) );
+		}
+		if ( backbone_flag >= 0 && as_string(row[backbone_flag]) == "Y" ) {
+			backbone.insert( as_string(row[atom_name_id]) );
+		}
+		if ( n_term_flag >= 0 && as_string(row[n_term_flag]) == "Y" ) {
+			n_term.insert( as_string(row[atom_name_id]) );
+		}
+		if ( c_term_flag >= 0 && as_string(row[c_term_flag]) == "Y" ) {
+			c_term.insert( as_string(row[atom_name_id]) );
+		}
+	}
+
+	if ( is_peptide_linking ) {
+		std::string n_term_atm;
+
+		/////////////////// PEPTIDE LOWER
+
+		// TODO: Do we always want to fall back, or should that be conditional based on whether particular columns are or are not found?
+		if ( !n_term.empty() ) {
+			// Ideally we'd like a nitrogen -- if there's multiple, just pick the first.
+			utility::vector1< std::string > const & found_N = find_elements( n_term, "N", name_to_element_map );
+			TR.Trace << "Found annotated N-terminal nitrogens: " << found_N << std::endl;
+			if ( found_N.size() >= 1 ) {
+				n_term_atm = found_N[1];
+				TR.Debug << "Picking N-terminal connection point as (first) N-term annotated nitrogen: " << n_term_atm << std::endl;
+			}
+			if ( n_term_atm.empty() ) {
+				// Failing that, pick the first heavy atom.
+				utility::vector1< std::string > const & found_heavy = find_heavy( n_term, name_to_element_map );
+				TR.Trace << "Found annotated N-terminal heavy: " << found_heavy << std::endl;
+				if ( found_heavy.size() >= 1 ) {
+					n_term_atm = found_heavy[1];
+					TR.Debug << "Picking N-terminal connection point as (first) N-term annotated heavy atom: " << n_term_atm << std::endl;
+				}
+			}
+		}
+		if ( n_term_atm.empty() && !leaving.empty() ) {
+			// Next, try to find a (unique) nitrogen attached to a leaving hydrogen.
+			utility::vector1< std::string > found_N;
+			for ( std::string const & atm: leaving ) {
+				if ( name_to_element_map.at(atm) == "H" ) {
+					found_N.append( find_elements( get_attached_atoms( atm, block ), "N", name_to_element_map ) );
+				}
+			}
+			std::set< std::string > found_N_set( found_N.begin(), found_N.end() ); // Need to deduplicate
+			TR.Trace << "Found nitrogens with attached leaving Hs: " << found_N << std::endl;
+			if ( found_N_set.size() == 1 ) {
+				n_term_atm = *(found_N.begin());
+				TR.Debug << "Picking N-terminal connection point as unique nitrogen attached to leaving hydrogen: " << n_term_atm << std::endl;
+			}
+		}
+		if ( n_term_atm.empty() && !backbone.empty() ) {
+			// Next, try to find a (unique) nitrogen in the annotated backbone.
+			utility::vector1< std::string > const & found_N = find_elements( backbone, "N", name_to_element_map );
+			TR.Trace << "Found Backbone nitrogens: " << found_N << std::endl;
+			if ( found_N.size() == 1 ) {
+				n_term_atm = found_N[1];
+				TR.Debug << "Picking N-terminal connection point as unique backbone nitrogen: " << n_term_atm << std::endl;
+			}
+		}
+		if ( n_term_atm.empty() ) {
+			// Fallback -- look for an atom named 'N'
+			if ( name_to_element_map.count("N") ) {
+				n_term_atm = "N";
+				TR.Debug << "Picking N-terminal connection point based on name: " << n_term_atm << std::endl;
+			}
+		}
+
+		if ( !n_term_atm.empty() ) {
+			TR.Debug << "Setting LOWER atom to " << n_term_atm << std::endl;
+			molecule.set_lower_atom( n_term_atm );
+			// The attached hydrogens to N are generally for the free molecule, and not in the correct geometry for the LOWER connect.
+		} else {
+			TR.Warning << "Could not find N-terminal atom in nominally peptide residue." << std::endl;
+		}
+
+		/////////////////// PEPTIDE UPPER
+
+		std::string c_term_atm, c_term_connect;
+
+		if ( !c_term.empty() && !leaving.empty() ) {
+			// Look for a unique heavy atom which is in the leaving set
+			utility::vector1< std::string > leaving_heavy;
+
+			for ( std::string const & atm: c_term ) {
+				if ( name_to_element_map.at(atm) != "H" && leaving.count(atm) > 0 ) {
+					leaving_heavy.push_back(atm);
+					c_term_connect = atm;
+				}
+			}
+			TR.Trace << "Found C-term annotated leaving heavy atoms " << leaving_heavy << std::endl;
+			if ( leaving_heavy.size() == 1 ) {
+				c_term_connect = leaving_heavy[1];
+				TR.Debug << "Picking UPPER location as unique C-term-annotated leaving heavy atom: " << c_term_connect << std::endl;
+			} else if ( leaving_heavy.size() > 1 ) {
+				// Is the leaving oxygen unique?
+				utility::vector1< std::string > leaving_oxy = find_elements( leaving_heavy, "O", name_to_element_map );
+				TR.Trace << "Found C-term annotated leaving oxygens " << leaving_oxy << std::endl;
+				if ( leaving_oxy.size() == 1 ) {
+					c_term_connect = leaving_oxy[1];
+					TR.Debug << "Picking UPPER location as unique C-term-annotated leaving oxygen: " << c_term_connect << std::endl;
+				}
+			}
+		}
+		if ( c_term_connect.empty() ) {
+			// Fallback -- look for an atom named 'OXT'
+			if ( name_to_element_map.count("OXT") ) {
+				c_term_connect = "OXT";
+				TR.Debug << "Picking C-terminal leaving atom based on name: " << c_term_connect << std::endl;
+			}
+		}
+
+		if ( c_term_connect.empty() ) {
+			// Fallback -- look for atom named 'C'
+			if ( name_to_element_map.count("C") ) {
+				c_term_atm = "C";
+				TR.Debug << "Picking C-terminal atom based on name: " << c_term_atm << std::endl;
+			}
+		}
+		if ( c_term_connect.empty() && c_term_atm.empty() ) {
+			// Fallback -- look for atom named 'P' -- we may have a phosphonate
+			if ( name_to_element_map.count("P") ) {
+				c_term_atm = "P";
+				TR.Debug << "Picking C-terminal atom based on name: " << c_term_atm << std::endl;
+			}
+		}
+
+		// Find the c_term atom from the c_term connect atom.
+		if ( c_term_atm.empty() && !c_term_connect.empty() ) {
+			// Find connected heavy atom
+			utility::vector1< std::string > connected_heavy;
+			for ( std::string const & atm: get_attached_atoms( c_term_connect, block ) ) {
+				if ( name_to_element_map.at(atm) != "H" ) {
+					connected_heavy.push_back( atm );
+				}
+			}
+			TR.Trace << "Atoms found connected with the c-term leaving group: " << connected_heavy << std::endl;
+			if ( connected_heavy.size() == 1 ) {
+				c_term_atm = connected_heavy[1];
+			}
+		}
+
+		if ( !c_term_atm.empty() ) {
+			TR.Debug << "Setting UPPER atom to " << n_term_atm << std::endl;
+			molecule.set_upper_atom( c_term_atm );
+		} else {
+			TR.Warning << "Could not find C-terminal atom in nominally peptide residue." << std::endl;
+		}
+
+		/////////////////// ATTACHED H
+
+		//ICOOR_INTERNAL    H   -180.000000   60.849998    1.010000   N     CA  LOWER
+		// Since we (may have) deleted ALL hydrogens attached to N, we should add back in an ideal
+		// one. We can't add its coordinates yet, though, since only the residue type
+		// knows where LOWER is -- The to-ResidueType conversion should update the ICOOR appropriately.
+
+		if ( !n_term_atm.empty() ) {
+			utility::vector1< std::string > N_attached_atoms = get_attached_atoms( n_term_atm, block );
+			utility::vector1< std::string > N_attached_heavy = find_heavy( N_attached_atoms, name_to_element_map );
+			utility::vector1< std::string > N_attached_H = find_elements( N_attached_atoms, "H", name_to_element_map );
+
+			// Add an H if there isn't one already, and we're not in a proline-like situation
+			if ( N_attached_H.empty() && N_attached_heavy.size() == 1 ) {
+				TR.Debug << "Adding missing H atom to " << n_term_atm << std::endl;
+				sdf::MolFileIOAtomOP H_atom( new sdf::MolFileIOAtom());
+				auto index = molecule.get_free_index();
+				H_atom->index( index );
+				H_atom->name( "H" );
+				H_atom->element( "H" );
+				// faked xyz cordinates
+				H_atom->position( core::Vector( 0, 0, 0 ) );
+				H_atom->formal_charge( 0 );
+				molecule.add_atom( H_atom );
+
+				sdf::MolFileIOBondOP H_bond( new sdf::MolFileIOBond() );
+				H_bond->atom1( index );
+				H_bond->atom2( molecule.atom( n_term_atm )->index() );
+				H_bond->sdf_type( 1 ); //bond order
+				molecule.add_bond( H_bond );
+			}
+		}
+
+	} else if ( is_nucleic_linking ) {
+
+	} else {
+
+	}
+
+}
+
 
 }
 }
