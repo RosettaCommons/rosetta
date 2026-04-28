@@ -147,8 +147,8 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 	bool is_nucleic_linking = false;
 	gemmi::cif::Table chem_comp = block.find( "_chem_comp.", {"type"} );
 	if ( chem_comp.size() > 0 ) {
-		std::string type = as_string(chem_comp[0][0]);
-		// TODO: Need better handling of variants (e.g. 1ZN)
+		std::string type = utility::uppercased( as_string(chem_comp[0][0]) );
+		// TODO: Need better handling of variants (e.g. 1ZN, B5I)
 		if ( type == "L-PEPTIDE LINKING" ) {
 			TR.Debug << "Found L-peptide RT" << std::endl;// named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "PROTEIN POLYMER L_AA" );
@@ -279,6 +279,49 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 	return molecule;
 }
 
+/// Utilities for get_atoms_to_ignore() and annotate_polymeric_connections()
+
+template< class C >
+utility::vector1< std::string >
+find_elements( C const & container, std::string const & elem, std::map< std::string, std::string > const & name_to_element_map ) {
+	utility::vector1< std::string > found;
+	for ( std::string const & atm: container ) {
+		if ( name_to_element_map.at(atm) == elem ) {
+			found.push_back( atm );
+		}
+	}
+	return found;
+}
+
+template< class C >
+utility::vector1< std::string >
+find_heavy( C const & container, std::map< std::string, std::string > const & name_to_element_map ) {
+	utility::vector1< std::string > found;
+	for ( std::string const & atm: container ) {
+		if ( name_to_element_map.at(atm) != "H" ) {
+			found.push_back( atm );
+		}
+	}
+	return found;
+}
+
+utility::vector1< std::string >
+get_attached_atoms( std::string const & atm, gemmi::cif::Block& block ) {
+	utility::vector1< std::string > found;
+	gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2"} );
+	for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
+		std::string source = gemmi::cif::as_string( bond_comp[ii][0] ); //atom 1
+		std::string target = gemmi::cif::as_string( bond_comp[ii][1] ); //atom 2
+		if ( source == atm ) {
+			found.push_back( target );
+		}
+		if ( target == atm ) {
+			found.push_back( source );
+		}
+	}
+	return found;
+}
+
 std::set< std::string >
 mmCIFParser::get_atoms_to_ignore(
 	gemmi::cif::Block& block,
@@ -308,6 +351,15 @@ mmCIFParser::get_atoms_to_ignore(
 			}
 		}
 		// If the annotation is valid, trust it
+		// Though there are some edge cases (e.g. BVP) where hydrogens attached to leaving heavyatoms aren't annotated as leaving -- catch this
+		for ( std::string const & to_ignore: find_heavy(atoms_to_ignore, name_to_element_map) ) {
+			for ( std::string const & hydro: find_elements(get_attached_atoms(to_ignore, block), "H", name_to_element_map) ) {
+				if ( atoms_to_ignore.count(hydro) == 0 ) {
+					TR.Trace << "Ignoring " << hydro << " as a hydrogen connected to a heavy atom being ignored." << std::endl;
+					atoms_to_ignore.insert( hydro ); // Safe, as find_heavy() above means we're not iterating over this continer directly
+				}
+			}
+		}
 		return atoms_to_ignore;
 	}
 
@@ -399,49 +451,6 @@ mmCIFParser::get_atoms_to_ignore(
 	}
 
 	return atoms_to_ignore;
-}
-
-/// Utilities for annotate_polymeric_connections()
-
-template< class C >
-utility::vector1< std::string >
-find_elements( C const & container, std::string const & elem, std::map< std::string, std::string > const & name_to_element_map ) {
-	utility::vector1< std::string > found;
-	for ( std::string const & atm: container ) {
-		if ( name_to_element_map.at(atm) == elem ) {
-			found.push_back( atm );
-		}
-	}
-	return found;
-}
-
-template< class C >
-utility::vector1< std::string >
-find_heavy( C const & container, std::map< std::string, std::string > const & name_to_element_map ) {
-	utility::vector1< std::string > found;
-	for ( std::string const & atm: container ) {
-		if ( name_to_element_map.at(atm) != "H" ) {
-			found.push_back( atm );
-		}
-	}
-	return found;
-}
-
-utility::vector1< std::string >
-get_attached_atoms( std::string const & atm, gemmi::cif::Block& block ) {
-	utility::vector1< std::string > found;
-	gemmi::cif::Table bond_comp = block.find( "_chem_comp_bond.", {"atom_id_1","atom_id_2"} );
-	for ( core::Size ii(0); ii < bond_comp.size(); ++ii ) {
-		std::string source = gemmi::cif::as_string( bond_comp[ii][0] ); //atom 1
-		std::string target = gemmi::cif::as_string( bond_comp[ii][1] ); //atom 2
-		if ( source == atm ) {
-			found.push_back( target );
-		}
-		if ( target == atm ) {
-			found.push_back( source );
-		}
-	}
-	return found;
 }
 
 void
