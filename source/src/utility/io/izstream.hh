@@ -35,6 +35,7 @@
 // C++ headers
 #include <fstream>
 #include <limits>
+#include <memory>
 #include <ios> // For std::streamsize
 
 namespace utility {
@@ -96,12 +97,16 @@ public: // Creation
 	}
 
 
+	/// @brief Copy constructor: deleted (streams are not copyable)
+	izstream( izstream const & ) = delete;
+
+	/// @brief Copy assignment: deleted (streams are not copyable)
+	izstream & operator =( izstream const & ) = delete;
+
 	/// @brief Destructor
 	inline
-
 	~izstream() override
 	{
-		delete zip_stream_p_;
 		if_stream_.close();
 		if_stream_.clear();
 	}
@@ -229,7 +234,7 @@ public: // Methods: i/o
 		if_stream_.close();
 		if_stream_.clear();
 		filename_.clear();
-		delete zip_stream_p_; zip_stream_p_ = nullptr;
+		zip_stream_p_.reset();
 	}
 
 
@@ -250,9 +255,9 @@ public: // Methods: i/o
 		if_stream_.seekg( std::ios_base::beg );
 		if_stream_.clear();
 		if ( zip_stream_p_ ) {
-			delete zip_stream_p_; zip_stream_p_ = new zlib_stream::zip_istream( if_stream_ );
-			if ( ( !zip_stream_p_ ) || ( !( *zip_stream_p_ ) ) || ( !zip_stream_p_->is_gzip() ) ) {
-				delete zip_stream_p_; zip_stream_p_ = nullptr;
+			zip_stream_p_.reset( new zlib_stream::zip_istream( if_stream_ ) );
+			if ( !zip_stream_p_ || !( *zip_stream_p_ ) || !zip_stream_p_->is_gzip() ) {
+				zip_stream_p_.reset();
 				if_stream_.close();
 				if_stream_.setstate( std::ios_base::failbit ); // set ios state to failbit
 			}
@@ -716,7 +721,7 @@ private: // Fields
 	std::string filename_;
 
 	/// @brief Zip file stream pointer (owning)
-	zlib_stream::zip_istream * zip_stream_p_;
+	std::unique_ptr< zlib_stream::zip_istream > zip_stream_p_;
 
 	/// @brief Alternative search paths
 	/// This initialized by the option system -in:path:path Notice that
