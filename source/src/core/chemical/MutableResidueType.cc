@@ -1937,11 +1937,20 @@ MutableResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples )
 		// Note that this algorithm to get down to the 'real' chis is pretty
 		// gross, but when N is < 10 most reasonable big-Os are fine, right?
 
+		VD lower = INVALID_VD;
+		if ( lower_connect_id() != 0 ) {
+			lower = lower_connect_atom();
+		}
+		VD upper = INVALID_VD;
+		if ( upper_connect_id() != 0 ) {
+			upper = upper_connect_atom();
+		}
+
 		// Step 1. Get chi1 (it's the one with N as first or fourth)
 		// Other criterion -- atom 3 can't be C (it'll find N CA C O)
 		for ( VDs const & chi : found_chis ) {
 			TR.Trace << "looking at found chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
-			if ( atom_name( chi[ 1 ] ) == "N" && atom_name( chi[ 3 ] ) != "C" ) {
+			if ( chi[ 1 ] == lower && chi[ 3 ] != upper ) {
 				TR.Trace << "Selecting" << std::endl;
 				true_chis.push_back( chi );
 				found_chis.pop( chi ); // Modifying what we're iterating over, but that's okay as we're breaking immediately afterwards.
@@ -1955,6 +1964,7 @@ MutableResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples )
 		// poorly by essentially any chi system.
 		std::string target_first_atom;
 		if ( true_chis.size() > 0 )  target_first_atom = atom_name( true_chis[ 1 ][ 2 ] );
+		std::set< std::string > already_considered;
 		while ( true ) {
 			// this extra loop is to future-proof a bit against branching: multiple
 			// chis per pass may start with the target_first_atom and therefore
@@ -1975,6 +1985,13 @@ MutableResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples )
 
 			// This may have to become a vector -- where we accumulated many
 			// candidate_new_atom -- later.
+			TR.Trace << "Proceeding with new target first atom. (Was `" << target_first_atom << "` now `" << candidate_new_atom << "`)" << std::endl;
+			already_considered.insert( target_first_atom );
+			if ( already_considered.count(candidate_new_atom) ) {
+				candidate_new_atom = target_first_atom; // Restore the last round's value
+				TR.Trace << "Infinite loop detected!!" << std::endl;
+				break;
+			}
 			target_first_atom = candidate_new_atom;
 		}
 		for ( VDs const & true_chi : true_chis ) {
@@ -1993,6 +2010,15 @@ MutableResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples )
 	} else if ( is_RNA() ) {
 		utility::vector1<VDs> true_chis; // filtered and ordered from found_chis.
 
+		VD lower = INVALID_VD;
+		if ( lower_connect_id() != 0 ) {
+			lower = lower_connect_atom();
+		}
+		//VD upper = INVALID_VD;
+		//if ( upper_connect_id() != 0 ) {
+		//	upper = upper_connect_atom();
+		//}
+
 		//CHI 1 C2' C1' N9  C4
 		//CHI 2 C4' C3' C2' C1'
 		//CHI 3 C3' C2' C1' N9
@@ -2004,7 +2030,7 @@ MutableResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples )
 		// need a value we can always initialize to for RNA rsd.
 		// (This is tough just because of thenature of VDs.)
 		// So we use a runtime_assert after the loop.
-		VD first_base_atom = atom_vertex( "P" );
+		VD first_base_atom = lower;
 		for ( VDs const & chi : found_chis ) {
 			TR.Trace << "looking at found chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
 			if ( atom_name( chi[ 1 ] ) == "C2'" && atom_name( chi[ 2 ] ) != "O2'" ) {
@@ -2015,13 +2041,13 @@ MutableResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples )
 				break;
 			}
 		}
-		runtime_assert( true_chis.size() == 0 || first_base_atom != atom_vertex( "P" ) );
+		runtime_assert( true_chis.size() == 0 || first_base_atom != lower );
 
 		// Step 2. Hard-fix three chis: two rings, and proton chi for HO2'.
 		VDs new_chi{atom_vertex("C4'"), atom_vertex("C3'"), atom_vertex("C2'"), atom_vertex("C1'")};
 		true_chis.emplace_back( new_chi );
 		// Skip this chi for N
-		if ( first_base_atom != atom_vertex( "P" ) ) {
+		if ( first_base_atom != lower ) {
 			new_chi = VDs{ atom_vertex("C3'"), atom_vertex("C2'"), atom_vertex("C1'"), first_base_atom };
 		}
 		//true_chis.emplace_back( { atom_vertex("C4'"), atom_vertex("C3'"), atom_vertex("C2'"), atom_vertex("C1'") } );
@@ -2049,6 +2075,7 @@ MutableResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples )
 		std::string target_first_atom;
 		if ( true_chis.size() > 0 ) target_first_atom = atom_name( true_chis[ 1 ][ 2 ] );
 
+		std::set< std::string > already_considered;
 		while ( true ) {
 
 			// this extra loop is to future-proof a bit against branching: multiple
@@ -2067,6 +2094,13 @@ MutableResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples )
 
 			// This may have to become a vector -- where we accumulated many
 			// candidate_new_atom -- later.
+			TR.Trace << "Proceeding with new target first atom. (Was `" << target_first_atom << "` now `" << candidate_new_atom << "`)" << std::endl;
+			already_considered.insert( target_first_atom );
+			if ( already_considered.count(candidate_new_atom) ) {
+				candidate_new_atom = target_first_atom; // Restore the last round's value
+				TR.Trace << "Infinite loop detected!!" << std::endl;
+				break;
+			}
 			target_first_atom = candidate_new_atom;
 		}
 
