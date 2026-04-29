@@ -341,11 +341,10 @@ MutableResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 		restype->add_property( "LIGAND" );
 	}
 
-	determine_polymeric_connections();
+	determine_polymeric_connections(restype);
 
-	// TODO: Can't directly specify internal coordinate tree or chi bond info
+	// TODO: Can't directly specify internal coordinate tree or chi bond info from input files
 	// If that changes this needs to be adjusted so as not to overwrite those settings.
-
 	if ( ! lower_atom_.empty()) {
 		restype->assign_internal_coordinates( restype->atom_vertex( lower_atom_ ) );
 	} else {
@@ -380,56 +379,70 @@ MutableResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 }
 
 void
-MolFileIOMolecule::determine_polymeric_connections() {
+MolFileIOMolecule::determine_polymeric_connections(MutableResidueTypeOP restype) {
 	if ( ! is_polymeric() ) { return; }
-	if ( !lower_atom_.empty() ||  !upper_atom_.empty() ) {
-		return; // If we've set one, trust the annotation for both.
-	}
-	TR.Warning << "Upper/Lower atoms not set for nominally polymeric residue " << name_ << "; using potentially inaccurate heuristics" << std::endl;
-	if ( is_peptidic() ) {
-		if ( atom("N") != nullptr ) {
-			lower_atom_ = "N";
-			TR.Debug << "Setting lower connect point on protein residue to N, based on atom naming" << std::endl;
+
+	if ( lower_atom_.empty() &&  upper_atom_.empty() ) { // If we've set one, trust the annotation for both.
+		TR.Warning << "Upper/Lower atoms not set for nominally polymeric residue " << name_ << "; using potentially inaccurate heuristics" << std::endl;
+		if ( is_peptidic() ) {
+			if ( atom("N") != nullptr ) {
+				lower_atom_ = "N";
+				TR.Debug << "Setting lower connect point on protein residue to N, based on atom naming" << std::endl;
+			}
+			if ( atom("C") != nullptr ) {
+				upper_atom_ = "C";
+				TR.Debug << "Setting upper connect point on protein residue to C, based on atom naming" << std::endl;
+			} else if ( atom("P") != nullptr ) {
+				upper_atom_ = "P";
+				TR.Debug << "Setting upper connect point on protein residue to P, based on atom naming" << std::endl;
+			}
 		}
-		if ( atom("C") != nullptr ) {
-			upper_atom_ = "C";
-			TR.Debug << "Setting upper connect point on protein residue to C, based on atom naming" << std::endl;
-		} else if ( atom("P") != nullptr ) {
-			upper_atom_ = "P";
-			TR.Debug << "Setting upper connect point on protein residue to P, based on atom naming" << std::endl;
-		}
-	}
-	if ( is_nucleic() ) {
-		if ( atom("P") != nullptr ) {
-			lower_atom_ = "P";
-			TR.Debug << "Setting lower connect point on nucleic residue to P, based on atom naming" << std::endl;
-		}
-		if ( atom("O3'") != nullptr ) {
-			upper_atom_ = "O3'";
-			TR.Debug << "Setting upper connect point on nucleic residue to O3', based on atom naming" << std::endl;
-		} else if ( atom("C3'") != nullptr ) {
-			// Try alternatives -- in particular, any atoms
-			// bonded to C3' that aren't hydrogens or C4' or C2'
-			MolFileIOGraph::edge_iterator eiter, eiter_end;
-			utility::vector1< std::string > possible_upper;
-			for ( boost::tie( eiter, eiter_end ) = boost::edges( molgraph_ ); eiter != eiter_end; ++eiter ) {
-				mioAD source( boost::source(*eiter, molgraph_) );
-				mioAD target( boost::target(*eiter, molgraph_) );
-				if ( molgraph_[source]->name() == "C3'" && molgraph_[target]->element() != "H" ) {
-					possible_upper.push_back( molgraph_[target]->name() );
-				} else if ( molgraph_[target]->name() == "C3'" && molgraph_[source]->element() != "H" ) {
-					possible_upper.push_back( molgraph_[source]->name() );
+		if ( is_nucleic() ) {
+			if ( atom("P") != nullptr ) {
+				lower_atom_ = "P";
+				TR.Debug << "Setting lower connect point on nucleic residue to P, based on atom naming" << std::endl;
+			}
+			if ( atom("O3'") != nullptr ) {
+				upper_atom_ = "O3'";
+				TR.Debug << "Setting upper connect point on nucleic residue to O3', based on atom naming" << std::endl;
+			} else if ( atom("C3'") != nullptr ) {
+				// Try alternatives -- in particular, any atoms
+				// bonded to C3' that aren't hydrogens or C4' or C2'
+				MolFileIOGraph::edge_iterator eiter, eiter_end;
+				utility::vector1< std::string > possible_upper;
+				for ( boost::tie( eiter, eiter_end ) = boost::edges( molgraph_ ); eiter != eiter_end; ++eiter ) {
+					mioAD source( boost::source(*eiter, molgraph_) );
+					mioAD target( boost::target(*eiter, molgraph_) );
+					if ( molgraph_[source]->name() == "C3'" && molgraph_[target]->element() != "H" ) {
+						possible_upper.push_back( molgraph_[target]->name() );
+					} else if ( molgraph_[target]->name() == "C3'" && molgraph_[source]->element() != "H" ) {
+						possible_upper.push_back( molgraph_[source]->name() );
+					}
+				}
+				TR.Trace << "Heavy atoms bonded to C3'" << possible_upper << std::endl;
+				for ( std::string const & atm: possible_upper ) {
+					if ( atm == "C2'" ) { continue; }
+					if ( atm == "C4'" ) { continue; }
+					upper_atom_ = atm;
+					TR.Debug << "Setting upper connect point on nucleic residue to " << upper_atom_ << " as the (first) heavy atom connected to C3'" << std::endl;
 				}
 			}
-			TR.Trace << "Heavy atoms bonded to C3'" << possible_upper << std::endl;
-			for ( std::string const & atm: possible_upper ) {
-				if ( atm == "C2'" ) { continue; }
-				if ( atm == "C4'" ) { continue; }
-				upper_atom_ = atm;
-				TR.Debug << "Setting upper connect point on nucleic residue to " << upper_atom_ << " as the (first) heavy atom connected to C3'" << std::endl;
-			}
 		}
 	}
+
+	////////////////// Actually assign the connection points
+
+	// Some RTs -- DOC is an example -- is upper terminal and lacks upper
+	if ( lower_atom_.empty() || upper_atom_.empty() ) {
+		TR.Warning << "Missing connection point for nominally polymeric residue " << name_ << " LOWER: `" << lower_atom_ << "` UPPER: `" << upper_atom_ << "`" << std::endl;
+	}
+	if ( !lower_atom_.empty() ) {
+		restype->set_lower_connect_atom( lower_atom_ );
+	}
+	if ( !upper_atom_.empty() ) {
+		restype->set_upper_connect_atom( upper_atom_ );
+	}
+
 }
 
 void
@@ -443,17 +456,6 @@ MolFileIOMolecule::handle_polymeric_assignments(MutableResidueTypeOP restype) {
 
 	if ( ! restype->is_polymer() ) { return; }
 
-	// Some RTs -- DOC is an example -- is upper terminal and lacks upper
-	if ( lower_atom_.empty() || upper_atom_.empty() ) {
-		TR.Warning << "Missing connection point for nominally polymeric residue " << name_ << " LOWER: `" << lower_atom_ << "` UPPER: `" << upper_atom_ << "`" << std::endl;
-	}
-	if ( !lower_atom_.empty() ) {
-		restype->set_lower_connect_atom( lower_atom_ );
-	}
-	if ( !upper_atom_.empty() ) {
-		restype->set_upper_connect_atom( upper_atom_ );
-	}
-
 	utility::vector1< VD > mainchain_vec = mainchain_path(*restype);
 	if ( !mainchain_vec.empty() ) {
 		restype->set_mainchain_atoms( mainchain_vec );
@@ -461,15 +463,24 @@ MolFileIOMolecule::handle_polymeric_assignments(MutableResidueTypeOP restype) {
 	if ( mainchain_vec.size() < 3 ) {
 		// We're either missing an upper/lower (which results in an empty vector), or we're too short of a backbone.
 		// Attempt to find usable atoms such that the ICOOR code below works.
-		mainchain_vec.resize(6); // 1-3 is N-term entries, 4-6 is C-term. Not 100% correct from an absolute perspective, but works in the context of this function.
+		mainchain_vec.resize(6, INVALID_VD); // 1-3 is N-term entries, 4-6 is C-term. Not 100% correct from an absolute perspective, but works in the context of this function.
 		if ( restype->lower_connect_id() != 0 ) {
 			mainchain_vec[1] = restype->lower_connect_atom();
 			mainchain_vec[2] = restype->atom_base( mainchain_vec[1] );
 			mainchain_vec[3] = restype->atom_base( mainchain_vec[2] );
 
-			// Note this probably won't work, as the base is redundant
+			// Catch case where the base is redundant (likely, if we're the root)
+			if ( mainchain_vec[3] == mainchain_vec[1] ) {
+				for ( VD bbase: restype->bonded_heavyatoms(mainchain_vec[2]) ) {
+					if ( bbase != mainchain_vec[1] ) {
+						mainchain_vec[3] = bbase;
+						break;
+					}
+				}
+			}
+
 			runtime_assert( mainchain_vec[1] != mainchain_vec[2] );
-			runtime_assert( mainchain_vec[3] != mainchain_vec[3] );
+			runtime_assert( mainchain_vec[2] != mainchain_vec[3] );
 			runtime_assert( mainchain_vec[1] != mainchain_vec[3] );
 
 			/// FOLLOWING FOR TEMPORARY TESTING PURPOSES ONLY
@@ -486,6 +497,16 @@ MolFileIOMolecule::handle_polymeric_assignments(MutableResidueTypeOP restype) {
 			mainchain_vec[6] = restype->upper_connect_atom();
 			mainchain_vec[5] = restype->atom_base( restype->upper_connect_atom() );
 			mainchain_vec[4] = restype->atom_base( mainchain_vec[5] );
+
+			// Catch case where the base is redundant
+			if ( mainchain_vec[4] == mainchain_vec[6] ) {
+				for ( VD bbase: restype->bonded_heavyatoms(mainchain_vec[5]) ) {
+					if ( bbase != mainchain_vec[6] ) {
+						mainchain_vec[4] = bbase;
+						break;
+					}
+				}
+			}
 
 			runtime_assert( mainchain_vec[6] != mainchain_vec[5] );
 			runtime_assert( mainchain_vec[5] != mainchain_vec[4] );
@@ -567,14 +588,19 @@ MolFileIOMolecule::handle_polymeric_assignments(MutableResidueTypeOP restype) {
 		// actually be worth it.
 		core::Real chiral = restype->is_l_rna() ? -1.0 : 1.0;
 		if ( restype->lower_connect_id() != 0 ) {
-			std::string OP2_name = restype->has( "OP2" ) ? "OP2" :
-				( restype->has( "O2P" ) ? "O2P" :
-				( restype->has( "S2P" ) ? "S2P" : "N4'" ) );
 			restype->set_icoor( "LOWER", radians(chiral*-60.259000), radians(76.024713), 1.607355,
 				restype->atom_name( mainchain_vec[1] ), // the lower atom itself
 				restype->atom_name( mainchain_vec[2] ),
 				restype->atom_name( mainchain_vec[3] ) );
-			restype->set_icoor( OP2_name, radians(chiral*-114.600417), radians(72.020306), 1.484470, "P", "O5'", "LOWER" );
+
+			//if ( has-pendant-oxygens ) {
+			//	find-primary-child-of-root
+			//	//std::string OP2_name = restype->has( "OP2" ) ? "OP2" :
+			//	//	( restype->has( "O2P" ) ? "O2P" :
+			//	//	( restype->has( "S2P" ) ? "S2P" : "N4'" ) );
+			//	set-icoor-based-on-lower ("O5'" being mainchain_vec[2]
+			//	//restype->set_icoor( OP2_name, radians(chiral*-114.600417), radians(72.020306), 1.484470, "P", "O5'", "LOWER" );
+			//}
 		} else {
 			TR.Debug << "Labeling nucleic residue " << restype->name() << " as lower terminus, due to lack of lower connect." << std::endl;
 			restype->add_property( "LOWER_TERMINUS" );

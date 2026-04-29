@@ -18,7 +18,7 @@
 #include <core/chemical/MutableICoorRecord.hh>
 #include <core/chemical/MutableResidueConnection.hh>
 #include <core/chemical/bond_support.hh>
-
+#include <core/chemical/residue_support.hh>
 
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/tree/Atom.hh>
@@ -174,13 +174,14 @@ public:
 /// * Actual bonds before pseudobonds
 /// * Bonds to Heavy atoms before light atoms
 /// * Bonds to Concrete atoms before virtual atoms
+/// * Bonds which get us closer to the UPPER (further from the LOWER), if relevant
 ///
 /// This doesn't (need to?) quite match the logic in core/conformation/util.cc:setup_atom_links()
 class RerootEdgeSorter {
 public:
-	RerootEdgeSorter(core::chemical::ResidueGraph const & graph, core::chemical::MutableResidueType const & /*restype*/):
-		graph_(graph)
-		//restype_(restype)
+	RerootEdgeSorter(core::chemical::ResidueGraph const & graph, core::chemical::MutableResidueType const & restype):
+		graph_(graph),
+		restype_(restype)
 	{}
 
 	/// Return true if the first argument goes before the second argument
@@ -211,6 +212,7 @@ public:
 		/*
 		// * Rotatable bonds before non-rotatable bonds.
 		// This is slightly manky - should we pre annotate the bonds as rotatable?
+		// (or just look at bond order, perhaps?)
 		bool b1rot(false), b2rot(false);
 		for ( core::Size chino(1); chino <= restype_.nchi(); ++chino ) {
 		core::chemical::AtomIndices const & ai( restype_.chi_atoms(chino) );
@@ -244,12 +246,35 @@ public:
 		} else if ( ! atom1.is_virtual() && atom2.is_virtual() ) {
 			return true;
 		}
-		/// For reproducible ordering, the "smaller" atom name should be first
+
+		/// * Bonds which get us closer to the UPPER (further from the LOWER), if relevant
+		if ( restype_.upper_connect_id() ) {
+			VD upper = restype_.upper_connect_atom();
+			utility::vector1< VD > path1 = shortest_path( restype_, upper, target1 );
+			utility::vector1< VD > path2 = shortest_path( restype_, upper, target2 );
+			if ( path1.size() < path2.size() ) {
+				return true;
+			} else if ( path2.size() < path1.size() ) {
+				return false;
+			} // fall through if equal
+		}
+		if ( restype_.lower_connect_id() ) {
+			VD lower = restype_.lower_connect_atom();
+			utility::vector1< VD > path1 = shortest_path( restype_, lower, target1 );
+			utility::vector1< VD > path2 = shortest_path( restype_, lower, target2 );
+			if ( path1.size() > path2.size() ) {
+				return true;
+			} else if ( path2.size() > path1.size() ) {
+				return false;
+			} // fall through if equal
+		}
+
+		/// For reproducible ordering, fall back to the "smaller" atom name being first
 		return atom1.name() < atom2.name();
 	}
 private:
 	core::chemical::ResidueGraph const & graph_;
-	//core::chemical::ResidueType const & restype_;
+	core::chemical::MutableResidueType const & restype_;
 };
 
 

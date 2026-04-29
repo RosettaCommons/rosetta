@@ -205,7 +205,7 @@ private:
 
 	/// @brief Helper function for convert_to_ResidueType -- determine connection points, if necessary.
 	void
-	determine_polymeric_connections();
+	determine_polymeric_connections(MutableResidueTypeOP restype);
 
 	/// @brief Helper function for convert_to_ResidueType -- Do polymeric assignments, if necessary.
 	void
