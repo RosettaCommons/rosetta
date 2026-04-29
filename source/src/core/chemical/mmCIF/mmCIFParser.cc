@@ -468,7 +468,7 @@ mmCIFParser::annotate_polymeric_connections(
 
 	using gemmi::cif::as_string; // Takes care of unquoting, use even if it's a simple string (e.g. atom names can have odd characters)
 
-	std::set< std::string > leaving, backbone, n_term, c_term;
+	std::set< std::string > leaving, backbone, n_term, c_term, all_atoms;
 	gemmi::cif::Table atom_comp = block.find_mmcif_category("_chem_comp_atom");
 	int leaving_flag = find_gemmi_column(atom_comp,"pdbx_leaving_atom_flag");
 	int backbone_flag = find_gemmi_column(atom_comp,"pdbx_backbone_atom_flag");
@@ -477,18 +477,20 @@ mmCIFParser::annotate_polymeric_connections(
 
 	for ( Size ii = 0; ii < atom_comp.size(); ++ii ) {
 		gemmi::cif::Table::Row row = atom_comp[ii];
+		std::string atom_name = as_string(row[atom_name_id]);
 
+		all_atoms.insert( atom_name );
 		if ( leaving_flag >= 0 && as_string(row[leaving_flag]) == "Y" ) {
-			leaving.insert( as_string(row[atom_name_id]) );
+			leaving.insert( atom_name );
 		}
 		if ( backbone_flag >= 0 && as_string(row[backbone_flag]) == "Y" ) {
-			backbone.insert( as_string(row[atom_name_id]) );
+			backbone.insert( atom_name );
 		}
 		if ( n_term_flag >= 0 && as_string(row[n_term_flag]) == "Y" ) {
-			n_term.insert( as_string(row[atom_name_id]) );
+			n_term.insert( atom_name );
 		}
 		if ( c_term_flag >= 0 && as_string(row[c_term_flag]) == "Y" ) {
-			c_term.insert( as_string(row[atom_name_id]) );
+			c_term.insert( atom_name );
 		}
 	}
 
@@ -541,19 +543,19 @@ mmCIFParser::annotate_polymeric_connections(
 			}
 		}
 		if ( n_term_atm.empty() ) {
+			// If there's a single nitrogen, that's probably it.
+			utility::vector1< std::string > nitrogens = find_elements( all_atoms, "N", name_to_element_map );
+			if ( nitrogens.size() == 1 ) {
+				n_term_atm = nitrogens[1];
+				TR.Debug << "Picking N-terminal connection point based on single nitrogen in residue: " << n_term_atm << std::endl;
+			}
+		}
+		if ( n_term_atm.empty() ) {
 			// Fallback -- look for an atom named 'N'
 			if ( name_to_element_map.count("N") ) {
 				n_term_atm = "N";
 				TR.Debug << "Picking N-terminal connection point based on name: " << n_term_atm << std::endl;
 			}
-		}
-
-		if ( !n_term_atm.empty() ) {
-			TR.Debug << "Setting LOWER atom to " << n_term_atm << std::endl;
-			molecule.set_lower_atom( n_term_atm );
-			// The attached hydrogens to N are generally for the free molecule, and not in the correct geometry for the LOWER connect.
-		} else {
-			TR.Warning << "Could not find N-terminal atom in nominally peptide residue." << std::endl;
 		}
 
 		/////////////////// PEPTIDE UPPER
@@ -581,6 +583,21 @@ mmCIFParser::annotate_polymeric_connections(
 				if ( leaving_oxy.size() == 1 ) {
 					c_term_connect = leaving_oxy[1];
 					TR.Debug << "Picking UPPER location as unique C-term-annotated leaving oxygen: " << c_term_connect << std::endl;
+				}
+			}
+		}
+		if ( c_term_connect.empty() && !leaving.empty() ) {
+			// Look for unique heavy atom in the leaving set (independent of the C-term annotation)
+			utility::vector1< std::string > leaving_heavy = find_heavy( leaving, name_to_element_map );
+			if ( leaving_heavy.size() == 1 ) {
+				c_term_connect = leaving_heavy[1];
+				TR.Debug << "Picking UPPER location as unique leaving heavy atom: " << c_term_connect << std::endl;
+			} else if ( leaving_heavy.size() > 1 ) {
+				// Is there specifically an oxygen in the leaving groups?
+				utility::vector1< std::string > leaving_oxy = find_elements( leaving_heavy, "O", name_to_element_map );
+				if ( leaving_oxy.size() == 1 ) {
+					c_term_connect = leaving_oxy[1];
+					TR.Debug << "Picking UPPER location as unique leaving oxygen atom: " << c_term_connect << std::endl;
 				}
 			}
 		}
@@ -622,8 +639,36 @@ mmCIFParser::annotate_polymeric_connections(
 			}
 		}
 
+		/////////////////// Special cases
+
+		// If we have a nitrogen at the alpha position, that's probably the N-term connection point, if we haven't already found it. (e.g. 2YH
+		if ( !c_term_atm.empty() && n_term_atm.empty() ) {
+			std::set< std::string > betas;
+			for ( std::string const & alpha: get_attached_atoms( c_term_atm, block ) ) {
+				for ( std::string const & beta: get_attached_atoms( alpha, block ) ) {
+					betas.insert( beta );
+				}
+			}
+			utility::vector1< std::string > alpha_amino = find_elements( betas, "N", name_to_element_map );
+			TR.Trace << "Found alpha-amino nitrogens " << alpha_amino << std::endl;
+			if ( alpha_amino.size() == 1 ) {
+				n_term_atm = alpha_amino[1];
+				TR.Debug << "Picking N-terminal connection point as nitrogen in the alpha-amino position: " << n_term_atm << std::endl;
+			}
+		}
+
+		/////////////////// Setting values
+
+		if ( !n_term_atm.empty() ) {
+			TR.Debug << "Setting LOWER atom to " << n_term_atm << std::endl;
+			molecule.set_lower_atom( n_term_atm );
+			// The attached hydrogens to N are generally for the free molecule, and not in the correct geometry for the LOWER connect.
+		} else {
+			TR.Warning << "Could not find N-terminal atom in nominally peptide residue." << std::endl;
+		}
+
 		if ( !c_term_atm.empty() ) {
-			TR.Debug << "Setting UPPER atom to " << n_term_atm << std::endl;
+			TR.Debug << "Setting UPPER atom to " << c_term_atm << std::endl;
 			molecule.set_upper_atom( c_term_atm );
 		} else {
 			TR.Warning << "Could not find C-terminal atom in nominally peptide residue." << std::endl;

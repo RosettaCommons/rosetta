@@ -445,7 +445,7 @@ MolFileIOMolecule::handle_polymeric_assignments(MutableResidueTypeOP restype) {
 
 	// Some RTs -- DOC is an example -- is upper terminal and lacks upper
 	if ( lower_atom_.empty() || upper_atom_.empty() ) {
-		TR.Warning << "Missing connection point for nominally polymeric residue" << name_ << " LOWER: `" << lower_atom_ << "` UPPER: `" << upper_atom_ << "`" << std::endl;
+		TR.Warning << "Missing connection point for nominally polymeric residue " << name_ << " LOWER: `" << lower_atom_ << "` UPPER: `" << upper_atom_ << "`" << std::endl;
 	}
 	if ( !lower_atom_.empty() ) {
 		restype->set_lower_connect_atom( lower_atom_ );
