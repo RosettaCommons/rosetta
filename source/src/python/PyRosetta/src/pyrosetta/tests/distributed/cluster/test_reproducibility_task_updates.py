@@ -55,7 +55,7 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
         self.tmpdir.cleanup()
         sys.stdout.flush()
 
-    def reproduce_task_updates(self, norm_task_options=False, with_init_file=False, verbose=True):
+    def reproduce_task_updates(self, norm_task_options=False, with_init_file=False, verbose=False):
         """
         Test for PyRosettaCluster decoy reproducibility with updated task dictionaries
         per user-provided PyRosetta protocol.
@@ -152,30 +152,6 @@ class TestReproducibilityTaskUpdates(unittest.TestCase):
                 protocol_seeds=protocol_seeds,
                 protocol_random_states=protocol_random_states,
             )
-
-            hash_data = []
-            pose = packed_pose.pose
-            for res in range(1, pose.size() + 1):
-                residue = pose.residue(res)
-                # Add residue number
-                hash_data.append(res)
-                # Add residue name
-                hash_data.append(residue.name())
-                for atom in range(1, residue.natoms() + 1):
-                    # Add atom number
-                    hash_data.append(atom)
-                    # Add atom name
-                    hash_data.append(residue.atom_name(atom))
-                    # Add atom coordinate components
-                    xyz = residue.atom(atom).xyz()
-                    for axis in "xyz":
-                        hash_data.append(getattr(xyz, axis))
-            if verbose:
-                print(f"Protocol number {protocol_number} Pose hash data:\n{hash_data}\n")
-                digest = packed_pose.pose.cache["protocol_pose_hash"][protocol_number]
-                print(f"Protocol number {protocol_number} Pose digest:\n{digest}\n")
-                print(f"Protocol number {protocol_number} Pose hash:\n{hash(digest)}\n")
-
             # Maybe update task dictionary for next PyRosetta protocol, which gets validated and kept
             if protocol_number + 1 < len(kwargs["protocol_options"]):
                 kwargs["options"] = ""
