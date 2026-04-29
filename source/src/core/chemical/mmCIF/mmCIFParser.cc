@@ -641,7 +641,8 @@ mmCIFParser::annotate_polymeric_connections(
 
 		/////////////////// Special cases
 
-		// If we have a nitrogen at the alpha position, that's probably the N-term connection point, if we haven't already found it. (e.g. 2YH
+		// If we have a nitrogen at the alpha position, that's probably the N-term connection point, if we haven't already found it. (e.g. 2YH)
+		// But not if we're already capped (e.g. 7HA)
 		if ( !c_term_atm.empty() && n_term_atm.empty() ) {
 			std::set< std::string > betas;
 			for ( std::string const & alpha: get_attached_atoms( c_term_atm, block ) ) {
@@ -708,6 +709,97 @@ mmCIFParser::annotate_polymeric_connections(
 		}
 
 	} else if ( is_nucleic_linking ) {
+		// Nucleic atoms don't have n-term/c-term annotations.
+
+		/////////////////// NUCLEIC LOWER
+		std::string p5_atm;
+
+		// Look for unique phosphate attached to leaving oxygen(s)
+		if ( p5_atm.empty() && !leaving.empty() ) {
+			utility::vector1< std::string > attached;
+			for ( std::string const & atm: find_elements( leaving, "O", name_to_element_map ) ) {
+				attached.append( find_elements( get_attached_atoms( atm, block ), "P", name_to_element_map ) );
+			}
+			if ( attached.size() == 1 ) {
+				p5_atm = attached[1];
+				TR.Debug << "Picking 5-prime connection point as unique phosphorus attached to leaving oxygen: " << p5_atm << std::endl;
+			}
+		}
+		// Look for unique heavyatom attached to unique leaving oxygen
+		if ( p5_atm.empty() && !leaving.empty() ) {
+			utility::vector1< std::string > leaving_O = find_elements( leaving, "O", name_to_element_map );
+			if ( leaving_O.size() == 1 ) {
+				utility::vector1< std::string > attached_heavy = find_heavy( get_attached_atoms( leaving_O[1], block ), name_to_element_map );
+				if ( attached_heavy.size() == 1 ) {
+					p5_atm = attached_heavy[1];
+					TR.Debug << "Picking 5-prime connection point as unique heavyatom attached to unique leaving oxygen: " << p5_atm << std::endl;
+				}
+			}
+		}
+
+		if ( p5_atm.empty() ) {
+			// Fallback -- look for an atom named 'P'
+			if ( name_to_element_map.count("P") ) {
+				p5_atm = "P";
+				TR.Debug << "Picking 5-prime connection point based on name: " << p5_atm << std::endl;
+			}
+		}
+
+		/////////////////// NUCLEIC UPPER
+
+		std::string p3_atm;
+
+		// Look for (unique) non-leaving heavyatom attached to a leaving hydrogen
+		if ( p3_atm.empty() && !leaving.empty() ) {
+			utility::vector1< std::string > found_heavy;
+			for ( std::string const & atm: find_elements( leaving, "H", name_to_element_map ) ) {
+				for ( std::string const & heavy: find_heavy( get_attached_atoms( atm, block ), name_to_element_map ) ) {
+					if ( ! leaving.count( heavy ) ) {
+						found_heavy.push_back( heavy );
+					}
+				}
+			}
+			if ( found_heavy.size() == 1 ) {
+				p3_atm = found_heavy[1];
+				TR.Debug << "Picking 3-prime connection point as unique non-leaving heavyatom attached to leaving hydrogen: " << p3_atm << std::endl;
+			}
+		}
+
+		// Fallback -- look for an atom named "O3'"
+		if ( p3_atm.empty() && name_to_element_map.count("O3'") ) {
+			p3_atm = "O3'";
+			TR.Debug << "Picking 3-prime connection point based on name: " << p3_atm << std::endl;
+		}
+
+		if ( p3_atm.empty() && name_to_element_map.count("C3'") ) {
+			// Look for non-carbon atoms heavy connected to C3'
+			utility::vector1< std::string > possible_connects;
+			for ( std::string const & atm: find_heavy( get_attached_atoms("C3'",block), name_to_element_map ) ) {
+				if ( name_to_element_map.at(atm) != "C" ) {
+					possible_connects.push_back(atm);
+				}
+			}
+			if ( possible_connects.size() == 1 ) {
+				p3_atm = possible_connects[1];
+				TR.Debug << "Picking 3-prime connection point based on connection to C3': " << p3_atm << std::endl;
+			}
+		}
+
+		/////////////////// Setting values
+
+		if ( !p5_atm.empty() ) {
+			TR.Debug << "Setting LOWER atom to " << p5_atm << std::endl;
+			molecule.set_lower_atom( p5_atm );
+		} else {
+			TR.Warning << "Could not find 5-prime-terminal atom in nominally nucleic residue." << std::endl;
+		}
+
+		if ( !p3_atm.empty() ) {
+			TR.Debug << "Setting UPPER atom to " << p3_atm << std::endl;
+			molecule.set_upper_atom( p3_atm );
+		} else {
+			TR.Warning << "Could not find 3-prime-terminal atom in nominally nucleic residue." << std::endl;
+		}
 
 	} else {
 
