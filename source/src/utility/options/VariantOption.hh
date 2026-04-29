@@ -67,11 +67,6 @@ public: // Creation
 	{}
 
 
-	/// @brief Move constructor
-	inline
-	VariantOption( VariantOption && ) = default;
-
-
 	/// @brief Option constructor
 	inline
 	VariantOption( Option const & option_a ) :
@@ -92,12 +87,6 @@ public: // Assignment
 		}
 		return *this;
 	}
-
-
-	/// @brief Move assignment
-	inline
-	VariantOption &
-	operator =( VariantOption && ) = default;
 
 
 public: // Conversion

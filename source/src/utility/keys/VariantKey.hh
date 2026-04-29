@@ -64,11 +64,6 @@ public: // Creation
 	{}
 
 
-	/// @brief Move constructor
-	inline
-	VariantKey( VariantKey && ) = default;
-
-
 	/// @brief Key constructor
 	inline
 	VariantKey( Key const & key_a ) :
@@ -89,12 +84,6 @@ public: // Assignment
 		}
 		return *this;
 	}
-
-
-	/// @brief Move assignment
-	inline
-	VariantKey &
-	operator =( VariantKey && ) = default;
 
 
 public: // Conversion
