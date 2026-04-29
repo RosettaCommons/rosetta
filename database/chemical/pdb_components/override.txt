@@ -1,3 +1,6 @@
 # Overrides of existing PDB components 
 
-chemical/pdb_components/override/components.NA8.cif
+chemical/pdb_components/override/components.7HA.cif
+chemical/pdb_components/override/components.GOM.cif
+chemical/pdb_components/override/components.NKS.cif
+chemical/pdb_components/override/components.THX.cif
