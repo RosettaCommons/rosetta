@@ -78,66 +78,8 @@ RNA_Info::update_derived_rna_data( ResidueType const & residue_type ){
 	}
 	runtime_assert( is_virtual_.size() == residue_type.natoms() );
 
-	// There must be EITHER O2', a replacement like F2', or a virt.
-	if ( residue_type.has( "O2'" ) ) {
-		o2prime_index_ = residue_type.atom_index( "O2'" );
-	} else if ( residue_type.has( "F2'" ) ) {
-		o2prime_index_ = residue_type.atom_index( "F2'" );
-	} else {
-		o2prime_index_ = 0;
-	}
-	if ( residue_type.has( "HO2'" ) ) {
-		ho2prime_index_ = residue_type.atom_index("HO2'" );
-	} else {
-		ho2prime_index_ = 0;
-	}
-	p_atom_index_  = residue_type.atom_index( "P" );
+	update_atom_annotations( residue_type );
 
-	// Could be phosphorothioate
-	if ( residue_type.has( "OP2" ) ) {
-		op2_atom_index_ = residue_type.atom_index( "OP2" );
-	} else if ( residue_type.has( "O2P" ) ) { // should only be CCD derived
-		op2_atom_index_ = residue_type.atom_index( "O2P" );
-	} else if ( residue_type.has( "SP2" ) ) {
-		op2_atom_index_ = residue_type.atom_index( "SP2" );
-	} else {
-		op2_atom_index_ = residue_type.atom_index( "S2P" );
-	}
-	if ( residue_type.has( "OP1" ) ) {
-		op1_atom_index_ = residue_type.atom_index( "OP1" );
-	} else if ( residue_type.has( "O1P" ) ) { // should only be CCD derived
-		op2_atom_index_ = residue_type.atom_index( "O1P" );
-	} else {
-		op1_atom_index_ = residue_type.atom_index( "SP1" );
-	}
-	if ( residue_type.has( "O5'" ) ) {
-		o5prime_index_  = residue_type.atom_index( "O5'" );
-	} else {
-		o5prime_index_ = 0; // TNA
-	}
-
-	if ( residue_type.has( "O3'" ) ) {
-		o3prime_index_  = residue_type.atom_index( "O3'" );
-	} else if ( residue_type.has( "N3'" ) ) {
-		o3prime_index_ = residue_type.atom_index( "N3'" ); // TNA
-	} else {
-		o3prime_index_ = 0; // erp
-	}
-
-	if ( residue_type.has( "O4'" ) ) {
-		o4prime_index_ = residue_type.atom_index( "O4'" );
-	} else {
-		o4prime_index_ = residue_type.atom_index( "S4'" );
-	}
-	c1prime_index_ = residue_type.atom_index( "C1'" );
-	c2prime_index_ = residue_type.atom_index( "C2'" );
-	c4prime_index_ = residue_type.atom_index( "C4'" );
-	c3prime_index_ = residue_type.atom_index( "C3'" );
-	if ( residue_type.has( "C5'" ) ) {
-		c5prime_index_ = residue_type.atom_index( "C5'" );
-	} else {
-		o5prime_index_ = 0; // TNA
-	}
 	base_atom_list_.clear();
 
 	for ( Size i = 1; i <= residue_type.natoms(); i++ ) {
@@ -203,6 +145,149 @@ RNA_Info::update_derived_rna_data( ResidueType const & residue_type ){
 
 }
 
+void
+RNA_Info::update_atom_annotations( ResidueType const & residue_type ) {
+
+	//// Get info, pulling from the base type if necessary
+
+	//core::Size lower = 0;
+	//if ( restype.lower_connect_id() != 0 ) {
+	//	lower = restype.lower_connect_atom();
+	//} else {
+	//	// We may be a patched type -- pull the lower from the parent
+	//	ResidueTypeCOP basetype = restype->get_base_type_cop();
+	//	if ( basetype != nullptr && basetype->lower_connect_id() != 0 ) {
+	//		// Bounce through name, as patching may reorder atoms.
+	//		std::string const & lowername = basetype->atom_name( basetype->lower_connect_atom() );
+	//		if ( restype.has( lowername ) ) {
+	//			lower = restype.atom_index( lowername );
+	//		}
+	//	}
+	//}
+	//core::Size upper = 0;
+	//if ( restype.upper_connect_id() != 0 ) {
+	//	upper = restype.upper_connect_atom();
+	//} else {
+	//	// We may be a patched type -- pull the upper from the parent
+	//	ResidueTypeCOP basetype = restype->get_base_type_cop();
+	//	if ( basetype != nullptr && basetype->upper_connect_id() != 0 ) {
+	//		// Bounce through name, as patching may reorder atoms.
+	//		std::string const & uppername = basetype->atom_name( basetype->upper_connect_atom() );
+	//		if ( restype.has( uppername ) ) {
+	//			upper = restype.atom_index( uppername );
+	//		}
+	//	}
+	//}
+	//AtomIndices mainchain_atoms = restype.mainchain_atoms();
+	//if ( mainchain_atoms.size() == 0 ) {
+	//	// We may be a patched type -- pull from parent
+	//	ResidueTypeCOP basetype = restype->get_base_type_cop();
+	//	if ( basetype != nullptr ) {
+	//		for ( core::Size batm: basetype->mainchain_atoms() ) {
+	//			std::string const & name = basetype->atom_name( batm );
+	//			if ( restype.has(name) ) {
+	//				mainchain_atoms.push_back( restype.atom_index(name) );
+	//			} else {
+	//				mainchain_atoms.clear(); // Issue with mainchain and patching -- skip
+	//				break;
+	//			}
+	//		}
+	//	}
+	//}
+
+	////// Should the following be more responsive to atom renaming?
+	// The issue is that I (RM) don't know the full semantics of what each of these mean
+	// For now, simply leave things as the zero-index defaults
+
+	if ( residue_type.has("P") ) {
+		p_atom_index_ = residue_type.atom_index( "P" );
+	} else {
+		p_atom_index_ = 0;
+	}
+
+	if ( residue_type.has( "O5'" ) ) {
+		o5prime_index_  = residue_type.atom_index( "O5'" );
+	} else {
+		o5prime_index_ = 0; // TNA
+	}
+
+	// There must be EITHER O2', a replacement like F2', or a virt.
+	if ( residue_type.has( "O2'" ) ) {
+		o2prime_index_ = residue_type.atom_index( "O2'" );
+	} else if ( residue_type.has( "F2'" ) ) {
+		o2prime_index_ = residue_type.atom_index( "F2'" );
+	} else {
+		o2prime_index_ = 0;
+	}
+	if ( residue_type.has( "HO2'" ) ) {
+		ho2prime_index_ = residue_type.atom_index("HO2'" );
+	} else {
+		ho2prime_index_ = 0;
+	}
+
+	// Could be phosphorothioate
+	if ( residue_type.has( "OP2" ) ) {
+		op2_atom_index_ = residue_type.atom_index( "OP2" );
+	} else if ( residue_type.has( "O2P" ) ) { // should only be CCD derived
+		op2_atom_index_ = residue_type.atom_index( "O2P" );
+	} else if ( residue_type.has( "SP2" ) ) {
+		op2_atom_index_ = residue_type.atom_index( "SP2" );
+	} else {
+		op2_atom_index_ = 0;
+	}
+	if ( residue_type.has( "OP1" ) ) {
+		op1_atom_index_ = residue_type.atom_index( "OP1" );
+	} else if ( residue_type.has( "O1P" ) ) { // should only be CCD derived
+		op1_atom_index_ = residue_type.atom_index( "O1P" );
+	} else if ( residue_type.has( "SP1" ) ) {
+		op1_atom_index_ = residue_type.atom_index( "SP1" );
+	} else {
+		op1_atom_index_ = 0;
+	}
+
+	if ( residue_type.has( "O3'" ) ) {
+		o3prime_index_  = residue_type.atom_index( "O3'" );
+	} else if ( residue_type.has( "N3'" ) ) {
+		o3prime_index_ = residue_type.atom_index( "N3'" ); // TNA
+	} else {
+		o3prime_index_ = 0; // erp
+	}
+
+	if ( residue_type.has( "O4'" ) ) {
+		o4prime_index_ = residue_type.atom_index( "O4'" );
+	} else if ( residue_type.has( "S4'" ) ) {
+		o4prime_index_ = residue_type.atom_index( "S4'" );
+	} else {
+		o4prime_index_ = 0;
+	}
+
+	if ( residue_type.has( "C1'" ) ) {
+		c1prime_index_ = residue_type.atom_index( "C1'" );
+	} else {
+		c1prime_index_ = 0;
+	}
+	if ( residue_type.has( "C2'" ) ) {
+		c2prime_index_ = residue_type.atom_index( "C2'" );
+	} else {
+		c2prime_index_ = 0;
+	}
+	if ( residue_type.has( "C3'" ) ) {
+		c3prime_index_ = residue_type.atom_index( "C3'" );
+	} else {
+		c3prime_index_ = 0;
+	}
+	if ( residue_type.has( "C4'" ) ) {
+		c4prime_index_ = residue_type.atom_index( "C4'" );
+	} else {
+		c4prime_index_ = 0;
+	}
+	if ( residue_type.has( "C5'" ) ) {
+		c5prime_index_ = residue_type.atom_index( "C5'" );
+	} else {
+		c5prime_index_ = 0; // TNA
+	}
+
+}
 
 ////////////////////////////////////////////////////////////
 // ugh, sorry this was hard-coded by Parin.
