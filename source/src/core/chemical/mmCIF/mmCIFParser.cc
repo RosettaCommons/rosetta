@@ -642,7 +642,7 @@ mmCIFParser::annotate_polymeric_connections(
 		/////////////////// Special cases
 
 		// If we have a nitrogen at the alpha position, that's probably the N-term connection point, if we haven't already found it. (e.g. 2YH)
-		// But not if we're already capped (e.g. 7HA)
+		// But not if we're already fully capped (e.g. 7HA)
 		if ( !c_term_atm.empty() && n_term_atm.empty() ) {
 			std::set< std::string > betas;
 			for ( std::string const & alpha: get_attached_atoms( c_term_atm, block ) ) {
@@ -653,8 +653,11 @@ mmCIFParser::annotate_polymeric_connections(
 			utility::vector1< std::string > alpha_amino = find_elements( betas, "N", name_to_element_map );
 			TR.Trace << "Found alpha-amino nitrogens " << alpha_amino << std::endl;
 			if ( alpha_amino.size() == 1 ) {
-				n_term_atm = alpha_amino[1];
-				TR.Debug << "Picking N-terminal connection point as nitrogen in the alpha-amino position: " << n_term_atm << std::endl;
+				if ( find_heavy( get_attached_atoms( alpha_amino[1], block ), name_to_element_map ).size() < 2 ) {
+					// We can have two, as a secondary amine, but if it's three, it's likely fully capped, and we shouldn't pick it by heuristic
+					n_term_atm = alpha_amino[1];
+					TR.Debug << "Picking N-terminal connection point as nitrogen in the alpha-amino position: " << n_term_atm << std::endl;
+				}
 			}
 		}
 
