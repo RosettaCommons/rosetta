@@ -48,13 +48,6 @@ public: // Types
 	typedef  typename ProductFactory::Create  Create; // Product creation function
 
 
-private: // Creation
-
-
-	/// @brief Copy constructor
-	Registrant( Registrant const & ); // Undefined
-
-
 public: // Creation
 
 
@@ -175,12 +168,9 @@ public: // Creation
 	}
 
 
-private: // Assignment
-
-
-	/// @brief Copy assignment
-	Registrant &
-	operator =( Registrant const & ); // Undefined
+	// Each constructor calls ProductFactory::add(); a copy would silently re-register the same key.
+	Registrant( Registrant const & ) = delete;
+	Registrant & operator =( Registrant const & ) = delete;
 
 
 }; // Registrant
