@@ -525,6 +525,64 @@ fill_ideal_xyz_from_icoor(
 	} //while( ! atom_queue.empty() )
 }
 
+void
+pretty_print_atomicoor(
+	std::ostream & out,
+	core::chemical::MutableResidueType & restype
+) {
+	out << "ICOOR for MutableResidueType" << restype.name() << std::endl;
+	std::set< std::string > atoms_to_do;
+	for ( VD vd: restype.all_atoms() ) {
+		atoms_to_do.insert( restype.atom_name(vd) );
+	}
+	utility::vector1< std::string > process_queue; // queue for depth-first action.
+
+	debug_assert( restype.has( restype.root_atom() ) );
+	std::string root_atom = restype.atom_name(restype.root_atom());
+	out << "Root atom: " << root_atom << std::endl;
+
+	process_queue.push_back( root_atom );
+
+	while ( atoms_to_do.size() > 0 ) {
+		std::string current_atom;
+		if ( process_queue.empty() ) {
+			current_atom = *(atoms_to_do.begin());
+		} else {
+			current_atom = process_queue.back();
+			process_queue.pop_back();
+		}
+
+		MutableICoorRecordCOP icoor = restype.icoor( restype.atom_vertex(current_atom) );
+
+		out << current_atom << " ";
+		icoor->show(out); // adds line ending
+
+		atoms_to_do.erase(current_atom);
+
+		for ( core::Size ii(1); ii <= 3; ++ii ) {
+			if ( icoor->stub_type(ii) == ICoordAtomIDType::INTERNAL ) {
+				std::string stub = icoor->stub_atom(ii);
+				if ( ! restype.has(stub) ) {
+					out << "????Bad atom id??? " << stub << std::endl;
+					continue;
+				}
+				if ( process_queue.has_value( stub ) ) { continue; } // already pending
+				if ( atoms_to_do.count( stub ) == 0 ) { continue; } // already covered.
+				process_queue.push_back( stub );
+			}
+		}
+	}
+
+	// Connection ICOOR
+	for ( core::Size ii(1); ii <= restype.n_possible_residue_connections(); ++ii ) {
+		MutableResidueConnection const & con = restype.residue_connection( ii );
+		MutableICoorRecord const & icoor = con.icoor();
+
+		out << "CONN" << ii << " on " << restype.atom_name(con.vertex()) << ": ";
+		icoor.show(out); // adds line ending
+	}
+
+}
 
 } //chemical
 } //core

@@ -22,6 +22,7 @@
 #include <core/chemical/atomtype_support.hh>
 #include <core/chemical/residue_support.hh>
 #include <core/chemical/bond_support.hh>
+#include <core/chemical/icoor_support.hh>
 
 #include <numeric/conversions.hh>
 
@@ -461,6 +462,10 @@ MolFileIOMolecule::handle_polymeric_assignments(MutableResidueTypeOP restype) {
 		restype->set_mainchain_atoms( mainchain_vec );
 	}
 	if ( mainchain_vec.size() < 3 ) {
+		if ( TR.Trace.visible() ) {
+			TR.Trace << "Attempting to grab mainchain equivalents from ICOOR tree." << std::endl;
+			pretty_print_atomicoor( TR.Trace, *restype);
+		}
 		// We're either missing an upper/lower (which results in an empty vector), or we're too short of a backbone.
 		// Attempt to find usable atoms such that the ICOOR code below works.
 		mainchain_vec.resize(6, INVALID_VD); // 1-3 is N-term entries, 4-6 is C-term. Not 100% correct from an absolute perspective, but works in the context of this function.
