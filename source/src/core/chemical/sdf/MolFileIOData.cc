@@ -83,6 +83,13 @@ MolFileIOAtom::MolFileIOAtom() :
 
 MolFileIOAtom::~MolFileIOAtom() = default;
 
+void
+MolFileIOAtom::add_alias( std::string const & alias ) {
+	if ( alias != name_ ) {
+		aliases_.insert( name_ );
+	}
+}
+
 MolFileIOBond::MolFileIOBond() :
 	index_( utility::get_undefined_size() ),
 	sdf_type_( utility::get_undefined_size() )
@@ -361,6 +368,22 @@ MutableResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 					restype->set_disulfide_atom_name( restype->atom_name( atom_vd ) );
 				}
 			}
+		}
+	}
+
+	// Handle atom aliases -- performed here so as to minimize the issues with aliases in the above code
+	// also to avoid adding an alias which the restype already has.
+	for ( VD atom_vd: restype->all_atoms() ) {
+		std::string const & atom_name = restype->atom_name(atom_vd);
+		for ( std::string alias: atom(atom_name)->aliases() ) {
+			alias = utility::stripped_whitespace( alias ); // Probably already stripped.
+			if ( restype->has(alias) ) { continue; }
+			// Unfortunately, the protected non-const version is prefered to the public const version
+			if ( MutableResidueTypeCOP(restype)->atom_aliases().count(alias) ) {
+				TR.Warning << "Alias " << alias << " double counted for " << atom_name << " and " << MutableResidueTypeCOP(restype)->atom_aliases().at(alias) << std::endl;
+				continue;
+			}
+			restype->add_atom_alias( atom_name, alias );
 		}
 	}
 

@@ -122,14 +122,27 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 	int model_Cartn_z = find_gemmi_column(atom_comp,"model_Cartn_z");
 	int charge = find_gemmi_column(atom_comp,"charge");
 
-	int atom_name_id = find_gemmi_column(atom_comp,"atom_id");
-	if ( atom_name_id < 0 ) {
-		atom_name_id = find_gemmi_column(atom_comp,"pdbx_component_atom_id");
+	utility::vector1< int > atom_ids;
+
+	int atom_id = find_gemmi_column(atom_comp,"atom_id");
+	if ( atom_id >= 0 ) {
+		atom_ids.push_back( atom_id );
 	}
-	if ( atom_name_id < 0 ) {
+	int pdbx_component_atom_id = find_gemmi_column(atom_comp,"pdbx_component_atom_id");
+	if ( pdbx_component_atom_id >= 0 ) {
+		atom_ids.push_back( pdbx_component_atom_id );
+	}
+	int alt_atom_id = find_gemmi_column(atom_comp,"alt_atom_id");
+	if ( alt_atom_id >= 0 ) {
+		atom_ids.push_back( alt_atom_id );
+	}
+
+	if ( atom_ids.empty() ) {
 		TR.Error << "Can't find atom id column (atom_id/pdbx_component_atom_id) in chem_comp_atom table for " << block.name << std::endl;
 		return molecule;
 	}
+
+	int atom_name_id = atom_ids.front();
 
 	// A map of atom names to their chemical symbols -- includes ignored atoms
 	std::map< std::string, std::string > name_to_element_map;
@@ -238,6 +251,13 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 			atom->formal_charge( as_int( atom_comp[ii][charge], 0 ) ); // Default zero if present and null
 		} else {
 			atom->formal_charge( 0 );
+		}
+
+		for ( int id: atom_ids ) {
+			std::string const & alt_name = as_string( atom_comp[ii][id] );
+			// Don't add an alias if it conflicts with any of the canonical names (as that would confuse things).
+			if ( name_to_element_map.count(alt_name) ) { continue; }
+			atom->add_alias( alt_name ); // Will handle deduplicating across different ID slots
 		}
 
 		molecule->add_atom( atom );

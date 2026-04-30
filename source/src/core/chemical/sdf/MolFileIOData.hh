@@ -93,6 +93,9 @@ public:
 	void formal_charge( int formal_charge ) { formal_charge_ = formal_charge; }
 	void partial_charge( core::Real partial_charge ) { partial_charge_ = partial_charge; }
 
+	void add_alias( std::string const & alias );
+	std::set< std::string > const & aliases() const { return aliases_; }
+
 private:
 	// Depending on what other file formats we want to use, it may make sense to convert this to a string "designator" instead.
 	AtomIndex index_;
@@ -104,6 +107,8 @@ private:
 	core::Real partial_charge_; /// Need to pull from file.
 	//StrStrMap atom_string_data_;
 	//StrRealMap atom_real_data_;
+
+	std::set< std::string > aliases_;
 };
 
 class MolFileIOBond : public utility::VirtualBase
@@ -173,6 +178,8 @@ public:
 	std::string const & get_lower_atom() const { return lower_atom_; }
 	std::string const & get_upper_atom() const { return upper_atom_; }
 
+	void add_atom_alias( std::string const & ref, std::string const & alias );
+
 	/// @brief Find a free atom index.
 	AtomIndex get_free_index() const;
 
@@ -240,7 +247,6 @@ private:
 
 	std::string lower_atom_; // The atom connected to the LOWER connect, if not empty
 	std::string upper_atom_;
-
 };
 
 }
