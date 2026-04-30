@@ -39,6 +39,8 @@ public:
 	Timer();
 	~Timer();
 
+	// ~Timer() calls Report(), so a copy would fire a second Report() on its
+	// own destruction, silently logging a duplicate timing entry.
 	Timer(Timer const &) = delete;
 	Timer & operator=(Timer const &) = delete;
 	void Report(const char *tag =nullptr);
