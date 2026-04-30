@@ -74,16 +74,8 @@ public: // construct/destruct
 	inline
 	~PausableSignalHub() override = default;
 
-
-private: // disallow copy construction and assignment
-
-
-	/// @brief disallow copy constructor
-	PausableSignalHub( PausableSignalHub const & rval );
-
-
-	/// @brief disallow copy assignment
-	PausableSignalHub & operator =( PausableSignalHub const & rval );
+	PausableSignalHub( PausableSignalHub const & ) = delete;
+	PausableSignalHub & operator =( PausableSignalHub const & ) = delete;
 
 
 public: // signal management

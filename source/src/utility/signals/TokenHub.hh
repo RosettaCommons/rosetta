@@ -89,16 +89,8 @@ public: // construct/destruct
 		this->invalidate_all( tokens_ );
 	}
 
-
-private: // disallow copy construction and assignment
-
-
-	/// @brief disallow copy constructor
-	TokenHub( TokenHub const & rval );
-
-
-	/// @brief disallow copy assignment
-	TokenHub & operator =( TokenHub const & rval );
+	TokenHub( TokenHub const & ) = delete;
+	TokenHub & operator =( TokenHub const & ) = delete;
 
 
 public: // token copy
