@@ -78,6 +78,7 @@ std::string name_for_common_type( XMLSchemaCommonType common_type )
 	case xsct_task_operation_comma_separated_list : return "task_operation_comma_separated_list";
 	case xsct_pose_cached_task_operation : return "pose_cached_task_operation";
 	case xsct_string_cslist : return "string_cslist";
+	case xsct_perturbation_type : return "perturbation_type";
 	case xsct_none :
 		throw CREATE_EXCEPTION(utility::excn::Exception, "Error in requesting name for xsct_none;" );
 		break;
@@ -513,6 +514,13 @@ activate_common_simple_type(
 		string_cslist.base_type( xs_string );
 		string_cslist.add_restriction( xsr_pattern, "[+]?.+(,[-+]?[0-9]+)*" );
 		xsd.add_top_level_element( string_cslist );
+	} else if ( common_type == xsct_perturbation_type ) {
+		XMLSchemaRestriction perturbation_type;
+		perturbation_type.name( name_for_common_type( common_type ) );
+		perturbation_type.base_type( xs_string );
+		perturbation_type.add_restriction( xsr_enumeration, "gaussian" );
+		perturbation_type.add_restriction( xsr_enumeration, "uniform" );
+		xsd.add_top_level_element( perturbation_type );
 	}
 
 	/* else if ( common_type == xsct_zero_or_one ) {
