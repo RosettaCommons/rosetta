@@ -357,12 +357,10 @@ public:
 	/// O(N)
 	platform::Size size() const;
 
-private:
+	DirectedEdgeList( DirectedEdgeList const & ) = delete;
+	DirectedEdgeList & operator =( DirectedEdgeList const & ) = delete;
 
-	/// @brief Uncopyable -- private and unimplemented copy ctor
-	DirectedEdgeList( DirectedEdgeList const & );
-	/// @brief Uncopyable -- private and unimplemented assignment operator
-	DirectedEdgeList const & operator = ( DirectedEdgeList const & );
+private:
 
 	/// @brief this edge-list-element-pool reference is handed to the list
 	/// to draw from.  This pool must outlive the edge-list itself.
@@ -518,10 +516,9 @@ private:
 	DirectedEdgeListIter first_outgoing_edge_;
 	Digraph* owner_;
 
-	//no default constructor, uncopyable
-	DirectedNode();
-	DirectedNode( DirectedNode const & );
-	DirectedNode & operator = ( DirectedNode & );
+	DirectedNode() = delete;
+	DirectedNode( DirectedNode const & ) = delete;
+	DirectedNode & operator =( DirectedNode const & ) = delete;
 };
 
 class DirectedEdge
@@ -667,10 +664,9 @@ private:
 	DirectedEdgeListIter pos_in_owners_edge_list_;
 	Digraph* owner_;
 
-	//no default constructor, uncopyable
-	DirectedEdge();
-	DirectedEdge( DirectedEdge const & );
-	DirectedEdge & operator = ( DirectedEdge & );
+	DirectedEdge() = delete;
+	DirectedEdge( DirectedEdge const & ) = delete;
+	DirectedEdge & operator =( DirectedEdge const & ) = delete;
 
 };
 
