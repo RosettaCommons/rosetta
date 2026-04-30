@@ -58,6 +58,7 @@ BarrelParametrizationCalculator::BarrelParametrizationCalculator( bool const use
 		parameter(i)->set_copy_suffix("copies_strand");
 	}
 	set_use_degrees_for_parameters();
+	real_parameter( BBPC_epsilon )->set_default_value( 1.0 );
 	boolean_parameter( BBPC_set_dihedrals )->set_default_value( true );
 	boolean_parameter( BBPC_set_bondangles )->set_default_value( true );
 	boolean_parameter( BBPC_set_bondlengths )->set_default_value( true );
@@ -147,25 +148,21 @@ BarrelParametrizationCalculator::build_strand(
 	if ( TR.Debug.visible() ) TR.Debug << "Generating strand atom positions." << std::endl;
 	bool failed( false );
 
-	// For a barrel strand, omega0=0 (strands run roughly parallel to barrel axis).
-	// delta_t=0, z1_offset=0, epsilon=1.0 (no superhelical coiling, no squash).
-	// The barrel geometry is encoded in r0 (barrel radius), delta_omega0 (azimuthal position),
-	// and delta_z0 (axial stagger from shear), plus inversion for antiparallel strands.
-	core::Real const omega0_effective = 0.0;
-	core::Real const delta_t = 0.0;
+	// omega0=0 for a closed barrel (strands parallel to barrel axis).
+	// omega0!=0 for a solenoid/beta-helix (strands spiral around the axis).
+	// epsilon=1.0 for circular cross-section; !=1 for elliptical.
 	core::Real const z1_offset = 0.0;
-	core::Real const epsilon = 1.0;
 	core::Size const repeating_unit_offset = 0;
 
 	protocols::helical_bundle::generate_atom_positions(
 		atom_positions, pose, strand_start, strand_end,
 		real_parameter_cop( BBPC_r0 )->value(),
-		omega0_effective,
+		real_parameter_cop( BBPC_omega0 )->value(),
 		real_parameter_cop( BBPC_delta_omega0 )->value(),
-		delta_t,
+		real_parameter_cop( BBPC_delta_t )->value(),
 		z1_offset,
 		real_parameter_cop( BBPC_delta_z0 )->value(),
-		epsilon,
+		real_parameter_cop( BBPC_epsilon )->value(),
 		boolean_parameter_cop( BBPC_invert_strand )->value(),
 		realvector_parameter_cop( BBPC_r1_peratom )->value(),
 		real_parameter_cop( BBPC_omega1 )->value(),
@@ -210,9 +207,12 @@ BarrelParametrizationCalculator::parameter_type_from_enum(
 	using namespace core::conformation::parametric;
 	switch( param_enum ) {
 	case BBPC_r0:                    return PT_generic_nonnegative_valued_real;
+	case BBPC_omega0:                return PT_angle;
 	case BBPC_delta_omega0:          return PT_angle;
 	case BBPC_delta_z0:              return PT_generic_real;
 	case BBPC_delta_omega1:          return PT_angle;
+	case BBPC_delta_t:               return PT_generic_real;
+	case BBPC_epsilon:               return PT_generic_nonnegative_valued_real;
 	case BBPC_residues_per_repeat:   return PT_generic_natural_number;
 	case BBPC_atoms_per_residue:     return PT_generic_natural_number_vector;
 	case BBPC_r1_peratom:            return PT_generic_nonnegative_valued_real_vector;
@@ -234,10 +234,13 @@ BarrelParametrizationCalculator::parameter_description_from_enum(
 	BBPC_Parameters param_enum
 ) {
 	static const utility::vector1< std::string > descriptions {
-		"Barrel radius in Angstroms.",
+		"Barrel/solenoid radius in Angstroms.",
+		"Superhelical twist per residue, stored in radians. Zero for closed barrels; nonzero for solenoids/beta-helices.",
 		"Azimuthal position of this strand around the barrel axis, stored in radians.",
 		"Axial offset of this strand along the barrel axis, in Angstroms.",
 		"Rotational offset of this strand about its own axis, stored in radians.",
+		"Offset along the polypeptide backbone, in residues.",
+		"Lateral squash parameter/eccentricity of the barrel cross-section.",
 		"Number of residues per repeating unit in a strand.",
 		"Number of mainchain atoms per residue in the repeating unit -- a vector of integers.",
 		"Minor helix radius per atom, in Angstroms. Read from Crick params file.",
@@ -260,9 +263,12 @@ BarrelParametrizationCalculator::short_parameter_description_from_enum(
 ) {
 	static const utility::vector1< std::string > descriptions {
 		"Barrel radius",
+		"Superhelical twist",
 		"Azimuthal position",
 		"Axial offset",
 		"Roll about strand axis",
+		"Registry shift",
+		"Lateral squash",
 		"Residues/repeat",
 		"Atoms/residue",
 		"Minor radius",
@@ -285,9 +291,12 @@ BarrelParametrizationCalculator::parameter_units_from_enum(
 ) {
 	static const utility::vector1< std::string > units {
 		"Angstroms",
+		"radians/residue",
 		"radians",
 		"Angstroms",
 		"radians",
+		"residues",
+		"dimensionless",
 		"dimensionless",
 		"dimensionless",
 		"Angstroms",
@@ -311,9 +320,12 @@ BarrelParametrizationCalculator::parameter_properties_from_enum(
 	static const utility::vector1< ParameterizationCalculatorProperties > props {
 		//                                                        can_set, can_copy, can_sample, can_perturb, global
 		ParameterizationCalculatorProperties( true,  true,  true,  true,  true  ), // r0 (global for all strands)
+		ParameterizationCalculatorProperties( true,  true,  true,  true,  true  ), // omega0 (global; 0 for barrel, nonzero for solenoid)
 		ParameterizationCalculatorProperties( true,  true,  true,  true,  false ), // delta_omega0
 		ParameterizationCalculatorProperties( true,  true,  true,  true,  false ), // delta_z0
 		ParameterizationCalculatorProperties( true,  true,  true,  true,  false ), // delta_omega1
+		ParameterizationCalculatorProperties( true,  true,  true,  true,  false ), // delta_t
+		ParameterizationCalculatorProperties( true,  true,  true,  true,  true  ), // epsilon (global)
 		ParameterizationCalculatorProperties( false, false, false, false, false ), // residues_per_repeat
 		ParameterizationCalculatorProperties( false, false, false, false, false ), // atoms_per_residue
 		ParameterizationCalculatorProperties( true,  false, false, false, false ), // r1_peratom
@@ -336,9 +348,12 @@ BarrelParametrizationCalculator::parameter_name_from_enum(
 ) {
 	static const utility::vector1< std::string > names {
 		"r0",
+		"omega0",
 		"delta_omega0",
 		"delta_z0",
 		"delta_omega1",
+		"delta_t",
+		"epsilon",
 		"residues_per_repeat",
 		"atoms_per_residue",
 		"r1_peratom",
@@ -395,6 +410,7 @@ BarrelParametrizationCalculator::residues_per_repeat() const {
 
 void
 BarrelParametrizationCalculator::set_use_degrees_for_parameters() {
+	real_parameter( BBPC_omega0 )->set_input_is_angle_in_degrees( use_degrees_ );
 	real_parameter( BBPC_delta_omega0 )->set_input_is_angle_in_degrees( use_degrees_ );
 	real_parameter( BBPC_delta_omega1 )->set_input_is_angle_in_degrees( use_degrees_ );
 }

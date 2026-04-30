@@ -31,14 +31,21 @@
 namespace protocols {
 namespace beta_barrel {
 
-/// @brief Parameters for a single strand in a beta-barrel.
+/// @brief Parameters for a single strand in a parametric barrel or solenoid.
+/// @details For a closed barrel, omega0 is typically 0 (strands run parallel to the barrel axis).
+/// For a solenoid/beta-helix, omega0 is non-zero (strands spiral around the axis).
+/// For TIM barrels, these parameters describe the strand elements; alpha-helical elements
+/// between strands can be modeled separately using the helical bundle infrastructure.
 enum BBPC_Parameters {
 	// Sampled/perturbable parameters:
-	BBPC_r0 = 1,           // Barrel radius (Angstroms), effectively global
+	BBPC_r0 = 1,           // Barrel/solenoid radius (Angstroms), effectively global
+	BBPC_omega0,            // Superhelical twist per residue (radians); 0 for flat barrels, nonzero for solenoids
 	BBPC_delta_omega0,      // Azimuthal position of this strand (radians)
 	BBPC_delta_z0,          // Axial offset of this strand (Angstroms)
 	BBPC_delta_omega1,      // Rotational offset about the strand's own axis (radians)
-	BBPC_last_parameter_to_be_sampled = BBPC_delta_omega1,
+	BBPC_delta_t,           // Offset along the polypeptide backbone (residues)
+	BBPC_epsilon,           // Lateral squash/eccentricity of the barrel cross-section
+	BBPC_last_parameter_to_be_sampled = BBPC_epsilon,
 
 	// Invariant minor helix parameters (from .crick_params):
 	BBPC_residues_per_repeat,
