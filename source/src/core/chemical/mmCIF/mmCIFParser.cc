@@ -305,6 +305,19 @@ find_heavy( C const & container, std::map< std::string, std::string > const & na
 	return found;
 }
 
+// All entries in container 1 which aren't in container2
+template< class C1 >
+utility::vector1< std::string >
+find_not_in( C1 const & container1, std::set<std::string> const & container2 ) {
+	utility::vector1< std::string > clean;
+	for ( std::string const & atm: container1 ) {
+		if ( container2.count(atm) == 0 ) {
+			clean.push_back( atm );
+		}
+	}
+	return clean;
+}
+
 utility::vector1< std::string >
 get_attached_atoms( std::string const & atm, gemmi::cif::Block& block ) {
 	utility::vector1< std::string > found;
@@ -502,7 +515,7 @@ mmCIFParser::annotate_polymeric_connections(
 		// TODO: Do we always want to fall back, or should that be conditional based on whether particular columns are or are not found?
 		if ( !n_term.empty() ) {
 			// Ideally we'd like a nitrogen -- if there's multiple, just pick the first.
-			utility::vector1< std::string > const & found_N = find_elements( n_term, "N", name_to_element_map );
+			utility::vector1< std::string > const & found_N = find_not_in( find_elements( n_term, "N", name_to_element_map ), leaving );
 			TR.Trace << "Found annotated N-terminal nitrogens: " << found_N << std::endl;
 			if ( found_N.size() >= 1 ) {
 				n_term_atm = found_N[1];
@@ -510,7 +523,7 @@ mmCIFParser::annotate_polymeric_connections(
 			}
 			if ( n_term_atm.empty() ) {
 				// Failing that, pick the first heavy atom.
-				utility::vector1< std::string > const & found_heavy = find_heavy( n_term, name_to_element_map );
+				utility::vector1< std::string > const & found_heavy = find_not_in( find_heavy( n_term, name_to_element_map ), leaving );
 				TR.Trace << "Found annotated N-terminal heavy: " << found_heavy << std::endl;
 				if ( found_heavy.size() >= 1 ) {
 					n_term_atm = found_heavy[1];
@@ -523,15 +536,10 @@ mmCIFParser::annotate_polymeric_connections(
 			utility::vector1< std::string > found_N;
 			for ( std::string const & atm: leaving ) {
 				if ( name_to_element_map.at(atm) == "H" ) {
-					found_N.append( find_elements( get_attached_atoms( atm, block ), "N", name_to_element_map ) );
+					found_N.append( find_not_in( find_elements( get_attached_atoms( atm, block ), "N", name_to_element_map ), leaving) );
 				}
 			}
-			std::set< std::string > found_N_set; // Need to deduplicate
-			for ( std::string const & atm: found_N_set ) {
-				if ( leaving.count( atm ) == 0 ) { // There can be nitrogens in the leaving set, e.g. 9OW
-					found_N_set.insert(atm);
-				}
-			}
+			std::set< std::string > found_N_set( found_N.begin(), found_N.end() ); // Need to deduplicate
 			TR.Trace << "Found nitrogens with attached leaving Hs: " << found_N << std::endl;
 			if ( found_N_set.size() == 1 ) {
 				n_term_atm = *(found_N.begin());
@@ -540,7 +548,7 @@ mmCIFParser::annotate_polymeric_connections(
 		}
 		if ( n_term_atm.empty() && !backbone.empty() ) {
 			// Next, try to find a (unique) nitrogen in the annotated backbone.
-			utility::vector1< std::string > const & found_N = find_elements( backbone, "N", name_to_element_map );
+			utility::vector1< std::string > const & found_N = find_not_in( find_elements( backbone, "N", name_to_element_map ), leaving);
 			TR.Trace << "Found Backbone nitrogens: " << found_N << std::endl;
 			if ( found_N.size() == 1 ) {
 				n_term_atm = found_N[1];
@@ -549,7 +557,7 @@ mmCIFParser::annotate_polymeric_connections(
 		}
 		if ( n_term_atm.empty() ) {
 			// If there's a single nitrogen, that's probably it.
-			utility::vector1< std::string > nitrogens = find_elements( all_atoms, "N", name_to_element_map );
+			utility::vector1< std::string > nitrogens = find_not_in( find_elements( all_atoms, "N", name_to_element_map ), leaving );
 			if ( nitrogens.size() == 1 ) {
 				n_term_atm = nitrogens[1];
 				TR.Debug << "Picking N-terminal connection point based on single nitrogen in residue: " << n_term_atm << std::endl;
@@ -574,7 +582,6 @@ mmCIFParser::annotate_polymeric_connections(
 			for ( std::string const & atm: c_term ) {
 				if ( name_to_element_map.at(atm) != "H" && leaving.count(atm) > 0 ) {
 					leaving_heavy.push_back(atm);
-					c_term_connect = atm;
 				}
 			}
 			TR.Trace << "Found C-term annotated leaving heavy atoms " << leaving_heavy << std::endl;
@@ -632,12 +639,7 @@ mmCIFParser::annotate_polymeric_connections(
 		// Find the c_term atom from the c_term connect atom.
 		if ( c_term_atm.empty() && !c_term_connect.empty() ) {
 			// Find connected heavy atom
-			utility::vector1< std::string > connected_heavy;
-			for ( std::string const & atm: get_attached_atoms( c_term_connect, block ) ) {
-				if ( name_to_element_map.at(atm) != "H" ) {
-					connected_heavy.push_back( atm );
-				}
-			}
+			utility::vector1< std::string > connected_heavy = find_not_in( find_heavy( get_attached_atoms( c_term_connect, block ), name_to_element_map ), leaving );
 			TR.Trace << "Atoms found connected with the c-term leaving group: " << connected_heavy << std::endl;
 			if ( connected_heavy.size() == 1 ) {
 				c_term_atm = connected_heavy[1];
@@ -655,7 +657,7 @@ mmCIFParser::annotate_polymeric_connections(
 					betas.insert( beta );
 				}
 			}
-			utility::vector1< std::string > alpha_amino = find_elements( betas, "N", name_to_element_map );
+			utility::vector1< std::string > alpha_amino = find_not_in( find_elements( betas, "N", name_to_element_map ), leaving);
 			TR.Trace << "Found alpha-amino nitrogens " << alpha_amino << std::endl;
 			if ( alpha_amino.size() == 1 ) {
 				if ( find_heavy( get_attached_atoms( alpha_amino[1], block ), name_to_element_map ).size() < 2 ) {
@@ -735,7 +737,7 @@ mmCIFParser::annotate_polymeric_connections(
 		if ( p5_atm.empty() && !leaving.empty() ) {
 			utility::vector1< std::string > attached;
 			for ( std::string const & atm: find_elements( leaving, "O", name_to_element_map ) ) {
-				attached.append( find_elements( get_attached_atoms( atm, block ), "P", name_to_element_map ) );
+				attached.append( find_not_in( find_elements( get_attached_atoms( atm, block ), "P", name_to_element_map ), leaving ) );
 			}
 			if ( attached.size() == 1 ) {
 				p5_atm = attached[1];
@@ -747,7 +749,7 @@ mmCIFParser::annotate_polymeric_connections(
 		if ( p5_atm.empty() && !leaving.empty() ) {
 			utility::vector1< std::string > leaving_O = find_elements( leaving, "O", name_to_element_map );
 			if ( leaving_O.size() == 1 ) {
-				utility::vector1< std::string > attached_heavy = find_heavy( get_attached_atoms( leaving_O[1], block ), name_to_element_map );
+				utility::vector1< std::string > attached_heavy = find_not_in( find_heavy( get_attached_atoms( leaving_O[1], block ), name_to_element_map ), leaving );
 				if ( attached_heavy.size() == 1 ) {
 					p5_atm = attached_heavy[1];
 					TR.Debug << "Picking 5-prime connection point as unique heavyatom attached to unique leaving oxygen: " << p5_atm << std::endl;
@@ -760,7 +762,7 @@ mmCIFParser::annotate_polymeric_connections(
 		std::string p3_atm;
 
 		// Look for an atom named "O3'"
-		if ( p3_atm.empty() && name_to_element_map.count("O3'") ) {
+		if ( p3_atm.empty() && name_to_element_map.count("O3'") && leaving.count("O3'") == 0 ) {
 			p3_atm = "O3'";
 			TR.Debug << "Picking 3-prime connection point based on name: " << p3_atm << std::endl;
 		}
@@ -768,7 +770,7 @@ mmCIFParser::annotate_polymeric_connections(
 		if ( p3_atm.empty() && name_to_element_map.count("C3'") ) {
 			// Look for non-carbon atoms heavy connected to C3'
 			utility::vector1< std::string > possible_connects;
-			for ( std::string const & atm: find_heavy( get_attached_atoms("C3'",block), name_to_element_map ) ) {
+			for ( std::string const & atm: find_not_in( find_heavy( get_attached_atoms("C3'",block), name_to_element_map ), leaving) ) {
 				if ( name_to_element_map.at(atm) != "C" ) {
 					possible_connects.push_back(atm);
 				}
@@ -783,10 +785,10 @@ mmCIFParser::annotate_polymeric_connections(
 		if ( p3_atm.empty() && !leaving.empty() ) {
 			utility::vector1< std::string > found_heavy;
 			for ( std::string const & atm: find_elements( leaving, "H", name_to_element_map ) ) {
-				for ( std::string const & heavy: find_heavy( get_attached_atoms( atm, block ), name_to_element_map ) ) {
+				for ( std::string const & heavy: find_not_in( find_heavy( get_attached_atoms( atm, block ), name_to_element_map ), leaving) ) {
 					// For some nucleic, there's leaving H on non-leaving phosphate oxygens (for charge purposes?)
 					// Don't pick if it's attached to the 5' end.
-					if ( ! leaving.count( heavy ) && !get_attached_atoms(heavy, block).has_value(p5_atm)  ) {
+					if ( !get_attached_atoms(heavy, block).has_value(p5_atm)  ) {
 						found_heavy.push_back( heavy );
 					}
 				}

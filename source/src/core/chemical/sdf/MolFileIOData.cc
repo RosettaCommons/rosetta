@@ -232,13 +232,7 @@ MutableResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 		restype_from_mio[ *aiter ] = vd;
 		Atom & restype_atom( restype->atom( vd ) );
 
-		if ( atom.name() == "O1P" ) {
-			restype->rename_atom( vd, "OP1" );
-		} else if ( atom.name() == "O2P" ) {
-			restype->rename_atom( vd, "OP2" );
-		} else {
-			restype->rename_atom( vd, atom.name() );
-		}
+		restype->rename_atom( vd, atom.name() ); // Need to call the restype function, as it also updates internal data maps
 		restype_atom.element_type( elements->element( atom.element() ) );
 		restype_atom.charge( atom.partial_charge() );
 		if ( atom.partial_charge() != 0 ) {
