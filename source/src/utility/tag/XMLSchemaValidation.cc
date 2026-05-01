@@ -425,7 +425,7 @@ private:
 
 
 XMLValidator::XMLValidator() : pimpl_( new XMLValidatorImpl() ) {}
-XMLValidator::~XMLValidator() { delete pimpl_; }
+XMLValidator::~XMLValidator() = default;
 
 bool
 XMLValidator::schema_has_been_set() const
