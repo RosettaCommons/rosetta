@@ -14,12 +14,8 @@
 			<Helix delta_omega0="240"/>
 		</MakeBundle>
 		<MinMover name="min" scorefxn="ref15"
-			type="lbfgs_armijo_nonmonotone" tolerance="0.01" max_iter="200">
-			<MoveMap>
-				<Parametric enable="true"/>
-				<Chi enable="true"/>
-			</MoveMap>
-		</MinMover>
+			type="lbfgs_armijo_nonmonotone" tolerance="0.01" max_iter="200"
+			bb="false" chi="true" parametric="true"/>
 	</MOVERS>
 
 	<PROTOCOLS>
