@@ -163,35 +163,35 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 		std::string type = utility::uppercased( as_string(chem_comp[0][0]) );
 		// TODO: Need better handling of variants (e.g. 1ZN, B5I)
 		if ( type == "L-PEPTIDE LINKING"
-					|| type == "L-PEPTIDE NH3 AMINO TERMINUS"
-					|| type == "L-PEPTIDE COOH CARBOXY TERMINUS"
-					|| type == "L-BETA-PEPTIDE, C-GAMMA LINKING"
-					|| type == "L-GAMMA-PEPTIDE, C-DELTA LINKING"
+				|| type == "L-PEPTIDE NH3 AMINO TERMINUS"
+				|| type == "L-PEPTIDE COOH CARBOXY TERMINUS"
+				|| type == "L-BETA-PEPTIDE, C-GAMMA LINKING"
+				|| type == "L-GAMMA-PEPTIDE, C-DELTA LINKING"
 				) {
 			TR.Debug << "Found L-peptide RT" << std::endl;// named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "PROTEIN POLYMER L_AA" );
 			is_peptide_linking = true;
 			is_nucleic_linking = false;
 		} else if ( type == "D-PEPTIDE LINKING"
-					|| type == "D-PEPTIDE NH3 AMINO TERMINUS"
-					|| type == "D-PEPTIDE COOH CARBOXY TERMINUS"
-					|| type == "D-BETA-PEPTIDE, C-GAMMA LINKING"
-					|| type == "D-GAMMA-PEPTIDE, C-DELTA LINKING"
+				|| type == "D-PEPTIDE NH3 AMINO TERMINUS"
+				|| type == "D-PEPTIDE COOH CARBOXY TERMINUS"
+				|| type == "D-BETA-PEPTIDE, C-GAMMA LINKING"
+				|| type == "D-GAMMA-PEPTIDE, C-DELTA LINKING"
 				) {
 			TR.Debug << "Found D-peptide RT" << std::endl;//named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "PROTEIN POLYMER D_AA" );
 			is_peptide_linking = true;
 			is_nucleic_linking = false;
 		} else if ( type == "PEPTIDE-LIKE"
-					|| type == "PEPTIDE LINKING"
+				|| type == "PEPTIDE LINKING"
 				) {
 			TR.Debug << "Found peptide RT" << std::endl;//named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "PROTEIN POLYMER" );
 			is_peptide_linking = true;
 			is_nucleic_linking = false;
 		} else if ( type == "RNA LINKING"
-					|| type == "RNA OH 5 PRIME TERMINUS"
-					|| type == "RNA OH 3 PRIME TERMINUS"
+				|| type == "RNA OH 5 PRIME TERMINUS"
+				|| type == "RNA OH 3 PRIME TERMINUS"
 				) {
 			TR.Debug << "Found D-RNA RT" << std::endl;//named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "RNA POLYMER D_RNA" );
@@ -203,8 +203,8 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 			is_peptide_linking = false;
 			is_nucleic_linking = true;
 		}  else if ( type == "DNA LINKING"
-					|| type == "DNA OH 3 PRIME TERMINUS"
-					|| type == "DNA OH 5 PRIME TERMINUS"
+				|| type == "DNA OH 3 PRIME TERMINUS"
+				|| type == "DNA OH 5 PRIME TERMINUS"
 				) {
 			TR.Debug << "Found D-DNA RT" << std::endl;//named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "DNA POLYMER" );
@@ -216,12 +216,12 @@ mmCIFParser::get_molfile_molecule( gemmi::cif::Block & block ) {
 			is_peptide_linking = false;
 			is_nucleic_linking = true;
 		} else if ( type == "SACCHARIDE"
-					|| type == "L-SACCHARIDE"
-					|| type == "L-SACCHARIDE, ALPHA LINKING"
-					|| type == "L-SACCHARIDE, BETA LINKING"
-					|| type == "D-SACCHARIDE"
-					|| type == "D-SACCHARIDE, ALPHA LINKING"
-					|| type == "D-SACCHARIDE, BETA LINKING"
+				|| type == "L-SACCHARIDE"
+				|| type == "L-SACCHARIDE, ALPHA LINKING"
+				|| type == "L-SACCHARIDE, BETA LINKING"
+				|| type == "D-SACCHARIDE"
+				|| type == "D-SACCHARIDE, ALPHA LINKING"
+				|| type == "D-SACCHARIDE, BETA LINKING"
 				) {
 			// No special handling at the moment
 			is_peptide_linking = false;
@@ -403,7 +403,7 @@ mmCIFParser::get_atoms_to_ignore(
 	using gemmi::cif::as_string; // Takes care of unquoting, use even if it's a simple string (e.g. atom names can have odd characters)
 
 	std::set< std::string > atoms_to_ignore;
-	if ( !is_peptide_linking && !is_nucleic_linking) {
+	if ( !is_peptide_linking && !is_nucleic_linking ) {
 		// Ligands keep all the atoms
 		return atoms_to_ignore;
 	}
@@ -471,7 +471,7 @@ mmCIFParser::get_atoms_to_ignore(
 			}
 		}
 
-		if ( n_heavy_to_OXT < 2	) {
+		if ( n_heavy_to_OXT < 2 ) {
 			atoms_to_ignore.insert( "OXT" );
 		} else {
 			TR.Trace << "Not ignoring OXT, as it contains a pendant group." << std::endl;
@@ -512,7 +512,7 @@ mmCIFParser::get_atoms_to_ignore(
 			}
 		}
 
-		if ( n_heavy_to_O3P < 2	) {
+		if ( n_heavy_to_O3P < 2 ) {
 			atoms_to_ignore.insert( "OP3" );
 			atoms_to_ignore.insert( "O3P" );
 		} else {
@@ -872,9 +872,7 @@ mmCIFParser::annotate_polymeric_connections(
 			TR.Warning << "Could not find 3-prime-terminal atom in nominally nucleic residue." << molecule.name() << std::endl;
 		}
 
-	} else {
-
-	}
+	} else { }
 
 }
 

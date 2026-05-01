@@ -130,7 +130,7 @@ MolFileIOMolecule::atom( std::string const & name ) {
 		debug_assert( has( molgraph_, *aiter ) );
 		MolFileIOAtomOP atom( molgraph_[*aiter] );
 		debug_assert( atom );
-		if (atom->name() == name) {
+		if ( atom->name() == name ) {
 			return atom;
 		}
 	}
@@ -347,7 +347,7 @@ MutableResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 
 	// TODO: Can't directly specify internal coordinate tree or chi bond info from input files
 	// If that changes this needs to be adjusted so as not to overwrite those settings.
-	if ( ! lower_atom_.empty()) {
+	if ( ! lower_atom_.empty() ) {
 		restype->assign_internal_coordinates( restype->atom_vertex( lower_atom_ ) );
 	} else {
 		restype->assign_internal_coordinates(); // Also sets atom base. Needs nbr atom assignment
@@ -615,12 +615,12 @@ MolFileIOMolecule::handle_polymeric_assignments(MutableResidueTypeOP restype) {
 				restype->atom_name( mainchain_vec[3] ) );
 
 			//if ( has-pendant-oxygens ) {
-			//	find-primary-child-of-root
-			//	//std::string OP2_name = restype->has( "OP2" ) ? "OP2" :
-			//	//	( restype->has( "O2P" ) ? "O2P" :
-			//	//	( restype->has( "S2P" ) ? "S2P" : "N4'" ) );
-			//	set-icoor-based-on-lower ("O5'" being mainchain_vec[2]
-			//	//restype->set_icoor( OP2_name, radians(chiral*-114.600417), radians(72.020306), 1.484470, "P", "O5'", "LOWER" );
+			// find-primary-child-of-root
+			// //std::string OP2_name = restype->has( "OP2" ) ? "OP2" :
+			// // ( restype->has( "O2P" ) ? "O2P" :
+			// // ( restype->has( "S2P" ) ? "S2P" : "N4'" ) );
+			// set-icoor-based-on-lower ("O5'" being mainchain_vec[2]
+			// //restype->set_icoor( OP2_name, radians(chiral*-114.600417), radians(72.020306), 1.484470, "P", "O5'", "LOWER" );
 			//}
 		} else {
 			TR.Debug << "Labeling nucleic residue " << restype->name() << " as lower terminus, due to lack of lower connect." << std::endl;
