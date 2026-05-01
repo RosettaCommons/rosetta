@@ -116,7 +116,7 @@ ParametricAtomTreeMultifunc::dfunc( Multivec const & vars, Multivec & dE_dvars )
 		Real r0_val = 0, omega0_val = 0, delta_omega0_val = 0;
 		Real omega1_val = 0, z1_val = 0, delta_omega1_all_val = 0;
 		utility::vector1< Real > r1_vals, delta_omega1_vals, delta_z1_vals;
-		Size residues_per_repeat = 1;
+		//Size residues_per_repeat = 1;
 
 		// Read parameter values by iterating and checking names
 		for ( Size i = 1; i <= params->num_parameters(); ++i ) {
@@ -140,9 +140,9 @@ ParametricAtomTreeMultifunc::dfunc( Multivec const & vars, Multivec & dE_dvars )
 				delta_omega1_vals = utility::pointer::static_pointer_cast< conformation::parametric::RealVectorValuedParameter const >( param )->value();
 			} else if ( name == "delta_z1_peratom" ) {
 				delta_z1_vals = utility::pointer::static_pointer_cast< conformation::parametric::RealVectorValuedParameter const >( param )->value();
-			} else if ( name == "residues_per_repeat" ) {
+			} /*else if ( name == "residues_per_repeat" ) {
 				residues_per_repeat = utility::pointer::static_pointer_cast< conformation::parametric::SizeValuedParameter const >( param )->value();
-			}
+			}*/
 		}
 
 		if ( r1_vals.empty() || delta_omega1_vals.empty() || delta_z1_vals.empty() ) continue;

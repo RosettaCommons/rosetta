@@ -82,14 +82,10 @@ public:
 
 	/// @brief returns an internal ID assigned to a given atom name
 	/// @details this ID remains the same for all residues
-	inline core::Size get_constrained_atom_id(std::string atom_name) {
+	inline core::Size get_constrained_atom_id(std::string const & atom_name) {
 		return constrainable_atoms_.find(atom_name)->second;
 	}
-
-	/// @brief returns a name of a constrained atom when its internal ID is known
-	/// @details this is the oposite to get_constrained_atom_id(std::string)
-	std::string get_constrained_atom_name(core::Size atom_id);
-
+	
 	/// @brief provides an access to the size of the length of a query sequence
 	inline core::Size get_query_size() {
 		return query_size_;

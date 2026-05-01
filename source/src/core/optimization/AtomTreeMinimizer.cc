@@ -121,8 +121,8 @@ AtomTreeMinimizer::run(
 	if ( use_parametric && !parametric_dofs.empty() ) {
 		ParametricAtomTreeMultifunc f( pose, min_map, scorefxn, parametric_dofs,
 			options.deriv_check(), options.deriv_check_verbose() );
-
 		Multivec dofs( f.total_dofs() );
+
 		min_map.copy_dofs_from_pose( pose, dofs );
 		for ( Size p = 1; p <= parametric_dofs.size(); ++p ) {
 			dofs[ min_map.nangles() + p ] = get_parametric_dof_value( pose, parametric_dofs[p] );
@@ -136,6 +136,22 @@ AtomTreeMinimizer::run(
 		Minimizer minimizer( f, options );
 		minimizer.run( dofs );
 		end_func = f( dofs );
+	
+		if ( TR.Debug.visible() && ! use_nblist ) {
+			TR.Debug << "end_func: " << end_func << std::endl;
+			pose.energies().show( TR.Trace );
+		}
+
+		// turn off nblist
+		if ( use_nblist ) pose.energies().reset_nblist();
+	
+		// if we were doing rigid-body minimization, fold the rotation and
+		// translation offsets into the jump transforms
+		//
+		// also sets rb dofs to 0.0, so in principle func value should be the same
+		//
+		min_map.reset_jump_rb_deltas( pose, dofs );
+
 	} else {
 		AtomTreeMultifunc f( pose, min_map, scorefxn,
 			options.deriv_check(), options.deriv_check_verbose() );
@@ -153,22 +169,23 @@ AtomTreeMinimizer::run(
 		Minimizer minimizer( f, options );
 		minimizer.run( dofs );
 		end_func = f( dofs );
+	
+		if ( TR.Debug.visible() && ! use_nblist ) {
+			TR.Debug << "end_func: " << end_func << std::endl;
+			pose.energies().show( TR.Trace );
+		}
+
+		// turn off nblist
+		if ( use_nblist ) pose.energies().reset_nblist();
+
+		// if we were doing rigid-body minimization, fold the rotation and
+		// translation offsets into the jump transforms
+		//
+		// also sets rb dofs to 0.0, so in principle func value should be the same
+		//
+		min_map.reset_jump_rb_deltas( pose, dofs );
+
 	}
-
-	if ( TR.Debug.visible() && ! use_nblist ) {
-		TR.Debug << "end_func: " << end_func << std::endl;
-		pose.energies().show( TR.Trace );
-	}
-
-	// turn off nblist
-	if ( use_nblist ) pose.energies().reset_nblist();
-
-	// if we were doing rigid-body minimization, fold the rotation and
-	// translation offsets into the jump transforms
-	//
-	// also sets rb dofs to 0.0, so in principle func value should be the same
-	//
-	min_map.reset_jump_rb_deltas( pose, dofs );
 
 	// rescore
 	Real const end_score( scorefxn( pose ) );
