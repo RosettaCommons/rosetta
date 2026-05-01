@@ -15,6 +15,7 @@
 
 #include <basic/Tracer.hh>
 #include <core/types.hh>
+#include <utility/exit.hh>
 
 
 static basic::Tracer TR( "core.scoring.hbonds.graph.HBondGraph" );
@@ -194,6 +195,28 @@ HBondGraph::HBondGraph( Size num_nodes ):
 
 HBondGraph::~HBondGraph()
 {}
+
+HBondNode &
+HBondGraph::HBondNode_from_LowMemNode( utility::graph::LowMemNode & node ) {
+	for ( core::Size ii = 1; ii <= num_nodes(); ++ii ) {
+		HBondNode * hbnode = get_node( ii );
+		if ( &node == static_cast< utility::graph::LowMemNode * >( hbnode ) ) {
+			return *hbnode;
+		}
+	}
+	utility_exit_with_message( "Attempted to convert a LowMemNode to an HBondNode through an HBondGraph which doesn't contain the node." );
+}
+
+HBondEdge &
+HBondGraph::HBondEdge_from_LowMemEdge( utility::graph::LowMemEdge & edge ) {
+	for ( auto iter = edge_list_begin(), end = edge_list_end(); iter != end; ++iter ) {
+		HBondEdge * hbedge = static_cast< HBondEdge * >( *iter );
+		if ( &edge == static_cast< utility::graph::LowMemEdge * >( hbedge ) ) {
+			return *hbedge;
+		}
+	}
+	utility_exit_with_message( "Attempted to convert a LowMemEdge to an HBondEdge through an HBondGraph which doesn't contain the edge." );
+}
 
 
 Size
