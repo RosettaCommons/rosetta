@@ -26,7 +26,10 @@
 #include <core/conformation/parametric/SizeVectorValuedParameter.hh>
 #include <core/conformation/parametric/BooleanValuedParameter.hh>
 
-#include <protocols/helical_bundle/util.hh>
+#include <core/conformation/Residue.hh>
+#include <core/id/AtomID.hh>
+
+#include <numeric/crick_equations/BundleParams.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -298,25 +301,47 @@ rebuild_parametric_backbone(
 
 			if ( r1_vals.empty() ) continue;
 
-			// Use helical_bundle utilities for the actual rebuild
-			utility::vector1< utility::vector1< numeric::xyzVector< Real > > > atom_positions;
-			bool failed = false;
-			protocols::helical_bundle::generate_atom_positions(
-				atom_positions, pose, start, end,
-				r0_val, omega0_val, delta_omega0_val, delta_t_val,
-				0.0 /*z1_offset*/, 0.0 /*z0_offset*/, epsilon_val,
-				invert, r1_vals, omega1_val, z1_val,
-				delta_omega1_vals, delta_omega1_all_val,
-				delta_z1_vals, residues_per_repeat,
-				atoms_per_residue_vals, repeating_unit_offset, failed );
+			// Compute omega1 relative to omega0 (matching generate_atom_positions convention)
+			Real const omega1_relative = omega1_val - omega0_val;
 
-			if ( failed ) {
-				TR.Warning << "rebuild_parametric_backbone: Failed to rebuild parametric element "
-					<< p << " in ParametersSet " << ps << std::endl;
-				continue;
+			// Compute atom positions directly via Crick equations (numeric layer, no protocols dependency).
+			core::Size const helix_length = end - start + 1;
+			Real t = -static_cast<Real>( helix_length + 2 ) / 2.0 + delta_t_val;
+
+			bool rebuild_failed = false;
+			core::Size atom_counter = 0;
+			for ( core::Size resid = start; resid <= end && !rebuild_failed; ++resid ) {
+				core::Size const n_mc = pose.residue( resid ).n_mainchain_atoms();
+				for ( core::Size iatom = 1; iatom <= n_mc && !rebuild_failed; ++iatom ) {
+					++atom_counter;
+					core::Size const idx = ((atom_counter - 1) % r1_vals.size()) + 1;
+
+					Real const r1 = r1_vals[ idx ];
+					Real const dw1 = delta_omega1_vals[ idx ] + delta_omega1_all_val;
+					Real const dz1 = delta_z1_vals[ idx ];
+
+					bool failed = false;
+					numeric::xyzVector< Real > xyz = numeric::crick_equations::XYZ_BUNDLE(
+						t, r0_val, omega0_val, delta_omega0_val,
+						r1, omega1_relative, z1_val, dw1, dz1, epsilon_val, failed );
+
+					if ( failed ) {
+						TR.Warning << "rebuild_parametric_backbone: Crick equation failed for element "
+							<< p << " residue " << resid << " atom " << iatom << std::endl;
+						rebuild_failed = true;
+						break;
+					}
+
+					if ( invert ) {
+						xyz.x( -xyz.x() );
+						xyz.z( -xyz.z() );
+					}
+
+					core::Size const real_atomno = pose.residue_type( resid ).mainchain_atom( iatom );
+					pose.set_xyz( id::AtomID( real_atomno, resid ), xyz );
+				}
+				t += 1.0;
 			}
-
-			protocols::helical_bundle::place_atom_positions( pose, atom_positions, start, end );
 		}
 	}
 }

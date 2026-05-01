@@ -117,12 +117,13 @@ AtomTreeMinimizer::run(
 	scorefxn.setup_for_minimizing( pose, min_map );
 
 	// Setup the multifunc — use parametric version if parametric DOFs are present
+	Multivec dofs;
 	Real start_func, end_func;
 	if ( use_parametric && !parametric_dofs.empty() ) {
 		ParametricAtomTreeMultifunc f( pose, min_map, scorefxn, parametric_dofs,
 			options.deriv_check(), options.deriv_check_verbose() );
 
-		Multivec dofs( f.total_dofs() );
+		dofs.resize( f.total_dofs() );
 		min_map.copy_dofs_from_pose( pose, dofs );
 		for ( Size p = 1; p <= parametric_dofs.size(); ++p ) {
 			dofs[ min_map.nangles() + p ] = get_parametric_dof_value( pose, parametric_dofs[p] );
@@ -142,7 +143,7 @@ AtomTreeMinimizer::run(
 
 		if ( deriv_check_result_ ) f.set_deriv_check_result( deriv_check_result_ );
 
-		Multivec dofs( min_map.nangles() );
+		dofs.resize( min_map.nangles() );
 		min_map.copy_dofs_from_pose( pose, dofs );
 
 		start_func = f( dofs );
