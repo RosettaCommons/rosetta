@@ -920,11 +920,16 @@ GlobalResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 
 	// Now look in the directory.
 	if ( !new_rsd_type && pdb_components_directory_ != "" ) {
-		std::string db_filename = pdb_components_directory_+"/components." + pdb_id[0] + ".cif";
-		if  ( !utility::file::file_exists( db_filename ) ) db_filename = pdb_components_directory_+"/components." + pdb_id[0] + ".cif";
-		if  ( !utility::file::file_exists( db_filename ) ) db_filename = pdb_components_directory_+"/components." + pdb_id[0] + ".cif.gz";
-		if  ( !utility::file::file_exists( db_filename ) ) db_filename = basic::database::full_name( pdb_components_directory_+"/components." + pdb_id[0] + ".cif" );
-		if  ( !utility::file::file_exists( db_filename ) ) db_filename = basic::database::full_name( pdb_components_directory_+"/components." + pdb_id[0] + ".cif.gz" );
+		std::string stem = pdb_id.substr(0, 1); // First letter
+		if ( pdb_id.size() > 3 ) { // PDB now has 4+ letter CCD codes
+			stem = pdb_id.substr( 0, pdb_id.size()-2 );
+		}
+
+		std::string db_filename = pdb_components_directory_+"/components." + stem + ".cif";
+		if  ( !utility::file::file_exists( db_filename ) ) db_filename = pdb_components_directory_+"/components." + stem + ".cif";
+		if  ( !utility::file::file_exists( db_filename ) ) db_filename = pdb_components_directory_+"/components." + stem + ".cif.gz";
+		if  ( !utility::file::file_exists( db_filename ) ) db_filename = basic::database::full_name( pdb_components_directory_+"/components." + stem + ".cif" );
+		if  ( !utility::file::file_exists( db_filename ) ) db_filename = basic::database::full_name( pdb_components_directory_+"/components." + stem + ".cif.gz" );
 
 		if ( !utility::file::file_exists( db_filename ) &&
 				!( option[ OptionKeys::in::file::load_PDB_components ] || option[ OptionKeys::in::file::PDB_components_directory ].user() ) ) {

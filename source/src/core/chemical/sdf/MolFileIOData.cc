@@ -22,6 +22,7 @@
 #include <core/chemical/atomtype_support.hh>
 #include <core/chemical/residue_support.hh>
 #include <core/chemical/bond_support.hh>
+#include <core/chemical/icoor_support.hh>
 
 #include <numeric/conversions.hh>
 
@@ -32,6 +33,7 @@
 // Utility headers
 #include <utility/numbers.hh>
 #include <utility/string_util.hh>
+#include <utility/stream_util.hh>
 
 // C++ headers
 #include <map>
@@ -42,7 +44,7 @@ namespace core {
 namespace chemical {
 namespace sdf {
 
-static basic::Tracer TR( "core.io.sdf.MolFileIOData" );
+static basic::Tracer TR( "core.chemical.sdf.MolFileIOData" );
 
 void dump_graph( MolFileIOGraph const & graph ) {
 	MolFileIOGraph::vertex_iterator aiter, aiter_end;
@@ -81,6 +83,13 @@ MolFileIOAtom::MolFileIOAtom() :
 
 MolFileIOAtom::~MolFileIOAtom() = default;
 
+void
+MolFileIOAtom::add_alias( std::string const & alias ) {
+	if ( alias != name_ ) {
+		aliases_.insert( name_ );
+	}
+}
+
 MolFileIOBond::MolFileIOBond() :
 	index_( utility::get_undefined_size() ),
 	sdf_type_( utility::get_undefined_size() )
@@ -114,6 +123,20 @@ MolFileIOMolecule::atom_index( core::Size index ) {
 	return molgraph_[ index_atom_map_[index] ];
 }
 
+MolFileIOAtomOP
+MolFileIOMolecule::atom( std::string const & name ) {
+	MolFileIOGraph::vertex_iterator aiter, aiter_end;
+	for ( boost::tie( aiter, aiter_end ) = boost::vertices( molgraph_ ); aiter != aiter_end; ++aiter ) {
+		debug_assert( has( molgraph_, *aiter ) );
+		MolFileIOAtomOP atom( molgraph_[*aiter] );
+		debug_assert( atom );
+		if ( atom->name() == name ) {
+			return atom;
+		}
+	}
+	return nullptr;
+}
+
 void
 MolFileIOMolecule::add_atom( MolFileIOAtomOP atom ) {
 	// This call has both a "side effect" with the add_vertex, as well as the storage effect
@@ -132,6 +155,48 @@ MolFileIOMolecule::add_str_str_data( std::string const & key, std::string const 
 	molecule_string_data_[ key ] = value;
 }
 
+bool
+MolFileIOMolecule::is_polymeric() const {
+	// Probably should be a better way of handling this
+	if ( molecule_string_data_.count("Rosetta Properties") ) {
+		return molecule_string_data_.at("Rosetta Properties").find("POLYMER") != std::string::npos;
+	} else {
+		return false;
+	}
+}
+
+bool
+MolFileIOMolecule::is_peptidic() const {
+	// Probably should be a better way of handling this
+	if ( molecule_string_data_.count("Rosetta Properties") ) {
+		return molecule_string_data_.at("Rosetta Properties").find("PROTEIN") != std::string::npos;
+	} else {
+		return false;
+	}
+}
+
+bool
+MolFileIOMolecule::is_nucleic() const {
+	// Probably should be a better way of handling this
+	if ( molecule_string_data_.count("Rosetta Properties") ) {
+		return (molecule_string_data_.at("Rosetta Properties").find("RNA") != std::string::npos ||
+			molecule_string_data_.at("Rosetta Properties").find("DNA") != std::string::npos );
+	} else {
+		return false;
+	}
+}
+
+AtomIndex
+MolFileIOMolecule::get_free_index() const {
+	if ( index_atom_map_.empty() ) {
+		return 1;
+	} else {
+		// std::maps have sorted keys
+		// Return one past the end, that should be free.
+		return index_atom_map_.rbegin()->first + 1;
+	}
+}
+
 void
 MolFileIOMolecule::normalize() {
 	// TODO: Does anything need to go here?
@@ -143,6 +208,8 @@ MutableResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 	chemical::ElementSetCOP elements,
 	chemical::MMAtomTypeSetCOP mm_atom_types
 ) {
+	TR.Trace << "Converting " << name_ << " to a ResidueType." << std::endl;
+
 	index_name_map.clear();
 	debug_assert( elements );
 
@@ -172,13 +239,7 @@ MutableResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 		restype_from_mio[ *aiter ] = vd;
 		Atom & restype_atom( restype->atom( vd ) );
 
-		if ( atom.name() == "O1P" ) {
-			restype->rename_atom( vd, "OP1" );
-		} else if ( atom.name() == "O2P" ) {
-			restype->rename_atom( vd, "OP2" );
-		} else {
-			restype->rename_atom( vd, atom.name() );
-		}
+		restype->rename_atom( vd, atom.name() ); // Need to call the restype function, as it also updates internal data maps
 		restype_atom.element_type( elements->element( atom.element() ) );
 		restype_atom.charge( atom.partial_charge() );
 		if ( atom.partial_charge() != 0 ) {
@@ -277,180 +338,25 @@ MutableResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 		restype->nbr_atom( nbr_atom );
 	}
 
-	// AMW: here is where the party starts:
-	// 1. allow chi overrides from extra info in molfile? or alter the
-	// autodetermine_chi_bonds function to be smarter for peptidic types
-	// 2. definitely provide information like UPPER and LOWER as part of the
-	// extra info (what gets input as M lines in molfile to params operations)
-	// and export them from CIF somehow.
-
-
-	// TODO: Can't directly specify internal coordinate tree or chi bond info
-	// If that changes this needs to be adjusted so as not to overwrite those settings.
-
-	if ( restype->is_protein() ) { // (This would be set from the `Rosetta Properties` specification)
-		restype->assign_internal_coordinates( restype->atom_vertex( "N" ) );
-	} else if ( restype->is_RNA() ) {
-		restype->assign_internal_coordinates( restype->atom_vertex( "P" ) );
-	} else if ( restype->is_DNA() ) {
-		restype->assign_internal_coordinates( restype->atom_vertex( "P" ) );
-	} else {
-		restype->assign_internal_coordinates(); // Also sets atom base. Needs nbr atom assignment
-	}
-	restype->autodetermine_chi_bonds(); // Must be after internal coordinate setup
-
 	// To match molfile_to_params, assume type is LIGAND if not otherwise specified.
 	if ( restype->properties().get_list_of_properties().size() == 0 ) {  // TODO: I should add a size() method. ~Labonte
 		restype->add_property( "LIGAND" );
 	}
 
-	// OK, we now have our chis. Assign chi rotamers if necessary.
-	if ( restype->is_protein() ) {
-		for ( Size ii = 1; ii <= restype->nchi(); ++ii ) {
-			if ( restype->is_proton_chi( ii ) ) continue; // already done.
-			restype->add_chi_rotamer( ii,  60, 8 );
-			restype->add_chi_rotamer( ii, 180, 8 );
-			restype->add_chi_rotamer( ii, 300, 8 );
-		}
+	determine_polymeric_connections(restype);
+
+	// TODO: Can't directly specify internal coordinate tree or chi bond info from input files
+	// If that changes this needs to be adjusted so as not to overwrite those settings.
+	if ( ! lower_atom_.empty() ) {
+		restype->assign_internal_coordinates( restype->atom_vertex( lower_atom_ ) );
+	} else {
+		restype->assign_internal_coordinates(); // Also sets atom base. Needs nbr atom assignment
 	}
+	restype->autodetermine_chi_bonds(); // Must be after internal coordinate setup
 
-	// If one of those properties is PROTEIN (inferred from a cif, for
-	// example) set upper and lower
-	if ( restype->is_polymer() ) {
-		if ( restype->is_protein() ) {
-			restype->set_lower_connect_atom( "N" );
-			if ( restype->has( "C" ) ) {
-				restype->set_upper_connect_atom( "C" );
-			} else { // hope it has P (phosphonate)
-				debug_assert( restype->has( "P" ) );
-				restype->set_upper_connect_atom( "P" );
-				restype->add_property( "PHOSPHONATE" );
-			}
+	handle_polymeric_assignments(restype);
 
-			using numeric::conversions::radians;
-			auto mainchain_vec = mainchain_path( *restype );
-			runtime_assert_msg( mainchain_vec.size() >= 3, "Insufficient mainchain atoms for residue " + name_ );
-			if ( mainchain_vec.size() == 3 ) {
-				restype->add_property( "ALPHA_AA" );
-			} else if ( mainchain_vec.size() == 4 ) {
-				restype->add_property( "BETA_AA" );
-			}
-
-			if ( restype->is_d_aa() ) {
-				// TODO: correct internal coordinates, if possible? For H at least.
-				restype->set_icoor( "LOWER", radians(-149.999985), radians(63.800007), 1.328685,
-					restype->atom_name( mainchain_vec[1] ), // the lower atom itself
-					restype->atom_name( mainchain_vec[2] ),
-					restype->atom_name( mainchain_vec[3] ) );
-				restype->set_icoor( "UPPER", radians(150.000000), radians(58.300003), 1.328685,
-					restype->atom_name( mainchain_vec[mainchain_vec.size()] ), // the upper atom itself
-					restype->atom_name( mainchain_vec[mainchain_vec.size() - 1] ),
-					restype->atom_name( mainchain_vec[mainchain_vec.size() - 2] ) );
-				restype->set_icoor( "H", radians(180.000000), radians(60.849998), 1.010000,
-					restype->atom_name( mainchain_vec[1] ), // the lower atom itself
-					restype->atom_name( mainchain_vec[2] ),
-					"LOWER" );
-			} else { // is L or achiral
-				restype->set_icoor( "LOWER", radians(149.999985), radians(63.800007), 1.328685,
-					restype->atom_name( mainchain_vec[1] ), // the lower atom itself
-					restype->atom_name( mainchain_vec[2] ),
-					restype->atom_name( mainchain_vec[3] ) );
-				restype->set_icoor( "UPPER", radians(-150.000000), radians(58.300003), 1.328685,
-					restype->atom_name( mainchain_vec[mainchain_vec.size()] ), // the upper atom itself
-					restype->atom_name( mainchain_vec[mainchain_vec.size() - 1] ),
-					restype->atom_name( mainchain_vec[mainchain_vec.size() - 2] ) );
-				restype->set_icoor( "H", radians(-180.000000), radians(60.849998), 1.010000,
-					restype->atom_name( mainchain_vec[1] ), // the lower atom itself
-					restype->atom_name( mainchain_vec[2] ),
-					"LOWER" );
-			}
-		} else if ( restype->is_RNA() || restype->is_DNA() ) {
-
-			// Require that it HAS an O3'. Some RTs -- DOC is an example --
-			// is upper terminal and lacks upper.
-			restype->set_lower_connect_atom( "P" );
-			if ( restype->has( "O3'" ) ) {
-				restype->set_upper_connect_atom( "O3'" );
-			}
-			// Try alternatives -- in particular, any atoms
-			// bonded to C3' that aren't hydrogens or C4' or C2'.else if ( restype->has( ""))
-			std::string upper_atom = "";
-			if ( restype->has( "C3'" ) ) {
-				for ( VD possible_upper : restype->bonded_neighbors( restype->atom_vertex( "C3'" ) ) ) {
-					if ( restype->atom_name( possible_upper ) == "C2'" ) continue;
-					if ( restype->atom_name( possible_upper ) == "C4'" ) continue;
-					// Can't use the below because we aren't finalized.
-					// Let's say that we probably don't need this yet. Maybe for
-					// the next run at this test we will need to support
-					// 3' deoxy RNA termination.
-					// Let's just make DOC a thing.
-					//if ( restype->atom_is_hydrogen( possible_upper_idx ) ) continue;
-					// Or... these are common, too.
-					if ( restype->atom_name( possible_upper ) == "H3'" ) continue;
-					if ( restype->atom_name( possible_upper ) == "H3''" ) continue;
-
-					restype->set_upper_connect_atom( restype->atom_name( possible_upper ) );
-					upper_atom = restype->atom_name( possible_upper );
-				}
-			}
-
-			// Taken -- hardcoded -- from RAD_n.
-			// Necessary?
-			//std::string OP1_name = restype->has( "OP1" ) ? "OP1" :
-			// ( restype->has( "O1P" ) ? "O1P" :
-			// ( restype->has( "S1P" ) ? "S1P" : "N4'" ) );
-			std::string OP2_name = restype->has( "OP2" ) ? "OP2" :
-				( restype->has( "O2P" ) ? "O2P" :
-				( restype->has( "S2P" ) ? "S2P" : "N4'" ) );
-
-			using numeric::conversions::radians;
-			// These magic numbers are the standard upper and lower coordinates used across nucleic acid
-			// residue types. This is our best attempt to obtain reasonable polymeric-type behavior for
-			// residues where that information is not encoded by default.
-			// AMW TODO: in theory we could use the icoor that WOULD be learned from the CIF residue from
-			// i.e. the OP3 atom for LOWER, but nothing analogous could be done for UPPER so it may not
-			// actually be worth it.
-			if ( restype->is_d_rna() ) {
-				restype->set_icoor( "LOWER", radians(-60.259000), radians(76.024713), 1.607355, "P", "O5'", "C5'" );
-				if ( upper_atom != "" ) {
-					// If restype has C4', use; else skip to C4' (4JA)
-					if ( restype->has( "C4'" ) ) {
-						restype->set_icoor( "UPPER", radians(-139.954848), radians(59.821530), 1.607226, upper_atom, "C3'", "C4'" );
-					} else {
-						restype->set_icoor( "UPPER", radians(-139.954848), radians(59.821530), 1.607226, upper_atom, "C3'", "C5'" );
-					}
-				} else {
-					restype->add_property( "UPPER_TERMINUS" );
-				}
-				restype->set_icoor( OP2_name, radians(-114.600417), radians(72.020306), 1.484470, "P", "O5'", "LOWER" );
-			} else if ( restype->is_l_rna() ) { // is L or achiral
-				restype->set_icoor( "LOWER", radians(60.259000), radians(76.024713), 1.607355, "P", "O5'", "C5'" );
-				if ( upper_atom != "" ) {
-					// If restype has C4', use; else skip to C4' (4JA)
-					if ( restype->has( "C4'" ) ) {
-						restype->set_icoor( "UPPER", radians(139.954848), radians(59.821530), 1.607226, upper_atom, "C3'", "C4'" );
-					} else {
-						restype->set_icoor( "UPPER", radians(139.954848), radians(59.821530), 1.607226, upper_atom, "C3'", "C5'" );
-					}
-				} else {
-					restype->add_property( "UPPER_TERMINUS" );
-				}
-				restype->set_icoor( OP2_name, radians(114.600417), radians(72.020306), 1.484470, "P", "O5'", "LOWER" );
-			} else if ( restype->is_DNA() ) {
-				restype->set_icoor( "LOWER", radians(-60.259000), radians(76.024713), 1.607355, "P", "O5'", "C5'" );
-				if ( upper_atom != "" ) {
-					if ( restype->has( "C4'" ) ) {
-						restype->set_icoor( "UPPER", radians(-139.954848), radians(59.821530), 1.607226, upper_atom, "C3'", "C4'" );
-					} else {
-						restype->set_icoor( "UPPER", radians(-139.954848), radians(59.821530), 1.607226, upper_atom, "C3'", "C5'" );
-					}
-				} else {
-					restype->add_property( "UPPER_TERMINUS" );
-				}
-				restype->set_icoor( OP2_name, radians(-114.600417), radians(72.020306), 1.484470, "P", "O5'", "LOWER" );
-			}
-		}
-	}
+	handle_rotamers(restype);
 
 	// Find possible disulfide atoms.
 	for ( VD atom_vd: restype->all_atoms() ) {
@@ -465,12 +371,285 @@ MutableResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 		}
 	}
 
+	// Handle atom aliases -- performed here so as to minimize the issues with aliases in the above code
+	// also to avoid adding an alias which the restype already has.
+	for ( boost::tie( aiter, aiter_end ) = boost::vertices( molgraph_ ); aiter != aiter_end; ++aiter ) {
+		MolFileIOAtom const & atom( *(molgraph_[*aiter]) );
+		std::string const & atom_name = atom.name();
+		for ( std::string alias: atom.aliases() ) {
+			alias = utility::stripped_whitespace( alias ); // Probably already stripped.
+			if ( restype->has(alias) ) { continue; }
+			// Unfortunately, the protected non-const version is prefered to the public const version
+			if ( MutableResidueTypeCOP(restype)->atom_aliases().count(alias) ) {
+				TR.Warning << "Alias " << alias << " double counted for " << atom_name << " and " << MutableResidueTypeCOP(restype)->atom_aliases().at(alias) << std::endl;
+				continue;
+			}
+			restype->add_atom_alias( atom_name, alias );
+		}
+	}
+
 	//TR.Debug << "First sidechain atom: " << restype->name() << " " << restype->atom_name( restype->first_sidechain_atom() ) << std::endl;
 	TR.Debug << "Neighbor atom: " << restype->name() << " " << restype->atom_name( restype->nbr_vertex() ) << std::endl;
 
 	//restype->show( TR, true );
 
+	TR.Trace << "Done Converting " << name_ << " to a ResidueType." << std::endl;
 	return restype;
+}
+
+void
+MolFileIOMolecule::determine_polymeric_connections(MutableResidueTypeOP restype) {
+	if ( ! is_polymeric() ) { return; }
+
+	if ( lower_atom_.empty() &&  upper_atom_.empty() ) { // If we've set one, trust the annotation for both.
+		TR.Warning << "Upper/Lower atoms not set for nominally polymeric residue " << name_ << "; using potentially inaccurate heuristics" << std::endl;
+		if ( is_peptidic() ) {
+			if ( atom("N") != nullptr ) {
+				lower_atom_ = "N";
+				TR.Debug << "Setting lower connect point on protein residue to N, based on atom naming" << std::endl;
+			}
+			if ( atom("C") != nullptr ) {
+				upper_atom_ = "C";
+				TR.Debug << "Setting upper connect point on protein residue to C, based on atom naming" << std::endl;
+			} else if ( atom("P") != nullptr ) {
+				upper_atom_ = "P";
+				TR.Debug << "Setting upper connect point on protein residue to P, based on atom naming" << std::endl;
+			}
+		}
+		if ( is_nucleic() ) {
+			if ( atom("P") != nullptr ) {
+				lower_atom_ = "P";
+				TR.Debug << "Setting lower connect point on nucleic residue to P, based on atom naming" << std::endl;
+			}
+			if ( atom("O3'") != nullptr ) {
+				upper_atom_ = "O3'";
+				TR.Debug << "Setting upper connect point on nucleic residue to O3', based on atom naming" << std::endl;
+			} else if ( atom("C3'") != nullptr ) {
+				// Try alternatives -- in particular, any atoms
+				// bonded to C3' that aren't hydrogens or C4' or C2'
+				MolFileIOGraph::edge_iterator eiter, eiter_end;
+				utility::vector1< std::string > possible_upper;
+				for ( boost::tie( eiter, eiter_end ) = boost::edges( molgraph_ ); eiter != eiter_end; ++eiter ) {
+					mioAD source( boost::source(*eiter, molgraph_) );
+					mioAD target( boost::target(*eiter, molgraph_) );
+					if ( molgraph_[source]->name() == "C3'" && molgraph_[target]->element() != "H" ) {
+						possible_upper.push_back( molgraph_[target]->name() );
+					} else if ( molgraph_[target]->name() == "C3'" && molgraph_[source]->element() != "H" ) {
+						possible_upper.push_back( molgraph_[source]->name() );
+					}
+				}
+				TR.Trace << "Heavy atoms bonded to C3'" << possible_upper << std::endl;
+				for ( std::string const & atm: possible_upper ) {
+					if ( atm == "C2'" ) { continue; }
+					if ( atm == "C4'" ) { continue; }
+					upper_atom_ = atm;
+					TR.Debug << "Setting upper connect point on nucleic residue to " << upper_atom_ << " as the (first) heavy atom connected to C3'" << std::endl;
+				}
+			}
+		}
+	}
+
+	////////////////// Actually assign the connection points
+
+	// Some RTs -- DOC is an example -- is upper terminal and lacks upper
+	if ( lower_atom_.empty() || upper_atom_.empty() ) {
+		TR.Warning << "Missing connection point for nominally polymeric residue " << name_ << " LOWER: `" << lower_atom_ << "` UPPER: `" << upper_atom_ << "`" << std::endl;
+	}
+	if ( !lower_atom_.empty() ) {
+		restype->set_lower_connect_atom( lower_atom_ );
+	}
+	if ( !upper_atom_.empty() ) {
+		restype->set_upper_connect_atom( upper_atom_ );
+	}
+
+}
+
+/// @brief Gets a valid atm1-atm2-atm3 makes stub path. Returns atm2 && atm1 by-reference
+void
+get_stub_path(MutableResidueType const & restype, VD atm1, VD & atm2, VD & atm3 ) {
+
+	// Ideally use bases:
+	atm2 = restype.atom_base( atm1 );
+	atm3 = restype.atom_base( atm2 );
+
+	if ( atm1 != atm2 && atm2 != atm3 && atm1 != atm3 ) { return; }
+
+	// Next try any other atom bonded to atm3
+	for ( VD bbase: restype.bonded_heavyatoms(atm2) ) {
+		if ( bbase != atm1 && bbase != atm2 ) {
+			atm3 = bbase;
+			return;
+		}
+	}
+
+	// Fallback - try all heavy atoms
+	for ( VD a2: restype.bonded_heavyatoms(atm1) ) {
+		if ( a2 == atm1 ) { continue; }
+		for ( VD a3: restype.bonded_heavyatoms(a2) ) {
+			if ( a3 != atm1 && a3 != a2 ) {
+				atm2 = a2;
+				atm3 = a3;
+				return;
+			}
+		}
+	}
+
+	// Any atom?
+	for ( VD a2: restype.bonded_neighbors(atm1) ) {
+		if ( a2 == atm1 ) { continue; }
+		for ( VD a3: restype.bonded_neighbors(a2) ) {
+			if ( a3 != atm1 && a3 != a2 ) {
+				atm2 = a2;
+				atm3 = a3;
+				return;
+			}
+		}
+	}
+}
+
+void
+MolFileIOMolecule::handle_polymeric_assignments(MutableResidueTypeOP restype) {
+	// AMW: here is where the party starts:
+	// 1. allow chi overrides from extra info in molfile? or alter the
+	// autodetermine_chi_bonds function to be smarter for peptidic types
+	// 2. definitely provide information like UPPER and LOWER as part of the
+	// extra info (what gets input as M lines in molfile to params operations)
+	// and export them from CIF somehow.
+
+	if ( ! restype->is_polymer() ) { return; }
+
+	utility::vector1< VD > mainchain_vec = mainchain_path(*restype);
+	if ( !mainchain_vec.empty() ) {
+		restype->set_mainchain_atoms( mainchain_vec );
+	}
+	if ( mainchain_vec.size() < 3 ) {
+		if ( TR.Trace.visible() ) {
+			TR.Trace << "Attempting to grab mainchain equivalents from ICOOR tree." << std::endl;
+			pretty_print_atomicoor( TR.Trace, *restype);
+		}
+		// We're either missing an upper/lower (which results in an empty vector), or we're too short of a backbone.
+		// Attempt to find usable atoms such that the ICOOR code below works.
+		mainchain_vec.resize(6, INVALID_VD); // 1-3 is N-term entries, 4-6 is C-term. Not 100% correct from an absolute perspective, but works in the context of this function.
+		if ( restype->lower_connect_id() != 0 ) {
+			mainchain_vec[1] = restype->lower_connect_atom();
+			get_stub_path(*restype, mainchain_vec[1], mainchain_vec[2], mainchain_vec[3]);
+			runtime_assert( mainchain_vec[1] != mainchain_vec[2] );
+			runtime_assert( mainchain_vec[2] != mainchain_vec[3] );
+			runtime_assert( mainchain_vec[1] != mainchain_vec[3] );
+		}
+		if ( restype->upper_connect_id() != 0 ) {
+			mainchain_vec[6] = restype->upper_connect_atom();
+			get_stub_path(*restype, mainchain_vec[6], mainchain_vec[5], mainchain_vec[4]);
+			runtime_assert( mainchain_vec[6] != mainchain_vec[5] );
+			runtime_assert( mainchain_vec[5] != mainchain_vec[4] );
+			runtime_assert( mainchain_vec[6] != mainchain_vec[4] );
+		}
+	}
+
+	if ( restype->is_protein() ) {
+
+		// If the upper connect point is P, it's a phosphonate
+		if ( restype->upper_connect_id() != 0 &&
+				restype->atom( restype->upper_connect_atom() ).element() == core::chemical::element::P ) {
+			restype->add_property( "PHOSPHONATE" );
+		}
+
+		if ( mainchain_vec.size() == 3 ) {
+			restype->add_property( "ALPHA_AA" );
+		} else if ( mainchain_vec.size() == 4 ) {
+			restype->add_property( "BETA_AA" );
+		}
+
+		using numeric::conversions::radians;
+		core::Real chiral = restype->is_d_aa() ? -1.0 : 1.0;
+
+		if ( restype->lower_connect_id() != 0 ) {
+			restype->set_icoor( "LOWER", radians(chiral*149.999985), radians(63.800007), 1.328685,
+				restype->atom_name( mainchain_vec[1] ), // the lower atom itself
+				restype->atom_name( mainchain_vec[2] ),
+				restype->atom_name( mainchain_vec[3] ) );
+			// Find the pendant hydrogen to the lower connect, if any.
+			auto bonded_hydro = restype->bonded_hydrogens( restype->lower_connect_atom() );
+			if ( bonded_hydro.size() == 1 ) {
+				// This only works if we have a single n-term hydrogen
+				std::string const & hname = restype->atom_name( bonded_hydro[1] );
+				restype->set_icoor( hname, radians(chiral*-180.000000), radians(60.849998), 1.010000,
+					restype->atom_name( mainchain_vec[1] ), // the lower atom itself
+					restype->atom_name( mainchain_vec[2] ),
+					"LOWER" );
+			} else if ( bonded_hydro.size() == 0 ) {
+				TR.Trace << "Protein N-term does not contain an attached hydrogen."  << std::endl;
+			} else {
+				TR.Trace << "Multiple hydrogens on the protein N-term : ";
+				for ( auto vd: bonded_hydro ) { TR.Trace << restype->atom_name(vd) << "  "; }
+				TR.Trace << std::endl;
+			}
+		} else {
+			TR.Debug << "Labeling protein residue " << restype->name() << " as lower terminus, due to lack of lower connect." << std::endl;
+			restype->add_property( "LOWER_TERMINUS" );
+		}
+		if ( restype->upper_connect_id() != 0 ) {
+			restype->set_icoor( "UPPER", radians(chiral*-150.000000), radians(58.300003), 1.328685,
+				restype->atom_name( mainchain_vec[mainchain_vec.size()] ), // the upper atom itself
+				restype->atom_name( mainchain_vec[mainchain_vec.size() - 1] ),
+				restype->atom_name( mainchain_vec[mainchain_vec.size() - 2] ) );
+		} else {
+			TR.Debug << "Labeling protein residue " << restype->name() << " as upper terminus, due to lack of upper connect." << std::endl;
+			restype->add_property( "UPPER_TERMINUS" );
+		}
+
+	} else if ( restype->is_RNA() || restype->is_DNA() ) {
+
+		using numeric::conversions::radians;
+		// These magic numbers are the standard upper and lower coordinates used across nucleic acid
+		// residue types. This is our best attempt to obtain reasonable polymeric-type behavior for
+		// residues where that information is not encoded by default.
+		// AMW TODO: in theory we could use the icoor that WOULD be learned from the CIF residue from
+		// i.e. the OP3 atom for LOWER, but nothing analogous could be done for UPPER so it may not
+		// actually be worth it.
+		core::Real chiral = restype->is_l_rna() ? -1.0 : 1.0;
+		if ( restype->lower_connect_id() != 0 ) {
+			restype->set_icoor( "LOWER", radians(chiral*-60.259000), radians(76.024713), 1.607355,
+				restype->atom_name( mainchain_vec[1] ), // the lower atom itself
+				restype->atom_name( mainchain_vec[2] ),
+				restype->atom_name( mainchain_vec[3] ) );
+
+			//if ( has-pendant-oxygens ) {
+			// find-primary-child-of-root
+			// //std::string OP2_name = restype->has( "OP2" ) ? "OP2" :
+			// // ( restype->has( "O2P" ) ? "O2P" :
+			// // ( restype->has( "S2P" ) ? "S2P" : "N4'" ) );
+			// set-icoor-based-on-lower ("O5'" being mainchain_vec[2]
+			// //restype->set_icoor( OP2_name, radians(chiral*-114.600417), radians(72.020306), 1.484470, "P", "O5'", "LOWER" );
+			//}
+		} else {
+			TR.Debug << "Labeling nucleic residue " << restype->name() << " as lower terminus, due to lack of lower connect." << std::endl;
+			restype->add_property( "LOWER_TERMINUS" );
+		}
+		if ( restype->upper_connect_id() != 0 ) {
+			restype->set_icoor( "UPPER", radians(chiral*-139.954848), radians(59.821530), 1.607226,
+				restype->atom_name( mainchain_vec[mainchain_vec.size()] ), // the upper atom itself
+				restype->atom_name( mainchain_vec[mainchain_vec.size() - 1] ),
+				restype->atom_name( mainchain_vec[mainchain_vec.size() - 2] ) );
+		} else {
+			restype->add_property( "UPPER_TERMINUS" );
+			TR.Debug << "Labeling nucleic residue " << restype->name() << " as upper terminus, due to lack of lower connect." << std::endl;
+		}
+
+	}
+}
+
+void MolFileIOMolecule::handle_rotamers(MutableResidueTypeOP restype) {
+	// OK, we now have our chis. Assign chi rotamers if necessary.
+	// TODO: There's probably a more general way of doing this (Rarey rotamers?)
+	if ( restype->is_protein() ) {
+		for ( Size ii = 1; ii <= restype->nchi(); ++ii ) {
+			if ( restype->is_proton_chi( ii ) ) continue; // already done.
+			restype->add_chi_rotamer( ii,  60, 8 );
+			restype->add_chi_rotamer( ii, 180, 8 );
+			restype->add_chi_rotamer( ii, 300, 8 );
+		}
+	}
 }
 
 void MolFileIOMolecule::create_dummy_atom(MutableResidueTypeOP restype, std::string atom_name, core::Vector const & xyz_offset, chemical::ElementSetCOP elements, chemical::MMAtomTypeSetCOP ){

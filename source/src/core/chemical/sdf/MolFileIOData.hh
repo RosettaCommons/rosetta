@@ -93,6 +93,9 @@ public:
 	void formal_charge( int formal_charge ) { formal_charge_ = formal_charge; }
 	void partial_charge( core::Real partial_charge ) { partial_charge_ = partial_charge; }
 
+	void add_alias( std::string const & alias );
+	std::set< std::string > const & aliases() const { return aliases_; }
+
 private:
 	// Depending on what other file formats we want to use, it may make sense to convert this to a string "designator" instead.
 	AtomIndex index_;
@@ -104,6 +107,8 @@ private:
 	core::Real partial_charge_; /// Need to pull from file.
 	//StrStrMap atom_string_data_;
 	//StrRealMap atom_real_data_;
+
+	std::set< std::string > aliases_;
 };
 
 class MolFileIOBond : public utility::VirtualBase
@@ -150,6 +155,9 @@ public:
 	/// @brief Retrieve a modifiable atom by index
 	MolFileIOAtomOP atom_index( AtomIndex index );
 
+	/// @brief Retrieve a modifiable atom by name (returns nullpointer if not found);
+	MolFileIOAtomOP atom( std::string const & name );
+
 	/// @brief Add an atom (takes possession of object)
 	void add_atom( MolFileIOAtomOP atom );
 	/// @brief Add a bond (takes possession of object)
@@ -159,6 +167,21 @@ public:
 	StrStrMap const & get_str_str_data() const {
 		return molecule_string_data_;
 	};
+
+	bool is_polymeric() const;
+	bool is_peptidic() const;
+	bool is_nucleic() const;
+
+	void set_lower_atom(std::string const & a ) { lower_atom_ = a; }
+	void set_upper_atom(std::string const & a ) { upper_atom_ = a; }
+
+	std::string const & get_lower_atom() const { return lower_atom_; }
+	std::string const & get_upper_atom() const { return upper_atom_; }
+
+	void add_atom_alias( std::string const & ref, std::string const & alias );
+
+	/// @brief Find a free atom index.
+	AtomIndex get_free_index() const;
 
 	/// @brief Generate data for potentially missing fields.
 	void normalize();
@@ -187,6 +210,18 @@ public:
 
 private:
 
+	/// @brief Helper function for convert_to_ResidueType -- determine connection points, if necessary.
+	void
+	determine_polymeric_connections(MutableResidueTypeOP restype);
+
+	/// @brief Helper function for convert_to_ResidueType -- Do polymeric assignments, if necessary.
+	void
+	handle_polymeric_assignments(MutableResidueTypeOP restype);
+
+	/// @brief Helper function for convert_to_ResidueType -- Do rotamer handling
+	void
+	handle_rotamers(MutableResidueTypeOP restype);
+
 	/// @brief From the str/str data in MolFile, additional information
 	/// Specifically, it's the overall atom and bond information.
 	void set_from_extra_data(MutableResidueType & restype, std::map< mioAD, core::chemical::VD > & restype_from_mio);
@@ -209,6 +244,9 @@ private:
 	std::map< AtomIndex, mioAD > index_atom_map_;
 	StrStrMap molecule_string_data_;
 	//StrRealMap molecule_real_data_;
+
+	std::string lower_atom_; // The atom connected to the LOWER connect, if not empty
+	std::string upper_atom_;
 };
 
 }

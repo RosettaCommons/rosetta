@@ -18,7 +18,7 @@
 #include <core/chemical/MutableICoorRecord.hh>
 #include <core/chemical/MutableResidueConnection.hh>
 #include <core/chemical/bond_support.hh>
-
+#include <core/chemical/residue_support.hh>
 
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/tree/Atom.hh>
@@ -174,13 +174,16 @@ public:
 /// * Actual bonds before pseudobonds
 /// * Bonds to Heavy atoms before light atoms
 /// * Bonds to Concrete atoms before virtual atoms
+/// * (likely) Rotatable bonds before non-rotatable bonds.
+/// * Bonds which get us closer to the UPPER (further from the LOWER), if relevant
+/// * Bonds to atoms with more substituents over those with fewer substituents
 ///
 /// This doesn't (need to?) quite match the logic in core/conformation/util.cc:setup_atom_links()
 class RerootEdgeSorter {
 public:
-	RerootEdgeSorter(core::chemical::ResidueGraph const & graph, core::chemical::MutableResidueType const & /*restype*/):
-		graph_(graph)
-		//restype_(restype)
+	RerootEdgeSorter(core::chemical::ResidueGraph const & graph, core::chemical::MutableResidueType const & restype):
+		graph_(graph),
+		restype_(restype)
 	{}
 
 	/// Return true if the first argument goes before the second argument
@@ -208,30 +211,6 @@ public:
 		core::chemical::Atom const & atom1( graph_[ target1 ] );
 		core::chemical::Atom const & atom2( graph_[ target2 ] );
 
-		/*
-		// * Rotatable bonds before non-rotatable bonds.
-		// This is slightly manky - should we pre annotate the bonds as rotatable?
-		bool b1rot(false), b2rot(false);
-		for ( core::Size chino(1); chino <= restype_.nchi(); ++chino ) {
-		core::chemical::AtomIndices const & ai( restype_.chi_atoms(chino) );
-		if( (ai[2] == restype_.atom_index(source) && ai[3] == restype_.atom_index(target1)) ||
-		(ai[3] == restype_.atom_index(source) && ai[2] == restype_.atom_index(target1)) ) {
-		b1rot = true;
-		TR << "Rotatable: " << restype_.atom_name(source) << " -- " << restype_.atom_name(target1) << std::endl;
-		}
-		if( (ai[2] == restype_.atom_index(source) && ai[3] == restype_.atom_index(target2)) ||
-		(ai[3] == restype_.atom_index(source) && ai[2] == restype_.atom_index(target2)) ) {
-		b2rot = true;
-		TR << "Rotatable: " << restype_.atom_name(source) << " -- " << restype_.atom_name(target2) << std::endl;
-		}
-		}
-		if( ! b1rot && b2rot ) {
-		return false;
-		} else if (b1rot && ! b2rot ) {
-		return true;
-		}
-		*/
-
 		// * Bonds to Heavy atoms before light atoms
 		if ( atom1.is_hydrogen() && ! atom2.is_hydrogen() ) {
 			return false;
@@ -244,12 +223,58 @@ public:
 		} else if ( ! atom1.is_virtual() && atom2.is_virtual() ) {
 			return true;
 		}
-		/// For reproducible ordering, the "smaller" atom name should be first
+
+		// * Rotatable bonds before non-rotatable bonds.
+		bool b1single = (bond1.order() == SingleBondOrder);
+		bool b2single = (bond2.order() == SingleBondOrder);
+		core::Size nsub1 = restype_.bonded_neighbors(target1).size(); // includes source
+		core::Size nsub2 = restype_.bonded_neighbors(target2).size();
+		// Here we use a simple heuristic - we look for single bonds to atoms with one or more substituents.
+		//
+		if ( b1single && nsub1 > 1 && (!b2single || nsub2 <= 1) ) {
+			return true;
+		}
+		if ( b2single && nsub2 > 1 && (!b1single || nsub2 <= 1) ) {
+			return true;
+		}
+
+		/// * Bonds which get us closer to the UPPER (further from the LOWER), if relevant
+		if ( restype_.upper_connect_id() ) {
+			VD upper = restype_.upper_connect_atom();
+			utility::vector1< VD > path1 = shortest_path( restype_, upper, target1 );
+			utility::vector1< VD > path2 = shortest_path( restype_, upper, target2 );
+			if ( path1.size() < path2.size() ) {
+				return true;
+			} else if ( path2.size() < path1.size() ) {
+				return false;
+			} // fall through if equal
+		}
+		if ( restype_.lower_connect_id() ) {
+			VD lower = restype_.lower_connect_atom();
+			utility::vector1< VD > path1 = shortest_path( restype_, lower, target1 );
+			utility::vector1< VD > path2 = shortest_path( restype_, lower, target2 );
+			if ( path1.size() > path2.size() ) {
+				return true;
+			} else if ( path2.size() > path1.size() ) {
+				return false;
+			} // fall through if equal
+		}
+
+		/// * Bonds to atoms with more substituents over those with fewer substituents
+		// Do we want to consider heavy/light differences here as well?
+		if ( nsub1 > nsub2 ) {
+			return true;
+		}
+		if ( nsub2 > nsub1 ) {
+			return false;
+		}
+
+		/// For reproducible ordering, fall back to the "smaller" atom name being first
 		return atom1.name() < atom2.name();
 	}
 private:
 	core::chemical::ResidueGraph const & graph_;
-	//core::chemical::ResidueType const & restype_;
+	core::chemical::MutableResidueType const & restype_;
 };
 
 
@@ -500,6 +525,64 @@ fill_ideal_xyz_from_icoor(
 	} //while( ! atom_queue.empty() )
 }
 
+void
+pretty_print_atomicoor(
+	std::ostream & out,
+	core::chemical::MutableResidueType & restype
+) {
+	out << "ICOOR for MutableResidueType" << restype.name() << std::endl;
+	std::set< std::string > atoms_to_do;
+	for ( VD vd: restype.all_atoms() ) {
+		atoms_to_do.insert( restype.atom_name(vd) );
+	}
+	utility::vector1< std::string > process_queue; // queue for depth-first action.
+
+	debug_assert( restype.has( restype.root_atom() ) );
+	std::string root_atom = restype.atom_name(restype.root_atom());
+	out << "Root atom: " << root_atom << std::endl;
+
+	process_queue.push_back( root_atom );
+
+	while ( atoms_to_do.size() > 0 ) {
+		std::string current_atom;
+		if ( process_queue.empty() ) {
+			current_atom = *(atoms_to_do.begin());
+		} else {
+			current_atom = process_queue.back();
+			process_queue.pop_back();
+		}
+
+		MutableICoorRecordCOP icoor = restype.icoor( restype.atom_vertex(current_atom) );
+
+		out << current_atom << " ";
+		icoor->show(out); // adds line ending
+
+		atoms_to_do.erase(current_atom);
+
+		for ( core::Size ii(1); ii <= 3; ++ii ) {
+			if ( icoor->stub_type(ii) == ICoordAtomIDType::INTERNAL ) {
+				std::string stub = icoor->stub_atom(ii);
+				if ( ! restype.has(stub) ) {
+					out << "????Bad atom id??? " << stub << std::endl;
+					continue;
+				}
+				if ( process_queue.has_value( stub ) ) { continue; } // already pending
+				if ( atoms_to_do.count( stub ) == 0 ) { continue; } // already covered.
+				process_queue.push_back( stub );
+			}
+		}
+	}
+
+	// Connection ICOOR
+	for ( core::Size ii(1); ii <= restype.n_possible_residue_connections(); ++ii ) {
+		MutableResidueConnection const & con = restype.residue_connection( ii );
+		MutableICoorRecord const & icoor = con.icoor();
+
+		out << "CONN" << ii << " on " << restype.atom_name(con.vertex()) << ": ";
+		icoor.show(out); // adds line ending
+	}
+
+}
 
 } //chemical
 } //core

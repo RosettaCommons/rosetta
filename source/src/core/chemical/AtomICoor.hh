@@ -258,14 +258,14 @@ public:
 	/// indices depends on one of the atoms that are "true".
 	/// @details Called by ResidueType::update_polymer_dependent_groups() when figuring out which atoms depend on atoms that
 	/// depend on a connection.
-	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	bool
 	depends_on_a_true_index( utility::vector1< bool > const &atomvect ) const {
-		for ( core::Size i(1), imax(atomvect.size()); i<=imax; ++i ) {
-			if ( atomvect[i] ) {
-				if ( stub_atom1_.atomno() == i || stub_atom2_.atomno() == i || stub_atom3_.atomno() == i ) return true;
-			}
-		}
+		core::Size a1 = stub_atom1_.atomno();
+		core::Size a2 = stub_atom1_.atomno();
+		core::Size a3 = stub_atom1_.atomno();
+		if ( a1 != 0 && a1 <= atomvect.size() && atomvect[a1] ) { return true; }
+		if ( a2 != 0 && a2 <= atomvect.size() && atomvect[a2] ) { return true; }
+		if ( a3 != 0 && a3 <= atomvect.size() && atomvect[a3] ) { return true; }
 		return false;
 	}
 
