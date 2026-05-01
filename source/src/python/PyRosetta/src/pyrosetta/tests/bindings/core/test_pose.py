@@ -811,6 +811,49 @@ class TestPoseCacheAccessor(unittest.TestCase):
             self.assertDictEqual(dict(data), {})
         self.assertFalse(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
 
+        # Test `Pose.cache` bulk setters
+        pose = pyrosetta.io.pose_from_sequence("EMPTY/DATA/CACHE")
+        N = 10000
+        real_mappable = {f"real_{i}": float(i) for i in range(N)}
+        string_mappable = {f"string_{i}": str(i) for i in range(N)}
+        pose.cache.metrics.real.set_mappable(real_mappable)
+        pose.cache.metrics.string.set_mappable(string_mappable)
+        self.assertEqual(len(dict(pose.cache.metrics.fast_items())), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(dict(pose.cache.fast_items())), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(list(pose.cache.metrics.fast_values())), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(list(pose.cache.fast_values())), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(pose.cache.metrics.real.all), N, msg="Bulk `Pose.cache` setter failed.") # Test encoded scores data
+        self.assertEqual(len(pose.cache.metrics.string.all), N, msg="Bulk `Pose.cache` setter failed.") # Test encoded scores data
+        self.assertEqual(len(pose.cache.metrics.all), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(pose.cache.all), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(list(pose.cache.metrics)), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(list(pose.cache)), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        all_mappable = {}
+        all_mappable.update(real_mappable)
+        all_mappable.update(string_mappable)
+        for k, v in pose.cache.fast_items():
+            self.assertIn(k, all_mappable, msg="Bulk `Pose.cache` setter failed.")
+            self.assertEqual(v, all_mappable[k], msg="Bulk `Pose.cache` setter failed.")
+
+        # Test `Pose.cache` bulk setters with arbitrary Python types
+        pose.cache.metrics.real.clear()
+        pose.cache.metrics.string.clear()
+        arbitrary_mappable = {f"arbitrary_{i}": {i: list(range(0, 3))} if i % 2 == 0 else complex(0, 3) for i in range(N)}
+        with self.assertRaises(TypeError): # Cannot set `dict` types to a real metric
+            pose.cache.metrics.real.set_mappable(arbitrary_mappable)
+        pose.cache.metrics.string.set_mappable(arbitrary_mappable)
+        _matches = 0
+        _arbitrary_prefix = [*arbitrary_mappable][0].split("_")[0]
+        for k, v in pose.cache.all.items(): # Test encoded scores data
+            if k.startswith(_arbitrary_prefix):
+                self.assertTrue(v.startswith("[CustomArbitraryValueMetric]"), msg="Bulk `Pose.cache` setter failed.")
+                _matches += 1
+        self.assertEqual(_matches, N, msg="Bulk `Pose.cache` setter failed.")
+        for k, v in pose.cache.fast_items():
+            self.assertIn(k, arbitrary_mappable, msg="Bulk `Pose.cache` setter failed.")
+            self.assertEqual(v, arbitrary_mappable[k], msg="Bulk `Pose.cache` setter failed.")
+
+
 class TestPoseResidueLabelAccessor(unittest.TestCase):
 
     def test_labels(self):
