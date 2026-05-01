@@ -148,53 +148,6 @@ RNA_Info::update_derived_rna_data( ResidueType const & residue_type ){
 void
 RNA_Info::update_atom_annotations( ResidueType const & residue_type ) {
 
-	//// Get info, pulling from the base type if necessary
-
-	//core::Size lower = 0;
-	//if ( restype.lower_connect_id() != 0 ) {
-	//	lower = restype.lower_connect_atom();
-	//} else {
-	//	// We may be a patched type -- pull the lower from the parent
-	//	ResidueTypeCOP basetype = restype->get_base_type_cop();
-	//	if ( basetype != nullptr && basetype->lower_connect_id() != 0 ) {
-	//		// Bounce through name, as patching may reorder atoms.
-	//		std::string const & lowername = basetype->atom_name( basetype->lower_connect_atom() );
-	//		if ( restype.has( lowername ) ) {
-	//			lower = restype.atom_index( lowername );
-	//		}
-	//	}
-	//}
-	//core::Size upper = 0;
-	//if ( restype.upper_connect_id() != 0 ) {
-	//	upper = restype.upper_connect_atom();
-	//} else {
-	//	// We may be a patched type -- pull the upper from the parent
-	//	ResidueTypeCOP basetype = restype->get_base_type_cop();
-	//	if ( basetype != nullptr && basetype->upper_connect_id() != 0 ) {
-	//		// Bounce through name, as patching may reorder atoms.
-	//		std::string const & uppername = basetype->atom_name( basetype->upper_connect_atom() );
-	//		if ( restype.has( uppername ) ) {
-	//			upper = restype.atom_index( uppername );
-	//		}
-	//	}
-	//}
-	//AtomIndices mainchain_atoms = restype.mainchain_atoms();
-	//if ( mainchain_atoms.size() == 0 ) {
-	//	// We may be a patched type -- pull from parent
-	//	ResidueTypeCOP basetype = restype->get_base_type_cop();
-	//	if ( basetype != nullptr ) {
-	//		for ( core::Size batm: basetype->mainchain_atoms() ) {
-	//			std::string const & name = basetype->atom_name( batm );
-	//			if ( restype.has(name) ) {
-	//				mainchain_atoms.push_back( restype.atom_index(name) );
-	//			} else {
-	//				mainchain_atoms.clear(); // Issue with mainchain and patching -- skip
-	//				break;
-	//			}
-	//		}
-	//	}
-	//}
-
 	////// Should the following be more responsive to atom renaming?
 	// The issue is that I (RM) don't know the full semantics of what each of these mean
 	// For now, simply leave things as the zero-index defaults
