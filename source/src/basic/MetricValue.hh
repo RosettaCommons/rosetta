@@ -33,7 +33,7 @@ class MetricValueBase : public utility::VirtualBase {
 public:
 	// note: MetricValueBase must have a virtual function so that it will be polymorphic
 	// (specifically to allow dynamic casting)
-	~MetricValueBase() override {};
+	~MetricValueBase() override = default;
 	virtual MetricValueBaseOP clone() const = 0;
 };
 
@@ -41,8 +41,8 @@ public:
 template <class T>
 class MetricValue : public MetricValueBase {
 public:
-	MetricValue() {};
-	MetricValue( MetricValue const & metric_value ) : MetricValueBase(), data_(metric_value.value()) {};
+	MetricValue() = default;
+	MetricValue( MetricValue const & metric_value ) = default;
 	MetricValue( T const & inp ) : data_(inp) {};
 	void set( T const & inp ) { data_ = inp; };
 	std::string print() const { std::ostringstream ostream; ostream << data_; return ostream.str(); };
