@@ -18,6 +18,9 @@
 #include <cxxtest/TestSuite.h>
 #include <utility/keys/SmallKeyMap.hh>
 
+// C++ headers
+#include <vector>
+
 
 class SmallKeyMapTests : public CxxTest::TestSuite {
 
@@ -88,6 +91,24 @@ class SmallKeyMapTests : public CxxTest::TestSuite {
 		TS_ASSERT( m[ 9 ] == 33 );
 	}
 
-};
+	void test_SmallKeyMap_range_operations_activate_last_key() {
 
+		typedef  utility::keys::SmallKeyMap< int, int >  Map;
+		typedef  std::vector< Map::Value >  Values;
+
+		Values values;
+		values.push_back( Map::Value( 4, 44 ) );
+		values.push_back( Map::Value( 8, 88 ) );
+
+		Map constructed( values.begin(), values.end() );
+		TS_ASSERT( constructed.has( 8 ) );
+		TS_ASSERT_EQUALS( constructed[ 8 ], 88 );
+
+		Map assigned;
+		assigned.assign( values.begin(), values.end() );
+		TS_ASSERT( assigned.has( 8 ) );
+		TS_ASSERT_EQUALS( assigned[ 8 ], 88 );
+	}
+
+};
 
