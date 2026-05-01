@@ -58,19 +58,10 @@ protected: // Creation
 	= default;
 
 
-private: // Creation
+public: // Creation (deleted)
 
-
-	/// @brief Copy constructor: Undefined
-	orstream( orstream const & );
-
-
-private: // Methods: assignment
-
-
-	/// @brief Copy assignment: Undefined
-	orstream &
-	operator =( orstream const & );
+	orstream( orstream const & ) = delete;
+	orstream & operator =( orstream const & ) = delete;
 
 
 public: // Methods: conversion

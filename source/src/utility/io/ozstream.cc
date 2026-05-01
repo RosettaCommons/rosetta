@@ -40,8 +40,8 @@ ozstream::open_append_if_existed( std::string const& filename_a, std::stringstre
 #ifdef USEMPI
 		//		std::cout << "MPI_Reroute " << (bMPI_reroute_stream_ ? " active " : " not-active ") << std::endl;
 	if ( bMPI_reroute_stream_ ) { // this is switched via call to static function enable_MPI_reroute()
-		mpi_stream_p_ = new mpi_stream::mpi_ostream( filename_a, mpi_FileBuf_master_rank_, preprinted_header, true );
-		if ( ( !mpi_stream_p_ ) || ( !( *mpi_stream_p_ ) ) ) {
+		mpi_stream_p_.reset( new mpi_stream::mpi_ostream( filename_a, mpi_FileBuf_master_rank_, preprinted_header, true ) );
+		if ( !( *mpi_stream_p_ ) ) {
 			compression_ = NONE;
 		} else 	compression_ = UNCOMPRESSED;
 		return;
@@ -94,8 +94,8 @@ ozstream::open(
 		//		std::cout << "MPI_Reroute " << (bMPI_reroute_stream_ ? " active " : " not-active ") << std::endl;
 		if ( bMPI_reroute_stream_ ) {
 			std::stringstream no_header;
-			mpi_stream_p_ = new mpi_stream::mpi_ostream( filename_, mpi_FileBuf_master_rank_, no_header, open_mode & ios::app );
-			if ( ( !mpi_stream_p_ ) || ( !( *mpi_stream_p_ ) ) ) {
+			mpi_stream_p_.reset( new mpi_stream::mpi_ostream( filename_, mpi_FileBuf_master_rank_, no_header, open_mode & ios::app ) );
+			if ( !( *mpi_stream_p_ ) ) {
 				compression_ = NONE;
 			} else {
 				compression_ = UNCOMPRESSED;
@@ -139,12 +139,10 @@ ozstream::open(
 
 	// Attach zip_ostream to ofstream if gzip file
 	if ( compression_ == GZIP ) {
-		// zip_stream_p_ deleted by close() above so don't have to here
-		zip_stream_p_ = new zip_ostream( of_stream_, true, static_cast< size_t >( Z_DEFAULT_COMPRESSION ), zlib_stream::DefaultStrategy, 15, 8, buffer_size_ );
-		if ( ( !zip_stream_p_ ) || ( !( *zip_stream_p_ ) ) ||
-				( !zip_stream_p_->is_gzip() ) ) { // zip_stream not in good state
-			if ( zip_stream_p_ ) delete zip_stream_p_;
-			zip_stream_p_ = nullptr;
+		// zip_stream_p_ cleared by close() above so don't have to here
+		zip_stream_p_.reset( new zip_ostream( of_stream_, true, static_cast< size_t >( Z_DEFAULT_COMPRESSION ), zlib_stream::DefaultStrategy, 15, 8, buffer_size_ ) );
+		if ( !( *zip_stream_p_ ) || !zip_stream_p_->is_gzip() ) { // zip_stream not in good state
+			zip_stream_p_.reset();
 			of_stream_.close();
 			// Set failbit so failure can be detected
 			of_stream_.setstate( ios_base::failbit );
@@ -175,8 +173,8 @@ ozstream::open_append( std::string const & filename_a )
 		//		std::cout << "MPI_Reroute " << (bMPI_reroute_stream_ ? " active " : " not-active ") << std::endl;
 		if ( bMPI_reroute_stream_ ) {
 			std::stringstream no_header;
-			mpi_stream_p_ = new mpi_stream::mpi_ostream( filename_, mpi_FileBuf_master_rank_, no_header, true );
-			if ( ( !mpi_stream_p_ ) || ( !( *mpi_stream_p_ ) ) ) {
+			mpi_stream_p_.reset( new mpi_stream::mpi_ostream( filename_, mpi_FileBuf_master_rank_, no_header, true ) );
+			if ( !( *mpi_stream_p_ ) ) {
 				compression_ = NONE;
 			} else compression_ = UNCOMPRESSED;
 			return;
@@ -208,11 +206,10 @@ ozstream::open_append( std::string const & filename_a )
 
 	// Attach zip_ostream to ofstream if gzip file
 	if ( compression_ == GZIP ) {
-		// zip_stream_p_ deleted by close() above so don't have to here
-		zip_stream_p_ = new zip_ostream( of_stream_, true, static_cast< size_t >( Z_DEFAULT_COMPRESSION ), zlib_stream::DefaultStrategy, 15, 8, buffer_size_ );
-		if ( ( !zip_stream_p_ ) || ( !( *zip_stream_p_ ) ) ||
-				( !zip_stream_p_->is_gzip() ) ) { // zip_stream not in good state
-			delete zip_stream_p_; zip_stream_p_ = nullptr;
+		// zip_stream_p_ cleared by close() above so don't have to here
+		zip_stream_p_.reset( new zip_ostream( of_stream_, true, static_cast< size_t >( Z_DEFAULT_COMPRESSION ), zlib_stream::DefaultStrategy, 15, 8, buffer_size_ ) );
+		if ( !( *zip_stream_p_ ) || !zip_stream_p_->is_gzip() ) { // zip_stream not in good state
+			zip_stream_p_.reset();
 			of_stream_.close();
 			// Set failbit so failure can be detected
 			of_stream_.setstate( ios_base::failbit );
