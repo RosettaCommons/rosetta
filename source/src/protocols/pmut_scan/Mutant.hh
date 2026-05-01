@@ -36,7 +36,7 @@ class MutationData {
 
 public:
 
-	MutationData( char wt_residue, char mut_residue, core::Size pose_resnum, core::Size pdb_resnum, char icode, char chain );
+	MutationData( char wt_residue, char mut_residue, core::Size pose_resnum, core::Size pdb_resnum, char icode, std::string const &  chain );
 	~MutationData();
 
 	std::string mutation_string() const;
@@ -45,7 +45,7 @@ public:
 	char mut_residue() const;
 	core::Size pose_resnum() const;
 
-	char pdb_chain() const { return chain_; }
+	std::string pdb_chain() const { return chain_; }
 
 	// print function for mutation data class; only used by unit tests
 	void print_mutation_data( MutationData & md );
@@ -62,7 +62,7 @@ private:
 	core::Size pose_resnum_;
 	core::Size pdb_resnum_; // position in PDB numbering
 	char icode_; // insertion code
-	char chain_; // insertion code
+	std::string chain_; // chain
 
 
 	friend class Mutant;

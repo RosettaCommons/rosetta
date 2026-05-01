@@ -136,43 +136,43 @@ public: // tests
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( ii == 5 ) {
 				pose.pdb_info()->number( ii, 0 );
-				pose.pdb_info()->chain( ii, ' ' );
+				pose.pdb_info()->chain( ii, " " );
 				pose.pdb_info()->icode( ii, ' ' );
 				continue;
 			}
 			pose.pdb_info()->number( ii, ii );
-			pose.pdb_info()->chain( ii, 'A' );
+			pose.pdb_info()->chain( ii, "A" );
 			pose.pdb_info()->icode( ii, ' ' );
 		}
 		fix_pdbinfo_damaged_by_insertion( pose );
 		TS_ASSERT( pose.pdb_info()->number( 5 ) == 5  ) ;
-		TS_ASSERT( pose.pdb_info()->chain( 5 )  == 'A' );
+		TS_ASSERT( pose.pdb_info()->chain( 5 )  == "A" );
 		TS_ASSERT( pose.pdb_info()->icode( 5 )  == ' ' );
 		TS_ASSERT( pose.pdb_info()->number( 6 ) == 6  ) ;
-		TS_ASSERT( pose.pdb_info()->chain( 6 )  == 'A' );
+		TS_ASSERT( pose.pdb_info()->chain( 6 )  == "A" );
 		TS_ASSERT( pose.pdb_info()->icode( 6 )  == ' ' );
 
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( ii == 5 ) {
 				pose.pdb_info()->number( ii, 0 );
-				pose.pdb_info()->chain( ii, ' ' );
+				pose.pdb_info()->chain( ii, " " );
 				pose.pdb_info()->icode( ii, ' ' );
 			} else if ( ii > 5 ) {
 				pose.pdb_info()->number( ii, ii - 1 );
-				pose.pdb_info()->chain( ii, 'A' );
+				pose.pdb_info()->chain( ii, "A" );
 				pose.pdb_info()->icode( ii, ' ' );
 			} else {
 				pose.pdb_info()->number( ii, ii );
-				pose.pdb_info()->chain( ii, 'A' );
+				pose.pdb_info()->chain( ii, "A" );
 				pose.pdb_info()->icode( ii, ' ' );
 			}
 		}
 		fix_pdbinfo_damaged_by_insertion( pose );
 		TS_ASSERT( pose.pdb_info()->number( 5 ) == 4  ) ;
-		TS_ASSERT( pose.pdb_info()->chain( 5 )  == 'A' );
+		TS_ASSERT( pose.pdb_info()->chain( 5 )  == "A" );
 		TS_ASSERT( pose.pdb_info()->icode( 5 )  == 'A' );
 		TS_ASSERT( pose.pdb_info()->number( 6 ) == 5  ) ;
-		TS_ASSERT( pose.pdb_info()->chain( 6 )  == 'A' );
+		TS_ASSERT( pose.pdb_info()->chain( 6 )  == "A" );
 		TS_ASSERT( pose.pdb_info()->icode( 6 )  == ' ' );
 
 		/*Pose pose = *two_chain_pose();
@@ -184,11 +184,11 @@ public: // tests
 		pose.conformation().append_polymer_residue_after_seqpos( *rsd, 5, true );
 
 		TS_ASSERT( test_one_pose.pdb_info()->number( 6 ) == 0  ) ;
-		TS_ASSERT( test_one_pose.pdb_info()->chain( 6 )  == ' ' );
+		TS_ASSERT( test_one_pose.pdb_info()->chain( 6 )  == " " );
 		TS_ASSERT( test_one_pose.pdb_info()->icode( 6 )  == ' ' );
 		fix_pdbinfo_damaged_by_insertion( pose );
 		TS_ASSERT( test_one_pose.pdb_info()->number( 6 ) == 5  ) ;
-		TS_ASSERT( test_one_pose.pdb_info()->chain( 6 )  == 'A' );
+		TS_ASSERT( test_one_pose.pdb_info()->chain( 6 )  == "A" );
 		TS_ASSERT( test_one_pose.pdb_info()->icode( 6 )  == 'A' );
 		*/
 	}
@@ -269,25 +269,25 @@ public: // tests
 
 		for ( Size i = 1, ie = pose_one->size(); i <= ie; ++i ) {
 			TS_ASSERT_EQUALS( pose_one->pdb_info()->number( i ), static_cast< int >( i ) );
-			TS_ASSERT_EQUALS( pose_one->pdb_info()->chain( i ), 'A' );
+			TS_ASSERT_EQUALS( pose_one->pdb_info()->chain( i ), "A" );
 		}
 
 		// TEST: keeping existing starting number
 		add_empty_pdb_info( *pose_two );
-		pose_two->pdb_info()->chain( 1 , 'A' );
+		pose_two->pdb_info()->chain( 1 , "A" );
 		pose_two->pdb_info()->number( 1 , 27 );
-		pose_two->pdb_info()->chain( 10, 'B' );
+		pose_two->pdb_info()->chain( 10, "B" );
 		pose_two->pdb_info()->number( 10, -4 );
 		renumber_pdbinfo_based_on_conf_chains( *pose_two, true, true, false, false );
 
 		for ( Size i = 1, ie = 9; i <= ie; ++i ) {
 			TS_ASSERT_EQUALS( pose_two->pdb_info()->number( i ), static_cast< int >( i + 26 ) );
-			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), 'A' );
+			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), "A" );
 		}
 
 		for ( Size i = 10, ie = 20; i <= ie; ++i ) {
 			TS_ASSERT_EQUALS( pose_two->pdb_info()->number( i ), static_cast< int >( i - 9 - 5) );
-			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), 'B' );
+			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), "B" );
 		}
 
 		// TEST: keeping icodes
@@ -298,23 +298,23 @@ public: // tests
 
 		for ( Size i = 1, ie = 3; i <= ie; ++i ) {
 			TS_ASSERT_EQUALS( pose_two->pdb_info()->number( i ), static_cast< int >( i ) );
-			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), 'A' );
+			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), "A" );
 		}
 
 		// next two should have pdb_seq = 3 due to insertion codes
 		for ( Size i = 4, ie = 5; i <= ie; ++i ) {
 			TS_ASSERT_EQUALS( pose_two->pdb_info()->number( i ), 3 );
-			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), 'A' );
+			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), "A" );
 		}
 
 		for ( Size i = 6, ie = 9; i <= ie; ++i ) {
 			TS_ASSERT_EQUALS( pose_two->pdb_info()->number( i ), static_cast< int >( i - 2 ) );
-			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), 'A' );
+			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), "A" );
 		}
 
 		for ( Size i = 10, ie = 20; i <= ie; ++i ) {
 			TS_ASSERT_EQUALS( pose_two->pdb_info()->number( i ), static_cast< int >( i - 9 ) );
-			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), 'B' );
+			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), "B" );
 		}
 
 		// TEST: resetting icodes
@@ -327,12 +327,12 @@ public: // tests
 		TS_ASSERT_EQUALS( pose_two->pdb_info()->icode( 5 ), ' ' );
 		for ( Size i = 1, ie = 9; i <= ie; ++i ) {
 			TS_ASSERT_EQUALS( pose_two->pdb_info()->number( i ), static_cast< int >( i ) );
-			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), 'A' );
+			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), "A" );
 		}
 
 		for ( Size i = 10, ie = 20; i <= ie; ++i ) {
 			TS_ASSERT_EQUALS( pose_two->pdb_info()->number( i ), static_cast< int >( i - 9 ) );
-			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), 'B' );
+			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), "B" );
 		}
 
 		// TEST: no fix chains + icode resetting
@@ -397,8 +397,8 @@ public: // tests
 		core::pose::Pose const p1 = create_pdb_string_2res_1ten_2res_trp_cage_pose();
 		core::pose::Pose p2(p1);
 
-		std::string p1_hash(core::pose::get_sha1_hash_excluding_chain('A',p1));
-		std::string p2_hash(core::pose::get_sha1_hash_excluding_chain('A',p2));
+		std::string p1_hash(core::pose::get_sha1_hash_excluding_chain("A",p1));
+		std::string p2_hash(core::pose::get_sha1_hash_excluding_chain("A",p2));
 		TS_ASSERT(p1_hash == p2_hash);
 	}
 
@@ -506,7 +506,7 @@ public: // tests
 		core::pose::PDBInfoOP pdb_info( pose->pdb_info() );
 		TS_ASSERT( pdb_info );
 
-		utility::vector1< char > chain_letters{ 'X', 'A', 'A', 'A', 'M', 'B', 'B', 'B', 'B', 'C', 'B', 'M', 'M', 'A', 'A', 'A', 'X', 'M' };
+		utility::vector1< std::string > chain_letters{ "X", "A", "A", "A", "M", "B", "B", "B", "B", "C", "B", "M", "M", "A", "A", "A", "X", "M" };
 		debug_assert( pose->size() == chain_letters.size() );
 		// Chain IDs are always sequential.
 		utility::vector1< core::Size > chain_ids{ 1, 2, 2, 2, 3, 4, 4, 4, 4, 4, 4, 5, 6, 7, 7, 7, 8, 9 };
@@ -541,18 +541,18 @@ public: // tests
 
 		// get_jump_ids_from_chain
 		TS_ASSERT_EQUALS( get_jump_ids_from_chain( "A", *pose ), (utility::vector1<core::Size>{1,9}) );
-		TS_ASSERT_EQUALS( get_jump_ids_from_chain( 'B', *pose ), (utility::vector1<core::Size>{2,8}) );
+		TS_ASSERT_EQUALS( get_jump_ids_from_chain( "B", *pose ), (utility::vector1<core::Size>{2,8}) );
 		// C is a hard exit
 		TS_ASSERT_EQUALS( get_jump_ids_from_chain( "M", *pose ), (utility::vector1<core::Size>{4,5,6,7}) );
-		TS_ASSERT_EQUALS( get_jump_ids_from_chain( 'X', *pose ).size(), 1 ); // Root doesn't get a jump
-		TS_ASSERT_EQUALS( get_jump_ids_from_chain( 'X', *pose ), (utility::vector1<core::Size>{3}) ); // Root doesn't get a jump
-		TS_ASSERT_EQUALS( get_jump_ids_from_chain( 'T', *pose ), (utility::vector1<core::Size>{}) );
+		TS_ASSERT_EQUALS( get_jump_ids_from_chain( "X", *pose ).size(), 1 ); // Root doesn't get a jump
+		TS_ASSERT_EQUALS( get_jump_ids_from_chain( "X", *pose ), (utility::vector1<core::Size>{3}) ); // Root doesn't get a jump
+		TS_ASSERT_EQUALS( get_jump_ids_from_chain( "T", *pose ), (utility::vector1<core::Size>{}) );
 
-		TS_ASSERT_EQUALS( get_jump_id_from_chain( 'A', *pose ), 1 );
+		TS_ASSERT_EQUALS( get_jump_id_from_chain( "A", *pose ), 1 );
 		TS_ASSERT_EQUALS( get_jump_id_from_chain( "B", *pose ), 2 );
 		// C is a hard exit
 		TS_ASSERT_EQUALS( get_jump_id_from_chain( "X", *pose ), 3 );
-		TS_ASSERT_EQUALS( get_jump_id_from_chain( 'M', *pose ), 4 );
+		TS_ASSERT_EQUALS( get_jump_id_from_chain( "M", *pose ), 4 );
 
 	}
 
@@ -568,12 +568,12 @@ public: // tests
 		// conf2pdb_chain -- Not strictly speaking good on the mixed-up pose, as chain 4 is not consistent (it has both B and C chains
 		// This will flag a warning on the tracer and return a naive assignment.
 		// To test properly, we cheat by making the pose consistent and then putting it back
-		TS_ASSERT_EQUALS( pose->pdb_info()->chain( 10 ), 'C' );
-		pose->pdb_info()->chain( 10, 'B' );
-		std::map< core::Size, char > chainid_to_chanlett( core::pose::conf2pdb_chain(*pose) );
+		TS_ASSERT_EQUALS( pose->pdb_info()->chain( 10 ), "C" );
+		pose->pdb_info()->chain( 10, "B" );
+		std::map< core::Size, std::string > chainid_to_chanlett( core::pose::conf2pdb_chain(*pose) );
 		TS_ASSERT_EQUALS( chainid_to_chanlett.size(), 9 );
-		TS_ASSERT_EQUALS( chainid_to_chanlett, (std::map< core::Size, char >( { {1,'X'}, {2,'A'}, {3,'M'}, {4,'B'}, {5,'M'}, {6,'M'}, {7,'A'}, {8,'X'}, {9,'M'} } )) );
-		pose->pdb_info()->chain( 10, 'C' ); // Put it back, properly mixed up.
+		TS_ASSERT_EQUALS( chainid_to_chanlett, (std::map< core::Size, std::string >( { {1,"X"}, {2,"A"}, {3,"M"}, {4,"B"}, {5,"M"}, {6,"M"}, {7,"A"}, {8,"X"}, {9,"M"} } )) );
+		pose->pdb_info()->chain( 10, "C" ); // Put it back, properly mixed up.
 
 		// chain_end_res
 		utility::vector1< core::Size > expected_chain_ends{ 1, 4, 5, 11, 12, 13, 16, 17, 18 };
@@ -613,17 +613,17 @@ public: // tests
 
 		// get_chain_ids_from_chains
 		TS_ASSERT_EQUALS( get_chain_ids_from_chains( utility::vector1<std::string>{"A","M"}, *pose ), (utility::vector1<core::Size>{2,3,5,6,7,9}) );
-		TS_ASSERT_EQUALS( get_chain_ids_from_chains( utility::vector1<char>{'B','X'}, *pose ), (utility::vector1<core::Size>{1,4,8}) );
-		TS_ASSERT_EQUALS( get_chain_ids_from_chains( utility::vector1<char>{'C'}, *pose ), (utility::vector1<core::Size>{4}) );
+		TS_ASSERT_EQUALS( get_chain_ids_from_chains( utility::vector1<std::string>{"B","X"}, *pose ), (utility::vector1<core::Size>{1,4,8}) );
+		TS_ASSERT_EQUALS( get_chain_ids_from_chains( utility::vector1<std::string>{"C"}, *pose ), (utility::vector1<core::Size>{4}) );
 		TS_ASSERT_EQUALS( get_chain_ids_from_chains( utility::vector1<std::string>{"T"}, *pose ), (utility::vector1<core::Size>{}) );
 
-		TS_ASSERT_EQUALS( get_chain_ids_from_chain( 'A', *pose), (utility::vector1<core::Size>{2,7}) );
-		TS_ASSERT_EQUALS( get_chain_ids_from_chain( 'B', *pose), (utility::vector1<core::Size>{4}) );
+		TS_ASSERT_EQUALS( get_chain_ids_from_chain( "A", *pose), (utility::vector1<core::Size>{2,7}) );
+		TS_ASSERT_EQUALS( get_chain_ids_from_chain( "B", *pose), (utility::vector1<core::Size>{4}) );
 		TS_ASSERT_EQUALS( get_chain_ids_from_chain( "C", *pose), (utility::vector1<core::Size>{4}) );
 		TS_ASSERT_EQUALS( get_chain_ids_from_chain( "M", *pose), (utility::vector1<core::Size>{3,5,6,9}) );
-		TS_ASSERT_EQUALS( get_chain_ids_from_chain( 'T', *pose), (utility::vector1<core::Size>{}) );
+		TS_ASSERT_EQUALS( get_chain_ids_from_chain( "T", *pose), (utility::vector1<core::Size>{}) );
 
-		TS_ASSERT_EQUALS( get_chain_id_from_chain( 'B', *pose), 4);
+		TS_ASSERT_EQUALS( get_chain_id_from_chain( "B", *pose), 4);
 		TS_ASSERT_EQUALS( get_chain_id_from_chain( "C", *pose), 4);
 
 		// get_chain_id_from_jump_id
@@ -638,13 +638,13 @@ public: // tests
 		PoseOP pose( get_mixedup_pose() );
 
 		// has_chain
-		TS_ASSERT( core::pose::has_chain( 'A', *pose ) );
-		TS_ASSERT( core::pose::has_chain( 'B', *pose ) );
-		TS_ASSERT( core::pose::has_chain( 'C', *pose ) );
-		TS_ASSERT( ! core::pose::has_chain( 'D', *pose ) );
-		TS_ASSERT( core::pose::has_chain( 'M', *pose ) );
-		TS_ASSERT( core::pose::has_chain( 'X', *pose ) );
-		TS_ASSERT( ! core::pose::has_chain( 'Z', *pose ) );
+		TS_ASSERT( core::pose::has_chain( "A", *pose ) );
+		TS_ASSERT( core::pose::has_chain( "B", *pose ) );
+		TS_ASSERT( core::pose::has_chain( "C", *pose ) );
+		TS_ASSERT( ! core::pose::has_chain( "D", *pose ) );
+		TS_ASSERT( core::pose::has_chain( "M", *pose ) );
+		TS_ASSERT( core::pose::has_chain( "X", *pose ) );
+		TS_ASSERT( ! core::pose::has_chain( "Z", *pose ) );
 
 		// res_in_chain
 		utility::vector1< std::string > chain_letters{ "X", "A", "A", "A", "M", "B", "B", "B", "B", "C", "B", "M", "M", "A", "A", "A", "X", "M" };
@@ -657,20 +657,20 @@ public: // tests
 		}
 
 		// get_resnums_for_chain
-		TS_ASSERT_EQUALS( get_resnums_for_chain( *pose, 'A' ), (utility::vector1< core::Size >{2,3,4,14,15,16}) );
-		TS_ASSERT_EQUALS( get_resnums_for_chain( *pose, 'M' ), (utility::vector1< core::Size >{5,12,13,18}) );
-		TS_ASSERT_EQUALS( get_resnums_for_chain( *pose, 'C' ), (utility::vector1< core::Size >{10}) );
-		TS_ASSERT_EQUALS( get_resnums_for_chain( *pose, 'D' ), (utility::vector1< core::Size >{}) );
+		TS_ASSERT_EQUALS( get_resnums_for_chain( *pose, "A" ), (utility::vector1< core::Size >{2,3,4,14,15,16}) );
+		TS_ASSERT_EQUALS( get_resnums_for_chain( *pose, "M" ), (utility::vector1< core::Size >{5,12,13,18}) );
+		TS_ASSERT_EQUALS( get_resnums_for_chain( *pose, "C" ), (utility::vector1< core::Size >{10}) );
+		TS_ASSERT_EQUALS( get_resnums_for_chain( *pose, "D" ), (utility::vector1< core::Size >{}) );
 
 		// get_chain_from_chain_id -- this is the chain letter of the first residue in the chain number
-		utility::vector1<char> ids_to_letters{ 'X', 'A', 'M', 'B', 'M', 'M', 'A', 'X', 'M' };
+		utility::vector1<std::string> ids_to_letters{ "X", "A", "M", "B", "M", "M", "A", "X", "M" };
 		debug_assert( ids_to_letters.size() == pose->num_chains() );
 		for ( core::Size ii(1); ii <= pose->num_chains(); ++ii ) {
 			TS_ASSERT_EQUALS( get_chain_from_chain_id( ii, *pose ), ids_to_letters[ii] );
 		}
 
 		// get_chain_from_jump_id
-		utility::vector1< char > jump_id_to_chain{ 'A', 'B', 'X', 'M', 'M', 'M', 'M', 'B', 'A' };
+		utility::vector1< std::string > jump_id_to_chain{ "A", "B", "X", "M", "M", "M", "M", "B", "A" };
 		debug_assert( jump_id_to_chain.size() == pose->num_jump() );
 		for ( core::Size ii(1); ii <= pose->num_jump(); ++ii ) {
 			TS_ASSERT_EQUALS( get_chain_from_jump_id( ii, *pose ), jump_id_to_chain[ii] );

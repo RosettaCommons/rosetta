@@ -1008,7 +1008,7 @@ std::vector< core::conformation::ResidueCOP > PocketGrid::getRelaxResidues( core
 		pos = resids.find_first_of(delimiters, lastPos);
 
 		int  central_relax_pdb_number;
-		char chain = ' ';
+		char chain = ' '; // Single character due to input format
 		std::size_t fpos( resid.find(':') );
 		if ( fpos != std::string::npos ) {
 			central_relax_pdb_number = ObjexxFCL::int_of( resid.substr(0,fpos) );
@@ -1021,7 +1021,7 @@ std::vector< core::conformation::ResidueCOP > PocketGrid::getRelaxResidues( core
 		for ( int j = 1, resnum = input_pose.size(); j <= resnum; ++j ) {
 			if ( input_pose.pdb_info()->number(j) == central_relax_pdb_number ) {
 				if ( chain != ' ' ) {
-					if ( input_pose.pdb_info()->chain(j) == chain ) {
+					if ( input_pose.pdb_info()->chain(j) == std::string{chain} ) {
 						residues.push_back(input_pose.conformation().residue(j).clone());
 						continue;
 					}

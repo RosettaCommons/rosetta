@@ -50,7 +50,7 @@ void jumps_from_pose(core::pose::Pose const & pose, Jumps & jumps);
 ///
 /// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 ///
-std::map< core::Size, char > conf2pdb_chain( core::pose::Pose const & pose );
+std::map< core::Size, std::string > conf2pdb_chain( core::pose::Pose const & pose );
 
 /// @brief Get all the chain numbers from conformation
 ///
@@ -120,12 +120,9 @@ bool renumber_pdbinfo_based_on_conf_chains(
 bool
 has_chain(std::string const & chain, core::pose::Pose const & pose);
 
-/// @brief Does the pose have a residue with the given chain letter
-///
-/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
-///
+// To disambiguate with the core::Size variant
 bool
-has_chain(char const & chain, core::pose::Pose const & pose);
+has_chain(char const & /*chain*/, core::pose::Pose const & /*pose*/) = delete;
 
 /// @brief Does the pose have a residue with the given chain number
 ///
@@ -142,14 +139,6 @@ has_chain(core::Size chain_id, core::pose::Pose const & pose);
 utility::vector1<core::Size>
 get_chain_ids_from_chains(utility::vector1<std::string> const & chains, core::pose::Pose const & pose);
 
-/// @brief Get all chain numbers for the residues with the given chain letters
-///
-/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
-///
-/// The returned chain numbers are in sorted order
-utility::vector1<core::Size>
-get_chain_ids_from_chains(utility::vector1<char> const & chains, core::pose::Pose const & pose);
-
 /// @brief Get all chain numbers for the residues with the given chain letter
 ///
 /// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
@@ -157,14 +146,6 @@ get_chain_ids_from_chains(utility::vector1<char> const & chains, core::pose::Pos
 /// The returned chain numbers are in sorted order
 utility::vector1<core::Size>
 get_chain_ids_from_chain(std::string const & chain, core::pose::Pose const & pose);
-
-/// @brief Get all chain numbers for the residues with the given chain letter
-///
-/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
-///
-/// The returned chain numbers are in sorted order
-utility::vector1<core::Size>
-get_chain_ids_from_chain(char const & chain, core::pose::Pose const & pose);
 
 /// @brief Attempt to get the chain number which correspond to the given chain letter
 ///
@@ -174,20 +155,12 @@ get_chain_ids_from_chain(char const & chain, core::pose::Pose const & pose);
 core::Size
 get_chain_id_from_chain(std::string const & chain, core::pose::Pose const & pose);
 
-/// @brief Attempt to get the chain number which correspond to the given chain letter
-///
-/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
-///
-/// If the chain letter corresponds to more than one chain letter, raise an error
-core::Size
-get_chain_id_from_chain(char const & chain, core::pose::Pose const & pose);
-
 /// @brief Get the chain letter for the first residue in a given chain number
 ///
 /// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 ///
 /// Keep in mind that not all residues with the given chain number will necessarily have the returned chain letter
-char
+std::string
 get_chain_from_chain_id(core::Size const & chain_id, core::pose::Pose const & pose);
 
 /// @brief Attempt to get jump IDs which correspond to the given chain number
@@ -224,19 +197,6 @@ get_jump_id_from_chain_id(core::Size const & chain_id, core::pose::Pose const & 
 ///
 /// The returned jump numbers are in sorted order
 utility::vector1<core::Size>
-get_jump_ids_from_chain(char const & chain, core::pose::Pose const & pose);
-
-/// @brief Get all the jump numbers for the given chain letter
-///
-/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
-///
-/// The jumps here are the jumps which are *directly* upstream of a residue with a given chain letter,
-/// (i.e. a residue with the given chain letter is built directly from the jump) rather than logically upstream.
-/// Return all jumps which build residues with the given chain letter.
-/// If no jumps directly builds residues with the given chain letters, return an empty vector.
-///
-/// The returned jump numbers are in sorted order
-utility::vector1<core::Size>
 get_jump_ids_from_chain(std::string const & chain, core::pose::Pose const & pose);
 
 /// @brief Get the jump number for the given chain letter
@@ -251,18 +211,6 @@ get_jump_ids_from_chain(std::string const & chain, core::pose::Pose const & pose
 core::Size
 get_jump_id_from_chain(std::string const & chain, core::pose::Pose const & pose);
 
-/// @brief Get the jump number for the given chain letter
-///
-/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
-///
-/// The jump here is the jumps which is *directly* upstream of a residue with a given chain letter,
-/// (i.e. a residue with the given chain letter is built directly from the jump) rather than logically upstream.
-/// If there's more than one jump which builds residues with the given chain letter, return the smallest numbered jump
-/// (even if it's not the jump which best partions the chain on the FoldTree).
-/// If no jump directly builds the chain, hard exit.
-core::Size
-get_jump_id_from_chain(char const & chain, core::pose::Pose const & pose);
-
 /// @brief Get the chain ID of the residue directly built by the given jump.
 ///
 /// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
@@ -276,7 +224,7 @@ get_chain_id_from_jump_id(core::Size const & jump_id, core::pose::Pose const & p
 /// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 ///
 /// Keep in mind that not every residue with the returned chain ID will be downstream of this jump.
-char
+std::string
 get_chain_from_jump_id(core::Size const & jump_id, core::pose::Pose const & pose);
 
 /// @brief Get a vector of all residues numbers which are represented by this chain letter
@@ -285,7 +233,7 @@ get_chain_from_jump_id(core::Size const & jump_id, core::pose::Pose const & pose
 ///
 /// The returned residue numbers are in sorted order
 utility::vector1<core::Size>
-get_resnums_for_chain( core::pose::Pose const & pose, char chain );
+get_resnums_for_chain( core::pose::Pose const & pose, std::string const & chain );
 
 /// @brief Get a vector of all residues numbers which are represented by this chain number
 ///
@@ -323,21 +271,14 @@ core::Size get_hash_from_pos(PointPosition const & pos);
 /// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 ///
 core::Size
-get_hash_from_chain( char const & chain, core::pose::Pose const & pose, std::string const & extra_label="" );
+get_hash_from_chain( std::string const & chain, core::pose::Pose const & pose, std::string const & extra_label="" );
 
 /// @brief Get a value representing the position of all the atoms for residues which don't have the given chain letter
 ///
 /// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 ///
 core::Size
-get_hash_excluding_chain( char const & chain, core::pose::Pose const & pose, std::string const & extra_label="" );
-
-/// @brief Get a value representing the position of all the atoms for residues with the given chain letter
-///
-/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
-///
-std::string
-get_sha1_hash_from_chain(char const & chain, core::pose::Pose const & pose, std::string const & extra_label="");
+get_hash_excluding_chain( std::string const & chain, core::pose::Pose const & pose, std::string const & extra_label="" );
 
 /// @brief Get a value representing the position of all the atoms for residues with the given chain letters
 ///
@@ -345,13 +286,6 @@ get_sha1_hash_from_chain(char const & chain, core::pose::Pose const & pose, std:
 ///
 std::string
 get_sha1_hash_from_chains(utility::vector1< std::string > const & chains, core::pose::Pose const & pose, std::string const & extra_label="");
-
-/// @brief Get a value representing the position of all the atoms for residues which don't have the given chain letter
-///
-/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
-///
-std::string
-get_sha1_hash_excluding_chain(char const & chain, core::pose::Pose const & pose, std::string const & extra_label="");
 
 /// @brief Get a value representing the position of all the atoms for residues which don't have the given chain letter
 ///

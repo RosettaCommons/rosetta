@@ -55,13 +55,13 @@ OPT_KEY( String, target_chain_list )
 
 static basic::Tracer TR( "apps.pilot.david_choose_target_residues.main" );
 core::Real interface_residue_ddg (core::pose::Pose const & pose, core::Size resno);
-bool is_interface_residue (const char chain, const int resno);
+bool is_interface_residue (std::string const & chain, const int resno);
 
 
 //set to store pdb info keys
 std::set <std::string> interface;
 std::set <std::string> interface_resi;
-std::set <char> chains;
+std::set <std::string> chains;
 
 //stores resid of the ligand residue
 
@@ -111,13 +111,9 @@ main( int argc, char * argv [] )
 		}
 		utility::vector1< std::string > parsed_chains( utility::string_split_simple( chain_list, ',' ) );
 		for ( std::string const & chain : parsed_chains ) {
-			if ( chain.size() > 1 ) {
-				std::cout << "Chains shouls only be one character" << std::endl;
-				return -1;
-			}
-			chains.insert(chain[0]);
+			chains.insert(chain);
 		}
-		if ( chains.empty()/*size() == 0*/ ) {
+		if ( chains.empty() ) {
 			std::cout << "No target chains specified. use -target_chain_list A[,B,C...]"<<std::endl;
 			return -1;
 		}
@@ -405,7 +401,7 @@ core::Real interface_residue_ddg (core::pose::Pose const & pose, core::Size resn
 					token = strtok (nullptr, " ");
 				} else { break; }
 			} else if ( token_count == 1 ) {
-				if ( pose.pdb_info()->chain(resno) == token[0] ) {
+				if ( pose.pdb_info()->chain(resno) == std::string{token[0]} ) {
 					token_count++;
 					token = strtok (nullptr, " ");
 				} else { break; }
@@ -423,7 +419,7 @@ core::Real interface_residue_ddg (core::pose::Pose const & pose, core::Size resn
 	return out;
 }
 
-bool is_interface_residue (const char chain, const int resno){
+bool is_interface_residue (std::string const & chain, const int resno){
 	bool out=false;
 	if ( chains.count(chain)==0 ) return out;
 	for ( auto const & it : interface ) {
@@ -439,7 +435,7 @@ bool is_interface_residue (const char chain, const int resno){
 					token = strtok (nullptr, " ");
 				} else { break; }
 			} else if ( token_count == 1 ) {
-				if ( chain == token[0] ) {
+				if ( chain == std::string{token[0]} ) {
 					delete[] str;
 					return true;
 				} else { break; }

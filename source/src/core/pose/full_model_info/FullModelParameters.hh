@@ -107,11 +107,11 @@ public:
 	std::string full_annotated_sequence() const;
 
 	utility::vector1< int >  const & conventional_numbering() const { return conventional_numbering_;}
-	utility::vector1< char > const & conventional_chains() const { return conventional_chains_;}
+	utility::vector1< std::string > const & conventional_chains() const { return conventional_chains_;}
 	utility::vector1< std::string > const & conventional_segids() const { return conventional_segids_;}
 
 	void set_conventional_numbering( utility::vector1< int > const & setting ) { conventional_numbering_  = setting; }
-	void set_conventional_chains( utility::vector1< char > const & setting ) { conventional_chains_  = setting; }
+	void set_conventional_chains( utility::vector1< std::string > const & setting ) { conventional_chains_  = setting; }
 	void set_conventional_segids( utility::vector1< std::string > const & setting ) { conventional_segids_  = setting; }
 	void set_non_standard_residue_map(  std::map< Size, std::string > const & setting ) { non_standard_residue_map_  = setting; }
 
@@ -151,7 +151,7 @@ public:
 	conventional_to_full( utility::vector1< int > const & res_list ) const;
 
 	utility::vector1< Size >
-	conventional_to_full( std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & resnum_and_chain_and_segid ) const;
+	conventional_to_full( std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & resnum_and_chain_and_segid ) const;
 
 	//utility::vector1< Size >
 	// conventional_to_full( std::pair< std::vector< int >, std::vector< char > > const & resnum_and_chain ) const;
@@ -160,13 +160,13 @@ public:
 	has_conventional_residue( int const res_num ) const;
 
 	bool
-	has_conventional_residue( int const res_num, char const chain, std::string const & segid = "    ") const;
+	has_conventional_residue( int const res_num, std::string const & chain, std::string const & segid = "    ") const;
 
 	Size
 	conventional_to_full( int const res_num ) const;
 
 	Size
-	conventional_to_full( int const res_num, char const chain, std::string const & segid = "    ") const;
+	conventional_to_full( int const res_num, std::string const & chain, std::string const & segid = "    ") const;
 
 	utility::vector1< int >
 	full_to_conventional( utility::vector1< Size > const & res_list ) const;
@@ -176,10 +176,10 @@ public:
 
 	//    std::pair< utility::vector1< int >, utility::vector1< char > >
 	//    full_to_conventional_resnum_and_chain( utility::vector1< Size > const & res_list ) const;
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > >
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > >
 	full_to_conventional_resnum_and_chain_and_segid( utility::vector1< Size > const & res_list ) const;
 
-	std::tuple< int, char, std::string >
+	std::tuple< int, std::string, std::string >
 	full_to_conventional_resnum_and_chain_and_segid( Size const res_num ) const;
 
 	utility::vector1< Size >
@@ -231,7 +231,7 @@ private:
 	get_sequence_with_gaps_filled_with_n( pose::Pose const & pose,
 		std::string & sequence,
 		utility::vector1< int  > & conventional_numbering,
-		utility::vector1< char > & conventional_chains,
+		utility::vector1< std::string > & conventional_chains,
 		utility::vector1< std::string > & conventional_segids,
 		utility::vector1< Size > & res_list ) const;
 
@@ -271,7 +271,7 @@ private:
 	std::string global_sequence_; // Full native sequence on which partition function scoring will be based.
 	utility::vector1< Size > global_mapping_; // Mapping from full_sequence to global_sequence.
 	utility::vector1< int >  conventional_numbering_; // permits user to use numbering other than 1, 2, 3...
-	utility::vector1< char > conventional_chains_;    // permits user to use chains other than A, B, C, ..
+	utility::vector1< std::string > conventional_chains_;    // permits user to use chains other than A, B, C, ..
 	utility::vector1< std::string > conventional_segids_;    // permits user to use segids (i.e., for large structures. subsets of a chain)
 	std::map< Size, std::string > non_standard_residue_map_; // for DNA, non-natural protein/RNA, ligands, ions, etc.
 

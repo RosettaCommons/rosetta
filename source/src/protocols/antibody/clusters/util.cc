@@ -102,21 +102,21 @@ check_if_pose_renumbered_for_clusters(core::pose::Pose const & pose){
 
 	if ( core::pose::has_chain("L", pose) ) {
 		//L1
-		if ( pose.residue(pose.pdb_info()->pdb2pose('L', 23)).name1() != 'C' ) {
+		if ( pose.residue(pose.pdb_info()->pdb2pose("L", 23)).name1() != 'C' ) {
 			TR << "Problem with L1 starting anchor residue name" <<std::endl;
 			return false;
 		}
-		if ( pose.residue(pose.pdb_info()->pdb2pose('L', 43)).name1() != 'W' ) {
+		if ( pose.residue(pose.pdb_info()->pdb2pose("L", 43)).name1() != 'W' ) {
 			TR << "Problem with L1 ending anchor residue name" <<std::endl;
 			return false;
 		}
 
 		//L3
-		if ( pose.residue(pose.pdb_info()->pdb2pose('L', 106)).name1() != 'C' ) {
+		if ( pose.residue(pose.pdb_info()->pdb2pose("L", 106)).name1() != 'C' ) {
 			TR << "Problem with L3 starting anchor residue name" <<std::endl;
 			return false;
 		}
-		if ( pose.residue(pose.pdb_info()->pdb2pose('L', 139)).name1() != 'F' ) {
+		if ( pose.residue(pose.pdb_info()->pdb2pose("L", 139)).name1() != 'F' ) {
 			TR << "Problem with L3 ending anchor residue name" <<std::endl;
 			return false;
 		}
@@ -124,21 +124,21 @@ check_if_pose_renumbered_for_clusters(core::pose::Pose const & pose){
 
 	if ( core::pose::has_chain("H", pose) ) {
 		//H1
-		if ( pose.residue(pose.pdb_info()->pdb2pose('H', 23)).name1() != 'C' ) {
+		if ( pose.residue(pose.pdb_info()->pdb2pose("H", 23)).name1() != 'C' ) {
 			TR << "Problem with H1 starting anchor residue name" <<std::endl;
 			return false;
 		}
-		if ( pose.residue(pose.pdb_info()->pdb2pose('H', 43)).name1() != 'W' ) {
+		if ( pose.residue(pose.pdb_info()->pdb2pose("H", 43)).name1() != 'W' ) {
 			TR << "Problem with H1 ending anchor residue name" <<std::endl;
 			return false;
 		}
 
 		//H3
-		if ( pose.residue(pose.pdb_info()->pdb2pose('H', 106)).name1() != 'C' ) {
+		if ( pose.residue(pose.pdb_info()->pdb2pose("H", 106)).name1() != 'C' ) {
 			TR << "Problem with H3 starting anchor residue name" <<std::endl;
 			return false;
 		}
-		if ( pose.residue(pose.pdb_info()->pdb2pose('H', 139)).name1() != 'W' ) {
+		if ( pose.residue(pose.pdb_info()->pdb2pose("H", 139)).name1() != 'W' ) {
 			TR << "Problem with H3 ending anchor residue name" <<std::endl;
 			return false;
 		}

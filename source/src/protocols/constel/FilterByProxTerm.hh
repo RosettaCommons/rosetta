@@ -41,7 +41,7 @@ private:
 	static core::Size nres_;
 
 	/// @brief chains with termini proximal to one another
-	static std::map<char, bool> proxnc_;
+	static std::map<std::string, bool> proxnc_;
 
 public:
 

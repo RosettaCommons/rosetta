@@ -131,7 +131,7 @@ dump_RefinementDB_to_silent(
 				tmp_pose.pdb_info(utility::pointer::make_shared< core::pose::PDBInfo >(tmp_pose.size()));
 			}
 			// Temporary until chains are strings i guess
-			if ( final_chain.at(0) != '^' ) tmp_pose.pdb_info()->set_chains( final_chain.at(0) );
+			if ( final_chain != "^" ) tmp_pose.pdb_info()->set_chains( final_chain );
 
 			return tmp_pose;
 		}();
@@ -260,7 +260,7 @@ template< typename T >
 void
 dump_and_raise_bad_pose_alignment(
 	core::pose::Pose const & r1,
-	char const r1_chain,
+	std::string const & r1_chain,
 	core::Size const r1_resnum,
 	core::Size const r1_posenum,
 	core::pose::Pose const & r2,
@@ -300,7 +300,7 @@ get_rms(core::pose::Pose const & r1, core::pose::Pose const & r2, DensitySymmInf
 	core::Size N=0;
 	for ( core::Size i = 1; i <= r1.size(); ++i ) {
 		int const r1_resnum = r1.pdb_info()->number(i);
-		char const r1_chain = r1.pdb_info()->chain(i);
+		std::string r1_chain = r1.pdb_info()->chain(i);
 		core::Size const r2_posenum = r2.pdb_info()->pdb2pose( r1_chain, r1_resnum );
 		if ( r2_posenum == 0 ) continue;
 
@@ -354,7 +354,7 @@ get_gdt(
 	core::Size N=0;
 	for ( core::Size i = 1; i <= r1.size(); ++i ) {
 		int const r1_resnum = r1.pdb_info()->number(i);
-		char const r1_chain = r1.pdb_info()->chain(i);
+		std::string const r1_chain = r1.pdb_info()->chain(i);
 		core::Size const r2_posenum = r2.pdb_info()->pdb2pose( r1_chain, r1_resnum );
 		if ( r2_posenum == 0 ) continue;
 

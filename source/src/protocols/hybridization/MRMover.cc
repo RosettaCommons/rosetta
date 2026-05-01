@@ -79,7 +79,7 @@ using namespace core;
 core::Size
 parse_res( core::pose::Pose const &pose, std::string resnum ) {
 	core::Size num;
-	char chain;
+	std::string chain;
 	std::string::const_iterator input_end = resnum.end(), number_start = resnum.begin(), number_end = resnum.begin();
 	while ( number_end != input_end && *number_end >= '0' && *number_end <= '9' )
 			++number_end;
@@ -88,7 +88,7 @@ parse_res( core::pose::Pose const &pose, std::string resnum ) {
 	if ( number_end == input_end ) {
 		chain = pose.pdb_info()->chain(1);
 	} else {
-		chain = *number_end;
+		chain = std::string(number_end, input_end);
 	}
 	return pose.pdb_info()->pdb2pose( chain, num );
 }

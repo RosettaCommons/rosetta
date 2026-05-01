@@ -460,7 +460,7 @@ inline void harvest_motifs(){
 
 		Pose pose; vector1<Real> bfactors,occupancy;
 		utility::vector1<int> pdbres;
-		std::map<int,char> pdbchain;
+		std::map<int,std::string> pdbchain;
 		int nresmodel1;
 		if ( !protocols::sic_dock::read_biounit(fname,pose,bfactors,occupancy,pdbres,pdbchain,nresmodel1,option[mh::harvest::max_res](),false) ) {
 			TR.Error << "FAIL TO READ " << fname << endl;
@@ -563,7 +563,7 @@ int main(int argc, char *argv[]) {
 			for ( int ifile = 1; ifile <= (int)fnames.size(); ++ifile ) {
 				Pose pose; vector1<Real> bfactors,occupancy;
 				utility::vector1<int> pdbres;
-				std::map<int,char> pdbchain;
+				std::map<int,std::string> pdbchain;
 				int nresmodel1;
 				if ( !protocols::sic_dock::read_biounit(fnames[ifile],pose,bfactors,occupancy,pdbres,pdbchain,nresmodel1,option[mh::harvest::max_res](),true) ) {
 					TR.Error << "FAIL TO READ " << fnames[ifile] << endl;

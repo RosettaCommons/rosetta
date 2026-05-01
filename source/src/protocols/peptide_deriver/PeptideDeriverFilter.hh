@@ -169,11 +169,11 @@ public:
 	utility::vector1<core::Size> get_pep_lengths() const { return pep_lengths_; }
 	void set_pep_lengths(utility::vector1<core::Size> const & values) { pep_lengths_ = values; }
 
-	utility::vector1<char> get_restrict_receptors_to_chains() const { return restrict_receptors_to_chains_; }
-	void set_restrict_receptors_to_chains(utility::vector1<char> const & values) { restrict_receptors_to_chains_ = values; }
+	utility::vector1<std::string> get_restrict_receptors_to_chains() const { return restrict_receptors_to_chains_; }
+	void set_restrict_receptors_to_chains(utility::vector1<std::string> const & values) { restrict_receptors_to_chains_ = values; }
 
-	utility::vector1<char> get_restrict_partners_to_chains() const { return restrict_partners_to_chains_; }
-	void set_restrict_partners_to_chains(utility::vector1<char> const & values) { restrict_partners_to_chains_ = values; }
+	utility::vector1<std::string> get_restrict_partners_to_chains() const { return restrict_partners_to_chains_; }
+	void set_restrict_partners_to_chains(utility::vector1<std::string> const & values) { restrict_partners_to_chains_ = values; }
 
 	PeptideDeriverReportFormat get_report_format() const { return report_format_; }
 	void set_report_format(PeptideDeriverReportFormat const value) { report_format_ = value; }
@@ -279,7 +279,7 @@ private:
 
 	/// @brief helper function, returns a list of chain indices. If restrict_to_chains is specified, only indices of chains with these letters
 	///        are retuned. Otherwise, indices of all chains (i.e., 1..num_chains) are returned.
-	static utility::vector1<core::Size> get_chain_indices( core::pose::Pose const & pose, utility::vector1<char> const & restrict_to_chains );
+	static utility::vector1<core::Size> get_chain_indices( core::pose::Pose const & pose, utility::vector1<std::string> const & restrict_to_chains );
 
 	/// @brief read options from option system
 	void parse_options();
@@ -325,12 +325,12 @@ private:
 	/// @brief list of chains to use as receptors. When empty, all chains are included.
 	///        Peptides won't be derived from these chains (unless they are also specified as partners).
 	/// @see restrict_partners_to_chains_
-	utility::vector1<char> restrict_receptors_to_chains_;
+	utility::vector1<std::string> restrict_receptors_to_chains_;
 
 	/// @brief list of chain to use as partners. When empty, all chains are included.
 	///        We only go over the chains listed as partners to derive the peptides.
 	/// @see restrict_receptors_to_chains_
-	utility::vector1<char> restrict_partners_to_chains_;
+	utility::vector1<std::string> restrict_partners_to_chains_;
 
 	/// @brief The score function used to score derived peptides
 	core::scoring::ScoreFunctionOP scorefxn_deriver_;

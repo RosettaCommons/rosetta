@@ -38,7 +38,7 @@ public:
 	bool merge_poses(Pose & pose,Pose & attach_pose);
 	void assign_seq(Pose & pose, char residue_type, core::Size position);
 	void minimize_overlap(Pose & pose,core::Size overlap_start,core::Size overlap_end);
-	bool makeJunctions_apply(core::pose::Pose & pose, core::pose::Pose const & attach_pose, core::Size overlap_length, core::Real max_overlap_rmsd, std::string attachment_termini,char chain);
+	bool makeJunctions_apply(core::pose::Pose & pose, core::pose::Pose const & attach_pose, core::Size overlap_length, core::Real max_overlap_rmsd, std::string const & attachment_termini,std::string const & chain);
 	bool apply_helper( core::pose::Pose & pose );
 	void apply( core::pose::Pose & pose ) override;
 
@@ -61,7 +61,7 @@ private:
 	bool minimize_after_overlap_;
 	std::string attachment_termini_;
 	core::scoring::ScoreFunctionOP sfxn_;
-	char attachment_chain_;
+	std::string attachment_chain_;
 };
 
 } // pose_creation

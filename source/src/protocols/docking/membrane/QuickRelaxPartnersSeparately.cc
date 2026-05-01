@@ -112,7 +112,7 @@ QuickRelaxPartnersSeparately::parse_my_tag(
 
 	// Read in docking partners
 	if ( tag->hasOption( "partners" ) ) {
-		partners_ = tag->getOption< std::string >( "partners" );
+		partners_ = core::pose::DockingPartners::docking_partners_from_string( tag->getOption< std::string >( "partners" ) );
 	}
 
 	// TODO: to implement
@@ -215,16 +215,15 @@ QuickRelaxPartnersSeparately::apply( Pose & pose ) {
 	TR << "foldtree before superimposition: " << std::endl;
 	pose.fold_tree().show( TR );
 
-	// get partner 1: ALL CHAINS MUST BE IN PDB CONSECUTIVELY!!!
-	utility::vector1< std::string > partners( utility::string_split( partners_, '_' ) );
-	utility::vector1< std::string > partner1( utility::split( partners[1] ) );
+	// ALL CHAINS MUST BE IN PDB CONSECUTIVELY!!!
 
 	// get residue range for superposition: get start residue
 	core::Size start(0);
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( start == 0 &&
-				partner1[1] == utility::to_string( pose.pdb_info()->chain( i ) ) ) {
+				partners_.partner1.has_value( pose.pdb_info()->chain( i ) ) ) {
 			start = i;
+			break;
 		}
 	}
 
@@ -232,8 +231,9 @@ QuickRelaxPartnersSeparately::apply( Pose & pose ) {
 	core::Size end(0);
 	for ( core::Size j = pose.size(); j >= 1; --j ) {
 		if ( end == 0 &&
-				partner1[partner1.size()] == utility::to_string( pose.pdb_info()->chain( j ) ) ) {
+				partners_.partner1.has_value( pose.pdb_info()->chain( j ) ) ) {
 			end = j;
+			break;
 		}
 	}
 	TR << "superimposing from: " << start << " to " << end << std::endl;
@@ -278,7 +278,7 @@ QuickRelaxPartnersSeparately::init_from_cmd() {
 
 	// docking partners
 	if ( option[ OptionKeys::docking::partners ].user() ) {
-		partners_ = option[ OptionKeys::docking::partners ]();
+		partners_ = core::pose::DockingPartners::docking_partners_from_string( option[ OptionKeys::docking::partners ]() );
 	}
 
 	// native

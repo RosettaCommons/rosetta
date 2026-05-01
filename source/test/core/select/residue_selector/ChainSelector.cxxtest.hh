@@ -70,7 +70,7 @@ public:
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		for ( core::Size ii = 11; ii <= trpcage.size(); ++ii ) {
-			trpcage.pdb_info()->chain( ii, 'B' );
+			trpcage.pdb_info()->chain( ii, "B" );
 		}
 		ResidueSubset subset = chain_rs->apply( trpcage );
 		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
@@ -103,7 +103,7 @@ public:
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		for ( core::Size ii = 11; ii <= trpcage.size(); ++ii ) {
-			trpcage.pdb_info()->chain( ii, 'B' );
+			trpcage.pdb_info()->chain( ii, "B" );
 		}
 		ResidueSubset subset = chain_rs->apply( trpcage );
 		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );

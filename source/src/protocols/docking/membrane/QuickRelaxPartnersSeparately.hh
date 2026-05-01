@@ -24,6 +24,7 @@
 
 // Package Headers
 #include <core/pose/Pose.hh>
+#include <core/pose/DockingPartners.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -98,7 +99,7 @@ private: // data
 	Pose native_;
 
 	// docking partners
-	std::string partners_;
+	core::pose::DockingPartners partners_;
 
 	// jump
 	int jump_;
