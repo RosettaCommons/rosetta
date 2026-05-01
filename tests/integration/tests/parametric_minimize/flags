@@ -1,0 +1,3 @@
+-nstruct 1
+-overwrite
+-out:file:scorefile score.sc

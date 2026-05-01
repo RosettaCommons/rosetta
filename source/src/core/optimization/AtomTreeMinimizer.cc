@@ -22,9 +22,12 @@
 #include <core/optimization/MinimizerMap.hh>
 #include <core/optimization/NumericalDerivCheckResult.hh>
 #include <core/optimization/AtomTreeMultifunc.hh>
+#include <core/optimization/ParametricAtomTreeMultifunc.hh>
+#include <core/optimization/parametric_minimize_util.hh>
 
 // Project headers
 #include <core/kinematics/MoveMap.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
@@ -79,9 +82,31 @@ AtomTreeMinimizer::run(
 		pose.energies().show( TR.Trace );
 	}
 
-	// setup the map of the degrees of freedom
+	// Check whether parametric DOFs should be included
+	bool const use_parametric = move_map.get_parametric() && pose.conformation().n_parameters_sets() > 0;
+	utility::vector1< ParametricDOFInfo > parametric_dofs;
+	std::set< Size > parametric_residues;
+	if ( use_parametric ) {
+		enumerate_parametric_dofs( pose, parametric_dofs );
+		parametric_residues = get_parametric_residues( pose );
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "Parametric minimization: " << parametric_dofs.size() << " parametric DOFs, "
+				<< parametric_residues.size() << " residues under parametric control." << std::endl;
+		}
+	}
+
+	// Setup the map of the degrees of freedom.
+	// If parametric minimization is active, we need a MoveMap that excludes backbone
+	// torsions of parametric residues (to prevent redundant DOF control).
+	kinematics::MoveMap effective_move_map( move_map );
+	if ( use_parametric ) {
+		for ( Size resid : parametric_residues ) {
+			effective_move_map.set_bb( resid, false );
+		}
+	}
+
 	MinimizerMap min_map;
-	min_map.setup( pose, move_map );
+	min_map.setup( pose, effective_move_map );
 
 	// if we are using the nblist, set it up
 	if ( use_nblist ) {
@@ -91,27 +116,44 @@ AtomTreeMinimizer::run(
 
 	scorefxn.setup_for_minimizing( pose, min_map );
 
-	// setup the function that we will pass to the low-level minimizer
-	AtomTreeMultifunc f( pose, min_map, scorefxn,
-		options.deriv_check(), options.deriv_check_verbose() );
+	// Setup the multifunc — use parametric version if parametric DOFs are present
+	Real start_func, end_func;
+	if ( use_parametric && !parametric_dofs.empty() ) {
+		ParametricAtomTreeMultifunc f( pose, min_map, scorefxn, parametric_dofs,
+			options.deriv_check(), options.deriv_check_verbose() );
 
-	if ( deriv_check_result_ ) f.set_deriv_check_result( deriv_check_result_ );
+		Multivec dofs( f.total_dofs() );
+		min_map.copy_dofs_from_pose( pose, dofs );
+		for ( Size p = 1; p <= parametric_dofs.size(); ++p ) {
+			dofs[ min_map.nangles() + p ] = get_parametric_dof_value( pose, parametric_dofs[p] );
+		}
 
-	// starting position -- "dofs" = Degrees Of Freedom
-	Multivec dofs( min_map.nangles() );
-	min_map.copy_dofs_from_pose( pose, dofs );
+		start_func = f( dofs );
+		if ( TR.Trace.visible() && !use_nblist ) {
+			pose.energies().show( TR.Trace );
+		}
 
-	Real const start_func( f( dofs ) );
+		Minimizer minimizer( f, options );
+		minimizer.run( dofs );
+		end_func = f( dofs );
+	} else {
+		AtomTreeMultifunc f( pose, min_map, scorefxn,
+			options.deriv_check(), options.deriv_check_verbose() );
 
-	if ( TR.Trace.visible() && ! use_nblist ) {
-		pose.energies().show( TR.Trace );
+		if ( deriv_check_result_ ) f.set_deriv_check_result( deriv_check_result_ );
+
+		Multivec dofs( min_map.nangles() );
+		min_map.copy_dofs_from_pose( pose, dofs );
+
+		start_func = f( dofs );
+		if ( TR.Trace.visible() && !use_nblist ) {
+			pose.energies().show( TR.Trace );
+		}
+
+		Minimizer minimizer( f, options );
+		minimizer.run( dofs );
+		end_func = f( dofs );
 	}
-
-	// now do the optimization with the low-level minimizer function
-	Minimizer minimizer( f, options );
-	minimizer.run( dofs );
-
-	Real const end_func( f( dofs ) );
 
 	if ( TR.Debug.visible() && ! use_nblist ) {
 		TR.Debug << "end_func: " << end_func << std::endl;
