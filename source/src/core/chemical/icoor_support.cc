@@ -174,7 +174,9 @@ public:
 /// * Actual bonds before pseudobonds
 /// * Bonds to Heavy atoms before light atoms
 /// * Bonds to Concrete atoms before virtual atoms
+/// * (likely) Rotatable bonds before non-rotatable bonds.
 /// * Bonds which get us closer to the UPPER (further from the LOWER), if relevant
+/// * Bonds to atoms with more substituents over those with fewer substituents
 ///
 /// This doesn't (need to?) quite match the logic in core/conformation/util.cc:setup_atom_links()
 class RerootEdgeSorter {
@@ -209,31 +211,6 @@ public:
 		core::chemical::Atom const & atom1( graph_[ target1 ] );
 		core::chemical::Atom const & atom2( graph_[ target2 ] );
 
-		/*
-		// * Rotatable bonds before non-rotatable bonds.
-		// This is slightly manky - should we pre annotate the bonds as rotatable?
-		// (or just look at bond order, perhaps?)
-		bool b1rot(false), b2rot(false);
-		for ( core::Size chino(1); chino <= restype_.nchi(); ++chino ) {
-		core::chemical::AtomIndices const & ai( restype_.chi_atoms(chino) );
-		if( (ai[2] == restype_.atom_index(source) && ai[3] == restype_.atom_index(target1)) ||
-		(ai[3] == restype_.atom_index(source) && ai[2] == restype_.atom_index(target1)) ) {
-		b1rot = true;
-		TR << "Rotatable: " << restype_.atom_name(source) << " -- " << restype_.atom_name(target1) << std::endl;
-		}
-		if( (ai[2] == restype_.atom_index(source) && ai[3] == restype_.atom_index(target2)) ||
-		(ai[3] == restype_.atom_index(source) && ai[2] == restype_.atom_index(target2)) ) {
-		b2rot = true;
-		TR << "Rotatable: " << restype_.atom_name(source) << " -- " << restype_.atom_name(target2) << std::endl;
-		}
-		}
-		if( ! b1rot && b2rot ) {
-		return false;
-		} else if (b1rot && ! b2rot ) {
-		return true;
-		}
-		*/
-
 		// * Bonds to Heavy atoms before light atoms
 		if ( atom1.is_hydrogen() && ! atom2.is_hydrogen() ) {
 			return false;
@@ -244,6 +221,20 @@ public:
 		if ( atom1.is_virtual() && ! atom2.is_virtual() ) {
 			return false;
 		} else if ( ! atom1.is_virtual() && atom2.is_virtual() ) {
+			return true;
+		}
+
+		// * Rotatable bonds before non-rotatable bonds.
+		bool b1single = (bond1.order() == SingleBondOrder);
+		bool b2single = (bond2.order() == SingleBondOrder);
+		core::Size nsub1 = restype_.bonded_neighbors(target1).size(); // includes source
+		core::Size nsub2 = restype_.bonded_neighbors(target2).size();
+		// Here we use a simple heuristic - we look for single bonds to atoms with one or more substituents.
+		//
+		if ( b1single && nsub1 > 1 && (!b2single || nsub2 <= 1) ) {
+			return true;
+		}
+		if ( b2single && nsub2 > 1 && (!b1single || nsub2 <= 1) ) {
 			return true;
 		}
 
@@ -267,6 +258,15 @@ public:
 			} else if ( path2.size() > path1.size() ) {
 				return false;
 			} // fall through if equal
+		}
+
+		/// * Bonds to atoms with more substituents over those with fewer substituents
+		// Do we want to consider heavy/light differences here as well?
+		if ( nsub1 > nsub2 ) {
+			return true;
+		}
+		if ( nsub2 > nsub1 ) {
+			return false;
 		}
 
 		/// For reproducible ordering, fall back to the "smaller" atom name being first
