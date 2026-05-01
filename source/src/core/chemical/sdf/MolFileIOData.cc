@@ -373,9 +373,10 @@ MutableResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 
 	// Handle atom aliases -- performed here so as to minimize the issues with aliases in the above code
 	// also to avoid adding an alias which the restype already has.
-	for ( VD atom_vd: restype->all_atoms() ) {
-		std::string const & atom_name = restype->atom_name(atom_vd);
-		for ( std::string alias: atom(atom_name)->aliases() ) {
+	for ( boost::tie( aiter, aiter_end ) = boost::vertices( molgraph_ ); aiter != aiter_end; ++aiter ) {
+		MolFileIOAtom const & atom( *(molgraph_[*aiter]) );
+		std::string const & atom_name = atom.name();
+		for ( std::string alias: atom.aliases() ) {
 			alias = utility::stripped_whitespace( alias ); // Probably already stripped.
 			if ( restype->has(alias) ) { continue; }
 			// Unfortunately, the protected non-const version is prefered to the public const version
@@ -463,6 +464,49 @@ MolFileIOMolecule::determine_polymeric_connections(MutableResidueTypeOP restype)
 
 }
 
+/// @brief Gets a valid atm1-atm2-atm3 makes stub path. Returns atm2 && atm1 by-reference
+void
+get_stub_path(MutableResidueType const & restype, VD atm1, VD & atm2, VD & atm3 ) {
+
+	// Ideally use bases:
+	atm2 = restype.atom_base( atm1 );
+	atm3 = restype.atom_base( atm2 );
+
+	if ( atm1 != atm2 && atm2 != atm3 && atm1 != atm3 ) { return; }
+
+	// Next try any other atom bonded to atm3
+	for ( VD bbase: restype.bonded_heavyatoms(atm2) ) {
+		if ( bbase != atm1 && bbase != atm2 ) {
+			atm3 = bbase;
+			return;
+		}
+	}
+
+	// Fallback - try all heavy atoms
+	for ( VD a2: restype.bonded_heavyatoms(atm1) ) {
+		if ( a2 == atm1 ) { continue; }
+		for ( VD a3: restype.bonded_heavyatoms(a2) ) {
+			if ( a3 != atm1 && a3 != a2 ) {
+				atm2 = a2;
+				atm3 = a3;
+				return;
+			}
+		}
+	}
+
+	// Any atom?
+	for ( VD a2: restype.bonded_neighbors(atm1) ) {
+		if ( a2 == atm1 ) { continue; }
+		for ( VD a3: restype.bonded_neighbors(a2) ) {
+			if ( a3 != atm1 && a3 != a2 ) {
+				atm2 = a2;
+				atm3 = a3;
+				return;
+			}
+		}
+	}
+}
+
 void
 MolFileIOMolecule::handle_polymeric_assignments(MutableResidueTypeOP restype) {
 	// AMW: here is where the party starts:
@@ -488,62 +532,17 @@ MolFileIOMolecule::handle_polymeric_assignments(MutableResidueTypeOP restype) {
 		mainchain_vec.resize(6, INVALID_VD); // 1-3 is N-term entries, 4-6 is C-term. Not 100% correct from an absolute perspective, but works in the context of this function.
 		if ( restype->lower_connect_id() != 0 ) {
 			mainchain_vec[1] = restype->lower_connect_atom();
-			mainchain_vec[2] = restype->atom_base( mainchain_vec[1] );
-			mainchain_vec[3] = restype->atom_base( mainchain_vec[2] );
-
-			// Catch case where the base is redundant (likely, if we're the root)
-			if ( mainchain_vec[3] == mainchain_vec[1] ) {
-				for ( VD bbase: restype->bonded_heavyatoms(mainchain_vec[2]) ) {
-					if ( bbase != mainchain_vec[1] ) {
-						mainchain_vec[3] = bbase;
-						break;
-					}
-				}
-			}
-
+			get_stub_path(*restype, mainchain_vec[1], mainchain_vec[2], mainchain_vec[3]);
 			runtime_assert( mainchain_vec[1] != mainchain_vec[2] );
 			runtime_assert( mainchain_vec[2] != mainchain_vec[3] );
 			runtime_assert( mainchain_vec[1] != mainchain_vec[3] );
-
-			/// FOLLOWING FOR TEMPORARY TESTING PURPOSES ONLY
-			if ( restype->is_RNA() || restype->is_DNA() ) {
-				if ( restype->atom_name(mainchain_vec[2]) != "O5'" ) {
-					TR << "Found " << restype->atom_name(mainchain_vec[2]) << " instead of O5' for mainchain atom 2" << std::endl;
-				}
-				if ( restype->atom_name(mainchain_vec[3]) != "C5'" ) {
-					TR << "Found " << restype->atom_name(mainchain_vec[3]) << " instead of C5' for mainchain atom 3" << std::endl;
-				}
-			}
 		}
 		if ( restype->upper_connect_id() != 0 ) {
 			mainchain_vec[6] = restype->upper_connect_atom();
-			mainchain_vec[5] = restype->atom_base( restype->upper_connect_atom() );
-			mainchain_vec[4] = restype->atom_base( mainchain_vec[5] );
-
-			// Catch case where the base is redundant
-			if ( mainchain_vec[4] == mainchain_vec[6] ) {
-				for ( VD bbase: restype->bonded_heavyatoms(mainchain_vec[5]) ) {
-					if ( bbase != mainchain_vec[6] ) {
-						mainchain_vec[4] = bbase;
-						break;
-					}
-				}
-			}
-
+			get_stub_path(*restype, mainchain_vec[6], mainchain_vec[5], mainchain_vec[4]);
 			runtime_assert( mainchain_vec[6] != mainchain_vec[5] );
 			runtime_assert( mainchain_vec[5] != mainchain_vec[4] );
 			runtime_assert( mainchain_vec[6] != mainchain_vec[4] );
-
-			/// FOLLOWING FOR TEMPORARY TESTING PURPOSES ONLY
-			if ( restype->is_RNA() || restype->is_DNA() ) {
-				if ( restype->atom_name(mainchain_vec[5]) != "C3'" ) {
-					TR << "Found " << restype->atom_name(mainchain_vec[5]) << " instead of C3' for mainchain atom 5" << std::endl;
-				}
-				// Some residues are missing C4' (4JA)
-				if ( restype->atom_name(mainchain_vec[4]) != "C4'" && restype->atom_name(mainchain_vec[4]) != "C5'" ) {
-					TR << "Found " << restype->atom_name(mainchain_vec[3]) << " instead of C4'/C5' for mainchain atom 3" << std::endl;
-				}
-			}
 		}
 	}
 
