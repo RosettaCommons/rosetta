@@ -32,7 +32,7 @@ namespace chemical {
 namespace mmCIF {
 
 //Load up the tracer for this class
-static basic::Tracer TR( "core.io.mmCIF.mmCIFParser" );
+static basic::Tracer TR( "core.chemical.mmCIF.mmCIFParser" );
 
 using utility::find_gemmi_column;
 
