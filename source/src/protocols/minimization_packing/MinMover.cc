@@ -342,7 +342,7 @@ MinMover::inner_run_minimizer( core::pose::Pose & pose, core::kinematics::MoveMa
 
 		// Create the rebuild callback that properly rebuilds ALL atoms
 		// from the current parameter values by calling build_helix()
-		auto rebuild_callback = [&pose]( core::pose::Pose & p ) {
+		auto rebuild_callback = []( core::pose::Pose & p ) {
 			using namespace core::conformation::parametric;
 			for ( core::Size ps = 1; ps <= p.conformation().n_parameters_sets(); ++ps ) {
 				ParametersSetCOP params_set = p.conformation().parameters_set( ps );
