@@ -45,6 +45,7 @@ ParametricAtomTreeMultifunc::ParametricAtomTreeMultifunc(
 	MinimizerMap & min_map_in,
 	scoring::ScoreFunction const & scorefxn_in,
 	utility::vector1< ParametricDOFInfo > const & parametric_dofs_in,
+	RebuildCallback rebuild_callback,
 	bool const deriv_check_in,
 	bool const deriv_check_verbose_in
 ) :
@@ -53,6 +54,7 @@ ParametricAtomTreeMultifunc::ParametricAtomTreeMultifunc(
 	score_function_( scorefxn_in ),
 	parametric_dofs_( parametric_dofs_in ),
 	n_standard_dofs_( min_map_in.nangles() ),
+	rebuild_callback_( std::move( rebuild_callback ) ),
 	deriv_check_( deriv_check_in ),
 	deriv_check_verbose_( deriv_check_verbose_in )
 {}
@@ -65,7 +67,12 @@ ParametricAtomTreeMultifunc::apply_parametric_dofs( Multivec const & vars ) cons
 		Real const val = vars[ n_standard_dofs_ + p ];
 		set_parametric_dof_value( pose_, parametric_dofs_[p], val );
 	}
-	rebuild_parametric_backbone( pose_ );
+	// Rebuild the full backbone (and sidechain frames) from current parameters.
+	// The callback is provided by protocols-level code and calls the appropriate
+	// ParametrizationCalculator::build_helix/build_strand, which correctly
+	// places all atoms — mainchain and sidechain — via the Crick equations
+	// and atom tree operations.
+	rebuild_callback_( pose_ );
 }
 
 Real

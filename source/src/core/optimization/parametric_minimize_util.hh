@@ -80,14 +80,6 @@ void set_parametric_dof_value(
 	Real value
 );
 
-/// @brief Rebuild backbone coordinates for all parametric elements in the pose.
-/// @details Iterates over all ParametersSets, reconstructing backbone atom positions
-/// from current parameter values via the ParametrizationCalculator.
-/// This is a potentially expensive operation (full Crick equation evaluation).
-void rebuild_parametric_backbone(
-	pose::Pose & pose
-);
-
 } // namespace optimization
 } // namespace core
 

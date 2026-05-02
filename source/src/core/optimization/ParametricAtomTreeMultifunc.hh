@@ -28,6 +28,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/vector1.hh>
+#include <functional>
 
 namespace core {
 namespace optimization {
@@ -36,11 +37,18 @@ class ParametricAtomTreeMultifunc : public Multifunc {
 
 public:
 
+	/// @brief The rebuild callback receives a Pose and must rebuild all parametric
+	/// backbone coordinates (and sidechain frames) from the current parameter values.
+	/// This is provided by protocols-level code that knows about the specific
+	/// ParametrizationCalculator (e.g., BundleParametrizationCalculator::build_helix).
+	using RebuildCallback = std::function< void( pose::Pose & ) >;
+
 	ParametricAtomTreeMultifunc(
 		pose::Pose & pose_in,
 		MinimizerMap & min_map_in,
 		scoring::ScoreFunction const & scorefxn_in,
 		utility::vector1< ParametricDOFInfo > const & parametric_dofs_in,
+		RebuildCallback rebuild_callback,
 		bool deriv_check_in = false,
 		bool deriv_check_verbose_in = false
 	);
@@ -73,6 +81,8 @@ private:
 
 	utility::vector1< ParametricDOFInfo > parametric_dofs_;
 	Size n_standard_dofs_;
+
+	RebuildCallback rebuild_callback_;
 
 	bool deriv_check_;
 	bool deriv_check_verbose_;
