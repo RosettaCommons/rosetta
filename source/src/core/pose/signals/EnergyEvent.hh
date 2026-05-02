@@ -56,29 +56,6 @@ struct EnergyEvent : public GeneralEvent {
 	{}
 
 
-	/// @brief copy constructor
-	inline
-	EnergyEvent( EnergyEvent const & rval ) :
-		Super( rval )
-	{}
-
-
-	/// @brief default destructor
-	inline
-	~EnergyEvent() override {}
-
-
-	/// @brief copy assignment
-	inline
-	EnergyEvent &
-	operator =( EnergyEvent const & rval ) {
-		if ( this != &rval ) {
-			Super::operator =( rval );
-		}
-		return *this;
-	}
-
-
 };
 
 
