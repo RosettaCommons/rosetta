@@ -84,35 +84,6 @@ struct IdentityEvent : public GeneralEvent {
 	{}
 
 
-	/// @brief copy constructor
-	inline
-	IdentityEvent( IdentityEvent const & rval ) :
-		Super( rval ),
-		tag( rval.tag ),
-		position( rval.position ),
-		residue( rval.residue )
-	{}
-
-
-	/// @brief default destructor
-	inline
-	~IdentityEvent() override {}
-
-
-	/// @brief copy assignment
-	inline
-	IdentityEvent &
-	operator =( IdentityEvent const & rval ) {
-		if ( this != &rval ) {
-			Super::operator =( rval );
-			tag = rval.tag;
-			position = rval.position;
-			residue = rval.residue;
-		}
-		return *this;
-	}
-
-
 	/// @brief tag indicating type of identity change
 	Tag tag;
 

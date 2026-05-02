@@ -49,28 +49,7 @@ struct DestructionEvent { // do not derive from GeneralEvent
 	{}
 
 
-	/// @brief copy constructor
-	inline
-	DestructionEvent( DestructionEvent const & rval ) :
-		pose( rval.pose )
-	{}
-
-
-	/// @brief default destructor
-	inline
-	virtual
-	~DestructionEvent() {}
-
-
-	/// @brief copy assignment
-	inline
-	DestructionEvent &
-	operator =( DestructionEvent const & rval ) {
-		if ( this != &rval ) {
-			pose = rval.pose;
-		}
-		return *this;
-	}
+	virtual ~DestructionEvent() = default;
 
 
 	/// @brief the Pose firing the signal
