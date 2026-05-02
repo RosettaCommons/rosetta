@@ -154,7 +154,8 @@ SequenceProfileConstraint::read_def(
 		seqpos_ = residue_index;
 		const_cast<SequenceProfile * >(sequence_profile_.get())->prof_row( aa_scores, residue_index );
 	} else {
-		auto residue_index(boost::lexical_cast<Size>(version));
+		debug_assert(version >= 0);
+		auto residue_index(static_cast<Size>(version));
 		std::string profile_filename;
 
 		is >> profile_filename;

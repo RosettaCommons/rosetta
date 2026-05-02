@@ -335,6 +335,7 @@ parse_movemap_tag(
 	if ( in_tag->hasOption( "bb" ) ) mmf->all_bb( in_tag->getOption< bool >( "bb" ) );
 	if ( in_tag->hasOption( "chi" ) ) mmf->all_chi( in_tag->getOption< bool >( "chi" ) );
 	if ( in_tag->hasOption( "jump" ) ) mmf->all_jumps( in_tag->getOption< bool >( "jump" ) );
+	if ( in_tag->hasOption( "parametric" ) ) mmf->all_parametric( in_tag->getOption< bool >( "parametric" ) );
 }
 
 
@@ -475,7 +476,8 @@ common_movemap_complex_type_def( utility::tag::XMLSchemaComplexTypeGenerator & c
 	movemap_tag_attributes
 		+ XMLSchemaAttribute( "bb", xsct_rosetta_bool , bb_desc )
 		+ XMLSchemaAttribute( "chi", xsct_rosetta_bool , chi_desc )
-		+ XMLSchemaAttribute( "jump", xsct_rosetta_bool , "move all jumps?" );
+		+ XMLSchemaAttribute( "jump", xsct_rosetta_bool , "move all jumps?" )
+		+ XMLSchemaAttribute( "parametric", xsct_rosetta_bool , "Minimize over parametric DOFs (Crick parameters for helical bundles, barrels, etc.)?" );
 
 	ct_gen.element_name( "MoveMap" )
 		.description( "MoveMaps dicate what degrees of freedom are mobile to other bits of code, especially minimization - they do NOT work with packing" )

@@ -36,6 +36,17 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/select/movemap/util.hh>
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/parametric/Parameters.hh>
+#include <core/conformation/parametric/ParametersSet.hh>
+#include <core/optimization/ParametricAtomTreeMultifunc.hh>
+#include <core/optimization/parametric_minimize_util.hh>
+#include <core/optimization/Minimizer.hh>
+#include <core/optimization/MinimizerMap.hh>
+#include <core/scoring/Energies.hh>
+#include <protocols/helical_bundle/BundleParametrizationCalculator.hh>
+#include <protocols/helical_bundle/parameters/BundleParameters.hh>
+#include <protocols/helical_bundle/parameters/BundleParametersSet.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -309,7 +320,80 @@ MinMover::minimize(pose::Pose & pose, core::kinematics::MoveMap const & active_m
 
 void
 MinMover::inner_run_minimizer( core::pose::Pose & pose, core::kinematics::MoveMap const & active_movemap ) {
-	if ( !cartesian( ) ) {
+	using namespace core::optimization;
+
+	bool const use_parametric = active_movemap.get_parametric() &&
+		pose.conformation().n_parameters_sets() > 0;
+
+	if ( use_parametric && !cartesian() ) {
+		// Parametric minimization: co-optimize parametric DOFs alongside standard DOFs.
+		// This path is handled here (protocols layer) because the rebuild callback
+		// needs access to build_helix() which lives in protocols/.
+
+		utility::vector1< ParametricDOFInfo > parametric_dofs;
+		enumerate_parametric_dofs( pose, parametric_dofs );
+		std::set< core::Size > param_residues = get_parametric_residues( pose );
+
+		// Exclude backbone torsions of parametric residues to prevent redundant DOF control
+		core::kinematics::MoveMap effective_movemap( active_movemap );
+		for ( core::Size resid : param_residues ) {
+			effective_movemap.set_bb( resid, false );
+		}
+
+		// Create the rebuild callback that properly rebuilds ALL atoms
+		// from the current parameter values by calling build_helix()
+		auto rebuild_callback = []( core::pose::Pose & p ) {
+			using namespace core::conformation::parametric;
+			for ( core::Size ps = 1; ps <= p.conformation().n_parameters_sets(); ++ps ) {
+				ParametersSetCOP params_set = p.conformation().parameters_set( ps );
+				if ( params_set == nullptr ) continue;
+				for ( core::Size pidx = 1; pidx <= params_set->n_parameters(); ++pidx ) {
+					ParametersCOP params = params_set->parameters( pidx );
+					if ( params == nullptr || params->n_residue() == 0 ) continue;
+					core::Size const start = params->first_residue_index();
+					core::Size const end = params->last_residue_index();
+					protocols::helical_bundle::BundleParametrizationCalculator calc(
+						false, utility::pointer::dynamic_pointer_cast<
+							protocols::helical_bundle::parameters::BundleParameters const >( params ) );
+					calc.build_helix( p, start, end );
+				}
+			}
+		};
+
+		score_before_minimization_ = (*scorefxn_)( pose );
+
+		MinimizerMap min_map;
+		min_map.setup( pose, effective_movemap );
+
+		bool const use_nblist = min_options_->use_nblist();
+		if ( use_nblist ) {
+			pose.energies().set_use_nblist( pose, min_map.domain_map(), min_options_->nblist_auto_update() );
+		}
+		scorefxn_->setup_for_minimizing( pose, min_map );
+
+		ParametricAtomTreeMultifunc f( pose, min_map, *scorefxn_, parametric_dofs,
+			rebuild_callback, min_options_->deriv_check(), min_options_->deriv_check_verbose() );
+
+		if ( TR.Debug.visible() ) {
+			f.set_trajectory_dump( "parametric_traj", 1 );
+		}
+
+		Multivec dofs( f.total_dofs() );
+		min_map.copy_dofs_from_pose( pose, dofs );
+		for ( core::Size p = 1; p <= parametric_dofs.size(); ++p ) {
+			dofs[ min_map.nangles() + p ] = get_parametric_dof_value( pose, parametric_dofs[p] );
+		}
+
+		Minimizer minimizer( f, *min_options_ );
+		minimizer.run( dofs );
+		f( dofs ); // apply final state
+
+		if ( use_nblist ) pose.energies().reset_nblist();
+		min_map.reset_jump_rb_deltas( pose, dofs );
+		scorefxn_->finalize_after_minimizing( pose );
+		score_after_minimization_ = (*scorefxn_)( pose );
+
+	} else if ( !cartesian() ) {
 		AtomTreeMinimizerOP minimizer;
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			minimizer = utility::pointer::make_shared< core::optimization::symmetry::SymAtomTreeMinimizer >();
@@ -449,6 +533,9 @@ void MinMover::parse_movemap_factory( TagCOP const tag, basic::datacache::DataMa
 		bool const value( tag->getOption<bool>("bondlength") );
 		mmf->all_bondlengths( value );
 	}
+	if ( tag->hasOption("parametric") ) {
+		mmf->all_parametric( tag->getOption<bool>("parametric") );
+	}
 
 	movemap_factory( protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data, false, mmf ) );
 }
@@ -559,7 +646,8 @@ MinMover::complex_type_generator_for_min_mover( utility::tag::XMLSchemaDefinitio
 	attributes
 		+ XMLSchemaAttribute( "chi", xsct_rosetta_bool , "Minimize chi angles?" )
 		+ XMLSchemaAttribute( "bb",  xsct_rosetta_bool , "Minimize backbone torsion angles?" )
-		+ XMLSchemaAttribute::attribute_w_default( "omega", xsct_rosetta_bool , "Minimize omega torsions?", "true" );
+		+ XMLSchemaAttribute::attribute_w_default( "omega", xsct_rosetta_bool , "Minimize omega torsions?", "true" )
+		+ XMLSchemaAttribute( "parametric", xsct_rosetta_bool , "Minimize over parametric DOFs (Crick parameters for helical bundles, barrels, etc.)? Backbone torsions of parametric residues are automatically excluded." );
 	//All of these are lists of task operations, but none use parse_task_operations
 	attributes
 		+ XMLSchemaAttribute( "bb_task_operations", xsct_task_operation_comma_separated_list , "Task operations specifying residues for backbone minimization" )
