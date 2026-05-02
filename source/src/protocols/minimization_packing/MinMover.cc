@@ -449,6 +449,9 @@ void MinMover::parse_movemap_factory( TagCOP const tag, basic::datacache::DataMa
 		bool const value( tag->getOption<bool>("bondlength") );
 		mmf->all_bondlengths( value );
 	}
+	if ( tag->hasOption("parametric") ) {
+		mmf->all_parametric( tag->getOption<bool>("parametric") );
+	}
 
 	movemap_factory( protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data, false, mmf ) );
 }
@@ -559,7 +562,8 @@ MinMover::complex_type_generator_for_min_mover( utility::tag::XMLSchemaDefinitio
 	attributes
 		+ XMLSchemaAttribute( "chi", xsct_rosetta_bool , "Minimize chi angles?" )
 		+ XMLSchemaAttribute( "bb",  xsct_rosetta_bool , "Minimize backbone torsion angles?" )
-		+ XMLSchemaAttribute::attribute_w_default( "omega", xsct_rosetta_bool , "Minimize omega torsions?", "true" );
+		+ XMLSchemaAttribute::attribute_w_default( "omega", xsct_rosetta_bool , "Minimize omega torsions?", "true" )
+		+ XMLSchemaAttribute( "parametric", xsct_rosetta_bool , "Minimize over parametric DOFs (Crick parameters for helical bundles, barrels, etc.)? Backbone torsions of parametric residues are automatically excluded." );
 	//All of these are lists of task operations, but none use parse_task_operations
 	attributes
 		+ XMLSchemaAttribute( "bb_task_operations", xsct_task_operation_comma_separated_list , "Task operations specifying residues for backbone minimization" )
