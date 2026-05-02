@@ -76,6 +76,13 @@ ParametricAtomTreeMultifunc::operator()( Multivec const & vars ) const {
 	min_map_.copy_dofs_to_pose( pose_, vars );
 	Real const score = score_function_( pose_ );
 
+	++eval_count_;
+	if ( trajectory_stride_ > 0 && ( eval_count_ % trajectory_stride_ == 0 || eval_count_ == 1 ) ) {
+		std::string const fname = trajectory_prefix_ + "_" + std::to_string( eval_count_ ) + ".pdb";
+		pose_.dump_pdb( fname );
+		TR << "Trajectory frame " << eval_count_ << " score=" << score << " -> " << fname << std::endl;
+	}
+
 	PROF_STOP( basic::FUNC );
 	return score;
 }

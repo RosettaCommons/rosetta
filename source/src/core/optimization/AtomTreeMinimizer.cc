@@ -122,6 +122,12 @@ AtomTreeMinimizer::run(
 	if ( use_parametric && !parametric_dofs.empty() ) {
 		ParametricAtomTreeMultifunc f( pose, min_map, scorefxn, parametric_dofs,
 			options.deriv_check(), options.deriv_check_verbose() );
+
+		// Enable trajectory dumping at Debug tracer level
+		if ( TR.Debug.visible() ) {
+			f.set_trajectory_dump( "parametric_traj", 1 );
+		}
+
 		dofs.resize( f.total_dofs() );
 		min_map.copy_dofs_from_pose( pose, dofs );
 		for ( Size p = 1; p <= parametric_dofs.size(); ++p ) {

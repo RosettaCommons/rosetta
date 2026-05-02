@@ -28,6 +28,7 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
+#include <core/id/TorsionID.hh>
 
 #include <numeric/crick_equations/BundleParams.hh>
 
@@ -341,6 +342,26 @@ rebuild_parametric_backbone(
 					pose.set_xyz( id::AtomID( real_atomno, resid ), xyz );
 				}
 				t += 1.0;
+			}
+
+			if ( rebuild_failed ) continue;
+
+			// Sync the atom tree's internal coordinates with the new backbone XYZ.
+			// Without this, sidechain atoms stay at their old positions because
+			// the atom tree still has the pre-move backbone torsions and rebuilds
+			// sidechains from those when chi angles are applied.
+			// Reading phi/psi/omega back from the new XYZ and writing them as
+			// torsions forces the atom tree to adopt the new backbone frame.
+			for ( core::Size resid = start; resid <= end; ++resid ) {
+				if ( resid > start ) {
+					pose.set_phi( resid, pose.phi( resid ) );
+				}
+				if ( resid < end ) {
+					pose.set_psi( resid, pose.psi( resid ) );
+				}
+				if ( resid < end ) {
+					pose.set_omega( resid, pose.omega( resid ) );
+				}
 			}
 		}
 	}

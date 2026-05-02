@@ -57,6 +57,12 @@ public:
 	Size n_parametric_dofs() const { return parametric_dofs_.size(); }
 	Size total_dofs() const { return n_standard_dofs_ + parametric_dofs_.size(); }
 
+	/// @brief Enable trajectory dumping: write a PDB every stride evaluations.
+	void set_trajectory_dump( std::string const & prefix, Size stride = 1 ) {
+		trajectory_prefix_ = prefix;
+		trajectory_stride_ = stride;
+	}
+
 private:
 
 	void apply_parametric_dofs( Multivec const & vars ) const;
@@ -70,6 +76,10 @@ private:
 
 	bool deriv_check_;
 	bool deriv_check_verbose_;
+
+	mutable Size eval_count_ = 0;
+	std::string trajectory_prefix_;
+	Size trajectory_stride_ = 0;
 
 }; // ParametricAtomTreeMultifunc
 
