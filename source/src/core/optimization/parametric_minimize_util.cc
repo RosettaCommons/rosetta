@@ -28,7 +28,7 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/TorsionID.hh>
+#include <core/id/AtomID.hh>
 
 #include <numeric/crick_equations/BundleParams.hh>
 
@@ -344,24 +344,26 @@ rebuild_parametric_backbone(
 				t += 1.0;
 			}
 
-			if ( rebuild_failed ) continue;
+		}
+	}
 
-			// Sync the atom tree's internal coordinates with the new backbone XYZ.
-			// Without this, sidechain atoms stay at their old positions because
-			// the atom tree still has the pre-move backbone torsions and rebuilds
-			// sidechains from those when chi angles are applied.
-			// Reading phi/psi/omega back from the new XYZ and writing them as
-			// torsions forces the atom tree to adopt the new backbone frame.
+	// After all parametric backbone atoms have been placed via set_xyz(),
+	// sync the atom tree by reading backbone torsions from the new XYZ and
+	// writing them back via set_torsion. This updates the internal coordinate
+	// representation and triggers a coordinate rebuild that repositions
+	// sidechain atoms to match the new backbone frame.
+	for ( core::Size ps = 1; ps <= pose.conformation().n_parameters_sets(); ++ps ) {
+		ParametersSetCOP ps_obj = pose.conformation().parameters_set( ps );
+		if ( ps_obj == nullptr ) continue;
+		for ( core::Size p = 1; p <= ps_obj->n_parameters(); ++p ) {
+			ParametersCOP params = ps_obj->parameters( p );
+			if ( params == nullptr || params->n_residue() == 0 ) continue;
+			core::Size const start = params->first_residue_index();
+			core::Size const end = params->last_residue_index();
 			for ( core::Size resid = start; resid <= end; ++resid ) {
-				if ( resid > start ) {
-					pose.set_phi( resid, pose.phi( resid ) );
-				}
-				if ( resid < end ) {
-					pose.set_psi( resid, pose.psi( resid ) );
-				}
-				if ( resid < end ) {
-					pose.set_omega( resid, pose.omega( resid ) );
-				}
+				pose.set_phi( resid, pose.phi( resid ) );
+				pose.set_psi( resid, pose.psi( resid ) );
+				pose.set_omega( resid, pose.omega( resid ) );
 			}
 		}
 	}
