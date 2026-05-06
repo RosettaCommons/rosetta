@@ -42,7 +42,7 @@ template <class T>
 class MetricValue : public MetricValueBase {
 public:
 	MetricValue() = default;
-	MetricValue( MetricValue const & metric_value ) = default;
+	MetricValue( MetricValue const & ) = default;
 	MetricValue( T const & inp ) : data_(inp) {};
 	void set( T const & inp ) { data_ = inp; };
 	std::string print() const { std::ostringstream ostream; ostream << data_; return ostream.str(); };
