@@ -111,15 +111,6 @@ public: // Creation
 	{}
 
 
-	/// @brief Copy constructor
-	inline
-	SmallKeyMap( SmallKeyMap const & a ) :
-		v_( a.v_ ),
-		m_( a.m_ ),
-		u_( a.u_ )
-	{}
-
-
 	/// @brief Iterator range constructor
 	template< typename InputIterator >
 	inline
@@ -136,26 +127,7 @@ public: // Creation
 	}
 
 
-	/// @brief Destructor
-	inline
-	~SmallKeyMap() {}
-
-
 public: // Assignment
-
-
-	/// @brief Copy assignment
-	inline
-	SmallKeyMap &
-	operator =( SmallKeyMap const & a )
-	{
-		if ( this != &a ) {
-			v_ = a.v_;
-			m_ = a.m_;
-			u_ = a.u_;
-		}
-		return *this;
-	}
 
 
 	/// @brief Uniform mapped value assignment to current elements
