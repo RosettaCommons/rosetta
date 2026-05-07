@@ -178,8 +178,6 @@ public:
 	std::string const & get_lower_atom() const { return lower_atom_; }
 	std::string const & get_upper_atom() const { return upper_atom_; }
 
-	void add_atom_alias( std::string const & ref, std::string const & alias );
-
 	/// @brief Find a free atom index.
 	AtomIndex get_free_index() const;
 
