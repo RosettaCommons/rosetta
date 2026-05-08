@@ -83,12 +83,6 @@ public: // Creation
 	}
 
 
-	/// @brief Destructor
-	inline
-
-	~ResidueChainVectorOption() override {}
-
-
 public: // copying
 
 
