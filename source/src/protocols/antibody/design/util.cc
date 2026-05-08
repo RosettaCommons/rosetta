@@ -389,9 +389,9 @@ get_dock_chains_from_ab_dock_chains(AntibodyInfoCOP ab_info, core::pose::Docking
 	}
 	for ( std::string const & chain: ab_dock_chains.partner2 ) {
 		if ( chain == "L" || chain == "H" ) {
-			dock_chains.partner1.push_back( chain );
+			dock_chains.partner2.push_back( chain );
 		} else if ( chain == "A" ) {
-			dock_chains.partner1.append( ab_info->get_antigen_chains() );
+			dock_chains.partner2.append( ab_info->get_antigen_chains() );
 		} else {
 			utility_exit_with_message("ab_dock_chains must be L H or A: " + ab_dock_chains.str());
 		}

@@ -479,6 +479,7 @@ make_symmetric_pdb_info(
 				} while ( used_chainIDs.count(new_chain) >= 1 );
 
 				symmChainIDMap[ std::make_pair(chn_id,clone_i) ] = new_chain;
+				used_chainIDs.insert( new_chain );
 			}
 		}
 	}
