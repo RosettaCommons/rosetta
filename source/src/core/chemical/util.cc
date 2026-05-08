@@ -528,64 +528,170 @@ get_terminal_varianttypes() {
 
 ///////////////////////////////////////////////////////////////////////////////
 ///
-/// @brief look for best match to atom_names
-/// @details taken out of build_pose_as_is1
-///  rsd_type should have all the atoms present in xyz
-///  try to minimize atoms missing from xyz
 ResidueTypeCOP
 find_best_match( ResidueTypeCOPs const & rsd_type_list,
-	utility::vector1< std::string > const & atom_names,
+	std::map< std::string, Vector > const & coords,
 	bool const ignore_atom_named_H /* = false */ )
 {
 	using namespace core::chemical;
-	Size best_index(0), best_rsd_missing( 99999 ), best_xyz_missing( 99999 );
-	for ( Size j=1; j <= rsd_type_list.size(); j++ ) {
+	if (rsd_type_list.empty()) { return nullptr; }
 
-		ResidueType const & rsd_type( *(rsd_type_list[j]) );
+	utility::vector1<core::Size> missing_real; // Number of non-virtual atoms in RT that aren't in coords
+	utility::vector1<core::Size> missing_virt; // Number of virt atoms in RF that aren't in coords
+	utility::vector1<core::Size> extra_atoms; // Number of entries in coords which aren't in RT
 
-		Size rsd_missing( 0 ), xyz_missing( 0 );
-		utility::vector1< std::string > rsd_missing_atoms, xyz_missing_atoms;
+	std::set< std::string > stripped_cn;
+	for ( auto const & pair: coords ) {
+		stripped_cn.insert( ObjexxFCL::stripped_whitespace(pair.first) );
+	}
 
-		// xyz_missing is number of candidate ResidueType's atoms that do not match target atom names
-		for ( Size k=1; k<= rsd_type.natoms(); ++k ) {
-			bool found_match( false );
-			// @mlnance TODO (quote from RM from closed PR #4570)
-			// "some 'half' approach which considers virtuals but not the same as non-virtuals
-			// (e.g. just as a tiebreaker) might be the better approach" [It may be]
-			// "worth putting in missing virtuals as a secondary, lower level check,
-			// versus being equivalent to a missing real atom."
-			// context: both virtual and non-virtual atoms can be considered a match
-			for ( Size m = 1; m <= atom_names.size(); ++m ) {
-				if ( ObjexxFCL::stripped_whitespace( atom_names[m] ) == ObjexxFCL::stripped_whitespace( rsd_type.atom_name(k) ) ) {
-					found_match = true; break;
+	// Tally the number of missing atoms for each type
+	for ( ResidueTypeCOP const & rsd_type: rsd_type_list ) {
+		debug_assert( rsd_type != nullptr );
+		core::Size n_missing_real = 0, n_missing_virt = 0;
+		for ( core::Size aa(1); aa <= rsd_type->natoms(); ++aa ) {
+			std::string const & stripped_name = ObjexxFCL::stripped_whitespace(rsd_type->atom_name(aa));
+			if ( ignore_atom_named_H && stripped_name == "H" ) { continue; }
+			if ( stripped_cn.count(stripped_name) == 0 ) {
+				if ( rsd_type->is_virtual(aa) ) {
+					n_missing_virt += 1;
+				} else {
+					n_missing_real += 1;
 				}
 			}
-			if ( !found_match ) {
-				++xyz_missing;
-				xyz_missing_atoms.push_back( rsd_type.atom_name(k) );
+		}
+		core::Size n_extra_atoms = 0;
+		for ( std::string const & coord_atom: stripped_cn ) {
+			if ( ignore_atom_named_H && coord_atom == "H" ) { continue; }
+			if ( ! rsd_type->has(coord_atom) ) {
+				n_extra_atoms += 1;
 			}
 		}
+		missing_real.push_back( n_missing_real );
+		missing_virt.push_back( n_missing_virt );
+		extra_atoms.push_back( n_extra_atoms );
+	}
+	debug_assert( missing_real.size() == rsd_type_list.size() );
+	debug_assert( missing_virt.size() == rsd_type_list.size() );
+	debug_assert( extra_atoms.size() == rsd_type_list.size() );
 
-		// rsd_missing is number of target atom names not found in candidate ResidueType
-		for ( std::string const & atom_name : atom_names ) {
-			if ( !rsd_type.has( ObjexxFCL::stripped_whitespace( atom_name ) ) &&
-					!( atom_name == " H  " && ignore_atom_named_H ) ) { // don't worry about missing BB H if Nterm
-				++rsd_missing;
-				rsd_missing_atoms.push_back( atom_name );
+	// First attempt to filter by number of missing real atom coordinates
+	core::Size least_missing_real = *(std::min_element( missing_real.begin(), missing_real.end() ));
+	utility::vector1<core::Size> real_filtered;
+	core::Size least_extra = 99999; // least of the real_filtered.
+	for ( core::Size ii(1); ii <= rsd_type_list.size(); ++ii ) {
+		if ( missing_real[ii] == least_missing_real ) {
+			real_filtered.push_back(ii);
+			if ( extra_atoms[ii] < least_extra ) {
+				least_extra = extra_atoms[ii];
 			}
 		}
-
-		// TR.Debug << "checking: " << rsd_type.name() << "  rsd_missing " << rsd_missing << "  xyz_missing " << xyz_missing << "  rsd_missing names in xyz not captured by ResidueType" << rsd_missing_atoms << "  xyz_missing names in ResidueType not captured in atoms " << xyz_missing_atoms << std::endl;
-
-		if ( ( rsd_missing < best_rsd_missing ) ||
-				( rsd_missing == best_rsd_missing && xyz_missing < best_xyz_missing ) ) {
-			best_rsd_missing = rsd_missing;
-			best_xyz_missing = xyz_missing;
-			best_index = j;
+	}
+	if ( real_filtered.size() == 1 ) {
+		return rsd_type_list[real_filtered[1]];
+	}
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "After filtering for missing coordinates (" << least_missing_real << " missing) found ";
+		for ( core::Size ii: real_filtered ) {
+			TR.Debug << rsd_type_list[ii]->name() << "   ";
 		}
-	} // j=1,rsd_type_list.size()
+		TR.Debug << std::endl;
+	}
 
-	return  rsd_type_list[ best_index ];
+	// If ties, then look for the number of extra atoms in coordinates
+	utility::vector1<core::Size> extra_filtered;
+	core::Size least_missing_virt = 99999; // least of the extra_filtered
+	for ( core::Size ii: real_filtered ) {
+		if ( extra_atoms[ii] == least_extra ) {
+			extra_filtered.push_back(ii);
+			if ( missing_virt[ii] < least_missing_virt ) {
+				least_missing_virt = missing_virt[ii];
+			}
+		}
+	}
+	if ( extra_filtered.size() == 1 ) {
+		return rsd_type_list[extra_filtered[1]];
+	}
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "After filtering for extra coordinates (" << least_extra << " extra) found ";
+		for ( core::Size ii: extra_filtered ) {
+			TR.Debug << rsd_type_list[ii]->name() << "   ";
+		}
+		TR.Debug << std::endl;
+	}
+
+	// If still tied, minimize the number of missing virtuals
+	utility::vector1<core::Size> virt_filtered;
+	for ( core::Size ii: extra_filtered ) {
+		if ( missing_virt[ii] == least_missing_virt ) {
+			virt_filtered.push_back(ii);
+		}
+	}
+	if ( virt_filtered.size() == 1 ) {
+		return rsd_type_list[virt_filtered[1]];
+	}
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "After filtering for missing virtuals (" << least_missing_virt << " missing) found ";
+		for ( core::Size ii: virt_filtered ) {
+			TR.Debug << rsd_type_list[ii]->name() << "   ";
+		}
+		TR.Debug << std::endl;
+	}
+
+	// If we reach here, we have multiple residues which are equivalent from the atom naming perspective
+	// Attempt to disambiguate based on coordinates (as it may be a chirality issue)
+	std::map< std::string, Vector > stripped_coords;
+	for ( auto const & pair: coords ) {
+		stripped_coords[ ObjexxFCL::stripped_whitespace(pair.first) ] = pair.second;
+	}
+	utility::vector1<core::Size> chiral_mismatches; // Same size/index as virt_filtered
+	for ( core::Size ii: virt_filtered ) {
+		ResidueType const & restype = *rsd_type_list[ii];
+		core::Size n_chiral_mismatch = 0;
+		for (core::Size aa(1); aa <= restype.natoms(); ++aa) {
+			AtomIndices const & nbrs = restype.bonded_neighbor(aa);
+			if ( nbrs.size() != 4 ) { continue; } // Need 4 atoms to determine chirality
+			std::string const & n1 = ObjexxFCL::stripped_whitespace(restype.atom_name(nbrs[1]));
+			std::string const & n2 = ObjexxFCL::stripped_whitespace(restype.atom_name(nbrs[2]));
+			std::string const & n3 = ObjexxFCL::stripped_whitespace(restype.atom_name(nbrs[3]));
+			std::string const & n4 = ObjexxFCL::stripped_whitespace(restype.atom_name(nbrs[4]));
+			if ( stripped_coords.count(n1) == 0 || stripped_coords.count(n2) == 0 || stripped_coords.count(n3) == 0 || stripped_coords.count(n4) == 0 ) {
+				// Can't calculate chirality with missing atoms. Skip. (Should we penalize this?)
+				continue;
+			}
+			core::Real coord_dihedral = numeric::dihedral_degrees( stripped_coords[n1], stripped_coords[n2], stripped_coords[n3], stripped_coords[n4] );
+			core::Real rt_dihedral = numeric::dihedral_degrees( restype.ideal_xyz(nbrs[1]), restype.ideal_xyz(nbrs[2]), restype.ideal_xyz(nbrs[3]), restype.ideal_xyz(nbrs[4]));
+
+			core::Real delta = std::abs(coord_dihedral - rt_dihedral);
+			if ( delta > 90 && delta < 270 ) { // In the neihborhood of 180 degrees is a chiral flip.
+				if ( restype.atom_is_backbone(aa) ) {
+					n_chiral_mismatch += 10; //Somewhat arbitrarily, count a backbone mismatch as 10 times as important as a non-backbone one.
+				} else {
+					n_chiral_mismatch += 1;
+				}
+			}
+		}
+		chiral_mismatches.push_back(n_chiral_mismatch);
+	}
+	core::Size least_chiral = *(std::min_element( chiral_mismatches.begin(), chiral_mismatches.end() ));
+	utility::vector1<core::Size> chiral_filtered;
+	for ( core::Size jj(1); jj <= chiral_mismatches.size(); ++jj ) { // chiral_mismatches is the same length as virt_filtered
+		if ( chiral_mismatches[jj] == least_chiral ) {
+			chiral_filtered.push_back( virt_filtered[jj] );
+		}
+	}
+	if ( chiral_filtered.size() == 1 ) {
+		return rsd_type_list[chiral_filtered[1]];
+	}
+
+
+	TR << "When filtering by coordinates, found " << chiral_filtered.size() << " equally valid types:" << std::endl << '\t';
+	for ( core::Size ii: chiral_filtered ) {
+		TR.Debug << rsd_type_list[ii]->name() << "   ";
+	}
+	TR << std::endl << "Arbitrarily picking " << rsd_type_list[chiral_filtered[1]]->name() << std::endl;
+
+	return rsd_type_list[chiral_filtered[1]];
 }
 
 //////////////////////////////////////

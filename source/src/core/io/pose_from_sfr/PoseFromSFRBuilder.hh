@@ -146,7 +146,8 @@ private:
 		bool const is_lower_terminus,
 		bool const is_upper_terminus,
 		bool const is_d_aa,
-		bool const is_l_aa
+		bool const is_l_aa,
+		bool const is_achiral
 	);
 
 	bool lower_terminus_is_occupied_according_to_link_map( std::string const & resid );
