@@ -2115,7 +2115,7 @@ utility::vector1< core::Size >
 compute_cutpoints( core::pose::Pose const & pose )
 {
 	utility::vector1< core::Size > cutpoints;
-	for ( core::Size resid=1; resid!=pose.size(); ++resid ) {
+	for ( core::Size resid=1; resid<=pose.size(); ++resid ) {
 		if ( pose.residue( resid ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ) {
 			cutpoints.push_back( resid );
 			if ( ( resid < pose.size() ) && !pose.residue( resid + 1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ) {
