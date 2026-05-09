@@ -751,6 +751,10 @@ GasteigerAtomTypeData::TypeDifference GasteigerAtomTypeData::difference_from( co
 		return None;
 	}
 
+	// Two atom types are "fundamentally different" (TypeDifference::Other) if any
+	// of charge / element / hybridization differ. The lone-pair / s-orbital /
+	// p-orbital classification below assumes these three are equal and uses
+	// `charge_` as a shared reference value, so this early-out is required.
 	if ( charge_ != OTHER.charge_ || element_type_ != OTHER.element_type_ || hybridization_ != OTHER.hybridization_ ) {
 		return Other;
 	}

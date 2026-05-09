@@ -136,6 +136,10 @@ StructFileReaderOptions::operator == ( StructFileReaderOptions const & other ) c
 bool
 StructFileReaderOptions::operator < ( StructFileReaderOptions const & other ) const
 {
+	// Lexicographic compare. The pattern is: for each tier, return true on `<`,
+	// return false on `!=` (i.e. on `>`), otherwise fall through to the next tier.
+	// Using `==` for the second check (the original form) returns false on equality
+	// and short-circuits before later tiers are ever consulted -- breaks ordering.
 	if (   StructFileRepOptions::operator<  ( other ) ) return true;
 	if ( ! StructFileRepOptions::operator== ( other ) ) return false;
 
