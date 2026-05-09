@@ -136,20 +136,20 @@ StructFileReaderOptions::operator == ( StructFileReaderOptions const & other ) c
 bool
 StructFileReaderOptions::operator < ( StructFileReaderOptions const & other ) const
 {
-	if ( StructFileRepOptions::operator< ( other ) ) return true;
-	if ( StructFileRepOptions::operator== ( other ) ) return false;
+	if (   StructFileRepOptions::operator<  ( other ) ) return true;
+	if ( ! StructFileRepOptions::operator== ( other ) ) return false;
 
-	if ( new_chain_order_ <  other.new_chain_order_ ) return true;
-	if ( new_chain_order_ == other.new_chain_order_ ) return false;
-	if ( obey_ENDMDL_ <  other.obey_ENDMDL_  ) return true;
-	if ( obey_ENDMDL_ == other.obey_ENDMDL_  ) return false;
-	if ( read_pdb_header_ <  other.read_pdb_header_  ) return true;
-	if ( read_pdb_header_ == other.read_pdb_header_  ) return false;
-	if ( glycam_pdb_format_ <  other.glycam_pdb_format_  ) return true;
-	if ( mmtf_extra_data_io_ < other.mmtf_extra_data_io_ ) return true;
-	if ( mmtf_extra_data_io_ == other.mmtf_extra_data_io_ ) return false;
+	if ( new_chain_order_      <  other.new_chain_order_      ) return true;
+	if ( new_chain_order_      != other.new_chain_order_      ) return false;
+	if ( obey_ENDMDL_          <  other.obey_ENDMDL_          ) return true;
+	if ( obey_ENDMDL_          != other.obey_ENDMDL_          ) return false;
+	if ( read_pdb_header_      <  other.read_pdb_header_      ) return true;
+	if ( read_pdb_header_      != other.read_pdb_header_      ) return false;
+	if ( glycam_pdb_format_    <  other.glycam_pdb_format_    ) return true;
+	if ( glycam_pdb_format_    != other.glycam_pdb_format_    ) return false;
+	if ( mmtf_extra_data_io_   <  other.mmtf_extra_data_io_   ) return true;
+	if ( mmtf_extra_data_io_   != other.mmtf_extra_data_io_   ) return false;
 
-	//if ( glycam_pdb_format_ == other.glycam_pdb_format_  ) return false;
 	return false;
 
 }

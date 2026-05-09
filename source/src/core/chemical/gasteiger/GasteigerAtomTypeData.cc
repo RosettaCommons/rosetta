@@ -751,7 +751,7 @@ GasteigerAtomTypeData::TypeDifference GasteigerAtomTypeData::difference_from( co
 		return None;
 	}
 
-	if ( charge_ == OTHER.charge_ || element_type_ != OTHER.element_type_ || hybridization_ != OTHER.hybridization_ ) {
+	if ( charge_ != OTHER.charge_ || element_type_ != OTHER.element_type_ || hybridization_ != OTHER.hybridization_ ) {
 		return Other;
 	}
 

@@ -15,6 +15,7 @@
 #include <utility/string_util.hh>
 #include <map>
 #include <set>
+#include <tuple>
 #include <core/types.hh>
 
 namespace core {
@@ -35,7 +36,7 @@ BondData::BondData(core::Size index1, core::Size index2, core::Size type)
 
 bool BondData::operator <(const core::chemical::sdf::BondData & other) const
 {
-	return (this->lower < other.lower) || (this->upper < other.upper);
+	return std::tie( lower, upper ) < std::tie( other.lower, other.upper );
 }
 
 bool BondData::operator ==(const core::chemical::sdf::BondData& other) const
