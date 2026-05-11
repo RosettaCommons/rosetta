@@ -44,10 +44,6 @@ private:
 
 	// Private constructor to make it singleton managed
 	LoopMoverFactory();
-	LoopMoverFactory(const LoopMoverFactory & src); // unimplemented
-
-	LoopMoverFactory const &
-	operator=( LoopMoverFactory const & ); // unimplemented
 
 public:
 

@@ -169,10 +169,10 @@ private:
 	bool alternate_state_is_being_considered_;
 	bool procrastinated_;
 
-	//no default constructor, uncopyable
-	LazyNode();
-	LazyNode( LazyNode const & );
-	LazyNode & operator = ( LazyNode const & );
+public:
+	LazyNode() = delete;
+	LazyNode( LazyNode const & ) = delete;
+	LazyNode & operator = ( LazyNode const & ) = delete;
 
 };
 
@@ -333,10 +333,10 @@ private:
 	bool partial_state_assignment_;
 	bool ran_annealing_since_pair_energy_table_cleared_;
 
-	//no default constructor, uncopyable
-	LazyEdge();
-	LazyEdge( LazyEdge const & );
-	LazyEdge & operator = ( LazyEdge const & );
+public:
+	LazyEdge() = delete;
+	LazyEdge( LazyEdge const & ) = delete;
+	LazyEdge & operator = ( LazyEdge const & ) = delete;
 
 };
 
@@ -426,10 +426,10 @@ private:
 
 	static const int COMMIT_LIMIT_BETWEEN_UPDATES = 1024; // 2^10
 
-	//no default constructor, uncopyable
-	LazyInteractionGraph();
-	LazyInteractionGraph( LazyInteractionGraph const & );
-	LazyInteractionGraph & operator = ( LazyInteractionGraph const & );
+public:
+	LazyInteractionGraph() = delete;
+	LazyInteractionGraph( LazyInteractionGraph const & ) = delete;
+	LazyInteractionGraph & operator = ( LazyInteractionGraph const & ) = delete;
 
 };
 

@@ -178,10 +178,10 @@ private:
 	bool alternate_state_is_being_considered_;
 	bool procrastinated_;
 
-	//no default constructor, uncopyable
-	DoubleLazyNode();
-	DoubleLazyNode( DoubleLazyNode const & );
-	DoubleLazyNode & operator = ( DoubleLazyNode const & );
+public:
+	DoubleLazyNode() = delete;
+	DoubleLazyNode( DoubleLazyNode const & ) = delete;
+	DoubleLazyNode & operator = ( DoubleLazyNode const & ) = delete;
 
 };
 
@@ -380,10 +380,10 @@ private:
 	// prepare_for_simulated_annealing
 	int edge_index_;
 
-	//no default constructor, uncopyable
-	DoubleLazyEdge();
-	DoubleLazyEdge( DoubleLazyEdge const & );
-	DoubleLazyEdge & operator = ( DoubleLazyEdge const & );
+public:
+	DoubleLazyEdge() = delete;
+	DoubleLazyEdge( DoubleLazyEdge const & ) = delete;
+	DoubleLazyEdge & operator = ( DoubleLazyEdge const & ) = delete;
 
 };
 
@@ -527,10 +527,10 @@ private:
 	utility::vector0< DoubleLazyEdge * > dlazy_edge_vector_;
 	mutable InPlaceIntListOP aa_submatrix_history_list_;
 
-	//no default constructor, uncopyable
-	DoubleLazyInteractionGraph();
-	DoubleLazyInteractionGraph( DoubleLazyInteractionGraph const & );
-	DoubleLazyInteractionGraph & operator = ( DoubleLazyInteractionGraph const & );
+public:
+	DoubleLazyInteractionGraph() = delete;
+	DoubleLazyInteractionGraph( DoubleLazyInteractionGraph const & ) = delete;
+	DoubleLazyInteractionGraph & operator = ( DoubleLazyInteractionGraph const & ) = delete;
 
 };
 

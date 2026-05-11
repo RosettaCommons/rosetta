@@ -47,10 +47,6 @@ public:
 private:
 	// Private constructor to make it singleton managed
 	RotamerRecoveryFactory();
-	RotamerRecoveryFactory(const RotamerRecoveryFactory & src); // unimplemented
-
-	RotamerRecoveryFactory const &
-	operator=( RotamerRecoveryFactory const & ); // unimplemented
 
 public:
 
