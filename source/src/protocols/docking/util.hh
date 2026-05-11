@@ -29,16 +29,6 @@
 namespace protocols {
 namespace docking {
 
-///// @brief Setup FoldTree for docking across an interface.
-///// The partners are described by a string for the partner chains (using pdb_chain identification) separated by "_".
-///// The foldtree is set up such that the jump points are at the center of masses of the two partners.
-//void
-//setup_foldtree(
-// core::pose::Pose & pose,
-// std::string const & partner_chainID,
-// DockJumps & movable_jumps,
-// bool rand_jump_res_partner2 = false ); // default = false
-
 /// @brief Setup FoldTree for docking across an interface.
 /// The foldtree is set up such that the jump points are at the center of masses of the two partners.
 void
@@ -58,6 +48,22 @@ setup_foldtree(
 	DockJumps & movable_jumps,
 	core::kinematics::FoldTree & ft,
 	bool rand_jump_res_partner2 = false ); // default = false
+
+
+#ifdef PYROSETTA
+
+/// @brief Setup FoldTree for docking across an interface.
+/// The partners are described by a string for the partner chains (using pdb_chain identification) separated by "_".
+/// The foldtree is set up such that the jump points are at the center of masses of the two partners.
+/// (This is a convienience/backward compatibility function for PyRosetta -- use the DockingPartners instead.)
+void
+setup_foldtree(
+	core::pose::Pose & pose,
+	std::string const & partner_chainID,
+	DockJumps & movable_jumps,
+	bool rand_jump_res_partner2 = false );
+
+#endif
 
 } // docking
 } // protocols

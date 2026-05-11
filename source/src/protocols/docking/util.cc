@@ -320,5 +320,17 @@ setup_foldtree(
 	debug_assert( ft.check_fold_tree() );
 }
 
+#ifdef PYROSETTA
+void
+setup_foldtree(
+	core::pose::Pose & pose,
+	std::string const & partner_chainID,
+	DockJumps & movable_jumps,
+	bool rand_jump_res_partner2 = false )
+{
+	setup_foldtree(pose, core::pose::DockingPartners::docking_partners_from_string(partner_chainID), movable_jumps, rand_jump_res_partner2);
+}
+#endif
+
 } //docking
 } //protocols
