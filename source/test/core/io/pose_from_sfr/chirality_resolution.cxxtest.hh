@@ -14,6 +14,7 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
+#include <test/util/pose_funcs.hh>
 
 // Unit headers
 #include <core/io/pose_from_sfr/chirality_resolution.hh>
@@ -69,7 +70,7 @@ class geometric_rename_Tests : public CxxTest::TestSuite
 public:
 	// Shared initialization goes here.
 	void setUp() {
-		core_init();
+		core_init_with_additional_options("-extra_res_fa core/io/pose_from_sfr/mock_L_ALA.params core/io/pose_from_sfr/mock_D_ALA.params");
 
 		using namespace core::chemical;
 
@@ -639,5 +640,53 @@ public:
 		TR << " 1.0/natoms " << 1.0/natoms << " 1.0/natoms2 " << 1.0/natoms2 << std::endl;
 		TS_ASSERT_DELTA( score_mapping( map, rinfo, *rsd ), 8.0/natoms + 0.0/natoms2, score_delta );
 	}
+
+	/// @brief Test if we can properly resolve input residues based on chirality.
+	void test_chirality_based_resolution() {
+		std::string input_string = // From 1EVA
+			"ATOM      1  N   L:G A   1       8.676   0.335  10.868  1.00  0.00           N\n"
+			"ATOM      2  CA  L:G A   1       9.471   0.643   9.646  1.00  0.00           C\n"
+			"ATOM      3  CB  L:G A   1       9.010   2.018   9.120  1.00  0.00           C\n"
+			"ATOM      4  C   L:G A   1       9.453  -0.424   8.519  1.00  0.00           C\n"
+			"ATOM      5  O   L:G A   1       9.722  -0.109   7.355  1.00  0.00           O\n"
+			"ATOM      6  H1  L:G A   1       7.987  -0.425  10.880  1.00  0.00           H\n"
+			"ATOM      7  HA  L:G A   1      10.526   0.772   9.965  1.00  0.00           H\n"
+			"ATOM      8  HB1 L:G A   1       9.099   2.809   9.887  1.00  0.00           H\n"
+			"ATOM      9  HB2 L:G A   1       9.620   2.347   8.258  1.00  0.00           H\n"
+			"ATOM     10  HB3 L:G A   1       7.955   2.007   8.783  1.00  0.00           H\n"
+			"ATOM     11  N   LEU A   2       9.169  -1.688   8.892  1.00  0.00           N\n"
+			"ATOM     12  CA  LEU A   2       9.108  -2.841   7.951  1.00  0.00           C\n"
+			"ATOM     13  C   LEU A   2       7.899  -2.622   7.004  1.00  0.00           C\n"
+			"ATOM     14  O   LEU A   2       7.987  -2.895   5.801  1.00  0.00           O\n"
+			"ATOM     15  CB  LEU A   2       8.992  -4.181   8.744  1.00  0.00           C\n"
+			"ATOM     16  CG  LEU A   2       9.865  -4.325  10.025  1.00  0.00           C\n"
+			"ATOM     17  CD1 LEU A   2       9.996  -5.762  10.570  1.00  0.00           C\n"
+			"ATOM     18  CD2 LEU A   2      11.269  -3.733   9.782  1.00  0.00           C\n"
+			"ATOM     19  H   LEU A   2       8.987  -1.804   9.895  1.00  0.00           H\n"
+			"ATOM     20  HA  LEU A   2      10.039  -2.898   7.349  1.00  0.00           H\n"
+			"ATOM     21  HB2 LEU A   2       7.932  -4.405   8.977  1.00  0.00           H\n"
+			"ATOM     22  HB3 LEU A   2       9.290  -5.013   8.075  1.00  0.00           H\n"
+			"ATOM     23  HG  LEU A   2       9.392  -3.719  10.820  1.00  0.00           H\n"
+			"ATOM     24 HD11 LEU A   2      10.412  -6.460   9.821  1.00  0.00           H\n"
+			"ATOM     25 HD12 LEU A   2      10.652  -5.807  11.459  1.00  0.00           H\n"
+			"ATOM     26 HD13 LEU A   2       9.020  -6.168  10.887  1.00  0.00           H\n"
+			"ATOM     27 HD21 LEU A   2      11.217  -2.676   9.463  1.00  0.00           H\n"
+			"ATOM     28 HD22 LEU A   2      11.888  -3.756  10.698  1.00  0.00           H\n"
+			"ATOM     29 HD23 LEU A   2      11.822  -4.284   8.997  1.00  0.00           H\n"
+			"ATOM     45  N   L:G A   4       3.095   0.782   7.075  1.00  0.00           N\n"
+			"ATOM     46  CA  L:G A   4       2.121   1.493   7.950  1.00  0.00           C\n"
+			"ATOM     47  C   L:G A   4       0.732   0.802   7.935  1.00  0.00           C\n"
+			"ATOM     48  O   L:G A   4      -0.288   1.445   8.211  1.00  0.00           O\n"
+			"ATOM     49  CB  L:G A   4       2.027   2.988   7.523  1.00  0.00           C\n";
+
+		core::pose::Pose pose = fullatom_pose_from_string(input_string);
+
+		TS_ASSERT_EQUALS( pose.size(), 3);
+		TS_ASSERT_EQUALS( pose.residue_type(1).name(), "D_AA_ALA:NtermProteinFull" );
+		TS_ASSERT_EQUALS( pose.residue_type(2).name(), "LEU" );
+		TS_ASSERT_EQUALS( pose.residue_type(3).name(), "L_AA_ALA:CtermProteinFull" );
+
+	}
+
 };
 
