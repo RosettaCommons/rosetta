@@ -447,17 +447,11 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 		bool is_upper_terminus( ( ii == nres_pdb || ! same_chain_next ) && check_Ctermini_for_this_chain  && ! upper_terminus_is_occupied_according_to_link_map( resid ) );
 
 		// Determine if this residue is a D-AA residue, an L-AA residue, or neither.
+		// The is only if we *know* the name3 have the given chirality.
+		// If we're unsure, we'll let the ResidueTypeFinder figure it out.
 		bool is_d_aa = NomenclatureManager::get_instance()->decide_is_d_aa( name3 );
 		bool is_l_aa = NomenclatureManager::get_instance()->decide_is_l_aa( name3 );
 		bool is_achiral = NomenclatureManager::get_instance()->decide_is_known_achiral( name3 );
-
-		// The above is only if we *know* the name3 have the given chirality.
-		// If we're unsure, we'll let the ResidueTypeFinder figure it out.
-		if ( d_l_threeletter_codes_are_same_for_aa(name3, false) ) {
-			is_d_aa = false;
-			is_l_aa = false;
-			is_achiral = false;
-		}
 
 		// More complex chirality determination is handled by
 		bool is_chemical_component_ligand = false;
@@ -1882,61 +1876,6 @@ PoseFromSFRBuilder::is_residue_type_recognized(
 		is_chemical_component_ligand = true;
 	}
 	return is_residue_type_recognized( pdb_residue_index, rosetta_residue_name3, rsd_type_list );
-}
-
-/// @brief Given an amino acid three-letter code, retrive a
-/// residue. If the residue is an alpha- or beta-amino acid, also
-/// retrieve its mirrored type.  Return true if the three-letter
-/// codes are the same, false if they differ.  If no resiude type
-/// could be loaded or there is no mirror type, throw if
-/// error_on_unrecognized is true, and return false otherwise.
-/// @author Vikram K. Mulliga (vmulligan@flatironinstitute.org).
-bool
-PoseFromSFRBuilder::d_l_threeletter_codes_are_same_for_aa(
-	std::string const & name3,
-	bool const error_on_unrecognized
-) const {
-	std::string const errmsg( "Error in core::io::pose_from_sfr::PoseFromSFRBuilder::d_l_threeletter_codes_are_same_for_aa(): " );
-
-	//Get the restype:
-	core::chemical::ResidueTypeCOP restype(
-		core::chemical::ResidueTypeFinder( *residue_type_set_ ).name3(name3).get_representative_type()
-	);
-	if ( restype == nullptr ) {
-		if ( error_on_unrecognized ) {
-			utility_exit_with_message( errmsg + "Did not recognize residue with three-letter code \"" + name3 + "\"." );
-		} else {
-			return false;
-		}
-	}
-
-	if ( restype->is_achiral_backbone() ) {
-		if ( error_on_unrecognized ) {
-			utility_exit_with_message( errmsg + "Residue \"" + name3 + "\" is achiral.  Cannot get mirrored type." );
-		} else {
-			return false;
-		}
-	}
-	if ( !( restype->is_alpha_aa() || restype->is_beta_aa() || restype->is_gamma_aa() ) ) {
-		if ( error_on_unrecognized ) {
-			utility_exit_with_message( errmsg + "Residue \"" + name3 + "\" is not an alpha amino acid, beta amino acid, or gamma amino acid.  Cannot perform check." );
-		} else {
-			return false;
-		}
-	}
-
-	//Get the mirrored type:
-	core::chemical::ResidueTypeCOP mirrored_restype( residue_type_set_->get_mirrored_type( restype ) );
-	if ( mirrored_restype == nullptr ) {
-		if ( error_on_unrecognized ) {
-			utility_exit_with_message( errmsg + "Residue \"" + name3 + "\" seems not to have a mirrored type." );
-		} else {
-			return false;
-		}
-	}
-
-	//Compare the names:
-	return (restype->name3() == mirrored_restype->name3());
 }
 
 ///////////////////////////////////////////////////////////////////////
