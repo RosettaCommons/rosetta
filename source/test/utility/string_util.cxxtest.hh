@@ -158,13 +158,7 @@ public:
 		TS_ASSERT_EQUALS( resnum[1], 32 );
 		TS_ASSERT_EQUALS( chains[1], "C" );
 
-		resnum.clear(); chains.clear(); segids.clear();
-		utility::get_resnum_and_chain_from_one_tag( "CD156-159", resnum, chains, segids);
-		TS_ASSERT_EQUALS( resnum.size(), 4 );
-		TS_ASSERT_EQUALS( chains.size(), 4 );
-		TS_ASSERT_EQUALS( segids.size(), 4 );
-		TS_ASSERT_EQUALS( resnum[1], 156 );
-		TS_ASSERT_EQUALS( chains[1], "CD" );
+		// Designations like "CD156-159" are not supported -- For multi-letter chains, you need to use the colon
 
 		resnum.clear(); chains.clear(); segids.clear();
 		utility::get_resnum_and_chain_from_one_tag( "F:3", resnum, chains, segids);
