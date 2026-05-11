@@ -536,9 +536,9 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 	using namespace core::chemical;
 	if (rsd_type_list.empty()) { return nullptr; }
 
-	utility::vector1<core::Size> missing_real; // Number of non-virtual atoms in RT that aren't in coords
-	utility::vector1<core::Size> missing_virt; // Number of virt atoms in RF that aren't in coords
-	utility::vector1<core::Size> extra_atoms; // Number of entries in coords which aren't in RT
+	utility::vector1<core::Size> missing_atoms; // Number of entries in coords which aren't in RT
+	utility::vector1<core::Size> extra_real; // Number of non-virtual atoms in RT that aren't in coords
+	utility::vector1<core::Size> extra_virt; // Number of virt atoms in RF that aren't in coords
 
 	std::set< std::string > stripped_cn;
 	for ( auto const & pair: coords ) {
@@ -548,42 +548,65 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 	// Tally the number of missing atoms for each type
 	for ( ResidueTypeCOP const & rsd_type: rsd_type_list ) {
 		debug_assert( rsd_type != nullptr );
-		core::Size n_missing_real = 0, n_missing_virt = 0;
+		core::Size n_missing_atoms = 0;
+		for ( std::string const & coord_atom: stripped_cn ) {
+			if ( ignore_atom_named_H && coord_atom == "H" ) { continue; }
+			if ( ! rsd_type->has(coord_atom) ) {
+				n_missing_atoms += 1;
+			}
+		}
+		core::Size n_extra_real = 0, n_extra_virt = 0;
 		for ( core::Size aa(1); aa <= rsd_type->natoms(); ++aa ) {
 			std::string const & stripped_name = ObjexxFCL::stripped_whitespace(rsd_type->atom_name(aa));
 			if ( ignore_atom_named_H && stripped_name == "H" ) { continue; }
 			if ( stripped_cn.count(stripped_name) == 0 ) {
 				if ( rsd_type->is_virtual(aa) ) {
-					n_missing_virt += 1;
+					n_extra_virt += 1;
 				} else {
-					n_missing_real += 1;
+					n_extra_real += 1;
 				}
 			}
 		}
-		core::Size n_extra_atoms = 0;
-		for ( std::string const & coord_atom: stripped_cn ) {
-			if ( ignore_atom_named_H && coord_atom == "H" ) { continue; }
-			if ( ! rsd_type->has(coord_atom) ) {
-				n_extra_atoms += 1;
+		TR.Trace << "Restype " << rsd_type->name() << " is missing " << n_missing_atoms << " atoms from the input, and has " << n_extra_real << " extra real and " << n_extra_virt << " extra virtual atoms." << std::endl;
+		missing_atoms.push_back( n_missing_atoms );
+		extra_real.push_back( n_extra_real );
+		extra_virt.push_back( n_extra_virt );
+	}
+	debug_assert( missing_atoms.size() == rsd_type_list.size() );
+	debug_assert(	extra_real.size() == rsd_type_list.size() );
+	debug_assert( extra_virt.size() == rsd_type_list.size() );
+
+	// First attempt to filter by number of atoms in the input which aren't represented by the residue type.
+	core::Size least_missing = *(std::min_element( missing_atoms.begin(), missing_atoms.end() ));
+	utility::vector1<core::Size> missing_filtered;
+	core::Size least_real = 99999; // least of the missing_filtered subset
+	for ( core::Size ii(1); ii <= rsd_type_list.size(); ++ii ) {
+		if ( missing_atoms[ii] == least_missing ) {
+			missing_filtered.push_back(ii);
+			if ( extra_real[ii] < least_real ) {
+				least_real = extra_real[ii];
 			}
 		}
-		missing_real.push_back( n_missing_real );
-		missing_virt.push_back( n_missing_virt );
-		extra_atoms.push_back( n_extra_atoms );
 	}
-	debug_assert( missing_real.size() == rsd_type_list.size() );
-	debug_assert( missing_virt.size() == rsd_type_list.size() );
-	debug_assert( extra_atoms.size() == rsd_type_list.size() );
+	if ( missing_filtered.size() == 1 ) {
+		return rsd_type_list[missing_filtered[1]];
+	}
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "After filtering for coordinates missing from the residue type (" << least_missing << " missing) found restypes: ";
+		for ( core::Size ii: missing_filtered ) {
+			TR.Debug << rsd_type_list[ii]->name() << "   ";
+		}
+		TR.Debug << std::endl;
+	}
 
-	// First attempt to filter by number of missing real atom coordinates
-	core::Size least_missing_real = *(std::min_element( missing_real.begin(), missing_real.end() ));
+	// If ties, then look for the number of extra real atoms
 	utility::vector1<core::Size> real_filtered;
-	core::Size least_extra = 99999; // least of the real_filtered.
-	for ( core::Size ii(1); ii <= rsd_type_list.size(); ++ii ) {
-		if ( missing_real[ii] == least_missing_real ) {
+	core::Size least_virt = 99999; // least of the real_filtered
+	for ( core::Size ii: missing_filtered ) {
+		if ( extra_real[ii] == least_real ) {
 			real_filtered.push_back(ii);
-			if ( extra_atoms[ii] < least_extra ) {
-				least_extra = extra_atoms[ii];
+			if ( extra_virt[ii] < least_virt ) {
+				least_virt = extra_virt[ii];
 			}
 		}
 	}
@@ -591,39 +614,17 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 		return rsd_type_list[real_filtered[1]];
 	}
 	if ( TR.Debug.visible() ) {
-		TR.Debug << "After filtering for missing coordinates (" << least_missing_real << " missing) found ";
+		TR.Debug << "After filtering by number of unrepresented non-virtual atoms in ResidueType (" << least_real << " extra) found: ";
 		for ( core::Size ii: real_filtered ) {
 			TR.Debug << rsd_type_list[ii]->name() << "   ";
 		}
 		TR.Debug << std::endl;
 	}
 
-	// If ties, then look for the number of extra atoms in coordinates
-	utility::vector1<core::Size> extra_filtered;
-	core::Size least_missing_virt = 99999; // least of the extra_filtered
-	for ( core::Size ii: real_filtered ) {
-		if ( extra_atoms[ii] == least_extra ) {
-			extra_filtered.push_back(ii);
-			if ( missing_virt[ii] < least_missing_virt ) {
-				least_missing_virt = missing_virt[ii];
-			}
-		}
-	}
-	if ( extra_filtered.size() == 1 ) {
-		return rsd_type_list[extra_filtered[1]];
-	}
-	if ( TR.Debug.visible() ) {
-		TR.Debug << "After filtering for extra coordinates (" << least_extra << " extra) found ";
-		for ( core::Size ii: extra_filtered ) {
-			TR.Debug << rsd_type_list[ii]->name() << "   ";
-		}
-		TR.Debug << std::endl;
-	}
-
-	// If still tied, minimize the number of missing virtuals
+	// If still tied, minimize the number of unrepresented virtuals
 	utility::vector1<core::Size> virt_filtered;
-	for ( core::Size ii: extra_filtered ) {
-		if ( missing_virt[ii] == least_missing_virt ) {
+	for ( core::Size ii: real_filtered ) {
+		if ( extra_virt[ii] == least_virt ) {
 			virt_filtered.push_back(ii);
 		}
 	}
@@ -631,7 +632,7 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 		return rsd_type_list[virt_filtered[1]];
 	}
 	if ( TR.Debug.visible() ) {
-		TR.Debug << "After filtering for missing virtuals (" << least_missing_virt << " missing) found ";
+		TR.Debug << "After filtering by number of unrepresented virtual atoms (" << least_virt << " virts) found ";
 		for ( core::Size ii: virt_filtered ) {
 			TR.Debug << rsd_type_list[ii]->name() << "   ";
 		}
@@ -687,7 +688,7 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 
 	TR << "When filtering by coordinates, found " << chiral_filtered.size() << " equally valid types:" << std::endl << '\t';
 	for ( core::Size ii: chiral_filtered ) {
-		TR.Debug << rsd_type_list[ii]->name() << "   ";
+		TR << rsd_type_list[ii]->name() << "   ";
 	}
 	TR << std::endl << "Arbitrarily picking " << rsd_type_list[chiral_filtered[1]]->name() << std::endl;
 
