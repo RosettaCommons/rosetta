@@ -535,7 +535,7 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 	bool const ignore_atom_named_H /* = false */ )
 {
 	using namespace core::chemical;
-	if (rsd_type_list.empty()) { return nullptr; }
+	if ( rsd_type_list.empty() ) { return nullptr; }
 
 	utility::vector1<core::Size> missing_atoms; // Number of entries in coords which aren't in RT
 	utility::vector1<core::Size> extra_real; // Number of non-virtual atoms in RT that aren't in coords
@@ -574,7 +574,7 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 		extra_virt.push_back( n_extra_virt );
 	}
 	debug_assert( missing_atoms.size() == rsd_type_list.size() );
-	debug_assert(	extra_real.size() == rsd_type_list.size() );
+	debug_assert( extra_real.size() == rsd_type_list.size() );
 	debug_assert( extra_virt.size() == rsd_type_list.size() );
 
 	// First attempt to filter by number of atoms in the input which aren't represented by the residue type.
@@ -650,7 +650,7 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 	for ( core::Size ii: virt_filtered ) {
 		ResidueType const & restype = *rsd_type_list[ii];
 		core::Size n_chiral_mismatch = 0;
-		for (core::Size aa(1); aa <= restype.natoms(); ++aa) {
+		for ( core::Size aa(1); aa <= restype.natoms(); ++aa ) {
 			AtomIndices nbrs = restype.bonded_neighbor(aa);
 			if ( nbrs.size() <= 3 ) { continue; } // Quick out if we don't have enough atoms to do chirality checks.
 			nbrs.insert( nbrs.begin(), aa ); // Include the this atom, as a referent
