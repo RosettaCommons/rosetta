@@ -35,6 +35,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/vector1.functions.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/string_util.hh>
@@ -650,21 +651,36 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 		ResidueType const & restype = *rsd_type_list[ii];
 		core::Size n_chiral_mismatch = 0;
 		for (core::Size aa(1); aa <= restype.natoms(); ++aa) {
-			AtomIndices const & nbrs = restype.bonded_neighbor(aa);
-			if ( nbrs.size() != 4 ) { continue; } // Need 4 atoms to determine chirality
-			std::string const & n1 = ObjexxFCL::stripped_whitespace(restype.atom_name(nbrs[1]));
-			std::string const & n2 = ObjexxFCL::stripped_whitespace(restype.atom_name(nbrs[2]));
-			std::string const & n3 = ObjexxFCL::stripped_whitespace(restype.atom_name(nbrs[3]));
-			std::string const & n4 = ObjexxFCL::stripped_whitespace(restype.atom_name(nbrs[4]));
-			if ( stripped_coords.count(n1) == 0 || stripped_coords.count(n2) == 0 || stripped_coords.count(n3) == 0 || stripped_coords.count(n4) == 0 ) {
-				// Can't calculate chirality with missing atoms. Skip. (Should we penalize this?)
+			AtomIndices nbrs = restype.bonded_neighbor(aa);
+			if ( nbrs.size() <= 3 ) { continue; } // Quick out if we don't have enough atoms to do chirality checks.
+			nbrs.insert( nbrs.begin(), aa ); // Include the this atom, as a referent
+			utility::vector1< std::string > present_neighbors;
+			for ( core::Size nbr_ii: nbrs ) {
+				std::string const & nbr_name = ObjexxFCL::stripped_whitespace(restype.atom_name(nbr_ii));
+				if ( stripped_coords.count(nbr_name) ) {
+					present_neighbors.push_back(nbr_name);
+				}
+			}
+			if ( present_neighbors.size() < 4 ) { // Need 4 points to calculate chirality.
+				// No penalization here -- lots of times missing atoms are due to missing hydrogens.
+				TR.Trace << "Skipping chirality for atom " << restype.atom_name(aa) << " due to too many missing neighbors." << std::endl;
 				continue;
 			}
-			core::Real coord_dihedral = numeric::dihedral_degrees( stripped_coords[n1], stripped_coords[n2], stripped_coords[n3], stripped_coords[n4] );
-			core::Real rt_dihedral = numeric::dihedral_degrees( restype.ideal_xyz(nbrs[1]), restype.ideal_xyz(nbrs[2]), restype.ideal_xyz(nbrs[3]), restype.ideal_xyz(nbrs[4]));
 
-			core::Real delta = std::abs(coord_dihedral - rt_dihedral);
-			if ( delta > 90 && delta < 270 ) { // In the neihborhood of 180 degrees is a chiral flip.
+			// If we wanted to do all the combinations, we could likely use utility::nmers_of() to enumerate them.
+			// But we're probably fine with using the first 4 atoms (which are weighted to the center atom and then heavy atoms)
+			auto const & n = present_neighbors;
+
+			core::Real coord_dihedral = numeric::dihedral_degrees( stripped_coords[n[1]], stripped_coords[n[2]], stripped_coords[n[3]], stripped_coords[n[4]] );
+			core::Real rt_dihedral = numeric::dihedral_degrees( restype.ideal_xyz(n[1]), restype.ideal_xyz(n[2]), restype.ideal_xyz(n[3]), restype.ideal_xyz(n[4]));
+
+			TR.Trace << "With " << restype.name() << ": dihedrals from " << n[1] << " " << n[2] << " " << n[3] << " " << n[4] << " coord dihedral " << coord_dihedral << " restype dihedral " << rt_dihedral << std::endl;
+			if ( (std::abs(coord_dihedral) < 10 && std::abs(rt_dihedral) < 10 ) ||
+					(std::abs(coord_dihedral) > 170 && std::abs(rt_dihedral) > 170 ) ) {
+				continue; // Too close to planar to know
+			}
+
+			if ( std::signbit(coord_dihedral) != std::signbit(rt_dihedral) ) {
 				if ( restype.atom_is_backbone(aa) ) {
 					n_chiral_mismatch += 10; //Somewhat arbitrarily, count a backbone mismatch as 10 times as important as a non-backbone one.
 				} else {

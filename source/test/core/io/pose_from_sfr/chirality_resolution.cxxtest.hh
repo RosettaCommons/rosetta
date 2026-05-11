@@ -685,7 +685,67 @@ public:
 		TS_ASSERT_EQUALS( pose.residue_type(1).name(), "D_AA_ALA:NtermProteinFull" );
 		TS_ASSERT_EQUALS( pose.residue_type(2).name(), "LEU" );
 		TS_ASSERT_EQUALS( pose.residue_type(3).name(), "L_AA_ALA:CtermProteinFull" );
+	}
 
+	void test_ambiguous_name3() {
+		// ABA is one of those residues for which d_l_threeletter_codes_are_same_for_aa() returns true
+		// Have to include all heavyatoms to avoid packing
+		std::string input_string =
+				"HETATM    1  N   ABA A   1       0.000   0.000   0.000  1.00  0.00           N\n"
+				"HETATM    2  CA  ABA A   1       1.444   0.000   0.000  1.00  0.00           C\n"
+				"HETATM    3  C   ABA A   1       1.885   1.462   0.000  1.00  0.00           C\n"
+				"HETATM    4  O   ABA A   1       1.223   2.308  -0.546  1.00  0.00           O\n"
+				"HETATM    5  CB  ABA A   1       1.994  -0.762  -1.222  1.00  0.00           C\n"
+				"HETATM    6  CG  ABA A   1       3.508  -0.977  -1.233  1.00  0.00           C\n"
+				"HETATM   11  N   ABA A   2      10.000   0.000  20.000  1.00  0.00           N\n"
+				"HETATM   12  CA  ABA A   2      11.444   0.000  20.000  1.00  0.00           C\n"
+				"HETATM   13  C   ABA A   2      11.885   1.462  20.000  1.00  0.00           C\n"
+				"HETATM   14  O   ABA A   2      11.223   2.308  20.546  1.00  0.00           O\n"
+				"HETATM   15  CB  ABA A   2      11.994  -0.762  21.222  1.00  0.00           C\n"
+				"HETATM   16  CG  ABA A   2      13.508  -0.977  21.233  1.00  0.00           C\n";
+
+//			"HETATM    1  N   R1A A   1       0.000   0.000   0.000  1.00  0.00           N\n"
+//			"HETATM    2  CA  R1A A   1       1.458   0.000   0.000  1.00  0.00           C\n"
+//			"HETATM    3  C   R1A A   1       2.009   1.420   0.000  1.00  0.00           C\n"
+//			"HETATM    4  O   R1A A   1       1.383   2.339  -0.529  1.00  0.00           O\n"
+//			"HETATM    5  CB  R1A A   1       1.796  -0.709  -1.312  1.00  0.00           C\n"
+//			"HETATM    6  SG  R1A A   1       0.356  -1.229  -2.275  1.00  0.00           S\n"
+//			"HETATM    7  SD  R1A A   1      -0.498   0.540  -2.900  1.00  0.00           S\n"
+//			"HETATM    8  CE  R1A A   1      -1.812   0.846  -1.670  1.00  0.00           C\n"
+//			"HETATM    9  C3  R1A A   1      -3.067   0.029  -1.784  1.00  0.00           C\n"
+//			"HETATM   10  C2  R1A A   1      -4.257   0.175  -0.865  1.00  0.00           C\n"
+//			"HETATM   11  C9  R1A A   1      -3.879  -0.159   0.576  1.00  0.00           C\n"
+//			"HETATM   12  C8  R1A A   1      -4.869   1.569  -0.981  1.00  0.00           C\n"
+//			"HETATM   13  N1  R1A A   1      -5.162  -0.820  -1.392  1.00  0.00           N\n"
+//			"HETATM   14  C5  R1A A   1      -4.646  -1.547  -2.526  1.00  0.00           C\n"
+//			"HETATM   15  C7  R1A A   1      -4.526  -3.035  -2.199  1.00  0.00           C\n"
+//			"HETATM   16  C6  R1A A   1      -5.516  -1.311  -3.759  1.00  0.00           C\n"
+//			"HETATM   17  C4  R1A A   1      -3.281  -0.923  -2.702  1.00  0.00           C\n"
+//			"HETATM   18  O1  R1A A   1      -6.251  -1.022  -0.931  1.00  0.00           O\n"
+//			"HETATM   21  N   R1A A   2      10.000   0.000   0.000  1.00  0.00           N\n"
+//			"HETATM   22  CA  R1A A   2      11.458   0.000   0.000  1.00  0.00           C\n"
+//			"HETATM   23  C   R1A A   2      12.009   1.420   0.000  1.00  0.00           C\n"
+//			"HETATM   24  O   R1A A   2      11.383   2.339  -0.529  1.00  0.00           O\n"
+//			"HETATM   25  CB  R1A A   2      11.796  -0.709   1.312  1.00  0.00           C\n"
+//			"HETATM   26  SG  R1A A   2      10.356  -1.229   2.275  1.00  0.00           S\n"
+//			"HETATM   27  SD  R1A A   2      -0.498   0.540   2.900  1.00  0.00           S\n"
+//			"HETATM   28  CE  R1A A   2      -1.812   0.846   1.670  1.00  0.00           C\n"
+//			"HETATM   29  C3  R1A A   2      -3.067   0.029   1.784  1.00  0.00           C\n"
+//			"HETATM   30  C2  R1A A   2      -4.257   0.175   0.865  1.00  0.00           C\n"
+//			"HETATM   31  C9  R1A A   2      -3.879  -0.159  -0.576  1.00  0.00           C\n"
+//			"HETATM   32  C8  R1A A   2      -4.869   1.569   0.981  1.00  0.00           C\n"
+//			"HETATM   33  N1  R1A A   2      -5.162  -0.820   1.392  1.00  0.00           N\n"
+//			"HETATM   34  C5  R1A A   2      -4.646  -1.547   2.526  1.00  0.00           C\n"
+//			"HETATM   35  C7  R1A A   2      -4.526  -3.035   2.199  1.00  0.00           C\n"
+//			"HETATM   36  C6  R1A A   2      -5.516  -1.311   3.759  1.00  0.00           C\n"
+//			"HETATM   37  C4  R1A A   2      -3.281  -0.923   2.702  1.00  0.00           C\n"
+//			"HETATM   38  O1  R1A A   2      -6.251  -1.022   0.931  1.00  0.00           O\n";
+
+		core::pose::Pose pose = fullatom_pose_from_string(input_string);
+
+		TS_ASSERT_EQUALS( pose.size(), 2);
+		TS_ASSERT_EQUALS( pose.residue_type(1).name(), "ABA:NtermProteinFull" );
+		TS_ASSERT_EQUALS( pose.residue_type(2).name(), "DABA:CtermProteinFull" );
 	}
 
 };
