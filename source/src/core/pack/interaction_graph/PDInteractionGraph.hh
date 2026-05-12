@@ -488,8 +488,6 @@ private:
 
 
 	//variables for I/O
-	int num_nodes_in_file_;
-	int num_file_aa_types_;
 	ObjexxFCL::FArray1D_int file_node_2_instance_node_;
 	ObjexxFCL::FArray1D_int instance_node_2_file_node_;
 	ObjexxFCL::FArray1D< ObjexxFCL::FArray1D_int > aa_types_for_states_on_file_nodes_;

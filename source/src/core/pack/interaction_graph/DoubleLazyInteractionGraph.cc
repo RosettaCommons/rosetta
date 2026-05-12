@@ -62,8 +62,7 @@ DoubleLazyNode::DoubleLazyNode(
 	alternate_state_( 0 ),
 	alternate_state_one_body_energy_( 0 ),
 	alternate_state_total_energy_( 0 ),
-	alternate_state_is_being_considered_( false ),
-	procrastinated_( false )
+	alternate_state_is_being_considered_( false )
 {
 }
 

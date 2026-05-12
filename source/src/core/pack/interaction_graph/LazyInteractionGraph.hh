@@ -167,7 +167,6 @@ private:
 	std::vector< core::PackerEnergy > alternate_state_two_body_energies_;
 
 	bool alternate_state_is_being_considered_;
-	bool procrastinated_;
 
 public:
 	LazyNode() = delete;
@@ -418,7 +417,6 @@ protected:
 	}
 
 private:
-	int num_aa_types_;
 	int num_commits_since_last_update_;
 	core::PackerEnergy total_energy_current_state_assignment_;
 	core::PackerEnergy total_energy_alternate_state_assignment_;

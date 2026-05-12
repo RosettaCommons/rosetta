@@ -176,7 +176,6 @@ private:
 	std::vector< core::PackerEnergy > alternate_state_two_body_energies_;
 
 	bool alternate_state_is_being_considered_;
-	bool procrastinated_;
 
 public:
 	DoubleLazyNode() = delete;
