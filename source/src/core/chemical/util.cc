@@ -702,11 +702,13 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 	}
 
 
-	TR << "When filtering by coordinates, found " << chiral_filtered.size() << " equally valid types:" << std::endl << '\t';
-	for ( core::Size ii: chiral_filtered ) {
-		TR << rsd_type_list[ii]->name() << "   ";
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "When filtering by coordinates, found " << chiral_filtered.size() << " equally valid types:" << std::endl << '\t';
+		for ( core::Size ii: chiral_filtered ) {
+			TR.Debug << rsd_type_list[ii]->name() << "   ";
+		}
+		TR.Debug << std::endl << "Arbitrarily picking " << rsd_type_list[chiral_filtered[1]]->name() << std::endl;
 	}
-	TR << std::endl << "Arbitrarily picking " << rsd_type_list[chiral_filtered[1]]->name() << std::endl;
 
 	return rsd_type_list[chiral_filtered[1]];
 }
