@@ -74,8 +74,6 @@ CentroidDisulfideNeighborIterator::CentroidDisulfideNeighborIterator(
 	disulfide_index_( CentroidDisulfideEnergyContainer::NO_DISULFIDE )
 {}
 
-CentroidDisulfideNeighborIterator::~CentroidDisulfideNeighborIterator() = default;
-
 /// @brief Assignment
 ResidueNeighborIterator &
 CentroidDisulfideNeighborIterator::operator = ( ResidueNeighborIterator const & rhs)
@@ -218,8 +216,6 @@ CentroidDisulfideNeighborConstIterator::CentroidDisulfideNeighborConstIterator(
 	focused_residue_( CentroidDisulfideEnergyContainer::NO_DISULFIDE ),
 	disulfide_index_( CentroidDisulfideEnergyContainer::NO_DISULFIDE )
 {}
-
-CentroidDisulfideNeighborConstIterator::~CentroidDisulfideNeighborConstIterator() = default;
 
 ResidueNeighborConstIterator &
 CentroidDisulfideNeighborConstIterator::operator = ( ResidueNeighborConstIterator const & rhs )
