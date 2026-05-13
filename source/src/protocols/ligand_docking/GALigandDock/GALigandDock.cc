@@ -1670,7 +1670,7 @@ GALigandDock::calculate_free_ligand_score(
 
 	//core::pose::Pose pose_premin( *pose );
 	core::id::AtomID anchorid( 1, pose->fold_tree().root() );
-	for ( core::Size ires = 1; ires < pose->total_residue(); ++ires ) {
+	for ( core::Size ires = 1; ires <= pose->total_residue(); ++ires ) {
 		for ( core::Size iatm = 1; iatm <= pose->residue(ires).natoms(); ++iatm ) {
 			core::id::AtomID atomid( iatm, ires );
 			core::Vector const &xyz = pose->xyz( atomid );
