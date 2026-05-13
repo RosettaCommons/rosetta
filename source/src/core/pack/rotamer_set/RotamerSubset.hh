@@ -168,8 +168,7 @@ public:
 	show( std::ostream & out ) const override;
 
 private:
-	/// @brief (private) No copy-constructor
-	RotamerSubset( RotamerSubset const & );
+	RotamerSubset( RotamerSubset const & ) = delete;
 
 	/// @brief declare that a new block of residue types has begun, and that new residues
 	/// are about to be pushed back. NOT IMPLEMENTED.
