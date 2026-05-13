@@ -98,6 +98,19 @@ public: // Types
 public: // Creation
 
 
+	/// @brief Default constructor
+	inline
+	ClassKeyVector()
+	= default;
+
+
+	/// @brief Copy constructor
+	inline
+	ClassKeyVector( ClassKeyVector const & a ) :
+		v_( a.v_ )
+	{}
+
+
 	/// @brief Size constructor
 	inline
 	explicit
@@ -127,7 +140,24 @@ public: // Creation
 	{}
 
 
+	/// @brief Destructor
+	inline
+	~ClassKeyVector() {}
+
+
 public: // Assignment
+
+
+	/// @brief Copy assignment
+	inline
+	ClassKeyVector &
+	operator =( ClassKeyVector const & a )
+	{
+		if ( this != &a ) {
+			v_ = a.v_;
+		}
+		return *this;
+	}
 
 
 	/// @brief Uniform value assignment to current elements

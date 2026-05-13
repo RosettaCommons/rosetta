@@ -89,6 +89,12 @@ public: // Types
 public: // Creation
 
 
+	/// @brief Default constructor
+	inline
+	KeyVector()
+	= default;
+
+
 	/// @brief Size constructor
 	inline
 	explicit
@@ -118,7 +124,25 @@ public: // Creation
 	{}
 
 
+	/// @brief Destructor
+	inline
+	~KeyVector()
+	= default;
+
+
 public: // Assignment
+
+
+	/// @brief Copy assignment
+	inline
+	KeyVector &
+	operator =( KeyVector const & a )
+	{
+		if ( this != &a ) {
+			v_ = a.v_;
+		}
+		return *this;
+	}
 
 
 	/// @brief Uniform value assignment to elements

@@ -108,6 +108,19 @@ public: // Types
 public: // Creation
 
 
+	/// @brief Default constructor
+	inline
+	ClassKeyMap()
+	= default;
+
+
+	/// @brief Copy constructor
+	inline
+	ClassKeyMap( ClassKeyMap const & a ) :
+		v_( a.v_ )
+	{}
+
+
 	/// @brief Iterator range constructor
 	template< typename InputIterator >
 	inline
@@ -123,7 +136,24 @@ public: // Creation
 	}
 
 
+	/// @brief Destructor
+	inline
+	~ClassKeyMap() {}
+
+
 public: // Assignment
+
+
+	/// @brief Copy assignment
+	inline
+	ClassKeyMap &
+	operator =( ClassKeyMap const & a )
+	{
+		if ( this != &a ) {
+			v_ = a.v_;
+		}
+		return *this;
+	}
 
 
 	/// @brief Uniform value assignment to current elements
