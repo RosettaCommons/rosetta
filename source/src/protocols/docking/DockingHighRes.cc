@@ -206,6 +206,12 @@ core::pack::task::TaskFactoryCOP DockingHighRes::task_factory()
 	return tf_;
 }
 
+#ifdef PYROSETTA
+void
+DockingHighRes::set_partners( std::string const & partners ) {
+	set_partners( core::pose::DockingPartners::docking_partners_from_string(partners) );
+}
+#endif
 
 } // namespace docking
 } // namespace protocols

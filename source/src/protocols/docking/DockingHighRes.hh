@@ -108,6 +108,10 @@ public:
 	void set_sc_min( bool sc_min ){ sc_min_ = sc_min; }
 	void set_rt_min( bool rt_min ){ rt_min_ = rt_min; }
 	void set_partners( core::pose::DockingPartners const & partners ) { partners_ = partners; }
+#ifdef PYROSETTA
+	/// @brief Convienience function for PyRosetta -- prefer the DockingPartners version
+	void set_partners( std::string const & partners );
+#endif
 	core::pose::DockingPartners get_partners() const { return partners_; }
 	void set_interface_definition_task_operation( protocols::simple_task_operations::InterfaceTaskOperationOP interface_definition );
 	void set_additional_task_operarations( utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations );
