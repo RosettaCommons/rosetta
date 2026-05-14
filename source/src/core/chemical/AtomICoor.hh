@@ -261,8 +261,8 @@ public:
 	bool
 	depends_on_a_true_index( utility::vector1< bool > const &atomvect ) const {
 		core::Size a1 = stub_atom1_.atomno();
-		core::Size a2 = stub_atom1_.atomno();
-		core::Size a3 = stub_atom1_.atomno();
+		core::Size a2 = stub_atom2_.atomno();
+		core::Size a3 = stub_atom3_.atomno();
 		if ( a1 != 0 && a1 <= atomvect.size() && atomvect[a1] ) { return true; }
 		if ( a2 != 0 && a2 <= atomvect.size() && atomvect[a2] ) { return true; }
 		if ( a3 != 0 && a3 <= atomvect.size() && atomvect[a3] ) { return true; }
