@@ -399,4 +399,22 @@ public:
 		}
 	}
 
+	void test_DNA() {
+		// DNA has a number of virtualized patches (and conflicts with modified RNA types), so check that we're typing things correctly.
+		core::io::StructFileReaderOptions options;
+		std::string dna_file = utility::file_contents( "core/io/pose_from_sfr/DNA.pdb" );
+		core::io::StructFileRep sfr = core::io::pdb::create_sfr_from_pdb_file_contents( dna_file, options );
+		chemical::ResidueTypeSetCOP residue_set
+			( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
+		PoseFromSFRBuilder pb( residue_set, options );
+		pose::Pose pose;
+		pb.build_pose( sfr, pose );
+
+		TS_ASSERT_EQUALS(pose.size(),5);
+		TS_ASSERT_EQUALS(pose.residue_type(1).name(),"ADE:LowerDNA:VirtualDNAPhosphate");
+		TS_ASSERT_EQUALS(pose.residue_type(2).name(),"THY");
+		TS_ASSERT_EQUALS(pose.residue_type(3).name(),"THY:UpperDNA");
+		TS_ASSERT_EQUALS(pose.residue_type(4).name(),"THY:LowerDNA:VirtualDNAPhosphate");
+		TS_ASSERT_EQUALS(pose.residue_type(5).name(),"CYT:UpperDNA");
+	}
 };
