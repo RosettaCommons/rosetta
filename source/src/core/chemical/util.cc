@@ -45,6 +45,7 @@
 
 #include <core/chemical/MutableICoorRecord.hh> // AUTO IWYU For MutableICoorRecord
 
+#include <numeric>
 
 namespace core {
 namespace chemical {
@@ -526,6 +527,36 @@ get_terminal_varianttypes() {
 	return terminal_types;
 }
 
+///@brief A utility function for  find_best_match()
+/// Entries are a vector of indices into values. Will collect all entries which match the lowest entry in values, and return the filtered entries vector.
+/// (Not the lowest of all values, just the lowest of the provided entries)
+/// designation and rsd_type_list are just for reporting purposes.
+utility::vector1<core::Size>
+filter_by_lowest(utility::vector1<core::Size> const & entries, utility::vector1<core::Size> const & values, std::string const & designation, ResidueTypeCOPs const & rsd_type_list ) {
+	core::Size lowest_value = 9999999; // Hopefully will be bigger than any value in values
+	for ( core::Size ii: entries ) {
+		if ( values[ii] < lowest_value ) {
+			lowest_value = values[ii];
+		}
+	}
+	utility::vector1<core::Size> filtered;
+	for ( core::Size ii: entries ) {
+		if ( values[ii] == lowest_value ) {
+			filtered.push_back(ii);
+		}
+	}
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "After filtering on " << designation << " ( " << lowest_value << " ) found: ";
+		for ( core::Size ii: filtered ) {
+			TR.Debug << rsd_type_list[ii]->name() << "   ";
+		}
+		TR.Debug << std::endl;
+	}
+
+	return filtered;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 ///
@@ -538,15 +569,17 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 	if ( rsd_type_list.empty() ) { return nullptr; }
 
 	utility::vector1<core::Size> missing_atoms; // Number of entries in coords which aren't in RT
-	utility::vector1<core::Size> extra_real; // Number of non-virtual atoms in RT that aren't in coords
-	utility::vector1<core::Size> extra_virt; // Number of virt atoms in RF that aren't in coords
+	utility::vector1<core::Size> extra_real_heavy; // Number of non-virtual heavy atoms in RT that aren't in coords
+	utility::vector1<core::Size> extra_real_hydrogens; // Number of non-virtual hydrogen atoms in RT that aren't in coords
+	utility::vector1<core::Size> extra_virt_heavy; // Number of virt heavy atoms in RF that aren't in coords
+	utility::vector1<core::Size> extra_virt_hydrogens; // Number of virt hydrogen atoms in RF that aren't in coords
 
 	std::set< std::string > stripped_cn;
 	for ( auto const & pair: coords ) {
 		stripped_cn.insert( ObjexxFCL::stripped_whitespace(pair.first) );
 	}
 
-	// Tally the number of missing atoms for each type
+	// Tally the number of missing atoms for each type (If they're not in the ResidueType, we really can't tell if they're virtual/hydrogen or not.)
 	for ( ResidueTypeCOP const & rsd_type: rsd_type_list ) {
 		debug_assert( rsd_type != nullptr );
 		core::Size n_missing_atoms = 0;
@@ -556,88 +589,71 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 				n_missing_atoms += 1;
 			}
 		}
-		core::Size n_extra_real = 0, n_extra_virt = 0;
+		core::Size n_extra_real_heavy = 0, n_extra_virt_heavy = 0, n_extra_real_hydrogen = 0, n_extra_virt_hydrogen = 0;
 		for ( core::Size aa(1); aa <= rsd_type->natoms(); ++aa ) {
 			std::string const & stripped_name = ObjexxFCL::stripped_whitespace(rsd_type->atom_name(aa));
 			if ( ignore_atom_named_H && stripped_name == "H" ) { continue; }
 			if ( stripped_cn.count(stripped_name) == 0 ) {
 				if ( rsd_type->is_virtual(aa) ) {
-					n_extra_virt += 1;
+					if ( rsd_type->atom_is_hydrogen(aa) ) {
+						n_extra_virt_hydrogen += 1;
+					} else {
+						n_extra_virt_heavy += 1;
+					}
 				} else {
-					n_extra_real += 1;
+					if ( rsd_type->atom_is_hydrogen(aa) ) {
+						n_extra_real_hydrogen += 1;
+					} else {
+						n_extra_real_heavy += 1;
+					}
 				}
 			}
 		}
-		TR.Trace << "Restype " << rsd_type->name() << " is missing " << n_missing_atoms << " atoms from the input, and has " << n_extra_real << " extra real and " << n_extra_virt << " extra virtual atoms." << std::endl;
+		TR.Trace << "Restype " << rsd_type->name() << " is missing " << n_missing_atoms << " atoms from the input, and has " << n_extra_real_heavy << " extra heavy atoms, " << n_extra_real_hydrogen << " extra hydrogens, " << n_extra_virt_heavy << " extra virtual heavy atoms, and " << n_extra_virt_hydrogen << " extra virtual hydrogens." << std::endl;
 		missing_atoms.push_back( n_missing_atoms );
-		extra_real.push_back( n_extra_real );
-		extra_virt.push_back( n_extra_virt );
+		extra_real_heavy.push_back( n_extra_real_heavy );
+		extra_virt_heavy.push_back( n_extra_virt_heavy );
+		extra_real_hydrogens.push_back( n_extra_real_hydrogen );
+		extra_virt_hydrogens.push_back( n_extra_virt_hydrogen );
 	}
 	debug_assert( missing_atoms.size() == rsd_type_list.size() );
-	debug_assert( extra_real.size() == rsd_type_list.size() );
-	debug_assert( extra_virt.size() == rsd_type_list.size() );
+	debug_assert( extra_real_heavy.size() == rsd_type_list.size() );
+	debug_assert( extra_virt_heavy.size() == rsd_type_list.size() );
+	debug_assert( extra_real_hydrogens.size() == rsd_type_list.size() );
+	debug_assert( extra_virt_hydrogens.size() == rsd_type_list.size() );
+
+	utility::vector1<core::Size> all( rsd_type_list.size() );
+	std::iota(all.begin(),all.end(),1); // fill vector with consecutive integers
 
 	// First attempt to filter by number of atoms in the input which aren't represented by the residue type.
-	core::Size least_missing = *(std::min_element( missing_atoms.begin(), missing_atoms.end() ));
-	utility::vector1<core::Size> missing_filtered;
-	core::Size least_real = 99999; // least of the missing_filtered subset
-	for ( core::Size ii(1); ii <= rsd_type_list.size(); ++ii ) {
-		if ( missing_atoms[ii] == least_missing ) {
-			missing_filtered.push_back(ii);
-			if ( extra_real[ii] < least_real ) {
-				least_real = extra_real[ii];
-			}
-		}
-	}
+	utility::vector1<core::Size> missing_filtered = filter_by_lowest( all, missing_atoms, "atoms missing from residue type", rsd_type_list);
 	if ( missing_filtered.size() == 1 ) {
 		return rsd_type_list[missing_filtered[1]];
 	}
-	if ( TR.Debug.visible() ) {
-		TR.Debug << "After filtering for coordinates missing from the residue type (" << least_missing << " missing) found restypes: ";
-		for ( core::Size ii: missing_filtered ) {
-			TR.Debug << rsd_type_list[ii]->name() << "   ";
-		}
-		TR.Debug << std::endl;
+
+	// If ties, then look for the number of extra real heavy atoms
+	utility::vector1<core::Size> real_heavy_filtered = filter_by_lowest( missing_filtered, extra_real_heavy, "unrepresented heavy atoms", rsd_type_list);
+	if ( real_heavy_filtered.size() == 1 ) {
+		return rsd_type_list[real_heavy_filtered[1]];
 	}
 
-	// If ties, then look for the number of extra real atoms
-	utility::vector1<core::Size> real_filtered;
-	core::Size least_virt = 99999; // least of the real_filtered
-	for ( core::Size ii: missing_filtered ) {
-		if ( extra_real[ii] == least_real ) {
-			real_filtered.push_back(ii);
-			if ( extra_virt[ii] < least_virt ) {
-				least_virt = extra_virt[ii];
-			}
-		}
-	}
-	if ( real_filtered.size() == 1 ) {
-		return rsd_type_list[real_filtered[1]];
-	}
-	if ( TR.Debug.visible() ) {
-		TR.Debug << "After filtering by number of unrepresented non-virtual atoms in ResidueType (" << least_real << " extra) found: ";
-		for ( core::Size ii: real_filtered ) {
-			TR.Debug << rsd_type_list[ii]->name() << "   ";
-		}
-		TR.Debug << std::endl;
+	// If still tied, minimize the number of unrepresented virtual heavy atoms
+	// As specialist patches sometimes replace hydrogens (which might be missing from the input) with virtual heavyatoms
+	utility::vector1<core::Size> virtual_heavy_filtered = filter_by_lowest( real_heavy_filtered, extra_virt_heavy, "unrepresented virtual heavy atoms", rsd_type_list);
+	if ( virtual_heavy_filtered.size() == 1 ) {
+		return rsd_type_list[virtual_heavy_filtered[1]];
 	}
 
-	// If still tied, minimize the number of unrepresented virtuals
-	utility::vector1<core::Size> virt_filtered;
-	for ( core::Size ii: real_filtered ) {
-		if ( extra_virt[ii] == least_virt ) {
-			virt_filtered.push_back(ii);
-		}
+	// If ties, then look for the number of extra real hydrogen atoms
+	utility::vector1<core::Size> real_hydro_filtered = filter_by_lowest( virtual_heavy_filtered, extra_real_hydrogens, "unrepresented hydrogen atoms", rsd_type_list);
+	if ( real_hydro_filtered.size() == 1 ) {
+		return rsd_type_list[real_hydro_filtered[1]];
 	}
-	if ( virt_filtered.size() == 1 ) {
-		return rsd_type_list[virt_filtered[1]];
-	}
-	if ( TR.Debug.visible() ) {
-		TR.Debug << "After filtering by number of unrepresented virtual atoms (" << least_virt << " virts) found ";
-		for ( core::Size ii: virt_filtered ) {
-			TR.Debug << rsd_type_list[ii]->name() << "   ";
-		}
-		TR.Debug << std::endl;
+
+	// If still tied, minimize the number of unrepresented virtual heavy atoms
+	utility::vector1<core::Size> virtual_hydro_filtered = filter_by_lowest( virtual_heavy_filtered, extra_virt_hydrogens, "unrepresented virtual hydrogen atoms", rsd_type_list);
+	if ( virtual_hydro_filtered.size() == 1 ) {
+		return rsd_type_list[virtual_hydro_filtered[1]];
 	}
 
 	// If we reach here, we have multiple residues which are equivalent from the atom naming perspective
@@ -647,7 +663,7 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 		stripped_coords[ ObjexxFCL::stripped_whitespace(pair.first) ] = pair.second;
 	}
 	utility::vector1<core::Size> chiral_mismatches; // Same size/index as virt_filtered
-	for ( core::Size ii: virt_filtered ) {
+	for ( core::Size ii: virtual_hydro_filtered ) {
 		ResidueType const & restype = *rsd_type_list[ii];
 		core::Size n_chiral_mismatch = 0;
 		for ( core::Size aa(1); aa <= restype.natoms(); ++aa ) {
@@ -692,9 +708,9 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 	}
 	core::Size least_chiral = *(std::min_element( chiral_mismatches.begin(), chiral_mismatches.end() ));
 	utility::vector1<core::Size> chiral_filtered;
-	for ( core::Size jj(1); jj <= chiral_mismatches.size(); ++jj ) { // chiral_mismatches is the same length as virt_filtered
+	for ( core::Size jj(1); jj <= chiral_mismatches.size(); ++jj ) { // chiral_mismatches is the same length as virtual_hydro_filtered
 		if ( chiral_mismatches[jj] == least_chiral ) {
-			chiral_filtered.push_back( virt_filtered[jj] );
+			chiral_filtered.push_back( virtual_hydro_filtered[jj] );
 		}
 	}
 	if ( chiral_filtered.size() == 1 ) {
