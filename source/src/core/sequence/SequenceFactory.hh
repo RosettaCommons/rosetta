@@ -36,9 +36,6 @@ public:
 private:
 	SequenceFactory();
 
-	SequenceFactory(SequenceFactory const &); // unimplemented
-	SequenceFactory const & operator=( SequenceFactory const & ); // unimplemented
-
 public:
 	void factory_register( SequenceCreatorCOP creator );
 	SequenceOP get_sequence( std::string const & type_name );

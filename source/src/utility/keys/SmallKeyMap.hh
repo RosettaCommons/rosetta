@@ -130,7 +130,7 @@ public: // Creation
 		v_( beg, end ),
 		u_( 0 )
 	{
-		for ( Index i = 1, e = v_.size(); i != e; ++i ) {
+		for ( Index i = 1, e = v_.size(); i <= e; ++i ) {
 			add_key( v_[ i ].first );
 		}
 	}
@@ -208,7 +208,7 @@ public: // Assignment
 	{
 		clear();
 		v_.assign( beg, end );
-		for ( Index i = 1, e = v_.size(); i != e; ++i ) {
+		for ( Index i = 1, e = v_.size(); i <= e; ++i ) {
 			add_key( v_[ i ].first );
 		}
 	}
