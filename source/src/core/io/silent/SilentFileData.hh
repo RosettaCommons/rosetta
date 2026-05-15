@@ -450,8 +450,6 @@ public:
 			it_( s_iter)
 		{}
 
-		~iterator() {}
-
 		bool operator==( const iterator& other ) const {
 			return ( it_ == other.it_ );
 		}
@@ -504,8 +502,6 @@ public:
 		const_iterator( Structure_Map::const_iterator s_iter ) :
 			it_( s_iter )
 		{}
-
-		~const_iterator() {}
 
 		bool operator==( const const_iterator& other ) {
 			return ( it_ == other.it_ );

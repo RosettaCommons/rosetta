@@ -54,7 +54,7 @@ public:
 
 	RealVectorValuedParameter( RealVectorValuedParameter const & src );
 
-	~RealVectorValuedParameter() override;
+	~RealVectorValuedParameter() override = default;
 
 	/// @brief Make a copy of this object ( allocate actual memory for it )
 	///

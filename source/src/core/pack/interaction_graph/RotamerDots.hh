@@ -65,7 +65,7 @@ class DotSphere {
 
 public:
 	DotSphere();
-	~DotSphere();
+	~DotSphere() = default;
 	DotSphere( DotSphere const & rhs );
 	DotSphere & operator= ( DotSphere const & rhs );
 	bool operator!= ( DotSphere const & rhs );
@@ -139,7 +139,7 @@ class RotamerDots : public utility::VirtualBase {
 public:
 	RotamerDots();
 	RotamerDots( conformation::ResidueCOP rotamer, bool exclude_hydrogen_atoms = false, bool use_expanded_polar_atom_radii = false );
-	~RotamerDots() override;
+	~RotamerDots() override = default;
 	RotamerDots( RotamerDots const & rhs );
 
 	void copy(RotamerDots const & rhs);
@@ -334,7 +334,7 @@ public:
 	RotamerDotsCache( core::Size num_atoms );
 	RotamerDotsCache( RotamerDotsCache const & rhs );
 	RotamerDotsCache & operator= ( RotamerDotsCache const & rhs );
-	~RotamerDotsCache();
+	~RotamerDotsCache() = default;
 
 	void resize( core::Size num_atoms );
 	void zero();
@@ -362,7 +362,7 @@ class InvRotamerDots : public utility::VirtualBase {
 public:
 	InvRotamerDots();
 	InvRotamerDots( InvRotamerDots const & src );
-	~InvRotamerDots() override;
+	~InvRotamerDots() override = default;
 
 	InvRotamerDots & operator = ( InvRotamerDots const & rhs );
 

@@ -70,7 +70,7 @@ public:
 	);
 
 	AqueousPoreParameters(AqueousPoreParameters const & src);
-	~AqueousPoreParameters() override;
+	~AqueousPoreParameters() override = default;
 
 	AqueousPoreParametersOP
 	clone() const;

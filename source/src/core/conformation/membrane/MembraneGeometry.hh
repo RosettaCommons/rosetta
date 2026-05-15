@@ -81,7 +81,7 @@ public: // Constructors & Setup
 	);
 
 	/// @brief Destructor
-	~MembraneGeometry() override;
+	~MembraneGeometry() override = default;
 
 	virtual MembraneGeometryOP
 	clone() const = 0;

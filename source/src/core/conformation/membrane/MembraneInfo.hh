@@ -146,7 +146,7 @@ public: // Constructors & Setup
 	operator=( MembraneInfo const & src );
 
 	/// @brief Destructor
-	~MembraneInfo() override;
+	~MembraneInfo() override = default;
 
 	/// @brief Generate a string representation of information represented by this MembraneInfo and send it to std::cout
 	virtual void show() const;

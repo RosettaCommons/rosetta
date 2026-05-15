@@ -63,7 +63,7 @@ public: // Constructors & Setup
 	Vesicle( core::Real steepness, core::Real thickness, core::Real radius, AqueousPoreParametersOP aqueous_pore );
 
 	/// @brief Destructor
-	~Vesicle() override;
+	~Vesicle() override = default;
 
 	MembraneGeometryOP
 	clone() const override;

@@ -54,7 +54,7 @@ public:
 
 	SizeVectorValuedParameter( SizeVectorValuedParameter const & src );
 
-	~SizeVectorValuedParameter() override;
+	~SizeVectorValuedParameter() override = default;
 
 	/// @brief Make a copy of this object ( allocate actual memory for it )
 	///

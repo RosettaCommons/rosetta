@@ -53,7 +53,7 @@ public:
 	SAXSEnergy(const std::string &,const utility::vector1<Real> &,const utility::vector1<Real> &,
 		core::scoring::ScoreType, core::scoring::methods::EnergyMethodCreatorOP);
 
-	~SAXSEnergy() override {}
+	~SAXSEnergy() override = default;
 
 	core::scoring::methods::EnergyMethodOP clone() const override {
 

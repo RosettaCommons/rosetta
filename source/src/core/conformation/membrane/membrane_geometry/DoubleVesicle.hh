@@ -65,7 +65,7 @@ public: // Constructors & Setup
 	DoubleVesicle( core::Real steepness, core::Real thickness, core::Real inner_radius, core::Real distance, AqueousPoreParametersOP aqueous_pore);
 
 	/// @brief Destructor
-	~DoubleVesicle() override;
+	~DoubleVesicle() override = default;
 
 	MembraneGeometryOP
 	clone() const override;

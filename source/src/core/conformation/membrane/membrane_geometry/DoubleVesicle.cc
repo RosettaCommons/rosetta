@@ -105,9 +105,6 @@ DoubleVesicle::DoubleVesicle(
 }
 
 
-/// @brief Destructor
-DoubleVesicle::~DoubleVesicle() {}
-
 MembraneGeometryOP DoubleVesicle::clone() const {
 	return DoubleVesicleOP( new DoubleVesicle( *this ) );
 }

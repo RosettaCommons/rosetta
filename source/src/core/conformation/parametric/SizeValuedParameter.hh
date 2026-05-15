@@ -53,7 +53,7 @@ public:
 
 	SizeValuedParameter( SizeValuedParameter const & src );
 
-	~SizeValuedParameter() override;
+	~SizeValuedParameter() override = default;
 
 	/// @brief Make a copy of this object ( allocate actual memory for it )
 	///

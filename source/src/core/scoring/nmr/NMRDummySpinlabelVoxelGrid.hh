@@ -56,7 +56,7 @@ public: // Methods
 	);
 
 	/// @brief Destructor
-	~VoxelGridPoint() override;
+	~VoxelGridPoint() override = default;
 
 	/// @brief Type name of this voxel grid point
 	virtual std::string type() const;
@@ -101,7 +101,7 @@ public: // Methods
 	);
 
 	/// @brief Destructor
-	~NMRDummySpinlabelAtom() override;
+	~NMRDummySpinlabelAtom() override = default;
 
 	/// @brief Type name of this voxel grid point
 	std::string type() const override;
@@ -136,7 +136,7 @@ public: // Methods
 	);
 
 	/// @brief Destructor
-	~VoxelGridPoint_AA() override;
+	~VoxelGridPoint_AA() override = default;
 
 	/// @brief Type name of this voxel grid point
 	std::string type() const override;
@@ -169,7 +169,7 @@ public: // Methods
 	);
 
 	/// @brief Destructor
-	~NMRDummySpinlabelVoxelGrid() override;
+	~NMRDummySpinlabelVoxelGrid() override = default;
 
 	/// @brief Extract the 3D coordinate of a given object of type VoxelGridPoint.
 	Vector const *
