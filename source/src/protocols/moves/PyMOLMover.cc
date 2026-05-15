@@ -548,7 +548,7 @@ void PyMOLMover::send_membrane_planes( Pose const & pose ) {
 	// Compute radius of gyration of the pose
 	utility::vector1< bool > relevant_residues;
 	relevant_residues.resize( pose.size() );
-	for ( core::Size i = 1; i < relevant_residues.size(); ++i ) {
+	for ( core::Size i = 1; i <= relevant_residues.size(); ++i ) {
 		relevant_residues[i] = true;
 	}
 
