@@ -90,7 +90,7 @@ core::Size
 CutOutDomain::find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size const chain/*=0*/ ){
 	core::Real min_dist( 100000 ); core::Size nearest_res( 0 );
 	core::Size i;
-	for ( i = 1; i < target.size(); ++i ) {
+	for ( i = 1; i <= target.size(); ++i ) {
 		if ( target.residue( i ).is_ligand() ) continue;
 		if ( chain && target.residue( i ).chain() != chain ) continue;
 		// TR<<"the residue examnied is:"<<i<<target.residue(i).name1()<<std::endl;

@@ -66,7 +66,7 @@ public:
 
 	inline void clear() override
 	{
-		for ( core::Size i=1; i<storage_.size(); ++i ) {
+		for ( core::Size i=1; i<=storage_.size(); ++i ) {
 			storage_[i].clear();
 		}
 	}

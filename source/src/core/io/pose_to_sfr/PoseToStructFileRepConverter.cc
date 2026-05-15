@@ -1514,7 +1514,7 @@ PoseToStructFileRepConverter::generate_secondary_structure_informations( core::p
 	core::Size new_tercount( 0 ); //we have to track this for ResidueInformation
 
 	//Now we are going to iterate through the pose, identifying secondary structure elements
-	for ( Size ires=1; ires<pose.size(); ++ires ) {
+	for ( Size ires=1; ires<=pose.size(); ++ires ) {
 		char secstruct = secstructs[ires-1]; //H, E, or L; note indexing fix
 		Size chain = pose.residue(ires).chain();
 		Size jres = ires;
