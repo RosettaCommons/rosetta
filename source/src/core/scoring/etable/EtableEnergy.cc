@@ -356,8 +356,6 @@ EtableEvaluator::EtableEvaluator( Etable const & etable ) :
 	hydrogen_interaction_cutoff2_( etable.hydrogen_interaction_cutoff2() )
 {}
 
-EtableEvaluator::~EtableEvaluator() = default;
-
 TableLookupEvaluator::TableLookupEvaluator(
 	Etable const & etable_in
 ) :
@@ -373,8 +371,6 @@ TableLookupEvaluator::TableLookupEvaluator(
 	etable_bins_per_A2_( etable_in.get_bins_per_A2() )
 	//dis2_step_( 1.0 / (Real) etable_bins_per_A2_ )
 {}
-
-TableLookupEvaluator::~TableLookupEvaluator() = default;
 
 EtableEvaluatorOP
 TableLookupEvaluator::clone() const {
@@ -475,8 +471,6 @@ AnalyticEtableEvaluator::AnalyticEtableEvaluator( Etable const & etable ) :
 	etable_( etable ),
 	safe_max_dis2_( etable.get_safe_max_dis2() )
 {}
-
-AnalyticEtableEvaluator::~AnalyticEtableEvaluator() = default;
 
 EtableEvaluatorOP
 AnalyticEtableEvaluator::clone() const {

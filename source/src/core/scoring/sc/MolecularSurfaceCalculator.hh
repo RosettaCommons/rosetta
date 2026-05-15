@@ -158,7 +158,6 @@ public:
 
 public:
 	Atom();
-	~Atom();
 
 	int operator ==(Atom const &atom2) {
 		// <EVIL>

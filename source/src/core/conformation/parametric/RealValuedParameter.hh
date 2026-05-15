@@ -65,8 +65,6 @@ public:
 
 	RealValuedParameter( RealValuedParameter const & src );
 
-	~RealValuedParameter() override;
-
 	/// @brief Make a copy of this object ( allocate actual memory for it )
 	///
 	ParameterOP clone() const override;

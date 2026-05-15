@@ -86,8 +86,6 @@ RealValuedParameter::RealValuedParameter( RealValuedParameter const & src ) :
 {
 }
 
-RealValuedParameter::~RealValuedParameter() {}
-
 
 /// @brief Make a copy of this object ( allocate actual memory for it )
 ///

@@ -53,8 +53,6 @@ public:
 	SAXSEnergy(const std::string &,const utility::vector1<Real> &,const utility::vector1<Real> &,
 		core::scoring::ScoreType, core::scoring::methods::EnergyMethodCreatorOP);
 
-	~SAXSEnergy() override {}
-
 	core::scoring::methods::EnergyMethodOP clone() const override {
 
 		if ( saxs_score_variant_ == core::scoring::saxs_fa_score ) {

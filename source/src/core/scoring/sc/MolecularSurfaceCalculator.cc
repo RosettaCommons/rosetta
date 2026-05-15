@@ -1320,8 +1320,6 @@ Atom::Atom() : numeric::xyzVector < MolecularSurfaceCalculator::ScValue > (0.0)
 	memset(residue, 0, sizeof(residue));
 }
 
-Atom::~Atom() = default;
-
 // The End
 ////////////////////////////////////////////////////////////////////////////
 
