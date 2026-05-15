@@ -61,28 +61,7 @@ struct GeneralEvent {
 	{}
 
 
-	/// @brief copy constructor
-	inline
-	GeneralEvent( GeneralEvent const & rval ) :
-		pose( rval.pose )
-	{}
-
-
-	/// @brief default destructor
-	inline
-	virtual
-	~GeneralEvent() {}
-
-
-	/// @brief copy assignment
-	inline
-	GeneralEvent &
-	operator =( GeneralEvent const & rval ) {
-		if ( this != &rval ) {
-			pose = rval.pose;
-		}
-		return *this;
-	}
+	virtual ~GeneralEvent() = default;
 
 
 	/// @brief the Pose firing the signal

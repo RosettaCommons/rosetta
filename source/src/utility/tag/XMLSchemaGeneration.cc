@@ -2051,7 +2051,7 @@ XMLSchemaParticleOP XMLSchemaComplexTypeGeneratorImpl::create_subelement(
 }
 
 XMLSchemaComplexTypeGenerator::XMLSchemaComplexTypeGenerator() : pimpl_( new XMLSchemaComplexTypeGeneratorImpl ) {}
-XMLSchemaComplexTypeGenerator::~XMLSchemaComplexTypeGenerator() { delete pimpl_; }
+XMLSchemaComplexTypeGenerator::~XMLSchemaComplexTypeGenerator() = default;
 //XMLSchemaComplexTypeGenerator::XMLSchemaComplexTypeGenerator( XMLSchemaComplexTypeGenerator const & src ) :
 // pimpl_( new XMLSchemaComplexTypeGeneratorImpl( *src.pimpl_ ))
 //{

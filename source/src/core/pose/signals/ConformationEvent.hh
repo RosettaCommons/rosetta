@@ -57,29 +57,6 @@ struct ConformationEvent : public GeneralEvent {
 	{}
 
 
-	/// @brief copy constructor
-	inline
-	ConformationEvent( ConformationEvent const & rval ) :
-		Super( rval )
-	{}
-
-
-	/// @brief default destructor
-	inline
-	~ConformationEvent() override {}
-
-
-	/// @brief copy assignment
-	inline
-	ConformationEvent &
-	operator =( ConformationEvent const & rval ) {
-		if ( this != &rval ) {
-			Super::operator =( rval );
-		}
-		return *this;
-	}
-
-
 };
 
 

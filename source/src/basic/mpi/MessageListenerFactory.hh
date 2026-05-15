@@ -37,8 +37,6 @@ public:
 private:
 
 	MessageListenerFactory();
-	MessageListenerFactory(MessageListenerFactory const &);
-	MessageListenerFactory const & operator = (MessageListenerFactory const &);
 
 private:
 
