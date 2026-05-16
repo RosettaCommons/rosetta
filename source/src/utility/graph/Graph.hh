@@ -366,12 +366,10 @@ public:
 	/// O(N)
 	platform::Size size() const;
 
-private:
+	EdgeList( EdgeList const & ) = delete;
+	EdgeList & operator =( EdgeList const & ) = delete;
 
-	/// @brief Uncopyable -- private and unimplemented copy ctor
-	EdgeList( EdgeList const & );
-	/// @brief Uncopyable -- private and unimplemented assignment operator
-	EdgeList const & operator = ( EdgeList const & );
+private:
 
 	/// @brief this edge-list-element-pool reference is handed to the list
 	/// to draw from.  This pool must outlive the edge-list itself.
@@ -522,10 +520,9 @@ private:
 	EdgeListIter first_upper_edge_;
 	Graph* owner_;
 
-	//no default constructor, uncopyable
-	Node();
-	Node( Node const & );
-	Node & operator = ( Node & );
+	Node() = delete;
+	Node( Node const & ) = delete;
+	Node & operator =( Node const & ) = delete;
 };
 
 class Edge
@@ -634,10 +631,9 @@ private:
 	EdgeListIter pos_in_owners_edge_list_;
 	Graph* owner_;
 
-	//no default constructor, uncopyable
-	Edge();
-	Edge( Edge const & );
-	Edge & operator = ( Edge & );
+	Edge() = delete;
+	Edge( Edge const & ) = delete;
+	Edge & operator =( Edge const & ) = delete;
 
 };
 

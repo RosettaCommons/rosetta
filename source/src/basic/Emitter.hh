@@ -72,6 +72,9 @@ public:
 
 	~Emitter() override {}
 
+	Emitter( Emitter const & ) = delete;
+	Emitter & operator=( Emitter const & ) = delete;
+
 	/// @brief Flush the underlying output stream.
 	void flush() { out_.flush(); }
 
@@ -122,9 +125,6 @@ public:
 	virtual void start_doc() = 0;
 
 protected:
-
-	Emitter(); // no null ctor
-	Emitter(Emitter const &); // no copy ctor
 
 	/// @brief Check that we're in the expected context (either map or list)
 	bool assert_in(bool in_map, std::string const & msg)
@@ -224,14 +224,12 @@ public:
 
 	~YamlEmitter() override {}
 
+	YamlEmitter( YamlEmitter const & ) = delete;
+	YamlEmitter & operator=( YamlEmitter const & ) = delete;
+
 	/// @brief Start a new YAML document, ending the previous one first if necessary
 	void start_doc() override
 	{ end(); out_ << "\n---\n"; start_raw(true, true); }
-
-private:
-
-	YamlEmitter(); // no null ctor
-	YamlEmitter(YamlEmitter const &); // no copy ctor
 
 protected:
 
@@ -342,15 +340,13 @@ public:
 
 	~JsonEmitter() override {}
 
+	JsonEmitter( JsonEmitter const & ) = delete;
+	JsonEmitter & operator=( JsonEmitter const & ) = delete;
+
 	/// @brief JSON doesn't support multiple documents, so this just calls end(1)
 	/// to return you to the top (least-nested) level.
 	void start_doc() override
 	{ end(1); }
-
-private:
-
-	JsonEmitter(); // no null ctor
-	JsonEmitter(JsonEmitter const &); // no copy ctor
 
 protected:
 
