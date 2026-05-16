@@ -398,6 +398,45 @@ class TestPoseCacheAccessor(unittest.TestCase):
     def tearDownClass(cls):
         cls.workdir.cleanup()
 
+    @staticmethod
+    def maybe_get_pose_state(obj):
+        if isinstance(obj, pyrosetta.Pose):
+            state = []
+            for res in range(1, obj.size() + 1):
+                residue = obj.residue(res)
+                state.append(res)
+                state.append(residue.name())
+                for atom in range(1, residue.natoms() + 1):
+                    state.append(atom)
+                    state.append(residue.atom_name(atom))
+                    xyz = residue.atom(atom).xyz()
+                    for axis in "xyz":
+                        state.append(getattr(xyz, axis))
+            return state
+        else:
+            return obj
+
+    def assert_items_equal(self, a, b):
+        self.assertEqual(len(a), len(b), msg="Objects have different size.")
+        self.assertEqual(type(a), type(b), msg="Object types differ.")
+        for k in a:
+            self.assertIn(k, b)
+            self.assertEqual(
+                TestPoseCacheAccessor.maybe_get_pose_state(a[k]),
+                TestPoseCacheAccessor.maybe_get_pose_state(b[k]),
+                msg="Objects are not equal.",
+            )
+
+    def assert_values_equal(self, a, b):
+        self.assertEqual(len(a), len(b), msg="Objects have different size.")
+        self.assertEqual(type(a), type(b), msg="Object types differ.")
+        for i in range(len(a)):
+            self.assertEqual(
+                TestPoseCacheAccessor.maybe_get_pose_state(a[i]),
+                TestPoseCacheAccessor.maybe_get_pose_state(b[i]),
+                msg="Objects are not equal.",
+            )
+
     def test_pose_cache(self):
         self.assertEqual(self.pose.cache, {})
 
@@ -675,7 +714,7 @@ class TestPoseCacheAccessor(unittest.TestCase):
 
         self.assertDictEqual(dict(self.pose.cache.metrics.per_residue_string), {})
 
-        # Test clearing scores
+        # Test all scores
         self.scorefxn(self.pose)
         ref_scores = dict(self.pose.cache.all_scores)
         self.assertDictEqual(dict(ref_scores["metrics"]["real"]), dict(self.pose.cache.metrics.real))
@@ -690,6 +729,32 @@ class TestPoseCacheAccessor(unittest.TestCase):
         self.assertDictEqual(dict(ref_scores["energies"]), dict(self.pose.cache.energies))
         ref_keys = list(self.pose.cache.all_keys)
         self.pose.cache.assert_unique_keys()
+
+        # Test `Pose.cache.all_scores` parity after refactor to fast accessor path
+        all_scores_old = types.MappingProxyType(
+            {
+                "extra": types.MappingProxyType(
+                    {
+                        "string": types.MappingProxyType(dict(self.pose.cache.extra.string)), # Slow path
+                        "real": types.MappingProxyType(dict(self.pose.cache.extra.real)), # Slow path
+                    }
+                ),
+                "metrics": types.MappingProxyType(
+                        {
+                        "string": types.MappingProxyType(dict(self.pose.cache.metrics.string)), # Slow path
+                        "real": types.MappingProxyType(dict(self.pose.cache.metrics.real)), # Slow path
+                        "composite_string": types.MappingProxyType(dict(self.pose.cache.metrics.composite_string)), # Slow path
+                        "composite_real": types.MappingProxyType(dict(self.pose.cache.metrics.composite_real)), # Slow path
+                        "per_residue_string": types.MappingProxyType(dict(self.pose.cache.metrics.per_residue_string)), # Slow path
+                        "per_residue_real": types.MappingProxyType(dict(self.pose.cache.metrics.per_residue_real)), # Slow path
+                        "per_residue_probabilities": types.MappingProxyType(dict(self.pose.cache.metrics.per_residue_probabilities)), # Slow path
+                    }
+                ),
+                "energies": types.MappingProxyType(dict(self.pose.cache.energies)), # Slow path
+            }
+        )
+        all_scores_new = self.pose.cache.all_scores
+        self.assertEqual(all_scores_old, all_scores_new)
 
         # Test SimpleMetric data that is immutable
         with self.assertRaises(KeyError):
@@ -736,6 +801,35 @@ class TestPoseCacheAccessor(unittest.TestCase):
             self.pose.cache.extra.real["dict"] = dict(a=1, b=2)
         self.assertIn("dict", self.pose.cache.extra.string.keys())
 
+        # Test parity between fast and slow accessor paths
+        self.assert_items_equal(dict(self.pose.cache.items()), dict(self.pose.cache.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.values()), list(self.pose.cache.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.metrics.items()), dict(self.pose.cache.metrics.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.metrics.values()), list(self.pose.cache.metrics.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.metrics.real.items()), dict(self.pose.cache.metrics.real.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.metrics.real.values()), list(self.pose.cache.metrics.real.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.metrics.string.items()), dict(self.pose.cache.metrics.string.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.metrics.string.values()), list(self.pose.cache.metrics.string.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.metrics.composite_real.items()), dict(self.pose.cache.metrics.composite_real.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.metrics.composite_real.values()), list(self.pose.cache.metrics.composite_real.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.metrics.composite_string.items()), dict(self.pose.cache.metrics.composite_string.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.metrics.composite_string.values()), list(self.pose.cache.metrics.composite_string.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.metrics.per_residue_real.items()), dict(self.pose.cache.metrics.per_residue_real.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.metrics.per_residue_real.values()), list(self.pose.cache.metrics.per_residue_real.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.metrics.per_residue_string.items()), dict(self.pose.cache.metrics.per_residue_string.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.metrics.per_residue_string.values()), list(self.pose.cache.metrics.per_residue_string.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.metrics.per_residue_probabilities.items()), dict(self.pose.cache.metrics.per_residue_probabilities.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.metrics.per_residue_probabilities.values()), list(self.pose.cache.metrics.per_residue_probabilities.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.extra.items()), dict(self.pose.cache.extra.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.extra.values()), list(self.pose.cache.extra.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.extra.real.items()), dict(self.pose.cache.extra.real.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.extra.real.values()), list(self.pose.cache.extra.real.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.extra.string.items()), dict(self.pose.cache.extra.string.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.extra.string.values()), list(self.pose.cache.extra.string.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.energies.items()), dict(self.pose.cache.energies.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.energies.values()), list(self.pose.cache.energies.fast_values()))
+
+        # Test clearing scores
         self.pose.cache.clear()
         self.pose.cache.extra.real["1"] = float(1)
         with self.assertRaises(KeyError):
@@ -781,15 +875,19 @@ class TestPoseCacheAccessor(unittest.TestCase):
         pickler = partial(pickle.dumps, protocol=pickle.DEFAULT_PROTOCOL)
         bytes_start_1 = pickler(pose)
         self.assertFalse(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+        self.assertFalse(pose.cache.metrics._has_sm_data())
         _ = dict(pose.cache) # Access `Pose.cache`
         self.assertFalse(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+        self.assertFalse(pose.cache.metrics._has_sm_data())
         bytes_final_1 = pickler(pose)
         self.assertEqual(bytes_start_1, bytes_final_1, msg="Pose is not bitwise identical after accessing `Pose.cache`.")
         pose.cache.metrics["pi"] = math.pi # Add SimpleMetrics data
         bytes_start_2 = pickler(pose)
         self.assertTrue(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+        self.assertTrue(pose.cache.metrics._has_sm_data())
         _ = dict(pose.cache) # Access `Pose.cache`
         self.assertTrue(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+        self.assertTrue(pose.cache.metrics._has_sm_data())
         bytes_final_2 = pickler(pose)
         self.assertEqual(bytes_start_2, bytes_final_2, msg="Pose is not bitwise identical after accessing `Pose.cache`.")
         self.assertNotEqual(bytes_final_1, bytes_final_2, msg="Pose is bitwise identical after adding SimpleMetrics data to `Pose.cache`.")
@@ -797,6 +895,7 @@ class TestPoseCacheAccessor(unittest.TestCase):
         # Test `Pose.cache` access to SimpleMetrics data when `CacheableDataType.SIMPLE_METRIC_DATA` is not yet set up
         pose = pyrosetta.io.pose_from_sequence("EMPTY/DATA/CACHE")
         self.assertFalse(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+        self.assertFalse(pose.cache.metrics._has_sm_data())
         for _attr in (
             "real",
             "string",
@@ -810,6 +909,7 @@ class TestPoseCacheAccessor(unittest.TestCase):
             self.assertIsInstance(data.all, types.MappingProxyType)
             self.assertDictEqual(dict(data), {})
         self.assertFalse(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+        self.assertFalse(pose.cache.metrics._has_sm_data())
 
         # Test `Pose.cache` bulk setters
         pose = pyrosetta.io.pose_from_sequence("EMPTY/DATA/CACHE")
@@ -852,6 +952,29 @@ class TestPoseCacheAccessor(unittest.TestCase):
         for k, v in pose.cache.fast_items():
             self.assertIn(k, arbitrary_mappable, msg="Bulk `Pose.cache` setter failed.")
             self.assertEqual(v, arbitrary_mappable[k], msg="Bulk `Pose.cache` setter failed.")
+
+        # Test parity of energy clearing paths
+        pose.cache.clear()
+        pose1 = pose.clone()
+        pose2 = pose.clone()
+        self.scorefxn(pose1)
+        self.scorefxn(pose2)
+        self.assertEqual(pose1.cache.energies, pose2.cache.energies)
+        self.assertEqual(dict(pose1.cache.energies.fast_items()), dict(pose2.cache.energies.fast_items()))
+        self.assertEqual(dict(pose1.energies().active_total_energies().items()), dict(pose2.energies().active_total_energies().items()))
+        self.assertEqual(pose1.cache.energies, dict(pose2.energies().active_total_energies().items()))
+        self.assertEqual(dict(pose1.energies().active_total_energies().items()), pose2.cache.energies)
+        self.assertIn("total_score", pose1.cache.energies)
+        self.assertIn("total_score", pose2.cache.energies)
+        pose1.energies().clear() # Clear energies via `Pose.energies`
+        pose2.cache.energies.clear() # Clear energies via `Pose.cache`
+        self.assertEqual(pose1.cache.energies, pose2.cache.energies)
+        self.assertEqual(dict(pose1.cache.energies.fast_items()), dict(pose2.cache.energies.fast_items()))
+        self.assertEqual(dict(pose1.energies().active_total_energies().items()), dict(pose2.energies().active_total_energies().items()))
+        self.assertEqual(pose1.cache.energies, dict(pose2.energies().active_total_energies().items()))
+        self.assertEqual(dict(pose1.energies().active_total_energies().items()), pose2.cache.energies)
+        self.assertNotIn("total_score", pose1.cache.energies)
+        self.assertNotIn("total_score", pose2.cache.energies)
 
 
 class TestPoseResidueLabelAccessor(unittest.TestCase):
