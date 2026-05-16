@@ -93,7 +93,7 @@ class PoseCacheAccessor(PoseCacheAccessorBase, MutableMapping):
             `pose.cache.energies` (~O(N^2))
             `dict(pose.cache.extra.fast_items())` (~O(N))
 
-        Note: see corresponding `*.fast_values()` methods (~O(N)) versus `*.values()` methods (O(~N^2)).
+        Note: see corresponding `*.fast_values()` methods (~O(N)) versus `*.values()` methods (~O(N^2)).
 
     Get a score value:
         - Return the value of a key from any `pose.cache.extra`, `pose.cache.metrics`, or `pose.cache.energies` dictionary
