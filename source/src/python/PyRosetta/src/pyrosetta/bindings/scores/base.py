@@ -41,6 +41,14 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
         metric.set_value(self.maybe_encode(value))
         metric.apply(out_label=key, pose=self.pose, override_existing_data=True)
 
+    def fast_items(self):
+        for k, v in self.all.items():
+            yield k, self.maybe_decode(v)
+
+    def fast_values(self):
+        for v in self.all.values():
+            yield self.maybe_decode(v)
+
     @property
     def _reserved_custom_metric_keys(self):
         """Reserved scoretype keys for SimpleMetrics that cannot be set or deleted."""
@@ -74,7 +82,7 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
 
     def _get_sm_data_dict(self, attributes):
         return {
-            _attr: dict(getattr(self.pose.cache.metrics, _attr))
+            _attr: dict(getattr(self.pose.cache.metrics, _attr).fast_items())
             for _attr in attributes
         }
 
@@ -94,8 +102,9 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
             _sm_data_dict = self._get_sm_data_dict(self._sm_data_accessor_attrs)
             _unsupported_sm_data_dict = self._get_sm_data_dict(self._unsupported_sm_data_accessor_attrs)
             # Raise if deleting an item we cannot restore
-            for _d in _unsupported_sm_data_dict.values():
-                for _k in _d.keys():
+            _vals = _unsupported_sm_data_dict.values()
+            for _d in _vals:
+                for _k in _d:
                     for key in keys:
                         if key == _k:
                             raise KeyError(
@@ -103,7 +112,7 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
                                     key, self._unsupported_sm_data_accessor_attrs
                                 ) + "Consider using `pose.cache.metrics.clear()`."
                             )
-            if any(map(len, _unsupported_sm_data_dict.values())):
+            if any(map(len, _vals)):
                 raise KeyError(
                     "Cannot delete SimpleMetric data keys {0} because Pose contains SimpleMetric data from: {1}".format(
                         keys, self._unsupported_sm_data_accessor_attrs
@@ -136,11 +145,11 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
         aims to delete these extra default keys if they were created and we can delete them.
         """
         _static_keys = (
-            self.pose.cache.metrics.composite_string.keys(),
-            self.pose.cache.metrics.composite_real.keys(),
-            self.pose.cache.metrics.per_residue_string.keys(),
-            self.pose.cache.metrics.per_residue_real.keys(),
-            self.pose.cache.metrics.per_residue_probabilities.keys(),
+            self.pose.cache.metrics.composite_string,
+            self.pose.cache.metrics.composite_real,
+            self.pose.cache.metrics.per_residue_string,
+            self.pose.cache.metrics.per_residue_real,
+            self.pose.cache.metrics.per_residue_probabilities,
         )
         if not any(map(len, _static_keys)):
             _has_custom_string_valued_metric, _has_custom_real_valued_metric = self._has_reserved_custom_metric_keys()
@@ -160,13 +169,13 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
         _has_custom_string_valued_metric, _has_custom_real_valued_metric = self._has_reserved_custom_metric_keys()
         if _has_custom_string_valued_metric:
             warnings.warn(
-                "`CustomStringValueMetric` implemented the key 'custom_string_valued_metric' in `pose.cache`.",
+                "`CustomStringValueMetric` implemented the key 'custom_string_valued_metric' in `Pose.cache` dictionary.",
                 RuntimeWarning,
                 stacklevel=2,
             )
         if _has_custom_real_valued_metric:
             warnings.warn(
-                "`CustomRealValueMetric` implemented the key 'custom_real_valued_metric' in `pose.cache`.",
+                "`CustomRealValueMetric` implemented the key 'custom_real_valued_metric' in `Pose.cache` dictionary.",
                 RuntimeWarning,
                 stacklevel=2,
             )
@@ -189,6 +198,10 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
         if key in self._reserved:
             raise KeyError("Cannot delete a key with a reserved name: {0}".format(key))
 
+    def __getitem__(self, key):
+        """Get a value from a key in the `Pose.cache` dictionary."""
+        return self.maybe_decode(self.all[key])
+
     def __len__(self):
         return len(self.all)
 
@@ -196,8 +209,8 @@ class PoseCacheAccessorBase(PoseScoreSerializer):
         return iter(self.all)
 
     def __str__(self):
-        return str(dict(self))
+        return str(dict(self.fast_items()))
 
     def _repr_pretty_(self, p, cycle):
         """IPython-display representation."""
-        p.pretty(dict(self))
+        p.pretty(dict(self.fast_items()))

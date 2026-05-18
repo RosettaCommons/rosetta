@@ -53,7 +53,7 @@ __all__: List[str] = [
     "secure_read_pickle",
     "update_scores",
 ]
-__version__: str = "5.0.3"
+__version__: str = "5.0.4"
 
 with warnings.catch_warnings() and suppress(NameError):
     warnings.simplefilter("ignore", category=UserWarning)

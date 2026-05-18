@@ -433,7 +433,7 @@ def reserve_scores(func: PyRosettaProtocolType) -> PyRosettaProtocolType:
         _output = func(packed_pose, **kwargs)
         # Only deserialize after the user-provided PyRosetta protocol finished executing, giving
         # the user an opportunity to add secure packages to the unpickle-allowed list as necessary
-        _scores_dict = dict(_reserved_pose.cache) if _reserved_pose is not None else {}
+        _scores_dict = dict(_reserved_pose.cache.fast_items()) if _reserved_pose is not None else {}
 
         return reserve_scores_in_results(_output, _scores_dict, func.__name__)
 
