@@ -49,6 +49,7 @@
 #include <core/chemical/io/MergeAndSplitBehaviorManager.hh>
 #include <core/chemical/mmCIF/mmCIFParser.hh>
 #include <core/chemical/sdf/MolFileIOReader.hh>
+#include <core/chemical/sdf/MolFileIOData.hh>
 
 // Basic headers
 #include <basic/database/open.hh>
@@ -791,8 +792,6 @@ GlobalResidueTypeSet::lazy_load_base_type_already_write_locked( std::string cons
 			new_rsd_type = load_pdb_component( short_name );
 			if ( new_rsd_type ) {
 				// Duplicate detection is handled by the exclude_pdb_component file -- if it's not exclude_pdb_component, we load the component
-				new_rsd_type->name( "pdb_" + short_name );
-				new_rsd_type->base_name( short_name );
 				TR << "Loading (but possibly not actually using) '" << short_name << "' from the PDB components dictionary for residue type '" << rsd_base_name << "'" << std::endl;
 			} else {
 				TR.Debug << "Attempted to load '" << short_name << "' from PDB components dictionary, but the appropriate entry wasn't found." << std::endl;
@@ -818,7 +817,7 @@ GlobalResidueTypeSet::lazy_load_base_type_already_write_locked( std::string cons
 }
 
 void
-GlobalResidueTypeSet::attempt_readin( std::string const & db_filename, std::string const & pdb_id, MutableResidueTypeOP & new_rsd_type, bool & found_file ) const {
+GlobalResidueTypeSet::attempt_ccd_readin( std::string const & db_filename, std::string const & pdb_id, MutableResidueTypeOP & new_rsd_type, bool & found_file ) const {
 	utility::io::izstream filestream( db_filename );
 	if ( filestream.good() ) found_file = true;
 	std::string entry( "data_" + pdb_id );
@@ -845,9 +844,17 @@ GlobalResidueTypeSet::attempt_readin( std::string const & db_filename, std::stri
 	}
 
 	if ( lines.size() > 0 ) {
+		core::chemical::sdf::MolFileIOMoleculeOP molecule = mmCIF_parser.parse( lines, pdb_id);
+		if (molecule == nullptr) {
+			TR.Warning << "Issue reading " << pdb_id << " from components file." << std::endl;
+			return;
+		}
+		molecule->name( "pdb_" + pdb_id );
+		molecule->name3( pdb_id );
 		utility::vector1< core::chemical::sdf::MolFileIOMoleculeOP> molecules;
-		molecules.push_back( mmCIF_parser.parse( lines, pdb_id) );
+		molecules.push_back( molecule );
 		new_rsd_type = core::chemical::sdf::convert_to_ResidueType( molecules );
+		new_rsd_type->base_name( pdb_id );
 
 		// By default, the ResidueType is being loaded as a Full Atom type - convert to the correct form, if possible.
 		switch( mode() ) {
@@ -885,7 +892,7 @@ GlobalResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 				// return without showing a warning, since user didn't request the PDB components and probably doesn't want to be bothered.
 			}
 
-			attempt_readin( db_filename, pdb_id, new_rsd_type, found_file );
+			attempt_ccd_readin( db_filename, pdb_id, new_rsd_type, found_file );
 			if ( new_rsd_type ) return new_rsd_type;
 		} // pdb_components_overrides
 	}
@@ -907,9 +914,9 @@ GlobalResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 		// Skip empty lines and comments.
 		if ( line.size() < 1 || line[0] == '#' ) continue;
 
-		attempt_readin( line, pdb_id, new_rsd_type, found_file );
+		attempt_ccd_readin( line, pdb_id, new_rsd_type, found_file );
 		if ( !new_rsd_type ) {
-			attempt_readin( basic::database::full_name( line ), pdb_id, new_rsd_type, found_file );
+			attempt_ccd_readin( basic::database::full_name( line ), pdb_id, new_rsd_type, found_file );
 		}
 		if ( new_rsd_type ) {
 			TR.Debug << "Overriding " << pdb_id << " with edited component " << line << std::endl;
@@ -936,7 +943,7 @@ GlobalResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 			// return without showing a warning, since user didn't request the PDB components and probably doesn't want to be bothered.
 		}
 
-		attempt_readin( db_filename, pdb_id, new_rsd_type, found_file );
+		attempt_ccd_readin( db_filename, pdb_id, new_rsd_type, found_file );
 		if ( new_rsd_type ) return new_rsd_type;
 
 		if ( ! found_file && ! warned_about_missing_file ) {

@@ -100,15 +100,7 @@ MolFileIOBond::MolFileIOBond() :
 
 MolFileIOBond::~MolFileIOBond() = default;
 
-MolFileIOMolecule::MolFileIOMolecule() :
-	name_(""),
-	//name3_(""),
-	//name1_(""),
-	//nbr_( utility::get_undefined_size() ),
-	//nbr_radius_( utility::get_undefined_real() ),
-	molecule_string_data_()
-	//molecule_real_data_()
-{}
+MolFileIOMolecule::MolFileIOMolecule() = default;
 
 MolFileIOMolecule::~MolFileIOMolecule() = default;
 
@@ -223,7 +215,11 @@ MutableResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 
 	restype->name( name_ );
 	restype->base_name( name_ );
-	restype->name3( name_.substr(0,3) );
+	if ( name3_.empty() ) {
+		restype->name3( name_.substr(0,3) );
+	} else {
+		restype->name3( name3_ );
+	}
 	restype->interchangeability_group( restype->name3() );
 	restype->name1( 'Z' );
 
