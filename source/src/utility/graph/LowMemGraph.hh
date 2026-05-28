@@ -352,8 +352,6 @@ class LowMemGraphBase : public utility::VirtualBase {
 public:
 	LowMemGraphBase() {}
 
-	~LowMemGraphBase() override {}
-
 	virtual LowMemNode const * get_node( uint32_t index ) const = 0;
 
 	virtual LowMemNode * get_node( uint32_t index ) = 0;
