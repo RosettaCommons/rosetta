@@ -147,12 +147,6 @@ public: // Creation
 	clone() const override = 0;
 
 
-	/// @brief Destructor
-	inline
-
-	~VectorOption_T_() override {}
-
-
 protected: // Assignment
 
 
