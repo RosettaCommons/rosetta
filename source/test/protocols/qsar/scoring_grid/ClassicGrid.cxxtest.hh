@@ -56,8 +56,8 @@ public:
 
 		GridBaseOP grid(GridFactory::get_instance()->new_grid(grid_tag));
 		grid->initialize(center,30,0.25);
-		grid->set_chain('X');
-		grid->refresh(pose,center,'X');
+		grid->set_chain("X");
+		grid->refresh(pose,center);
 
 		protocols::qsar::qsarMapOP map;
 		TS_ASSERT_EQUALS(grid->score(ligand, 100, map), -11);

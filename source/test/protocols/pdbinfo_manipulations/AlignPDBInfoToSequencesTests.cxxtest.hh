@@ -104,7 +104,7 @@ public:
 		TS_ASSERT_DIFFERS(rcsb_pdb_pose->sequence(), bad_aln_pdb_pose->sequence());
 		apts.apply(*bad_aln_pdb_pose);
 		apts.apply(*rcsb_pdb_pose);
-		std::set<std::tuple<char, int, char>> original, aligned;
+		std::set<std::tuple<std::string, int, char>> original, aligned;
 
 		TS_ASSERT_EQUALS(rcsb_pdb_pose->size(), bad_aln_pdb_pose->size());
 		for ( core::Size i=1; i<=rcsb_pdb_pose->size(); ++i ) {
@@ -192,11 +192,12 @@ public:
 		core::pose::Pose pose = pdb1rpb_pose();
 		protocols::pdbinfo_manipulations::AlignPDBInfoToSequences apts;
 		std::string const base_sequence("CLGIGSCNDFAGCGYAVVCFW");
-		std::string const   tobe_chains("AAAABBBBBBBBBCCCCCCDD"); // kept in line with split_chains_str
+		std::string const   tobe_chains_str("AAAABBBBBBBBBCCCCCCDD"); // kept in line with split_chains_str
 		std::string const    split_sequence("XXXXXXXXXXXXXXCLGIGSCNDFAGCGXXXXXXYAVVCFWXXXXX");
 		std::string const  split_chains_str("XXXXXXXXXXXXXXAAAABBBBBBBBBCYYYYYYCCCCCDDZZZZZ");
 		utility::vector1<std::string> const split_chains(to_string_vec(split_chains_str));
 		utility::vector1<std::string> const split_idx(to_string_vec(split_sequence));
+		utility::vector1<std::string> const tobe_chains(to_string_vec(tobe_chains_str));
 
 		protocols::pdbinfo_manipulations::SequenceSpecification const ss(
 			split_sequence,
@@ -213,7 +214,7 @@ public:
 			15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 35, 36, 37, 38, 39, 40, 41});
 		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			TS_ASSERT_EQUALS(pose.pdb_info()->number(i), expected_numbers[i]);
-			TS_ASSERT_EQUALS(pose.pdb_info()->chain(i), tobe_chains.at(i-1));
+			TS_ASSERT_EQUALS(pose.pdb_info()->chain(i), tobe_chains[i]);
 		}
 	}
 
@@ -294,23 +295,23 @@ public:
 			TS_ASSERT_EQUALS(pose->size(), og_pdb_pose->size());
 			for ( core::Size i=1, X_count=0, Y_count=0, Z_count=0; i<=pose->size(); ++i ) {
 				TS_ASSERT_EQUALS(
-					std::string(1, pose->pdb_info()->chain(i)),
-					old_to_new.at(std::string(1, og_pdb_pose->pdb_info()->chain(i)))
+					pose->pdb_info()->chain(i),
+					old_to_new.at(og_pdb_pose->pdb_info()->chain(i))
 				);
 				TS_ASSERT_DIFFERS(
 					pose->pdb_info()->chain(i),
 					og_pdb_pose->pdb_info()->chain(i)
 				);
-				if ( pose->pdb_info()->chain(i) == 'X' ) {
+				if ( pose->pdb_info()->chain(i) == "X" ) {
 					++X_count;
 					// this starts alignment at residue 7
 					TS_ASSERT_EQUALS(X_count+6, pose->pdb_info()->number(i));
-				} else if ( pose->pdb_info()->chain(i) == 'Y' ) {
+				} else if ( pose->pdb_info()->chain(i) == "Y" ) {
 					++Y_count;
 					// this starts alignment at residue 2
 					// so Y_count + 33(set start number)
 					TS_ASSERT_EQUALS(Y_count+33, pose->pdb_info()->number(i));
-				} else if ( pose->pdb_info()->chain(i) == 'Z' ) {
+				} else if ( pose->pdb_info()->chain(i) == "Z" ) {
 					++Z_count;
 					TS_ASSERT_EQUALS(L_residue_numbers[Z_count], pose->pdb_info()->number(i));
 				}
@@ -376,8 +377,8 @@ public:
 			core::Size current_pos(1);
 			for ( core::Size i=1; i<=pose->size(); ++i ) {
 				TS_ASSERT_EQUALS(
-					std::string(1, pose->pdb_info()->chain(i)),
-					chain_old_to_new.at(std::string(1, og_pdb_pose->pdb_info()->chain(i)))[current_pos]
+					pose->pdb_info()->chain(i),
+					chain_old_to_new.at(og_pdb_pose->pdb_info()->chain(i))[current_pos]
 				);
 				TS_ASSERT_DIFFERS(
 					pose->pdb_info()->chain(i),
@@ -386,7 +387,7 @@ public:
 
 				TS_ASSERT_EQUALS(
 					pose->pdb_info()->segmentID(i),
-					chain_to_new_segid.at(std::string(1, pose->pdb_info()->chain(i)))
+					chain_to_new_segid.at(pose->pdb_info()->chain(i))
 				);
 				TS_ASSERT_DIFFERS(
 					pose->pdb_info()->segmentID(i),

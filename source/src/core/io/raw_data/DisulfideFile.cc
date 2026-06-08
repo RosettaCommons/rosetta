@@ -141,7 +141,7 @@ Size DisulfideFile::resnum_to_rosetta_num(Pose const& pose, ResNum const& resnum
 
 	// Rosetta number
 	if ( resnum.type == rosetta_num ||
-			(resnum.type == unknown_num && resnum.chain == 0) ) {
+			(resnum.type == unknown_num && resnum.chain.empty()) ) {
 		return resnum.n;
 	}
 
@@ -212,8 +212,8 @@ void DisulfideFile::parse_disulf_file() const {
 			}
 			TR.Info << "Fixing a disulfide between "
 				<< l << " and " << u << std::endl;
-			ResNum lres = { l,0,rosetta_num };
-			ResNum ures = { u,0,rosetta_num };
+			ResNum lres = { l,"",rosetta_num };
+			ResNum ures = { u,"",rosetta_num };
 			disulfides_.push_back(make_pair(lres,ures));
 
 			continue;

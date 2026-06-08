@@ -94,7 +94,7 @@ private:
 
 	utility::vector1< core::pose::PoseOP >
 	get_refine_pose_list( std::string const & input_silent_file,
-		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & output_res_and_chain_segid,
+		std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & output_res_and_chain_segid,
 		core::chemical::ResidueTypeSetCOP rsd_set ) const;
 
 	utility::vector1< core::Size >
@@ -115,13 +115,13 @@ private:
 	get_seq_and_resnum( std::string const & pdb,
 		std::string & seq,
 		utility::vector1< int > & resnum,
-		utility::vector1< char > & chain,
+		utility::vector1< std::string > & chain,
 		utility::vector1< std::string > & segid ) const;
 
 	std::string
 	get_silent_seq( std::string const & silent_file ) const;
 
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > >
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > >
 	get_silent_resnum( std::string const & silent_file ) const;
 
 	bool

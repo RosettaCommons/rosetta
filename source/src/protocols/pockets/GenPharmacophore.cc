@@ -425,7 +425,7 @@ std::string  GenPharmacophore::extract_rna_rings_from_protein_rna_complex(core::
 
 		core::conformation::Residue const & curr_rna_rsd = rna_pose.residue(ir);
 		core::Size seq_pos = curr_rna_rsd.seqpos();
-		char rna_chain_id = rna_pose.pdb_info()->chain(seq_pos);
+		std::string rna_chain_id = rna_pose.pdb_info()->chain(seq_pos);
 
 		if ( !curr_rna_rsd.is_RNA() ) continue;
 		core::pose::Pose temp_protein_rnabase_pose = new_pose;

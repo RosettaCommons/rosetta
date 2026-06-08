@@ -81,7 +81,7 @@ PCSSingle::PCSSingle(
 	for ( Size i = 1, i_end = spins.size(); i <= i_end; ++i ) {
 		Size rsd = spins[i].get_rsd();
 		std::string atom = spins[i].get_atom();
-		char const & chain = spins[i].get_chain();
+		std::string const & chain = spins[i].get_chain();
 
 		if ( pdbinfo ) {
 			TR.Trace << "Converting AtomSelection \"" + to_string(rsd) + " " + atom + " " + to_string(chain) + "\" in PCS datafile from pdb to pose numbering." << std::endl;

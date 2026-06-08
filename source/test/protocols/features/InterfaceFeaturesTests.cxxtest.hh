@@ -103,7 +103,7 @@ public:
 
 	void interface_test(){
 		TR << "Testing Interface combos" << std::endl;
-		utility::vector1<std::string> interfaces;
+		utility::vector1<core::pose::DockingPartners> interfaces;
 		TS_ASSERT_THROWS_NOTHING(reporter_->make_interface_combos(multimer_, interfaces));
 		TR << "Interfaces: "<< interfaces.size() << std::endl;
 		for ( core::Size i = 1; i<=interfaces.size(); ++i ) {

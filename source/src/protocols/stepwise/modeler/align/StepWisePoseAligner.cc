@@ -277,9 +277,9 @@ StepWisePoseAligner::get_res_list_in_reference( pose::Pose const & pose ) const 
 	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 
 		bool found_it( false );
-		std::tuple< int, char, std::string > const resnum_and_chain = full_model_parameters.full_to_conventional_resnum_and_chain_and_segid( res_list[ n ] );
+		std::tuple< int, std::string, std::string > const resnum_and_chain = full_model_parameters.full_to_conventional_resnum_and_chain_and_segid( res_list[ n ] );
 		core::Size const resnum( std::get< 0 >( resnum_and_chain ) );
-		char const chain( std::get< 1 >( resnum_and_chain ) );
+		std::string const & chain( std::get< 1 >( resnum_and_chain ) );
 		std::string const & segid( std::get< 2 >( resnum_and_chain ) );
 		if ( reference_full_model_parameters.has_conventional_residue( resnum, chain, segid ) ) {
 			core::Size const reference_resnum = reference_full_model_parameters.conventional_to_full( resnum, chain, segid );

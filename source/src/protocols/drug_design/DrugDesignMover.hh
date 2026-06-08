@@ -82,7 +82,7 @@ public: // accessors
 	core::Size maxtrials() const { return maxtrials_; }
 
 	/// @brief What chain is the ligand supposed to be?
-	char chain() const { return chain_; }
+	std::string chain() const { return chain_; }
 
 	/// @brief What's the prefix of the filename to which intermediate debug structures are dumped?
 	std::string debug_prefix() const { return debug_prefix_; }
@@ -121,7 +121,7 @@ public: // setters
 	}
 
 	/// @brief set the ligand chain to use for design
-	void chain( char chain ) {
+	void chain( std::string const & chain ) {
 		chain_ = chain;
 	}
 
@@ -243,7 +243,7 @@ private: // Data
 	core::Real maxtrials_;
 
 	/// @brief What chain is the ligand?
-	char chain_;
+	std::string chain_;
 
 	/// @brief The pass/fail filter to use prior to redocking
 	protocols::filters::FilterOP prefilter_;

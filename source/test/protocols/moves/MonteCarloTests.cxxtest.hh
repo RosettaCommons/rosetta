@@ -113,7 +113,8 @@ public:
 		AntibodyInfoOP ab_info = AntibodyInfoOP(new AntibodyInfo(ab_pose_, AHO_Scheme, North));
 		GeneralAntibodyModeler modeler = GeneralAntibodyModeler(ab_info);
 		//modeler.ab_dock_chains("L_H");
-		InterfaceAnalyzerMover analyzer = InterfaceAnalyzerMover("L_H");
+		core::pose::DockingPartners interface = core::pose::DockingPartners::docking_partners_from_string("L_H");
+		InterfaceAnalyzerMover analyzer = InterfaceAnalyzerMover(interface);
 		analyzer.set_compute_interface_delta_hbond_unsat( false );
 		analyzer.set_compute_packstat( false );
 		analyzer.set_compute_interface_sc( false );
@@ -124,7 +125,7 @@ public:
 		analyzer.set_scorefunction( scorefxn_ );
 		analyzer.apply(ab_pose_);
 
-		MonteCarloInterface mc = MonteCarloInterface(ab_pose_, *scorefxn_, 1.0, "L_H");
+		MonteCarloInterface mc = MonteCarloInterface(ab_pose_, *scorefxn_, 1.0, interface);
 		mc.set_dG_weight( 1.0 );
 		mc.set_repack_separated( false );
 		mc.reset( ab_pose_ );

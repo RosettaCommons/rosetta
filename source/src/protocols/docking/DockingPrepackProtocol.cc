@@ -23,6 +23,7 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/DockingPartners.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/util.hh>
 
@@ -95,7 +96,7 @@ void DockingPrepackProtocol::init_from_options()
 	}
 
 	if ( option[ OptionKeys::docking::partners ].user() ) {
-		set_partners(option[ OptionKeys::docking::partners ]());
+		set_partners( core::pose::DockingPartners::docking_partners_from_string( option[ OptionKeys::docking::partners ]() ) );
 	}
 
 	if ( option[ OptionKeys::docking::dock_ppk ].user() ) {
@@ -164,7 +165,7 @@ void DockingPrepackProtocol::finalize_setup( pose::Pose & pose ) {
 		add_mem->apply( pose );
 
 		// set the foldtree for membrane proteins
-		core::Size dock_jump = create_membrane_docking_foldtree_from_partners( pose, partners() );
+		core::Size dock_jump = create_membrane_docking_foldtree_from_partners( pose, get_partners() );
 
 		// set DockJumps in DockingHighres protocol
 		DockJumps dock_jumps;
@@ -183,7 +184,7 @@ void DockingPrepackProtocol::finalize_setup( pose::Pose & pose ) {
 		/// May need to write a method to change the number of movable
 		// jumps based on the partner flag!!!!
 		// Possible breaking of code, needs to get changed later
-		docking::setup_foldtree( pose, partners(), movable_jumps() );
+		docking::setup_foldtree( pose, get_partners(), movable_jumps() );
 	}
 	tf2()->set_prepack_only(true);
 	tf2()->create_and_attach_task_factory( this, pose );

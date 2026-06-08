@@ -285,13 +285,13 @@ HelixNCapperMover::set_excluded_positions() {
 		// Process one at a time
 
 		core::Size exc_pos;
-		char exc_chain;
+		char exc_chain; // Limited to single char due to input format considerations
 
 		exc_file >> exc_pos;
 		while ( !exc_file.eof() ) {
 			exc_file >> exc_chain;
 			TR << "Adding position " << exc_pos << " chain " << exc_chain << " to exclude list." << std::endl;
-			excluded_positions_.push_back( start_pose_.pdb_info()->pdb2pose( exc_chain, exc_pos ) );
+			excluded_positions_.push_back( start_pose_.pdb_info()->pdb2pose( std::string{exc_chain}, exc_pos ) );
 			exc_file >> exc_pos;
 		}
 		exc_file.close();

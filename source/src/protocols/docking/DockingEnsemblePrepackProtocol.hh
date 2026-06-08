@@ -55,7 +55,7 @@ public:
 	void setup_pack_operation_movers();
 
 	/// @brief Returns a vector1 of the pdb chains in a pose, in order
-	utility::vector1< char > get_pose_chains( core::pose::Pose & );
+	utility::vector1< std::string > get_pose_chains( core::pose::Pose & );
 
 	/// @brief Ensures all members of either ensemble are compatible with one another
 	void check_ensemble_member_compatibility();

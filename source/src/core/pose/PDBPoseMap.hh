@@ -75,14 +75,14 @@ private: // structs
 	struct ResidueKey {
 		/// @brief default constructor
 		ResidueKey () :
-			chainID(' '),
+			chainID(" "),
 			resSeq(0),
 			iCode(' '),
 			segmentID("    ")
 		{}
 
 		/// @brief value constructor
-		ResidueKey( char const c, int const r, char const i, std::string const & s = "    " ) :
+		ResidueKey( std::string const & c, int const r, char const i, std::string const & s = "    " ) :
 			chainID( c ),
 			resSeq( r ),
 			iCode( i ),
@@ -97,7 +97,7 @@ private: // structs
 		}
 
 		/// @brief chain id
-		char chainID;
+		std::string chainID;
 		/// @brief residue sequence number
 		int resSeq;
 		/// @brief insertion code
@@ -159,7 +159,7 @@ public: // methods
 	/// @warning this will default to return the no-segmentID version if we can't find it!
 	Size
 	find(
-		char const chain,
+		std::string const & chain,
 		int const pdb_res,
 		char const ins_code = ' ',
 		std::string const & segmentID = "    "
@@ -174,7 +174,7 @@ public: // methods
 	///  the insertion will be skipped
 	void
 	insert(
-		char const chain,
+		std::string const & chain,
 		int const pdb_res,
 		char const ins_code,
 		std::string const & segmentID,
@@ -189,7 +189,7 @@ public: // methods
 	/// @return true if key-value pair erase, false otherwise
 	bool
 	conditional_erase(
-		char const chain,
+		std::string const & chain,
 		int const pdb_res,
 		char const ins_code,
 		std::string const & segmentID,
@@ -202,7 +202,7 @@ public: // methods
 	/// @param[in] ins_code insertion code, use ' ' if no insertion code
 	void
 	erase(
-		char const chain,
+		std::string const & chain,
 		int const pdb_res,
 		char const ins_code,
 		std::string const & segmentID = "    "

@@ -22,6 +22,7 @@
 // When you move PDBReader and PoseUnbuilder, take these.
 
 #include <core/io/AtomInformation.hh>
+#include <core/io/ResidueInformation.hh>
 #include <core/io/StructFileRep.fwd.hh>
 
 
@@ -53,7 +54,7 @@ namespace mmtf {
 template < typename T >
 inline void
 add_xbond_information(
-	std::map< std::string, utility::vector1< T > >& xbond_map,
+	std::map< ResID, utility::vector1< T > >& xbond_map,
 	core::io::AtomInformation const & atm_1,
 	core::io::AtomInformation const & atm_2);
 
@@ -120,7 +121,7 @@ make_atom_information(
 	core::Size const atomSerial,
 	core::Size const groupIndex,
 	core::Size const chainIndex,
-	utility::vector1<char> & known_chainIDs,
+	utility::vector1<std::string> & known_chainIDs,
 	core::io::StructFileReaderOptions const & options );
 
 template < typename T >

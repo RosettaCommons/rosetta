@@ -108,7 +108,7 @@ void DockingEnsemblePrepackProtocol::init_from_options()
 	}
 
 	if ( option[ OptionKeys::docking::partners ].user() ) {
-		set_partners(option[ OptionKeys::docking::partners ]());
+		set_partners( core::pose::DockingPartners::docking_partners_from_string( option[ OptionKeys::docking::partners ]() ) );
 	}
 
 	if ( option[ OptionKeys::docking::ensemble1 ].user() ) {
@@ -183,7 +183,7 @@ void DockingEnsemblePrepackProtocol::finalize_setup( pose::Pose & pose ) {
 		// pose.dump_pdb( "pose_in_finalize_setupmem.pdb" );
 
 		//Set the foldtree for membrane proteins
-		core::Size dock_jump = create_membrane_docking_foldtree_from_partners( pose, partners() );
+		core::Size dock_jump = create_membrane_docking_foldtree_from_partners( pose, get_partners() );
 
 		// set DockJumps in DockingHighres protocols
 		DockJumps dock_jumps;
@@ -197,7 +197,7 @@ void DockingEnsemblePrepackProtocol::finalize_setup( pose::Pose & pose ) {
 
 	} else {
 
-		docking::setup_foldtree( pose, partners(), movable_jumps() );
+		docking::setup_foldtree( pose, get_partners(), movable_jumps() );
 	}
 
 	tf2()->set_prepack_only(true);
@@ -234,10 +234,10 @@ void DockingEnsemblePrepackProtocol::finalize_setup( pose::Pose & pose ) {
 
 }
 
-utility::vector1< char > DockingEnsemblePrepackProtocol::get_pose_chains( core::pose::Pose & pose ) {
+utility::vector1< std::string > DockingEnsemblePrepackProtocol::get_pose_chains( core::pose::Pose & pose ) {
 	// returns chains in order of appearance in pose.pdb_info().chain()
-	utility::vector1< char > chain_list;
-	char current_chain;
+	utility::vector1< std::string > chain_list;
+	std::string current_chain;
 	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( i==1 ) {
 			current_chain = pose.pdb_info()->chain(i);
@@ -254,27 +254,29 @@ utility::vector1< char > DockingEnsemblePrepackProtocol::get_pose_chains( core::
 
 void DockingEnsemblePrepackProtocol::check_ensemble_member_compatibility() {
 
-	// use the -partners flag to get vectors of chains
-	// compare to chains of each ensemble
-	utility::vector1< char > partner1_chains;
-	utility::vector1< char > partner2_chains;
-	utility::vector1< char > * current_partner = &partner1_chains;
+	// // use the -partners flag to get vectors of chains
+	// // compare to chains of each ensemble
+	// utility::vector1< std::string > partner1_chains;
+	// utility::vector1< std::string > partner2_chains;
+	// utility::vector1< std::string > * current_partner = &partner1_chains;
+	//
+	// // get the string from the -partners flag
+	// std::string partners( get_partners() );
+	//
+	// // loop over the string, character by character and split it on the underscore
+	// // assume here that ensemble1 is reported first (in my experience this is always the case)
+	// // (Note that due to input format limitations, only single letter chains are supported)
+	// for ( char & partner : partners ) {
+	//
+	//  if ( partner == '_' ) {
+	//   current_partner = &partner2_chains;
+	//   continue;
+	//  }
+	//
+	//  current_partner->push_back(std::string{partner});
+	//
+	// }
 
-	// get the string from the -partners flag
-	std::string partners( get_partners() );
-
-	// loop over the string, character by character and split it on the underscore
-	// assume here that ensemble1 is reported first (in my experience this is always the case)
-	for ( char & partner : partners ) {
-
-		if ( partner == '_' ) {
-			current_partner = &partner2_chains;
-			continue;
-		}
-
-		current_partner->push_back(partner);
-
-	}
 	// ensemble1_/ensemble2_ must be present i.e. not NULL
 	// note ensembles index at 1
 	if ( !ensemble1_ || !ensemble2_ ) utility_exit_with_message( "Ensembles must be loaded, otherwise comparison is nonsensical!" );
@@ -282,18 +284,20 @@ void DockingEnsemblePrepackProtocol::check_ensemble_member_compatibility() {
 	TR.Debug << "Ensemble 1 length is: " << ensemble1_->size() << std::endl;
 	TR.Debug << "Ensemble 2 length is: " << ensemble2_->size() << std::endl;
 
+	core::pose::DockingPartners const & partners = get_partners();
+
 	// check if partners flag has at least two partners "A_B" before doing partners flag comparisons
-	if ( partners.size() > 2 ) {
+	if ( partners.has_both() ) {
 
 		// chain based checks only: ensemble 1
 		for ( core::Size i=1; i<=ensemble1_->size(); ++i ) { // outer loop
 			core::pose::Pose c1 = ensemble1_->get_conformer(i);
-			utility::vector1< char > chains = get_pose_chains( c1 );
+			utility::vector1< std::string > chains = get_pose_chains( c1 );
 
 			// if there is a different number of chains in any ensemble member vs. the partners flag, error!
-			if ( chains.size() != partner1_chains.size() ) {
+			if ( chains.size() != partners.partner1.size() ) {
 				std::string exit_message = "Ensemble 1 member differs in number of chains from partners flag!\n";
-				exit_message = exit_message + "Partner flag has " + std::to_string(partner2_chains.size()) + " chains.\n";
+				exit_message = exit_message + "Partner flag has " + std::to_string(partners.partner1.size()) + " chains.\n";
 				exit_message = exit_message + "Member " + std::to_string(i) + " has " + std::to_string(chains.size()) + " chains!\n";
 				utility_exit_with_message( exit_message );
 			}
@@ -301,9 +305,9 @@ void DockingEnsemblePrepackProtocol::check_ensemble_member_compatibility() {
 			// if the chain identities are not equivalent, error!
 			// assuming ensemble 1 chains are first reported in parterns flag
 			for ( core::Size k=1; k<chains.size(); ++k ) {
-				if ( chains[k] != partner1_chains[k] ) {
+				if ( chains[k] != partners.partner1[k] ) {
 					std::string exit_message = "Ensemble 1 member differs in chain identity from partners flag!\n";
-					exit_message = exit_message + "Member " + std::to_string(i) + ": " + chains[k] + " vs. " + partner1_chains[k] + "\n";
+					exit_message = exit_message + "Member " + std::to_string(i) + ": " + chains[k] + " vs. " + partners.partner1[k] + "\n";
 					utility_exit_with_message( exit_message );
 				}
 			}
@@ -312,12 +316,12 @@ void DockingEnsemblePrepackProtocol::check_ensemble_member_compatibility() {
 		// chain based checks only: ensemble 2
 		for ( core::Size i=1; i<=ensemble2_->size(); ++i ) { // outer loop
 			core::pose::Pose c1 = ensemble2_->get_conformer(i);
-			utility::vector1< char > chains = get_pose_chains( c1 );
+			utility::vector1< std::string > chains = get_pose_chains( c1 );
 
 			// if there is a different number of chains in any ensemble member vs. the partners flag, error!
-			if ( chains.size() != partner2_chains.size() ) {
+			if ( chains.size() != partners.partner2.size() ) {
 				std::string exit_message = "Ensemble 2 member differs in number of chains from partners flag!\n";
-				exit_message = exit_message + "Partner flag has " + std::to_string(partner2_chains.size()) + " chains.\n";
+				exit_message = exit_message + "Partner flag has " + std::to_string(partners.partner2.size()) + " chains.\n";
 				exit_message = exit_message + "Member " + std::to_string(i) + " has " + std::to_string(chains.size()) + " chains!\n";
 				utility_exit_with_message( exit_message );
 			}
@@ -325,9 +329,9 @@ void DockingEnsemblePrepackProtocol::check_ensemble_member_compatibility() {
 			// if the chain identities are not equivalent, error!
 			// assuming ensemble 2 chains are second reported in parterns flag
 			for ( core::Size k=1; k<chains.size(); ++k ) {
-				if ( chains[k] != partner2_chains[k] ) {
+				if ( chains[k] != partners.partner2[k] ) {
 					std::string exit_message = "Ensemble 2 member differs in chain identity from partners flag!\n";
-					exit_message = exit_message + "Member " + std::to_string(i) + ": " + chains[k] + " vs. " + partner2_chains[k] + "\n";
+					exit_message = exit_message + "Member " + std::to_string(i) + ": " + chains[k] + " vs. " + partners.partner2[k] + "\n";
 					utility_exit_with_message( exit_message );
 				}
 			}

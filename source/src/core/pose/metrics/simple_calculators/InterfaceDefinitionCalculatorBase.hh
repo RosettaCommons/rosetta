@@ -38,7 +38,7 @@ public:
 
 	InterfaceDefinitionCalculator( core::Size const chain1_number, core::Size const chain2_number );
 
-	InterfaceDefinitionCalculator( char const chain1_letter, char const chain2_letter );
+	InterfaceDefinitionCalculator( std::string const & chain1_letter, std::string const & chain2_letter );
 
 	core::pose::metrics::PoseMetricCalculatorOP clone() const override = 0;
 
@@ -53,12 +53,12 @@ protected:
 	core::Size ch1_begin_num_, ch1_end_num_, ch2_begin_num_, ch2_end_num_;
 
 	core::Size chain1_number_, chain2_number_;
-	char chain1_letter_, chain2_letter_;
+	std::string chain1_letter_, chain2_letter_;
 	bool got_chain_numbers_;
 
 	virtual void verify_chain_setup( core::pose::Pose const & pose );
 
-	virtual core::Size chain_letter_to_number( core::pose::Pose const & pose, char const chain_id );
+	virtual core::Size chain_letter_to_number( core::pose::Pose const & pose, std::string const & chain_id );
 
 	virtual void fill_in_chain_terminii( core::pose::Pose const & pose );
 

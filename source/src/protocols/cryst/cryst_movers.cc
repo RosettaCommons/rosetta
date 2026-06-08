@@ -265,7 +265,7 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 
 			// ASSUMES PDBINFO IS PRESENT!!!!
 			core::Size pdb_res = pose.pdb_info()->number( id.rsd() );
-			char pdb_chain = pose.pdb_info()->chain( id.rsd() );
+			std::string pdb_chain = pose.pdb_info()->chain( id.rsd() );
 
 			if ( id.atomno() <= rsd_i.natoms() ) {
 				numeric::xyzVector< core::Real > grad_i(dEros_dvars[3*ii_atm+1], dEros_dvars[3*ii_atm+2], dEros_dvars[3*ii_atm+3]);

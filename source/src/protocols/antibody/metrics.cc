@@ -449,7 +449,7 @@ cdr_backbone_rmsds(pose::Pose & p1, pose::Pose const & p2, AntibodyInfoOP const 
 	// define conserved residues for alignment in Chothia numbering
 	for ( auto i : get_conserved_residue_list('H') ) {
 
-		core::Size k = p1.pdb_info()->pdb2pose('H', i);
+		core::Size k = p1.pdb_info()->pdb2pose("H", i);
 		if ( k == 0 ) { // res doesnt exist in p1
 			n_zero += 1;
 			continue;
@@ -472,7 +472,7 @@ cdr_backbone_rmsds(pose::Pose & p1, pose::Pose const & p2, AntibodyInfoOP const 
 
 	for ( auto i : get_conserved_residue_list('L') ) {
 
-		core::Size k = p1.pdb_info()->pdb2pose('L', i);
+		core::Size k = p1.pdb_info()->pdb2pose("L", i);
 		if ( k == 0 ) { // res doesnt exist in p1
 			n_zero += 1;
 			continue;

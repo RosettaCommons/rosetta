@@ -21,6 +21,7 @@
 // Core headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/DockingPartners.hh>
 
 // Utility headers
 #include <utility/VirtualBase.hh>
@@ -207,24 +208,9 @@ public:
 	//idealize_rings_=in;
 	//}
 
-	/// @brief Get upstream chain for 'outward' fold tree
-	std::string get_upstream_chain(){
-		return upstream_chains_;
-	}
-
-	/// @brief Get downstream chain for 'outward' fold tree
-	std::string get_downstream_chain(){
-		return downstream_chains_;
-	}
-
-	/// @brief Set upstream chain for 'outward' fold tree
-	void set_upstream_chain(std::string const &chain){
-		upstream_chains_=chain;
-	}
-
-	/// @brief Set downstream chain for 'outward' fold tree
-	void set_downstream_chain(std::string const &chain){
-		downstream_chains_=chain;
+	core::pose::DockingPartners const &
+	get_docking_partners() {
+		return partners_;
 	}
 
 	/// @brief Set fold tree type: outward OR docking
@@ -362,11 +348,6 @@ public:
 
 
 private:
-	/// @brief Function to get index of anchor, donor and glycosylation residues
-	/// from specified string.
-	core::Size
-	get_resnum(core::pose::Pose const &pose,std::string const &special_residue);
-
 	core::Size first_residue_substrate_;
 	core::Size last_residue_substrate_;
 	core::Size anchor_residue_substrate_;
@@ -388,8 +369,7 @@ private:
 	std::string tree_type_="docking"; //done
 	bool randomize_substrate_torsions_=false;
 	bool enable_backbone_moves_pp_=true;
-	std::string downstream_chains_=""; //done
-	std::string upstream_chains_=""; //done
+	core::pose::DockingPartners partners_;
 	bool prevent_anchor_repacking_=true;//done
 	core::Size donor_=1;//done dummy value
 	bool debug_pdbs_=false; //done

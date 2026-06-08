@@ -156,12 +156,12 @@ get_buildingblock_and_neighbor_subs(core::pose::Pose const & pose_in, utility::v
 
 // For Multicomponent systems
 core::pose::Pose
-get_subpose(core::pose::Pose const & pose, utility::vector1<std::string> subs);
+get_subpose(core::pose::Pose const & pose, utility::vector1<std::pair<Size,std::string>> const & subs);
 
 utility::vector1<Size>
-get_resis(core::pose::Pose const & pose, utility::vector1<std::string> subs);
+get_resis(core::pose::Pose const & pose, utility::vector1<std::pair<Size,std::string>> const & subs);
 
-utility::vector1<std::string>
+utility::vector1< std::pair<Size,std::string> >
 get_full_intracomponent_and_neighbor_subs(core::pose::Pose const &pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 core::pose::Pose
@@ -176,7 +176,7 @@ get_full_intracomponent_subpose(core::pose::Pose const &pose, std::string const 
 utility::vector1<Size>
 get_full_intracomponent_resis(core::pose::Pose const &pose, std::string const & sym_dof_name);
 
-utility::vector1<std::string>
+utility::vector1<std::pair<Size,std::string>>
 get_full_intracomponent_neighbor_subs(core::pose::Pose const &pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 core::pose::Pose
@@ -188,7 +188,7 @@ get_full_intracomponent_neighbor_resis(core::pose::Pose const &pose, std::string
 bool
 intracomponent_contact(core::pose::Pose const &pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
-utility::vector1<std::string>
+utility::vector1< std::pair<Size,std::string> >
 get_intracomponent_and_neighbor_subs(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 core::pose::Pose
@@ -197,7 +197,7 @@ get_intracomponent_and_neighbor_subpose(core::pose::Pose const & pose, std::stri
 utility::vector1<Size>
 get_intracomponent_and_neighbor_resis(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
-utility::vector1<std::string>
+utility::vector1<std::pair<Size,std::string>>
 get_intracomponent_subs(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 core::pose::Pose
@@ -206,7 +206,7 @@ get_intracomponent_subpose(core::pose::Pose const & pose, std::string const & sy
 utility::vector1<Size>
 get_intracomponent_resis(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
-utility::vector1<std::string>
+utility::vector1<std::pair<Size,std::string>>
 get_neighbor_subs(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 core::pose::Pose
@@ -215,7 +215,7 @@ get_neighbor_subpose(core::pose::Pose const & pose, std::string const & sym_dof_
 utility::vector1<Size>
 get_neighbor_resis(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
-utility::vector1<std::string>
+utility::vector1< std::pair<Size,std::string> >
 get_intracomponent_and_intraneighbor_subs(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 core::pose::Pose
@@ -224,7 +224,7 @@ get_intracomponent_and_intraneighbor_subpose(core::pose::Pose const & pose, std:
 utility::vector1<Size>
 get_intracomponent_and_intraneighbor_resis(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
-utility::vector1<std::string>
+utility::vector1<std::pair<Size,std::string>>
 get_intracomponent_and_interneighbor_subs(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 core::pose::Pose
@@ -255,17 +255,17 @@ jump_num_sym_dof(core::pose::Pose const & pose, Size const & jnum);
 utility::vector1<Size>
 get_symdof_subunits(core::pose::Pose const & pose, std::string const & jname);
 
-utility::vector1<char> symmetric_components(core::pose::Pose const & pose);
+utility::vector1<std::string> symmetric_components(core::pose::Pose const & pose);
 bool is_multicomponent (core::pose::Pose const & pose);
 bool is_singlecomponent(core::pose::Pose const & pose);
-Size get_component_lower_bound(core::pose::Pose const & pose, char c);
-Size get_component_upper_bound(core::pose::Pose const & pose, char c);
-char get_component_of_residue(core::pose::Pose const & pose, Size ir);
-char get_subunit_name_to_component(core::pose::Pose const & pose, std::string const & vname);
-utility::vector1<char> const & get_jump_name_to_components(core::pose::Pose const & pose, std::string const & jname);
+Size get_component_lower_bound(core::pose::Pose const & pose, std::string const & c);
+Size get_component_upper_bound(core::pose::Pose const & pose, std::string const & c);
+std::string get_component_of_residue(core::pose::Pose const & pose, Size ir);
+std::string get_subunit_name_to_component(core::pose::Pose const & pose, std::string const & vname);
+utility::vector1<std::string> const & get_jump_name_to_components(core::pose::Pose const & pose, std::string const & jname);
 utility::vector1<Size> const & get_jump_name_to_subunits(core::pose::Pose const & pose, std::string const & jname);
-std::string get_resnum_to_subunit_component(core::pose::Pose const & pose, Size const & resnum);
-utility::vector1<std::string> get_full_intracomponent_subs(core::pose::Pose const & pose, std::string const & jname);
+std::pair< Size, std::string> get_resnum_to_subunit_component(core::pose::Pose const & pose, Size const & resnum);
+utility::vector1< std::pair<Size,std::string> > get_full_intracomponent_subs(core::pose::Pose const & pose, std::string const & jname);
 
 } // symmetry
 } // pose

@@ -480,7 +480,7 @@ Nub::join_pieces( utility::vector1< core::pose::PoseOP > const & template_pieces
 	unfolded_pose_->pdb_info()->rebuild_pdb2pose();
 	for ( core::Size i = 1; i <= unfolded_pose_->size(); i++ ) {
 		utility::vector1< std::string > labels = unfolded_pose_->pdb_info()->get_reslabels( i );
-		unfolded_pose_->pdb_info()->set_resinfo( i, *design_chain_.c_str(), i );
+		unfolded_pose_->pdb_info()->set_resinfo( i, design_chain_, i );
 		for ( auto label: labels ) {
 			unfolded_pose_->pdb_info()->add_reslabel( i, label );
 		}
@@ -525,7 +525,7 @@ Nub::add_binders()
 			dssp.apply( *bind );
 			utils::append_pose_to_pose_keep_fold_tree( *unfolded_pose_, *bind, true );
 			unfolded_pose_->pdb_info()->copy(*(bind->pdb_info()), 1, bind->size(), current_length + 1);
-			char bind_chain = bind->pdb_info()->chain(1);
+			std::string bind_chain = bind->pdb_info()->chain(1);
 			for ( core::Size i = 1; i <= bind->size(); ++i ) {
 				// Renumber chain from 1, as silent_files don't play well with insertion codes
 				unfolded_pose_->pdb_info()->set_resinfo( current_length + i, bind_chain, i);

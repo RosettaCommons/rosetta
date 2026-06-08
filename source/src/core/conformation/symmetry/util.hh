@@ -30,12 +30,6 @@ namespace core {
 namespace conformation {
 namespace symmetry {
 
-
-
-std::string
-get_chain_id_string();
-
-
 bool
 is_symmetric( conformation::Conformation const & conf );
 
@@ -49,14 +43,14 @@ conformation::symmetry::SymmetricConformationOP
 setup_symmetric_conformation(
 	conformation::Conformation & src_conformation,
 	conformation::symmetry::SymmData & symmdata,
-	std::map< core::Size, char > conf2pdb_chain = std::map< core::Size, char >()
+	std::map< core::Size, std::string > conf2pdb_chain = {}
 );
 
 kinematics::FoldTree
 set_fold_tree_from_symm_data(
 	conformation::Conformation & src_conformation,
 	conformation::symmetry::SymmData & symmdata,
-	std::map< core::Size, char > conf2pdb_chain = std::map< core::Size, char >()
+	std::map< core::Size, std::string > conf2pdb_chain = {}
 );
 
 kinematics::FoldTree
@@ -112,7 +106,7 @@ std::string
 show_foldtree(
 	core::conformation::symmetry::SymmetricConformation const & symm_conf,
 	SymmData const & symdata,
-	std::map<char,std::pair<Size,Size> > const & chain2range
+	std::map<std::string,std::pair<Size,Size> > const & chain2range
 );
 
 /// @breif A very specific helper function that counts the number of mirror ops from root->each subunit

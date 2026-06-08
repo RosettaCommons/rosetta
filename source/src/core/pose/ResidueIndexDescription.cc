@@ -183,10 +183,10 @@ ResidueIndexDescriptionChainEnd::resolve_index(
 		} else {
 			return pose.conformation().chain_end( chain_no_ );
 		}
-	} else if ( chain_letter_ ) { // Chain letter of 0x00 (not '0') means invalid chain letter.
+	} else if ( ! chain_letter_.empty() ) {
 		utility::vector1<core::Size> chain_ids = get_chain_ids_from_chain(chain_letter_, pose); // sorted order
 		if ( chain_ids.size() == 0 ) {
-			return do_error( no_error, "Attempted to access non-existent chain `" + std::to_string(chain_letter_) + "` in residue index description " + source_string() );
+			return do_error( no_error, "Attempted to access non-existent chain `" + chain_letter_ + "` in residue index description " + source_string() );
 		}
 		if ( chain_start_ ) {
 			return pose.conformation().chain_begin( chain_ids[1] ); // Get the first residue which is part of this chain.
@@ -204,7 +204,7 @@ ResidueIndexDescriptionChainEnd::show( std::ostream & out ) const {
 	out << ( chain_start_ ? "Starting":"Ending" ) << " residue of chain ";
 	if ( chain_no_ >= 0 ) { //Negative chain number means do not use chain number.
 		out << chain_no_;
-	} else if ( chain_letter_ ) {
+	} else if ( !chain_letter_.empty() ) {
 		out << chain_letter_;
 	} else {
 		out << "???";

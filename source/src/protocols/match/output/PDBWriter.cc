@@ -733,7 +733,7 @@ PoseMatchOutputWriter::insert_match_into_pose(
 
 	if ( downstream_pose->size() == 1 ) {
 		pose.append_residue_by_jump( downstream_pose->residue(1), 1, "", "", true );
-		pose.pdb_info()->chain( pose.size(), 'X' );
+		pose.pdb_info()->chain( pose.size(), "X" );
 		pose.pdb_info()->number( pose.size(), 1 );
 		pose.pdb_info()->obsolete( false );
 		//pose.append_residue_by_jump( downstream_pose->residue(1), pose.size(), "CA", downstream_pose->residue(1).atom_name(1), true );

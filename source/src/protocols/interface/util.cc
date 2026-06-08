@@ -15,6 +15,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/chains_util.hh>
+#include <core/pose/DockingPartners.hh>
 #include <protocols/toolbox/CalcInterNeighborGroup.hh>
 
 #include <utility/vector1.hh>
@@ -29,7 +30,7 @@ namespace protocols {
 namespace interface {
 
 utility::vector1<bool>
-select_interface_residues(core::pose::Pose const & pose, std::string interface, core::Size interface_distance) {
+select_interface_residues(core::pose::Pose const & pose, core::pose::DockingPartners const & interface, core::Size interface_distance) {
 
 	//Adapted from IAM
 	using namespace core;
@@ -41,26 +42,14 @@ select_interface_residues(core::pose::Pose const & pose, std::string interface, 
 	typedef std::pair< one_group, one_group > group_pair;
 	using group_set = utility::vector1<group_pair>;
 
-	if ( interface.find('_') ==  std::string::npos ) {
-		utility_exit_with_message("Unrecognized interface: "+interface+" must have side1 and side2, ex: LH_A or L_H to calculate interface residues");
-	}
-
-
-
 	std::set<core::Size> side1_chains;
 	std::set<core::Size> side2_chains;
-	vector1<std::string> sides = utility::string_split(interface, '_');
-	//TR <<"Interface:"<< interface <<":"<<std::endl;
-	//TR << "side1:" << sides[1] << ":" << std::endl;
-	//TR << "side3:" << sides[2] << ":" << std::endl;
 
-	for ( core::Size i = 0; i <= sides[1].length() -1; ++i ) {
-		//TR <<"C:"<<utility::to_string(sides[1][i]) << std::endl;
-		side1_chains.insert(pose::get_chain_id_from_chain(sides[1][i], pose));
+	for ( std::string const & chain: interface.partner1 ) {
+		side1_chains.insert(pose::get_chain_id_from_chain(chain, pose));
 	}
-	for ( core::Size i = 0; i <= sides[2].length() -1; ++i ) {
-		//TR <<"C:"<<utility::to_string(sides[2][i]) << std::endl;
-		side2_chains.insert(pose::get_chain_id_from_chain(sides[2][i], pose));
+	for ( std::string const & chain: interface.partner2 ) {
+		side2_chains.insert(pose::get_chain_id_from_chain(chain, pose));
 	}
 
 	debug_assert (!side1_chains.empty()/*size() >= 1*/);

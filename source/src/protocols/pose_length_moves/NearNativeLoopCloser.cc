@@ -873,7 +873,7 @@ NearNativeLoopCloser::NearNativeLoopCloser():moves::Mover("NearNativeLoopCloser"
 
 
 
-NearNativeLoopCloser::NearNativeLoopCloser(int resAdjustmentStartLow,int resAdjustmentStartHigh,int resAdjustmentStopLow,int resAdjustmentStopHigh,int resAdjustmentStartLow_sheet,int resAdjustmentStartHigh_sheet,int resAdjustmentStopLow_sheet,int resAdjustmentStopHigh_sheet,core::Size loopLengthRangeLow, core::Size loopLengthRangeHigh,core::Size resBeforeLoop,core::Size resAfterLoop,char chainBeforeLoop, char chainAfterLoop,Real rmsThreshold, Real max_vdw_change, bool idealExtension,bool ideal, bool output_closed,std::string closure_type,std::string allowed_loop_abegos,std::string label_loop, std::string fragment_store_path, std::string fragment_store_format, std::string fragment_store_compression,core::Size numb_stubs_to_consider){
+NearNativeLoopCloser::NearNativeLoopCloser(int resAdjustmentStartLow,int resAdjustmentStartHigh,int resAdjustmentStopLow,int resAdjustmentStopHigh,int resAdjustmentStartLow_sheet,int resAdjustmentStartHigh_sheet,int resAdjustmentStopLow_sheet,int resAdjustmentStopHigh_sheet,core::Size loopLengthRangeLow, core::Size loopLengthRangeHigh,core::Size resBeforeLoop,core::Size resAfterLoop,std::string const & chainBeforeLoop, std::string const & chainAfterLoop,Real rmsThreshold, Real max_vdw_change, bool idealExtension,bool ideal, bool output_closed,std::string closure_type,std::string allowed_loop_abegos,std::string label_loop, std::string fragment_store_path, std::string fragment_store_format, std::string fragment_store_compression,core::Size numb_stubs_to_consider){
 	resAdjustmentStartLow_=resAdjustmentStartLow;
 	resAdjustmentStartHigh_=resAdjustmentStartHigh;
 	resAdjustmentStopLow_=resAdjustmentStopLow;
@@ -1326,10 +1326,10 @@ NearNativeLoopCloser::parse_my_tag(
 	}
 	std::string resAdjustmentRange1( tag->getOption< std::string >( "resAdjustmentRangeSide1", "-3,3") );
 	std::string resAdjustmentRange2( tag->getOption< std::string >( "resAdjustmentRangeSide2","-3,3") );
-	chainBeforeLoop_ = tag->getOption<char>("chain",'A');
-	chainAfterLoop_ = tag->getOption<char>("chain",'A');
-	chainBeforeLoop_ = tag->getOption<char>("chainBeforeLoop",'A');
-	chainAfterLoop_ = tag->getOption<char>("chainAfterLoop",'A');
+	chainBeforeLoop_ = tag->getOption<std::string>("chain","A");
+	chainAfterLoop_ = tag->getOption<std::string>("chain","A");
+	chainBeforeLoop_ = tag->getOption<std::string>("chainBeforeLoop","A");
+	chainAfterLoop_ = tag->getOption<std::string>("chainAfterLoop","A");
 	idealExtension_ = tag->getOption<bool>("idealExtension",true);
 	label_loop_ = tag->getOption<std::string>("label_loop","");
 	allowed_loop_abegos_ = tag->getOption< std::string >( "allowed_loop_abegos","");

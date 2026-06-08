@@ -67,6 +67,7 @@
 #ifdef USEMPI
 /// MPI
 #include <mpi.h>
+#include <utility/mpi_util.hh>
 #endif
 
 // option key includes
@@ -425,6 +426,7 @@ void PointMutScanDriver::read_mutants_list_file( std::string & list_file ) {
 		// there might be more than one mutation per line!
 		while ( iss.peek() && !iss.eof() ) {
 
+			// RM: Not sure if chain being a single character is critical for the input file format
 			iss >> chain >> wt_residue >> position_code >> mut_residue;
 
 			// check to see if an insertion code is present in the position_code string
@@ -450,7 +452,7 @@ void PointMutScanDriver::read_mutants_list_file( std::string & list_file ) {
 
 			// figure out what the pose residue number for this residue is
 			pose::Pose & pose = input_poses_[ 1 ];
-			core::Size pose_resnum = (pose.pdb_info())->pdb2pose( chain, pdb_resnum, icode );
+			core::Size pose_resnum = (pose.pdb_info())->pdb2pose( std::string{chain}, pdb_resnum, icode );
 
 			if ( pose.residue( pose_resnum ).name1() != wt_residue ) {
 				TR << "wt_residue: " << wt_residue << ", pdb resnum: " << pdb_resnum << ", pose resnum: " << pose_resnum
@@ -460,7 +462,7 @@ void PointMutScanDriver::read_mutants_list_file( std::string & list_file ) {
 
 			//TR << "Found mutation of " << wt_residue << " to " << mut_residue  << " at position " << pose_resnum << " (pdb chain: '" << chain << "', resnum: '" << pdb_resnum << "', icode: '" << icode << "')" << std::endl;
 
-			MutationData md( wt_residue, mut_residue, pose_resnum, pdb_resnum, icode, chain );
+			MutationData md( wt_residue, mut_residue, pose_resnum, pdb_resnum, icode, std::string{chain} );
 			m.add_mutation( md ); // the variable mutations is a vector of vectors!
 
 		} // done parsing line
@@ -624,11 +626,10 @@ void PointMutScanDriver::send_mutant_data_to_node( int destination, const protoc
 		MPI_Send( & pdb_resnum, 1, MPI_UNSIGNED_LONG, destination, tag, MPI_COMM_WORLD );
 
 		char icode = iter->icode_;
-		char chain = iter->chain_;
+		std::string chain = iter->chain_;
 		//TR << "sending icode: '" << icode << "' and chain: '" << chain << "' to node " << destination << "." << std::endl;
 		MPI_Send( & icode, 1, MPI_CHAR, destination, tag, MPI_COMM_WORLD );
-		MPI_Send( & chain, 1, MPI_CHAR, destination, tag, MPI_COMM_WORLD );
-
+		utility::send_string_to_node(destination, chain);
 	}
 
 }
@@ -659,9 +660,9 @@ Mutant PointMutScanDriver::receive_mutant_data_from_node( int source ) {
 		MPI_Recv( & pose_resnum, 1, MPI_UNSIGNED_LONG, source, tag, MPI_COMM_WORLD, & stat );
 		MPI_Recv( & pdb_resnum, 1, MPI_UNSIGNED_LONG, source, tag, MPI_COMM_WORLD, & stat );
 
-		char icode, chain;
+		char icode;
 		MPI_Recv( & icode, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, & stat );
-		MPI_Recv( & chain, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, & stat );
+		std::string chain = utility::receive_string_from_node(source);
 		//TR << "received icode: '" << icode << "' and chain: '" << chain << "' from node " << source << "." << std::endl;
 
 		MutationData md( wt_residue, mut_residue, pose_resnum, pdb_resnum, icode, chain );

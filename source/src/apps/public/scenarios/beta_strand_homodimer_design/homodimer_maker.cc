@@ -282,9 +282,8 @@ void HDmakerMover::apply (pose::Pose & pose ) {
 	hbond_set.setup_for_residue_pair_energies(pose);
 
 	//translate pdb numbering to pose numbering
-	char chain( pdb_chain_[0] );
-	Size sheet_start( pose.pdb_info()->pdb2pose(chain, sheet_start_) );
-	Size sheet_end( pose.pdb_info()->pdb2pose(chain, sheet_stop_) );
+	Size sheet_start( pose.pdb_info()->pdb2pose(pdb_chain_, sheet_start_) );
+	Size sheet_end( pose.pdb_info()->pdb2pose(pdb_chain_, sheet_stop_) );
 
 	//get some info about the pose
 	Size n_residues (pose.size());
@@ -444,7 +443,7 @@ void HDmakerMover::apply (pose::Pose & pose ) {
 			std::stringstream anti_ss;
 			std::stringstream parl_ss;
 			int pdb_res( pose.pdb_info()->number(jj) );
-			char pdb_chain( pose.pdb_info()->chain(jj) );
+			std::string pdb_chain( pose.pdb_info()->chain(jj) );
 			anti_ss << pdb_file_name.base() <<"_"<< pdb_chain << pdb_res <<"_anti_wind_"<< window_num << "_step_" << ii   << ".pdb";
 			parl_ss << pdb_file_name.base() <<"_"<< pdb_chain << pdb_res <<"_parl_wind_" << window_num << "_step_" << ii   << ".pdb";
 			std::string anti_filename (anti_ss.str());

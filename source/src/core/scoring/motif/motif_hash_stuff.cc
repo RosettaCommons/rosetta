@@ -13,12 +13,12 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/keys/mh.OptionKeys.gen.hh>
-#include <basic/pymol_chains.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/motif/reference_frames.hh>
@@ -217,8 +217,14 @@ ResPairMotif::ResPairMotif(
 	}
 	aa1_ = _pose.residue(_resi1).name1();
 	aa2_ = _pose.residue(_resi2).name1();
-	chain1_ = basic::get_pymol_chain(_pose.chain(_resi1));
-	chain2_ = basic::get_pymol_chain(_pose.chain(_resi2));
+	std::string chain1 = core::conformation::canonical_chain_letter_for_chain_number(_pose.chain(_resi1), /*extended*/true);
+	std::string chain2 = core::conformation::canonical_chain_letter_for_chain_number(_pose.chain(_resi2), /*extended*/true);
+
+	// Because it looks like there's some structure size/layout considerations in ResPairMotif
+	if ( chain1.size() != 1 ) utility_exit_with_message("In ResPairMotif, can't handle multi-letter chain.");
+	if ( chain2.size() != 1 ) utility_exit_with_message("In ResPairMotif, can't handle multi-letter chain.");
+	chain1_ = chain1[0];
+	chain2_ = chain2[0];
 
 	this->bfac1   (_bfac1);
 	this->bfac2   (_bfac2);
@@ -614,7 +620,7 @@ void ResPairMotif::fill_pose_with_motif( Pose & pose, int const & ir, int const 
 	core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo( pose, true ) );
 	pdb_info->number(1,ir);
 	pdb_info->number(2,jr);
-	for ( Size i=1; i<=pose.size(); ++i ) pdb_info->chain (i,'~');
+	for ( Size i=1; i<=pose.size(); ++i ) pdb_info->chain (i,"~");
 	pose.pdb_info( pdb_info );
 	for ( Size i=1; i<=pose.residue(1).nchi(); ++i ) { pose.set_chi(i,1,uint8_to_real(chi1_[i],-180.0,180.0)); }
 	for ( Size i=1; i<=pose.residue(2).nchi(); ++i ) { pose.set_chi(i,2,uint8_to_real(chi2_[i],-180.0,180.0)); }
@@ -1685,8 +1691,8 @@ int MotifHash::get_matching_motifs(ResPairMotifQuery const & opt, MotifHits & hi
 
 			bool is_interface = true;
 			if ( multicomponent && get_component_of_residue(pose1,ir) == get_component_of_residue(pose1,jr) ) {
-				char comp = get_component_of_residue(pose1,jr);
-				Sizes const & intra_subs(comp=='A'?intra_subs1:intra_subs2);
+				std::string comp = get_component_of_residue(pose1,jr);
+				Sizes const & intra_subs(comp=="A"?intra_subs1:intra_subs2);
 				if ( find(intra_subs.begin(), intra_subs.end(), sym_info->subunit_index(ir)) != intra_subs.end() ) { /*cout<<"intra sub"<<endl;*/ is_interface=false; };
 			} else if (  symmetry && !multicomponent && sym_info->subunit_index(ir)==sym_info->subunit_index(jr) && pose1.chain(ir)==pose1.chain(jr) ) { /*<<"subunit index"<<endl;*/ is_interface=false; }
 			else if ( !symmetry && samepose        && pose1.chain(ir)            ==pose1.chain(jr)             ) { /*<<"no sym, same chain"<<endl;*/ is_interface=false; };

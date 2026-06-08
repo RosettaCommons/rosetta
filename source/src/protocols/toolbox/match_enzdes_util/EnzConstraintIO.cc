@@ -253,22 +253,22 @@ EnzConstraintIO::process_pdb_header(
 			//if( resB_type.size() == 2 ) resB_type = " " + resB_type;
 			//note: if the chain is '_', this means the pose doesn't have a chain info.
 			//we'll set the chain to ' ' to prevent a crash
-			if ( resA_chain[0] == '_' ) resA_chain[0] = ' ';
-			if ( resB_chain[0] == '_' ) resB_chain[0] = ' ';
+			if ( resA_chain == "_" ) resA_chain = " ";
+			if ( resB_chain == "_" ) resB_chain = " ";
 
 			found_cst_blocks.insert( cst_block );
 			//debug output
 			//tr.Info << "remark debug " << buffer << tag << resA_chain << resA_type << resA_num;
 			//tr.Info << resB_chain << resB_type << resB_num << cst_block << std::endl;
 			if ( resA_num != 0 ) {
-				pose_resnumA = PDB_map.find(resA_chain[0], resA_num);
+				pose_resnumA = PDB_map.find(resA_chain, resA_num);
 
 				if ( pose_resnumA == 0 ) utility_exit_with_message( "residue at chain "+resA_chain+" position "+utility::to_string( resA_num )+" not found in pose.");
 
 			}
 
 			if ( resB_num != 0 ) {
-				pose_resnumB = PDB_map.find(resB_chain[0], resB_num);
+				pose_resnumB = PDB_map.find(resB_chain, resB_num);
 
 				if ( pose_resnumB == 0 ) utility_exit_with_message( "residue at chain "+resB_chain+" position "+utility::to_string( resB_num )+" not found in pose.");
 
@@ -277,10 +277,6 @@ EnzConstraintIO::process_pdb_header(
 			// first do sanity checks for format and consistency of REMARKs with actual atom data in the pdb
 			if ( cst_block == 0 || cst_block > cst_pairs_.size() ) {
 				std::cerr << "Error: catalytic map in pdb file and information in cst file don't match. Either there is no correctly formatted info given in the REMARK block, or there are more constraint REMARKS than blocks in the .cst file." << std::endl;
-				utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
-			}
-			if ( (resA_chain.size() != 1) || (resB_chain.size() !=1) ) {
-				std::cerr << "Error: format in pdb file header is wrong, missing chains of catalytic residues. Information readfor resA_chain is " << resA_chain << ", for resB_chain is " << resB_chain  << std::endl;
 				utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 			}
 			if ( ( (resA_num != 0 ) && (pose.residue(pose_resnumA).name3() != resA_type ) ) ||

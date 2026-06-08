@@ -194,12 +194,12 @@ aiChain
 make_chain(utility::vector0<AtomInformation> const & chain_atoms)
 {
 	aiChain AIC_out;
-	std::map< std::tuple< char, core::Size, std::string, char >, core::Size >rsd_map;
+	std::map< std::tuple< std::string, core::Size, std::string, char >, core::Size >rsd_map;
 
 	core::Size current_index(0);
 	for ( core::Size i=0; i<chain_atoms.size(); ++i ) {
 		core::io::AtomInformation const & ai(chain_atoms[i]);
-		std::tuple< char, core::Size, std::string, char > const current_id(ai.chainID, ai.resSeq, ai.resName, ai.iCode);
+		std::tuple< std::string, core::Size, std::string, char > const current_id(ai.chainID, ai.resSeq, ai.resName, ai.iCode);
 		auto const search(rsd_map.find(current_id));
 		if ( search != rsd_map.end() ) AIC_out[search->second].push_back(chain_atoms[i]);
 		else {
@@ -362,7 +362,13 @@ add_extra_data(
 			[](core::io::StructFileRepOP const & sfr) {return sfr->heterogen_names();});
 	} else if ( !options.write_glycan_pdb_codes() ) {
 		resize_and_add_if_not_empty(sfrs, "rosetta::residue_type_base_names", sd.modelProperties, sd.msgpack_zone,
-			[](core::io::StructFileRepOP const & sfr) {return sfr->residue_type_base_names();});
+			[](core::io::StructFileRepOP const & sfr) {
+				std::map< std::string, std::pair< std::string, std::string > > base_names;
+				for ( auto const & pairing: sfr->residue_type_base_names() ) {
+					base_names[ resid_to_tag( pairing.first ) ] = pairing.second;
+				}
+				return base_names;
+			});
 	}
 
 	// 2. reproducibility / logging info

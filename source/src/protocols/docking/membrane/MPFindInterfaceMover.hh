@@ -27,6 +27,7 @@
 
 // Package Headers
 #include <core/pose/Pose.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/types.hh>
 
 // Utility Headers
@@ -117,7 +118,7 @@ private: // data
 	Pose native_;
 
 	/// @brief docking partners
-	std::string partners_;
+	core::pose::DockingPartners partners_;
 
 	/// @brief jumps
 	int jump_;

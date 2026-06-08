@@ -102,7 +102,7 @@ void InterfaceBuilder::find_interface_residues(
 )const{
 	auto ligand_area= ligand_areas_.begin();
 	for ( ; ligand_area != ligand_areas_.end(); ++ligand_area ) {
-		char const & chain= ligand_area->first;
+		std::string const & chain= ligand_area->first;
 		utility::vector1<core::Size> chain_ids= core::pose::get_chain_ids_from_chain(chain, pose);
 		for ( core::Size const chain_id : chain_ids ) {
 			core::Size ligand_residue_id= pose.conformation().chain_begin(chain_id);
@@ -142,7 +142,7 @@ void InterfaceBuilder::set_interface_residue(
 	core::conformation::Residue const & ligand_residue = pose.residue(ligand_interface_residue_id);
 
 	core::Size const & chain_id= interface[ligand_interface_residue_id].chain_id;
-	core::Size const & chain= interface[ligand_interface_residue_id].chain;
+	std::string const & chain= interface[ligand_interface_residue_id].chain;
 
 	if ( is_interface_residue(potential_interface_residue, ligand_residue, chain) ) {
 		interface[potential_interface_residue_id].type= ligand_options::InterfaceInfo::is_interface;
@@ -154,7 +154,7 @@ void InterfaceBuilder::set_interface_residue(
 bool InterfaceBuilder::is_interface_residue(
 	core::conformation::Residue const & potential_interface_residue,
 	core::conformation::Residue const & ligand_interface_residue,
-	char const chain
+	std::string const & chain
 )const {
 	core::Size const potential_interface_neighbor_atom_id= potential_interface_residue.nbr_atom();
 	core::Vector const potential_interface_vector= potential_interface_residue.xyz(potential_interface_neighbor_atom_id);

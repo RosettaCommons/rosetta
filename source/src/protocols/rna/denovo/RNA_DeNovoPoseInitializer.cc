@@ -674,11 +674,11 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 	///// check that we have a "chunk" from every chain, if not, make one
 	if ( dock_each_chunk_ && (pose_input.residue( pose_input.size() ).name3() == "XXX") ) {
 		// get a list of all the chains
-		utility::vector1< char > chains = full_model_params_input_pose->conventional_chains();
-		utility::vector1< char > chains_covered;
+		utility::vector1< std::string > chains = full_model_params_input_pose->conventional_chains();
+		utility::vector1< std::string > chains_covered;
 		for ( core::Size n=1; n<=chunk_poses.size(); ++n ) {
 			for ( auto const i : const_full_model_info(*chunk_poses[n]).res_list() ) {
-				char c = chains[i];
+				std::string c = chains[i];
 				chains_covered.push_back( c );
 			}
 		}
@@ -791,15 +791,15 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 		start_pose = *chunk_poses[ 1 ];
 
 		// figure out which chunks we're going to merge (don't merge in multiple chunks from the same chain)
-		utility::vector1< char > all_chains = full_model_params_input_pose->conventional_chains();
-		utility::vector1< char > chains_in_start_pose;
+		utility::vector1< std::string > all_chains = full_model_params_input_pose->conventional_chains();
+		utility::vector1< std::string > chains_in_start_pose;
 		// a vector of booleans telling us whether to merge chunk poses or not, same length as chunk_poses
 		utility::vector1< bool > chunks_to_merge;
 		utility::vector1< pose::PoseOP > remaining_chunk_poses; // the chunk poses that aren't merged - will be included as "other poses"
 		chunks_to_merge.push_back( true ); // include the first chunk
 
 		for ( auto const i : const_full_model_info(*chunk_poses[1]).res_list() ) {
-			char c = all_chains[i];
+			std::string c = all_chains[i];
 			chains_in_start_pose.push_back( c );
 		}
 
@@ -808,10 +808,10 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 			// if we already have a chunk from this chain, then we don't want to add this chunk
 			// unless we specified dock_each_chunk_per_chain
 			// add it to a new list of chunk poses
-			utility::vector1< char > chains_in_chunk;
+			utility::vector1< std::string > chains_in_chunk;
 			bool merge_chunk = true;
 			for ( auto const i : const_full_model_info( *chunk_poses[n] ).res_list() ) {
-				char c = all_chains[ i ];
+				std::string c = all_chains[ i ];
 				chains_in_chunk.push_back( c );
 				// check if this chain is already represented in the start pose, if so, we don't want to add this chunk as well
 				if ( std::find( chains_in_start_pose.begin(), chains_in_start_pose.end(), c ) != chains_in_start_pose.end() ) { //HERE
@@ -830,7 +830,7 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 			}
 			// we're including the chunk, add the chains to the chains_in_start_pose
 			if ( merge_chunk ) {
-				for ( auto const i : chains_in_chunk ) {
+				for ( auto const & i : chains_in_chunk ) {
 					chains_in_start_pose.push_back( i );
 				}
 			}

@@ -1191,10 +1191,11 @@ def analyze_integration_test( test, outdir, refdir, results, full_log ):
 
         if Options.fulldiff:
             for diff in proc.stdout.readlines():
+                diff = diff.decode('utf-8')
                 msg += "~ %s\n" % diff.strip()
                 full_log_msg += "     %s\n" % diff.strip()
         else :
-            lines = proc.stdout.readlines()
+            lines = [l.decode('utf-8') for l in proc.stdout.readlines()]
             for line in lines :
                 cols = line.split()
                 if len(cols) < 4 :
@@ -1213,10 +1214,11 @@ def analyze_integration_test( test, outdir, refdir, results, full_log ):
 
         if Options.fulldiff:
             for diff in proc.stdout.readlines():
+                diff = diff.decode('utf-8')
                 msg += "~ %s\n" % diff.strip()
                 full_log_msg += "     %s\n" % diff.strip()
         else :
-            lines = proc.stdout.readlines()
+            lines = [l.decode('utf-8') for l in proc.stdout.readlines()]
             for line in lines :
                 cols = line.split()
                 if len(cols) < 4 or not( cols[2] == "and" ) :

@@ -156,7 +156,7 @@ SelectedResiduesPyMOLMetric::calculate(const pose::Pose & pose) const {
 	core::pose::PDBInfoCOP pdb_info( pose.pdb_info() );
 
 	for ( core::Size i : selected ) {
-		std::string chain( 1, core::pose::get_chain_from_chain_id( pose.chain(i), pose ) );
+		std::string chain = core::pose::get_chain_from_chain_id( pose.chain(i), pose );
 		std::string num = ( pdb_info != nullptr && !use_rosetta_numbering()? utility::to_string( pdb_info->number(i) ) : utility::to_string(i) );
 		std::string icode = ( pdb_info != nullptr && !use_rosetta_numbering()? utility::to_string( pdb_info->icode(i) ) : utility::to_string(' ') );
 

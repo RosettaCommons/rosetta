@@ -213,7 +213,7 @@ PCSData::init_pcs_data_from_file(
 			// Clear singleset vector and multiset_params map afterwards
 			if ( !singleset_vec.empty() && !multiset_params_map.empty() ) {
 
-				char chain_id;
+				std::string chain_id;
 				Size sl_pos;
 
 				// Check that all parameter for the grid search have been provided and convert them to the appropriate types
@@ -224,18 +224,17 @@ PCSData::init_pcs_data_from_file(
 				}
 
 				if ( multiset_params_map.find("chain_id") != multiset_params_map.end() ) {
-					runtime_assert_msg(multiset_params_map["chain_id"].size() == 1, "ERROR in creating PCSData. The tagging site chain ID for the PCSMultiSet must be a single character.");
-					chain_id = std::toupper(multiset_params_map["chain_id"].c_str()[0]);
+					chain_id = multiset_params_map["chain_id"];
 				} else {
 					utility_exit_with_message("ERROR in creating PCSData. The tagging site chain ID for the PCSMultiSet has not been provided.");
 				}
 
 				// Try to convert tagging site number from pdb to pose numbering
 				if ( pdbinfo ) {
-					TR.Trace << "Converting PCS spinlabel residue " + to_string(sl_pos) + " " + to_string(chain_id) + " in PCS input file from pdb to pose numbering." << std::endl;
+					TR.Trace << "Converting PCS spinlabel residue " + to_string(sl_pos) + " " + chain_id + " in PCS input file from pdb to pose numbering." << std::endl;
 					sl_pos = pdbinfo->pdb2pose(chain_id, sl_pos);
 					if ( sl_pos == 0 ) { // Residue not found
-						utility_exit_with_message( "ERROR: Cannot convert PCS spinlabel residue " + to_string(sl_pos) + " " + to_string(chain_id)
+						utility_exit_with_message( "ERROR: Cannot convert PCS spinlabel residue " + to_string(sl_pos) + " " + chain_id
 							+ " in PCS input file from pdb to pose numbering. Residue number was not found." );
 					}
 				} else { // Assume pose numbering instead
