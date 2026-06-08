@@ -42,6 +42,9 @@ sources = {
 		"xyzTriple",
 		"xyzVector",
 	],
+	"crick_equations" : [
+		"BundleParams_derivatives",
+	],
 	"fourier" : [
 		"fft",
 	],

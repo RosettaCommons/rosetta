@@ -478,7 +478,7 @@ BundleParametrizationCalculator::parameter_properties_from_enum(
 		ParameterizationCalculatorProperties( true, true, true, true, false ), //z0_offset
 		ParameterizationCalculatorProperties( true, true, true, true, false ), //z1_offset
 		ParameterizationCalculatorProperties( true, true, true, true, false ), //epsilon
-		ParameterizationCalculatorProperties( false, false, false, false, false ), //residues_per_repeat
+		ParameterizationCalculatorProperties( true, false, false, false, false ), //residues_per_repeat
 		ParameterizationCalculatorProperties( true, false, false, false, false ), //repeating_unit_offset
 		ParameterizationCalculatorProperties( false, false, false, false, false ), //atoms_per_residue
 		ParameterizationCalculatorProperties( true, false, false, false, false ), //r1_peratom

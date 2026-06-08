@@ -1,0 +1,34 @@
+#
+# Integration test for parametric minimization.
+# Builds a 3-helix bundle with ELLKAIA heptad repeat and minimizes:
+#   Run 1: Parametric DOFs only (no chi angles)
+#   Run 2: Parametric DOFs + chi angles simultaneously
+#
+# Enable trajectory PDB dumps via Debug tracer level.
+#
+
+cd %(workdir)s
+
+[ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
+
+# Run 1: parametric-only minimization (with trajectory dump)
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags \
+    -parser:protocol inputs/param_only.xml \
+    -out:prefix param_only_ \
+    -out:levels core.optimization.AtomTreeMinimizer:debug \
+    -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+    | egrep -vf ../../ignore_list \
+    > log_param_only
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+
+# Run 2: parametric + chi minimization (with trajectory dump)
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags \
+    -parser:protocol inputs/param_plus_chi.xml \
+    -out:prefix param_plus_chi_ \
+    -out:levels core.optimization.AtomTreeMinimizer:debug \
+    -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+    | egrep -vf ../../ignore_list \
+    > log_param_plus_chi
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true

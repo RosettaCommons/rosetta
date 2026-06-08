@@ -74,7 +74,7 @@ string PDB::getField(const string &str, int index)
 			case 11 : return str.substr(60,6); // B-factor
 			}
 
-	return nullptr;
+	return "You've provided an illegal argument and this function is only permitted to return a string.";
 }
 
 

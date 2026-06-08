@@ -88,6 +88,8 @@ public:
 	void add_bondlengths_action( move_map_action action, residue_selector::ResidueSelectorCOP selector );
 
 
+	void all_parametric( bool setting );
+
 	///@brief Option to use specific cartesian settings for the movemap.
 	/// Used for glycans as dihedral vs cart MM settings are completely different to move the same
 	/// underlying coordinates in IUPAC definitions
@@ -182,9 +184,10 @@ private:
 	bool all_bondlengths_setting_ = false;
 	std::list< MMResAction > bondlengths_actions_;
 
-	bool cartesian_specific_ = false; //Option to use specific cartesian settings for the movemap.  Used for glycans as dihedral vs cart MM settings are completely different to move the same underlying coordinates in IUPAC definitions
-	// TO DO:
-	// Specific torsion selectors!
+	bool cartesian_specific_ = false;
+
+	bool use_all_parametric_ = false;
+	bool all_parametric_setting_ = false;
 
 };
 
