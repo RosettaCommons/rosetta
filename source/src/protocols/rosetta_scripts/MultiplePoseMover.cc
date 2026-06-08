@@ -37,6 +37,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -261,27 +262,28 @@ std::deque < core::pose::PoseOP > MultiplePoseMover::process_poses( std::deque <
 /// @brief Process a single input pose by the RosettaScripts mover
 bool MultiplePoseMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::pose::PoseOP > & additional_poses )
 {
-	if ( !rosetta_scripts_tag_ ) {
-		return true;
-	}
-
-	protocols::rosetta_scripts::RosettaScriptsParser parser;
-
-	// rosetta_scripts_tag_ has been pre-parsed in parse_my_tag() so no parsing exception should be thrown here
-	// No longer true, in fact, as the original parse_my_tag call has been removed, since the Pose needed for that
-	// call is not present until we get to the MPM's apply call.
 	protocols::moves::MoverOP mover;
-	try {
-		rosetta_scripts_tag_->reset_accessed_options();
-		mover = parser.parse_protocol_tag( rosetta_scripts_tag_, basic::options::option );
-		if ( !mover ) {
-			TR << "Failed to parse protocol? This should not happen. Not applying protocol to pose." << std::endl;
-			return false;
+
+	if ( rosetta_scripts_tag_ ) {
+		protocols::rosetta_scripts::RosettaScriptsParser parser;
+
+		// This can throw if the tag can't be properly parsed
+		try {
+			rosetta_scripts_tag_->reset_accessed_options();
+			mover = parser.parse_protocol_tag( rosetta_scripts_tag_, basic::options::option );
+			if ( !mover ) {
+				TR << "Failed to parse protocol? This should not happen. Not applying protocol to pose." << std::endl;
+				return false;
+			}
+		} catch ( utility::excn::Exception const & e ) {
+			std::ostringstream oss;
+			oss << "MultiplePoseMover could not create the inner parsed protocol; error message generated from parser.parse_protocol_tag:\n" << e.msg();
+			throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
 		}
-	} catch ( utility::excn::Exception const & e ) {
-		std::ostringstream oss;
-		oss << "MultiplePoseMover could not create the inner parsed protocol; error message generated from parser.parse_protocol_tag:\n" << e.msg();
-		throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
+	} else if ( mover_ ) {
+		mover = mover_->clone(); // New copy to keep from saving state across calls
+	} else {
+		return true;
 	}
 
 	mover->apply(pose);
@@ -327,6 +329,12 @@ void MultiplePoseMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data
 ) {
+	std::string my_name;
+	if ( tag->hasOption("name") ) {
+		my_name = tag->getOption<std::string>("name");
+	} else {
+		my_name = "Anonymous "  + tag->getName();
+	}
 
 	if ( tag->hasOption("max_input_poses") ) {
 		max_input_poses_ = tag->getOption<int>("max_input_poses", 0);
@@ -336,6 +344,10 @@ void MultiplePoseMover::parse_my_tag(
 	}
 	if ( tag->hasOption("cached") ) {
 		cached_ = tag->getOption<bool>("cached");
+	}
+
+	if ( tag->hasOption("mover") ) {
+		mover_ = rosetta_scripts::parse_mover( tag->getOption< std::string >( "mover", "null" ), data );
 	}
 
 	try {
@@ -348,6 +360,20 @@ void MultiplePoseMover::parse_my_tag(
 			// protocols::rosetta_scripts::RosettaScriptsParser parser;
 			// protocols::moves::MoverOP mover( parser.parse_protocol_tag( rosetta_scripts_tag_ ) );
 			recursively_access_all_attributes( rs_tag );
+		}
+		if ( mover_ && rosetta_scripts_tag_ ) {
+			TR.Warning << "Both a mover and a ROSETTASCRIPTS specification was set with a MultiplePoseMover -- the script will take precedence, and the mover will be ignored." << std::endl;
+		}
+
+		if ( tag->hasTag("PROTOCOLS") ) {
+			if ( mover_ ) {
+				TR.Warning << "Both a mover and a PROTOCOLS block was set with a MultiplePoseMover -- the protocols block will take precedence, and the mover will be ignored." << std::endl;
+			}
+			if ( rosetta_scripts_tag_ ) {
+				TR.Warning << "Both a PROTOCOLS and a ROSETTASCRIPTS specification was set with a MultiplePoseMover -- the script will take precedence, and the PROTOCOLS will be ignored." << std::endl;
+			}
+			mover_ = utility::pointer::make_shared< protocols::rosetta_scripts::ParsedProtocol >();
+			mover_->parse_my_tag( tag->getTag("PROTOCOLS"), data );
 		}
 
 		// SELECT tag (optional)
@@ -367,16 +393,15 @@ void MultiplePoseMover::parse_my_tag(
 			}
 		}
 
+
 		// Warn if no ROSETTASCRIPTS protocol and no SELECTOR (i.e. null mover)
-		if ( selectors_.size() < 1 && !rosetta_scripts_tag_ ) {
-			std::string my_name( tag->getOption<std::string>("name") );
-			TR.Warning << "Neither a ROSETTASCRIPTS protocol nor a SELECT statement specified in MultiplePoseMover with name \"" << my_name << "\". This mover has no effect. Are you sure this is what you intended?" << std::endl;
+		if ( selectors_.size() < 1 && !rosetta_scripts_tag_ && !mover_ ) {
+			TR.Warning << "Neither a ROSETTASCRIPTS protocol nor a SELECT statement nor a mover or PROTOCOLS specified in MultiplePoseMover with name \"" << my_name << "\". This mover has no effect. Are you sure this is what you intended?" << std::endl;
 		}
 
 		// TODO: Should we complain here is there are tags specified that we don't understand?
 
 	} catch( utility::excn::Exception const & e ) {
-		std::string my_name( tag->getOption<std::string>("name") );
 		throw CREATE_EXCEPTION(utility::excn::Exception, "Exception in MultiplePoseMover with name \"" + my_name + "\": " + e.msg());
 	}
 
@@ -408,6 +433,8 @@ void MultiplePoseMover::parse_my_tag(
 /// @brief Used by RosettaScripts to set the previous mover to pull poses from
 void MultiplePoseMover::set_previous_mover( protocols::moves::MoverOP const m ) { previous_mover_ = m; }
 
+void MultiplePoseMover::set_main_mover( protocols::moves::MoverOP const m ) { mover_ = m; }
+
 /// @brief sets rosettascripts tag
 void MultiplePoseMover::set_rosetta_scripts_tag( utility::tag::TagCOP tag ) { rosetta_scripts_tag_ = tag; }
 
@@ -433,7 +460,8 @@ void MultiplePoseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	attlist
 		+ Attr( "max_input_poses", xsct_non_negative_integer, "XSD TO DO" )
 		+ Attr( "max_output_poses", xsct_non_negative_integer, "XSD TO DO" )
-		+ Attr( "cached", xsct_rosetta_bool, "XSD TO DO" );
+		+ Attr( "cached", xsct_rosetta_bool, "XSD TO DO" )
+		+ Attr( "mover", xs_string, "The mover to apply to each of the poses (instead of the script)" );
 
 	PoseSelectorFactory::get_instance()->define_pose_selector_group( xsd );
 
@@ -446,12 +474,15 @@ void MultiplePoseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		.description( "XRW TO DO" )
 		.write_complex_type_to_schema( xsd );
 
-	XMLSchemaSimpleSubelementList rs_element, select_element;
+	XMLSchemaSimpleSubelementList rs_element, select_element, protocol_element;
 	rs_element.add_already_defined_subelement(
 		RosettaScriptsParser::rosetta_scripts_element_name(),
 		& RosettaScriptsParser::rosetta_scripts_complex_type_naming_func );
 	select_element.add_already_defined_subelement(
 		"SELECT", & mpm_mangler );
+	protocol_element.add_already_defined_subelement_w_alt_element_name(
+		"PROTOCOLS", ParsedProtocol::mover_name(), & moves::complex_type_name_for_mover );
+
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.element_name( mover_name() )
 		.complex_type_naming_func( & protocols::moves::complex_type_name_for_mover )
@@ -459,7 +490,8 @@ void MultiplePoseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		.add_optional_name_attribute()
 		.add_ordered_subelement_set_as_optional( select_element )
 		.add_ordered_subelement_set_as_optional( rs_element )
-		.description( "XRW TO DO" )
+		.add_ordered_subelement_set_as_optional( protocol_element )
+		.description( "Take multiple poses generated by the previous mover in the protocol list and apply selectors and additional movers on them." )
 		.write_complex_type_to_schema( xsd );
 }
 
