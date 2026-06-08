@@ -476,6 +476,11 @@ sources = {
 	"protocols/residue_optimization": [
 		"MetapatchEnumeration",
 	],
+
+    "protocols/sid_erms_prediction": [
+        "sid_erms_simulate",
+    ],
+
 	"protocols/tcr" : [
 		"TCRmodel", # /* Ragul Gowthaman, documentation/application_documentation/structure_prediction/TCRmodel.md, test/integration/tests/tcrmodel/, Rosetta/demos/public/tcr_modeling */
 		"TCRseqInfo",
