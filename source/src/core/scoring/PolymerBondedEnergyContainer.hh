@@ -48,17 +48,18 @@ namespace scoring {
 
 class PolymerBondedNeighborIterator : public ResidueNeighborIterator
 {
-	PolymerBondedNeighborIterator & operator = (PolymerBondedNeighborIterator const & src );
-
 public:
-	~PolymerBondedNeighborIterator() override;
-
 	// Moves pos_in, so by-value
 	PolymerBondedNeighborIterator(
 		Size const base_in,
 		utility::vector1< Size > const & positions_in,
 		PolymerBondedEnergyContainer & parent
 	);
+
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	PolymerBondedNeighborIterator & operator = (PolymerBondedNeighborIterator const & ) = delete;
 
 	ResidueNeighborIterator & operator = ( ResidueNeighborIterator const & src ) override;
 
@@ -99,16 +100,18 @@ private:
 
 class PolymerBondedNeighborConstIterator : public ResidueNeighborConstIterator
 {
-	PolymerBondedNeighborConstIterator & operator = (PolymerBondedNeighborConstIterator const & src );
 public:
-	~PolymerBondedNeighborConstIterator() override;
-
 	// Moves pos_in, so by value
 	PolymerBondedNeighborConstIterator(
 		Size const base_in,
 		utility::vector1< Size > const & positions_in,
 		PolymerBondedEnergyContainer const & parent
 	);
+
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	PolymerBondedNeighborConstIterator & operator = (PolymerBondedNeighborConstIterator const & ) = delete;
 
 	ResidueNeighborConstIterator & operator = ( ResidueNeighborConstIterator const & src ) override;
 
