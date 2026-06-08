@@ -46,9 +46,6 @@ GeneralFileContents::GeneralFileContents( std::string const & filename) :
 	file_contents_ = utility::file_contents( filename );
 }
 
-/// @brief Destructor.
-GeneralFileContents::~GeneralFileContents() {}
-
 /// @brief Clone function: make a copy of this object and return an owning pointer to the copy.
 GeneralFileContentsOP
 GeneralFileContents::clone() const {
@@ -104,9 +101,6 @@ GeneralFileContentsVector::GeneralFileContentsVector( std::string const & filena
 	std::string contents = utility::file_contents( filename );
 	file_contents_ = utility::string_split_simple(contents, '\n');
 }
-
-/// @brief Destructor.
-GeneralFileContentsVector::~GeneralFileContentsVector() {}
 
 /// @brief Clone function: make a copy of this object and return an owning pointer to the copy.
 GeneralFileContentsVectorOP
