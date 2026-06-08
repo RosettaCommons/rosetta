@@ -149,25 +149,26 @@ public:
 			TS_ASSERT_EQUALS(sfr->chains().size(), sfr_in->chains().size());
 			for ( core::Size i=0; i<sfr->chains().size(); ++i ) {
 				for ( core::Size j=0; j<sfr->chains()[i].size(); ++j ) {
+					std::string entry = test_file + " chain " + std::to_string(i) + " residue " + std::to_string(j);
 					core::io::AtomInformation const & ogai(sfr->chains()[i][j]);
 					core::io::AtomInformation const & cbai(sfr_in->chains()[i][j]);
-					TS_ASSERT_EQUALS(ogai.isHet, cbai.isHet);
-					TS_ASSERT_EQUALS(ogai.serial, cbai.serial);
-					TS_ASSERT_EQUALS(utility::strip(ogai.name), utility::strip(cbai.name));
-					TS_ASSERT_EQUALS(ogai.altLoc, cbai.altLoc);
-					TS_ASSERT_EQUALS(ogai.resName, cbai.resName);
-					TS_ASSERT_EQUALS(ogai.chainID, cbai.chainID);
-					TS_ASSERT_EQUALS(ogai.resSeq, cbai.resSeq);
-					TS_ASSERT_EQUALS(ogai.iCode, cbai.iCode);
-					TS_ASSERT_DELTA(ogai.x, cbai.x, 0.001); // extra large beacause might add atoms etc
-					TS_ASSERT_DELTA(ogai.y, cbai.y, 0.001);
-					TS_ASSERT_DELTA(ogai.z, cbai.z, 0.001);
-					TS_ASSERT_EQUALS(ogai.occupancy, cbai.occupancy);
-					TS_ASSERT_EQUALS(ogai.temperature, cbai.temperature);
-					TS_ASSERT_EQUALS(ogai.segmentID, cbai.segmentID);
-					TS_ASSERT_EQUALS(utility::strip(ogai.element), cbai.element);
-					TS_ASSERT_EQUALS(ogai.formalcharge, cbai.formalcharge);
-					TS_ASSERT_EQUALS(ogai.terCount, cbai.terCount);
+					TSM_ASSERT_EQUALS(entry, ogai.isHet, cbai.isHet);
+					TSM_ASSERT_EQUALS(entry, ogai.serial, cbai.serial);
+					TSM_ASSERT_EQUALS(entry, utility::strip(ogai.name), utility::strip(cbai.name));
+					TSM_ASSERT_EQUALS(entry, ogai.altLoc, cbai.altLoc);
+					TSM_ASSERT_EQUALS(entry, ogai.resName, cbai.resName);
+					TSM_ASSERT_EQUALS(entry, ogai.chainID, cbai.chainID);
+					TSM_ASSERT_EQUALS(entry, ogai.resSeq, cbai.resSeq);
+					TSM_ASSERT_EQUALS(entry, ogai.iCode, cbai.iCode);
+					TSM_ASSERT_DELTA(entry, ogai.x, cbai.x, 0.001); // extra large beacause might add atoms etc
+					TSM_ASSERT_DELTA(entry, ogai.y, cbai.y, 0.001);
+					TSM_ASSERT_DELTA(entry, ogai.z, cbai.z, 0.001);
+					TSM_ASSERT_EQUALS(entry, ogai.occupancy, cbai.occupancy);
+					TSM_ASSERT_EQUALS(entry, ogai.temperature, cbai.temperature);
+					TSM_ASSERT_EQUALS(entry, ogai.segmentID, cbai.segmentID);
+					TSM_ASSERT_EQUALS(entry, utility::strip(ogai.element), cbai.element);
+					TSM_ASSERT_EQUALS(entry, ogai.formalcharge, cbai.formalcharge);
+					TSM_ASSERT_EQUALS(entry, ogai.terCount, cbai.terCount);
 				}
 			}
 		}
