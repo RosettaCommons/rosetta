@@ -249,10 +249,10 @@ private:
 	bool partial_state_assignment_;
 	bool preped_for_sim_annealing_;
 
-	//no default constructor, uncopyable
-	SymmMinimalistEdge();
-	SymmMinimalistEdge( SymmMinimalistEdge const & );
-	SymmMinimalistEdge & operator = ( SymmMinimalistEdge const & );
+public:
+	SymmMinimalistEdge() = delete;
+	SymmMinimalistEdge( SymmMinimalistEdge const & ) = delete;
+	SymmMinimalistEdge & operator = ( SymmMinimalistEdge const & ) = delete;
 
 };
 
@@ -318,10 +318,10 @@ private:
 
 	static const int COMMIT_LIMIT_BETWEEN_UPDATES = 1024; // 2^10
 
-	//no default constructor, uncopyable
-	SymmMinimalistInteractionGraph();
-	SymmMinimalistInteractionGraph( SymmMinimalistInteractionGraph const & );
-	SymmMinimalistInteractionGraph & operator = ( SymmMinimalistInteractionGraph const & );
+public:
+	SymmMinimalistInteractionGraph() = delete;
+	SymmMinimalistInteractionGraph( SymmMinimalistInteractionGraph const & ) = delete;
+	SymmMinimalistInteractionGraph & operator = ( SymmMinimalistInteractionGraph const & ) = delete;
 };
 
 

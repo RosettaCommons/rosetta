@@ -171,12 +171,9 @@ public:
 	void save_momento( ResidueAtomTreeCollectionMomento & momento ) const;
 	void update_from_momento( ResidueAtomTreeCollectionMomento const & momento );
 
-private:
-
-	//uncopyable -- unimplemented
-	ResidueAtomTreeCollection( ResidueAtomTreeCollection const & );
-	ResidueAtomTreeCollection & operator = ( ResidueAtomTreeCollection const & );
-
+public:
+	ResidueAtomTreeCollection( ResidueAtomTreeCollection const & ) = delete;
+	ResidueAtomTreeCollection & operator = ( ResidueAtomTreeCollection const & ) = delete;
 
 private:
 

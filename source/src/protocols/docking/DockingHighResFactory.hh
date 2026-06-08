@@ -44,10 +44,6 @@ public:
 private:
 	// Private constructor to make it singleton managed
 	DockingHighResFactory();
-	DockingHighResFactory(const DockingHighResFactory & src); // unimplemented
-
-	DockingHighResFactory const &
-	operator=( DockingHighResFactory const & ); // unimplemented
 
 public:
 	// Warning this is not called because of the singleton pattern
