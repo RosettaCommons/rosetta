@@ -216,6 +216,18 @@ sources = {
 		"BundleParametersSet",
 		"OmegaBundleParameter",
 	],
+	"protocols/beta_barrel": [
+		"BarrelParametrizationCalculator",
+		"MakeBarrel",
+		"MakeBarrelStrand",
+		"PerturbBarrel",
+		"PerturbBarrelStrand",
+		"util",
+	],
+	"protocols/beta_barrel/parameters": [
+		"BarrelParameters",
+		"BarrelParametersSet",
+	],
 	"protocols/optimize_weights": [
 		"DDGBindOptEData",
 		"DGBindOptEData",
