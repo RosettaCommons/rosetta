@@ -351,8 +351,7 @@ RealValuedParameter::provide_xsd_perturbation_information(
 ) const {
 	using namespace utility::tag;
 	xsd + XMLSchemaAttribute::attribute_w_default( parameter_name() + "_perturbation" , xsct_real, "Perturbation magnitude for perturbing " + parameter_name() + ".", "0.0" );
-	xsd + XMLSchemaAttribute::attribute_w_default( parameter_name() + "_perturbation_type" , xs_string, "Perturbation type for perturbing " + parameter_name() + ".  Can be \"gaussian\" or \"uniform\".", "gaussian" );
-	//TODO: FIGURE OUT HOW TO ADD RESTRICTION THAT THE PERTURBATION TYPE CAN ONLY BE "gaussian" OR "uniform"
+	xsd + XMLSchemaAttribute::attribute_w_default( parameter_name() + "_perturbation_type" , xsct_perturbation_type, "Perturbation type for perturbing " + parameter_name() + ".  Can be \"gaussian\" or \"uniform\".", "gaussian" );
 }
 
 /// @brief Return the XSD information for setting this parameter.
