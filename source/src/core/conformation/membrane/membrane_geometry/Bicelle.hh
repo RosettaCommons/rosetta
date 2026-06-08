@@ -69,7 +69,7 @@ public: // Constructors & Setup
 	Bicelle( core::Real steepness, core::Real thickness, core::Real bicelle_inner_radius, AqueousPoreParametersOP aqueous_pore );
 
 	/// @brief Destructor
-	~Bicelle() override;
+	~Bicelle() override = default;
 
 	MembraneGeometryOP
 	clone() const override;

@@ -63,7 +63,7 @@ public:
 	);
 
 
-	~ImplicitLipidInfo() override;
+	~ImplicitLipidInfo() override = default;
 
 	ImplicitLipidInfoOP
 	clone() const;

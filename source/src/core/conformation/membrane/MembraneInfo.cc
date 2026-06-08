@@ -327,9 +327,6 @@ MembraneInfo::operator=( MembraneInfo const & src ) {
 	return *this;
 }
 
-/// @brief Destructor
-MembraneInfo::~MembraneInfo() {}
-
 /// @brief Generate a string representation of information represented by ths MembraneInfo
 void
 MembraneInfo::show() const {

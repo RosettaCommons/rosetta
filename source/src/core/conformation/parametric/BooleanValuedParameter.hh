@@ -52,7 +52,7 @@ public:
 
 	BooleanValuedParameter( BooleanValuedParameter const & src );
 
-	~BooleanValuedParameter() override;
+	~BooleanValuedParameter() override = default;
 
 	/// @brief Make a copy of this object ( allocate actual memory for it )
 	///

@@ -61,7 +61,7 @@ public: // Constructors & Setup
 	Slab( core::Real steepness, core::Real thickness, AqueousPoreParametersOP aqueous_pore );
 
 	/// @brief Destructor
-	~Slab() override;
+	~Slab() override = default;
 
 	MembraneGeometryOP
 	clone() const override;
