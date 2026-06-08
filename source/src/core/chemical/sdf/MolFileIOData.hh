@@ -139,11 +139,15 @@ public:
 	MolFileIOMolecule();
 	~MolFileIOMolecule() override;
 
-	std::string name() const { return name_; }
+	std::string const & name() const { return name_; }
+	std::string const & name3() const { return name3_; }
+	std::string const & name1() const { return name1_; }
 	//core::Size nbr() const { return nbr_; }
 	//core::Real nbr_radius() const { return nbr_radius_; }
 
-	void name(std::string name) { name_ = name; }
+	void name(std::string const & name) { name_ = name; }
+	void name3(std::string const & name3) { name3_ = name3; }
+	void name1(std::string const & name1) { name1_ = name1; }
 	//void nbr(core::Size nbr) { nbr_ = nbr; }
 	//void nbr_radius(core::Real nbr_radius) { nbr_radius_ = nbr_radius; }
 
@@ -203,8 +207,8 @@ private:
 
 private:
 	std::string name_;
-	//std::string name3_;
-	//std::string name1_;
+	std::string name3_;
+	std::string name1_;
 	MolFileIOGraph molgraph_;
 	std::map< AtomIndex, mioAD > index_atom_map_;
 	StrStrMap molecule_string_data_;
