@@ -7,3 +7,8 @@ for f in *.sdf; do
 
     test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 done
+for f in *.mol2; do
+    %(python)s %(pyapps)s/public/molfile_to_params_polymer.py --clobber --all-in-one-pdb --keep-names --name $(basename $f .mol2) -i $f --use-pdb-rotamers >> log 2>&1
+
+    test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+done
