@@ -300,7 +300,7 @@ void DockingEnsemblePrepackProtocol::check_ensemble_member_compatibility() {
 
 			// if the chain identities are not equivalent, error!
 			// assuming ensemble 1 chains are first reported in parterns flag
-			for ( core::Size k=1; k<chains.size(); ++k ) {
+			for ( core::Size k=1; k<=chains.size(); ++k ) {
 				if ( chains[k] != partner1_chains[k] ) {
 					std::string exit_message = "Ensemble 1 member differs in chain identity from partners flag!\n";
 					exit_message = exit_message + "Member " + std::to_string(i) + ": " + chains[k] + " vs. " + partner1_chains[k] + "\n";
@@ -324,7 +324,7 @@ void DockingEnsemblePrepackProtocol::check_ensemble_member_compatibility() {
 
 			// if the chain identities are not equivalent, error!
 			// assuming ensemble 2 chains are second reported in parterns flag
-			for ( core::Size k=1; k<chains.size(); ++k ) {
+			for ( core::Size k=1; k<=chains.size(); ++k ) {
 				if ( chains[k] != partner2_chains[k] ) {
 					std::string exit_message = "Ensemble 2 member differs in chain identity from partners flag!\n";
 					exit_message = exit_message + "Member " + std::to_string(i) + ": " + chains[k] + " vs. " + partner2_chains[k] + "\n";

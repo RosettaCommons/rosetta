@@ -51,9 +51,9 @@ bool QuotaCollector::add(std::pair<FragmentCandidateOP, scores::FragmentScoreMap
 
 void QuotaCollector::list_pools(std::ostream & where) const {
 
-	for ( core::Size i=1; i<storage_.size(); ++i ) {
+	for ( core::Size i=1; i<=storage_.size(); ++i ) {
 		where << std::setw(3) << i;
-		for ( core::Size j=1; j<storage_[i].size(); ++j ) {
+		for ( core::Size j=1; j<=storage_[i].size(); ++j ) {
 			where << std::setw(10) << storage_[i][j]->get_pool_name() << "(" << std::setw(3) << storage_[i][j]->total_size() << ") ";
 		}
 		where << std::endl;
@@ -64,7 +64,7 @@ void QuotaCollector::list_pools(std::ostream & where) const {
 void QuotaCollector::clear() {
 
 	for ( core::Size i=1; i<=storage_.size(); ++i ) {
-		for ( core::Size j=1; j<storage_[i].size(); ++j ) {
+		for ( core::Size j=1; j<=storage_[i].size(); ++j ) {
 			storage_[i][j]->clear();
 		}
 	}
@@ -73,7 +73,7 @@ void QuotaCollector::clear() {
 core::Size QuotaCollector::count_candidates(core::Size pos) const {
 
 	core::Size cnt = 0;
-	for ( core::Size j=1; j<storage_[pos].size(); ++j ) {
+	for ( core::Size j=1; j<=storage_[pos].size(); ++j ) {
 		cnt += storage_[pos][j]->count_candidates();
 	}
 
@@ -83,7 +83,7 @@ core::Size QuotaCollector::count_candidates(core::Size pos) const {
 core::Size QuotaCollector::count_candidates() const {
 	core::Size cnt = 0;
 	for ( core::Size i=1; i<=storage_.size(); ++i ) {
-		for ( core::Size j=1; j<storage_[i].size(); ++j ) {
+		for ( core::Size j=1; j<=storage_[i].size(); ++j ) {
 			cnt += storage_[i][j]->count_candidates();
 		}
 	}
