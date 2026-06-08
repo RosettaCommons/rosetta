@@ -259,7 +259,9 @@ char ResPairMotif::ss2  () const { if ( ss2_=='H'||ss2_=='I'||ss2_=='G' ) return
 char ResPairMotif::dssp1() const { return ss1_; }
 char ResPairMotif::dssp2() const { return ss2_; }
 bool ResPairMotif::operator < (ResPairMotif const & other) const {
-	return 0 <  memcmp(this,&other,sizeof(ResPairMotif));
+	// memcmp returns negative when *this is byte-wise less than other; the
+	// original form `0 < memcmp(...)` was the inverted predicate (greater-than).
+	return memcmp(this,&other,sizeof(ResPairMotif)) < 0;
 }
 bool ResPairMotif::operator ==(ResPairMotif const & other) const {
 	return 0 == memcmp(this,&other,sizeof(ResPairMotif));

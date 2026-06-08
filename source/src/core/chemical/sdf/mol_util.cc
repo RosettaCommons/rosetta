@@ -15,6 +15,7 @@
 #include <utility/string_util.hh>
 #include <map>
 #include <set>
+#include <tuple>
 #include <core/types.hh>
 
 namespace core {
@@ -35,7 +36,10 @@ BondData::BondData(core::Size index1, core::Size index2, core::Size type)
 
 bool BondData::operator <(const core::chemical::sdf::BondData & other) const
 {
-	return (this->lower < other.lower) || (this->upper < other.upper);
+	// Lexicographic compare. Do NOT replace with `(lower<o.lower) || (upper<o.upper)`:
+	// that form violates strict weak ordering (e.g. (5,1) and (3,7) each compare less
+	// than the other), which breaks std::set<BondData> in parse_bond_type_data().
+	return std::tie( lower, upper ) < std::tie( other.lower, other.upper );
 }
 
 bool BondData::operator ==(const core::chemical::sdf::BondData& other) const
