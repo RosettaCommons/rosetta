@@ -112,7 +112,7 @@ void SimulateMPIMessage::set_doubles_msg( utility::vector1< double > const & set
 }
 
 // initialize private static data
-SimulateMPIData * SimulateMPI::simulation_( nullptr );
+std::unique_ptr< SimulateMPIData > SimulateMPI::simulation_;
 int SimulateMPI::rank_( 0 );
 
 SimulateMPIData::SimulateMPIData( platform::Size nprocs ) :
@@ -236,13 +236,13 @@ void SimulateMPIData::clear_processed_msgs( MsgQueue & message_queue )
 
 void
 SimulateMPI::initialize_simulation( int nprocs ) {
-	simulation_ = new SimulateMPIData( nprocs );
+	simulation_.reset( new SimulateMPIData( nprocs ) );
 	rank_ = 0;
 }
 
 bool
 SimulateMPI::simulate_mpi() {
-	return simulation_;
+	return simulation_ != nullptr;
 }
 
 

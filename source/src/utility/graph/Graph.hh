@@ -110,9 +110,6 @@ public:
 	EdgeListElement( Edge * edge, EdgeListElement * previous, EdgeListElement * next )
 	: edge_( edge ), previous_( previous ), next_( next ) {}
 
-
-	~EdgeListElement() = default;
-
 	Edge * edge() {debug_assert( edge_ ); return edge_; }
 	void edge( Edge * setting ) { edge_ = setting; }
 	Edge const * const_edge() const {debug_assert( edge_ ); return edge_; }
@@ -155,17 +152,6 @@ public:
 	/// @brief owner and element constructor: points at a position in a list
 	EdgeListIterator( EdgeList const * owner, EdgeListElement * element )
 	: owner_( owner ), element_( element ) {}
-
-	/// @brief copy constructor
-	EdgeListIterator( EdgeListIterator const & src )
-	= default;
-
-	/// @brief non-virtual destructor, does nothing
-	~EdgeListIterator() = default;
-
-	/// @brief assignmnet operator
-	EdgeListIterator & operator = ( EdgeListIterator const & rhs )
-	= default;
 
 	/// @brief increment operator.  Point this iterator at the next element in the list.
 	EdgeListIterator const & operator ++ ()
@@ -233,21 +219,9 @@ public:
 	EdgeListConstIterator( EdgeList const * owner, EdgeListElement const * element )
 	: owner_( owner ), element_( element ) {}
 
-	/// @brief copy constructor
-	EdgeListConstIterator( EdgeListConstIterator const & src )
-	= default;
-
 	/// @brief const-cast constructor
 	EdgeListConstIterator( EdgeListIterator const & src )
 	: owner_( src.owner_ ), element_( src.element_ ) {}
-
-
-	/// @brief non-virtual destructor, does nothing
-	~EdgeListConstIterator() = default;
-
-	/// @brief assignmnet operator
-	EdgeListConstIterator & operator = ( EdgeListConstIterator const & rhs )
-	= default;
 
 	/// @brief increment operator.  Point this iterator at the next element in the list.
 	EdgeListConstIterator const & operator ++ ()
@@ -366,12 +340,10 @@ public:
 	/// O(N)
 	platform::Size size() const;
 
-private:
+	EdgeList( EdgeList const & ) = delete;
+	EdgeList & operator =( EdgeList const & ) = delete;
 
-	/// @brief Uncopyable -- private and unimplemented copy ctor
-	EdgeList( EdgeList const & );
-	/// @brief Uncopyable -- private and unimplemented assignment operator
-	EdgeList const & operator = ( EdgeList const & );
+private:
 
 	/// @brief this edge-list-element-pool reference is handed to the list
 	/// to draw from.  This pool must outlive the edge-list itself.
@@ -522,10 +494,9 @@ private:
 	EdgeListIter first_upper_edge_;
 	Graph* owner_;
 
-	//no default constructor, uncopyable
-	Node();
-	Node( Node const & );
-	Node & operator = ( Node & );
+	Node() = delete;
+	Node( Node const & ) = delete;
+	Node & operator =( Node const & ) = delete;
 };
 
 class Edge
@@ -634,10 +605,9 @@ private:
 	EdgeListIter pos_in_owners_edge_list_;
 	Graph* owner_;
 
-	//no default constructor, uncopyable
-	Edge();
-	Edge( Edge const & );
-	Edge & operator = ( Edge & );
+	Edge() = delete;
+	Edge( Edge const & ) = delete;
+	Edge & operator =( Edge const & ) = delete;
 
 };
 

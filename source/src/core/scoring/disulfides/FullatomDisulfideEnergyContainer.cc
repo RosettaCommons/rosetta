@@ -69,8 +69,6 @@ DisulfResNeighbIterator::DisulfResNeighbIterator(
 	disulfide_index_( FullatomDisulfideEnergyContainer::NO_DISULFIDE )
 {}
 
-DisulfResNeighbIterator::~DisulfResNeighbIterator() = default;
-
 ResidueNeighborIterator &
 DisulfResNeighbIterator::operator = ( ResidueNeighborIterator const & rhs)
 {
@@ -207,8 +205,6 @@ DisulfResNeighbConstIterator::DisulfResNeighbConstIterator(
 	focused_residue_( FullatomDisulfideEnergyContainer::NO_DISULFIDE ),
 	disulfide_index_( FullatomDisulfideEnergyContainer::NO_DISULFIDE )
 {}
-
-DisulfResNeighbConstIterator::~DisulfResNeighbConstIterator() = default;
 
 ResidueNeighborConstIterator &
 DisulfResNeighbConstIterator::operator = ( ResidueNeighborConstIterator const & rhs )

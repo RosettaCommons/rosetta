@@ -293,6 +293,11 @@ public:
 public://old methods & methods used for unit tests
 	HBondEdge * register_hbond( Size rotamerA, Size rotamerB, Real score );
 
+	// For pyrosetta: safely convert a LowMemNode/LowMemEdge to the derived type,
+	// verifying it belongs to this graph.
+	HBondNode & HBondNode_from_LowMemNode( utility::graph::LowMemNode & node );
+	HBondEdge & HBondEdge_from_LowMemEdge( utility::graph::LowMemEdge & edge );
+
 };
 
 

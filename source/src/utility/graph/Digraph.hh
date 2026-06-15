@@ -84,9 +84,6 @@ public:
 	DirectedEdgeListElement( DirectedEdge * edge, DirectedEdgeListElement * previous, DirectedEdgeListElement * next )
 	: edge_( edge ), previous_( previous ), next_( next ) {}
 
-
-	~DirectedEdgeListElement() {}
-
 	DirectedEdge * edge() {debug_assert( edge_ ); return edge_; }
 	void edge( DirectedEdge * setting ) { edge_ = setting; }
 	DirectedEdge const * const_edge() const {debug_assert( edge_ ); return edge_; }
@@ -129,21 +126,6 @@ public:
 	/// @brief owner and element constructor: points at a position in a list
 	DirectedEdgeListIterator( DirectedEdgeList const * owner, DirectedEdgeListElement * element )
 	: owner_( owner ), element_( element ) {}
-
-	/// @brief copy constructor
-	DirectedEdgeListIterator( DirectedEdgeListIterator const & src )
-	: owner_( src.owner_ ), element_( src.element_ ) {}
-
-	/// @brief non-virtual destructor, does nothing
-	~DirectedEdgeListIterator() {}
-
-	/// @brief assignmnet operator
-	DirectedEdgeListIterator & operator = ( DirectedEdgeListIterator const & rhs )
-	{
-		owner_ = rhs.owner_;
-		element_ = rhs.element_;
-		return *this;
-	}
 
 	/// @brief increment operator.  Point this iterator at the next element in the list.
 	inline
@@ -213,25 +195,9 @@ public:
 	DirectedEdgeListConstIterator( DirectedEdgeList const * owner, DirectedEdgeListElement const * element )
 	: owner_( owner ), element_( element ) {}
 
-	/// @brief copy constructor
-	DirectedEdgeListConstIterator( DirectedEdgeListConstIterator const & src )
-	: owner_( src.owner_ ), element_( src.element_ ) {}
-
 	/// @brief const-cast constructor
 	DirectedEdgeListConstIterator( DirectedEdgeListIterator const & src )
 	: owner_( src.owner_ ), element_( src.element_ ) {}
-
-
-	/// @brief non-virtual destructor, does nothing
-	~DirectedEdgeListConstIterator() {}
-
-	/// @brief assignmnet operator
-	DirectedEdgeListConstIterator & operator = ( DirectedEdgeListConstIterator const & rhs )
-	{
-		owner_ = rhs.owner_;
-		element_ = rhs.element_;
-		return *this;
-	}
 
 	/// @brief increment operator.  Point this iterator at the next element in the list.
 	inline
@@ -357,12 +323,10 @@ public:
 	/// O(N)
 	platform::Size size() const;
 
-private:
+	DirectedEdgeList( DirectedEdgeList const & ) = delete;
+	DirectedEdgeList & operator =( DirectedEdgeList const & ) = delete;
 
-	/// @brief Uncopyable -- private and unimplemented copy ctor
-	DirectedEdgeList( DirectedEdgeList const & );
-	/// @brief Uncopyable -- private and unimplemented assignment operator
-	DirectedEdgeList const & operator = ( DirectedEdgeList const & );
+private:
 
 	/// @brief this edge-list-element-pool reference is handed to the list
 	/// to draw from.  This pool must outlive the edge-list itself.
@@ -518,10 +482,9 @@ private:
 	DirectedEdgeListIter first_outgoing_edge_;
 	Digraph* owner_;
 
-	//no default constructor, uncopyable
-	DirectedNode();
-	DirectedNode( DirectedNode const & );
-	DirectedNode & operator = ( DirectedNode & );
+	DirectedNode() = delete;
+	DirectedNode( DirectedNode const & ) = delete;
+	DirectedNode & operator =( DirectedNode const & ) = delete;
 };
 
 class DirectedEdge
@@ -667,10 +630,9 @@ private:
 	DirectedEdgeListIter pos_in_owners_edge_list_;
 	Digraph* owner_;
 
-	//no default constructor, uncopyable
-	DirectedEdge();
-	DirectedEdge( DirectedEdge const & );
-	DirectedEdge & operator = ( DirectedEdge & );
+	DirectedEdge() = delete;
+	DirectedEdge( DirectedEdge const & ) = delete;
+	DirectedEdge & operator =( DirectedEdge const & ) = delete;
 
 };
 
