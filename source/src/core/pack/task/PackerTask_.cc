@@ -676,7 +676,7 @@ PackerTask_::show( std::ostream & out ) const {
 
 	//sml pymol-style selection, great for debugging
 	if ( basic::options::option[ basic::options::OptionKeys::packing::print_pymol_selection ].value() ) {
-		for ( Size i=1, it_end = total_residue(); i != it_end; ++i ) if ( pack_residue(i) ) out << i << "+";
+		for ( Size i=1, it_end = total_residue(); i <= it_end; ++i ) if ( pack_residue(i) ) out << i << "+";
 		out << std::endl;
 	}
 }
