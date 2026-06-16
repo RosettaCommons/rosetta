@@ -25,6 +25,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueProperty.hh>
 #include <utility/vector1.hh>
+#include <map>
 
 namespace core {
 namespace chemical {
@@ -76,8 +77,11 @@ public:
 	ResidueTypeCOPs
 	get_possible_base_unpatchable_residue_types() const;
 
+	/// @brief Get the best match, given the atom coordinates
+	/// Will look both at the atom name matches (primary determinant),
+	/// with a fallback based on atom chirality matches.
 	ResidueTypeCOP
-	get_best_match_residue_type_for_atom_names( utility::vector1< std::string > const & atom_names );
+	get_best_match_residue_type_for_known_coords( std::map< std::string, Vector > const & coords );
 
 	////////////////////////////////////////////
 	// Methods which set properties to filter by

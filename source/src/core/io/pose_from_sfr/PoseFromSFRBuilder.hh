@@ -124,19 +124,6 @@ private:
 		bool & is_chemical_component_derived
 	);
 
-	/// @brief Given an amino acid three-letter code, retrive a
-	/// residue. If the residue is an alpha- or beta-amino acid, also
-	/// retrieve its mirrored type.  Return true if the three-letter
-	/// codes are the same, false if they differ.  If no resiude type
-	/// could be loaded or there is no mirror type, throw if
-	/// error_on_unrecognized is true, and return false otherwise.
-	/// @author Vikram K. Mulliga (vmulligan@flatironinstitute.org).
-	bool
-	d_l_threeletter_codes_are_same_for_aa(
-		std::string const & name3,
-		bool const error_on_unrecognized
-	) const;
-
 	chemical::ResidueTypeCOP
 	get_rsd_type(
 		std::string const & name3,
@@ -146,7 +133,8 @@ private:
 		bool const is_lower_terminus,
 		bool const is_upper_terminus,
 		bool const is_d_aa,
-		bool const is_l_aa
+		bool const is_l_aa,
+		bool const is_achiral
 	);
 
 	bool lower_terminus_is_occupied_according_to_link_map( std::string const & resid );

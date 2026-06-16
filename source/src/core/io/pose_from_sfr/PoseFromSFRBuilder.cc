@@ -447,25 +447,19 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 		bool is_upper_terminus( ( ii == nres_pdb || ! same_chain_next ) && check_Ctermini_for_this_chain  && ! upper_terminus_is_occupied_according_to_link_map( resid ) );
 
 		// Determine if this residue is a D-AA residue, an L-AA residue, or neither.
-		StructFileRep::ResidueCoords const & xyz = rinfo.xyz();
+		// The is only if we *know* the name3 have the given chirality.
+		// If we're unsure, we'll let the ResidueTypeFinder figure it out.
 		bool is_d_aa = NomenclatureManager::get_instance()->decide_is_d_aa( name3 );
 		bool is_l_aa = NomenclatureManager::get_instance()->decide_is_l_aa( name3 );
 		bool is_achiral = NomenclatureManager::get_instance()->decide_is_known_achiral( name3 );
+
+		// More complex chirality determination is handled by
 		bool is_chemical_component_ligand = false;
 
 		// Get a list of ResidueTypes that could apply for this particular 3-letter PDB residue name.
 		if ( ! is_residue_type_recognized( ii, name3, is_chemical_component_ligand ) ) {
 			residue_was_recognized_[ ii ] = false;
 			continue;
-		}
-
-		// Don't try ld chirality detection on known CCD ligands -- that way leads madness
-		// (too many potential atom names, currently special cased, that might overlap)
-		if (
-				!is_chemical_component_ligand &&
-				( ( !(is_d_aa || is_l_aa || is_achiral ) ) || ( d_l_threeletter_codes_are_same_for_aa(name3, false) /*Returns false for non-aa.*/ ) )
-				) {
-			chemical::detect_ld_chirality_from_polymer_residue( xyz, name3, is_d_aa, is_l_aa );
 		}
 
 		if ( is_chemical_component_ligand ) {
@@ -477,21 +471,24 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 			//known_connect_atoms_on_this_residue.clear();
 		}
 
-		TR.Trace << "Residue " << ii << "(PDB file numbering: " << resid << " )" << std::endl;
-		TR.Trace << "...same_chain_prev: " << same_chain_prev << std::endl;
-		TR.Trace << "...same_chain_next: " << same_chain_next << std::endl;
-		TR.Trace << "...is_lower_terminus: " << is_lower_terminus << std::endl;
-		TR.Trace << "...check_Ntermini_for_this_chain: "<< check_Ntermini_for_this_chain << std::endl;
-		TR.Trace << "...is_upper_terminus: " << is_upper_terminus << std::endl;
-		TR.Trace << "...check_Ctermini_for_this_chain: "<< check_Ctermini_for_this_chain << std::endl;
-		TR.Trace << "...last_residue_was_recognized: " << last_residue_was_recognized( ii ) << std::endl;
-		TR.Trace << "...known connects this residue: " << known_connect_atoms_on_this_residue << std::endl;
-		TR.Trace << "...is_d_aa: " << is_d_aa << std::endl;
-		TR.Trace << "...is_l_aa: " << is_l_aa << std::endl;
+		if ( TR.Trace.visible() ) {
+			TR.Trace << "Residue " << ii << "(PDB file numbering: " << resid << " )" << std::endl;
+			TR.Trace << "...same_chain_prev: " << same_chain_prev << std::endl;
+			TR.Trace << "...same_chain_next: " << same_chain_next << std::endl;
+			TR.Trace << "...is_lower_terminus: " << is_lower_terminus << std::endl;
+			TR.Trace << "...check_Ntermini_for_this_chain: "<< check_Ntermini_for_this_chain << std::endl;
+			TR.Trace << "...is_upper_terminus: " << is_upper_terminus << std::endl;
+			TR.Trace << "...check_Ctermini_for_this_chain: "<< check_Ctermini_for_this_chain << std::endl;
+			TR.Trace << "...last_residue_was_recognized: " << last_residue_was_recognized( ii ) << std::endl;
+			TR.Trace << "...known connects this residue: " << known_connect_atoms_on_this_residue << std::endl;
+			TR.Trace << "...is_d_aa: " << is_d_aa << std::endl;
+			TR.Trace << "...is_l_aa: " << is_l_aa << std::endl;
+			TR.Trace << "...is_achiral: " << is_achiral << std::endl;
+		}
 
 		// Try to get RT using all connect atoms.
 		ResidueTypeCOP rsd_type_cop = get_rsd_type( name3, ii, known_connect_atoms_on_this_residue,
-			resid, is_lower_terminus, is_upper_terminus, is_d_aa, is_l_aa );
+			resid, is_lower_terminus, is_upper_terminus, is_d_aa, is_l_aa, is_achiral );
 
 		int kk = known_connect_atoms_on_this_residue.size() - 1; // for easier wraparound logic
 		while ( !rsd_type_cop && kk >= 0 ) {
@@ -503,7 +500,7 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 				//rsd_type_cop = get_rsd_type( name3, ii, all_but( known_connect_atoms_on_this_residue, utility::vector1< Size >( jj ) ),
 				//TR << "power_set " << power_set << std::endl;
 				rsd_type_cop = get_rsd_type( name3, ii, power_set,
-					resid, is_lower_terminus, is_upper_terminus, is_d_aa, is_l_aa );
+					resid, is_lower_terminus, is_upper_terminus, is_d_aa, is_l_aa, is_achiral );
 				if ( rsd_type_cop ) break;
 			}
 
@@ -1881,61 +1878,6 @@ PoseFromSFRBuilder::is_residue_type_recognized(
 	return is_residue_type_recognized( pdb_residue_index, rosetta_residue_name3, rsd_type_list );
 }
 
-/// @brief Given an amino acid three-letter code, retrive a
-/// residue. If the residue is an alpha- or beta-amino acid, also
-/// retrieve its mirrored type.  Return true if the three-letter
-/// codes are the same, false if they differ.  If no resiude type
-/// could be loaded or there is no mirror type, throw if
-/// error_on_unrecognized is true, and return false otherwise.
-/// @author Vikram K. Mulliga (vmulligan@flatironinstitute.org).
-bool
-PoseFromSFRBuilder::d_l_threeletter_codes_are_same_for_aa(
-	std::string const & name3,
-	bool const error_on_unrecognized
-) const {
-	std::string const errmsg( "Error in core::io::pose_from_sfr::PoseFromSFRBuilder::d_l_threeletter_codes_are_same_for_aa(): " );
-
-	//Get the restype:
-	core::chemical::ResidueTypeCOP restype(
-		core::chemical::ResidueTypeFinder( *residue_type_set_ ).name3(name3).get_representative_type()
-	);
-	if ( restype == nullptr ) {
-		if ( error_on_unrecognized ) {
-			utility_exit_with_message( errmsg + "Did not recognize residue with three-letter code \"" + name3 + "\"." );
-		} else {
-			return false;
-		}
-	}
-
-	if ( restype->is_achiral_backbone() ) {
-		if ( error_on_unrecognized ) {
-			utility_exit_with_message( errmsg + "Residue \"" + name3 + "\" is achiral.  Cannot get mirrored type." );
-		} else {
-			return false;
-		}
-	}
-	if ( !( restype->is_alpha_aa() || restype->is_beta_aa() || restype->is_gamma_aa() ) ) {
-		if ( error_on_unrecognized ) {
-			utility_exit_with_message( errmsg + "Residue \"" + name3 + "\" is not an alpha amino acid, beta amino acid, or gamma amino acid.  Cannot perform check." );
-		} else {
-			return false;
-		}
-	}
-
-	//Get the mirrored type:
-	core::chemical::ResidueTypeCOP mirrored_restype( residue_type_set_->get_mirrored_type( restype ) );
-	if ( mirrored_restype == nullptr ) {
-		if ( error_on_unrecognized ) {
-			utility_exit_with_message( errmsg + "Residue \"" + name3 + "\" seems not to have a mirrored type." );
-		} else {
-			return false;
-		}
-	}
-
-	//Compare the names:
-	return (restype->name3() == mirrored_restype->name3());
-}
-
 ///////////////////////////////////////////////////////////////////////
 // Use ResidueTypeFinder to efficiently figure out best match
 //    residue_type to these PDB atom_names, name3, etc.
@@ -1948,7 +1890,8 @@ PoseFromSFRBuilder::get_rsd_type(
 	bool const is_lower_terminus,
 	bool const is_upper_terminus,
 	bool const is_d_aa,
-	bool const is_l_aa )
+	bool const is_l_aa,
+	bool const is_achiral )
 {
 	// AMW: Just changed so that protein residue types don't get patched for
 	// links to their polymer main chain (i.e., deprecates the weird 'neutral'
@@ -1958,8 +1901,7 @@ PoseFromSFRBuilder::get_rsd_type(
 
 	// you can be neither but not both
 	debug_assert( ! ( is_d_aa && is_l_aa ) );
-
-	std::map< std::string, Vector > const & xyz( rinfos_[ seqpos ].xyz() );
+	debug_assert( ! (is_achiral && ( is_d_aa || is_l_aa ) ) );
 
 	using namespace core::chemical;
 	using utility::tools::make_vector1;
@@ -2004,6 +1946,10 @@ PoseFromSFRBuilder::get_rsd_type(
 	if ( is_l_aa ) {
 		preferred_properties.push_back( L_AA );
 	}
+	if ( is_achiral ) {
+		discouraged_properties.push_back( D_AA );
+		discouraged_properties.push_back( L_AA );
+	}
 
 	if ( rosetta_residue_name3 != "CYD" ) {
 		discouraged_properties.push_back( DISULFIDE_BONDED );
@@ -2014,10 +1960,7 @@ PoseFromSFRBuilder::get_rsd_type(
 		disallow_variants.push_back( DEPROTONATED );
 	}
 
-	utility::vector1< std::string > xyz_atom_names;
-	for ( auto const & xyz_elem : xyz ) {
-		xyz_atom_names.push_back( xyz_elem.first );
-	}
+	std::map< std::string, Vector > const & xyz( rinfos_[ seqpos ].xyz() );
 
 	ResidueTypeCOP rsd_type = ResidueTypeFinder( *residue_type_set_ )
 		.name3( rosetta_residue_name3 )
@@ -2032,7 +1975,7 @@ PoseFromSFRBuilder::get_rsd_type(
 		.ignore_atom_named_H( is_lower_terminus )
 		.check_nucleic_acid_virtual_phosphates( true )
 		.connect_atoms( known_connect_atoms_on_this_residue )
-		.get_best_match_residue_type_for_atom_names( xyz_atom_names );
+		.get_best_match_residue_type_for_known_coords( xyz );
 
 	return rsd_type;
 }
