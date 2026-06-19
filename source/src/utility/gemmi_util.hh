@@ -93,6 +93,12 @@ gemmi_add_row(gemmi::cif::Loop & loop, std::initializer_list<std::string> const 
 	gemmi_add_row< std::initializer_list<std::string> >(loop, init_list);
 }
 
+/// @brief Read an mmJSON file into a Gemmi Document object.
+/// @details Implementation based on Gemmi's read_mmjson_insitu()/fill_document_from_sajson()
+/// but reimplemented to keep the Gemmi dependency header-only.
+gemmi::cif::Document
+gemmi_load_mmjson(std::string const & contents_of_file, std::string const & filename);
+
 
 } // namespace utility
 

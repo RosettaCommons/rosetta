@@ -80,6 +80,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>
+#include <utility/gemmi_util.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
 // External headers
@@ -137,6 +138,9 @@ std::ostream & operator<<( std::ostream & stream, FileType type ) {
 	case SRLZ_file :
 		stream << "SRLZ";
 		break;
+	case MMJSON_file :
+		stream << "mmJSON";
+		break;
 	default :
 		stream << "UNKNOWN";
 		break;
@@ -160,6 +164,8 @@ extension_from_filetype(
 		return "mmtf";
 	case SRLZ_file :
 		return "srlz";
+	case MMJSON_file :
+		return "json";
 	default :
 		utility_exit_with_message( "Error in core::import_pose::extension_from_filetype(): Invalid filetype provided!" );
 		break;
@@ -185,6 +191,12 @@ filetype_from_extension(
 		return CIF_file;
 	} else if ( ext == "mmcif" ) {
 		return CIF_file;
+	} else if ( ext == "bcif" ) { // BinaryCIF
+		return CIF_file;
+	} else if ( ext == "json" ) { // mmJSON
+		return MMJSON_file;
+	} else if ( ext == "js" ) { // mmJSON
+		return MMJSON_file;
 	} else if ( ext == "mmtf" ) {
 		return MMTF_file;
 	} else if ( ext == "srlz" ) {
@@ -306,6 +318,11 @@ pose::PoseOP pose_from_file(chemical::ResidueTypeSet const & residue_set, std::s
 FileType
 determine_file_type( std::string const &contents_of_file) {
 	utility::vector1< std::string > lines( utility::split_by_newlines( contents_of_file ) );
+
+	if ( lines[1].substr(0,7) == "{\"data_" ) {
+		// Probably mmJSON
+		return MMJSON_file;
+	}
 
 	// The mmCIF format has a large number of initial underscores
 	// (We put this test first as the "has ATOM record" test will pass on standard mmCIF files,
@@ -431,10 +448,15 @@ pose_from_file(
 		// check for foldtree info
 		read_additional_pdb_data( contents_of_file, pose, options, read_fold_tree );
 
-	} else if ( file_type == CIF_file ) {
+	} else if ( file_type == CIF_file || file_type == MMJSON_file ) {
 		io::StructFileRepOP sfr;
 		try {
-			gemmi::cif::Document cifdoc = gemmi::cif::read_memory( contents_of_file.c_str(), contents_of_file.size(), filename.c_str() );
+			gemmi::cif::Document cifdoc;
+			if ( file_type == MMJSON_file ) {
+				cifdoc = utility::gemmi_load_mmjson( contents_of_file, filename );
+			} else {
+				cifdoc = gemmi::cif::read_memory( contents_of_file.c_str(), contents_of_file.size(), filename.c_str() );
+			}
 			if ( cifdoc.blocks.empty() ) { // More extensive checking?
 				TR.Warning << "mmCIF parser wasn't able to properly read '" << filename << "' " << std::endl;
 				return;
