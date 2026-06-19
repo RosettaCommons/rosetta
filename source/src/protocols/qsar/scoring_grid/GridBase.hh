@@ -62,7 +62,7 @@ public:
 	/// @brief get the type of the grid
 	virtual std::string get_type() const = 0;
 	/// @brief set the chain the grid applies to
-	virtual void set_chain(char chain) = 0;
+	virtual void set_chain(std::string const & chain) = 0;
 	/// @brief output a BRIX formatted grid.  This really does not work well but is being left for legacy purposes
 	virtual void dump_BRIX(std::string const & prefix) const = 0;
 	/// @brief Serialize the GridBase object into a json_spirit Value

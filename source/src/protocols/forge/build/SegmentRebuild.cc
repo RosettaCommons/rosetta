@@ -906,8 +906,8 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 	// safety, make sure PDBInfo leaves obsolete
 	if ( pose.pdb_info().get() ) {
 		pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( pose ) );
-		char const chain_id = 'A';
-		pose.pdb_info()->set_chains( chain_id );//set all chains to A at this stage, so design doesn't fail on chain
+		std::string chain_id = "A";
+		pose.pdb_info()->set_all_chains( chain_id );//set all chains to A at this stage, so design doesn't fail on chain
 		//pose.pdb_info()->obsolete( true );
 	}
 

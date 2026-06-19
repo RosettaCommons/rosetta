@@ -46,7 +46,7 @@ public:
 		pair_info = protocols::ligand_docking::process_line(wt_line);
 		TS_ASSERT_EQUALS(pair_info.wild_type, true);
 		TS_ASSERT_EQUALS(pair_info.has_bind, true);
-		TS_ASSERT_EQUALS(pair_info.lig_chain, 'X');
+		TS_ASSERT_EQUALS(pair_info.lig_chain, "X");
 		TS_ASSERT_EQUALS(pair_info.bind_data, 2.0);
 
 		std::string mut_line = "100 A X";
@@ -56,7 +56,7 @@ public:
 		TS_ASSERT_EQUALS(pair_info.has_bind, false);
 		TS_ASSERT_EQUALS(pair_info.mut_resid, 100);
 		TS_ASSERT_EQUALS(pair_info.mut_target, 'A');
-		TS_ASSERT_EQUALS(pair_info.lig_chain, 'X');
+		TS_ASSERT_EQUALS(pair_info.lig_chain, "X");
 		TS_ASSERT_EQUALS(pair_info.bind_data, 0.0);
 	}
 

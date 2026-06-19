@@ -25,6 +25,7 @@
 
 // Basic headers
 #include <basic/datacache/DataMap.fwd.hh>
+#include <basic/Tracer.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -48,6 +49,8 @@ namespace core {
 namespace select {
 namespace residue_selector {
 
+static basic::Tracer TR("core.select.residue_selector.ChainSelector");
+
 ChainSelector::ChainSelector():
 	chain_strings_()
 {}
@@ -58,6 +61,7 @@ ChainSelector::ChainSelector( ChainSelector const &src) :
 	chain_strings_( src.chain_strings_ )
 {}
 
+ChainSelector::ChainSelector( utility::vector1< std::string > const & chains ) : chain_strings_( chains ) {}
 ChainSelector::ChainSelector( std::string const & chains ) : chain_strings_( utility::string_split( chains, ',' ) ) {}
 ChainSelector::ChainSelector( char chain ) : chain_strings_( 1, std::string( 1, chain ) ) {}
 ChainSelector::ChainSelector( int chainid ) : chain_strings_( 1, std::to_string( chainid ) ) {}
@@ -80,12 +84,7 @@ ChainSelector::apply(
 			ii_num = boost::lexical_cast< core::Size > ( iichain_string );
 			select_chain_by_index( pose, subset, ii_num );
 		} catch ( boost::bad_lexical_cast & ) {
-			if ( iichain_string.size() != 1 ) {
-				std::stringstream error_message;
-				error_message << "ChainSelector was given a string identifier '" << iichain_string << "' that cannot be parsed as an unsigned integer and is also longer than a single character\n";
-				throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
-			}
-			select_chain_by_pdb_chain_char( pose, subset, iichain_string[0] );
+			select_chain_by_pdb_chain_char( pose, subset, iichain_string );
 		}
 	}
 	return subset;
@@ -165,7 +164,7 @@ void ChainSelector::select_chain_by_index(
 void ChainSelector::select_chain_by_pdb_chain_char(
 	core::pose::Pose const & pose,
 	ResidueSubset & subset,
-	char ch
+	std::string const & ch
 ) const
 {
 	if ( !pose.pdb_info() ) {
@@ -174,8 +173,17 @@ void ChainSelector::select_chain_by_pdb_chain_char(
 		throw CREATE_EXCEPTION(utility::excn::NullPointerError,  err.str() );
 	}
 
+	bool found = false;
+
 	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
-		if ( pose.pdb_info()->chain( ii ) == ch ) subset[ ii ] = true;
+		if ( pose.pdb_info()->chain( ii ) == ch ) {
+			subset[ ii ] = true;
+			found = true;
+		}
+	}
+
+	if ( !found && ch.size() != 1 ) {
+		TR.Warning << "ChainSelector was unable to interpret `" << ch << "` as a valid chain letter specifier. " << std::endl;
 	}
 }
 

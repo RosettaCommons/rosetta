@@ -42,13 +42,13 @@ public:
 	core::pose::metrics::PoseMetricCalculatorOP
 	clone() const override;
 
-	utility::vector1<std::set<char> > const &
+	utility::vector1<std::set<std::string> > const &
 	chain_letters() const {
 		return chain_letters_;
 	}
 
 	void
-	chain_letters(utility::vector1<std::set<char> > const & chain_letters) {
+	chain_letters(utility::vector1<std::set<std::string> > const & chain_letters) {
 		chain_letters_ = chain_letters;
 		use_numbers_ = false;
 	}
@@ -80,7 +80,7 @@ protected:
 
 	void recompute( core::pose::Pose const & this_pose ) override;
 
-	utility::vector1<std::set<char> > chain_letters_;
+	utility::vector1<std::set<std::string> > chain_letters_;
 	utility::vector1<std::set<core::Size> > chain_numbers_;
 	bool use_numbers_;
 #ifdef    SERIALIZATION

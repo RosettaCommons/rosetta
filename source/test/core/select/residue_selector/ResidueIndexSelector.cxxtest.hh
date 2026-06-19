@@ -34,6 +34,7 @@
 
 #include <core/init_util.hh> // AUTO IWYU For core_init
 #include <iostream> // AUTO IWYU For operator<<, basic_ostream, endl, cerr
+#include <set>
 
 using namespace core::select::residue_selector;
 
@@ -97,8 +98,8 @@ public:
 		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
 		std::set< core::Size > acceptTrue;
 		acceptTrue.insert(2);
-		acceptTrue.insert( trpcage.pdb_info()->pdb2pose('A', 3) );
-		acceptTrue.insert( trpcage.pdb_info()->pdb2pose('A', 4) );
+		acceptTrue.insert( trpcage.pdb_info()->pdb2pose("A", 3) );
+		acceptTrue.insert( trpcage.pdb_info()->pdb2pose("A", 4) );
 		for ( core::Size ii = 1; ii <= subset.size(); ++ii ) {
 			//if ( subset[ii] ) std::cerr << ii << "\n";
 			TS_ASSERT( !subset[ ii ] || ( acceptTrue.find( ii ) != acceptTrue.end() ) );

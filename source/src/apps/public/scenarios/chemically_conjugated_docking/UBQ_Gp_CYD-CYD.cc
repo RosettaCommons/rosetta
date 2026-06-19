@@ -151,7 +151,7 @@ public:
 
 		//determine cysteine target
 		runtime_assert(GTPase.conformation().num_chains() == 1);
-		char const GTPasechain(GTPase.pdb_info()->chain(1));
+		std::string const GTPasechain(GTPase.pdb_info()->chain(1));
 		GTPase_cyd_ = GTPase.pdb_info()->pdb2pose(GTPasechain, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::GTPase_residue].value());
 		//runtime_assert(GTPase.residue_type(GTPase_cyd_).aa() == core::chemical::aa_cys);
 

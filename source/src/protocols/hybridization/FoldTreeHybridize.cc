@@ -766,7 +766,7 @@ FoldTreeHybridize::add_strand_pairing(
 	pdb_numbering.push_back(pairing.Pos2());
 	core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo( trimmed_pairing_pose->size() ) );
 	pdb_info->set_numbering( pdb_numbering );
-	pdb_info->set_chains( ' ' );
+	pdb_info->set_all_chains( " " );
 	pdb_info->obsolete( false );
 	trimmed_pairing_pose->set_secstruct( 1, 'E' );
 	trimmed_pairing_pose->set_secstruct( 2, 'E' );

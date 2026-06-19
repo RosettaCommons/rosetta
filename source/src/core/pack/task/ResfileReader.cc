@@ -238,7 +238,8 @@ ResfileContents::parse_body_line(
 ) {
 	Size which_token = 1, ntokens(tokens.size());
 	int PDBnum, PDBnum_end;
-	char icode, icode_end, chain;
+	char icode, icode_end;
+	std::string chain;
 	residue_identifier_type id_type;
 
 	parse_resid( which_token, tokens, lineno,
@@ -270,14 +271,14 @@ ResfileContents::parse_body_line(
 				err_msg << ", icode=" << icode;
 			}
 			err_msg
-				<< ", chain=" << (chain == ' ' ? '_' : chain) << ") "
+				<< ", chain=" << chain_printable(chain) << ") "
 				<< "does not come before the end residue "
 				<< "(PDBnum=" << PDBnum_end;
 			if ( icode_end != ' ' ) {
 				err_msg << ", icode=" << icode_end;
 			}
 			err_msg
-				<< ", chain=" << (chain == ' ' ? '_' : chain) << ").";
+				<< ", chain=" << chain_printable(chain) << ").";
 			onError(err_msg.str());
 		}
 
@@ -332,7 +333,7 @@ ResfileContents::parse_body_line(
 			err_msg
 				<< "On line " << lineno << ", "
 				<< "there are no residues with chain '"
-				<< (chain == ' ' ? '_' : chain) << "'.";
+				<< chain_printable(chain) << "'.";
 			onError(err_msg.str());
 		}
 
@@ -359,7 +360,7 @@ ResfileContents::parse_resid(
 	int & PDBnum_end, // only defined for RANGE id_type
 	char & icode,
 	char & icode_end, // only defined for RANGE id_type
-	char & chain,
+	std::string & chain,
 	residue_identifier_type & id_type
 ) const {
 
@@ -425,34 +426,15 @@ ResfileContents::parse_resid(
 	// specifier! Get the token again but this time do not change it to
 	// upper case
 	token = get_token(which_token-1, tokens, false);
-	if ( token.length() != 1 ) {
-		stringstream err_msg;
-		err_msg
-			<< "On line " << lineno << ", "
-			<< "the chain identifier '" << token << "' "
-			<< "must be just a single character in [_A-Za-z] "
-			<< "(note the chain identifier is case sensitive).";
-		onError(err_msg.str());
-	}
-	chain = token[0];
-	if ( chain == '_' ) chain = ' ';
-	if ( core::chemical::chr_chains.find(chain) == std::string::npos
-			&& chain != ' ' ) {
-		stringstream err_msg;
-		err_msg
-			<< "On line " << lineno << ", "
-			<< "The chain identifier '" << chain << "' "
-			<< "is not in [_A-Za-z] "
-			<< "(note the chain identifier is case sensitive).";
-		onError(err_msg.str());
-	}
+	chain = token;
+	if ( chain == "_" ) chain = ' ';
 }
 
 
 Size
 ResfileContents::locate_resid(
 	Pose const & pose,
-	char const chain,
+	std::string const & chain,
 	Size const PDBnum,
 	char const icode,
 	Size const lineno
@@ -500,6 +482,14 @@ ResfileContents::locate_command(
 	return(command->second->clone());
 }
 
+std::string
+ResfileContents::chain_printable(std::string const & chain) const {
+	if ( chain.empty() || chain == " " ) {
+		return "_";
+	} else {
+		return chain;
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////
 /// @brief NATRO disables packing and designing at a position, the residue

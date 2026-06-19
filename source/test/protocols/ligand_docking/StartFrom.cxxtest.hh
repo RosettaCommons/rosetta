@@ -194,7 +194,7 @@ public:
 		core::Vector pv( 99.0, 96.0, 33.0 );
 		mover.add_coords(pv, "some_other.pdb");
 		core::Vector hv( 199.0, -96.0, 333.0 );
-		mover.add_coords_hash(hv, core::pose::get_sha1_hash_excluding_chain('X',pose) );
+		mover.add_coords_hash(hv, core::pose::get_sha1_hash_excluding_chain("X",pose) );
 
 		for ( core::Size ii(1); ii <= 10; ++ii ) {
 			mover.apply(pose);

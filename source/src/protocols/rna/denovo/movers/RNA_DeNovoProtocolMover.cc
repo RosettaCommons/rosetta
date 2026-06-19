@@ -21,6 +21,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/util.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/util.hh>
@@ -652,7 +653,7 @@ RNA_DeNovoProtocolMover::initialize_sequence_information(
 	bool const rna_protein_docking,
 	bool const virtual_anchor_provided,
 	bool const cutpoint_open_provided,
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & possible_cutpoint_open_numbering,
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & possible_cutpoint_open_numbering,
 	core::pose::full_model_info::FullModelParametersOP & full_model_parameters,
 	utility::vector1< core::Size > & cutpoint_open_in_full_model )
 {
@@ -699,9 +700,9 @@ RNA_DeNovoProtocolMover::initialize_sequence_information(
 		full_model_parameters = utility::pointer::make_shared< FullModelParameters >( sequence, cutpoint_open_in_full_model, res_numbers_in_pose );
 		full_model_parameters->set_non_standard_residue_map( non_standard_residue_map );
 		Size chain_num( 1 ), res( 0 );
-		utility::vector1< char > chains; utility::vector1< Size > resnum;
+		utility::vector1< std::string > chains; utility::vector1< Size > resnum;
 		for ( Size n = 1; n <= sequence.size(); n++ ) {
-			chains.push_back( chr_chains[ (chain_num - 1)  % chr_chains.size() ] );
+			chains.push_back( core::conformation::canonical_chain_letter_for_chain_number( chain_num ) );
 			resnum.push_back( ++res );
 			if ( cutpoint_open_in_full_model.has_value( n ) ) {
 				chain_num++; res = 0;
@@ -773,7 +774,7 @@ RNA_DeNovoProtocolMover::input_pdb_numbering_setup(
 	for ( std::string const & pdb : input_pdbs_ ) {
 		std::string pdb_seq;
 		vector1< int > resnum;
-		vector1< char >  chain;
+		vector1< std::string >  chain;
 		vector1< std::string >  segid;
 		get_seq_and_resnum( pdb, pdb_seq, resnum, chain, segid );
 		vector1< Size > resnum_in_full_model;
@@ -841,7 +842,7 @@ RNA_DeNovoProtocolMover::input_initialization_pdb_numbering_setup(
 	for ( auto const & pdb : input_initialization_pdbs_ ) {
 		std::string pdb_seq;
 		vector1< int > resnum;
-		vector1< char >  chain;
+		vector1< std::string >  chain;
 		vector1< std::string >  segid;
 		get_seq_and_resnum( pdb, pdb_seq, resnum, chain, segid );
 		vector1< Size > resnum_in_full_model;
@@ -878,7 +879,7 @@ RNA_DeNovoProtocolMover::input_initialization_pdb_numbering_setup(
 
 void
 RNA_DeNovoProtocolMover::input_silent_numbering_setup(
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & input_silent_res_resnum_and_chain,
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & input_silent_res_resnum_and_chain,
 	std::string const & sequence,
 	core::pose::full_model_info::FullModelParametersOP const & full_model_parameters,
 	utility::vector1< core::Size > const & input_res_user_defined,
@@ -958,8 +959,8 @@ RNA_DeNovoProtocolMover::input_silent_numbering_setup(
 
 void
 RNA_DeNovoProtocolMover::input_numbering_setup(
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & input_res_resnum_and_chain,
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & input_silent_res_resnum_and_chain,
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & input_res_resnum_and_chain,
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & input_silent_res_resnum_and_chain,
 	std::string const & sequence,
 	core::pose::full_model_info::FullModelParametersOP const & full_model_parameters,
 	utility::vector1< core::Size > & input_res,
@@ -989,7 +990,7 @@ RNA_DeNovoProtocolMover::input_numbering_setup(
 
 void
 RNA_DeNovoProtocolMover::setup_obligate_pair(
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & extra_minimize_res_rc,
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & extra_minimize_res_rc,
 	core::pose::full_model_info::FullModelParametersOP const & full_model_parameters,
 	utility::vector1< utility::vector1< int > > const & resnum_list,
 	core::pose::rna::RNA_SecStruct const & secstruct,
@@ -1007,20 +1008,20 @@ RNA_DeNovoProtocolMover::setup_obligate_pair(
 	vector1< Size > obligate_pair_explicit_full_model;
 	for ( Size m = 0; m < obligate_pair_explicit.size()/5; m++ ) {
 		vector1< int > resnum;
-		vector1< char > chains;
+		vector1< std::string > chains;
 		vector1< std::string > segids;
 		vector1< Size > resnum_full;
 
 		utility::get_resnum_and_chain_from_one_tag( obligate_pair_explicit[ 5*m + 1 ], resnum, chains, segids );
 		resnum_full = full_model_parameters->conventional_to_full( std::make_tuple( vector1<int>( resnum ),
-			vector1<char>( chains ), vector1< std::string >( segids ) ) );
+			vector1<std::string>( chains ), vector1< std::string >( segids ) ) );
 		runtime_assert( resnum_full.size() == 1 );
 		Size const pos1 = resnum_full[ 1 ];
 
 		resnum.clear(); chains.clear();
 		utility::get_resnum_and_chain_from_one_tag( obligate_pair_explicit[ 5*m + 2 ], resnum, chains, segids );
 		resnum_full = full_model_parameters->conventional_to_full( std::make_tuple( vector1<int>( resnum ),
-			vector1<char>( chains ), vector1< std::string >( segids ) ) );
+			vector1<std::string>( chains ), vector1< std::string >( segids ) ) );
 		runtime_assert( resnum_full.size() == 1 );
 		Size const pos2 = resnum_full[ 1 ];
 
@@ -1029,7 +1030,7 @@ RNA_DeNovoProtocolMover::setup_obligate_pair(
 	}
 
 
-	vector1< char > const & conventional_chains = full_model_parameters->conventional_chains();
+	vector1< std::string > const & conventional_chains = full_model_parameters->conventional_chains();
 	// Go through each of the inputs, and look for broken chains -- will define obligate pairs.
 	for ( Size n = 1; n <= resnum_list.size(); n++ ) {
 		vector1< Size > resnum = resnum_list[ n ];
@@ -1037,7 +1038,7 @@ RNA_DeNovoProtocolMover::setup_obligate_pair(
 		vector1< vector1< Size > > chunks;
 		vector1< Size > curr_chunk;
 		//Size i( 0 ), j( 0 );
-		char c(' '), d( ' ' );
+		std::string c(" "), d( " " );
 		for ( Size q = 1, i = 0, j = 0; q <= resnum.size(); q++ ) {
 			i = resnum[ q ];
 			c = conventional_chains[ resnum[ q ] ];
@@ -1248,7 +1249,7 @@ RNA_DeNovoProtocolMover::constraint_setup(
 
 void
 RNA_DeNovoProtocolMover::refine_working_obligate_pairs(
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & remove_obligate_pair_rc,
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & remove_obligate_pair_rc,
 	core::pose::full_model_info::FullModelParametersOP const & full_model_parameters,
 	utility::vector1< core::Size > const & obligate_pair,
 	utility::vector1< std::string > & obligate_pair_explicit,
@@ -1285,13 +1286,13 @@ RNA_DeNovoProtocolMover::refine_working_obligate_pairs(
 	for ( Size m = 0; m < obligate_pair_explicit.size()/5; m++ ) {
 
 		vector1< int > resnum;
-		vector1< char > chains;
+		vector1< std::string > chains;
 		vector1< std::string > segids;
 		vector1< Size > resnum_full;
 
 		utility::get_resnum_and_chain_from_one_tag( obligate_pair_explicit[ 5*m + 1 ], resnum, chains, segids );
 		resnum_full = full_model_parameters->conventional_to_full( std::make_tuple( vector1<int>( resnum ),
-			vector1<char>( chains ), vector1<std::string>( segids ) ) );
+			vector1<std::string>( chains ), vector1<std::string>( segids ) ) );
 		runtime_assert( resnum_full.size() == 1 );
 		Size const pos1 = resnum_full[ 1 ];
 		if ( !working_res.has_value( pos1 ) ) continue;
@@ -1299,7 +1300,7 @@ RNA_DeNovoProtocolMover::refine_working_obligate_pairs(
 		resnum.clear(); chains.clear();
 		utility::get_resnum_and_chain_from_one_tag( obligate_pair_explicit[ 5*m + 2 ], resnum, chains, segids );
 		resnum_full = full_model_parameters->conventional_to_full( std::make_tuple( vector1<int>( resnum ),
-			vector1<char>( chains ), vector1<std::string>( segids ) ) );
+			vector1<std::string>( chains ), vector1<std::string>( segids ) ) );
 		runtime_assert( resnum_full.size() == 1 );
 		Size const pos2 = resnum_full[ 1 ];
 		if ( !working_res.has_value( pos2 ) ) continue;
@@ -1365,13 +1366,13 @@ RNA_DeNovoProtocolMover::setup_working_chain_connections(
 		runtime_assert( which_set > 0 );
 
 		vector1< int > resnum;
-		vector1< char > chains;
+		vector1< std::string > chains;
 		vector1< std::string > segids;
 		bool ok = utility::get_resnum_and_chain_from_one_tag( chain_connections[ k ], resnum, chains, segids );
 		runtime_assert( ok );
 		utility::vector1< core::Size > resnum_full = full_model_parameters->conventional_to_full(
 			std::make_tuple( vector1< core::Size >( resnum ),
-			utility::vector1< char >( chains ),
+			utility::vector1< std::string >( chains ),
 			utility::vector1< std::string >( segids ) ) );
 		utility::vector1< core::Size > & resnum_for_set = ( which_set == 1 ) ? resnum1 : resnum2;
 		for ( core::Size n = 1; n <= resnum_full.size(); n++ ) resnum_for_set.push_back( resnum_full[ n ] );
@@ -1452,14 +1453,14 @@ void
 RNA_DeNovoProtocolMover::setup_final_res_lists(
 	utility::vector1< core::Size > const & working_res,
 	utility::vector1< core::Size > const & cutpoint_open_in_full_model,
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & extra_minimize_res_rc,
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & extra_minimize_chi_res_rc,
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & output_jump_res_rc,
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & extra_minimize_res_rc,
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & extra_minimize_chi_res_rc,
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & output_jump_res_rc,
 	bool const minimize_rna_specified,
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & syn_chi_rc,
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & anti_chi_rc,
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & block_stack_above_rc,
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & block_stack_below_rc,
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & syn_chi_rc,
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & anti_chi_rc,
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & block_stack_above_rc,
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & block_stack_below_rc,
 	core::pose::full_model_info::FullModelParametersOP const & full_model_parameters // can use a const OP -- not a COP!
 ) {
 	// Moved this up to restore refine_native functionality
@@ -2118,7 +2119,7 @@ void
 RNA_DeNovoProtocolMover::get_seq_and_resnum( std::string const & pdb,
 	std::string & seq,
 	vector1< int > & resnum,
-	vector1< char > & chain,
+	vector1< std::string > & chain,
 	vector1< std::string > & segid ) const
 {
 	using namespace core::pose;
@@ -2145,7 +2146,7 @@ RNA_DeNovoProtocolMover::get_silent_seq( std::string const & silent_file ) const
 	return silent_file_data.get_sequence( silent_file );
 }
 
-std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > >
+std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > >
 RNA_DeNovoProtocolMover::get_silent_resnum( std::string const & silent_file ) const
 {
 	using namespace core::io::silent;

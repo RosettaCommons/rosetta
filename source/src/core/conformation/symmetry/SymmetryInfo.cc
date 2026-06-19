@@ -1826,31 +1826,31 @@ SymmetryInfo::get_num_components() const {
 	return num_components_;
 }
 
-utility::vector1<char> const &
+utility::vector1<std::string> const &
 SymmetryInfo::get_components() const {
 	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
 	return components_;
 }
 
-char
+std::string const &
 SymmetryInfo::get_component(Size i) const {
 	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
 	return components_[i];
 }
 
-std::map<char,std::pair<Size,Size> > const &
+std::map<std::string,std::pair<Size,Size> > const &
 SymmetryInfo::get_component_bounds() const {
 	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
 	return component_bounds_;
 }
 
-std::map<std::string,char> const &
+std::map<std::string,std::string> const &
 SymmetryInfo::get_subunit_name_to_component() const {
 	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
 	return name2component_;
 }
 
-std::map<std::string,utility::vector1<char> > const &
+std::map<std::string,utility::vector1<std::string> > const &
 SymmetryInfo::get_jump_name_to_components() const {
 	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
 	return jname2components_;
@@ -1863,7 +1863,7 @@ SymmetryInfo::get_jump_name_to_subunits() const {
 }
 
 std::pair<Size,Size> const &
-SymmetryInfo::get_component_bounds(char c) const {
+SymmetryInfo::get_component_bounds(std::string const & c) const {
 	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
 	if ( component_bounds_.find(c) == component_bounds_.end() ) {
 		utility_exit_with_message(std::string("no symmetry component ")+c);
@@ -1871,7 +1871,7 @@ SymmetryInfo::get_component_bounds(char c) const {
 	return component_bounds_.find(c)->second;
 }
 Size
-SymmetryInfo::get_component_lower_bound(char c) const {
+SymmetryInfo::get_component_lower_bound(std::string const & c) const {
 	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
 	if ( component_bounds_.find(c) == component_bounds_.end() ) {
 		utility_exit_with_message(std::string("no symmetry component ")+c);
@@ -1879,14 +1879,14 @@ SymmetryInfo::get_component_lower_bound(char c) const {
 	return component_bounds_.find(c)->second.first;
 }
 Size
-SymmetryInfo::get_component_upper_bound(char c) const {
+SymmetryInfo::get_component_upper_bound(std::string const & c) const {
 	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
 	if ( component_bounds_.find(c) == component_bounds_.end() ) {
 		utility_exit_with_message(std::string("no symmetry component ")+c);
 	}
 	return component_bounds_.find(c)->second.second;
 }
-char
+std::string
 SymmetryInfo::get_component_of_residue(Size ir) const {
 	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
 	if ( ir > num_total_residues_without_pseudo() || ir < 1 ) {
@@ -1894,16 +1894,16 @@ SymmetryInfo::get_component_of_residue(Size ir) const {
 	}
 	Size irindep = (ir-1)%num_independent_residues()+1;
 	for ( auto const & component_bound : component_bounds_ ) {
-		char component = component_bound.first;
+		std::string component = component_bound.first;
 		Size lower = component_bound.second.first;
 		Size upper = component_bound.second.second;
 		// std::cerr << component << " " << lower << " " << upper << " " << irindep << std::endl;
 		if ( lower <= irindep && irindep <= upper ) return component;
 	}
 	utility_exit_with_message(std::string("no symmetry component for residue "));
-	return ' ';
+	return " ";
 }
-char
+std::string const &
 SymmetryInfo::get_subunit_name_to_component(std::string const & vname) const {
 	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
 	if ( name2component_.find(vname) == name2component_.end() ) {
@@ -1911,7 +1911,7 @@ SymmetryInfo::get_subunit_name_to_component(std::string const & vname) const {
 	}
 	return name2component_.find(vname)->second;
 }
-utility::vector1<char> const &
+utility::vector1<std::string> const &
 SymmetryInfo::get_jump_name_to_components(std::string const & jname) const {
 	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
 	if ( jname2components_.find(jname) == jname2components_.end() ) {
@@ -1931,10 +1931,10 @@ SymmetryInfo::get_jump_name_to_subunits(std::string const & jname) const {
 void
 SymmetryInfo::set_multicomponent_info(
 	Size const & num_components,
-	utility::vector1<char> const & components,
-	std::map<char,std::pair<Size,Size> > const & component_bounds,
-	std::map<std::string,char> const & name2component,
-	std::map<std::string,utility::vector1<char> > const & jname2component,
+	utility::vector1<std::string> const & components,
+	std::map<std::string,std::pair<Size,Size> > const & component_bounds,
+	std::map<std::string,std::string> const & name2component,
+	std::map<std::string,utility::vector1<std::string> > const & jname2component,
 	std::map<std::string,utility::vector1<Size> > const & jname2subunits
 ){
 	num_components_ = num_components;
@@ -1981,10 +1981,10 @@ core::conformation::symmetry::SymmetryInfo::save( Archive & arc ) const {
 	arc( CEREAL_NVP( contiguous_monomers_ ) ); // _Bool
 	arc( CEREAL_NVP( torsion_changes_move_other_monomers_ ) ); // _Bool
 	arc( CEREAL_NVP( num_components_ ) ); // Size
-	arc( CEREAL_NVP( components_ ) ); // utility::vector1<char>
-	arc( CEREAL_NVP( component_bounds_ ) ); // std::map<char, std::pair<Size, Size> >
-	arc( CEREAL_NVP( name2component_ ) ); // std::map<std::string, char>
-	arc( CEREAL_NVP( jname2components_ ) ); // std::map<std::string, utility::vector1<char> >
+	arc( CEREAL_NVP( components_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( component_bounds_ ) ); // std::map<std::string, std::pair<Size, Size> >
+	arc( CEREAL_NVP( name2component_ ) ); // std::map<std::string, std::string>
+	arc( CEREAL_NVP( jname2components_ ) ); // std::map<std::string, utility::vector1<std::string> >
 	arc( CEREAL_NVP( jname2subunits_ ) ); // std::map<std::string, utility::vector1<Size> >
 }
 
@@ -2018,10 +2018,10 @@ core::conformation::symmetry::SymmetryInfo::load( Archive & arc ) {
 	arc( contiguous_monomers_ ); // _Bool
 	arc( torsion_changes_move_other_monomers_ ); // _Bool
 	arc( num_components_ ); // Size
-	arc( components_ ); // utility::vector1<char>
-	arc( component_bounds_ ); // std::map<char, std::pair<Size, Size> >
-	arc( name2component_ ); // std::map<std::string, char>
-	arc( jname2components_ ); // std::map<std::string, utility::vector1<char> >
+	arc( components_ ); // utility::vector1<std::string>
+	arc( component_bounds_ ); // std::map<std::string, std::pair<Size, Size> >
+	arc( name2component_ ); // std::map<std::string, std::string>
+	arc( jname2components_ ); // std::map<std::string, utility::vector1<std::string> >
 	arc( jname2subunits_ ); // std::map<std::string, utility::vector1<Size> >
 }
 

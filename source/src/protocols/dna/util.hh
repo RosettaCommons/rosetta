@@ -241,8 +241,8 @@ bool
 not_already_connected(
 	core::pose::Pose const & pose,
 	core::Size const num_jumps,
-	char const this_chain,
-	char const other_chain,
+	std::string const & this_chain,
+	std::string const & other_chain,
 	ObjexxFCL::FArray2D< core::Size > & jump_pairs
 );
 

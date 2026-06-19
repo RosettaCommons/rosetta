@@ -57,7 +57,7 @@ public:
 	/// @brief get the type of the grid
 	std::string get_type() const override;
 	/// @brief set the chain the grid applies to
-	void set_chain(char chain) override;
+	void set_chain(std::string const & chain) override;
 	/// @brief output a BRIX formatted grid.  This really does not work well but is being left for legacy purposes
 	void dump_BRIX(std::string const & prefix) const override;
 	/// @brief Serialize the GridBase object into a json_spirit Value

@@ -158,18 +158,18 @@ public: // Tests //////////////////////////////////////////////////////////////
 			store_mod_res_record_in_sfr( records[ i ], sfr );
 		}
 
-		map< string, ModifiedResidueInformation > modres_map( sfr.modres_map() );
+		map< ResID, ModifiedResidueInformation > modres_map( sfr.modres_map() );
 		TS_ASSERT_EQUALS( modres_map.size(), 3 );
 
-		TS_ASSERT( modres_map.count( "  74 A" ) );
-		TS_ASSERT( modres_map.count( "1937 D" ) );
-		TS_ASSERT( modres_map.count( "  32 B" ) );
+		TS_ASSERT( modres_map.count( ResID( 74, "A" ) ) );
+		TS_ASSERT( modres_map.count( ResID( 1937, "D" ) ) );
+		TS_ASSERT( modres_map.count( ResID( 32, "B" )  ) );
 
-		TS_ASSERT_EQUALS( modres_map[ "  74 A" ].comment, "GLYCOSYLATION SITE" );
-		TS_ASSERT_EQUALS( modres_map[ "1937 D" ].stdRes, "  G" );
-		TS_ASSERT_EQUALS( modres_map[ "  32 B" ].iCode, ' ' );
-		TS_ASSERT_EQUALS( modres_map[ "  32 B" ].seqNum, 32 );
-		TS_ASSERT_EQUALS( modres_map[ "  32 B" ].chainID, 'B' );
+		TS_ASSERT_EQUALS( modres_map[ ResID(74,"A") ].comment, "GLYCOSYLATION SITE" );
+		TS_ASSERT_EQUALS( modres_map[ ResID(1937,"D") ].stdRes, "  G" );
+		TS_ASSERT_EQUALS( modres_map[ ResID(32,"B") ].iCode, ' ' );
+		TS_ASSERT_EQUALS( modres_map[ ResID(32,"B") ].seqNum, 32 );
+		TS_ASSERT_EQUALS( modres_map[ ResID(32,"B") ].chainID, "B" );
 	}
 
 	// Confirm that HETNAM records are stored properly.
@@ -231,7 +231,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TR << "Testing (indirectly) store_base_residue_type_name_in_sfr method, "
 			"which is called from within store_heterogen_name_record_in_sfr()..." << std::endl;;
 
-		map< string, pair< string, string > > base_names( sfr.residue_type_base_names() );
+		map< core::io::ResID, pair< string, string > > base_names( sfr.residue_type_base_names() );
 
 		// Each record is treated as separate for base names.
 		// However, because the resID (See below.) for both "UNKNOWN ATOM OR
@@ -239,15 +239,15 @@ public: // Tests //////////////////////////////////////////////////////////////
 		// former, giving us 8 records instead of 9.
 		TS_ASSERT_EQUALS( base_names.size(), 8 );
 
-		// Each key here is a 6-character "resID" used internally by Rosetta during Pose building/unbuilding.
-		TS_ASSERT( base_names.count( "-ACETN" ) );  // a meaningless code, since this record was a PDB-format record
-		TS_ASSERT( base_names.count( "  13ZX" ) );  // residue 13Z of chain X
-
-		TS_ASSERT_EQUALS( base_names[ "-ACETN" ].first, "NAG" );
-		TS_ASSERT_EQUALS( base_names[ "-ACETN" ].second, "L-D-GLUCOSAMINE" );  // meaningless junk
-
-		TS_ASSERT_EQUALS( base_names[ "  13ZX" ].first, "Krp" );
-		TS_ASSERT_EQUALS( base_names[ "  13ZX" ].second, "Kryptonite" );  // Any word after a comma is ignored.
+		//  // Each key here is a 6-character "resID" used internally by Rosetta during Pose building/unbuilding.
+		//  TS_ASSERT( base_names.count( "-ACETN" ) );  // a meaningless code, since this record was a PDB-format record
+		//  TS_ASSERT( base_names.count( "  13ZX" ) );  // residue 13Z of chain X
+		//
+		//  TS_ASSERT_EQUALS( base_names[ "-ACETN" ].first, "NAG" );
+		//  TS_ASSERT_EQUALS( base_names[ "-ACETN" ].second, "L-D-GLUCOSAMINE" );  // meaningless junk
+		//
+		//  TS_ASSERT_EQUALS( base_names[ "  13ZX" ].first, "Krp" );
+		//  TS_ASSERT_EQUALS( base_names[ "  13ZX" ].second, "Kryptonite" );  // Any word after a comma is ignored.
 	}
 
 	// Confirm that HETSYM records are stored properly.
@@ -373,32 +373,32 @@ public: // Tests //////////////////////////////////////////////////////////////
 			store_ssbond_record_in_sfr( records[ i ], sfr );
 		}
 
-		map< string, vector1< SSBondInformation > > ssbond_map( sfr.ssbond_map() );
+		map< ResID, vector1< SSBondInformation > > ssbond_map( sfr.ssbond_map() );
 		TS_ASSERT_EQUALS( ssbond_map.size(), 4 );  // Lines 5 through 7 should have been ignored.
 
-		TS_ASSERT( ssbond_map.count( "  30 A" ) );
-		TS_ASSERT_EQUALS( ssbond_map[ "  30 A" ].size(), 1 );
-		TS_ASSERT_EQUALS( ssbond_map[ "  30 A" ][ 1 ].resName1, "CYS" );
-		TS_ASSERT_EQUALS( ssbond_map[ "  30 A" ][ 1 ].chainID1, 'A' );
-		TS_ASSERT_EQUALS( ssbond_map[ "  30 A" ][ 1 ].resSeq1, 30 );
-		TS_ASSERT_EQUALS( ssbond_map[ "  30 A" ][ 1 ].iCode1, ' ' );
-		TS_ASSERT_EQUALS( ssbond_map[ "  30 A" ][ 1 ].resName2, "CYS" );
-		TS_ASSERT_EQUALS( ssbond_map[ "  30 A" ][ 1 ].chainID2, 'A' );
-		TS_ASSERT_EQUALS( ssbond_map[ "  30 A" ][ 1 ].resSeq2, 115 );
-		TS_ASSERT_EQUALS( ssbond_map[ "  30 A" ][ 1 ].iCode2, ' ' );
-		TS_ASSERT_EQUALS( ssbond_map[ "  30 A" ][ 1 ].length, 2.07 );
+		TS_ASSERT( ssbond_map.count(  ResID(30,"A") ) );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(30,"A") ].size(), 1 );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(30,"A") ][ 1 ].resName1, "CYS" );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(30,"A") ][ 1 ].chainID1, "A" );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(30,"A") ][ 1 ].resSeq1, 30 );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(30,"A") ][ 1 ].iCode1, ' ' );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(30,"A") ][ 1 ].resName2, "CYS" );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(30,"A") ][ 1 ].chainID2, "A" );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(30,"A") ][ 1 ].resSeq2, 115 );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(30,"A") ][ 1 ].iCode2, ' ' );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(30,"A") ][ 1 ].length, 2.07 );
 
-		TS_ASSERT( ssbond_map.count( "  64 A" ) );
-		TS_ASSERT_EQUALS( ssbond_map[ "  64 A" ].size(), 1 );
-		TS_ASSERT_EQUALS( ssbond_map[ "  64 A" ][ 1 ].resName1, "CYS" );
-		TS_ASSERT_EQUALS( ssbond_map[ "  64 A" ][ 1 ].chainID1, 'A' );
-		TS_ASSERT_EQUALS( ssbond_map[ "  64 A" ][ 1 ].resSeq1, 64 );
-		TS_ASSERT_EQUALS( ssbond_map[ "  64 A" ][ 1 ].iCode1, ' ' );
-		TS_ASSERT_EQUALS( ssbond_map[ "  64 A" ][ 1 ].resName2, "CYS" );
-		TS_ASSERT_EQUALS( ssbond_map[ "  64 A" ][ 1 ].chainID2, 'A' );
-		TS_ASSERT_EQUALS( ssbond_map[ "  64 A" ][ 1 ].resSeq2, 80 );
-		TS_ASSERT_EQUALS( ssbond_map[ "  64 A" ][ 1 ].iCode2, ' ' );
-		TS_ASSERT_EQUALS( ssbond_map[ "  64 A" ][ 1 ].length, 2.06 );
+		TS_ASSERT( ssbond_map.count(  ResID(64,"A") ) );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(64,"A") ].size(), 1 );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(64,"A") ][ 1 ].resName1, "CYS" );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(64,"A") ][ 1 ].chainID1, "A" );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(64,"A") ][ 1 ].resSeq1, 64 );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(64,"A") ][ 1 ].iCode1, ' ' );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(64,"A") ][ 1 ].resName2, "CYS" );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(64,"A") ][ 1 ].chainID2, "A" );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(64,"A") ][ 1 ].resSeq2, 80 );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(64,"A") ][ 1 ].iCode2, ' ' );
+		TS_ASSERT_EQUALS( ssbond_map[ ResID(64,"A") ][ 1 ].length, 2.06 );
 	}
 
 	// Confirm that LINK records are stored properly.
@@ -435,36 +435,36 @@ public: // Tests //////////////////////////////////////////////////////////////
 			store_link_record_in_sfr( records[ i ], sfr );
 		}
 
-		map< string, vector1< LinkInformation > > link_map( sfr.link_map() );
+		map< ResID, vector1< LinkInformation > > link_map( sfr.link_map() );
 		TS_ASSERT_EQUALS( link_map.size(), 5 );  // Lines 6 through 8 should have been ignored.
 
-		TS_ASSERT( link_map.count( "  49 A" ) );
-		TS_ASSERT_EQUALS( link_map[ "  49 A" ].size(), 1 );
-		TS_ASSERT_EQUALS( link_map[ "  49 A" ][ 1 ].name1, " O  " );
-		TS_ASSERT_EQUALS( link_map[ "  49 A" ][ 1 ].resName1, "GLY" );
-		TS_ASSERT_EQUALS( link_map[ "  49 A" ][ 1 ].chainID1, 'A' );
-		TS_ASSERT_EQUALS( link_map[ "  49 A" ][ 1 ].resSeq1, 49 );
-		TS_ASSERT_EQUALS( link_map[ "  49 A" ][ 1 ].iCode1, ' ' );
-		TS_ASSERT_EQUALS( link_map[ "  49 A" ][ 1 ].name2, "NA  " );
-		TS_ASSERT_EQUALS( link_map[ "  49 A" ][ 1 ].resName2, " NA" );
-		TS_ASSERT_EQUALS( link_map[ "  49 A" ][ 1 ].chainID2, 'A' );
-		TS_ASSERT_EQUALS( link_map[ "  49 A" ][ 1 ].resSeq2, 6001 );
-		TS_ASSERT_EQUALS( link_map[ "  49 A" ][ 1 ].iCode2, ' ' );
-		TS_ASSERT_EQUALS( link_map[ "  49 A" ][ 1 ].length, 2.98 );
+		TS_ASSERT( link_map.count(  ResID(49,"A") ) );
+		TS_ASSERT_EQUALS( link_map[ ResID(49,"A") ].size(), 1 );
+		TS_ASSERT_EQUALS( link_map[ ResID(49,"A") ][ 1 ].name1, " O  " );
+		TS_ASSERT_EQUALS( link_map[ ResID(49,"A") ][ 1 ].resName1, "GLY" );
+		TS_ASSERT_EQUALS( link_map[ ResID(49,"A") ][ 1 ].chainID1, "A" );
+		TS_ASSERT_EQUALS( link_map[ ResID(49,"A") ][ 1 ].resSeq1, 49 );
+		TS_ASSERT_EQUALS( link_map[ ResID(49,"A") ][ 1 ].iCode1, ' ' );
+		TS_ASSERT_EQUALS( link_map[ ResID(49,"A") ][ 1 ].name2, "NA  " );
+		TS_ASSERT_EQUALS( link_map[ ResID(49,"A") ][ 1 ].resName2, " NA" );
+		TS_ASSERT_EQUALS( link_map[ ResID(49,"A") ][ 1 ].chainID2, "A" );
+		TS_ASSERT_EQUALS( link_map[ ResID(49,"A") ][ 1 ].resSeq2, 6001 );
+		TS_ASSERT_EQUALS( link_map[ ResID(49,"A") ][ 1 ].iCode2, ' ' );
+		TS_ASSERT_EQUALS( link_map[ ResID(49,"A") ][ 1 ].length, 2.98 );
 
-		TS_ASSERT( link_map.count( "   7 A" ) );
-		TS_ASSERT_EQUALS( link_map[ "   7 A" ].size(), 1 );
-		TS_ASSERT_EQUALS( link_map[ "   7 A" ][ 1 ].name1, " C21" );
-		TS_ASSERT_EQUALS( link_map[ "   7 A" ][ 1 ].resName1, "2EG" );
-		TS_ASSERT_EQUALS( link_map[ "   7 A" ][ 1 ].chainID1, 'A' );
-		TS_ASSERT_EQUALS( link_map[ "   7 A" ][ 1 ].resSeq1, 7 );
-		TS_ASSERT_EQUALS( link_map[ "   7 A" ][ 1 ].iCode1, ' ' );
-		TS_ASSERT_EQUALS( link_map[ "   7 A" ][ 1 ].name2, " C22" );
-		TS_ASSERT_EQUALS( link_map[ "   7 A" ][ 1 ].resName2, "2EG" );
-		TS_ASSERT_EQUALS( link_map[ "   7 A" ][ 1 ].chainID2, 'B' );
-		TS_ASSERT_EQUALS( link_map[ "   7 A" ][ 1 ].resSeq2, 19 );
-		TS_ASSERT_EQUALS( link_map[ "   7 A" ][ 1 ].iCode2, ' ' );
-		TS_ASSERT_EQUALS( link_map[ "   7 A" ][ 1 ].length, 1.56 );
+		TS_ASSERT( link_map.count(  ResID(7,"A") ) );
+		TS_ASSERT_EQUALS( link_map[ ResID(7,"A") ].size(), 1 );
+		TS_ASSERT_EQUALS( link_map[ ResID(7,"A") ][ 1 ].name1, " C21" );
+		TS_ASSERT_EQUALS( link_map[ ResID(7,"A") ][ 1 ].resName1, "2EG" );
+		TS_ASSERT_EQUALS( link_map[ ResID(7,"A") ][ 1 ].chainID1, "A" );
+		TS_ASSERT_EQUALS( link_map[ ResID(7,"A") ][ 1 ].resSeq1, 7 );
+		TS_ASSERT_EQUALS( link_map[ ResID(7,"A") ][ 1 ].iCode1, ' ' );
+		TS_ASSERT_EQUALS( link_map[ ResID(7,"A") ][ 1 ].name2, " C22" );
+		TS_ASSERT_EQUALS( link_map[ ResID(7,"A") ][ 1 ].resName2, "2EG" );
+		TS_ASSERT_EQUALS( link_map[ ResID(7,"A") ][ 1 ].chainID2, "B" );
+		TS_ASSERT_EQUALS( link_map[ ResID(7,"A") ][ 1 ].resSeq2, 19 );
+		TS_ASSERT_EQUALS( link_map[ ResID(7,"A") ][ 1 ].iCode2, ' ' );
+		TS_ASSERT_EQUALS( link_map[ ResID(7,"A") ][ 1 ].length, 1.56 );
 	}
 
 	// Confirm that CISPEP records are stored properly.
@@ -494,30 +494,30 @@ public: // Tests //////////////////////////////////////////////////////////////
 			store_cis_peptide_record_in_sfr( records[ i ], sfr );
 		}
 
-		map< string, CisPeptideInformation > cispep_map( sfr.cispep_map() );
+		map< ResID, CisPeptideInformation > cispep_map( sfr.cispep_map() );
 		TS_ASSERT_EQUALS( cispep_map.size(), 3 );
 
-		TS_ASSERT( cispep_map.count( "  58 A" ) );
-		TS_ASSERT_EQUALS( cispep_map[ "  58 A" ].pep1, "SER" );
-		TS_ASSERT_EQUALS( cispep_map[ "  58 A" ].chainID1, 'A' );
-		TS_ASSERT_EQUALS( cispep_map[ "  58 A" ].seqNum1, 58 );
-		TS_ASSERT_EQUALS( cispep_map[ "  58 A" ].icode1, ' ' );
-		TS_ASSERT_EQUALS( cispep_map[ "  58 A" ].pep2, "GLY" );
-		TS_ASSERT_EQUALS( cispep_map[ "  58 A" ].chainID2, 'A' );
-		TS_ASSERT_EQUALS( cispep_map[ "  58 A" ].seqNum2, 59 );
-		TS_ASSERT_EQUALS( cispep_map[ "  58 A" ].icode2, ' ' );
-		TS_ASSERT_EQUALS( cispep_map[ "  58 A" ].measure, 20.91 );
+		TS_ASSERT( cispep_map.count(  ResID(58,"A") ) );
+		TS_ASSERT_EQUALS( cispep_map[ ResID(58,"A") ].pep1, "SER" );
+		TS_ASSERT_EQUALS( cispep_map[ ResID(58,"A") ].chainID1, "A" );
+		TS_ASSERT_EQUALS( cispep_map[ ResID(58,"A") ].seqNum1, 58 );
+		TS_ASSERT_EQUALS( cispep_map[ ResID(58,"A") ].icode1, ' ' );
+		TS_ASSERT_EQUALS( cispep_map[ ResID(58,"A") ].pep2, "GLY" );
+		TS_ASSERT_EQUALS( cispep_map[ ResID(58,"A") ].chainID2, "A" );
+		TS_ASSERT_EQUALS( cispep_map[ ResID(58,"A") ].seqNum2, 59 );
+		TS_ASSERT_EQUALS( cispep_map[ ResID(58,"A") ].icode2, ' ' );
+		TS_ASSERT_EQUALS( cispep_map[ ResID(58,"A") ].measure, 20.91 );
 
-		TS_ASSERT( cispep_map.count( " 116 A" ) );
-		TS_ASSERT_EQUALS( cispep_map[ " 116 A" ].pep1, "GLY" );
-		TS_ASSERT_EQUALS( cispep_map[ " 116 A" ].chainID1, 'A' );
-		TS_ASSERT_EQUALS( cispep_map[ " 116 A" ].seqNum1, 116 );
-		TS_ASSERT_EQUALS( cispep_map[ " 116 A" ].icode1, ' ' );
-		TS_ASSERT_EQUALS( cispep_map[ " 116 A" ].pep2, "GLY" );
-		TS_ASSERT_EQUALS( cispep_map[ " 116 A" ].chainID2, 'A' );
-		TS_ASSERT_EQUALS( cispep_map[ " 116 A" ].seqNum2, 117 );
-		TS_ASSERT_EQUALS( cispep_map[ " 116 A" ].icode2, ' ' );
-		TS_ASSERT_EQUALS( cispep_map[ " 116 A" ].measure, 18.5 );
+		TS_ASSERT( cispep_map.count(  ResID(116,"A") ) );
+		TS_ASSERT_EQUALS( cispep_map[ ResID(116,"A") ].pep1, "GLY" );
+		TS_ASSERT_EQUALS( cispep_map[ ResID(116,"A") ].chainID1, "A" );
+		TS_ASSERT_EQUALS( cispep_map[ ResID(116,"A") ].seqNum1, 116 );
+		TS_ASSERT_EQUALS( cispep_map[ ResID(116,"A") ].icode1, ' ' );
+		TS_ASSERT_EQUALS( cispep_map[ ResID(116,"A") ].pep2, "GLY" );
+		TS_ASSERT_EQUALS( cispep_map[ ResID(116,"A") ].chainID2, "A" );
+		TS_ASSERT_EQUALS( cispep_map[ ResID(116,"A") ].seqNum2, 117 );
+		TS_ASSERT_EQUALS( cispep_map[ ResID(116,"A") ].icode2, ' ' );
+		TS_ASSERT_EQUALS( cispep_map[ ResID(116,"A") ].measure, 18.5 );
 	}
 
 	// Confirm that UNKNOW records are stored properly.

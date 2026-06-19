@@ -124,7 +124,7 @@ void protocols::anchored_design::Anchor::read_anchorfile(
 
 	core::Size PDBstart;
 	core::Size PDBend;
-	char chain;
+	std::string chain;
 
 	anchorfile >> chain >> PDBstart >> PDBend;
 

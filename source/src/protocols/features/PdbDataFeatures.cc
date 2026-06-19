@@ -190,7 +190,7 @@ void PdbDataFeatures::load_residue_pdb_identification(
 	if ( !table_exists(db_session, "residue_pdb_identification") ) return;
 
 	vector1<int> pdb_numbers;
-	vector1<char> pdb_chains;
+	vector1<std::string> pdb_chains;
 	vector1<char> insertion_codes;
 	string statement_string =
 		"SELECT\n"
@@ -228,7 +228,7 @@ void PdbDataFeatures::load_residue_pdb_identification(
 
 		res >> chain_id >> insertion_code >> pdb_residue_number;
 
-		pdb_chains.push_back(chain_id[0]);
+		pdb_chains.push_back(chain_id);
 		insertion_codes.push_back(insertion_code[0]);
 		pdb_numbers.push_back(pdb_residue_number);
 	}
@@ -263,7 +263,7 @@ void PdbDataFeatures::insert_residue_pdb_identification_rows(
 	for ( core::Size index = 1; index <= res_num; ++index ) {
 		if ( !check_relevant_residues( relevant_residues, index ) ) continue;
 
-		string chain_id(& pose.pdb_info()->chain(index),1);
+		string chain_id( pose.pdb_info()->chain(index) );
 		string insertion_code(&pose.pdb_info()->icode(index),1);
 		int pdb_residue_number = pose.pdb_info()->number(index);
 

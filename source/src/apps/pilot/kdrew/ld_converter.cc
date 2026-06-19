@@ -171,7 +171,7 @@ LDConverterMover::apply(
 	core::pose::PDBPoseMap const & pose_map(pose.pdb_info()->pdb2pose());
 	//kdrew: chain and res numbers are a pair so increment by 2
 	for ( Size i = 1; i <= l_pdb_positions.size(); i=i+2 ) {
-		core::Size respos = pose_map.find( *l_pdb_positions[i].c_str(), atoi(l_pdb_positions[i+1].c_str()) );
+		core::Size respos = pose_map.find( l_pdb_positions[i], atoi(l_pdb_positions[i+1].c_str()) );
 		l_positions.push_back(respos);
 	}
 
@@ -192,7 +192,7 @@ LDConverterMover::apply(
 	//kdrew: parse pdb numbering in convert_pdb_position options
 	//kdrew: chain and res numbers are a pair so increment by 2
 	for ( Size i = 1; i <= d_pdb_positions.size(); i=i+2 ) {
-		core::Size respos = pose_map.find( *d_pdb_positions[i].c_str(), std::atoi(d_pdb_positions[i+1].c_str()) );
+		core::Size respos = pose_map.find( d_pdb_positions[i], std::atoi(d_pdb_positions[i+1].c_str()) );
 		d_positions.push_back(respos);
 
 	}

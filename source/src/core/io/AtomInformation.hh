@@ -45,7 +45,7 @@ struct AtomInformation {
 		name( "" ),
 		altLoc( ' ' ),
 		resName( "" ),
-		chainID( ' ' ),
+		chainID( " " ),
 		resSeq( 0 ),
 		iCode( ' ' ),
 		x( 0.0 ), y( 0.0 ), z( 0.0 ),
@@ -64,7 +64,7 @@ struct AtomInformation {
 	std::string name;
 	char altLoc;
 	std::string resName;
-	char chainID;
+	std::string chainID;
 	int resSeq;
 	char iCode;
 	core::Real x, y, z;

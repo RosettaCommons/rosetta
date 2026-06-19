@@ -80,13 +80,13 @@ PRESingle::PRESingle(
 	for ( Size i = 1, i_end = spins.size(); i <= i_end; ++i ) {
 		Size rsd = spins[i].get_rsd();
 		std::string atom = spins[i].get_atom();
-		char const & chain = spins[i].get_chain();
+		std::string const & chain = spins[i].get_chain();
 
 		if ( pdbinfo ) {
-			TR.Trace << "Converting AtomSelection \"" + to_string(rsd) + " " + atom + " " + to_string(chain) + "\" in PRE datafile from pdb to pose numbering." << std::endl;
+			TR.Trace << "Converting AtomSelection \"" + to_string(rsd) + " " + atom + " " + chain + "\" in PRE datafile from pdb to pose numbering." << std::endl;
 			rsd = pdbinfo->pdb2pose(chain, rsd);
 			if ( rsd == 0 ) { // Residue not found
-				utility_exit_with_message( "ERROR: Cannot convert AtomSelection " + to_string(spins[i].get_rsd()) + " " + atom + " " + to_string(chain) + " from PRE datafile into pose numbering. Residue number was not found." );
+				utility_exit_with_message( "ERROR: Cannot convert AtomSelection " + to_string(spins[i].get_rsd()) + " " + atom + " " + chain + " from PRE datafile into pose numbering. Residue number was not found." );
 			}
 		} else { // Assume pose numbering instead
 			TR.Warning << "Cannot convert residue numbers from pdb to pose numbering. No PDBInfo object. Make sure to provide residues in pose numbering in PRE datafile instead." << std::endl;

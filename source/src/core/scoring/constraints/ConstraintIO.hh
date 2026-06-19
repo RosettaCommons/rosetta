@@ -113,10 +113,10 @@ public:
 		bool const force_pdb_info_mapping = false
 	);
 
-	/// @details a value of 0 for the chain means to ignore PDBInfo settings,
+	/// @details An empty chain designation means to ignore PDBInfo settings,
 	/// and treat the resnum as Rosetta/Pose numbering.
 	static Size
-	parse_residue( pose::Pose const& pose, int const resnum, char const chain = 0,
+	parse_residue( pose::Pose const& pose, int const resnum, std::string const & chain = "",
 		bool const force_pdb_info_numbering = false);
 
 	// gkt - tmp hack for BoundFunc, should be private

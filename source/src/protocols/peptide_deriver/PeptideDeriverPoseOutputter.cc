@@ -87,8 +87,8 @@ void PeptideDeriverPoseOutputter::chain_pair_pose_prepared(core::pose::Pose cons
 	is_chain_pair_new_ = true;
 }
 
-void PeptideDeriverPoseOutputter::begin_receptor_partner_pair(char const receptor_chain_letter,
-	char const partner_chain_letter, core::Real const,
+void PeptideDeriverPoseOutputter::begin_receptor_partner_pair(std::string const & receptor_chain_letter,
+	std::string const & partner_chain_letter, core::Real const,
 	std::string const &) {
 	current_receptor_chain_letter_ = receptor_chain_letter;
 	current_partner_chain_letter_ = partner_chain_letter;

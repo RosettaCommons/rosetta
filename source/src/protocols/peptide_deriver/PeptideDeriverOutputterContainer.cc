@@ -62,8 +62,8 @@ void PeptideDeriverOutputterContainer::chain_pair_pose_prepared(core::pose::Pose
 	}
 }
 
-void PeptideDeriverOutputterContainer::begin_receptor_partner_pair(char const receptor_chain_letter,
-	char const partner_chain_letter, core::Real const total_isc,
+void PeptideDeriverOutputterContainer::begin_receptor_partner_pair(std::string const & receptor_chain_letter,
+	std::string const & partner_chain_letter, core::Real const total_isc,
 	std::string const & options_string) {
 	for ( PeptideDeriverOutputterOP outputter : list_ ) {
 		outputter->begin_receptor_partner_pair(receptor_chain_letter, partner_chain_letter, total_isc, options_string);

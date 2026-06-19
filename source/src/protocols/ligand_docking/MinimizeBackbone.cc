@@ -362,8 +362,8 @@ void MinimizeBackbone::restrain_protein_Calpha(
 		//Skip non-protein residues even if they are part of an interface
 		return;
 	}
-	char const & ligand_chain= interface[residue_id].chain;
-	std::map<char, LigandAreaOP> const & ligand_areas= interface_builder_->get_ligand_areas();
+	std::string const & ligand_chain= interface[residue_id].chain;
+	std::map<std::string, LigandAreaOP> const & ligand_areas= interface_builder_->get_ligand_areas();
 	auto found= ligand_areas.find(ligand_chain);
 	debug_assert( found != ligand_areas.end() );// this shouldn't be possible
 	LigandAreaOP const ligand_area= found->second;
@@ -419,7 +419,7 @@ std::map<core::Size, core::Size> MinimizeBackbone::find_attach_pts(
 	core::pose::Pose const & pose
 ) const {
 	std::map<core::Size, core::Size> jumpToAttach;
-	std::map<char, LigandAreaOP> const ligand_areas= interface_builder_->get_ligand_areas();
+	std::map<std::string, LigandAreaOP> const ligand_areas= interface_builder_->get_ligand_areas();
 	//std::map<char, LigandAreaOP>::const_iterator index = ligand_areas.begin();
 	for ( LigandAreas::value_type const & ligand_area_pair : ligand_areas ) {
 		//for (; index != ligand_areas.end(); ++index) { // these are just the ligand chains to dock

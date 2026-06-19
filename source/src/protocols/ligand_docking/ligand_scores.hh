@@ -34,7 +34,7 @@ namespace ligand_docking {
 
 std::map< std::string, core::Real >
 get_interface_deltas(
-	char chain,
+	std::string const & chain,
 	core::pose::Pose const & after,
 	const core::scoring::ScoreFunctionOP scorefxn,
 	std::string const & prefix = "",
@@ -46,7 +46,7 @@ get_interface_deltas(
 void
 output_interface_deltas(
 	std::map< std::string, core::Real > & score_map, //output//
-	char chain,
+	std::string const & chain,
 	const core::scoring::ScoreFunctionOP scorefxn,
 	core::scoring::EnergyMap const & together_energies,
 	core::scoring::EnergyMap const & separated_energies,
@@ -59,7 +59,7 @@ output_interface_deltas(
 /// Large values indicate we're outside of the intended binding site.
 std::map< std::string, core::Real >
 get_ligand_travel(
-	char chain,
+	std::string const & chain,
 	core::pose::Pose const & test_pose,
 	core::pose::Pose const & ref_pose,
 	std::string const & prefix = "",
@@ -91,7 +91,7 @@ get_ligand_grid_scores(
 std::map< std::string, core::Real >
 get_ligand_grid_scores(
 	protocols::qsar::scoring_grid::GridSet const & grid_set_prototype,
-	char chain,
+	std::string const & chain,
 	core::pose::Pose const & test_pose,
 	std::string const & prefix = "",
 	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function = nullptr
@@ -112,14 +112,14 @@ get_ligand_grid_scores(
 /// @brief Ligands tend to bind in outstretched conformations...
 std::map< std::string, core::Real >
 get_radius_of_gyration(
-	char chain,
+	std::string const & chain,
 	core::pose::Pose const & test_pose,
 	std::string const & prefix
 );
 
 std::map< std::string, core::Real >
 get_ligand_RMSDs(
-	char chain,
+	std::string const & chain,
 	core::pose::Pose const & test_pose,
 	core::pose::Pose const & ref_pose,
 	std::string const & prefix = "",
@@ -141,7 +141,7 @@ get_multi_residue_ligand_RMSDs(
 	core::pose::Pose const & ref_pose,
 	utility::vector1< core::Size > const & test_residue_ids,
 	utility::vector1< core::Size > const & ref_residue_ids,
-	char chain = 'X',
+	std::string const & chain = "X",
 	std::string const & prefix = ""
 );
 

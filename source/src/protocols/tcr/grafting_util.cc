@@ -66,7 +66,7 @@ void graft_framework(TCRmodel::tmpltinfo &currtmplt, std::string const &template
 	core::pose::Pose fr_piece;
 	core::Size startcap = aho_pos.cap.begin;
 	core::Size endcap = aho_pos.cap.end;
-	char tmplt_chainid = currtmplt.tid[5];
+	std::string tmplt_chainid = std::string{currtmplt.tid[5]}; // Limitation of the ID is it only supports single chain letters.
 	core::import_pose::pose_from_file( fr_tmplt, template_pdb_path, core::import_pose::PDB_file);
 	core::Size tmplt_chainnum = get_chain_id_from_chain(tmplt_chainid, fr_tmplt);
 	core::pose::Pose fw_tmplt( *fr_tmplt.split_by_chain(tmplt_chainnum) );
@@ -80,7 +80,7 @@ void graft_framework(TCRmodel::tmpltinfo &currtmplt, std::string const &template
 void graft_cdr(TCRmodel::tmpltinfo &currtmplt, std::string const &template_pdb_path, core::Size const &cdr_start, core::Size const &cdr_end) {
 	core::pose::Pose cdr_piece;
 	core::import_pose::pose_from_file( cdr_piece, template_pdb_path, core::import_pose::PDB_file);
-	char cdr_tmplt_chainid = currtmplt.tid[5];
+	std::string cdr_tmplt_chainid = std::string{currtmplt.tid[5]}; // Limitation of the ID is it only supports single chain letters.
 	core::Size start = cdr_piece.pdb_info()->pdb2pose( cdr_tmplt_chainid, cdr_start );
 	core::Size end = cdr_piece.pdb_info()->pdb2pose( cdr_tmplt_chainid, cdr_end );
 	core::pose::Pose temp_pose = protocols::grafting::return_region(cdr_piece, start, end);

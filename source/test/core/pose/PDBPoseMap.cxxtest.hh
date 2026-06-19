@@ -44,11 +44,11 @@ public:
 	// ------------- Helper Functions ------------- //
 
 	void fill_map( PDBPoseMap & map ) {
-		map.insert( ' ',  -1, 'C', "    ", 1 );
-		map.insert( 'X', 999, ' ', "    ", 2 );
-		map.insert( 'A',  10, 'A', "    ", 3 );
-		map.insert( 'A',  10, 'A', "XXXX", 4 );
-		map.insert( 'B',  22, 'A', "XXXX", 5 );
+		map.insert( " ",  -1, 'C', "    ", 1 );
+		map.insert( "X", 999, ' ', "    ", 2 );
+		map.insert( "A",  10, 'A', "    ", 3 );
+		map.insert( "A",  10, 'A', "XXXX", 4 );
+		map.insert( "B",  22, 'A', "XXXX", 5 );
 	}
 
 	// --------------- Test Cases --------------- //
@@ -64,23 +64,23 @@ public:
 		PDBPoseMap map;
 		fill_map( map );
 
-		TS_ASSERT_EQUALS( map.find( ' ',  -1, 'C' ), 1 );
-		TS_ASSERT_EQUALS( map.find( 'X', 999, ' ' ), 2 );
-		TS_ASSERT_EQUALS( map.find( 'A',  10, 'A' ), 3 );
-		TS_ASSERT_EQUALS( map.find( 'B',   0, ' ' ), 0 ); // 0 == not found
-		TS_ASSERT_EQUALS( map.find( 'A', 10, 'A' ), 3 );
-		TS_ASSERT_EQUALS( map.find( 'A', 10, 'A', "XXXX" ), 4 );
-		TS_ASSERT_EQUALS( map.find( 'B', 22, 'A' ), 5 );
-		TS_ASSERT_EQUALS( map.find( 'B', 22, 'A', "XXXX" ), 5 );
+		TS_ASSERT_EQUALS( map.find( " ",  -1, 'C' ), 1 );
+		TS_ASSERT_EQUALS( map.find( "X", 999, ' ' ), 2 );
+		TS_ASSERT_EQUALS( map.find( "A",  10, 'A' ), 3 );
+		TS_ASSERT_EQUALS( map.find( "B",   0, ' ' ), 0 ); // 0 == not found
+		TS_ASSERT_EQUALS( map.find( "A", 10, 'A' ), 3 );
+		TS_ASSERT_EQUALS( map.find( "A", 10, 'A', "XXXX" ), 4 );
+		TS_ASSERT_EQUALS( map.find( "B", 22, 'A' ), 5 );
+		TS_ASSERT_EQUALS( map.find( "B", 22, 'A', "XXXX" ), 5 );
 	}
 
 	void test_PDBPoseMap_erase() {
 		PDBPoseMap map;
 		fill_map( map );
-		map.erase( ' ', -1, 'C' );
+		map.erase( " ", -1, 'C' );
 
 		TS_ASSERT_EQUALS( map.size(), 4 );
-		TS_ASSERT_EQUALS( map.find( ' ', -1, 'C' ), 0 ); // 0 == not found
+		TS_ASSERT_EQUALS( map.find( " ", -1, 'C' ), 0 ); // 0 == not found
 	}
 
 };//end class

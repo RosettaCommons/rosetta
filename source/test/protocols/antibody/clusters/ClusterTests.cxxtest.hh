@@ -102,7 +102,7 @@ public:
 
 		CDRClusterCOP cluster_L1 = ab_info->get_CDR_cluster(l1);
 		TS_ASSERT_EQUALS(l1, cluster_L1->cdr());
-		TS_ASSERT_EQUALS('L', cluster_L1->chain());
+		TS_ASSERT_EQUALS("L", cluster_L1->chain());
 		TS_ASSERT_EQUALS(24, cluster_L1->pdb_start());
 		TS_ASSERT_EQUALS(42, cluster_L1->pdb_end());
 

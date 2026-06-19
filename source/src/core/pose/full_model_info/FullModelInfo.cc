@@ -168,7 +168,7 @@ utility::vector1< int > const &
 FullModelInfo::conventional_numbering() const {
 	return full_model_parameters_->conventional_numbering();
 }
-utility::vector1< char > const &
+utility::vector1< std::string > const &
 FullModelInfo::conventional_chains() const {
 	return full_model_parameters_->conventional_chains();
 }

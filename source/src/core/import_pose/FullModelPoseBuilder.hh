@@ -41,7 +41,7 @@ public:
 
 	void set_options( utility::options::OptionCollection const & options );
 	void set_input_poses( utility::vector1< pose::PoseOP > input_poses ) { input_poses_ = input_poses; }
-	void set_input_resnum_and_chain_and_segid( std::tuple< utility::vector1< Size >, utility::vector1< char >, utility::vector1< std::string > > const & input_resnum_and_chain_and_segid ) { input_resnum_and_chain_and_segid_ = input_resnum_and_chain_and_segid; }
+	void set_input_resnum_and_chain_and_segid( std::tuple< utility::vector1< Size >, utility::vector1< std::string >, utility::vector1< std::string > > const & input_resnum_and_chain_and_segid ) { input_resnum_and_chain_and_segid_ = input_resnum_and_chain_and_segid; }
 	void set_cutpoint_open_in_full_model( utility::vector1< Size > const & cutpoint_open_in_full_model ) { cutpoint_open_in_full_model_ = cutpoint_open_in_full_model; }
 	void set_fasta_file( std::string const & fasta_file ) { fasta_file_ = fasta_file; }
 	void set_full_model_parameters( core::pose::full_model_info::FullModelParametersOP const & full_model_parameters ) { full_model_parameters_ = full_model_parameters; }
@@ -93,7 +93,7 @@ private:
 
 	utility::options::OptionCollectionCOP options_;
 	utility::vector1< pose::PoseOP > input_poses_;
-	std::tuple< utility::vector1< Size >, utility::vector1< char >, utility::vector1< std::string > > input_resnum_and_chain_and_segid_;
+	std::tuple< utility::vector1< Size >, utility::vector1< std::string >, utility::vector1< std::string > > input_resnum_and_chain_and_segid_;
 	utility::vector1< Size > cutpoint_open_in_full_model_;
 	std::string fasta_file_ = "";
 	core::pose::full_model_info::FullModelParametersOP full_model_parameters_ = nullptr;

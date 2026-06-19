@@ -225,14 +225,14 @@ std::string read_fasta_file_section(std::string const & filename, std::string co
 ///////////////////////////////////////////////////////////////////////////////////////
 void
 get_conventional_chains_and_numbering( utility::vector1< SequenceCOP > const & fasta_sequences,
-	utility::vector1< char > & conventional_chains,
+	utility::vector1< std::string > & conventional_chains,
 	utility::vector1< int > & conventional_numbering,
 	utility::vector1< std::string > & conventional_segids ) {
 	using utility::string_split;
 	// bool found_info_in_previous_sequence( false );
 	Size count( 0 );
 	for ( auto const & fasta_sequence : fasta_sequences ) {
-		utility::vector1< char > chains;
+		utility::vector1< std::string > chains;
 		utility::vector1< int > resnum;
 		utility::vector1< std::string > segids;
 		bool found_info( false );
@@ -241,10 +241,10 @@ get_conventional_chains_and_numbering( utility::vector1< SequenceCOP > const & f
 		while ( ss.good() ) {
 			ss >> tag;
 			bool string_is_ok( false );
-			std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > resnum_and_chain_and_segid = utility::get_resnum_and_chain_and_segid( tag, string_is_ok );
+			std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > resnum_and_chain_and_segid = utility::get_resnum_and_chain_and_segid( tag, string_is_ok );
 			if ( !string_is_ok ) continue;
 			for ( Size ii = 1; ii <= std::get< 0 >( resnum_and_chain_and_segid ).size(); ++ii ) {
-				if ( std::get< 1 >( resnum_and_chain_and_segid )[ ii ] == ' ' ) continue; // there better be a chain. accept "A:1" but not just "1"
+				if ( std::get< 1 >( resnum_and_chain_and_segid )[ ii ] == " " ) continue; // there better be a chain. accept "A:1" but not just "1"
 				resnum.push_back( std::get< 0 >( resnum_and_chain_and_segid )[ii] );
 				chains.push_back( std::get< 1 >( resnum_and_chain_and_segid )[ii] );
 				segids.push_back( std::get< 2 >( resnum_and_chain_and_segid )[ii] );
@@ -263,7 +263,7 @@ get_conventional_chains_and_numbering( utility::vector1< SequenceCOP > const & f
 			resnum.clear();
 			for ( Size q = 1; q <= clean_len; ++q ) {
 				resnum.push_back( ++count );
-				chains.push_back( ' ' ); // unknown chain
+				chains.push_back( " " ); // unknown chain
 				segids.push_back( "    " ); // unknown chain
 			}
 		}
@@ -1019,7 +1019,7 @@ output_fasta_file( std::string const & fasta_filename, core::pose::Pose const & 
 	}
 
 	utility::vector1< int > res_vector;
-	utility::vector1< char > chain_vector;
+	utility::vector1< std::string > chain_vector;
 	utility::vector1< std::string > segid_vector;
 	for ( Size i = 1; i <= pose.size(); i++ ) {
 		res_vector.push_back(   pose.pdb_info()->number( i ) );

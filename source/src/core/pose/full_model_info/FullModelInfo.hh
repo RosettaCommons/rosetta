@@ -85,7 +85,7 @@ public:
 	std::string const & global_sequence() const;
 	utility::vector1< Size > const & global_mapping() const;
 	utility::vector1< int > const & conventional_numbering() const;
-	utility::vector1< char > const & conventional_chains() const;
+	utility::vector1< std::string > const & conventional_chains() const;
 	utility::vector1< std::string > const & conventional_segids() const;
 	utility::vector1< Size > const & cutpoint_open_in_full_model() const;
 	utility::vector1< Size > const & dock_domain_map() const;

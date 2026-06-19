@@ -617,7 +617,7 @@ pep_rmsd_analysis(
 	if ( option[ pepspec::native_pep_anchor ].user() ) ref_pep_anchor_in = option[ pepspec::native_pep_anchor ];
 	std::string ref_pep_chain_in( option[ pepspec::pep_chain ] );
 	if ( option[ pepspec::native_pep_chain ].user() ) ref_pep_chain_in = option[ pepspec::native_pep_chain ];
-	Size ref_pep_anchor( ref_pose.pdb_info()->pdb2pose( ref_pep_chain_in[0], ref_pep_anchor_in ) );
+	Size ref_pep_anchor( ref_pose.pdb_info()->pdb2pose( ref_pep_chain_in, ref_pep_anchor_in ) );
 	Size ref_pep_chain( ref_pose.chain( ref_pep_anchor ) );
 	Size ref_pep_begin( ref_pose.conformation().chain_begin( ref_pep_chain ) );
 	Size ref_pep_end( ref_pose.conformation().chain_end( ref_pep_chain ) );
@@ -695,7 +695,7 @@ pep_phipsi_analysis(
 	if ( option[ pepspec::native_pep_anchor ].user() ) ref_pep_anchor_in = option[ pepspec::native_pep_anchor ];
 	std::string ref_pep_chain_in( option[ pepspec::pep_chain ] );
 	if ( option[ pepspec::native_pep_chain ].user() ) ref_pep_chain_in = option[ pepspec::native_pep_chain ];
-	Size ref_pep_anchor( ref_pose.pdb_info()->pdb2pose( ref_pep_chain_in[0], ref_pep_anchor_in ) );
+	Size ref_pep_anchor( ref_pose.pdb_info()->pdb2pose( ref_pep_chain_in, ref_pep_anchor_in ) );
 	Size ref_pep_chain( ref_pose.chain( ref_pep_anchor ) );
 	Size ref_pep_begin( ref_pose.conformation().chain_begin( ref_pep_chain ) );
 	Size ref_pep_end( ref_pose.conformation().chain_end( ref_pep_chain ) );
@@ -1618,7 +1618,7 @@ RunPepSpec()
 		if ( option[ pepspec::pep_anchor ].user() ) {
 			Size const pep_anchor_in( option[ pepspec::pep_anchor ] );
 			std::string const pep_chain_in( option[ pepspec::pep_chain ] );
-			pep_anchor = pose.pdb_info()->pdb2pose( pep_chain_in[ 0 ], pep_anchor_in );
+			pep_anchor = pose.pdb_info()->pdb2pose( pep_chain_in, pep_anchor_in );
 			pep_chain = pose.chain( pep_anchor );
 			pep_begin = pose.conformation().chain_begin( pep_chain );
 			pep_end = pose.conformation().chain_end( pep_chain );

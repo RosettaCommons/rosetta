@@ -140,7 +140,7 @@ InsertionSiteTestMover::apply( core::pose::Pose & pose )
 		tr << "Starting insertion test at position " << insert_pos << "..." << std::endl;
 		if ( pdb_numbering_ ) {
 			tr << "PDB res " << insert_pos << " is pose res ";
-			insert_pos = input_pose.pdb_info()->pdb2pose('A', insert_pos );
+			insert_pos = input_pose.pdb_info()->pdb2pose("A", insert_pos );
 			tr << insert_pos << std::endl;
 		}
 		core::pose::Pose lowE_rlx_pose, lowE_rawins_pose;

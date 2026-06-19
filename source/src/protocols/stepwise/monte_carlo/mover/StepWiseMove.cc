@@ -125,7 +125,7 @@ StepWiseMove::StepWiseMove( std::string const & swa_move_string,
 		// Find : -- if it's not a residue tag then it's an attachment.
 		if ( swa_move_string_vector_partial[ ii ].find( ':' ) != std::string::npos ) {
 			utility::vector1< int > resnum;
-			utility::vector1< char > chains;
+			utility::vector1< std::string > chains;
 			utility::vector1< std::string > segids;
 			bool string_is_ok = utility::get_resnum_and_chain_from_one_tag( swa_move_string_vector_partial[ ii ], resnum, chains, segids );
 			if ( !string_is_ok ) {
@@ -152,12 +152,12 @@ StepWiseMove::StepWiseMove( std::string const & swa_move_string,
 	while ( n <= num_strings ) {
 		//   std::vector <int> ints = ints_of( swa_move_string_vector[ n ], string_is_ok );
 		utility::vector1< int > resnum;
-		utility::vector1< char > chains;
+		utility::vector1< std::string > chains;
 		utility::vector1< std::string > segids;
 		string_is_ok = utility::get_resnum_and_chain_from_one_tag( swa_move_string_vector[ n ], resnum, chains, segids );
 		if ( !string_is_ok ) break;
 		for ( core::Size i = 1; i <= resnum.size(); i++ ) {
-			if ( full_model_parameters && chains[i] != ' ' ) { // a chain of ' ' probably means segid language
+			if ( full_model_parameters && chains[i] != " " ) { // a chain of ' ' probably means segid language
 				move_element_.push_back( full_model_parameters->conventional_to_full( resnum[i], chains[i], segids[i] ) );
 			} else {
 				move_element_.push_back( resnum[i] );
@@ -178,13 +178,13 @@ StepWiseMove::StepWiseMove( std::string const & swa_move_string,
 			//   core::Size attachment_res = int_of( swa_move_string_vector[ n ] );
 			// attachment res should be one integer.
 			utility::vector1< int > resnum;
-			utility::vector1< char > chains;
+			utility::vector1< std::string > chains;
 			utility::vector1< std::string > segids;
 			string_is_ok = utility::get_resnum_and_chain_from_one_tag( swa_move_string_vector[ n ], resnum, chains, segids );
 			runtime_assert( string_is_ok );
 			runtime_assert( resnum.size() == 1 );
 			core::Size attachment_res = resnum[1];
-			if ( full_model_parameters && chains[1] != ' ' ) attachment_res = full_model_parameters->conventional_to_full( resnum[1], chains[1], segids[1]  );
+			if ( full_model_parameters && chains[1] != " " ) attachment_res = full_model_parameters->conventional_to_full( resnum[1], chains[1], segids[1]  );
 			n++;
 
 			attachments_.push_back( Attachment( attachment_res, attachment_type ) );
@@ -215,7 +215,7 @@ StepWiseMove::StepWiseMove( utility::vector1< std::string > const & swa_move_str
 	while ( n <= num_strings ) {
 		//   std::vector <int> ints = ints_of( swa_move_string_vector[ n ], string_is_ok );
 		utility::vector1< int > resnum;
-		utility::vector1< char > chains;
+		utility::vector1< std::string > chains;
 		utility::vector1< std::string > segids;
 		string_is_ok = utility::get_resnum_and_chain_from_one_tag( swa_move_string_vector[ n ], resnum, chains, segids );
 		if ( !string_is_ok ) break;
@@ -241,7 +241,7 @@ StepWiseMove::StepWiseMove( utility::vector1< std::string > const & swa_move_str
 			//   core::Size attachment_res = int_of( swa_move_string_vector[ n ] );
 			// attachment res should be one integer.
 			utility::vector1< int > resnum;
-			utility::vector1< char > chains;
+			utility::vector1< std::string > chains;
 			utility::vector1< std::string > segids;
 			string_is_ok = utility::get_resnum_and_chain_from_one_tag( swa_move_string_vector[ n ], resnum, chains, segids );
 			runtime_assert( string_is_ok );

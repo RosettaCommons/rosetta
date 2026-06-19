@@ -338,9 +338,8 @@ parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack
 				PDBnum = atoi( PDBnum_token.c_str() );
 			}
 			++which_token;
-			char chain;
-			chain = get_token( which_token, tokens )[ 0 ];
-			if ( chain == '_' ) chain = ' ';
+			std::string chain = get_token( which_token, tokens );
+			if ( chain == "_" ) chain = " ";
 			++which_token;
 
 			core::Size resid(0);

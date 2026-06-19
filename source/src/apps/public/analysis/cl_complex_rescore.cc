@@ -33,9 +33,11 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/stream_util.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <iostream>
 #include <core/pose/chains_util.hh>
@@ -58,7 +60,7 @@ basic::options::StringOptionKey const input_file( "cl_file" );
 
 
 void read_in_cl_data(
-	utility::vector1< std::pair< core::Size, std::pair< core::Real, utility::vector1<char> > > > & input_cl_data,
+	utility::vector1< std::pair< core::Size, std::pair< core::Real, utility::vector1<std::string> > > > & input_cl_data,
 	std::string const & input_fil
 ){
 	utility::io::izstream input(input_fil);
@@ -84,7 +86,10 @@ void read_in_cl_data(
 
 		runtime_assert_string_msg( !(ss.fail() || ss.bad()), "Error in cl_complex_rescore::cl_file Could not parse line\"" + line + "\".");
 
-		utility::vector1< char > temp_v(chains.begin(), chains.end());
+		utility::vector1< std::string > temp_v;
+		for ( char chain: chains ) {
+			temp_v.push_back( std::string{chain} );
+		}
 
 		input_cl_data.push_back(make_pair(resi, make_pair( mod_per, temp_v) ) );
 	}
@@ -102,14 +107,11 @@ void read_in_pdbs( utility::vector1<core::pose::PoseOP> & poses) {
 
 void cl_score(
 	utility::vector1<core::pose::PoseOP> const & poses,
-	utility::vector1< std::pair < core::Size, std::pair < core::Real, utility::vector1<char> > > > const & input_cl_data,
+	utility::vector1< std::pair < core::Size, std::pair < core::Real, utility::vector1<std::string> > > > const & input_cl_data,
 	utility::vector1< std::pair <std::string, core::Real >> & model_penalties,
 	utility::vector1< std::pair < std::string, core::Real >> & cl_scores,
-	std::string const & partner1,
-	std::string const & partner2
+	core::pose::DockingPartners const & partners
 ){
-	utility::vector1<char> partner1_chains(partner1.begin(), partner1.end());
-	utility::vector1<char> partner2_chains(partner2.begin(), partner2.end());
 	for ( auto const & pose : poses ) {
 		//Iterate through each pose
 		core::pose::Pose mypose = *pose;
@@ -119,13 +121,13 @@ void cl_score(
 			//Iterate through each labeled residue to find minimum interface distance
 			core::Real min_dist = 5000.0;
 			for ( core::Size lchain =1; lchain <= input_cl_data[lres].second.second.size(); ++lchain ) {
-				if ( std::find(partner1_chains.begin(), partner1_chains.end(), input_cl_data[lres].second.second[lchain]) != partner1_chains.end() ) {
+				if ( partners.partner1.has_value( input_cl_data[lres].second.second[lchain] ) ) {
 					utility::vector1<core::Size> lchain_res = core::pose::get_resnums_for_chain(mypose, input_cl_data[lres].second.second[lchain]);
 					for ( core::Size res1 = 1; res1 <= lchain_res.size(); ++res1 ) {
 						core::Size first_res_id = lchain_res[1]-1;
 						if ( input_cl_data[lres].first == mypose.residue(res1).seqpos()-first_res_id && pdb_info.chain(res1) == input_cl_data[lres].second.second[lchain] ) {
 							for ( core::Size res2 = 1; res2 <= mypose.size(); ++res2 ) {
-								if ( pdb_info.chain(res2) != input_cl_data[lres].second.second[lchain] && std::find(partner2_chains.begin(), partner2_chains.end(), pdb_info.chain(res2)) != partner2_chains.end() ) {
+								if ( pdb_info.chain(res2) != input_cl_data[lres].second.second[lchain] && partners.partner2.has_value( pdb_info.chain(res2) ) ) {
 									for ( core::Size latom = 1; latom <= mypose.residue(res1).nheavyatoms(); ++latom ) {
 										if ( !mypose.residue(res1).atom_type(latom).is_virtual() ) {
 											for ( core::Size atom = 1; atom <= mypose.residue(res2).nheavyatoms(); ++atom ) {
@@ -143,13 +145,13 @@ void cl_score(
 						}
 					}
 				}
-				if ( std::find(partner2_chains.begin(), partner2_chains.end(), input_cl_data[lres].second.second[lchain]) != partner2_chains.end() ) {
+				if ( partners.partner2.has_value( input_cl_data[lres].second.second[lchain] ) ) {
 					utility::vector1<core::Size> lchain_res = core::pose::get_resnums_for_chain(mypose, input_cl_data[lres].second.second[lchain]);
 					for ( core::Size res1 = 1; res1 <= lchain_res.size(); ++res1 ) {
 						core::Size first_res_id = lchain_res[1]-1;
 						if ( input_cl_data[lres].first == mypose.residue(res1).seqpos()-first_res_id && pdb_info.chain(res1) == input_cl_data[lres].second.second[lchain] ) {
 							for ( core::Size res2 = 1; res2 <= mypose.size(); ++res2 ) {
-								if ( pdb_info.chain(res2) != input_cl_data[lres].second.second[lchain] && std::find(partner1_chains.begin(), partner1_chains.end(), pdb_info.chain(res2)) != partner1_chains.end() ) {
+								if ( pdb_info.chain(res2) != input_cl_data[lres].second.second[lchain] && partners.partner1.has_value( pdb_info.chain(res2) ) ) {
 									for ( core::Size latom = 1; latom <= mypose.residue(res1).nheavyatoms(); ++latom ) {
 										if ( !mypose.residue(res1).atom_type(latom).is_virtual() ) {
 											for ( core::Size atom = 1; atom <= mypose.residue(res2).nheavyatoms(); ++atom ) {
@@ -239,18 +241,17 @@ main(int argc, char * argv [])
 		std::string intf( option[ interface ].value() );
 		std::string input_fil( option[ input_file ].value() );
 
-		if ( ! intf.find('_') ) {
+		core::pose::DockingPartners partners = core::pose::DockingPartners::docking_partners_from_string( intf );
+
+		if ( partners.is_empty() ) {
 			utility_exit_with_message("Unrecognized interface: " + intf + " must have side1 and side2, ex: A_BC or A_B");
 		}
-		utility::vector1<std::string> partner_chains = utility::string_split(intf, '_');
-		std::string dock_partner1 = partner_chains[1];
-		std::string dock_partner2 = partner_chains[2];
 
 		TR << "Interface: " << intf << std::endl;
-		TR << "Partner 1: " << dock_partner1 << std::endl;
-		TR << "Partner 2: " << dock_partner2 << std::endl;
+		TR << "Partner 1: " << partners.partner1 << std::endl;
+		TR << "Partner 2: " << partners.partner2 << std::endl;
 		//Import CL data
-		utility::vector1< std::pair< core::Size, std::pair < core::Real, utility::vector1<char> > > > input_cl_data;
+		utility::vector1< std::pair< core::Size, std::pair < core::Real, utility::vector1<std::string> > > > input_cl_data;
 		read_in_cl_data(input_cl_data,input_fil);
 
 		//Import Poses
@@ -260,7 +261,7 @@ main(int argc, char * argv [])
 		//Claculate scores for each pose
 		utility::vector1< std::pair< std::string, core::Real >> cl_scores;
 		utility::vector1< std::pair< std::string, core::Real >> model_penalties;
-		cl_score( poses, input_cl_data, model_penalties, cl_scores, dock_partner1, dock_partner2);
+		cl_score( poses, input_cl_data, model_penalties, cl_scores, partners);
 
 		//Output results
 		output_results(model_penalties, cl_scores);

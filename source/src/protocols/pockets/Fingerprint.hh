@@ -155,7 +155,7 @@ public:
 
 	void set_origin_from_residue ( core::pose::Pose const & protein_pose );
 
-	core::Size get_pose_resnum(int const pdbnum, char const pdbchn, core::pose::Pose const & ps);
+	core::Size get_pose_resnum(int const pdbnum, std::string const & pdbchn, core::pose::Pose const & ps);
 
 	void set_origin_away_from_eggshell( std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, core::pose::Pose const & protein_pose );
 

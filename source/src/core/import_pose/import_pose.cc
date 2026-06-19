@@ -959,17 +959,17 @@ initialize_pose_and_other_poses_from_options_and_input_poses(
 	using namespace core::pose;
 	using namespace utility;
 
-	std::tuple< vector1< Size >, vector1< char >, vector1< std::string > > const & input_resnum_and_chain_and_segid = options[ in::file::input_res ].resnum_and_chain();
+	std::tuple< vector1< Size >, vector1< std::string >, vector1< std::string > > const & input_resnum_and_chain_and_segid = options[ in::file::input_res ].resnum_and_chain();
 	vector1< Size > const & input_res_list = std::get<0>( input_resnum_and_chain_and_segid );
 	if ( input_res_list.size() ) {
-		vector1< char > input_chain_list = std::get<1>( input_resnum_and_chain_and_segid );
+		vector1< std::string > input_chain_list = std::get<1>( input_resnum_and_chain_and_segid );
 		vector1< std::string > input_segid_list = std::get<2>( input_resnum_and_chain_and_segid );
 		Size input_res_count = 0;
 		for ( Size n = 1; n <= input_poses.size(); n++ ) {
 			Pose & pose = *input_poses[ n ];
 			PDBInfoOP pdb_info( new PDBInfo( pose ) );
 			vector1< Size > input_res_for_pose;
-			vector1< char > input_chain_for_pose;
+			vector1< std::string > input_chain_for_pose;
 			vector1< std::string > input_segid_for_pose;
 			for ( Size k = 1; k <= pose.size(); k++ ) {
 				input_res_count++;
@@ -1089,7 +1089,7 @@ get_sequence_information(
 	std::string const desired_sequence           = core::sequence::get_concatenated_sequence( fasta_sequences );
 
 	FullModelParametersOP full_model_parameters( new FullModelParameters( desired_sequence ) );
-	vector1< char > conventional_chains;
+	vector1< std::string > conventional_chains;
 	vector1< std::string > conventional_segids;
 	vector1< int  > conventional_numbering;
 	core::sequence::get_conventional_chains_and_numbering( fasta_sequences, conventional_chains, conventional_numbering, conventional_segids );
@@ -1119,7 +1119,7 @@ setup_for_density_scoring( core::pose::Pose & pose ) {
 ///////////////////////////////////////////////////////////////////////////////////////
 vector1< Size >
 get_cutpoints_from_numbering( vector1< core::sequence::SequenceCOP > const & fasta_sequences,
-	vector1< char > const & conventional_chains,
+	vector1< std::string > const & conventional_chains,
 	vector1< std::string > const & conventional_segids,
 	vector1< int  > const & conventional_numbering ) {
 	using namespace basic::options;
@@ -1177,7 +1177,7 @@ get_extra_cutpoints_from_names( Size const nres,
 vector1< Size >
 get_cutpoints( vector1< core::sequence::SequenceCOP > const & fasta_sequences,
 	std::map< Size, std::string > const & non_standard_residue_map,
-	vector1< char > const & conventional_chains,
+	vector1< std::string > const & conventional_chains,
 	vector1< int  > const & conventional_numbering,
 	vector1< std::string > const & conventional_segids ) {
 	vector1< Size > cutpoints = get_cutpoints_from_numbering( fasta_sequences, conventional_chains, conventional_segids, conventional_numbering );
@@ -1385,7 +1385,7 @@ update_pose_fold_tree( pose::Pose & pose,
 	runtime_assert( jump_partners1.size() < nchains );
 
 	// needed to determine preferences for chain connections
-	std::tuple< vector1< int >, vector1< char >, vector1< std::string > > const resnum_and_chain_in_pose = full_model_parameters.full_to_conventional_resnum_and_chain_and_segid( res_list );
+	std::tuple< vector1< int >, vector1< std::string >, vector1< std::string > > const resnum_and_chain_in_pose = full_model_parameters.full_to_conventional_resnum_and_chain_and_segid( res_list );
 
 	// choose fixed_res as jump partners first.
 	setup_jumps( pose, jump_partners1, jump_partners2, chain_connections, all_fixed_res_in_chain, resnum_and_chain_in_pose );
@@ -1467,7 +1467,7 @@ setup_jumps( core::pose::Pose const & pose,
 	vector1< Size > & jump_partners2,
 	vector1< std::pair< Size, Size > > & chain_connections,
 	vector1< vector1< Size > > const & all_res_in_chain,
-	std::tuple< vector1< int >, vector1< char >, vector1< std::string > > const & resnum_and_chain_and_segid_in_pose ) {
+	std::tuple< vector1< int >, vector1< std::string >, vector1< std::string > > const & resnum_and_chain_and_segid_in_pose ) {
 
 	using namespace std;
 
@@ -1484,7 +1484,7 @@ setup_jumps( core::pose::Pose const & pose,
 	// For jump connection residues, prefer residues that have the most contacts.
 	//
 	vector1< int  > const & conventional_numbering_in_pose = std::get< 0 >( resnum_and_chain_and_segid_in_pose );
-	vector1< char > const & conventional_chains_in_pose = std::get< 1 >( resnum_and_chain_and_segid_in_pose );
+	vector1< std::string > const & conventional_chains_in_pose = std::get< 1 >( resnum_and_chain_and_segid_in_pose );
 	vector1< std::string > const & conventional_segids_in_pose = std::get< 2 >( resnum_and_chain_and_segid_in_pose );
 
 	// Data structure set up for sorting...

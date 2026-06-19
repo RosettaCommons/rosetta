@@ -51,6 +51,18 @@
 namespace core {
 namespace conformation {
 
+/// @brief Get the nominal/canonical chain letter for the (one indexed!) chain number
+/// Note that this is NOT guaranteed to actually match up with the chain order on any given pose.
+/// It's provided solely for situations where you need to re-label chains.
+/// @details If extended is set, use a larger set of chain letters (includes punctuation)
+std::string
+canonical_chain_letter_for_chain_number(core::Size chain_num, bool extended=false);
+
+/// @brief Is the passed chain designation valid?
+/// @details Invalid chains are empty, whitespace, or placeholder values.
+bool
+is_chain_valid(std::string const & chain);
+
 void
 orient_residue_for_ideal_bond(
 	Residue & moving_rsd,

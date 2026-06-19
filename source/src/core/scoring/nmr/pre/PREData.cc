@@ -201,7 +201,7 @@ PREData::init_pre_data_from_file(
 			if ( !singleset_vec.empty() && !multiset_params_map.empty() ) {
 
 				Size spinlabel_position;
-				char chain_id;
+				std::string chain_id;
 				std::string ion_type;
 				Real temperature;
 
@@ -215,8 +215,7 @@ PREData::init_pre_data_from_file(
 				}
 
 				if ( multiset_params_map.find("chain_id") != multiset_params_map.end() ) {
-					runtime_assert_msg(multiset_params_map["chain_id"].size() == 1, "ERROR in creating PREData. The spinlabel site chain ID for the PREMultiSet must be a single character.");
-					chain_id = std::toupper(multiset_params_map["chain_id"].c_str()[0]);
+					chain_id = multiset_params_map["chain_id"];
 				} else {
 					utility_exit_with_message("ERROR in creating PREData. The spinlabel site chain ID for the PREMultiSet has not been provided.");
 				}
@@ -239,7 +238,7 @@ PREData::init_pre_data_from_file(
 					spinlabel_position = pdbinfo->pdb2pose(chain_id, spinlabel_position);
 					if ( spinlabel_position == 0 ) { // Residue not found
 						utility_exit_with_message( "ERROR: Cannot convert PRE spinlabel site residue residue " + to_string(spinlabel_position) + " "
-							+ to_string(chain_id) + " in PRE input file from pdb to pose numbering. Residue number was not found." );
+							+ chain_id + " in PRE input file from pdb to pose numbering. Residue number was not found." );
 					}
 				} else { // Assume pose numbering instead
 					TR.Warning << "Cannot convert PRE spinlabel site residue in input file from pdb to pose numbering. No PDBInfo object. Using pose numbering instead." << std::endl;
