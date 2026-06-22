@@ -351,8 +351,8 @@ RealValuedParameter::provide_xsd_perturbation_information(
 ) const {
 	using namespace utility::tag;
 	xsd + XMLSchemaAttribute::attribute_w_default( parameter_name() + "_perturbation" , xsct_real, "Perturbation magnitude for perturbing " + parameter_name() + ".", "0.0" );
-	xsd + XMLSchemaAttribute::attribute_w_default( parameter_name() + "_perturbation_type" , xs_string, "Perturbation type for perturbing " + parameter_name() + ".  Can be \"gaussian\" or \"uniform\".", "gaussian" );
-	//TODO: FIGURE OUT HOW TO ADD RESTRICTION THAT THE PERTURBATION TYPE CAN ONLY BE "gaussian" OR "uniform"
+	xsd + XMLSchemaAttribute::attribute_w_default( parameter_name() + "_perturbation_type" , xs_string, "Perturbation type for perturbing " + parameter_name() + ".  Can be \"gaussian\", \"uniform\", or \"von_mises\".  For von_mises, the perturbation magnitude is interpreted as the concentration parameter kappa (higher kappa = tighter distribution; kappa=0 gives uniform on the circle).", "gaussian" );
+	//TODO: FIGURE OUT HOW TO ADD RESTRICTION THAT THE PERTURBATION TYPE CAN ONLY BE "gaussian", "uniform", OR "von_mises"
 }
 
 /// @brief Return the XSD information for setting this parameter.
@@ -383,7 +383,8 @@ RealValuedParameter::perturbation_type_string_from_enum(
 ) {
 	static utility::vector1< std::string > const types { //Must match enum in RealValuedParameter.hh.
 		"gaussian",
-		"uniform"
+		"uniform",
+		"von_mises"
 		};
 	runtime_assert(type_enum > 0 && type_enum < RPT_end_of_list);
 	return types[type_enum];
@@ -406,10 +407,16 @@ RealValuedParameter::perturbation_type_enum_from_string(
 /// @note Does *not* alter the value of this parameter.
 core::Real
 RealValuedParameter::generate_perturbed_value( core::Real const &current_value ) const {
-	runtime_assert_string_msg( perturbation_type_ == RPT_uniform || perturbation_type_ == RPT_gaussian, "Error in RealValuedParameter::generate_perturbed_value(): An unknown perturbation type was set." );
+	runtime_assert_string_msg( perturbation_type_ == RPT_uniform || perturbation_type_ == RPT_gaussian || perturbation_type_ == RPT_von_mises,
+		"Error in RealValuedParameter::generate_perturbed_value(): An unknown perturbation type was set." );
 	core::Real pert;
 	if ( perturbation_type_ == RPT_uniform ) {
 		pert = (numeric::random::uniform() * 2.0 - 1.0) * perturbation_magnitude_ + current_value;
+	} else if ( perturbation_type_ == RPT_von_mises ) {
+		// Von Mises perturbation: perturbation_magnitude_ is the concentration parameter kappa.
+		// numeric::random::von_mises(kappa) returns a sample centered at 0.
+		pert = numeric::random::von_mises( perturbation_magnitude_ ) + current_value;
+		pert = numeric::principal_angle_radians( pert );
 	} else { // RPT_gaussian case
 		pert = numeric::random::gaussian() * perturbation_magnitude_ + current_value;
 	}

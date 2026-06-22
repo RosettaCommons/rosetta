@@ -24,6 +24,9 @@
 // C++ 11 Compatibility
 #include <utility/thread/backwards_thread_local.hh>
 
+// Numeric headers
+#include <numeric/constants.hh>
+
 // C++ headers
 #include <iostream>
 #include <cmath>
@@ -51,6 +54,40 @@ RandomGenerator & rg()
 double uniform() { return rg().uniform(); }
 double gaussian() { return rg().gaussian(); }
 int random_range(int low, int high) { return rg().random_range(low, high); }
+
+/// @brief Generate a random deviate from the Von Mises distribution centered at 0
+/// with concentration parameter kappa, using the Best-Fisher (1979) algorithm.
+/// @details When kappa is 0, returns a uniform random angle in (-pi, pi].
+/// For large kappa, the distribution approximates a Gaussian with sigma = 1/sqrt(kappa).
+/// @author Andy Watkins
+double von_mises( double kappa ) {
+	double const pi = numeric::constants::d::pi;
+
+	// Special case: kappa == 0 gives uniform distribution on the circle
+	if ( kappa < 1e-12 ) {
+		return ( uniform() * 2.0 - 1.0 ) * pi;
+	}
+
+	// Best-Fisher algorithm (Best & Fisher, 1979, Applied Statistics 28:152-157)
+	double const tau = 1.0 + std::sqrt( 1.0 + 4.0 * kappa * kappa );
+	double const rho = ( tau - std::sqrt( 2.0 * tau ) ) / ( 2.0 * kappa );
+	double const r = ( 1.0 + rho * rho ) / ( 2.0 * rho );
+
+	while ( true ) {
+		double const u1 = uniform();
+		double const z = std::cos( pi * u1 );
+		double const f = ( 1.0 + r * z ) / ( r + z );
+		double const c = kappa * ( r - f );
+
+		double const u2 = uniform();
+
+		if ( c * ( 2.0 - c ) > u2 || std::log( c / u2 ) + 1.0 >= c ) {
+			double const u3 = uniform();
+			double const theta = ( u3 > 0.5 ) ? std::acos( f ) : -std::acos( f );
+			return theta;
+		}
+	}
+}
 
 
 using namespace std;
