@@ -69,10 +69,6 @@ private:
 
 	JobOutputterFactory();
 
-	// Unimplemented -- uncopyable
-	JobOutputterFactory( JobOutputterFactory const & );
-	JobOutputterFactory const & operator = ( JobOutputterFactory const & );
-
 private:
 
 	JobOutputterMap job_outputter_creator_map_;

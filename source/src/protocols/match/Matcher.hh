@@ -501,10 +501,9 @@ private:
 	void
 	note_primary_change_to_geom_csts_hitlist( core::Size geom_cst_id );
 
-private:
-	/// uncopyable -- unimplemented
-	Matcher( Matcher const & );
-	Matcher const & operator = ( Matcher const & rhs );
+public:
+	Matcher( Matcher const & ) = delete;
+	Matcher & operator = ( Matcher const & ) = delete;
 
 private:
 
