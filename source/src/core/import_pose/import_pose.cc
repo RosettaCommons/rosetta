@@ -184,9 +184,9 @@ filetype_from_extension(
 ) {
 	utility::vector1< std::string > split = utility::string_split( filename, '.');
 
-	std::string ext = split[split.size()-1];
+	std::string ext = split[split.size()];
 	if ( ext == "gz" ) {
-		ext = split[split.size()-2];
+		ext = split[split.size()-1];
 	}
 	ext = utility::lower(ext);
 
@@ -207,6 +207,7 @@ filetype_from_extension(
 	} else if ( ext == "srlz" ) {
 		return SRLZ_file;
 	} else {
+		TR << "Cannot interpret extension `" << ext << "` as supported structure extension." << std::endl;
 		return Unknown_file;
 	}
 }
@@ -430,7 +431,7 @@ pose_from_file(
 	}
 
 	if ( file_type == Unknown_file ) {
-		utility_exit_with_message( "Cannot determine file type. Current supported types are: PDB, CIF, SRLZ, MMTF");
+		utility_exit_with_message( "Cannot determine file type. Current supported types are: PDB, CIF, BCIF, MMJSON, SRLZ, MMTF");
 	} else if ( file_type == PDB_file ) {
 		//fpd If the conformation is not of type core::Conformation, reset it
 		conformation::ConformationOP conformation_op( new conformation::Conformation() );
