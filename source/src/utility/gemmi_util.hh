@@ -99,6 +99,11 @@ gemmi_add_row(gemmi::cif::Loop & loop, std::initializer_list<std::string> const 
 gemmi::cif::Document
 gemmi_load_mmjson(std::string const & contents_of_file, std::string const & filename);
 
+/// @brief Read a BCIF file into a Gemmi Document object.
+/// @details Implementation based on Gemmi's read_mmjson_insitu()/fill_document_from_sajson()
+/// but reimplemented for BCIF/msgpack context.
+gemmi::cif::Document
+gemmi_load_bcif(std::string const & contents_of_file, std::string const & filename);
 
 } // namespace utility
 

@@ -132,6 +132,9 @@ std::ostream & operator<<( std::ostream & stream, FileType type ) {
 	case CIF_file :
 		stream << "mmCIF";
 		break;
+	case BCIF_file :
+		stream << "binaryCIF";
+		break;
 	case MMTF_file :
 		stream << "MMTF";
 		break;
@@ -160,6 +163,8 @@ extension_from_filetype(
 		return "pdb";
 	case CIF_file :
 		return "cif";
+	case BCIF_file :
+		return "bcif";
 	case MMTF_file :
 		return "mmtf";
 	case SRLZ_file :
@@ -192,7 +197,7 @@ filetype_from_extension(
 	} else if ( ext == "mmcif" ) {
 		return CIF_file;
 	} else if ( ext == "bcif" ) { // BinaryCIF
-		return CIF_file;
+		return BCIF_file;
 	} else if ( ext == "json" ) { // mmJSON
 		return MMJSON_file;
 	} else if ( ext == "js" ) { // mmJSON
@@ -448,12 +453,14 @@ pose_from_file(
 		// check for foldtree info
 		read_additional_pdb_data( contents_of_file, pose, options, read_fold_tree );
 
-	} else if ( file_type == CIF_file || file_type == MMJSON_file ) {
+	} else if ( file_type == CIF_file || file_type == BCIF_file || file_type == MMJSON_file ) {
 		io::StructFileRepOP sfr;
 		try {
 			gemmi::cif::Document cifdoc;
 			if ( file_type == MMJSON_file ) {
 				cifdoc = utility::gemmi_load_mmjson( contents_of_file, filename );
+			} else if ( file_type == BCIF_file ) {
+				cifdoc = utility::gemmi_load_bcif( contents_of_file, filename );
 			} else {
 				cifdoc = gemmi::cif::read_memory( contents_of_file.c_str(), contents_of_file.size(), filename.c_str() );
 			}
