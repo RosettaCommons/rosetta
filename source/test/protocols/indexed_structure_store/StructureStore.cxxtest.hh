@@ -37,6 +37,8 @@
 
 static basic::Tracer TR("core.indexed_structure_store.StructureStore.cxxtest");
 
+using nlohmann::json;
+
 namespace
 {
 using namespace protocols::indexed_structure_store;

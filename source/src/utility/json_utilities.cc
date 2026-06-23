@@ -15,12 +15,16 @@
 #include <utility/json_utilities.hh>
 
 
-#ifdef _NLOHMANN_JSON_ENABLED_
-
 // Core headers
 
 // Utility headers
 #include <utility/exit.hh>
+
+#include <json.hpp>
+
+#include <iostream>
+
+using nlohmann::json;
 
 namespace utility {
 
@@ -38,7 +42,8 @@ void extract_boolean_from_json( nlohmann::json const & json, std::string const &
 
 	verify_present_exactly_once_in_json( json, bool_name );
 	if ( !json[bool_name].is_boolean() ) {
-		utility_exit_with_message("JSON element " + bool_name + " not of boolean type");
+		std::cerr << "JSON object with error: " << json[bool_name] << std::endl;
+		utility_exit_with_message("JSON element " + bool_name + " not of boolean type (is "+json[bool_name].type_name()+")");
 	}
 
 	return_bool = json[bool_name];
@@ -50,7 +55,8 @@ void extract_number_from_json( nlohmann::json const & json, std::string const & 
 
 	verify_present_exactly_once_in_json( json, number_name );
 	if ( !json[number_name].is_number() ) {
-		utility_exit_with_message("JSON element " + number_name + " not of number type");
+		std::cerr << "JSON object with error: " << json[number_name] << std::endl;
+		utility_exit_with_message("JSON element " + number_name + " not of number type (is "+json[number_name].type_name()+")");
 	}
 
 	return_number = json[number_name];
@@ -62,7 +68,8 @@ void extract_nonempty_string_from_json( nlohmann::json const & json, std::string
 
 	verify_present_exactly_once_in_json(json, string_name);
 	if ( !json[string_name].is_string() ) {
-		utility_exit_with_message("JSON element " + string_name + " not of string type");
+		std::cerr << "JSON object with error: " << json[string_name] << std::endl;
+		utility_exit_with_message("JSON element " + string_name + " not of string type (is "+json[string_name].type_name()+")");
 	}
 
 	return_string = json[string_name].get<std::string>();
@@ -78,7 +85,8 @@ void extract_nonempty_array_from_json( nlohmann::json const & json, std::string 
 
 	verify_present_exactly_once_in_json(json, array_name);
 	if ( !json[array_name].is_array() ) {
-		utility_exit_with_message("JSON element " + array_name + " not of array type");
+		std::cerr << "JSON object with error: " << json[array_name] << std::endl;
+		utility_exit_with_message("JSON element " + array_name + " not of array type (is "+json[array_name].type_name()+")");
 	}
 
 	return_array = json[array_name];
@@ -94,7 +102,8 @@ void extract_nonempty_object_from_json( nlohmann::json const & json, std::string
 
 	verify_present_exactly_once_in_json(json, object_name);
 	if ( !json[object_name].is_object() ) {
-		utility_exit_with_message("JSON element " + object_name + " not of object type");
+		std::cerr << "JSON object with error: " << json[object_name] << std::endl;
+		utility_exit_with_message("JSON element " + object_name + " not of object type (is "+json[object_name].type_name()+")");
 	}
 
 	return_object = json[object_name];
@@ -162,5 +171,3 @@ bool extract_value_if_present(json const &j, std::string const & key, std::strin
 
 
 } //utility
-
-#endif // ifdef _NLOHMANN_JSON_ENABLED_
