@@ -33,8 +33,6 @@ namespace scoring {
 
 ///////////////////////////////////////////////////////
 
-DenseNeighborIterator::~DenseNeighborIterator()= default;
-
 DenseNeighborIterator::DenseNeighborIterator(
 	Size const pos1_in,
 	Size const pos2_in,
@@ -147,8 +145,6 @@ DenseNeighborIterator::energy_computed() const
 }
 
 /////////////////////////////////////////////////////
-
-DenseNeighborConstIterator::~DenseNeighborConstIterator()= default;
 
 DenseNeighborConstIterator::DenseNeighborConstIterator(
 	Size const pos1_in,

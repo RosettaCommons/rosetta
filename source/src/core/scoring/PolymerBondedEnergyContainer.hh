@@ -48,10 +48,11 @@ namespace scoring {
 
 class PolymerBondedNeighborIterator : public ResidueNeighborIterator
 {
-	PolymerBondedNeighborIterator & operator = (PolymerBondedNeighborIterator const & src );
-
 public:
-	~PolymerBondedNeighborIterator() override;
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	PolymerBondedNeighborIterator & operator = (PolymerBondedNeighborIterator const & ) = delete;
 
 	// Moves pos_in, so by-value
 	PolymerBondedNeighborIterator(
@@ -99,9 +100,11 @@ private:
 
 class PolymerBondedNeighborConstIterator : public ResidueNeighborConstIterator
 {
-	PolymerBondedNeighborConstIterator & operator = (PolymerBondedNeighborConstIterator const & src );
 public:
-	~PolymerBondedNeighborConstIterator() override;
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	PolymerBondedNeighborConstIterator & operator = (PolymerBondedNeighborConstIterator const & ) = delete;
 
 	// Moves pos_in, so by value
 	PolymerBondedNeighborConstIterator(

@@ -44,9 +44,11 @@ namespace scoring {
 
 class DenseNeighborIterator : public ResidueNeighborIterator
 {
-	DenseNeighborIterator & operator = (DenseNeighborIterator const & src );
 public:
-	~DenseNeighborIterator() override;
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	DenseNeighborIterator & operator = (DenseNeighborIterator const & ) = delete;
 
 	DenseNeighborIterator(
 		Size const pos1_in,
@@ -98,9 +100,11 @@ private:
 
 class DenseNeighborConstIterator : public ResidueNeighborConstIterator
 {
-	DenseNeighborConstIterator & operator = (DenseNeighborConstIterator const & src );
 public:
-	~DenseNeighborConstIterator() override;
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	DenseNeighborConstIterator & operator = (DenseNeighborConstIterator const & ) = delete;
 
 	DenseNeighborConstIterator(
 		Size const pos1_in,

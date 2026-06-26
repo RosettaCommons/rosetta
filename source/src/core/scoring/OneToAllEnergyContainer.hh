@@ -42,9 +42,11 @@ namespace scoring {
 
 class OneToAllNeighborIterator : public ResidueNeighborIterator
 {
-	OneToAllNeighborIterator & operator = (OneToAllNeighborIterator const & src );
 public:
-	~OneToAllNeighborIterator() override;
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	OneToAllNeighborIterator & operator = (OneToAllNeighborIterator const & ) = delete;
 
 	OneToAllNeighborIterator(
 		Size const pos1_in,
@@ -97,9 +99,11 @@ private:
 
 class OneToAllNeighborConstIterator : public ResidueNeighborConstIterator
 {
-	OneToAllNeighborConstIterator & operator = (OneToAllNeighborConstIterator const & src );
 public:
-	~OneToAllNeighborConstIterator() override;
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	OneToAllNeighborConstIterator & operator = (OneToAllNeighborConstIterator const & ) = delete;
 
 	OneToAllNeighborConstIterator(
 		Size const pos1_in,
