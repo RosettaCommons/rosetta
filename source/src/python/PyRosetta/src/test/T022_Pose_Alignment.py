@@ -7,8 +7,7 @@
 
 __author__ = "Jason C. Klima"
 
-from utils.distributed import exit_if_missing_numpy_requirement, run_unittest
+from utils.distributed import run_unittest
 
 if __name__ == "__main__":
-    exit_if_missing_numpy_requirement()
     run_unittest("pyrosetta.tests.numeric.test_alignment", timeout=30)
