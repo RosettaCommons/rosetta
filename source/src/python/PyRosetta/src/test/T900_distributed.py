@@ -16,6 +16,7 @@ def main(wait: bool, streaming: bool, timeout: int) -> None:
         "pyrosetta.tests.bindings.core.test_pose",
         "pyrosetta.tests.distributed.test_concurrency",
         "pyrosetta.tests.distributed.test_dask",
+        "pyrosetta.tests.distributed.test_dask_worker",
         "pyrosetta.tests.distributed.test_gil",
         "pyrosetta.tests.distributed.test_smoke",
         "pyrosetta.tests.distributed.test_viewer",
