@@ -37,8 +37,6 @@ public:
 		core::scoring::hbonds::graph::HBondGraphOP const & hbond_graph
 	);
 
-	~NetworkState(){}
-
 	bool operator < ( NetworkState const & rhs) const {
 		return full_twobody_energy_ < rhs.full_twobody_energy_;
 	}

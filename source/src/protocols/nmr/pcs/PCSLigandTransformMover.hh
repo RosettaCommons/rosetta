@@ -66,9 +66,6 @@ public:
 		core::conformation::Residue const & residue
 	);
 
-	/// @brief Destructor
-	~AtomGridPoint() override;
-
 	/// @brief Is relevant for neighbor search
 	bool is_relevant_neighbor() const { return true; }
 

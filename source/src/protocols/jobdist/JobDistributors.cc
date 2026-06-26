@@ -548,8 +548,6 @@ AtomTreeDiffJobDistributor::AtomTreeDiffJobDistributor(JobVector jobs, std::stri
 	}
 }
 
-AtomTreeDiffJobDistributor::~AtomTreeDiffJobDistributor() = default;
-
 void AtomTreeDiffJobDistributor::dump_pose(
 	std::string const & tag,
 	std::map< std::string, core::Real > const & scores,

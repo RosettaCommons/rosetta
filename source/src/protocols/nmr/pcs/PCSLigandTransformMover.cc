@@ -90,8 +90,6 @@ AtomGridPoint::AtomGridPoint(
 	residue_(&residue)
 {}
 
-AtomGridPoint::~AtomGridPoint() {}
-
 
 AtomGrid::AtomGrid(
 	Real const & resolution,

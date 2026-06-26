@@ -47,8 +47,6 @@ public:
 
 	// Undefined, commenting out to fix PyRosetta build  CDRClusterSet(CDRClusterSet const & src);
 
-	~CDRClusterSet() override;
-
 	/// @brief Identify the cluster of the CDR, using numbering information held in AntibodyInfo. Replace data if already present.
 	void
 	identify_and_set_cdr_cluster( core::pose::Pose const & pose, CDRNameEnum cdr);
