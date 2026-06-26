@@ -514,7 +514,11 @@ def get_required_pyrosetta_python_packages_for_testing(platform, conda=False, st
     if static_versions:
         packages = set_static_versions_for_python_packages(packages)
 
-    return get_packages_str_for_python_packages(packages) if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else ''
+    return (
+        get_packages_str_for_python_packages(packages)
+        if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.'
+        else get_packages_str_for_python_packages({'numpy': packages.get('numpy', DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED['numpy'])})
+    )
 
 
 def get_required_pyrosetta_python_packages_for_release_package(platform, conda=True, static_versions=True, distributed_packages=False):
