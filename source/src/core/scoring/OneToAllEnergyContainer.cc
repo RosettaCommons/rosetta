@@ -33,8 +33,6 @@ namespace scoring {
 
 /////////////////////////////////////////////////////
 
-OneToAllNeighborIterator::~OneToAllNeighborIterator()= default;
-
 OneToAllNeighborIterator::OneToAllNeighborIterator(
 	Size const pos1_in,
 	Size const pos2_in,
@@ -135,8 +133,6 @@ bool OneToAllNeighborIterator::energy_computed() const
 
 
 /////////////////////////////////////////////////////
-
-OneToAllNeighborConstIterator::~OneToAllNeighborConstIterator()= default;
 
 OneToAllNeighborConstIterator::OneToAllNeighborConstIterator(
 	Size const pos1_in,
