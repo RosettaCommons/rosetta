@@ -47,12 +47,9 @@ public:
 	);
 
 private:
-	// private assignment and copy constructors to avoid discarding subtype information
-
-	OtherContextScoreFunction( OtherContextScoreFunction const & );
-
-	OtherContextScoreFunction &
-	operator=( OtherContextScoreFunction const & );
+	// Avoid discarding subtype information; clone() must be used to duplicate.
+	OtherContextScoreFunction( OtherContextScoreFunction const & ) = delete;
+	OtherContextScoreFunction & operator=( OtherContextScoreFunction const & ) = delete;
 
 public:
 

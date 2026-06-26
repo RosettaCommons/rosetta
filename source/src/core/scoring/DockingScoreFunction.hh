@@ -47,10 +47,8 @@ public:
 
 private:
 	/// @brief Copy constructor and assignment operators private for *ScoreFunctions as they discard subtype info.
-	DockingScoreFunction &
-	operator=( DockingScoreFunction const & );
-
-	DockingScoreFunction( DockingScoreFunction const & );
+	DockingScoreFunction & operator=( DockingScoreFunction const & ) = delete;
+	DockingScoreFunction( DockingScoreFunction const & ) = delete;
 
 public:
 
