@@ -53,6 +53,7 @@ from pyrosetta.secure_unpickle import (
     get_unpickle_hmac_key,
     set_unpickle_hmac_key,
 )
+from pyrosetta.utility import has_cereal
 
 
 pyrosetta.init(extra_options="-constant_seed", set_logging_handler="logging")
@@ -220,9 +221,11 @@ class TestPoseScoresAccessor(unittest.TestCase):
                 with self.assertRaises(Exception):
                     test_pose.cache[str(obj_type)] = value_input
                 continue
-            else:
-                test_pose.cache[str(obj_type)] = value_input
-                value_output = test_pose.cache[str(obj_type)]
+            if obj_type == pyrosetta.Pose and not has_cereal():
+                # `Pose` instances require cereal support for round-trip serialization
+                continue
+            test_pose.cache[str(obj_type)] = value_input
+            value_output = test_pose.cache[str(obj_type)]
 
             # Test instance types
             self.assertIsInstance(value_input, obj_type)
@@ -780,9 +783,10 @@ class TestPoseCacheAccessor(unittest.TestCase):
         with self.assertWarns(UserWarning):
             self.pose.cache.metrics.string["float"] = 1e5
         self.assertIn("float", self.pose.cache.metrics.real.keys())
-        with self.assertWarns(UserWarning):
-            self.pose.cache.metrics.real["pose"] = pyrosetta.pose_from_sequence("DATA")
-        self.assertIn("pose", self.pose.cache.metrics.string.keys())
+        if has_cereal():
+            with self.assertWarns(UserWarning):
+                self.pose.cache.metrics.real["pose"] = pyrosetta.pose_from_sequence("DATA")
+            self.assertIn("pose", self.pose.cache.metrics.string.keys())
 
         with self.assertWarns(UserWarning):
             self.pose.cache.extra.real["str"] = "String"
