@@ -503,7 +503,7 @@ MembraneEnergyLandscapeSampler::get_pH_value() {
 core::Real
 MembraneEnergyLandscapeSampler::count_res(std::string res, core::pose::Pose const & pose){
 	core::Real count(0.0);
-	for ( core::Size ii=1; ii<pose.total_residue(); ++ii ) {
+	for ( core::Size ii=1; ii<=pose.total_residue(); ++ii ) {
 		if ( pose.residue(ii).name() == res ) {
 			count = count+1.0;
 		}
@@ -515,7 +515,7 @@ MembraneEnergyLandscapeSampler::count_res(std::string res, core::pose::Pose cons
 core::Real
 MembraneEnergyLandscapeSampler::count_diff(core::pose::Pose const & pose1, core::pose::Pose const & pose2){
 	core::Real count(0.0);
-	for ( core::Size ii=1; ii<pose1.total_residue(); ++ii ) {
+	for ( core::Size ii=1; ii<=pose1.total_residue(); ++ii ) {
 		//TR << "residues: " << pose2.residue(ii).name3() << std::endl;
 		if ( pose1.residue(ii).name3() != pose2.residue(ii).name3() ) {
 			count = count+1.0;
