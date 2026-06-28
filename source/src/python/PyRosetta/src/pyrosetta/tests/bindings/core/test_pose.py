@@ -520,7 +520,7 @@ class TestPoseCacheAccessor(unittest.TestCase):
         self.assertEqual(self.pose.cache["bytes_to_str"], "ASCII binary")
 
         with self.assertWarns(UserWarning):
-            setPoseExtraScore(self.pose, "invalid_bytes", pickle.dumps("raw binary")) # Manually set; warns since it's raw binary
+            setPoseExtraScore(self.pose, "invalid_bytes", pickle.dumps("raw binary", protocol=pickle.DEFAULT_PROTOCOL)) # Manually set; warns since it's raw binary
         with self.assertRaises(UnicodeDecodeError):
             self.pose.cache["invalid_bytes"]
         with self.assertRaises(UnicodeDecodeError):
@@ -531,7 +531,7 @@ class TestPoseCacheAccessor(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.pose.cache["invalid_bytes"]
 
-        for bytestring in (b'ASCII binary', pickle.dumps("raw binary")):
+        for bytestring in (b'ASCII binary', pickle.dumps("raw binary", protocol=pickle.DEFAULT_PROTOCOL)):
             self.pose.cache.extra["bytes"] = bytestring # Automatically gets serialized
             self.assertIn("bytes", self.pose.cache.extra.string)
             with self.assertRaises(KeyError):
@@ -1334,7 +1334,7 @@ class TestPoseSecureUnpickler(unittest.TestCase):
             self.assertIsInstance(test_pose.cache[builtin], type(instance))
             if has_cereal():
                 _test_pose = SecureSerializerBase.secure_loads(
-                    pickle.dumps(test_pose, protocol=pickle.HIGHEST_PROTOCOL)
+                    pickle.dumps(test_pose, protocol=pickle.DEFAULT_PROTOCOL)
                 )
                 _instance = _test_pose.cache[builtin]
                 self.assertIsInstance(_instance, type(instance))
