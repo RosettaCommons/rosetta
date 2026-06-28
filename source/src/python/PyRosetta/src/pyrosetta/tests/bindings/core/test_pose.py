@@ -1268,8 +1268,9 @@ class TestPoseSecureUnpickler(unittest.TestCase):
         data = {
             "foo": list(range(10)),
             "bar": dict(enumerate([complex(1, i) for i in range(10)])),
-            "baz": pyrosetta.pose_from_sequence("TEST"),
         }
+        if has_cereal():
+            data["baz"] = pyrosetta.pose_from_sequence("TEST")
         _hmac_size = 32
         set_unpickle_hmac_key(os.urandom(_hmac_size))
         self.assertEqual(len(get_unpickle_hmac_key()), _hmac_size)
@@ -1277,8 +1278,9 @@ class TestPoseSecureUnpickler(unittest.TestCase):
         out = SecureSerializerBase.secure_from_base64_pickle(string)
         self.assertEqual(out["foo"], data["foo"])
         self.assertEqual(out["bar"], data["bar"])
-        self.assertIsInstance(out["baz"], pyrosetta.Pose)
-        self.assertEqual(out["baz"].sequence(), data["baz"].sequence())
+        if has_cereal():
+            self.assertIsInstance(out["baz"], pyrosetta.Pose)
+            self.assertEqual(out["baz"].sequence(), data["baz"].sequence())
         # Test tampering with HMAC tag
         arr = bytearray(base64.b64decode(string.encode(SecureSerializerBase._encoder)))
         _hmac_tag_idx = 3
