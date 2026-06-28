@@ -874,27 +874,28 @@ class TestPoseCacheAccessor(unittest.TestCase):
         with self.assertWarns(ClobberWarning):
             dict(self.pose.cache)
 
-        # Test that `CacheableDataType.SIMPLE_METRIC_DATA` pose data is not automatically set by accessing `Pose.cache`
-        pose = pyrosetta.io.pose_from_sequence("TEST/SIMPLE/METRIC/DATA")
-        pickler = partial(pickle.dumps, protocol=pickle.DEFAULT_PROTOCOL)
-        bytes_start_1 = pickler(pose)
-        self.assertFalse(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
-        self.assertFalse(pose.cache.metrics._has_sm_data())
-        _ = dict(pose.cache) # Access `Pose.cache`
-        self.assertFalse(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
-        self.assertFalse(pose.cache.metrics._has_sm_data())
-        bytes_final_1 = pickler(pose)
-        self.assertEqual(bytes_start_1, bytes_final_1, msg="Pose is not bitwise identical after accessing `Pose.cache`.")
-        pose.cache.metrics["pi"] = math.pi # Add SimpleMetrics data
-        bytes_start_2 = pickler(pose)
-        self.assertTrue(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
-        self.assertTrue(pose.cache.metrics._has_sm_data())
-        _ = dict(pose.cache) # Access `Pose.cache`
-        self.assertTrue(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
-        self.assertTrue(pose.cache.metrics._has_sm_data())
-        bytes_final_2 = pickler(pose)
-        self.assertEqual(bytes_start_2, bytes_final_2, msg="Pose is not bitwise identical after accessing `Pose.cache`.")
-        self.assertNotEqual(bytes_final_1, bytes_final_2, msg="Pose is bitwise identical after adding SimpleMetrics data to `Pose.cache`.")
+        if has_cereal():
+            # Test that `CacheableDataType.SIMPLE_METRIC_DATA` pose data is not automatically set by accessing `Pose.cache`
+            pose = pyrosetta.io.pose_from_sequence("TEST/SIMPLE/METRIC/DATA")
+            pickler = partial(pickle.dumps, protocol=pickle.DEFAULT_PROTOCOL)
+            bytes_start_1 = pickler(pose)
+            self.assertFalse(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+            self.assertFalse(pose.cache.metrics._has_sm_data())
+            _ = dict(pose.cache) # Access `Pose.cache`
+            self.assertFalse(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+            self.assertFalse(pose.cache.metrics._has_sm_data())
+            bytes_final_1 = pickler(pose)
+            self.assertEqual(bytes_start_1, bytes_final_1, msg="Pose is not bitwise identical after accessing `Pose.cache`.")
+            pose.cache.metrics["pi"] = math.pi # Add SimpleMetrics data
+            bytes_start_2 = pickler(pose)
+            self.assertTrue(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+            self.assertTrue(pose.cache.metrics._has_sm_data())
+            _ = dict(pose.cache) # Access `Pose.cache`
+            self.assertTrue(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+            self.assertTrue(pose.cache.metrics._has_sm_data())
+            bytes_final_2 = pickler(pose)
+            self.assertEqual(bytes_start_2, bytes_final_2, msg="Pose is not bitwise identical after accessing `Pose.cache`.")
+            self.assertNotEqual(bytes_final_1, bytes_final_2, msg="Pose is bitwise identical after adding SimpleMetrics data to `Pose.cache`.")
 
         # Test `Pose.cache` access to SimpleMetrics data when `CacheableDataType.SIMPLE_METRIC_DATA` is not yet set up
         pose = pyrosetta.io.pose_from_sequence("EMPTY/DATA/CACHE")
@@ -1328,11 +1329,13 @@ class TestPoseSecureUnpickler(unittest.TestCase):
             else:
                 instance = module()
             test_pose.cache[builtin] = instance
-            _test_pose = SecureSerializerBase.secure_loads(
-                pickle.dumps(test_pose, protocol=pickle.HIGHEST_PROTOCOL)
-            )
-            _instance = _test_pose.cache[builtin]
-            self.assertIsInstance(_instance, type(instance))
+            self.assertIsInstance(test_pose.cache[builtin], type(instance))
+            if has_cereal():
+                _test_pose = SecureSerializerBase.secure_loads(
+                    pickle.dumps(test_pose, protocol=pickle.HIGHEST_PROTOCOL)
+                )
+                _instance = _test_pose.cache[builtin]
+                self.assertIsInstance(_instance, type(instance))
 
         # Test disallowed packages
         test_pose = pyrosetta.pose_from_sequence("TEST/CACHE")
