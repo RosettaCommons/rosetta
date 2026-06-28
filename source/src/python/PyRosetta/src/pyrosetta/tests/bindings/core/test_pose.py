@@ -1241,7 +1241,7 @@ class TestPoseSecureUnpickler(unittest.TestCase):
 
         # Test secure serialization round-trip
         data = {"foo": [1, 2, 3], "bar": ("String", b"Bytes"), "baz": complex(1, -2)}
-        obj = pickle.dumps(data, protocol=5)
+        obj = pickle.dumps(data, protocol=pickle.DEFAULT_PROTOCOL)
         key = get_unpickle_hmac_key()
         if key is not None:
             obj = SecureSerializerBase._prepend_hmac_tag(obj, key)
