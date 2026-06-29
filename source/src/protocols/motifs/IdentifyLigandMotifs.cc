@@ -707,6 +707,95 @@ IdentifyLigandMotifs::write_motifs_to_disk()
 	protocols::motifs::write_motifs_to_disk(motif_library_, motif_file_output_);
 }
 
+// @brief Lightweight pre-check: counts how many significant residues have motifs formed against them,
+// without adding comments to the pose, without adding motifs to motif_library_, and without writing PDBs.
+// Returns a vector where:
+//   [1] = total motifs made
+//   [2] = 1 if all mandatory residues got a motif, 0 otherwise
+//   [3] = number of significant residues that got a motif
+// This is cheaper than the full evaluate_motifs_of_pose() because it skips all side effects
+// and the real-motif comparison step.
+utility::vector1< core::Real > IdentifyLigandMotifs::count_significant_motifs(core::pose::PoseOP working_pose)
+{
+	static basic::Tracer ms_tr( "protocols.motifs.IdentifyLigandMotifs.count_significant_motifs", basic::t_info );
+
+	ms_tr.Trace << "Beginning count_significant_motifs (lightweight pre-check)" << std::endl;
+
+	// Result vector: [1]=total, [2]=mandatory_ok, [3]=sig_count
+	utility::vector1< core::Real > result (3, 0);
+
+	// Save and temporarily disable output flags to prevent PDB writing and motif library pollution
+	bool saved_output_motifs = output_motifs_;
+	bool saved_output_motifs_as_pdb = output_motifs_as_pdb_;
+	output_motifs_ = false;
+	output_motifs_as_pdb_ = false;
+
+	// Clone the pose so we don't modify the original (process_for_motifs calls scorefxn->score(pose))
+	core::pose::PoseOP working_pose_copy = working_pose->clone();
+
+	// Use a temporary/discard motif library so we don't pollute motif_library_
+	protocols::motifs::MotifLibrary temp_lib;
+
+	// Run process_for_motifs — this does the O(n_res × n_ligand_atom_trios) distance checks
+	utility::vector1< core::Size > prot_pos_that_made_motifs_size = process_for_motifs(*working_pose_copy, "", temp_lib);
+
+	// Restore output flags
+	output_motifs_ = saved_output_motifs;
+	output_motifs_as_pdb_ = saved_output_motifs_as_pdb;
+
+	// Total motifs made
+	result[1] = prot_pos_that_made_motifs_size.size();
+
+	ms_tr.Debug << "Ligand placement created " << result[1] << " total motifs (pre-check)" << std::endl;
+
+	// Convert to int vector for easier matching
+	utility::vector1< int > prot_pos_that_made_motifs;
+	for ( auto motif_made : prot_pos_that_made_motifs_size ) {
+		prot_pos_that_made_motifs.push_back(motif_made);
+	}
+
+	// Check mandatory residues (if any)
+	result[2] = 1; // default: all mandatory residues got a motif
+	if ( option[ OptionKeys::motifs::mandatory_residues_for_motifs].user() ) {
+		utility::vector1< int > mandatory_residues = option[ OptionKeys::motifs::mandatory_residues_for_motifs];
+		for ( auto sig_res_pos : mandatory_residues ) {
+			bool found = false;
+			for ( auto motif_made : prot_pos_that_made_motifs ) {
+				if ( motif_made == sig_res_pos ) {
+					found = true;
+					break;
+				}
+			}
+			if ( !found ) {
+				ms_tr.Debug << "No motifs made for mandatory residue index " << sig_res_pos << " (pre-check)" << std::endl;
+				result[2] = 0;
+				// Early exit: if a mandatory residue is missing, no need to check the rest
+				ms_tr.Debug << "Exiting count_significant_motifs early: mandatory residue missing." << std::endl;
+				return result;
+			}
+		}
+		ms_tr.Trace << "Made motifs for all mandatory residues (pre-check)" << std::endl;
+	}
+
+	// Count significant residues that got motifs
+	if ( option[ OptionKeys::motifs::significant_residues_for_motifs].user() ) {
+		utility::vector1< int > significant_residues = option[ OptionKeys::motifs::significant_residues_for_motifs];
+		for ( auto sig_res_pos : significant_residues ) {
+			for ( auto motif_made : prot_pos_that_made_motifs ) {
+				if ( motif_made == sig_res_pos ) {
+					++result[3];
+					ms_tr.Debug << "Sig residue " << motif_made << " got a motif (pre-check)" << std::endl;
+				}
+			}
+		}
+		ms_tr.Debug << "Ligand placement created " << result[3] << " motifs for significant residues (pre-check)" << std::endl;
+	}
+
+	ms_tr.Debug << "About to exit count_significant_motifs: total=" << result[1] << " mandatory_ok=" << result[2] << " sig_count=" << result[3] << std::endl;
+
+	return result;
+}
+
 // @This function is intended to pull motifs off of a pose and determine if the motifs are comparable to motifs in a hashed motif library
 // The functions works in 4 parts:
 // 1. Pulls motifs from the protein-ligand system and gets a count of the number of motifs derived

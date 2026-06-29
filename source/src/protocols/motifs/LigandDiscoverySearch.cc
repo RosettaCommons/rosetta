@@ -1081,6 +1081,40 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//apply constraint set to working_pose_
 					add_constraints_to_working_pose(trip_atom_1, trip_atom_2, trip_atom_3, working_position, ligresOP);
 
+					// ── EARLY SIGNIFICANT-MOTIF PRE-CHECK ──
+					// Run a lightweight motif check BEFORE the expensive HighResDock.
+					// If the placement doesn't form enough motifs against significant residues,
+					// kill it early and skip docking entirely (~50-80% of placements filtered here).
+					if ( option[ OptionKeys::motifs::collect_motifs_from_placed_ligand]
+						&& option[ OptionKeys::motifs::significant_residues_for_motifs].user() ) {
+
+						ms_tr.Trace << "Running early significant-motif pre-check before HighResDock" << std::endl;
+
+						utility::vector1< core::Real > pre_check_data;
+						pre_check_data = ilm.count_significant_motifs(working_pose_);
+
+						ms_tr.Debug << "Pre-check motif data: total=" << pre_check_data[1]
+							<< " mandatory_ok=" << pre_check_data[2]
+							<< " sig_count=" << pre_check_data[3] << std::endl;
+
+						// Kill early if:
+						// - Not enough total motifs (use min_motifs_cutoff_)
+						// - A mandatory residue didn't get a motif (pre_check_data[2] == 0)
+						// - Not enough significant-residue motifs (use min_sig_motifs_cutoff_)
+						if ( pre_check_data[1] < min_motifs_cutoff_
+							|| pre_check_data[2] == 0
+							|| pre_check_data[3] < min_sig_motifs_cutoff_ ) {
+
+							ms_tr.Debug << "Early pre-check FAILED: skipping expensive HighResDock for this placement." << std::endl;
+
+							reset_working_pose();
+							++clashing_counter;
+							continue;
+						}
+
+						ms_tr.Debug << "Early pre-check PASSED: proceeding to HighResDock." << std::endl;
+					}
+
 					//get free energy of pose with placed ligand before highresdock
 					//declaration of variable
 					core::Real delta_score = 10000;

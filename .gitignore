@@ -39,3 +39,4 @@ source/src/python/PyRosetta/src/pyrosetta.egg-info
 .database-binaries/
 .windows-vc-tools-signature
 source/external/libtorch/
+source/external/*
