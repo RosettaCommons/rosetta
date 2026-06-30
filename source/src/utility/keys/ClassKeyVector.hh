@@ -99,16 +99,9 @@ public: // Creation
 
 
 	/// @brief Default constructor
-	inline
-	ClassKeyVector()
-	= default;
-
-
-	/// @brief Copy constructor
-	inline
-	ClassKeyVector( ClassKeyVector const & a ) :
-		v_( a.v_ )
-	{}
+	// The other user-declared constructors below suppress the implicit default,
+	// so keep an explicit = default so that `ClassKeyVector<K,T,C> v;` compiles.
+	ClassKeyVector() = default;
 
 
 	/// @brief Size constructor
@@ -140,24 +133,7 @@ public: // Creation
 	{}
 
 
-	/// @brief Destructor
-	inline
-	~ClassKeyVector() {}
-
-
 public: // Assignment
-
-
-	/// @brief Copy assignment
-	inline
-	ClassKeyVector &
-	operator =( ClassKeyVector const & a )
-	{
-		if ( this != &a ) {
-			v_ = a.v_;
-		}
-		return *this;
-	}
 
 
 	/// @brief Uniform value assignment to current elements
