@@ -209,7 +209,7 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 	Matrix3f I = Matrix3f::Identity();
 	Matrix3f N = 0.5*(H+H.transpose()) - cos(omega)*I;
 
-	Vector3f hN;
+	Vector3f hN{0.0, 0.0, 0.0};
 	Real scalar = 0;
 	Real max_scalar = -10000000;
 	for ( core::Size i = 0; i<=2; i++ ) {
