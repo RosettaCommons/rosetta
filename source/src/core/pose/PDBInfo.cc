@@ -796,10 +796,9 @@ PDBInfo::copy(
 	debug_assert( start_from <= residue_rec_.size() );
 
 	// force erase data from map
-	Size idx = start_from;
 	ResidueRecords::const_iterator const begin = residue_rec_.begin() + ( start_from - 1 );
 	ResidueRecords::const_iterator const end = begin + ( copy_to - copy_from + 1 );
-	for ( ResidueRecords::const_iterator i = begin; i < end; ++i, ++idx ) {
+	for ( ResidueRecords::const_iterator i = begin; i < end; ++i ) {
 		pdb2pose_.erase( i->chainID, i->resSeq, i->iCode, i->segmentID );
 	}
 
@@ -956,8 +955,7 @@ PDBInfo::delete_res(
 	auto start = residue_rec_.begin() + ( res - 1 );
 
 	// sync map first (force erase)
-	Size idx = res;
-	for ( auto i = start, ie = start + n; i < ie; ++i, ++idx ) {
+	for ( auto i = start, ie = start + n; i < ie; ++i ) {
 		pdb2pose_.erase( i->chainID, i->resSeq, i->iCode, i->segmentID );
 	}
 
