@@ -26,6 +26,8 @@ sources = {
 		"MinimizerOptions",
 		"NelderMeadSimplex",
 		"NumericalDerivCheckResult",
+		"ParametricAtomTreeMultifunc",
+		"parametric_minimize_util",
 		"ParticleSwarmMinimizer",
 		"SingleResidueMultifunc",
 	],

@@ -93,6 +93,9 @@ SizeValuedParameter::set_parameter_type(
 ) {
 	runtime_assert( type_in == PT_generic_natural_number || type_in == PT_generic_whole_number );
 	Parameter::set_parameter_type( type_in );
+	if ( type_in == PT_generic_natural_number && default_value_ == 0) {
+		default_value_ = 1; // can't be zero anymore.
+	}
 	correct_range();
 }
 
@@ -160,7 +163,11 @@ SizeValuedParameter::provide_xsd_information(
 	using namespace utility::tag;
 
 	if ( provide_setting ) {
-		xsd + XMLSchemaAttribute::attribute_w_default( parameter_name(), parameter_type() == PT_generic_natural_number ? xsct_positive_integer : xsct_non_negative_integer, parameter_description(), std::to_string( default_value() ) );
+		xsd + XMLSchemaAttribute::attribute_w_default(
+			parameter_name(),
+			parameter_type() == PT_generic_natural_number ? xsct_positive_integer : xsct_non_negative_integer,
+			parameter_description(),
+			std::to_string( default_value() ) );
 	}
 }
 

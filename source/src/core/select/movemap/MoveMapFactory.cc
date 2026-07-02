@@ -150,6 +150,8 @@ void MoveMapFactory::add_bondangles_action(
 
 void MoveMapFactory::all_bondlengths( bool setting ) { use_all_bondlengths_ = true; all_bondlengths_setting_ = setting; }
 
+void MoveMapFactory::all_parametric( bool setting ) { use_all_parametric_ = true; all_parametric_setting_ = setting; }
+
 void MoveMapFactory::add_bondlengths_action(
 	move_map_action action,
 	residue_selector::ResidueSelectorCOP selector
@@ -203,6 +205,7 @@ MoveMapFactory::edit_movemap_given_pose(
 	if ( use_all_jumps_ ) mm.set_jump( all_jumps_setting_ );
 	if ( use_all_bondangles_ ) mm.set( core::id::THETA, all_bondangles_setting_ );
 	if ( use_all_bondlengths_ ) mm.set( core::id::THETA, all_bondlengths_setting_ );
+	if ( use_all_parametric_ ) mm.set_parametric( all_parametric_setting_ );
 
 	///////// Backbone /////////
 	for ( auto const & bb_act : bb_actions_ ) {
@@ -387,6 +390,9 @@ void MoveMapFactory::parse_my_tag(
 	}
 
 	set_cartesian(tag->getOption< bool >("cartesian", cartesian_specific_));
+	if ( tag->hasOption( "parametric" ) ) {
+		all_parametric( tag->getOption< bool >( "parametric" ) );
+	}
 
 	for ( auto const & subtag : tag->getTags() ) {
 		move_map_action enable = move_map_action( subtag->getOption< bool >( "enable", true ) );
@@ -485,7 +491,8 @@ void MoveMapFactory::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute( "nu", xsct_rosetta_bool, "Enable or disable movement for all nu torsions." )
 		+ XMLSchemaAttribute( "branches", xsct_rosetta_bool, "Enable or disable movement for all branch torsions." )
 		+ XMLSchemaAttribute( "jumps", xsct_rosetta_bool, "Enable or disable movement for all jump DOFs." )
-		+ XMLSchemaAttribute::attribute_w_default( "cartesian", xsct_rosetta_bool, "Set the MMF for specific cartesian overrides.  Currently is only used for glycans in order to maintain IUPAC nomenclature during moves", "false" );
+		+ XMLSchemaAttribute::attribute_w_default( "cartesian", xsct_rosetta_bool, "Set the MMF for specific cartesian overrides.  Currently is only used for glycans in order to maintain IUPAC nomenclature during moves", "false" )
+		+ XMLSchemaAttribute( "parametric", xsct_rosetta_bool, "Enable or disable minimization over parametric DOFs (Crick parameters for helical bundles, barrels, etc.)." );
 
 	XMLSchemaComplexTypeGenerator xsct;
 	xsct.element_name( element_name() )

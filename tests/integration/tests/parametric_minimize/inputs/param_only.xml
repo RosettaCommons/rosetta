@@ -1,0 +1,40 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="ref15" weights="ref2015"/>
+	</SCOREFXNS>
+
+	<MOVERS>
+		<MakeBundle name="make" use_degrees="true"
+			crick_params_file="alpha_helix" helix_length="21"
+			r0="6.5" omega0="-2.56" set_bondlengths="true"
+			set_bondangles="true">
+			<Helix delta_omega0="0"/>
+			<Helix delta_omega0="120"/>
+			<Helix delta_omega0="240"/>
+		</MakeBundle>
+
+		<SimpleThreadingMover name="thread1" start_position="1"
+			thread_sequence="ELLKAIAELLKAIAELLKAIA" pack_neighbors="false"/>
+		<SimpleThreadingMover name="thread2" start_position="22"
+			thread_sequence="ELLKAIAELLKAIAELLKAIA" pack_neighbors="false"/>
+		<SimpleThreadingMover name="thread3" start_position="43"
+			thread_sequence="ELLKAIAELLKAIAELLKAIA" pack_neighbors="false"/>
+
+		<DumpPdb name="dump_before" fname="before_param_only.pdb"/>
+
+		<MinMover name="min" scorefxn="ref15"
+			type="lbfgs_armijo_nonmonotone" tolerance="0.01" max_iter="200"
+			bb="false" chi="false" parametric="true"/>
+	</MOVERS>
+
+	<PROTOCOLS>
+		<Add mover="make"/>
+		<Add mover="thread1"/>
+		<Add mover="thread2"/>
+		<Add mover="thread3"/>
+		<Add mover="dump_before"/>
+		<Add mover="min"/>
+	</PROTOCOLS>
+
+	<OUTPUT scorefxn="ref15"/>
+</ROSETTASCRIPTS>
