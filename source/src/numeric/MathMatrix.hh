@@ -59,11 +59,11 @@ public:
 	//////////////////////////////////
 
 	/// @brief default constructor
-	MathMatrix< T>() :
-	NumberRows_( 0),
-	NumberCols_( 0),
-	size_( 0 ),
-	data_( nullptr )
+	MathMatrix() :
+		NumberRows_( 0),
+		NumberCols_( 0),
+		size_( 0 ),
+		data_( nullptr )
 	{
 	}
 
@@ -79,16 +79,16 @@ public:
 	/// @param NUMBER_ROWS number of rows in matrix
 	/// @param NUMBER_COLS number of cols in matrix
 	/// @param FILL_VALUE assign every element to that value
-	explicit MathMatrix< T>
+	explicit MathMatrix
 	(
 		const Size NUMBER_ROWS,
 		const Size NUMBER_COLS,
 		const T &FILL_VALUE = T( 0)
 	) :
-	NumberRows_( NUMBER_ROWS),
-	NumberCols_( NUMBER_COLS),
-	size_( NumberRows_ * NumberCols_ ),
-	data_( new T[ size_ ])
+		NumberRows_( NUMBER_ROWS),
+		NumberCols_( NUMBER_COLS),
+		size_( NumberRows_ * NumberCols_ ),
+		data_( new T[ size_ ])
 	{
 		// set all values to FILL_VALUE
 		std::fill( data_, data_ + size_, FILL_VALUE);
@@ -98,16 +98,16 @@ public:
 	/// @param NUMBER_ROWS number of rows in matrix
 	/// @param NUMBER_COLS number of cols in matrix
 	/// @param DATA pointer to field of data
-	MathMatrix< T>
+	MathMatrix
 	(
 		const Size NUMBER_ROWS,
 		const Size NUMBER_COLS,
 		const T *DATA
 	) :
-	NumberRows_( NUMBER_ROWS),
-	NumberCols_( NUMBER_COLS),
-	size_( NumberRows_ * NumberCols_ ),
-	data_( new T[ NumberRows_ * NumberCols_])
+		NumberRows_( NUMBER_ROWS),
+		NumberCols_( NUMBER_COLS),
+		size_( NumberRows_ * NumberCols_ ),
+		data_( new T[ NumberRows_ * NumberCols_])
 	{
 		// copy data
 		std::copy( DATA, DATA + size_, data_);
@@ -133,7 +133,7 @@ public:
 	}
 
 	/// @brief destructor
-	~MathMatrix< T>()
+	~MathMatrix()
 	{
 		delete[] data_;
 	}
