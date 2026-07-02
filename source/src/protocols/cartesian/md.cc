@@ -184,9 +184,8 @@ void MolecularDynamics::getCartesianDerivatives(
 
 	// now loop over the torsions in the map (the map MUST be a map of everything!)
 
-	int imap( 1 ); // for indexing into de_dvars( imap )
 	for ( auto it=min_map.begin(), ite=min_map.end();
-			it != ite; ++it, ++imap ) {
+			it != ite; ++it ) {
 		using namespace id;
 
 		DOF_Node const & dof_node( **it );

@@ -1769,6 +1769,7 @@ SapConstraintHelper::find_lightning_2b(
 			}
 		}
 	}
+	(void)offset; // tracked for symmetry with the section above; never actually needed
 	return twobody;
 }
 

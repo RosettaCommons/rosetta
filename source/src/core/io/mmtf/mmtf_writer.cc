@@ -245,15 +245,13 @@ add_bonds_to_sd(::mmtf::StructureData & sd,
 	aiModels const & AIM, std::map<core::Size, sd_index> const & atom_num_to_sd_map)
 {
 	int32_t groupIndex = 0;
-	int32_t chainIndex = 0; // unused
-	int32_t modelIndex = 0;
 	unsigned int atomIndex = 0;
 	//int group_bonds(0), inter_bonds(0);
 	std::vector<core::Size>type_check;
 	// TODO this function sucks :(
-	for ( core::Size i=0; i<AIM.size(); ++i, ++modelIndex ) {  // for each model
+	for ( core::Size i=0; i<AIM.size(); ++i ) {  // for each model
 		aiPose const & AIP(AIM[i]);
-		for ( core::Size j=0; j<AIP.size(); ++j, ++chainIndex ) {  // for each chain
+		for ( core::Size j=0; j<AIP.size(); ++j ) {  // for each chain
 			for ( core::Size k=0; k<AIP[j].size(); ++k, ++groupIndex ) {  // for each group
 				for ( core::Size l=0; l<AIP[j][k].size(); ++l, ++atomIndex ) {  // for each atom
 					AtomInformation const & ai = AIP[j][k][l];

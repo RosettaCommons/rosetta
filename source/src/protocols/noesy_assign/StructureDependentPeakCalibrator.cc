@@ -71,13 +71,12 @@ void StructureDependentPeakCalibrator::collect_upperbound_statistics( core::Size
 	Real inv_n_struct( 1.0 / structures_.size() );
 	runtime_assert( peak <= peaks().size() );
 	runtime_assert( constraints_.size() == peaks().size() );
-	core::Size pose_ct( 1 );
 	Real stddev( 0.0);
 	Real mean( 0.0 );
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	if ( constraints_[ peak ] &&
 			!( params.calibration_ignore_eliminated_peaks_  && peaks()[ peak ]->eliminated() ) ) {
-		for ( PoseVector::const_iterator pose_it = structures_.begin(); pose_it != structures_.end(); ++pose_it, ++pose_ct ) {
+		for ( PoseVector::const_iterator pose_it = structures_.begin(); pose_it != structures_.end(); ++pose_it ) {
 			Real dist( constraints_[ peak ]->dist( **pose_it ) );
 			stddev += dist*dist;
 			mean += dist;

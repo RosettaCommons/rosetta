@@ -383,9 +383,8 @@ StructureDataFactory::infer_from_pose( core::pose::Pose const & pose, SegmentNam
 	utility::vector1< core::Size > chain_endings = pose.conformation().chain_endings();
 	chain_endings.push_back( pose.size() );
 	core::Size chain_start = 1;
-	core::Size cur_chain = 1;
 	SegmentCounts counts( pose );
-	for ( utility::vector1< core::Size >::const_iterator r=chain_endings.begin(); r!=chain_endings.end(); ++r, ++cur_chain ) {
+	for ( utility::vector1< core::Size >::const_iterator r=chain_endings.begin(); r!=chain_endings.end(); ++r ) {
 		core::Size const chain_end = *r;
 
 		// collect information about the residues from [ chain_start, chain_end ]

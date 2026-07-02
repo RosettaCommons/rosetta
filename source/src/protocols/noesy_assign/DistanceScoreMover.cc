@@ -260,8 +260,7 @@ void DistanceScoreMover::apply( pose::Pose& pose ) {
 
 void DistanceScoreMover::finalize_scoring() const {
 #ifndef WIN32
-	core::Size ct_peaks( 1 );
-	for ( auto it = cross_peaks_.begin(); it != cross_peaks_.end(); ++it, ++ct_peaks ) {
+	for ( auto it = cross_peaks_.begin(); it != cross_peaks_.end(); ++it ) {
 		for ( auto ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
 			(*ait)->set_decoy_compatibility( (*ait)->decoy_compatibility()/count_decoys_ );
 		}
