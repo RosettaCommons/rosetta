@@ -60,10 +60,10 @@ public:
 
 	/// @brief default constructor
 	MathMatrix() :
-	NumberRows_( 0),
-	NumberCols_( 0),
-	size_( 0 ),
-	data_( nullptr )
+		NumberRows_( 0),
+		NumberCols_( 0),
+		size_( 0 ),
+		data_( nullptr )
 	{
 	}
 
@@ -85,10 +85,10 @@ public:
 		const Size NUMBER_COLS,
 		const T &FILL_VALUE = T( 0)
 	) :
-	NumberRows_( NUMBER_ROWS),
-	NumberCols_( NUMBER_COLS),
-	size_( NumberRows_ * NumberCols_ ),
-	data_( new T[ size_ ])
+		NumberRows_( NUMBER_ROWS),
+		NumberCols_( NUMBER_COLS),
+		size_( NumberRows_ * NumberCols_ ),
+		data_( new T[ size_ ])
 	{
 		// set all values to FILL_VALUE
 		std::fill( data_, data_ + size_, FILL_VALUE);
@@ -104,10 +104,10 @@ public:
 		const Size NUMBER_COLS,
 		const T *DATA
 	) :
-	NumberRows_( NUMBER_ROWS),
-	NumberCols_( NUMBER_COLS),
-	size_( NumberRows_ * NumberCols_ ),
-	data_( new T[ NumberRows_ * NumberCols_])
+		NumberRows_( NUMBER_ROWS),
+		NumberCols_( NUMBER_COLS),
+		size_( NumberRows_ * NumberCols_ ),
+		data_( new T[ NumberRows_ * NumberCols_])
 	{
 		// copy data
 		std::copy( DATA, DATA + size_, data_);
