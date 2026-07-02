@@ -69,6 +69,8 @@
 #include <core/fragment/FrameIterator.hh> // AUTO IWYU For ConstFrameIterator
 #include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
+#include <json.hpp>
+
 //Auto Headers
 
 namespace protocols {
@@ -78,8 +80,6 @@ namespace CartesianddG {
 using namespace core;
 
 static basic::Tracer TR("protocols.CartesianddG");
-
-#ifdef _NLOHMANN_JSON_ENABLED_
 
 utility::vector1<core::Size>
 MutationSet::get_prolines(){
@@ -526,12 +526,12 @@ optimize_native(
 
     for ( core::Size i=1; i<=iterations; i++){
         run_single_iteration(
-            newmuts, 
-            pose, 
+            newmuts,
+            pose,
             fa_scorefxn,
             i,
             neighbors,
-            bbnbrs, 
+            bbnbrs,
             ncycles,
             interface_ddg,
             flex_bb,
@@ -545,11 +545,11 @@ optimize_native(
 
     if ( int(interface_ddg) > 0 ){
         interface_separate_and_score(
-           newmuts, 
-           pose, 
+           newmuts,
+           pose,
            fa_scorefxn,
            neighbors,
-           bbnbrs, 
+           bbnbrs,
            interface_ddg,
            flex_bb,
            cartesian,
@@ -937,13 +937,13 @@ get_scores_as_json(
 
 void
 run_single_iteration(
-    MutationSet & mutations, 
-    core::pose::Pose & work_pose, 
+    MutationSet & mutations,
+    core::pose::Pose & work_pose,
     core::scoring::ScoreFunctionOP score_fxn,
     const core::Size round,
     utility::vector1< core::Size > neighbors,
-    const core::Size bbnbrs, 
-    const core::Size ncycles, 
+    const core::Size bbnbrs,
+    const core::Size ncycles,
     const core::Size interface_ddg,
     bool flex_bb,
     bool cartesian,
@@ -987,11 +987,11 @@ run_single_iteration(
 
 void
 interface_separate_and_score(
-    MutationSet mutations, 
-    core::pose::Pose & work_pose, 
+    MutationSet mutations,
+    core::pose::Pose & work_pose,
     core::scoring::ScoreFunctionOP score_fxn,
     utility::vector1< core::Size > neighbors,
-    const core::Size bbnbrs, 
+    const core::Size bbnbrs,
     const core::Size interface_ddg,
     bool flex_bb,
     bool cartesian,
@@ -1137,8 +1137,8 @@ run(core::pose::Pose & pose){
 	        core::Size round = basic::options::option[ basic::options::OptionKeys::ddg::iterations ].value()-mutations.iterations()+i;
 
             run_single_iteration(
-                    mutations, 
-                    work_pose, 
+                    mutations,
+                    work_pose,
                     score_fxn,
                     round,
                     neighbors,
@@ -1157,11 +1157,11 @@ run(core::pose::Pose & pose){
 		//interface mode, seperate and score
 		if ( interface_ddg > 0 ) {
             interface_separate_and_score(
-                mutations, 
-                work_pose, 
+                mutations,
+                work_pose,
                 score_fxn,
                 neighbors,
-                bbnbrs, 
+                bbnbrs,
                 interface_ddg,
                 flex_bb,
                 cartesian,
@@ -1171,7 +1171,6 @@ run(core::pose::Pose & pose){
 	ofp.close();
 }
 
-#endif //_NLOHMANN_JSON_ENABLED_
 }//CartesianddG
 }//ddg
 }//protocols

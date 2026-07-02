@@ -53,8 +53,10 @@ namespace import_pose {
 enum FileType{
 	PDB_file=1, //Keep this first.
 	CIF_file,
+	BCIF_file,
 	MMTF_file,
 	SRLZ_file,
+	MMJSON_file,
 	end_of_filetype_list, // Keep this second-to-last.
 	Unknown_file = end_of_filetype_list //Keep this last.
 };

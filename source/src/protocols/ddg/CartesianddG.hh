@@ -33,8 +33,6 @@ namespace protocols {
 namespace ddg {
 namespace CartesianddG {
 
-#ifdef _NLOHMANN_JSON_ENABLED_
-
 class MutationSet{
 public:
 	MutationSet(utility::vector1<core::Size> resnums, utility::vector1<core::chemical::AA> mutations, core::Size iterations){
@@ -309,7 +307,6 @@ write_json(const std::string filename, nlohmann::json results_json);
 void
 run(core::pose::Pose & pose);
 
-#endif //_NLOHMANN_JSON_ENABLED_
 }// CartesianDDG
 }//ddg
 }//protocols
