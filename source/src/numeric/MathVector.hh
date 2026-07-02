@@ -66,7 +66,7 @@ public:
 	//////////////////////////////////
 
 	/// @brief default constructor
-	MathVector< T>() :
+	MathVector() :
 	size_( 0),
 	data_( nullptr )
 	{
@@ -81,7 +81,7 @@ public:
 	/// @brief construct from size and possible filler
 	/// @param SIZE number fo elements in Vector
 	/// @param FILL_VALUE assign every element to that value
-	explicit MathVector< T>( const Size SIZE, const T &FILL_VALUE= T( 0)) :
+	explicit MathVector( const Size SIZE, const T &FILL_VALUE= T( 0)) :
 	size_( SIZE),
 	data_( new T[ SIZE])
 	{
@@ -91,7 +91,7 @@ public:
 	}
 
 	/// @brief construct from length and pointer to data
-	MathVector< T>( const Size SIZE, const T *DATA) :
+	MathVector( const Size SIZE, const T *DATA) :
 	size_( SIZE),
 	data_( new T[ SIZE])
 	{
@@ -110,13 +110,13 @@ public:
 
 	/// @brief Clone function
 	/// @return pointer to new Vector< T>
-	MathVector< T> *clone() const
+	MathVector *clone() const
 	{
 		return new MathVector< T>( *this);
 	}
 
 	/// @ brief destructor
-	~MathVector< T>()
+	~MathVector()
 	{
 		delete[] data_;
 	}
