@@ -711,8 +711,7 @@ make_tag_with_dashes( utility::vector1< int > const & res_vector,
 	for ( platform::Size n = 1; n <= res_vector_segments.size(); n++ ) {
 		if ( n > 1 ) tag += delimiter;
 		std::pair< int, int > const & segment = res_vector_segments[n];
-		if ( chains_for_segments[n] != "\0" &&
-				chains_for_segments[n] != " "  &&
+		if ( chains_for_segments[n] != " "  &&
 				chains_for_segments[n] != "_" ) tag += chains_for_segments[n] + ":";
 		if ( segids_for_segments[n] != "    " ) tag += strip(segids_for_segments[n]) + ":";
 		if ( segment.first == segment.second ) {
@@ -724,19 +723,6 @@ make_tag_with_dashes( utility::vector1< int > const & res_vector,
 
 	return tag;
 }
-
-//std::string
-//make_tag_with_dashes( utility::vector1< int > const & res_vector,
-// utility::vector1< char > const & chain_vector,
-// utility::vector1< std::string > const & segid_vector,
-// char const delimiter
-//) {
-// utility::vector1< std::string > chain_str;
-// for ( char chain: chain_vector ) {
-//  chain_str.push_back( std::string{chain} );
-// }
-// return make_tag_with_dashes(res_vector, chain_vector, segid_vector, delimiter);
-//}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // @brief Demands four-character seg ids. Output looks like "SEG1:3-4 SEG2:1-12    :1-3"
