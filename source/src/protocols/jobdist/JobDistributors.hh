@@ -270,7 +270,6 @@ protected:
 public:
 
 	AtomTreeDiffJobDistributor(JobVector jobs, std::string outfile_name);
-	~AtomTreeDiffJobDistributor() override;
 
 	/// @brief Appends pose to the silent file
 	virtual void dump_pose(

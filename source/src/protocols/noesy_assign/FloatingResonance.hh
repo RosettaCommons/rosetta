@@ -51,7 +51,6 @@ private:
 public:
 	FloatingResonance();
 	FloatingResonance( Resonance const& res, FloatList const&, ResonanceList* );
-	~FloatingResonance() override;
 
 	ResonanceOP clone() override {
 		return utility::pointer::make_shared< FloatingResonance >( *this );

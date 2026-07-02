@@ -42,14 +42,6 @@ PeptideDeriverBasicStreamOutputter::PeptideDeriverBasicStreamOutputter(utility::
 
 }
 
-PeptideDeriverBasicStreamOutputter::~PeptideDeriverBasicStreamOutputter()= default;
-
-PeptideDeriverBasicStreamOutputter::PeptideDeriverBasicStreamOutputter( PeptideDeriverBasicStreamOutputter const & src ) {
-	out_p_=src.out_p_;
-	prefix_=src.prefix_;
-
-}
-
 PeptideDeriverBasicStreamOutputterOP
 PeptideDeriverBasicStreamOutputter::clone() const {
 	return utility::pointer::make_shared< PeptideDeriverBasicStreamOutputter >( *this );

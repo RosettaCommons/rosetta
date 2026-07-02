@@ -49,8 +49,6 @@ static basic::Tracer tr( "protocols.noesy_assign.assignments" );
 namespace protocols {
 namespace noesy_assign {
 
-/// @details Auto-generated virtual destructor
-PeakAssignment::~PeakAssignment() = default;
 using namespace core;
 
 PeakAssignment::PeakAssignment( CrossPeak * cp, core::Size assign_spin1, core::Size assign_spin2 )

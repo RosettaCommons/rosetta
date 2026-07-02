@@ -40,10 +40,6 @@ public:
 	/// @param prefix a string prefix to prepend to each output line
 	PeptideDeriverBasicStreamOutputter(utility::io::orstream & out, std::string prefix);
 
-	PeptideDeriverBasicStreamOutputter(PeptideDeriverBasicStreamOutputter const & src);
-
-	~PeptideDeriverBasicStreamOutputter() override;
-
 	PeptideDeriverBasicStreamOutputterOP clone() const;
 
 	void begin_structure(core::pose::Pose const &, std::string const &) override;
