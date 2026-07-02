@@ -227,7 +227,7 @@ void MPLipidAccessibility::apply( core::pose::Pose & pose ){
 	}
 
 	// go through slices
-	for ( core::Size s = 1; s < slice_zmin_.size(); ++s ) {
+	for ( core::Size s = 1; s <= slice_zmin_.size(); ++s ) {
 
 		// go through residues
 		for ( core::Size r = 1; r <= resi_[ s ].size(); ++r ) {
@@ -502,7 +502,7 @@ void MPLipidAccessibility::fill_up_slices( core::pose::Pose & pose ) {
 void MPLipidAccessibility::compute_slice_com(){
 
 	// go through slices and compute COMs
-	for ( core::Size s = 1; s < slice_zmin_.size(); ++s ) {
+	for ( core::Size s = 1; s <= slice_zmin_.size(); ++s ) {
 
 		core::Vector com( 0, 0, 0 );
 
