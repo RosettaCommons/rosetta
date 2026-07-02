@@ -53,6 +53,7 @@ from pyrosetta.secure_unpickle import (
     get_unpickle_hmac_key,
     set_unpickle_hmac_key,
 )
+from pyrosetta.utility import has_cereal
 
 
 pyrosetta.init(extra_options="-constant_seed", set_logging_handler="logging")
@@ -220,9 +221,11 @@ class TestPoseScoresAccessor(unittest.TestCase):
                 with self.assertRaises(Exception):
                     test_pose.cache[str(obj_type)] = value_input
                 continue
-            else:
-                test_pose.cache[str(obj_type)] = value_input
-                value_output = test_pose.cache[str(obj_type)]
+            if obj_type == pyrosetta.Pose and not has_cereal():
+                # `Pose` instances require cereal support for round-trip serialization
+                continue
+            test_pose.cache[str(obj_type)] = value_input
+            value_output = test_pose.cache[str(obj_type)]
 
             # Test instance types
             self.assertIsInstance(value_input, obj_type)
@@ -517,7 +520,7 @@ class TestPoseCacheAccessor(unittest.TestCase):
         self.assertEqual(self.pose.cache["bytes_to_str"], "ASCII binary")
 
         with self.assertWarns(UserWarning):
-            setPoseExtraScore(self.pose, "invalid_bytes", pickle.dumps("raw binary")) # Manually set; warns since it's raw binary
+            setPoseExtraScore(self.pose, "invalid_bytes", pickle.dumps("raw binary", protocol=pickle.DEFAULT_PROTOCOL)) # Manually set; warns since it's raw binary
         with self.assertRaises(UnicodeDecodeError):
             self.pose.cache["invalid_bytes"]
         with self.assertRaises(UnicodeDecodeError):
@@ -528,7 +531,7 @@ class TestPoseCacheAccessor(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.pose.cache["invalid_bytes"]
 
-        for bytestring in (b'ASCII binary', pickle.dumps("raw binary")):
+        for bytestring in (b'ASCII binary', pickle.dumps("raw binary", protocol=pickle.DEFAULT_PROTOCOL)):
             self.pose.cache.extra["bytes"] = bytestring # Automatically gets serialized
             self.assertIn("bytes", self.pose.cache.extra.string)
             with self.assertRaises(KeyError):
@@ -780,9 +783,10 @@ class TestPoseCacheAccessor(unittest.TestCase):
         with self.assertWarns(UserWarning):
             self.pose.cache.metrics.string["float"] = 1e5
         self.assertIn("float", self.pose.cache.metrics.real.keys())
-        with self.assertWarns(UserWarning):
-            self.pose.cache.metrics.real["pose"] = pyrosetta.pose_from_sequence("DATA")
-        self.assertIn("pose", self.pose.cache.metrics.string.keys())
+        if has_cereal():
+            with self.assertWarns(UserWarning):
+                self.pose.cache.metrics.real["pose"] = pyrosetta.pose_from_sequence("DATA")
+            self.assertIn("pose", self.pose.cache.metrics.string.keys())
 
         with self.assertWarns(UserWarning):
             self.pose.cache.extra.real["str"] = "String"
@@ -870,27 +874,28 @@ class TestPoseCacheAccessor(unittest.TestCase):
         with self.assertWarns(ClobberWarning):
             dict(self.pose.cache)
 
-        # Test that `CacheableDataType.SIMPLE_METRIC_DATA` pose data is not automatically set by accessing `Pose.cache`
-        pose = pyrosetta.io.pose_from_sequence("TEST/SIMPLE/METRIC/DATA")
-        pickler = partial(pickle.dumps, protocol=pickle.DEFAULT_PROTOCOL)
-        bytes_start_1 = pickler(pose)
-        self.assertFalse(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
-        self.assertFalse(pose.cache.metrics._has_sm_data())
-        _ = dict(pose.cache) # Access `Pose.cache`
-        self.assertFalse(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
-        self.assertFalse(pose.cache.metrics._has_sm_data())
-        bytes_final_1 = pickler(pose)
-        self.assertEqual(bytes_start_1, bytes_final_1, msg="Pose is not bitwise identical after accessing `Pose.cache`.")
-        pose.cache.metrics["pi"] = math.pi # Add SimpleMetrics data
-        bytes_start_2 = pickler(pose)
-        self.assertTrue(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
-        self.assertTrue(pose.cache.metrics._has_sm_data())
-        _ = dict(pose.cache) # Access `Pose.cache`
-        self.assertTrue(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
-        self.assertTrue(pose.cache.metrics._has_sm_data())
-        bytes_final_2 = pickler(pose)
-        self.assertEqual(bytes_start_2, bytes_final_2, msg="Pose is not bitwise identical after accessing `Pose.cache`.")
-        self.assertNotEqual(bytes_final_1, bytes_final_2, msg="Pose is bitwise identical after adding SimpleMetrics data to `Pose.cache`.")
+        if has_cereal():
+            # Test that `CacheableDataType.SIMPLE_METRIC_DATA` pose data is not automatically set by accessing `Pose.cache`
+            pose = pyrosetta.io.pose_from_sequence("TEST/SIMPLE/METRIC/DATA")
+            pickler = partial(pickle.dumps, protocol=pickle.DEFAULT_PROTOCOL)
+            bytes_start_1 = pickler(pose)
+            self.assertFalse(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+            self.assertFalse(pose.cache.metrics._has_sm_data())
+            _ = dict(pose.cache) # Access `Pose.cache`
+            self.assertFalse(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+            self.assertFalse(pose.cache.metrics._has_sm_data())
+            bytes_final_1 = pickler(pose)
+            self.assertEqual(bytes_start_1, bytes_final_1, msg="Pose is not bitwise identical after accessing `Pose.cache`.")
+            pose.cache.metrics["pi"] = math.pi # Add SimpleMetrics data
+            bytes_start_2 = pickler(pose)
+            self.assertTrue(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+            self.assertTrue(pose.cache.metrics._has_sm_data())
+            _ = dict(pose.cache) # Access `Pose.cache`
+            self.assertTrue(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+            self.assertTrue(pose.cache.metrics._has_sm_data())
+            bytes_final_2 = pickler(pose)
+            self.assertEqual(bytes_start_2, bytes_final_2, msg="Pose is not bitwise identical after accessing `Pose.cache`.")
+            self.assertNotEqual(bytes_final_1, bytes_final_2, msg="Pose is bitwise identical after adding SimpleMetrics data to `Pose.cache`.")
 
         # Test `Pose.cache` access to SimpleMetrics data when `CacheableDataType.SIMPLE_METRIC_DATA` is not yet set up
         pose = pyrosetta.io.pose_from_sequence("EMPTY/DATA/CACHE")
@@ -1236,7 +1241,7 @@ class TestPoseSecureUnpickler(unittest.TestCase):
 
         # Test secure serialization round-trip
         data = {"foo": [1, 2, 3], "bar": ("String", b"Bytes"), "baz": complex(1, -2)}
-        obj = pickle.dumps(data, protocol=5)
+        obj = pickle.dumps(data, protocol=pickle.DEFAULT_PROTOCOL)
         key = get_unpickle_hmac_key()
         if key is not None:
             obj = SecureSerializerBase._prepend_hmac_tag(obj, key)
@@ -1263,8 +1268,9 @@ class TestPoseSecureUnpickler(unittest.TestCase):
         data = {
             "foo": list(range(10)),
             "bar": dict(enumerate([complex(1, i) for i in range(10)])),
-            "baz": pyrosetta.pose_from_sequence("TEST"),
         }
+        if has_cereal():
+            data["baz"] = pyrosetta.pose_from_sequence("TEST")
         _hmac_size = 32
         set_unpickle_hmac_key(os.urandom(_hmac_size))
         self.assertEqual(len(get_unpickle_hmac_key()), _hmac_size)
@@ -1272,8 +1278,9 @@ class TestPoseSecureUnpickler(unittest.TestCase):
         out = SecureSerializerBase.secure_from_base64_pickle(string)
         self.assertEqual(out["foo"], data["foo"])
         self.assertEqual(out["bar"], data["bar"])
-        self.assertIsInstance(out["baz"], pyrosetta.Pose)
-        self.assertEqual(out["baz"].sequence(), data["baz"].sequence())
+        if has_cereal():
+            self.assertIsInstance(out["baz"], pyrosetta.Pose)
+            self.assertEqual(out["baz"].sequence(), data["baz"].sequence())
         # Test tampering with HMAC tag
         arr = bytearray(base64.b64decode(string.encode(SecureSerializerBase._encoder)))
         _hmac_tag_idx = 3
@@ -1324,11 +1331,13 @@ class TestPoseSecureUnpickler(unittest.TestCase):
             else:
                 instance = module()
             test_pose.cache[builtin] = instance
-            _test_pose = SecureSerializerBase.secure_loads(
-                pickle.dumps(test_pose, protocol=pickle.HIGHEST_PROTOCOL)
-            )
-            _instance = _test_pose.cache[builtin]
-            self.assertIsInstance(_instance, type(instance))
+            self.assertIsInstance(test_pose.cache[builtin], type(instance))
+            if has_cereal():
+                _test_pose = SecureSerializerBase.secure_loads(
+                    pickle.dumps(test_pose, protocol=pickle.DEFAULT_PROTOCOL)
+                )
+                _instance = _test_pose.cache[builtin]
+                self.assertIsInstance(_instance, type(instance))
 
         # Test disallowed packages
         test_pose = pyrosetta.pose_from_sequence("TEST/CACHE")
