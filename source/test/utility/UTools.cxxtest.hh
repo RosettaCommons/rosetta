@@ -171,13 +171,13 @@ public:
 
 		abs_tolerance=0;  rel_tolerance=0;  error_message="";
 		res = test::utools::isEq("1 ",
-								 "1 ", abs_tolerance, rel_tolerance, error_message);
+			"1 ", abs_tolerance, rel_tolerance, error_message);
 		TS_ASSERT_EQUALS(res, true);
 		TS_ASSERT_EQUALS(error_message, "");
 
 		abs_tolerance=0;  rel_tolerance=0;  error_message="";
 		res = test::utools::isEq("set_rel_tolerance(.1) 1.091 aa 5",
-								 " 1 aa 4.561", abs_tolerance, rel_tolerance, error_message);
+			" 1 aa 4.561", abs_tolerance, rel_tolerance, error_message);
 		TS_ASSERT_EQUALS(res, true);
 		TS_ASSERT_EQUALS(abs_tolerance, 0);
 		TS_ASSERT_EQUALS(rel_tolerance, .1);
@@ -185,7 +185,7 @@ public:
 
 		abs_tolerance=0;  rel_tolerance=0;  error_message="";
 		res = test::utools::isEq("1 set_abs_tolerance(.112)",
-								 "1 set_abs_tolerance(.112)", abs_tolerance, rel_tolerance, error_message);
+			"1 set_abs_tolerance(.112)", abs_tolerance, rel_tolerance, error_message);
 		TS_ASSERT_EQUALS(res, true);
 		TS_ASSERT_EQUALS(abs_tolerance, .112);
 		TS_ASSERT_EQUALS(rel_tolerance, 0);
@@ -193,7 +193,7 @@ public:
 
 		abs_tolerance=0;  rel_tolerance=0;  error_message="";
 		res = test::utools::isEq("1 set_abs_tolerance(.112)set_rel_tolerance(98.765)",
-								 "1 set_abs_tolerance(.2)set_rel_tolerance(.3)", abs_tolerance, rel_tolerance, error_message);
+			"1 set_abs_tolerance(.2)set_rel_tolerance(.3)", abs_tolerance, rel_tolerance, error_message);
 		TS_ASSERT_EQUALS(res, true);
 		TS_ASSERT_EQUALS(abs_tolerance, .112);
 		TS_ASSERT_EQUALS(rel_tolerance, 98.765);
@@ -202,7 +202,7 @@ public:
 
 		abs_tolerance=0;  rel_tolerance=0;  error_message="";
 		res = test::utools::isEq("1.2e-10 set_abs_tolerance(.091) 1 ",
-								 "1.2e-10 set_abs_tolerance(.2) 1.09 ", abs_tolerance, rel_tolerance, error_message);
+			"1.2e-10 set_abs_tolerance(.2) 1.09 ", abs_tolerance, rel_tolerance, error_message);
 		TS_ASSERT_EQUALS(res, true);
 		TS_ASSERT_EQUALS(abs_tolerance, .091);
 		TS_ASSERT_EQUALS(rel_tolerance, 0);
@@ -211,7 +211,7 @@ public:
 
 		abs_tolerance=0;  rel_tolerance=0;  error_message="";
 		res = test::utools::isEq("aa b 1 d set_rel_tolerance(.1) 12 ",
-								 "aa b 1 d set_rel_tolerance(.2) 13 ", abs_tolerance, rel_tolerance, error_message);
+			"aa b 1 d set_rel_tolerance(.2) 13 ", abs_tolerance, rel_tolerance, error_message);
 		TS_ASSERT_EQUALS(res, true);
 		TS_ASSERT_EQUALS(rel_tolerance, .1);
 		TS_ASSERT_EQUALS(abs_tolerance, 0);
@@ -220,20 +220,20 @@ public:
 
 		abs_tolerance=1;  rel_tolerance=0;  error_message="";
 		res = test::utools::isEq("aa b 1 d set_abs_tolerance(.0) 12 ",
-								 "aa b 1 d set_abs_tolerance(.2) 13 ", abs_tolerance, rel_tolerance, error_message);
+			"aa b 1 d set_abs_tolerance(.2) 13 ", abs_tolerance, rel_tolerance, error_message);
 		TS_ASSERT_EQUALS(res, false);
 		TS_ASSERT_DIFFERS(error_message, "");
 
 		abs_tolerance=1;  rel_tolerance=0;  error_message="";
 		res = test::utools::isEq("aa b x 1 d ",
-								 "aa b 1 d ", abs_tolerance, rel_tolerance, error_message);
+			"aa b 1 d ", abs_tolerance, rel_tolerance, error_message);
 		TS_ASSERT_EQUALS(res, false);
 		TS_ASSERT_DIFFERS(error_message, "");
 
 
 		abs_tolerance=.1;  rel_tolerance=0;  error_message="";
 		res = test::utools::isEq("aa b 10 d ",
-								 "aa b 10.1001 d ", abs_tolerance, rel_tolerance, error_message);
+			"aa b 10.1001 d ", abs_tolerance, rel_tolerance, error_message);
 		TS_ASSERT_EQUALS(res, false);
 		TS_ASSERT_DIFFERS(error_message, "");
 	}

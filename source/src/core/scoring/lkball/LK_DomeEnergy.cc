@@ -1035,11 +1035,11 @@ cubed_root( Real val ) {
 
 DerivativeFinderWadj::DerivativeFinderWadj( Vector const & base, Vector const & water, Real w_dist, Real water_adjust )
 : B( base ),
-W( water ),
-B_to_W( water - base ),
-wadj( water_adjust ),
-w_dist_( w_dist ),
-x(14)
+	W( water ),
+	B_to_W( water - base ),
+	wadj( water_adjust ),
+	w_dist_( w_dist ),
+	x(14)
 {
 
 	B_to_W_norm = B_to_W.norm();
