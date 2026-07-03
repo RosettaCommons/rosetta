@@ -167,9 +167,6 @@ public: // Creation
 	AutoKey *
 	clone() const override = 0;
 
-	/// @brief Destructor
-	inline
-	~AutoKey() override {}
 
 public: // Assignment
 

@@ -61,7 +61,7 @@ private:
 	// These definitions correspond to the Chothia numbering scheme.  This could be expanded to other numbering schemes in the future
 	static core::Size const pdb_numbered_h3_loop_start = 95; // 107;
 	static core::Size const pdb_numbered_h3_loop_end = 102;  // 138;
-	static char const heavy_chain = 'H';
+	static std::string const heavy_chain; // = "H";
 
 };
 

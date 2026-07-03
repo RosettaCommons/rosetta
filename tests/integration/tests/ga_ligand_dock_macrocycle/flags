@@ -1,7 +1,6 @@
 -parser:protocol ga_ligdock.xml
 -s inputs/holo.pdb
 -gen_potential
--beta_cart 
 -no_autogen_cart_improper 
 -out:levels protocols.ligand_docking.GALigandDock.GAOptimizer:500
 

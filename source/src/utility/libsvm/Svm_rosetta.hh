@@ -22,6 +22,7 @@
 // type headers
 #include <platform/types.hh>
 // aaaa WinPyRosetta
+#include <memory>
 #include <string>
 
 struct svm_model; // Forward declaration
@@ -29,10 +30,13 @@ struct svm_model; // Forward declaration
 namespace utility {
 namespace libsvm {
 
+struct SvmModelDeleter {
+	void operator()(svm_model* model) const;
+};
+
 class Svm_node_rosetta: public utility::VirtualBase {
 public:
 	Svm_node_rosetta(platform::Size index, platform::Real value);
-	~Svm_node_rosetta() override;
 	void set_index(platform::Size index){
 		index_ = index;
 	};
@@ -54,12 +58,13 @@ private:
 class Svm_rosetta: public utility::VirtualBase {
 public:
 	Svm_rosetta(std::string const & model_filename);
-	~Svm_rosetta() override;
+	Svm_rosetta(Svm_rosetta const &) = delete;
+	Svm_rosetta & operator=(Svm_rosetta const &) = delete;
 	platform::Size get_nr_class() const;
 	utility::vector1< platform::Real > predict_probability(utility::vector1< Svm_node_rosettaOP > const  & features) const;
 	platform::Real predict( utility::vector1< Svm_node_rosettaOP > const & features) const;
 private:
-	svm_model *svm_model_;
+	std::unique_ptr<svm_model, SvmModelDeleter> svm_model_;
 };
 }//libsvm
 }//utility

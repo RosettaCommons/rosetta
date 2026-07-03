@@ -34,6 +34,8 @@ __all__ = [
     "poses_from_multimodel_pdb",
     "poses_from_silent",
     "poses_from_init_file",
+    "init_from_file",
+    "read_init_file",
     "to_base64",
     "to_pickle",
     "to_silent",
@@ -149,7 +151,6 @@ def _pose_from_none(none):
 @pose_from_base64.register(str)
 @requires_init
 @pack_result
-@pose_result
 def _pose_from_str(filename):
     with open(filename, "r") as f:
         return f.read()
@@ -180,7 +181,6 @@ def _pose_from_none(none):
 @pose_from_pickle.register(str)
 @requires_init
 @pack_result
-@pose_result
 def _pose_from_str(filename):
     with open(filename, "rb") as f:
         return f.read()
@@ -293,6 +293,7 @@ def _poses_from_str(filename):
                     relative_paths=False,
                     dry_run=False,
                     max_decompressed_bytes=None,
+                    restore_rg_state=True,
                     database=None,
                     verbose=True,
                     set_logging_handler=None,

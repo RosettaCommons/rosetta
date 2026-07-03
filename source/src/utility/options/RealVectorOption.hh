@@ -80,12 +80,6 @@ public: // Creation
 	}
 
 
-	/// @brief Destructor
-	inline
-
-	~RealVectorOption() override {}
-
-
 public: // Properties
 
 

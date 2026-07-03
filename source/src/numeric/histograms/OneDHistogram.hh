@@ -29,8 +29,8 @@
 #include <map>
 #include <platform/types.hh>
 
-namespace numeric{
-namespace histograms{
+namespace numeric {
+namespace histograms {
 
 
 template<typename key1>
@@ -52,7 +52,7 @@ public:
 
 
 private:
-std::map< key1, platform::Size > histogram_;
+	std::map< key1, platform::Size > histogram_;
 
 
 };

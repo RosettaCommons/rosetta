@@ -7,11 +7,11 @@
 # (c) Questions about this can be addressed to University of Washington CoMotion, email: license@uw.edu.
 # Secure unpickling in PyRosetta
 """
-**Warning**: ONLY LOAD DATA YOU TRUST. 
-When depickling (deserializing) is performed arbitrary code can be executed, learn more at https://docs.python.org/3/library/pickle.html
-We (the PyRosetta developers) have made reasonable efforts to prevent malicious usage, however 
-the system’s complexity means it cannot be guaranteed to be entirely foolproof. To avoid finding
-any remaining security issues from the pickle module, only use inputs and data from known, trusted sources.
+**Warning**: ONLY LOAD DATA YOU TRUST!
+When unpickling (i.e., deserialization) is performed, arbitrary code can be executed. Learn more at: https://docs.python.org/3/library/pickle.html.
+We (the PyRosetta developers) have made reasonable efforts to prevent malicious usage, however,
+the system’s complexity means that it cannot be guaranteed to be entirely foolproof. To avoid finding
+any remaining security issues from the `pickle` module, only use inputs and data from known, trusted sources.
 """
 
 
@@ -77,6 +77,7 @@ BLOCKED_PACKAGES: FrozenSet[str] = frozenset({
     # Block process spawning:
     "billiard",
     "celery",
+    "concurrent",
     "dask",
     "distributed",
     "multiprocessing",
@@ -84,12 +85,26 @@ BLOCKED_PACKAGES: FrozenSet[str] = frozenset({
     "base64",
     "hashlib",
     "http",
+    "importlib",
+    "inspect",
+    "io",
     "logging",
+    "marshal",
+    "msgpack",
+    "pathlib",
+    "PIL",
+    "psutil",
     "random",
+    "requests",
+    "send2trash",
     "shelve",
+    "sqlite3",
     "ssl",
     "tempfile",
+    "types",
     "xml",
+    "yaml",
+    "zipimport",
     "zipfile",
 })
 
@@ -99,12 +114,19 @@ BLOCKED_GLOBALS: FrozenSet[Tuple[str, str]] = frozenset({
     ("builtins",  "compile"),
     ("builtins",  "eval"),
     ("builtins",  "exec"),
+    ("builtins",  "input"),
     ("builtins",  "open"),
     ("http",      "server"),
     ("importlib", "import_module"),
+    ("numpy",     "load"),
     ("os",        "_exit"),
+    ("os",        "open"),
     ("os",        "popen"),
     ("os",        "system"),
+    ("pandas",    "read_pickle"),
+    ("pandas.io", "pickle"),
+    ("pandas.io.pickle", "read_pickle"),
+    ("posix",     "open"),
     ("posix",     "popen"),
     ("posix",     "system"),
     ("sys",       "exit"),
@@ -131,7 +153,8 @@ BLOCKED_PREFIXES: Dict[str, Tuple[str, ...]] = {
         "open",
     ),
     "shutil": (
-        "chown",        "make_archive", "move",        "rmtree",
+        "chown",        "copy",         "make_archive", "move",
+        "rmtree",
     ),
     "sys": (
         "addaudithook", "setprofile",   "settrace",

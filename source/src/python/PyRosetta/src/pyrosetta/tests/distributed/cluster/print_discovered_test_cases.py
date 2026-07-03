@@ -10,6 +10,7 @@ __author__ = "Jason C. Klima"
 
 import argparse
 import os
+import sys
 import unittest
 
 def flatten(suite):
@@ -19,7 +20,8 @@ def flatten(suite):
 def main(root):
     suite = unittest.defaultTestLoader.discover(root)
     test_cases = (test_case.id() for test_case in flatten(suite))
-    print(*test_cases, sep="\n")
+    print(*test_cases, sep="\n", flush=True)
+    sys.stdout.flush()
 
 # if __name__ == "__main__":
 #     parser = argparse.ArgumentParser()

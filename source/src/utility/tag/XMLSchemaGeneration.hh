@@ -117,6 +117,7 @@
 
 // Boost headers
 #include <functional>
+#include <memory>
 
 // LibXML includes
 
@@ -969,7 +970,7 @@ public:
 
 
 private:
-	class XMLSchemaComplexTypeGeneratorImpl * pimpl_;
+	std::unique_ptr< class XMLSchemaComplexTypeGeneratorImpl > pimpl_;
 
 };
 

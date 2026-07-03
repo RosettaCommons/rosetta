@@ -136,7 +136,7 @@ private: //Data
 
 
 	utility::vector1<std::string> rosetta_names_;    //QSAR compound names from file only
-	utility::vector1<char> rosetta_chars_;          //Ligand chain identifiers
+	utility::vector1<std::string> ligand_chains_;          //Ligand chain identifiers
 
 };
 

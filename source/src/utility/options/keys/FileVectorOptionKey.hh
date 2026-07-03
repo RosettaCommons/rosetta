@@ -121,11 +121,6 @@ public: // Creation
 	}
 
 
-	/// @brief Destructor
-	inline
-	~FileVectorOptionKey() override {}
-
-
 public: // Assignment
 
 

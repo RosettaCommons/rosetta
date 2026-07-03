@@ -49,7 +49,7 @@ public:
 		core_init_with_additional_options("-extra_res_fa protocols/ligand_docking/ZNx.params protocols/ligand_docking/7cpa.params");
 
 		core::import_pose::pose_from_file( pose_, "protocols/ligand_docking/7cpa_7cpa_native.pdb" , core::import_pose::PDB_file);
-		begin_ = pose_.conformation().chain_begin(core::pose::get_chain_id_from_chain('X', pose_));
+		begin_ = pose_.conformation().chain_begin(core::pose::get_chain_id_from_chain("X", pose_));
 
 	}
 
@@ -107,7 +107,7 @@ public:
 
 		core::Vector start_center(start_ligand.center());
 
-		core::Size begin=pose_.conformation().chain_begin(core::pose::get_chain_id_from_chain('X', pose_));
+		core::Size begin=pose_.conformation().chain_begin(core::pose::get_chain_id_from_chain("X", pose_));
 
 		mover_.setup_conformers(pose_, begin);
 

@@ -71,8 +71,6 @@ DisulfideMatchingNeighborIterator::DisulfideMatchingNeighborIterator(
 	disulfide_index_( DisulfideMatchingEnergyContainer::NO_DISULFIDE )
 {}
 
-DisulfideMatchingNeighborIterator::~DisulfideMatchingNeighborIterator() = default;
-
 /// @brief Assignment
 ResidueNeighborIterator &
 DisulfideMatchingNeighborIterator::operator = ( ResidueNeighborIterator const & rhs)
@@ -215,8 +213,6 @@ DisulfideMatchingNeighborConstIterator::DisulfideMatchingNeighborConstIterator(
 	focused_residue_( DisulfideMatchingEnergyContainer::NO_DISULFIDE ),
 	disulfide_index_( DisulfideMatchingEnergyContainer::NO_DISULFIDE )
 {}
-
-DisulfideMatchingNeighborConstIterator::~DisulfideMatchingNeighborConstIterator() = default;
 
 ResidueNeighborConstIterator &
 DisulfideMatchingNeighborConstIterator::operator = ( ResidueNeighborConstIterator const & rhs )

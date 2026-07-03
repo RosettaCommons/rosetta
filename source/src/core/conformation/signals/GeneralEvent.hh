@@ -59,28 +59,7 @@ struct GeneralEvent {
 	{}
 
 
-	/// @brief copy constructor
-	inline
-	GeneralEvent( GeneralEvent const & rval ) :
-		conformation( rval.conformation )
-	{}
-
-
-	/// @brief default destructor
-	inline
-	virtual
-	~GeneralEvent() {}
-
-
-	/// @brief copy assignment
-	inline
-	GeneralEvent &
-	operator =( GeneralEvent const & rval ) {
-		if ( this != &rval ) {
-			conformation = rval.conformation;
-		}
-		return *this;
-	}
+	virtual ~GeneralEvent() = default;
 
 
 	/// @brief the Conformation firing the signal

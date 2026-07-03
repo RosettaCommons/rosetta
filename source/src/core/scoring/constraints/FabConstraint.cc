@@ -126,7 +126,13 @@ FabConstraint::read_def(
 		<< res1[6] << "-" << res2[6]
 		<< " and at interface with antigen chains " << antchains << std::endl;
 
-	setup_csts(pose, res1, res2, antchains);
+
+	// The current input format only supports single letter chains.
+	utility::vector1<std::string> antchains_vec;
+	for ( char chain: antchains ) {
+		antchains_vec.push_back( std::string{chain} );
+	}
+	setup_csts(pose, res1, res2, antchains_vec);
 
 	if ( data.good() ) {
 		//chu skip the rest of line since this is a single line defintion.
@@ -139,25 +145,22 @@ FabConstraint::read_def(
 Size
 FabConstraint::pose_res_no(
 	core::pose::Pose const & pose,
-	std::string tempres
+	std::string const & res_designation
 ) {
-	Size pose_resnum;
-	Size resnum;
-	std::string residue;
-	char chain = tempres[tempres.length()-1];
+	Size first_nondigit = res_designation.find_first_not_of("-1234567890");
 
-	//check if the residue has an insertion code
-	if ( isdigit(tempres[tempres.length()-2]) ) {
-		residue = tempres.substr(0,tempres.length()-1);
-		resnum = atoi(residue.c_str());
-		pose_resnum = pose.pdb_info()->pdb2pose(chain,resnum);
+	int resnum = std::stoi( res_designation.substr(0,first_nondigit) );
+
+	char ins_code = res_designation[first_nondigit];
+	std::string chain = res_designation.substr(first_nondigit+1);
+
+	Size pose_resnum = pose.pdb_info()->pdb2pose(chain,resnum,ins_code);
+	if ( pose_resnum != 0 ) { // We have the with-insertion code version
+		return pose_resnum;
 	} else {
-		char ins_code = tempres[tempres.length()-2];
-		residue = tempres.substr(0,tempres.length()-2);
-		resnum = atoi(residue.c_str());
-		pose_resnum = pose.pdb_info()->pdb2pose(chain,resnum, ins_code);
+		chain = res_designation.substr(first_nondigit);
+		return pose.pdb_info()->pdb2pose(chain,resnum);
 	}
-	return pose_resnum;
 }
 
 //Build a vector of the associated penalty scores for each antibody residue in the sequence
@@ -197,17 +200,17 @@ FabConstraint::calc_penalty_vec(
 void
 FabConstraint::setup_csts(
 	core::pose::Pose const & pose,
-	utility::vector1<Size> res1,
-	utility::vector1<Size> res2,
-	std::string antchains
+	utility::vector1<Size> const & res1,
+	utility::vector1<Size> const & res2,
+	utility::vector1<std::string> const & antchains
 ) {
 	utility::vector1<Real> abpenalty;
 	func::ConstantFuncOP flankpenaltyfunc( new func::ConstantFunc(0.5) );
 	func::ConstantFuncOP noncdrpenaltyfunc( new func::ConstantFunc(1.5) );
 
 	//set up antigen and antibody chain limits
-	Size ant_start_chain = pose::get_chain_id_from_chain(antchains[0], pose);
-	Size ant_stop_chain = pose::get_chain_id_from_chain(antchains[antchains.length()-1], pose);
+	Size ant_start_chain = pose::get_chain_id_from_chain(antchains[1], pose);
+	Size ant_stop_chain = pose::get_chain_id_from_chain(antchains[antchains.size()], pose);
 	Size ab_start_chain = pose.chain(res1[1]);
 	Size ab_stop_chain = pose.chain(res1[res1.size()]);
 

@@ -68,7 +68,7 @@ std::string read_fasta_file_section(std::string const & filename, std::string co
 /// @brief looks for tab-delimited tags like 'chain:A' and 'res_num:5-20' in fasta IDs.
 void
 get_conventional_chains_and_numbering( utility::vector1< SequenceCOP > const & fasta_sequences,
-	utility::vector1< char > & conventional_chains,
+	utility::vector1< std::string > & conventional_chains,
 	utility::vector1< int > & conventional_numbering,
 	utility::vector1< std::string > & conventional_segids );
 

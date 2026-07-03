@@ -135,12 +135,6 @@ public: // Creation
 	}
 
 
-	/// @brief Destructor
-	inline
-	~BitSet()
-	{}
-
-
 public: // Assignment
 
 

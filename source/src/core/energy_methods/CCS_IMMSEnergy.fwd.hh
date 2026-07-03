@@ -30,6 +30,8 @@ namespace energy_methods {
 
 
 class CCS_IMMSEnergy;
+class CCS_IMMSComplexEnergy;
+class CCS_IMMS_with_CryoEMEnergy;
 
 }
 }

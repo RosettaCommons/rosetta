@@ -51,8 +51,6 @@ public:
 	// Avoid the latter, though, as it circumvents the crash log handling
 	Exception(char const *file, int line, std::string const &msg);
 
-	~Exception() override {}
-
 	/// @brief Present this exception to the user.
 	/// Will invoke crash log reporting, if applicable
 	virtual void display() const;

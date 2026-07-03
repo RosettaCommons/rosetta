@@ -67,9 +67,6 @@ public:
 
 private:
 	GridFactory();
-	//unimplemented -- uncopyable
-	GridFactory(GridFactory const & );
-	GridFactory const & operator = (GridFactory const &);
 
 private:
 

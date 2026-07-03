@@ -59,7 +59,6 @@ public:
 
 	HighResDocker();
 	~HighResDocker() override;
-	HighResDocker(HighResDocker const & that);
 	HighResDocker(
 		core::Size num_cycles,
 		core::Size repack_every_Nth,
@@ -77,8 +76,8 @@ public:
 	) override;
 
 	void apply(core::pose::Pose & pose) override;
-	void apply(utility::vector1<core::pose::Pose> & poses, utility::vector1<core::Real> & current_scores, utility::vector1<char> qsar_chars, core::Size cycle);
-	void apply(core::pose::Pose & pose, core::Real & current_score, char qsar_char, core::Size cycle);
+	void apply(utility::vector1<core::pose::Pose> & poses, utility::vector1<core::Real> & current_scores, utility::vector1<std::string> const & qsar_chains, core::Size cycle);
+	void apply(core::pose::Pose & pose, core::Real & current_score, std::string const & qsar_chain, core::Size cycle);
 
 	std::string
 	get_name() const override;
@@ -102,10 +101,10 @@ public: //For CitationManager:
 
 protected:
 
-	MinimizeLigandOPs setup_ligands_to_minimize(core::pose::Pose & pose, char chain = 0);
+	MinimizeLigandOPs setup_ligands_to_minimize(core::pose::Pose & pose, std::string const & chain = "");
 	void remove_ligand_dihedral_restraints(core::pose::Pose & pose, MinimizeLigandOPs & minimized_ligands) const;
 
-	TetherLigandOPs tether_ligands(core::pose::Pose & pose, char chain = 0);
+	TetherLigandOPs tether_ligands(core::pose::Pose & pose, std::string const & chain = "");
 	void remove_ligand_tethers(core::pose::Pose pose, TetherLigandOPs ligand_tethers);
 
 	void enable_ligand_rotamer_packing(

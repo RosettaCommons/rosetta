@@ -17,9 +17,10 @@
 #include <protocols/docking/EllipsoidalRandomizationMover.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-
+#include <core/pose/DockingPartners.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -93,8 +94,11 @@ public:
 	/// @brief Calculates normal vector from a plane at the docking interface.
 	core::Vector inward_normal_to_plane( utility::vector1< core::Vector > );
 
-	/// @brief Set the partners_ string.
+	/// @brief Set the partners_
 	void set_partners( std::string const & );
+
+	/// @brief Set the partners_ string.
+	void set_partners( core::pose::DockingPartners const & );
 
 	/// @brief Get the axis for sliding partners into contact.
 	core::Vector get_slide_axis() const;
@@ -135,7 +139,7 @@ private:
 	bool ellipsoid_is_first_partner_;
 	bool autofoldtree_;
 
-	std::string partners_;
+	core::pose::DockingPartners partners_;
 
 };
 

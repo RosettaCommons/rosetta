@@ -63,19 +63,6 @@ GridManager::get_grids(
 	GridSet const & prototype,
 	core::pose::Pose const & pose,
 	core::Vector const & center,
-	char chain,
-	bool exclude,
-	core::Real fuzz_factor )
-{
-	utility::vector1< std::string > chains(1, utility::to_string( chain ) );
-	return get_grids( prototype, pose, center, chains, exclude, fuzz_factor );
-}
-
-GridSetCOP
-GridManager::get_grids(
-	GridSet const & prototype,
-	core::pose::Pose const & pose,
-	core::Vector const & center,
 	utility::vector1< std::string > const & chains,
 	bool exclude /*=true*/,
 	core::Real fuzz_factor /*=0.0*/ )

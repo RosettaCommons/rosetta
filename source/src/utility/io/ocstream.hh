@@ -46,12 +46,6 @@ public: // Creation
 	{}
 
 
-	/// @brief Destructor
-	inline
-
-	~ocstream() override {}
-
-
 public: // Methods: conversion
 
 

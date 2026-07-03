@@ -397,7 +397,7 @@ class PoseScoreAccessor(MutableMapping):
                 "dictionary in a future release. Prefer to use the `Pose.cache` dictionary instead."
             ),
             DeprecationWarning,
-            stacklevel=2,
+            stacklevel=3,
         )
 
     @property

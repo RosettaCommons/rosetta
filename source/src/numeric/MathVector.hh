@@ -67,8 +67,8 @@ public:
 
 	/// @brief default constructor
 	MathVector() :
-	size_( 0),
-	data_( nullptr )
+		size_( 0),
+		data_( nullptr )
 	{
 	}
 
@@ -82,8 +82,8 @@ public:
 	/// @param SIZE number fo elements in Vector
 	/// @param FILL_VALUE assign every element to that value
 	explicit MathVector( const Size SIZE, const T &FILL_VALUE= T( 0)) :
-	size_( SIZE),
-	data_( new T[ SIZE])
+		size_( SIZE),
+		data_( new T[ SIZE])
 	{
 
 		// set all values to FILL_VALUE
@@ -92,8 +92,8 @@ public:
 
 	/// @brief construct from length and pointer to data
 	MathVector( const Size SIZE, const T *DATA) :
-	size_( SIZE),
-	data_( new T[ SIZE])
+		size_( SIZE),
+		data_( new T[ SIZE])
 	{
 		std::copy( DATA, DATA + SIZE, data_);
 	}

@@ -49,7 +49,7 @@ public:
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 
-	char chain_;
+	std::string chain_;
 	core::Real cutoff_;// angstroms from ligand to interface residue
 	core::Real Calpha_restraints_;// size of one standard deviation (angstroms) for restraints on C-alphas
 	core::Real minimize_ligand_; // size of one standard deviation (degrees) for ligand torsion angles

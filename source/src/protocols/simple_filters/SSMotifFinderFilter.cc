@@ -117,7 +117,7 @@ void
 write_to_file( std::string const & filename, core::Size const stem1, core::Size const stem2, core::Real const rmsd, std::string const & pdbname, core::pose::Pose const & pose ){
 	core::pose::PDBInfoCOP pdb_info( pose.pdb_info() );
 
-	char const chain1( pdb_info->chain( stem1 ) ), chain2( pdb_info->chain( stem2 ) );
+	std::string const chain1( pdb_info->chain( stem1 ) ), chain2( pdb_info->chain( stem2 ) );
 	int const resnum1( pdb_info->number( stem1 )), resnum2( pdb_info->number( stem2 ) );
 
 	std::ofstream stem_file;

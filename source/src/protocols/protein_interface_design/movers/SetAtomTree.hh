@@ -15,6 +15,7 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/DockingPartners.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
@@ -48,8 +49,8 @@ public :
 
 	core::kinematics::FoldTreeOP fold_tree() const;
 	void fold_tree( core::kinematics::FoldTreeOP ft_ );
-	char start_tree_at_chain() const{ return start_tree_at_chain_; }
-	void start_tree_at_chain( char const c ){ start_tree_at_chain_ = c; }
+	std::string const & start_tree_at_chain() const{ return start_tree_at_chain_; }
+	void start_tree_at_chain( std::string const & c ){ start_tree_at_chain_ = c; }
 	void ab_fold_tree(bool b){ab_fold_tree_=b;}
 	bool ab_fold_tree(){return ab_fold_tree_;}
 	void update_residue_variants(bool b){update_residue_variants_=b;}
@@ -71,9 +72,10 @@ public :
 
 private :
 	bool docking_ft_, simple_ft_, two_parts_chain1_; //dflt false; false; false; two-parts-chain1 is intended for cases where chain1 has a cut and we want to optimize the jump between part1 and part2 along with the jump between chain1 and chain2
-	char start_tree_at_chain_; //dflt ''; if set, start the fold tree in the defined chain, and put all other chains beyond that jump
+	std::string start_tree_at_chain_; //dflt ''; if set, start the fold tree in the defined chain, and put all other chains beyond that jump
 	core::Size jump_; //dflt true
-	std::string partners_, resnum_, connect_to_, anchor_res_, connect_from_; //as parsed
+	core::pose::DockingPartners partners_;
+	std::string resnum_, connect_to_, anchor_res_, connect_from_; //as parsed
 	core::Size host_chain_; //dflt 2
 	core::kinematics::FoldTreeOP fold_tree_; // dflt NULL; if set just use it without any other options. Reading a foldtree from file parses the fold tree at parse time and then just applies it at apply.
 	bool ab_fold_tree_; //dflt false; NOOOOOOOOO. MUST SET BOOLS EXPLICITLY. SILLY C++.  Caught from integration test fail. --rhiju

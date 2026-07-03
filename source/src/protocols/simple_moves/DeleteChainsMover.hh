@@ -20,6 +20,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 
+#include <utility/vector1.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
 
@@ -41,7 +42,7 @@ public:
 	DeleteChainsMover();
 
 	/// @brief Constructor with chain
-	DeleteChainsMover( std::string const & chains );
+	DeleteChainsMover( utility::vector1< std::string > const & chains );
 
 	void
 	apply( core::pose::Pose & pose ) override;
@@ -53,10 +54,10 @@ public:
 	/// @brief Set the chain
 	///  Will figure out the chainIDs at apply time.
 	void
-	set_chains( std::string const & chains );
+	set_chains( utility::vector1< std::string > const & chains );
 
 	/// @brief Get the chain
-	std::string
+	utility::vector1< std::string > const &
 	chains() const;
 
 	/// @brief Set the class to detect bonds after full deletion of chains?
@@ -109,7 +110,7 @@ public: //CitationManager
 private:
 
 
-	std::string chains_;
+	utility::vector1< std::string > chains_;
 
 	bool detect_bonds_;
 	bool detect_pseudobonds_;

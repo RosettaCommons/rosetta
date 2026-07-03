@@ -43,7 +43,7 @@ read_biounit(
 	utility::vector1<core::Real> & bfactors,
 	utility::vector1<core::Real> & occupancy,
 	utility::vector1<int>  & pdbres,
-	std::map<int,char> & pdbchain,
+	std::map<int,std::string> & pdbchain,
 	int& nresmodel1,
 	int  max_res = 9999999,
 	bool debug = false

@@ -59,7 +59,7 @@ using namespace ObjexxFCL;
 
 std::map< std::string, core::Real >
 get_interface_deltas(
-	char chain,
+	std::string const & chain,
 	core::pose::Pose const & after,
 	const core::scoring::ScoreFunctionOP scorefxn,
 	std::string const & prefix,
@@ -178,7 +178,7 @@ get_interface_deltas(
 void
 output_interface_deltas(
 	std::map< std::string, core::Real >& score_map,
-	char chain,
+	std::string const & chain,
 	const core::scoring::ScoreFunctionOP scorefxn,
 	core::scoring::EnergyMap const & together_energies,
 	core::scoring::EnergyMap const & separated_energies,
@@ -221,7 +221,7 @@ output_interface_deltas(
 
 std::map< std::string, core::Real >
 get_ligand_travel(
-	char chain,
+	std::string const & chain,
 	core::pose::Pose const & test_pose,
 	core::pose::Pose const & ref_pose,
 	std::string const & prefix,
@@ -285,7 +285,7 @@ get_ligand_travel_ensemble_best(
 std::map< std::string, core::Real >
 get_ligand_grid_scores(
 	protocols::qsar::scoring_grid::GridSet const & grid_set_prototype,
-	char chain,
+	std::string const & chain,
 	core::pose::Pose const & test_pose,
 	std::string const & prefix,
 	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
@@ -314,7 +314,7 @@ get_ligand_grid_scores(
 
 	utility::vector1< core::Size > test_resi( core::kinematics::residues_downstream_of_jump( test_pose.fold_tree(), jump_id ) );
 
-	char const chain =core::pose::get_chain_from_jump_id( jump_id, test_pose );
+	std::string const & chain =core::pose::get_chain_from_jump_id( jump_id, test_pose );
 
 	return get_ligand_grid_scores( grid_set_prototype, test_resi, utility::to_string( chain ), test_pose, prefix, normalization_function );
 }
@@ -389,7 +389,7 @@ get_ligand_grid_scores(
 /// @brief Ligands tend to bind in outstretched conformations...
 std::map< std::string, core::Real >
 get_radius_of_gyration(
-	char chain,
+	std::string const & chain,
 	core::pose::Pose const & test_pose,
 	std::string const & prefix
 ) {
@@ -427,7 +427,7 @@ get_radius_of_gyration(
 
 std::map< std::string, core::Real >
 get_ligand_RMSDs(
-	char chain,
+	std::string const & chain,
 	core::pose::Pose const & test_pose,
 	core::pose::Pose const & ref_pose,
 	std::string const & prefix,
@@ -477,7 +477,7 @@ get_automorphic_RMSDs(
 
 	std::map< std::string, core::Real > retval;
 
-	char const ligand_chain = test_pose.pdb_info()->chain(test_residue_id);
+	std::string const & ligand_chain = test_pose.pdb_info()->chain(test_residue_id);
 	{
 		core::Real ligand_rms_no_super = 9999999999;
 		for ( core::Size ref_residue_id: ref_residue_ids ) {
@@ -530,7 +530,7 @@ get_multi_residue_ligand_RMSDs(
 	core::pose::Pose const & ref_pose,
 	utility::vector1< core::Size > const & test_residue_ids,
 	utility::vector1< core::Size > const & ref_residue_ids,
-	char chain,
+	std::string const & chain,
 	std::string const & prefix
 ) {
 	debug_assert( test_residue_ids.size() == ref_residue_ids.size() );

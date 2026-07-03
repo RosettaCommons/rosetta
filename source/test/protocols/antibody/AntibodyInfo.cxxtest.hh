@@ -171,8 +171,8 @@ public:
 
 		//Here, we test Numbering scheme/Landmark access.
 
-		core::Size chothia_num = ab_pose_chothia.pdb_info()->pdb2pose('L', 43);
-		core::Size aho_num = ab_info_north_aho->get_landmark_resnum(ab_pose_aho, Chothia_Scheme, 'L', 43);
+		core::Size chothia_num = ab_pose_chothia.pdb_info()->pdb2pose("L", 43);
+		core::Size aho_num = ab_info_north_aho->get_landmark_resnum(ab_pose_aho, Chothia_Scheme, "L", 43);
 		TS_ASSERT_EQUALS(chothia_num, aho_num);
 
 	}
@@ -188,7 +188,7 @@ public:
 
 		TS_ASSERT_EQUALS(false, ab_info_north_aho->antigen_present());
 		TS_ASSERT_EQUALS(16, ab_info_north_aho->get_CDR_length(l1));
-		TS_ASSERT_EQUALS('H', ab_info_north_aho->get_CDR_chain(h3));
+		TS_ASSERT_EQUALS("H", ab_info_north_aho->get_CDR_chain(h3));
 		TS_ASSERT(! ab_info_north_aho->antigen_present());
 		TS_ASSERT_EQUALS(24, ab_info_north_aho->get_CDR_start_PDB_num(l1));
 		TS_ASSERT_EQUALS(6, ab_info_north_aho->get_total_num_CDRs());

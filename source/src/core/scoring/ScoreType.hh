@@ -478,6 +478,8 @@ enum ScoreType {
 	hrf_ms_labeling,
 	hrf_dynamics,
 	ccs_imms,
+	ccs_imms_complex,
+	ccs_imms_cryoem,
 	depc_ms,
 	rnp_env,
 
