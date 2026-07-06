@@ -115,6 +115,8 @@ AntibodyFeatures::report_features(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session) {
 
+	using core::pose::DockingPartners;
+
 	if ( ! ab_info_ || regenerate_abinfo_ ) {
 		if ( regenerate_abinfo_ ) {
 			ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose, scheme_, definition_);
@@ -123,46 +125,53 @@ AntibodyFeatures::report_features(
 		}
 	}
 
-	std::map<std::string, std::string > db_interfaces;
+	std::map<DockingPartners, DockingPartners> db_interfaces;
 
 
 	if ( intermediate_interfaces_.size() == 0 ) {
 
 		if ( ! ab_info_->is_camelid() ) {
-			db_interfaces["L_H"] = "L_H";
+			db_interfaces[DockingPartners::docking_partners_from_string("L_H")] = DockingPartners::docking_partners_from_string("L_H");
 		}
 
 		if ( ab_info_->antigen_present() && ! skip_antigen_reports_ ) {
-			utility::vector1<char> antigen_chains = ab_info_->get_antigen_chains();
-			std::string antigen(antigen_chains.begin(), antigen_chains.end());
+			DockingPartners dock_chains;
+			dock_chains.partner2 = ab_info_->get_antigen_chains();
 
-			db_interfaces["H_"+antigen] = "H_A";
+			dock_chains.partner1 = utility::vector1<std::string>{"H"};
+			db_interfaces[dock_chains] = DockingPartners::docking_partners_from_string("H_A");
 
 			if ( ! ab_info_->is_camelid() ) {
-				db_interfaces["LH_"+antigen] = "LH_A";
-				db_interfaces["L_"+antigen] = "L_A";
+				dock_chains.partner1 = utility::vector1<std::string>{"L","H"};
+				db_interfaces[dock_chains] = DockingPartners::docking_partners_from_string("LH_A");
+				dock_chains.partner1 = utility::vector1<std::string>{"L"};
+				db_interfaces[dock_chains] = DockingPartners::docking_partners_from_string("L_A");
 			}
 		}
 	} else {
 		//Could use Enums for this:
 		for ( core::Size i = 1; i <= intermediate_interfaces_.size(); ++i ) {
 			if ( intermediate_interfaces_[i] == "L_H" && ! ab_info_->is_camelid() ) {
-				db_interfaces["L_H"] = "L_H";
+				db_interfaces[DockingPartners::docking_partners_from_string("L_H")] = DockingPartners::docking_partners_from_string("L_H");
 			}
 
 			if ( ab_info_->antigen_present() ) {
-				utility::vector1<char> antigen_chains = ab_info_->get_antigen_chains();
-				std::string antigen(antigen_chains.begin(), antigen_chains.end());
+				DockingPartners dock_chains;
+				dock_chains.partner2 = ab_info_->get_antigen_chains();
 
 				if ( intermediate_interfaces_[i] == "L_A" && ! skip_antigen_reports_ && ! ab_info_->is_camelid() ) {
-					db_interfaces["L_"+antigen] = "L_A";
+					dock_chains.partner1 = utility::vector1<std::string>{"L"};
+					db_interfaces[dock_chains] = DockingPartners::docking_partners_from_string("L_A");
 				} else if ( intermediate_interfaces_[i] == "H_A" && ! skip_antigen_reports_ ) {
-					db_interfaces["H_"+antigen] = "H_A";
+					dock_chains.partner1 = utility::vector1<std::string>{"H"};
+					db_interfaces[dock_chains] = DockingPartners::docking_partners_from_string("H_A");
 				} else if ( intermediate_interfaces_[i] == "LH_A" && ! skip_antigen_reports_ && !ab_info_->is_camelid() ) {
-					db_interfaces["LH_"+antigen] = "LH_A";
+					dock_chains.partner1 = utility::vector1<std::string>{"L","H"};
+					db_interfaces[dock_chains] = DockingPartners::docking_partners_from_string("LH_A");
 				} else if ( intermediate_interfaces_[i] == "LH_A" && ! skip_antigen_reports_ && ab_info_->is_camelid() ) {
 					TR << "Replacing LH_A with H_A for camelid antibody.  Your welcome." << std::endl;
-					db_interfaces["H_"+antigen] ="H_A";
+					dock_chains.partner1 = utility::vector1<std::string>{"H"};
+					db_interfaces[dock_chains] = DockingPartners::docking_partners_from_string("H_A");
 				} else {
 					//else if (intermediate_interfaces_[i] == "NONE"){
 					// TR << "Not reporting any InterfaceFeatures." << std::endl;
@@ -176,12 +185,12 @@ AntibodyFeatures::report_features(
 
 	//Find which per residue data to use from IAM.  We have camelid and regular LH antibody.  an LA antibody wouldn't be kosher in AntibodyInfo right now anyway.
 	//If its not in the interface, and not set to analyze, then we don't do anything (For speed issues?).
-	std::string match_interface_type;
+	core::pose::DockingPartners match_interface_type;
 	if ( ab_info_->antigen_present() ) {
 		if ( ab_info_->is_camelid() ) {
-			match_interface_type =  "H_A";
+			match_interface_type = DockingPartners::docking_partners_from_string("H_A");
 		} else {
-			match_interface_type = "LH_A";
+			match_interface_type = DockingPartners::docking_partners_from_string("LH_A");
 		}
 
 	}
@@ -349,10 +358,14 @@ AntibodyFeatures::report_ab_metrics_features(
 	utility::vector1<core::Real> vl_vh_coords = vl_vh_orientation_coords(pose, *ab_info_);
 
 	//Get chains
-	utility::vector1<char> antigen_chains = ab_info_->get_antigen_chains();
-	std::string antigen(antigen_chains.begin(), antigen_chains.end());
+	// Unfortunately effectively assumes that chains are single letters.
+	std::string antigen;
 	if ( ! ab_info_->antigen_present() ) {
 		antigen = "NA";
+	} else {
+		for ( std::string const & chain: ab_info_->get_antigen_chains() ) {
+			antigen += chain;
+		}
 	}
 
 	//TR << "camelid" <<  int(ab_info_->is_camelid()) << std::endl;

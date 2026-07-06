@@ -249,27 +249,27 @@ public:
 	void
 	set_multicomponent_info(
 		Size const & num_components,
-		utility::vector1<char> const & components,
-		std::map<char,std::pair<Size,Size> > const & component_bounds,
-		std::map<std::string,char> const & name2component,
-		std::map<std::string,utility::vector1<char> > const & jname2component,
+		utility::vector1<std::string> const & components,
+		std::map<std::string,std::pair<Size,Size> > const & component_bounds,
+		std::map<std::string,std::string> const & name2component,
+		std::map<std::string,utility::vector1<std::string> > const & jname2component,
 		std::map<std::string,utility::vector1<Size> > const & jname2subunits
 	);
 
 	Size const & get_num_components() const;
-	utility::vector1<char> const & get_components() const;
-	char get_component(Size i) const;
-	std::map<char,std::pair<Size,Size> > const & get_component_bounds() const;
-	std::map<std::string,char> const & get_subunit_name_to_component() const;
-	std::map<std::string,utility::vector1<char> > const & get_jump_name_to_components() const;
+	utility::vector1<std::string> const & get_components() const;
+	std::string const & get_component(Size i) const;
+	std::map<std::string,std::pair<Size,Size> > const & get_component_bounds() const;
+	std::map<std::string,std::string> const & get_subunit_name_to_component() const;
+	std::map<std::string,utility::vector1<std::string> > const & get_jump_name_to_components() const;
 	std::map<std::string,utility::vector1<Size> > const & get_jump_name_to_subunits() const;
 
-	std::pair<Size,Size> const & get_component_bounds(char c) const;
-	Size get_component_lower_bound(char c) const;
-	Size get_component_upper_bound(char c) const;
-	char get_component_of_residue(Size ir) const;
-	char get_subunit_name_to_component(std::string const & vname) const;
-	utility::vector1<char> const & get_jump_name_to_components(std::string const & jname) const;
+	std::pair<Size,Size> const & get_component_bounds(std::string const & c) const;
+	Size get_component_lower_bound(std::string const & c) const;
+	Size get_component_upper_bound(std::string const & c) const;
+	std::string get_component_of_residue(Size ir) const;
+	std::string const & get_subunit_name_to_component(std::string const & vname) const;
+	utility::vector1<std::string> const & get_jump_name_to_components(std::string const & jname) const;
 	utility::vector1<Size> const & get_jump_name_to_subunits  (std::string const & jname) const;
 
 private:
@@ -328,13 +328,13 @@ private:
 	bool torsion_changes_move_other_monomers_; // if we change a backbone torsion in one monomer, do other monomers move?
 
 	Size num_components_;
-	utility::vector1<char> components_;
-	std::map<char,std::pair<Size,Size> > component_bounds_;
-	std::map<std::string,char> name2component_;
-	std::map<std::string,utility::vector1<char> > jname2components_;
+	utility::vector1<std::string> components_;
+	std::map<std::string,std::pair<Size,Size> > component_bounds_;
+	std::map<std::string,std::string> name2component_;
+	std::map<std::string,utility::vector1<std::string> > jname2components_;
 	std::map<std::string,utility::vector1<Size> > jname2subunits_;
 
-	utility::vector1<char> components_moved_by_jump(std::string const & jname) const;
+	utility::vector1<std::string> components_moved_by_jump(std::string const & jname) const;
 	utility::vector1<Size> subunits_moved_by_jump(std::string const & jname) const;
 #ifdef    SERIALIZATION
 public:

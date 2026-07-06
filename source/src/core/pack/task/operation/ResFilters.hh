@@ -258,15 +258,15 @@ public:
 	typedef ResFilter parent;
 
 	struct ChainPos { // for (optional) pdb indexing
-		char chain_; int pos_;
-		ChainPos( char chain, int pos ) : chain_(chain), pos_(pos) {}
+		std::string chain_; int pos_;
+		ChainPos( std::string const & chain, int pos ) : chain_(chain), pos_(pos) {}
 		bool operator == ( ChainPos const & other ) const
 		{ return( chain_ == other.chain_ && pos_ == other.pos_ ); }
 	};
 
 public:
 	ResiduePDBIndexIs();
-	ResiduePDBIndexIs( char, int );
+	ResiduePDBIndexIs( std::string const &, int );
 	ResiduePDBIndexIs( utility::vector1< ChainPos > const & );
 	bool operator() ( Pose const &, Size ) const override;
 	ResFilterOP clone() const override;
@@ -287,7 +287,7 @@ public:
 
 public:
 	ResiduePDBIndexIsnt();
-	ResiduePDBIndexIsnt( char, int );
+	ResiduePDBIndexIsnt( std::string const &, int );
 	ResiduePDBIndexIsnt( utility::vector1< ChainPos > const & );
 	bool operator() ( Pose const &, Size ) const override;
 	ResFilterOP clone() const override;
@@ -302,18 +302,18 @@ public:
 	typedef ResFilter parent;
 public:
 	ChainIs();
-	ChainIs( char const );
+	ChainIs( std::string const & chain );
 	bool operator() ( Pose const &, Size ) const override;
 	ResFilterOP clone() const override;
 	void parse_tag( TagCOP ) override;
-	virtual char const & chain() const { return chain_; }
+	virtual std::string const & chain() const { return chain_; }
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static utility::tag::AttributeList get_xml_schema_attributes( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	char chain_;
+	std::string chain_;
 };
 
 class ChainIsnt : public ChainIs {
@@ -321,7 +321,7 @@ public:
 	typedef ChainIs parent;
 public:
 	ChainIsnt();
-	ChainIsnt( char const );
+	ChainIsnt( std::string const & chain );
 	bool operator() ( Pose const &, Size ) const override;
 	ResFilterOP clone() const override;
 

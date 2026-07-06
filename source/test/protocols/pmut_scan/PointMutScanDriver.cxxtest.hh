@@ -123,9 +123,9 @@ public:
 		// mutant #5
 		//L S 30B T L N 30E W L T 31 Y
 
-		MutationData md1( 'S', 'T', 2, 30, 'B', 'L' );
-		MutationData md2( 'N', 'W', 5, 30, 'E', 'L' );
-		MutationData md3( 'T', 'Y', 6, 31, ' ', 'L' );
+		MutationData md1( 'S', 'T', 2, 30, 'B', "L" );
+		MutationData md2( 'N', 'W', 5, 30, 'E', "L" );
+		MutationData md3( 'T', 'Y', 6, 31, ' ', "L" );
 		Mutant m;
 		m.add_mutation( md1 );
 		m.add_mutation( md2 );
@@ -183,7 +183,7 @@ public:
 		protocols::pmut_scan::PointMutScanDriver driver( pdb_file_names, double_mutant_scan, list_file, output_mutant_structures );
 
 		Mutant m;
-		MutationData md1( 'T', 'Y', 6, 31, 'A', 'L' );
+		MutationData md1( 'T', 'Y', 6, 31, 'A', "L" );
 		m.add_mutation( md1 );
 
 		// init some mutant poses
@@ -210,9 +210,9 @@ public:
 
 		protocols::pmut_scan::PointMutScanDriver driver( pdb_file_names, double_mutant_scan, list_file, output_mutant_structures );
 
-		MutationData md1( 'H', 'W', 1, 30, 'A', 'L' );
-		MutationData md2( 'S', 'T', 2, 30, 'B', 'L' );
-		MutationData md3( 'N', 'Q', 3, 30, 'C', 'L' );
+		MutationData md1( 'H', 'W', 1, 30, 'A', "L" );
+		MutationData md2( 'S', 'T', 2, 30, 'B', "L" );
+		MutationData md3( 'N', 'Q', 3, 30, 'C', "L" );
 
 		Mutant m;
 		m.add_mutation( md1 );

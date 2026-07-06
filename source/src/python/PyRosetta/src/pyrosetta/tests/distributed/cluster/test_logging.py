@@ -18,6 +18,7 @@ import os
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
 import re
+import sys
 import tempfile
 import unittest
 
@@ -26,10 +27,16 @@ from pyrosetta.tests.distributed.cluster.setup_inputs import get_test_params_fil
 
 
 class LoggingTest(unittest.TestCase):
+    """Test case for Python logging in PyRosettaCluster."""
+
     _ansi_regex = re.compile(r"(?:\x1B[@-_]|[\x80-\x9F])[0-?]*[ -/]*[@-~]")
 
-    def test_logging(self, verbose=True):
+    def tearDown(self):
+        sys.stdout.flush()
+
+    def test_logging(self, verbose=False):
         """A test for capturing logging information in the distributed protocol."""
+
         params_dir = tempfile.TemporaryDirectory(prefix="tmp_params_")
         params_file = get_test_params_file(params_dir.name)
         pyrosetta.distributed.init(
@@ -83,8 +90,10 @@ class LoggingTest(unittest.TestCase):
                 test_warning_with_pose=packed_pose.pose.clone(),
                 test_warning_with_packed_pose=io.to_packed(packed_pose.pose.clone()),
             )
+            # Testing that warnings are emitted when attempting to return keys starting with "PyRosettaCluster_"
+            kwargs["PyRosettaCluster_foo"] = "bar"
 
-            return packed_pose
+            return packed_pose, kwargs
 
         def my_pyrosetta_protocol_2(packed_pose, **kwargs):
             import pyrosetta
@@ -153,6 +162,8 @@ class LoggingTest(unittest.TestCase):
                 max_delay_time=3.0,
                 norm_task_options=None,
                 output_init_file=os.path.join(output_path, "pyrosetta.init"),
+                max_task_replicas=0,
+                task_registry="disk",
             )
             cluster.distribute(my_pyrosetta_protocol_1, my_pyrosetta_protocol_2)
 
@@ -164,7 +175,7 @@ class LoggingTest(unittest.TestCase):
             if verbose:
                 for log_file in (prc_log, protocol_log):
                     with open(log_file, "r") as f:
-                        print(f"Output: '{log_file}':", f.read(), sep="\n")
+                        print(f"Output: '{log_file}':", f.read(), sep="\n", flush=True)
 
             # Ensure the files populate
             self.assertTrue(os.path.exists(protocol_log), msg=f"'{protocol_log}' doesn't exist!")
@@ -184,6 +195,21 @@ class LoggingTest(unittest.TestCase):
                 log_fields = last.split()
                 self.assertEqual(log_fields[-1], "complete!")
             # Ensure warnings are emitted
+            with open(protocol_log, "r") as f:
+                lines = f.readlines()
+                key = "PyRosettaCluster_foo"
+                expected_msg = (
+                    f"User-defined PyRosetta protocol 'my_pyrosetta_protocol_1' returned one object of type `dict`, "
+                    + f"but a key starting with 'PyRosettaCluster_' was added: '{key}'. "
+                    + f"Task keys starting with 'PyRosettaCluster_' are reserved for `PyRosettaCluster`! "
+                    + f"Automatically ignoring the '{key}' key from the returned task dictionary."
+                )
+                warning_msgs = []
+                for line in lines:
+                     if line.startswith("WARNING:"):
+                        match = re.split(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}: ", line, maxsplit=1) # Split on datetime
+                        warning_msgs.append(match[1].rstrip() if len(match) > 1 else line.rstrip())
+                self.assertIn(expected_msg, warning_msgs)
             score_key_class_name_dict = {
                 "test_warning_with_complex": "complex",
                 "test_warning_with_pose": "pyrosetta.rosetta.core.pose.Pose",
@@ -196,13 +222,14 @@ class LoggingTest(unittest.TestCase):
                 for key, class_name in score_key_class_name_dict.items():
                     expected_msg = (
                         f"Removing score key '{key}' with value of type '<class '{class_name}'>' before "
-                        "saving PyRosettaCluster result! Only JSON-serializable score values can be written to output files. "
-                        "Consider custom serializing the value to save this score or removing the key from the `pose.cache` "
-                        "dictionary to remove this warning message."
+                        "saving `PyRosettaCluster` result! Only JSON-serializable scoring data can be written to output decoy files "
+                        "and scorefiles. Consider custom serializing the value to save this score or removing the key from the `Pose.cache` "
+                        "dictionary to silence this warning message."
                     )
                     self.assertIn(expected_msg, warning_msgs)
+            with open(prc_log, "r") as f:
+                lines = f.readlines()
+                info_msgs = [line.split("INFO:root: ")[-1].rstrip() for line in lines if "INFO:root: " in line]
+                expected_msg = "0 remaining task records in the on-disk task registry."
+                self.assertIn(expected_msg, info_msgs)
         params_dir.cleanup()
-
-
-# if __name__ == "__main__":
-#     unittest.main(verbosity=2)

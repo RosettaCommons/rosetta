@@ -606,7 +606,7 @@ set_water_numbers_to_zero( pose::Pose & pose ) {
 	using namespace core::pose;
 	PDBInfoCOP pdb_info = pose.pdb_info();
 	vector1< core::Size > numbering;
-	vector1< char > chains;
+	vector1< std::string > chains;
 	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.residue( n ).name3() == "HOH" ) {
 			numbering.push_back( 0 );
@@ -630,13 +630,13 @@ update_numbers_in_pdb_info( pose::Pose & pose, bool const reset_waters /* = fals
 	PDBInfoCOP pdb_info = pose.pdb_info();
 	int max_number( 0 );
 	vector1< core::Size > numbering;
-	vector1< char > chains;
+	vector1< std::string > chains;
 	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		if ( pdb_info->number( n ) > max_number ) max_number = pdb_info->number( n );
 		if ( pdb_info->number( n ) == 0 ) {
 			max_number++;
 			numbering.push_back( max_number );
-			chains.push_back( ' ' ); // otherwise get a warning about '^' placeholder
+			chains.push_back( " " ); // otherwise get a warning about '^' placeholder
 		} else {
 			numbering.push_back( pdb_info->number( n ) );
 			chains.push_back( pdb_info->chain( n ) );

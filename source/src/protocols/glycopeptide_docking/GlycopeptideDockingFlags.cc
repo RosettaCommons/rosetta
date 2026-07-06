@@ -23,6 +23,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/chains_util.hh>
+#include <core/pose/selection.hh>
 
 // Basic/Utility headers
 
@@ -165,33 +166,18 @@ GlycopeptideDockingFlags::set_enzyme_chain( core::pose::Pose const &pose )
 }
 
 
-///@Get residue from pose
-core::Size
-GlycopeptideDockingFlags::get_resnum(core::pose::Pose const &pose,std::string const &special_residue)
-{
-	pose::PDBInfoCOP pdb_info( pose.pdb_info() );
-
-	char chain = special_residue[ special_residue.size() - 1 ];
-	string res_num_str = "";
-	for ( core::Size pos = 0; pos < special_residue.size() - 1; pos++ ) {
-		res_num_str += special_residue[ pos ];
-	}
-	core::Size res_num = stoi( res_num_str );
-	return pdb_info->pdb2pose( chain, res_num );
-}
-
 ///@Set anchor or residue_to_glycosylate residue/s from command line or script options.
 void
 GlycopeptideDockingFlags::set_anchor_residue(core::pose::Pose const &pose,std::string const &special_residue)
 {
-	anchor_residue_substrate_ = get_resnum(pose,special_residue);
+	anchor_residue_substrate_ = core::pose::parse_resnum(special_residue,pose);
 }
 
 ///@Set anchor or residue_to_glycosylate residue/s from command line or script options.
 void
 GlycopeptideDockingFlags::set_glycosylation_residue(core::pose::Pose const &pose,std::string const &special_residue)
 {
-	residue_to_glycosylate_ = get_resnum(pose,special_residue);
+	residue_to_glycosylate_ = core::pose::parse_resnum(special_residue,pose);
 }
 
 
@@ -206,8 +192,7 @@ GlycopeptideDockingFlags::set_substrate_chain( core::pose::Pose const &pose)
 	core::uint chain_num_of_last_cut_point( n_chain_endings );
 	core::uint last_cut_point( chain_endings[ chain_num_of_last_cut_point ] );
 	// Clear data.
-	upstream_chains_ = "";
-	downstream_chains_ = "";
+	partners_ = core::pose::DockingPartners();
 
 	while ( pose.residue( last_cut_point + 1 ).has_lower_connect() && pose.residue( last_cut_point + 1 ).connected_residue_at_lower() != last_cut_point ) {
 		--chain_num_of_last_cut_point;
@@ -240,15 +225,15 @@ GlycopeptideDockingFlags::set_substrate_chain( core::pose::Pose const &pose)
 	for ( core::uint chain_number( 1 ); chain_number <= n_chain_endings; ++chain_number ) {
 		cut_point = chain_endings[ chain_number ];
 		if ( cut_point < last_cut_point ) {
-			upstream_chains_ += pdb_info->chain( cut_point );
+			partners_.partner1.push_back( pdb_info->chain( cut_point ) );
 		} else if ( cut_point == last_cut_point ) {
-			upstream_chains_ += pdb_info->chain( cut_point );
-			downstream_chains_ += pdb_info->chain( cut_point + 1 );
+			partners_.partner1.push_back( pdb_info->chain( cut_point ) );
+			partners_.partner2.push_back( pdb_info->chain( cut_point + 1 ) );
 		} else {
-			downstream_chains_ += pdb_info->chain( cut_point + 1 );
+			partners_.partner2.push_back( pdb_info->chain( cut_point + 1 ) );
 		}
 	}
-	TR << "Upstream and downstream "<< upstream_chains_ << " " << downstream_chains_ << std::endl;
+	TR << "Upstream and downstream "<< partners_ << std::endl;
 	if ( option[ OptionKeys::carbohydrates::glycopeptide_docking::preglycosylate_residues ].user() ) {
 		std::string preglycosylate_residues = option[ OptionKeys::carbohydrates::glycopeptide_docking::preglycosylate_residues ];
 		preglycosylate_residues_ = core::pose::get_resnum_list_ordered(preglycosylate_residues,pose);

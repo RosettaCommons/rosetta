@@ -366,9 +366,6 @@ private:
 	void
 	initialize_from_options( utility::options::OptionCollection const & options );
 
-	RotamerLibrary( RotamerLibrary const & ); // unimplemented
-	RotamerLibrary const & operator = ( RotamerLibrary const & ); // unimplemented
-
 private:
 
 	//////////////////////////

@@ -18,7 +18,7 @@
 #include <core/types.hh>
 #include <core/io/StructFileRep.fwd.hh>
 #include <core/io/StructFileRepOptions.fwd.hh>
-#include <core/io/ResidueInformation.fwd.hh>
+#include <core/io/ResidueInformation.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -105,7 +105,7 @@ utility::vector1< core::Size >
 fix_glycan_order( utility::vector1< core::io::ResidueInformation > & rinfos,
 	utility::vector1< core::Size > const & glycan_positions,
 	StructFileRepOptions const & options,
-	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > const & known_links );
+	std::map< ResID, std::map< std::string, std::pair< ResID, std::string > > > const & known_links );
 
 /// @brief Find the order of glycan residues for all glycan positions
 utility::vector1< core::Size >
@@ -115,7 +115,7 @@ find_carbohydrate_order(
 	utility::vector1< core::Size > & chain_ends, // return-by-reference of (rinfos) positions of (non-reducing) end sugars
 	// map of anomeric positions to where they are connected to
 	std::map< std::pair< core::Size, std::string >, std::pair< core::Size, std::string > > const & link_map,
-	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > const & known_links );
+	std::map< ResID, std::map< std::string, std::pair< ResID, std::string > > > const & known_links );
 
 /// @brief Find the order of all the glycans connected to current_res, as indicated by the connectivity map.
 utility::vector1< core::Size >
@@ -137,13 +137,13 @@ std::map< std::pair< core::Size, std::string >, std::pair< core::Size, std::stri
 determine_glycan_links( utility::vector1< core::io::ResidueInformation > const & rinfos,
 	StructFileRepOptions const & options );
 
-std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > >
-explicit_links_from_sfr_linkage( std::map< std::string, utility::vector1< LinkInformation > > const & link_map,
+std::map< ResID, std::map< std::string, std::pair< ResID, std::string > > >
+explicit_links_from_sfr_linkage( std::map< ResID, utility::vector1< LinkInformation > > const & link_map,
 	utility::vector1< core::io::ResidueInformation > const & rinfos );
 
 void
 add_glycan_links_to_map(
-	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > & known_links,
+	std::map< ResID, std::map< std::string, std::pair< ResID, std::string > > > & known_links,
 	std::map< std::pair< core::Size, std::string >, std::pair< core::Size, std::string > > const & link_map,
 	utility::vector1< core::io::ResidueInformation > const & rinfos );
 

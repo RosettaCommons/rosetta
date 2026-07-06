@@ -129,11 +129,6 @@ public: // Creation
 	clone() const override = 0;
 
 
-	/// @brief Destructor
-	inline
-	~OptionKey() override {}
-
-
 public: // Assignment
 
 

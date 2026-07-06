@@ -146,7 +146,7 @@ read_pose_from_file(
 		for ( core::Size i = 2; i <= input_poses.size(); ++i ) {
 			for ( core::Size j = 1; j <= input_poses[i].size(); ++j ) {
 				core::Size pdbres( input_poses[i].pdb_info()->number( j ) );
-				char pdbchain( input_poses[i].pdb_info()->chain( j ) );
+				std::string pdbchain( input_poses[i].pdb_info()->chain( j ) );
 				char pdbicode( input_poses[i].pdb_info()->icode( j ) );
 				core::Size orig_seqpos( pose.pdb_info()->pdb2pose( pdbchain, pdbres, pdbicode ) );
 				if ( orig_seqpos > 0 ) {

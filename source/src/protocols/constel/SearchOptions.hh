@@ -24,14 +24,14 @@ namespace constel {
 class NeighTeller;
 
 /// @brief Searches pair-constellations by target residue.
-void pair_constel_set(int const target_pdb_number, char const target_pdb_chain,
+void pair_constel_set(int const target_pdb_number, std::string const & target_pdb_chain,
 	core::pose::Pose& pose_init);
 
 /// @brief Searches pair-constellations by mutation pair.
 void pair_constel_set( std::string const& tgtmuts, core::pose::Pose& pose_init );
 
 /// @brief Searches triple-constellations by target residue.
-void triple_constel_set(int const target_pdb_number, char const target_pdb_chain,
+void triple_constel_set(int const target_pdb_number, std::string const & target_pdb_chain,
 	core::pose::Pose& pose_init);
 
 /// @brief Searches a single, target constellation.

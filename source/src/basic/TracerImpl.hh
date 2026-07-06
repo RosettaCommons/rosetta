@@ -54,6 +54,9 @@ public:
 	basic_otstream() : std::basic_ostream<CharT, Traits> ( new basic_tstringbuf<CharT, Traits> (this) ) {}
 	~basic_otstream() override { delete this->rdbuf(); }
 
+	// ~basic_otstream() calls delete this->rdbuf(); a copy would share the same buffer, causing a double-free.
+	basic_otstream( basic_otstream const & ) = delete;
+	basic_otstream & operator=( basic_otstream const & ) = delete;
 
 	/// @brief Return true if inner string buffer is empty.
 	bool is_flushed() const {
@@ -68,13 +71,6 @@ protected:
 	/// TracerImpl and TracerProxyImpl objects.
 	virtual void t_flush(std::string const &) {};
 
-private:
-	basic_otstream(basic_otstream const & );
-
-
-	/// Data members
-	/// @brief inner string buffer
-	//std::basic_stringbuf<CharT, Traits> * tstringbuf_;
 };
 
 
@@ -149,6 +145,9 @@ public:
 	);
 
 	~TracerImpl() override;
+
+	TracerImpl( TracerImpl const & ) = delete;
+	TracerImpl & operator=( TracerImpl const & ) = delete;
 
 	/// @brief re-init using data from another tracer object.
 	void init( TracerImpl const & tr );
@@ -270,9 +269,6 @@ protected:
 	void t_flush(std::string const &) override;
 
 private: /// Functions
-	/// @brief copy constructor.
-	TracerImpl( TracerImpl const & tr ) = delete;
-
 	static OstreamPointer &final_stream();
 
 	/// @brief return true if channel is inside vector, some logic apply.

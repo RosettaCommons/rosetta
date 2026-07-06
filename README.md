@@ -9,7 +9,7 @@ See <https://www.rosettacommons.org> for more information about Rosetta and the 
 Rosetta Code
 ============
 
-While the Rosetta source code is published on GitHub, it is not "Open Source" (according to the OSI definition). Most notably, use for commercial purposes requires purchase of a separate license. See LICENSE.md for further information.
+While the Rosetta source code is published on GitHub, it is not "Open Source" (according to the OSI definition). Most notably, use for commercial purposes requires purchase of a separate license. See LICENSE.md for further information regarding licensing for both commercial and non-commercial use.
 
 The main GitHub repository on https://github.com/RosettaCommons/rosetta integrates all the Rosetta-associated code base.
 It should be noted that many parts of Rosetta are structured as separate GitHub repositories, which the main repository conveniently presents as submodules.

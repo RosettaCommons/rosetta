@@ -343,7 +343,7 @@ public:
 			}
 		} else {
 			for ( Size n=1; n<=pdb_res_nos_.size(); ++n ) {
-				Size res_no = pose.pdb_info()->pdb2pose( pdb_chain_no_[0], static_cast< core::SSize >(pdb_res_nos_[n]));
+				Size res_no = pose.pdb_info()->pdb2pose( pdb_chain_no_, static_cast< core::SSize >(pdb_res_nos_[n]));
 				final_res_list_.push_back(res_no);
 			}
 		}

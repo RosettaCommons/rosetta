@@ -169,12 +169,6 @@ public: // Creation
 	clone() const = 0;
 
 
-	/// @brief Destructor
-	inline
-	virtual
-	~UserKey() {}
-
-
 public: // Assignment
 
 

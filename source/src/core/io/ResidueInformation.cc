@@ -25,7 +25,7 @@ namespace io {
 
 ResidueInformation::ResidueInformation() :
 	resName_( "" ),
-	chainID_( ' ' ),
+	chainID_( " " ),
 	resSeq_( 0 ),
 	iCode_( ' ' ),
 	terCount_( 0 ),
@@ -77,7 +77,7 @@ ResidueInformation::operator!=( ResidueInformation const & that) const
 }
 
 std::string const & ResidueInformation::resName() const { return resName_; }
-char ResidueInformation::chainID()  const { return chainID_; }
+std::string const & ResidueInformation::chainID()  const { return chainID_; }
 int  ResidueInformation::resSeq()   const { return resSeq_; }
 char ResidueInformation::iCode()    const { return iCode_; }
 int  ResidueInformation::terCount() const { return terCount_; }
@@ -95,7 +95,7 @@ void ResidueInformation::resName(  std::string const & setting )
 	}
 }
 
-void ResidueInformation::chainID( char setting ) { chainID_ = setting; }
+void ResidueInformation::chainID( std::string const & setting ) { chainID_ = setting; }
 void ResidueInformation::resSeq( int setting ) { resSeq_ = setting; }
 void ResidueInformation::iCode( char setting ) { iCode_ = setting; }
 void ResidueInformation::terCount( int setting ) { terCount_ = setting; }
@@ -160,16 +160,22 @@ std::map< std::string, core::Real > const & ResidueInformation::temps() const {
 	return temps_;
 }
 
-std::string ResidueInformation::resid() const {
-	std::string buf;
-	buf.resize(7);
-	// This is horribly hacky. Is this necessary?
-	// char * data = new char[buf.size() + 1];
-	std::unique_ptr<char[]> data( new char[buf.size() + 1]); // +1 for null termination
-	snprintf(data.get(), buf.size() + 1, "%4d%c%c", resSeq_, iCode_, chainID_ );
-	buf.assign(data.get(), data.get() + buf.size());
-	buf.resize(6);
-	return buf;
+ResID ResidueInformation::resid() const {
+	return ResID(resSeq_, iCode_, chainID_);
+}
+
+std::string
+ResID::str() const {
+	return std::to_string(seq_) + icode_ + chain_;
+}
+
+std::string
+ResID::pad_seq() const {
+	std::string retval = std::to_string(seq_);
+	if ( retval.size() == 1 ) return "   " + retval;
+	if ( retval.size() == 2 ) return "  " + retval;
+	if ( retval.size() == 3 ) return " " + retval;
+	return retval;
 }
 
 } // namespace io

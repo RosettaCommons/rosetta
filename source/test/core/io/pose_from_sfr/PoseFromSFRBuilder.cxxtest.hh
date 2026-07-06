@@ -25,7 +25,8 @@
 #include <core/io/pdb/pdb_reader.hh>
 #include <core/io/StructFileReaderOptions.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
@@ -176,18 +177,18 @@ public:
 		pose::PDBInfoCOP info( pose.pdb_info() );
 
 		TS_ASSERT_EQUALS( pose.residue( 1 ).name3(), "GLY" );
-		TS_ASSERT_EQUALS( info->chain( 1 ), 'A' );
+		TS_ASSERT_EQUALS( info->chain( 1 ), "A" );
 		TS_ASSERT_EQUALS( info->number( 1 ), 5 );
 		TS_ASSERT_EQUALS( pose.residue( 2 ).name3(), "Glc" );
-		TS_ASSERT_EQUALS( info->chain( 2 ), 'B' );
+		TS_ASSERT_EQUALS( info->chain( 2 ), "B" );
 		TS_ASSERT_EQUALS( info->number( 2 ), 401 );
 		TS_ASSERT_EQUALS( info->icode( 2 ), 'A' );
 		TS_ASSERT_EQUALS( pose.residue( 3 ).name3(), "Glc" );
-		TS_ASSERT_EQUALS( info->chain( 3 ), 'B' );
+		TS_ASSERT_EQUALS( info->chain( 3 ), "B" );
 		TS_ASSERT_EQUALS( info->number( 3 ), 401 );
 		TS_ASSERT_EQUALS( info->icode( 3 ), 'B' );
 		TS_ASSERT_EQUALS( pose.residue( 4 ).name3(), "GLY" );
-		TS_ASSERT_EQUALS( info->chain( 4 ), 'C' );
+		TS_ASSERT_EQUALS( info->chain( 4 ), "C" );
 		TS_ASSERT_EQUALS( info->number( 4 ), 11 );
 	}
 
@@ -242,12 +243,12 @@ public:
 		options2.set_pack_missing_sidechains(false);
 		options3.set_pack_missing_sidechains(false);
 		options4.set_pack_missing_sidechains(false);
-		options2.set_check_if_residues_are_Ntermini( "" );
-		options2.set_check_if_residues_are_Ctermini( "" );
-		options3.set_check_if_residues_are_Ntermini( "B" );
-		options3.set_check_if_residues_are_Ctermini( "B" );
-		options4.set_check_if_residues_are_Ntermini( "AC" );
-		options4.set_check_if_residues_are_Ctermini( "AC" );
+		options2.set_check_if_residues_are_Ntermini( utility::vector1<std::string>{} );
+		options2.set_check_if_residues_are_Ctermini( utility::vector1<std::string>{} );
+		options3.set_check_if_residues_are_Ntermini( {"B"} );
+		options3.set_check_if_residues_are_Ctermini( {"B"} );
+		options4.set_check_if_residues_are_Ntermini( {"A","C"} );
+		options4.set_check_if_residues_are_Ctermini( {"A","C"} );
 
 		core::pose::PoseOP pose1( core::import_pose::pose_from_file( "core/io/pose_from_sfr/1IJ3_cleaned.pdb" , options1, false, core::import_pose::PDB_file  ) );
 		core::pose::PoseOP pose2( core::import_pose::pose_from_file( "core/io/pose_from_sfr/1IJ3_cleaned.pdb" , options2, false, core::import_pose::PDB_file  ) );
@@ -287,6 +288,43 @@ public:
 		TS_ASSERT( !pose4->residue_type(resNB).is_upper_terminus() );
 		TS_ASSERT( pose4->residue_type(res1C).is_lower_terminus() );
 		TS_ASSERT( pose4->residue_type(resNC).is_upper_terminus() );
+	}
+
+	/// @brief Test if we can read in a structure with a ligand with a three letter code which matches an NCAA
+	void test_read_overlapping_3_letter_codes() {
+		pose::Pose pose;
+		core::io::StructFileReaderOptions options;
+		std::string file_contents = utility::file_contents( "core/io/pose_from_sfr/NOT_TES.pdb" );
+		core::io::StructFileRep sfr = core::io::pdb::create_sfr_from_pdb_file_contents( file_contents, options );
+		chemical::ResidueTypeSetCOP fa_standard
+			( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
+
+		TS_ASSERT( fa_standard->has_name("TES") );
+		TS_ASSERT_EQUALS( fa_standard->name_map("TES").name(), "TES" );
+		TS_ASSERT_DIFFERS( fa_standard->name_map("TES").upper_connect_id(), 0 );
+		TS_ASSERT_DIFFERS( fa_standard->name_map("TES").lower_connect_id(), 0 );
+
+		TS_ASSERT( fa_standard->has_name("TES:CtermProteinFull:NtermProteinFull") );
+		TS_ASSERT_EQUALS( fa_standard->name_map("TES:CtermProteinFull:NtermProteinFull").upper_connect_id(), 0 );
+		TS_ASSERT_EQUALS( fa_standard->name_map("TES:CtermProteinFull:NtermProteinFull").lower_connect_id(), 0 );
+		TS_ASSERT( fa_standard->name_map("TES:CtermProteinFull:NtermProteinFull").has_property( chemical::LOWER_TERMINUS ) );
+		TS_ASSERT( fa_standard->name_map("TES:CtermProteinFull:NtermProteinFull").has_property( chemical::UPPER_TERMINUS ) );
+
+		chemical::PoseResidueTypeSetOP residue_set = utility::pointer::make_shared< core::chemical::PoseResidueTypeSet >(fa_standard);
+		residue_set->add_base_residue_type( "core/io/pose_from_sfr/NOT_TES.params" );
+
+		TS_ASSERT( residue_set->has_name("MY_TES") );
+
+		PoseFromSFRBuilder pb( residue_set, options );
+		pb.build_pose( sfr, pose );
+
+		TS_ASSERT_EQUALS( pose.size(), 41 );
+		TS_ASSERT_EQUALS( pose.residue_type(41).name3(), "TES" );
+		TS_ASSERT_EQUALS( pose.residue_type(41).name(), "MY_TES" );
+		TS_ASSERT_EQUALS( pose.residue_type(41).upper_connect_id(), 0 );
+		TS_ASSERT_EQUALS( pose.residue_type(41).lower_connect_id(), 0 );
+		TS_ASSERT( !pose.residue_type(41).has_property( chemical::LOWER_TERMINUS ) ); // Not formally annotated as such
+		TS_ASSERT( !pose.residue_type(41).has_property( chemical::UPPER_TERMINUS ) );
 	}
 
 	/// @brief utility function for pose comparison

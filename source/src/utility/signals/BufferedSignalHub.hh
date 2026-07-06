@@ -87,16 +87,8 @@ public: // construct/destruct
 	inline
 	~BufferedSignalHub() override = default;
 
-
-private: // disallow copy construction and assignment
-
-
-	/// @brief disallow copy constructor
-	BufferedSignalHub( BufferedSignalHub const & rval );
-
-
-	/// @brief disallow copy assignment
-	BufferedSignalHub & operator =( BufferedSignalHub const & rval );
+	BufferedSignalHub( BufferedSignalHub const & ) = delete;
+	BufferedSignalHub & operator =( BufferedSignalHub const & ) = delete;
 
 
 public: // signal management

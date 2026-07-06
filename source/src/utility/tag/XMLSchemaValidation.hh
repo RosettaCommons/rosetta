@@ -28,6 +28,7 @@
 
 // C++ headers
 #include <list>
+#include <memory>
 #include <string>
 //#include <vector>
 //#include <map>
@@ -84,7 +85,7 @@ private:
 	XMLValidator( XMLValidator const & ) = delete;
 	XMLValidator & operator = ( XMLValidator const & rhs ) = delete;
 
-	class XMLValidatorImpl * pimpl_;
+	std::unique_ptr< class XMLValidatorImpl > pimpl_;
 };
 
 class XMLValidationOutput

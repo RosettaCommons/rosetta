@@ -34,6 +34,8 @@
 namespace core {
 namespace io {
 
+struct ResID;
+
 // Intermediate format for easy construction of
 // core::conformation::Residue objects from a StructFileRep.
 /// @details Subset of data from "ATOM" lines that is shared by all atoms in a
@@ -55,7 +57,7 @@ public:
 	bool operator!=( ResidueInformation const & that ) const;
 
 	std::string const & resName() const;
-	char chainID()  const;
+	std::string const & chainID() const;
 	int  resSeq()   const;
 	char iCode()    const;
 	int  terCount() const;
@@ -64,7 +66,7 @@ public:
 	std::string const & rosetta_resName() const;
 
 	void resName( std::string const & setting );
-	void chainID( char setting );
+	void chainID( std::string const & setting );
 	void resSeq( int setting );
 	void iCode( char setting );
 	void terCount( int setting );
@@ -84,13 +86,12 @@ public:
 	std::map< std::string, core::Real > const & temps() const; //< map of names to B-factors;  redundant but used a lot in reader
 
 	/// @brief Returns a short, printable designation for this residue.
-	std::string resid() const;  // 6-char string: resSeq_iCode_chainID_
-
+	ResID resid() const;  // 6-char string: resSeq_iCode_chainID_
 
 private:
 	/// For now, all member names have the same names as fields in PDB standard.
 	std::string resName_;
-	char chainID_;
+	std::string chainID_;
 	int resSeq_;
 	char iCode_;
 	int terCount_; //< number of TER or END cards encountered prior to this
@@ -106,6 +107,48 @@ private:
 	std::string rosetta_resName_;
 
 };  // class ResidueInformation
+
+struct ResID
+{
+	ResID( int seq=1, std::string const & chain=" ", char icode=' '):
+		seq_(seq),
+		icode_(icode),
+		chain_(chain)
+	{}
+
+	ResID( int seq, char icode, std::string const & chain):
+		seq_(seq),
+		icode_(icode),
+		chain_(chain)
+	{}
+
+	bool operator== (ResID const & other) const {
+		return std::make_tuple(seq_, icode_, chain_) == std::make_tuple(other.seq_, other.icode_, other.chain_);
+	}
+	bool operator!= (ResID const & other) const {
+		return std::make_tuple(seq_, icode_, chain_) != std::make_tuple(other.seq_, other.icode_, other.chain_);
+	}
+	bool operator< (ResID const & other) const {
+		return std::make_tuple(seq_, icode_, chain_) < std::make_tuple(other.seq_, other.icode_, other.chain_);
+	}
+
+	/// @brief A string representation for informational output purposes only
+	/// Not guaranteed to be consistently formatted for input or indexing purposes.
+	std::string
+	str() const;
+
+	/// @brief sequence, padded to 4 characters
+	std::string pad_seq() const;
+
+	int seq() const { return seq_; }
+	char icode() const { return icode_; }
+	std::string chain() const { return chain_; }
+
+private:
+	int seq_;
+	char icode_;
+	std::string chain_;
+};
 
 } // namespace io
 } // namespace core

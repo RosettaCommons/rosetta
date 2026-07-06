@@ -103,7 +103,7 @@ bool AlterSpecDisruptionDriver::reject_on_chains( Mutant const & mutant ){
 
 	if ( mutant.n_mutations() >= 2 ) { //if there is more than one mutation, check that they are on the same chain.  Disruptions on different chains are likely unrecoverable clashes.
 
-		char const chain(mutant.mutations_begin()->pdb_chain());
+		std::string const chain(mutant.mutations_begin()->pdb_chain());
 		for ( auto it(mutant.mutations_begin()), end(mutant.mutations_end()); it != end; ++it ) {
 			if ( chain != it->pdb_chain() ) {
 				//TR << "skipping Mutant " << mutant << " because it has a mutation on chain " << it->pdb_chain() << " which does not match the first mutation's chain " << chain << std::endl;

@@ -89,7 +89,11 @@ public:
 		bool append
 	);
 
+	/// @brief Destructor flushes the channel — copies/moves disabled to avoid duplicate flush_final() side effects.
 	~basic_mpi_streambuf() override;
+
+	basic_mpi_streambuf( basic_mpi_streambuf const & ) = delete;
+	basic_mpi_streambuf & operator =( basic_mpi_streambuf const & ) = delete;
 
 	int sync() override;
 	int_type overflow( int_type c ) override;
@@ -268,12 +272,7 @@ public:
 	void close() {
 	};
 
-	~basic_mpi_ostream() override
-	{
-		// adding a footer is not necessary here, as it will be
-		// taken care of during the last zflush_finalize()
-		// called by the higher level close() routines
-	}
+	~basic_mpi_ostream() override = default;
 
 	/// @brief stream output
 	/// @details if mpi stream has been finalized, will reset

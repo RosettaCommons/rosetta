@@ -1011,7 +1011,7 @@ ExplicitWaterMover::get_water_recovery( core::pose::Pose const & pose, bool incl
 	if ( !native_ ) return;
 
 	utility::vector1< core::Vector > native_hoh, predicted_hoh;
-	for ( core::Size i=1; i<pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 		bool is_wat = ( pose.residue(i).name() == "PWAT" || pose.residue(i).name() == "HOH" );
 		bool is_vwat = ( pose.residue(i).name() == "PWAT_V" || pose.residue(i).name() == "HOH_V" );
 		if ( is_wat || (incl_vrt&&is_vwat) ) {
@@ -1019,16 +1019,16 @@ ExplicitWaterMover::get_water_recovery( core::pose::Pose const & pose, bool incl
 		}
 	}
 
-	for ( core::Size i=1; i<native_->total_residue(); ++i ) {
+	for ( core::Size i=1; i<=native_->total_residue(); ++i ) {
 		if ( native_->residue(i).name() == "PWAT" || native_->residue(i).name() == "HOH" ) {
 			native_hoh.push_back( native_->residue(i).xyz(1) );
 		}
 	}
 
 	core::Real ncorr_05 = 0, ncorr_10 = 0;
-	for ( core::Size i=1; i<native_hoh.size(); ++i ) {
+	for ( core::Size i=1; i<=native_hoh.size(); ++i ) {
 		core::Real mindist_i = 100.0;
-		for ( core::Size j=1; j<predicted_hoh.size(); ++j ) {
+		for ( core::Size j=1; j<=predicted_hoh.size(); ++j ) {
 			core::Real dist_ij = (predicted_hoh[j] - native_hoh[i]).length_squared();
 			mindist_i = std::min( mindist_i, dist_ij );
 		}

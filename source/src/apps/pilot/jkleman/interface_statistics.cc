@@ -42,6 +42,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/types.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -194,10 +195,7 @@ private: // data
 	core::scoring::ScoreFunctionOP sfxn_;
 
 	/// @brief Partners;
-	std::string partner_;
-
-	/// @brief Partners split up
-	utility::vector1< std::string > partners_;
+	core::pose::DockingPartners partner_;
 
 	/// @brief jumps
 	utility::vector1< core::Size > jumps_;
@@ -206,7 +204,7 @@ private: // data
 	utility::vector1< Interface > interfaces_;
 
 	/// @brief Chains to consider for computing statistics
-	std::string chains_;
+	utility::vector1< std::string > chains_;
 
 	/// @brief Unique chains to minimize bias from multiple counts
 	utility::vector1< bool > uniq_;
@@ -231,8 +229,6 @@ private: // data
 MPInterfaceStatistics::MPInterfaceStatistics() :
 	Mover(),
 	sfxn_(),
-	partner_(),
-	partners_(),
 	jumps_(),
 	interfaces_(),
 	chains_(),
@@ -296,9 +292,9 @@ void MPInterfaceStatistics::apply( Pose & pose ) {
 		// writing a scorefile anyway, we might as well...
 		sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012.wts" );
 
-		// get foldtree from partners and movable jumps
 		// see ASCII art in protocols/membrane/util for how the foldtree is set up
-		jumps_ = create_membrane_multi_partner_foldtree_anchor_tmcom( pose, partner_ );
+		utility::vector1< utility::vector1< std::string > > partner_chains( {partner_.partner1, partner_.partner2} );
+		jumps_ = create_membrane_multi_partner_foldtree_anchor_tmcom( pose, partner_chains );
 		TR << "membrane interface jumps_ from foldtree: " << std::endl;
 		for ( core::Size i = 1; i <= jumps_.size(); ++i ) {
 			TR << jumps_[ i ] << " ";
@@ -389,7 +385,7 @@ void MPInterfaceStatistics::init_from_cmd() {
 	// docking partners
 	// requires all chains in the PDB file and is only for setting up the foldtree!!!
 	if ( option[ OptionKeys::docking::partners ].user() ) {
-		partner_ = option[ OptionKeys::docking::partners ]();
+		partner_ = core::pose::DockingPartners::docking_partners_from_string( option[ OptionKeys::docking::partners ]() );
 	} else {
 		utility_exit_with_message( "Please provide -docking:partners flag!" );
 	}
@@ -401,7 +397,10 @@ void MPInterfaceStatistics::init_from_cmd() {
 
 	// which chains to consider for getting statistics
 	if ( option[ OptionKeys::intf::chains ].user() ) {
-		chains_ = option[ OptionKeys::intf::chains ]();
+		chains_.clear();
+		for ( char c: option[ OptionKeys::intf::chains ]() ) {
+			chains_.push_back( std::string{c} );
+		}
 	}
 
 } // init from commandline
@@ -418,8 +417,7 @@ utility::vector1< bool > MPInterfaceStatistics::get_chains_from_cmd( Pose & pose
 		// get chain
 		core::Size res_chain = pose.residue( r ).chain();
 
-		// go through chains in string, 0-indexed
-		for ( char c : chains_ ) {
+		for ( std::string const & c : chains_ ) {
 
 			// get chain
 			core::Size chain = get_chain_id_from_chain( c, pose );
@@ -499,31 +497,20 @@ Real MPInterfaceStatistics::get_size( Pose & pose ) {
 	utility::vector1< core::Size > chains( get_chains( pose ) );
 	utility::vector1< Pose > pose_partners;
 
-	// go through partners and append the chains into subposes to fit the partners
-	for ( core::Size p = 1; p <= partners_.size(); ++p ) {
-
+	for ( auto const & p: { partner_.partner1, partner_.partner2 } ) {
 		Pose subpose;
-
-		// go through chains in partner, string indexes from 0
-		for ( char c : partners_[ p ] ) {
-
-			// get chainID from chain
+		for ( std::string const & c: p ) {
 			core::Size chainid( get_chain_id_from_chain( c, pose ) );
-
-			// go through pose chains to find pose chain in vector
 			for ( core::Size i = 1; i <= pose_chains.size(); ++i ) {
-
 				// if the chainids match, append chain to subpose
 				if ( chainid == chains[ i ] ) {
 					append_pose_to_pose( subpose, *pose_chains[ i ], true );
 				}
-
-			} // chains
+			} // pose chains
 		} // chains in partner
 
 		// add subpose to vector
 		pose_partners.push_back( subpose );
-
 	} // partners
 
 	// get total SASA
@@ -968,11 +955,6 @@ Size MPInterfaceStatistics::get_number_hbonds( Pose & pose ) {
 	using namespace core::scoring;
 	using namespace core::scoring::hbonds;
 
-	// get the partners
-	utility::vector1< std::string > partners( utility::string_split( partner_, '_' ) );
-	utility::vector1< std::string > partner1( utility::split( partners[1] ) );
-	utility::vector1< std::string > partner2( utility::split( partners[2] ) );
-
 	// get the Hbonds
 	hbonds::HBondDatabaseCOP hb_database(hbonds::HBondDatabase::get_database());
 	hbonds::HBondSet hb_set;
@@ -996,13 +978,13 @@ Size MPInterfaceStatistics::get_number_hbonds( Pose & pose ) {
 		bool acc_in_1( false );
 
 		// donor in partner1?
-		for ( Size j = 1; j <= partner1.size(); ++j ) {
-			don_in_1 = res_in_chain( pose, don, partner1[ j ] );
+		for ( Size j = 1; j <= partner_.partner1.size(); ++j ) {
+			don_in_1 = res_in_chain( pose, don, partner_.partner1[ j ] );
 		}
 
 		// acceptor in partner1?
-		for ( Size j = 1; j <= partner1.size(); ++j ) {
-			acc_in_1 = res_in_chain( pose, acc, partner1[ j ] );
+		for ( Size j = 1; j <= partner_.partner1.size(); ++j ) {
+			acc_in_1 = res_in_chain( pose, acc, partner_.partner1[ j ] );
 		}
 
 		//  TR << "hbond: don " << don << ", acc " << acc;
@@ -1351,9 +1333,6 @@ void MPInterfaceStatistics::fill_vectors_with_data( Pose & pose ) {
 /// @brief Calculate interfaces
 /// @detail This is for 2-body docking
 void MPInterfaceStatistics::calculate_interfaces( Pose & pose ) {
-
-	// fill partners_ vector
-	partners_ = utility::string_split( partner_, '_' );
 
 	// initialize intf_ vector with false for each residue
 	utility::vector1< bool > tmp( pose.size(), false );

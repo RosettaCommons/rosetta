@@ -5,43 +5,52 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
-
 
 import logging
 
-from typing import Tuple
+from pyrosetta.distributed.cluster.type_defs import Tuple
 
 
 class DefaultProtocolNameFilter(logging.Filter):
-    """Maybe set protocol name of third-party root log records for logging socket listener formatter."""
+    """
+    Maybe set PyRosetta protocol name of third-party root log records for logging socket listener formatter.
+    """
+
     def __init__(self) -> None:
+        """Initialize the logging filter."""
         super().__init__()
 
     def filter(self, record: logging.LogRecord) -> bool:
+        """Filter log records."""
         if not hasattr(record, "protocol_name"):
             record.protocol_name = "-"
         return True
 
 
 class SetProtocolNameFilter(logging.Filter):
-    """Set protocol name for logging socket listener formatter."""
+    """Set PyRosetta protocol name for logging socket listener formatter."""
+
     def __init__(self, protocol_name: str) -> None:
+        """Initialize the logging filter."""
         super().__init__()
         self.protocol_name = protocol_name
 
     def filter(self, record: logging.LogRecord) -> bool:
+        """Filter log records."""
         record.protocol_name = self.protocol_name
         return True
 
 
 class DefaultSocketAddressFilter(logging.Filter):
     """Maybe set socket address of third-party root log records for logging socket listener formatter."""
+
     def __init__(self) -> None:
+        """Initialize the logging filter."""
         super().__init__()
 
     def filter(self, record: logging.LogRecord) -> bool:
+        """Filter log records."""
         if not hasattr(record, "socket_address"):
             record.socket_address = format_socket_address(("-", 0))
         return True
@@ -49,31 +58,40 @@ class DefaultSocketAddressFilter(logging.Filter):
 
 class SetSocketAddressFilter(logging.Filter):
     """Set socket address for logging socket listener filter."""
+
     def __init__(self, socket_listener_address: Tuple[str, int]) -> None:
+        """Initialize the logging filter."""
         super().__init__()
         self.socket_address = format_socket_address(socket_listener_address)
 
     def filter(self, record: logging.LogRecord) -> bool:
+        """Filter log records."""
         record.socket_address = self.socket_address
         return True
 
 
 class SocketAddressFilter(logging.Filter):
     """Filter log records for the logging socket listener address."""
+
     def __init__(self, socket_listener_address: Tuple[str, int]) -> None:
+        """Initialize the logging filter."""
         super().__init__()
         self.socket_address = format_socket_address(socket_listener_address)
 
     def filter(self, record: logging.LogRecord) -> bool:
+        """Filter log records."""
         return record.socket_address == self.socket_address
 
 
 class DefaultTaskIdFilter(logging.Filter):
     """Maybe set task ID of third-party root log records for logging socket listener formatter."""
+
     def __init__(self) -> None:
+        """Initialize the logging filter."""
         super().__init__()
 
     def filter(self, record: logging.LogRecord) -> bool:
+        """Filter log records."""
         if not hasattr(record, "task_id"):
             record.task_id = "-"
         return True
@@ -81,11 +99,14 @@ class DefaultTaskIdFilter(logging.Filter):
 
 class SetTaskIdFilter(logging.Filter):
     """Set task ID for logging socket listener filter."""
+
     def __init__(self, task_id: str) -> None:
+        """Initialize the logging filter."""
         super().__init__()
         self.task_id = task_id
 
     def filter(self, record: logging.LogRecord) -> bool:
+        """Filter log records."""
         record.task_id = self.task_id
         return True
 

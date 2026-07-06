@@ -33,6 +33,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/types.hh>
 
@@ -1414,7 +1415,7 @@ public: // test functions
 		addmem->apply(pose);
 
 		// create foldtree
-		core::Size i_jump = create_membrane_docking_foldtree_from_partners( pose, "KL_MN" );
+		core::Size i_jump = create_membrane_docking_foldtree_from_partners( pose, core::pose::DockingPartners::docking_partners_from_string("KL_MN") );
 
 		// test
 		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 1 ), 557 );
@@ -1503,7 +1504,7 @@ public: // test functions
 		addmem->apply(pose);
 
 		// create foldtree
-		std::string partners = "A_BC_D";
+		utility::vector1< utility::vector1< std::string > > partners{ {"A"}, {"B","C"}, {"D"} };
 		utility::vector1< core::Size > interface_jumps = create_membrane_multi_partner_foldtree_anchor_tmcom( pose, partners );
 
 		// test

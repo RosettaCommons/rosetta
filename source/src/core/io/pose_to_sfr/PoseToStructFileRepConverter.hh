@@ -338,7 +338,7 @@ private: // PRIVATE DATA:
 	bool atom_indices_initialized_;
 
 	// A cache of the new_chainIDs data, initialized for each pose.
-	utility::vector1< char > new_chainIDs_;
+	utility::vector1< std::string > new_chainIDs_;
 
 }; // class PoseToStructFileRep
 

@@ -181,11 +181,11 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS(test_helix.helixID, 2);
 		TS_ASSERT_EQUALS(test_helix.helix_name, "  2");
 		TS_ASSERT_EQUALS(test_helix.name3_1, "HIS");
-		TS_ASSERT_EQUALS(test_helix.chainID1, 'A');
+		TS_ASSERT_EQUALS(test_helix.chainID1, "A");
 		TS_ASSERT_EQUALS(test_helix.seqNum1, 11);
 		TS_ASSERT_EQUALS(test_helix.icode1, ' ');
 		TS_ASSERT_EQUALS(test_helix.name3_2, "HIS");
-		TS_ASSERT_EQUALS(test_helix.chainID2, 'A');
+		TS_ASSERT_EQUALS(test_helix.chainID2, "A");
 		TS_ASSERT_EQUALS(test_helix.seqNum2, 16);
 		TS_ASSERT_EQUALS(test_helix.icode2, ' ');
 		TS_ASSERT_EQUALS(test_helix.helixClass, 1);
@@ -201,11 +201,11 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS(test_sheet.sheetID, "  4");
 		TS_ASSERT_EQUALS(test_sheet.num_strands, 1);
 		TS_ASSERT_EQUALS(test_sheet.name3_1, "GLU");
-		TS_ASSERT_EQUALS(test_sheet.chainID1, 'A');
+		TS_ASSERT_EQUALS(test_sheet.chainID1, "A");
 		TS_ASSERT_EQUALS(test_sheet.seqNum1, 44);
 		TS_ASSERT_EQUALS(test_sheet.icode1, ' ');
 		TS_ASSERT_EQUALS(test_sheet.name3_2, "GLU");
-		TS_ASSERT_EQUALS(test_sheet.chainID2, 'A');
+		TS_ASSERT_EQUALS(test_sheet.chainID2, "A");
 		TS_ASSERT_EQUALS(test_sheet.seqNum2, 46);
 		TS_ASSERT_EQUALS(test_sheet.icode2, ' ');
 		TS_ASSERT_EQUALS(test_sheet.strandClass, 0);

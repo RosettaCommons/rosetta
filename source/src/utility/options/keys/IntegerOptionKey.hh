@@ -121,11 +121,6 @@ public: // Creation
 	}
 
 
-	/// @brief Destructor
-	inline
-	~IntegerOptionKey() override {}
-
-
 public: // Assignment
 
 

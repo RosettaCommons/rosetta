@@ -31,9 +31,6 @@ class SimpleMetricDataAccessorBase(PoseCacheAccessorBase, MutableMapping):
     def __init__(self, pose):
         super().__init__(pose)
 
-    def __getitem__(self, key):
-        return self.maybe_decode(self.all[key])
-
     def __setitem__(self, key, value):
         self._validate_set(key)
         if isinstance(value, float):
@@ -52,8 +49,8 @@ class SimpleMetricDataAccessorBase(PoseCacheAccessorBase, MutableMapping):
         else:
             raise KeyError(key)
 
-    def _has_sm_data(self, pose):
-        return pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA)
+    def _has_sm_data(self):
+        return self.pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA)
 
     def _format_metric(self, raw_data, as_dict=False):
         out_data = {} 
@@ -95,7 +92,7 @@ class SimpleMetricDataAccessorBase(PoseCacheAccessorBase, MutableMapping):
 
     def clear(self):
         self._maybe_delete_keys_from_sm_data(
-            keys=tuple(self.all.keys()),
+            keys=tuple(self.all),
             attributes=("string", "real"),
         )
 
@@ -110,7 +107,7 @@ class SimpleMetricStringDataAccessor(SimpleMetricDataAccessorBase):
     @property
     def all(self):
         return types.MappingProxyType(
-            dict(get_sm_data(self.pose).get_string_metric_data()) if self._has_sm_data(self.pose) else {}
+            dict(get_sm_data(self.pose).get_string_metric_data()) if self._has_sm_data() else {}
         )
 
     def __setitem__(self, key, value):
@@ -132,6 +129,15 @@ class SimpleMetricStringDataAccessor(SimpleMetricDataAccessorBase):
         else:
             raise KeyError(key)
 
+    def set_mappable(self, mappable):
+        try:
+            for key, value in mappable.items():
+                self._validate_set(key)
+                self.apply(self.custom_string_value_metric, key, value)
+        finally:
+            self._maybe_delete_reserved_keys_from_sm_data()
+            self._reserved_custom_metric_keys_warning()
+
     def clear(self):
         self._maybe_delete_keys_from_sm_data(keys=tuple(self.all.keys()), attributes=("string",))
 
@@ -146,7 +152,7 @@ class SimpleMetricRealDataAccessor(SimpleMetricDataAccessorBase):
     @property
     def all(self):
         return types.MappingProxyType(
-            dict(get_sm_data(self.pose).get_real_metric_data()) if self._has_sm_data(self.pose) else {}
+            dict(get_sm_data(self.pose).get_real_metric_data()) if self._has_sm_data() else {}
         )
 
     def __setitem__(self, key, value):
@@ -168,6 +174,15 @@ class SimpleMetricRealDataAccessor(SimpleMetricDataAccessorBase):
         else:
             raise KeyError(key)
 
+    def set_mappable(self, mappable):
+        try:
+            for key, value in mappable.items():
+                self._validate_set(key)
+                self.apply(self.custom_real_value_metric, key, value)
+        finally:
+            self._maybe_delete_reserved_keys_from_sm_data()
+            self._reserved_custom_metric_keys_warning()
+
     def clear(self):
         self._maybe_delete_keys_from_sm_data(keys=tuple(self.all.keys()), attributes=("real",))
 
@@ -184,7 +199,7 @@ class SimpleMetricCompositeStringDataAccessor(SimpleMetricDataAccessorBase):
         return types.MappingProxyType(
             self.format_composite_string(
                 get_sm_data(self.pose).get_composite_string_metric_data()
-            ) if self._has_sm_data(self.pose) else {}
+            ) if self._has_sm_data() else {}
         )
 
     def __setitem__(self, key, value):
@@ -203,7 +218,7 @@ class SimpleMetricCompositeRealDataAccessor(SimpleMetricDataAccessorBase):
         return types.MappingProxyType(
             self.format_composite_real(
                 get_sm_data(self.pose).get_composite_real_metric_data()
-            ) if self._has_sm_data(self.pose) else {}
+            ) if self._has_sm_data() else {}
         )
 
     def __setitem__(self, key, value):
@@ -222,7 +237,7 @@ class SimpleMetricPerResidueStringDataAccessor(SimpleMetricDataAccessorBase):
         return types.MappingProxyType(
             self.format_per_residue_string(
                 get_sm_data(self.pose).get_per_residue_string_metric_output()
-            ) if self._has_sm_data(self.pose) else {}
+            ) if self._has_sm_data() else {}
         )
 
     def __setitem__(self, key, value):
@@ -241,7 +256,7 @@ class SimpleMetricPerResidueRealDataAccessor(SimpleMetricDataAccessorBase):
         return types.MappingProxyType(
             self.format_per_residue_real(
                 get_sm_data(self.pose).get_per_residue_real_metric_output()
-            ) if self._has_sm_data(self.pose) else {}
+            ) if self._has_sm_data() else {}
         )
 
     def __setitem__(self, key, value):
@@ -260,7 +275,7 @@ class SimpleMetricPerResidueProbabilitiesDataAccessor(SimpleMetricDataAccessorBa
         return types.MappingProxyType(
             self.format_per_residue_probabilities(
                 get_sm_data(self.pose).get_per_residue_probabilities_metric_output()
-            ) if self._has_sm_data(self.pose) else {}
+            ) if self._has_sm_data() else {}
         )
 
     def __setitem__(self, key, value):
@@ -293,62 +308,62 @@ class SimpleMetricDataAccessor(SimpleMetricDataAccessorBase):
             3. Composite string metrics
             4. String metrics
         """
-        sm_string = self.string # Lowest precedence
-        sm_composite_string = self.composite_string
-        sm_per_residue_string = self.per_residue_string
-        sm_per_residue_probabilities = self.per_residue_probabilities
-        sm_real = self.real
-        sm_composite_real = self.composite_real
-        sm_per_residue_real = self.per_residue_real # Highest precedence
+        sm_string = dict(self.string.all) # Lowest precedence
+        sm_composite_string = dict(self.composite_string.all)
+        sm_per_residue_string = dict(self.per_residue_string.all)
+        sm_per_residue_probabilities = dict(self.per_residue_probabilities.all)
+        sm_real = dict(self.real.all)
+        sm_composite_real = dict(self.composite_real.all)
+        sm_per_residue_real = dict(self.per_residue_real.all) # Highest precedence
 
         _msg = "SimpleMetric {0} data key is clobbering SimpleMetric {1} data key: '{2}'"
-        for k in sm_string.keys():
-            if k in sm_composite_string.keys():
+        for k in sm_string:
+            if k in sm_composite_string:
                 self._clobber_warning(_msg.format("composite string", "string", k))
-            if k in sm_per_residue_string.keys():
+            if k in sm_per_residue_string:
                 self._clobber_warning(_msg.format("per-residue string", "string", k))
-            if k in sm_per_residue_probabilities.keys():
+            if k in sm_per_residue_probabilities:
                 self._clobber_warning(_msg.format("per-residue probabilities", "string", k))
-            if k in sm_real.keys():
+            if k in sm_real:
                 self._clobber_warning(_msg.format("real", "string", k))
-            if k in sm_composite_real.keys():
+            if k in sm_composite_real:
                 self._clobber_warning(_msg.format("composite real", "string", k))
-            if k in sm_per_residue_real.keys():
+            if k in sm_per_residue_real:
                 self._clobber_warning(_msg.format("per-residue real", "string", k))
-        for k in sm_composite_string.keys():
-            if k in sm_per_residue_string.keys():
+        for k in sm_composite_string:
+            if k in sm_per_residue_string:
                 self._clobber_warning(_msg.format("per-residue string", "composite string", k))
-            if k in sm_per_residue_probabilities.keys():
+            if k in sm_per_residue_probabilities:
                 self._clobber_warning(_msg.format("per-residue probabilities", "composite string", k))
-            if k in sm_real.keys():
+            if k in sm_real:
                 self._clobber_warning(_msg.format("real", "composite string", k))
-            if k in sm_composite_real.keys():
+            if k in sm_composite_real:
                 self._clobber_warning(_msg.format("composite real", "composite string", k))
-            if k in sm_per_residue_real.keys():
+            if k in sm_per_residue_real:
                 self._clobber_warning(_msg.format("per-residue real", "composite string", k))
-        for k in sm_per_residue_string.keys():
-            if k in sm_per_residue_probabilities.keys():
+        for k in sm_per_residue_string:
+            if k in sm_per_residue_probabilities:
                 self._clobber_warning(_msg.format("per-residue probabilities", "per-residue string", k))
-            if k in sm_real.keys():
+            if k in sm_real:
                 self._clobber_warning(_msg.format("real", "per-residue string", k))
-            if k in sm_composite_real.keys():
+            if k in sm_composite_real:
                 self._clobber_warning(_msg.format("composite real", "per-residue string", k))
-            if k in sm_per_residue_real.keys():
+            if k in sm_per_residue_real:
                 self._clobber_warning(_msg.format("per-residue real", "per-residue string", k))
-        for k in sm_per_residue_probabilities.keys():
-            if k in sm_real.keys():
+        for k in sm_per_residue_probabilities:
+            if k in sm_real:
                 self._clobber_warning(_msg.format("real", "per-residue probabilities", k))
-            if k in sm_composite_real.keys():
+            if k in sm_composite_real:
                 self._clobber_warning(_msg.format("composite real", "per-residue probabilities", k))
-            if k in sm_per_residue_real.keys():
+            if k in sm_per_residue_real:
                 self._clobber_warning(_msg.format("per-residue real", "per-residue probabilities", k))
-        for k in sm_real.keys():
-            if k in sm_composite_real.keys():
+        for k in sm_real:
+            if k in sm_composite_real:
                 self._clobber_warning(_msg.format("composite real", "real", k))
-            if k in sm_per_residue_real.keys():
+            if k in sm_per_residue_real:
                 self._clobber_warning(_msg.format("per-residue real", "real", k))
-        for k in sm_composite_real.keys():
-            if k in sm_per_residue_real.keys():
+        for k in sm_composite_real:
+            if k in sm_per_residue_real:
                 self._clobber_warning(_msg.format("per-residue real", "composite real", k))
 
         return types.MappingProxyType(

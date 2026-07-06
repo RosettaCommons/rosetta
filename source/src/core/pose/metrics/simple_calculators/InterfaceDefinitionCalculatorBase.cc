@@ -48,7 +48,7 @@ InterfaceDefinitionCalculator::InterfaceDefinitionCalculator( Size const chain1_
 {
 }
 
-InterfaceDefinitionCalculator::InterfaceDefinitionCalculator( char const chain1_letter, char const chain2_letter ) :
+InterfaceDefinitionCalculator::InterfaceDefinitionCalculator( std::string const & chain1_letter, std::string const & chain2_letter ) :
 	StructureDependentCalculator(),
 	chain1_letter_(chain1_letter),
 	chain2_letter_(chain2_letter),
@@ -70,8 +70,8 @@ void InterfaceDefinitionCalculator::verify_chain_setup( pose::Pose const & pose 
 
 // helper method to convert a single chain letter to a single chain number.
 // returns 0 if chain letter not found
-Size InterfaceDefinitionCalculator::chain_letter_to_number( pose::Pose const & pose, char const chain_id ) {
-	char temp_letter_ = chain_id;
+Size InterfaceDefinitionCalculator::chain_letter_to_number( pose::Pose const & pose, std::string const & chain_id ) {
+	std::string temp_letter_ = chain_id;
 	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.pdb_info()->chain( i ) == temp_letter_ ) {
 			return pose.chain( i );

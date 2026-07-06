@@ -243,7 +243,7 @@ AlignPDBInfoToSequences::apply_single_sequence( core::pose::Pose& pose ) {
 		if ( pose_aln->sequence()[i-1] != '-' ) {
 			pose.pdb_info()->set_resinfo(
 				pose_loc,
-				linear_chains[i].at(0),
+				linear_chains[i],
 				linear_residue_numbers[i],
 				linear_insCodes[i].at(0),
 				linear_segmentIDs[i]
@@ -453,7 +453,7 @@ AlignPDBInfoToSequences::apply_multi_sequence( core::pose::Pose& pose ) {
 
 				pose.pdb_info()->set_resinfo(
 					current_pose_seq->start() + found_count,
-					current_chain.at(0),
+					current_chain,
 					residue_numbers[j+1],
 					insCode,
 					seg_id

@@ -21,6 +21,7 @@
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/chemical/AA.hh>
 
+#include <string>
 
 namespace protocols {
 namespace constel {
@@ -32,11 +33,11 @@ struct ResMut {
 
 	char saa; // start amino acid type
 	char eaa; // end amino acid type
-	char cid; // identifier of the chain that the residue belongs to
+	std::string cid; // identifier of the chain that the residue belongs to
 	int pdbn; // pdb number of the residue in the chain
 	core::Size psn; // number of the residue in its Rosetta pose
 
-	ResMut(char s, char e, char c, int d, core::Size r) : saa(s), eaa(e), cid(c), pdbn(d), psn(r) {}
+	ResMut(char s, char e, std::string const & c, int d, core::Size r) : saa(s), eaa(e), cid(c), pdbn(d), psn(r) {}
 };
 
 /// @brief Outputs all pair-constellations between a given pair of residues

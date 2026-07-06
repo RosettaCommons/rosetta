@@ -5,12 +5,13 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
 
-
 try:
-    from distributed import Worker, WorkerPlugin
+    from distributed import (
+        Worker,
+        WorkerPlugin,
+    )
 except ImportError:
     try:
         from distributed import Worker
@@ -19,7 +20,7 @@ except ImportError:
         print(
             "Importing 'pyrosetta.distributed.cluster.worker_plugins' requires the "
             + "third-party package 'distributed' as a dependency!\n"
-            + "Please install the package into your python environment. "
+            + "Please install this package into your virtual environment. "
             + "For installation instructions, visit:\n"
             + "https://pypi.org/project/distributed/\n"
         )
@@ -28,38 +29,41 @@ except ImportError:
 import logging
 
 from contextlib import suppress
-from typing import Optional
 
-from pyrosetta.distributed.cluster.hkdf import MaskedBytes, compare_digest, hmac_digest
-from pyrosetta.distributed.cluster.logging_handlers import MultiSocketHandler
+from pyrosetta.distributed.cluster.hkdf import MaskedBytes
 from pyrosetta.distributed.cluster.logging_filters import (
     DefaultProtocolNameFilter,
     DefaultSocketAddressFilter,
     DefaultTaskIdFilter,
 )
+from pyrosetta.distributed.cluster.logging_handlers import MultiSocketHandler
 from pyrosetta.distributed.cluster.serialization import NonceCache
-
+from pyrosetta.distributed.cluster.type_defs import Optional
 
 SOCKET_LOGGER_PLUGIN_NAME: str = "PyRosettaCluster_socket_logger_plugin"
 WORKER_LOGGER_NAME: str = "PyRosettaCluster_dask_worker"
 
 
 class SocketLoggerPlugin(WorkerPlugin):
-    """Install a `MultiSocketHandler` logging handler on a dask worker logger."""
+    """Install a `MultiSocketHandler` logging handler on a Dask worker logger."""
+
     def __init__(self, logging_level: str, maxsize: int = 128) -> None:
+        """Initialize the `SocketLoggerPlugin` Dask worker plugin."""
+
         self.logging_level: str = logging_level
         self.maxsize: int = maxsize
         self.logger_name: str = WORKER_LOGGER_NAME
         self.router: Optional[logging.Handler] = None
 
     def setup(self, worker: Worker) -> None:
-        """Setup dask worker plugin."""
+        """Setup the `SocketLoggerPlugin` Dask worker plugin."""
+
         logger = logging.getLogger(self.logger_name)
         logger.setLevel(self.logging_level)
         logger.propagate = False # Root logger records handled by `logging.StreamHandler(sys.stdout)`
         self.router = MultiSocketHandler(logging_level=self.logging_level, maxsize=self.maxsize)
         self.router.setLevel(self.logging_level)
-        # On dask workers, contextual information from `logging.LoggerAdapter` supersedes
+        # On Dask workers, contextual information from `logging.LoggerAdapter` supersedes
         # these default filters (added for any root logger records from third-party dependencies)
         self.router.addFilter(DefaultProtocolNameFilter())
         self.router.addFilter(DefaultSocketAddressFilter())
@@ -67,7 +71,8 @@ class SocketLoggerPlugin(WorkerPlugin):
         logger.addHandler(self.router)
 
     def teardown(self, worker: Worker) -> None:
-        """Teardown dask worker plugin."""
+        """Teardown the `SocketLoggerPlugin` Dask worker plugin."""
+
         logger = logging.getLogger(self.logger_name)
         if self.router and self.router in logger.handlers:
             self.router.flush()
@@ -78,11 +83,15 @@ class SocketLoggerPlugin(WorkerPlugin):
 
 
 class TaskSecurityPlugin(WorkerPlugin, NonceCache):
-    """Install a secure `NonceCache` instance with replay protection on a dask worker."""
+    """Install a secure `NonceCache` instance with replay protection on a Dask worker."""
+
     def __init__(self, instance_id: str, prk: MaskedBytes, max_nonce: int) -> None:
+        """Initialize the `TaskSecurityPlugin` Dask worker plugin."""
         NonceCache.__init__(self, instance_id=instance_id, prk=prk, max_nonce=max_nonce)
 
     def setup(self, worker: Worker) -> None:
+        """Setup the `TaskSecurityPlugin` Dask worker plugin."""
+
         # Worker plugin name must be the PyRosettaCluster instance identifier
         _maybe_existing_plugin = worker.plugins.get(self.instance_id, None)
         if _maybe_existing_plugin is not None and _maybe_existing_plugin is not self:
@@ -93,4 +102,5 @@ class TaskSecurityPlugin(WorkerPlugin, NonceCache):
         assert self.__getstate__()["prk"] is None, f"Pseudo-random key is not hidden on worker nonce cache."
 
     def teardown(self, worker: Worker) -> None:
+        """Teardown the `TaskSecurityPlugin` Dask worker plugin."""
         self.prk = None

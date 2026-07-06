@@ -154,18 +154,15 @@ void PeptideDeriverFilter::parse_options() {
 	set_optimize_cyclic_threshold(basic::options::option[basic::options::OptionKeys::peptide_deriver::optimize_cyclic_threshold]());
 	set_report_format( PeptideDeriverFilter::parse_report_format_string(basic::options::option[basic::options::OptionKeys::peptide_deriver::report_format]()) );
 
-	utility::vector1<char> restrict_receptors_to_chains;
+	utility::vector1<std::string> restrict_receptors_to_chains;
 
 	for ( std::string const & chain_string : basic::options::option[basic::options::OptionKeys::peptide_deriver::restrict_receptors_to_chains]() ) {
-		assert(chain_string.size() == 1);
-		restrict_receptors_to_chains.push_back(chain_string[0]);
-
+		restrict_receptors_to_chains.push_back(chain_string);
 	}
 
-	utility::vector1<char> restrict_partners_to_chains;
+	utility::vector1<std::string> restrict_partners_to_chains;
 	for ( std::string const & chain_string : basic::options::option[basic::options::OptionKeys::peptide_deriver::restrict_partners_to_chains]() ) {
-		assert(chain_string.size() == 1);
-		restrict_partners_to_chains.push_back(chain_string[0]);
+		restrict_partners_to_chains.push_back(chain_string);
 	}
 
 	set_restrict_receptors_to_chains(restrict_receptors_to_chains);
@@ -438,7 +435,7 @@ PeptideDeriverFilter::report(std::ostream & out, core::pose::Pose const & orig_p
 }
 
 utility::vector1<core::Size>
-PeptideDeriverFilter::get_chain_indices(core::pose::Pose const & pose, utility::vector1<char> const & restrict_to_chains) {
+PeptideDeriverFilter::get_chain_indices(core::pose::Pose const & pose, utility::vector1<std::string> const & restrict_to_chains) {
 	utility::vector1<core::Size> chain_indices;
 
 	if ( restrict_to_chains.empty() ) {
@@ -448,8 +445,8 @@ PeptideDeriverFilter::get_chain_indices(core::pose::Pose const & pose, utility::
 			chain_indices.push_back(i);
 		}
 	} else {
-		for ( char const chain_char : restrict_to_chains ) {
-			chain_indices.push_back( core::pose::get_chain_id_from_chain( chain_char, pose ) );
+		for ( std::string const & chain : restrict_to_chains ) {
+			chain_indices.push_back( core::pose::get_chain_id_from_chain( chain, pose ) );
 		}
 	}
 	return chain_indices;
@@ -565,8 +562,8 @@ PeptideDeriverFilter::derive_peptide(
 	core::Size partner_start = partner_pose.conformation().chain_begin(1);
 	core::Size partner_end = partner_pose.conformation().chain_end(1);
 
-	char receptor_chain_letter = receptor_pose.pdb_info()->chain(receptor_start);
-	char partner_chain_letter = partner_pose.pdb_info()->chain(partner_start);
+	std::string receptor_chain_letter = receptor_pose.pdb_info()->chain(receptor_start);
+	std::string partner_chain_letter = partner_pose.pdb_info()->chain(partner_start);
 
 	std::ostringstream options_string;
 
@@ -884,7 +881,7 @@ PeptideDeriverFilter::generate_N2C_cyclic_peptide_protein_complex(core::pose::Po
 	core::pose::PoseOP pose_for_N2C_cyclization( new core::pose::Pose(*receptor_peptide_pose));
 
 	// setup for calling PeptideCyclizeMover to setup chemical bond and constraints on N-ter and C-ter residues
-	char const cyclic_peptide_chain = pose_for_N2C_cyclization->pdb_info()->chain(pep_nter_idx);
+	std::string const cyclic_peptide_chain = pose_for_N2C_cyclization->pdb_info()->chain(pep_nter_idx);
 	core::select::residue_selector::ChainSelectorCOP peptide_chain_selector (new core::select::residue_selector::ChainSelector( cyclic_peptide_chain));
 	protocols::cyclic_peptide::PeptideCyclizeMoverOP cyclize_head_to_tail ( new protocols::cyclic_peptide::PeptideCyclizeMover () );
 	cyclize_head_to_tail->set_selector(peptide_chain_selector);
@@ -1067,11 +1064,11 @@ PeptideDeriverFilter::parse_my_tag( utility::tag::TagCOP tag,
 		set_report_format( PeptideDeriverFilter::parse_report_format_string(tag->getOption<std::string>( "report_format" )) );
 	}
 
-	utility::vector1<char> restrict_receptors_to_chains(
-		utility::string_split( tag->getOption<std::string>("restrict_receptors_to_chains", ""), ',', char() ));
+	utility::vector1<std::string> restrict_receptors_to_chains(
+		utility::string_split( tag->getOption<std::string>("restrict_receptors_to_chains", ""), ',' ));
 
-	utility::vector1<char> restrict_partners_to_chains(
-		utility::string_split( tag->getOption<std::string>("restrict_partners_to_chains", ""), ',', char() ));
+	utility::vector1<std::string> restrict_partners_to_chains(
+		utility::string_split( tag->getOption<std::string>("restrict_partners_to_chains", ""), ',' ));
 
 	set_restrict_receptors_to_chains(restrict_receptors_to_chains);
 	set_restrict_partners_to_chains(restrict_partners_to_chains);

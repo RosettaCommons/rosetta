@@ -114,6 +114,16 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
                 shutil.move(archive, release_path + '/' + os.path.basename(archive) )
 
 
+                # creating a local symlink with simple `latest` ie: `pyrosetta-latest-cp39-cp39-macosx_12_0_arm64.whl` --> to exact version from `pyrosetta-2025.41+release.de3cc17d50-cp39-cp39-macosx_12_0_arm64.whl`
+                symlink_frst_parition = os.path.basename(archive).partition('-')
+                symlink_path = release_path + '/' + symlink_frst_parition[0] + '-0-cp' + symlink_frst_parition[2].partition('-cp')[2]
+
+                if os.path.islink(symlink_path): os.unlink(symlink_path)
+                os.symlink(os.path.basename(archive), symlink_path)
+
+
+
+
         # removing old archives and adjusting _latest_html_
         files = [f for f in os.listdir(release_path) if f != _latest_html_  and  f[0] != '.' ]
         files.sort(key=lambda f: os.path.getmtime(release_path+'/'+f))
@@ -739,7 +749,7 @@ def native_libc_pyrosetta_conda_release(kind, rosetta_dir, working_dir, platform
 
     TR('Running PyRosetta conda release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
-    conda = setup_conda_virtual_environment(working_dir, platform, config, packages='setuptools')
+    conda = setup_conda_virtual_environment(working_dir, platform, config, packages='setuptools pybind11-stubgen')
 
     platform_name = get_platform_release_name(platform)
     release_name = 'PyRosetta4.conda.{platform}.python{python_version}.{kind}'.format(kind=kind, platform=platform_name, python_version=platform['python'].replace('.', '') )

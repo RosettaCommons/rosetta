@@ -29,8 +29,8 @@
 #include <map>
 #include <platform/types.hh>
 
-namespace numeric{
-namespace histograms{
+namespace numeric {
+namespace histograms {
 
 
 template<typename key1>
@@ -38,7 +38,7 @@ class OneDHistogram {
 
 public:
 
-	OneDHistogram<key1>()= default;
+	OneDHistogram()= default;
 
 	void insert_data(key1 key_1, platform::Size counts){
 		histogram_.insert(std::make_pair(key_1, counts));
@@ -52,7 +52,7 @@ public:
 
 
 private:
-std::map< key1, platform::Size > histogram_;
+	std::map< key1, platform::Size > histogram_;
 
 
 };

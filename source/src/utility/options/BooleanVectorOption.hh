@@ -76,12 +76,6 @@ public: // Creation
 	}
 
 
-	/// @brief Destructor
-	inline
-
-	~BooleanVectorOption() override {}
-
-
 public: // Properties
 
 

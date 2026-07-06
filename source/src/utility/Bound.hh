@@ -77,12 +77,6 @@ public: // Creation
 	}
 
 
-	/// @brief Destructor
-	inline
-	~Bound()
-	{}
-
-
 public: // Methods
 
 

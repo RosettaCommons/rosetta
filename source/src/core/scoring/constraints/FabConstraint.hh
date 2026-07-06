@@ -64,19 +64,18 @@ public:
 	read_def(std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory) override;
 
 	Size
-	pose_res_no(core::pose::Pose const & pose, std::string tempres);
+	pose_res_no(core::pose::Pose const & pose, std::string const & res_designation);
 
 	utility::vector1<Real>
 	calc_penalty_vec(Size start_res, Size stop_res, utility::vector1<Size> res1, utility::vector1<Size> res2);
 
 	void
-	setup_csts(core::pose::Pose const & pose, utility::vector1<Size> res1, utility::vector1<Size> res2, std::string antchains);
+	setup_csts(core::pose::Pose const & pose, utility::vector1<Size> const & res1, utility::vector1<Size> const & res2, utility::vector1<std::string> const & antchains);
 
 	bool operator==( Constraint const & rhs ) const override;
 	bool same_type_as_me( Constraint const & other ) const override;
 
 private:
-
 
 #ifdef    SERIALIZATION
 public:
