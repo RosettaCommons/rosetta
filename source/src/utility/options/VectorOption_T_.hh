@@ -107,7 +107,7 @@ protected: // Creation
 
 	/// @brief Copy constructor
 
-	VectorOption_T_( VectorOption_T_ const & option ) = default;
+	VectorOption_T_( VectorOption_T_ const & ) = default;
 
 	/// @brief Key + description constructor
 	inline
