@@ -195,7 +195,7 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 
 	if ( !option[in::file::movemap].user() && !movemap_ ) {
 		//original code: read from command line options
-		char const chain(option[FloppyTail::flexible_chain].value()[0]); //just take the first one
+		std::string chain(option[FloppyTail::flexible_chain].value());
 		start_ = pose.pdb_info()->pdb2pose().find(chain, option[FloppyTail::flexible_start_resnum].value());
 		if ( option[FloppyTail::flexible_stop_resnum].user() ) {
 			stop_ = pose.pdb_info()->pdb2pose().find(chain, option[FloppyTail::flexible_stop_resnum].value());

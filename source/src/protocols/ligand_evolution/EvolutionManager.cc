@@ -74,7 +74,7 @@ void EvolutionManager::init() {
 
 	library_.initialize_from_options( evoopt, external_scoring_, rank_ );
 
-	scorer_ = utility::pointer::make_shared< Scorer >( Scorer( library_, evoopt->get_n_scoring_runs(), evoopt->get_ligand_chain()[ 0 ] ) );
+	scorer_ = utility::pointer::make_shared< Scorer >( Scorer( library_, evoopt->get_n_scoring_runs(), evoopt->get_ligand_chain() ) );
 	scorer_->initialize_from_options( evoopt, rosetta_script, rank_ );
 
 	// These setups are not needed for external scoring runs, only evolutionary optimization

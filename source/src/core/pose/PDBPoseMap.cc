@@ -77,7 +77,7 @@ PDBPoseMap::operator =( PDBPoseMap const & m )
 
 Size
 PDBPoseMap::find(
-	char const chain,
+	std::string const & chain,
 	int const pdb_res,
 	char const ins_code, /*= ' ', */
 	std::string const & segmentID /* = "    " */
@@ -106,7 +106,7 @@ PDBPoseMap::find(
 ///  the insertion will be skipped
 void
 PDBPoseMap::insert(
-	char const chain,
+	std::string const & chain,
 	int const pdb_res,
 	char const ins_code,
 	std::string const & segmentID,
@@ -124,7 +124,7 @@ PDBPoseMap::insert(
 
 bool
 PDBPoseMap::conditional_erase(
-	char const chain,
+	std::string const & chain,
 	int const pdb_res,
 	char const ins_code,
 	std::string const & segmentID,
@@ -144,7 +144,7 @@ PDBPoseMap::conditional_erase(
 
 void
 PDBPoseMap::erase(
-	char const chain,
+	std::string const & chain,
 	int const pdb_res,
 	char const ins_code,
 	std::string const & segmentID /*= "    " */
@@ -177,7 +177,7 @@ PDBPoseMap::fill( PDBInfo const & info )
 template< class Archive >
 void
 core::pose::PDBPoseMap::ResidueKey::save( Archive & arc ) const {
-	arc( CEREAL_NVP( chainID ) ); // char
+	arc( CEREAL_NVP( chainID ) ); // std::string
 	arc( CEREAL_NVP( resSeq ) ); // int
 	arc( CEREAL_NVP( iCode ) ); // char
 	arc( CEREAL_NVP( segmentID ) ); // std::string
@@ -187,7 +187,7 @@ core::pose::PDBPoseMap::ResidueKey::save( Archive & arc ) const {
 template< class Archive >
 void
 core::pose::PDBPoseMap::ResidueKey::load( Archive & arc ) {
-	arc( chainID ); // char
+	arc( chainID ); // std::string
 	arc( resSeq ); // int
 	arc( iCode ); // char
 	arc( segmentID ); // std::string

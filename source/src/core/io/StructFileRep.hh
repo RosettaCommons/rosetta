@@ -24,6 +24,7 @@
 #include <core/io/Remarks.fwd.hh>
 #include <core/io/CrystInfo.hh>
 #include <core/io/AtomInformation.hh> // DO NOT AUTO-REMOVE (Needed for templated instantiation)
+#include <core/io/ResidueInformation.hh>
 #include <core/simple_metrics/SimpleMetricStruct.hh>
 
 // Project headers
@@ -50,7 +51,7 @@ typedef utility::vector0< AtomInformation > ChainAtoms;  // A representation of 
 /// @author Labonte <JWLabonte@jhu.edu>
 struct ModifiedResidueInformation {
 	std::string resName;
-	char chainID;
+	std::string chainID;
 	int seqNum;
 	char iCode;
 	std::string stdRes;
@@ -63,16 +64,16 @@ struct ModifiedResidueInformation {
 struct LinkInformation {
 	std::string name1;  // 1st atom name
 	std::string resName1;
-	char chainID1;
+	std::string chainID1;
 	int resSeq1;
 	char iCode1;
-	std::string resID1;  // a 6-character resID, as defined elsewhere in StructFileRep (not from the PDB)
+	ResID resID1;
 	std::string name2;  // 2nd atom name
 	std::string resName2;
-	char chainID2;
+	std::string chainID2;
 	int resSeq2;
 	char iCode2;
-	std::string resID2;
+	ResID resID2;
 	core::Distance length;
 
 	bool operator ==(const LinkInformation &rhs) const
@@ -93,16 +94,16 @@ bool link_in_vector( utility::vector1< LinkInformation > const & link_vector, Li
 struct SSBondInformation {
 	std::string name1;  // 1st atom name - usually not read from PDB
 	std::string resName1;
-	char chainID1;
+	std::string chainID1;
 	int resSeq1;
 	char iCode1;
-	std::string resID1;  // a 6-character resID, as defined elsewhere in StructFileRep (not from the PDB)
+	ResID resID1;
 	std::string name2;  // 2nd atom name - usually not read from PDB
 	std::string resName2;
-	char chainID2;
+	std::string chainID2;
 	int resSeq2;
 	char iCode2;
-	std::string resID2;
+	ResID resID2;
 	core::Distance length;
 	std::string sym1;
 	std::string sym2;
@@ -119,11 +120,11 @@ struct SSBondInformation {
 /// @author Labonte <JWLabonte@jhu.edu>
 struct CisPeptideInformation {
 	std::string pep1;
-	char chainID1;
+	std::string chainID1;
 	int seqNum1;
 	char icode1;
 	std::string pep2;
-	char chainID2;
+	std::string chainID2;
 	int seqNum2;
 	char icode2;
 	//int modNum;
@@ -138,11 +139,11 @@ struct HELIXInformation {
 	core::Size helixID; //numeric ID (which # helix is this?). if > 999 bad things happen here (output field is only 3 chars)
 	std::string helix_name; //arbitrary unique ID; copy of helixID as a string
 	std::string name3_1; //name3 of start residue
-	char chainID1; //chain of start residue
+	std::string chainID1; //chain of start residue
 	int seqNum1; //sequence number of start residue
 	char icode1; //icode of start residue
 	std::string name3_2; //name3 of end residue
-	char chainID2;
+	std::string chainID2;
 	int seqNum2;
 	char icode2;
 	core::Size helixClass = 1; //always 1, although actually it's an enum on 1-10 according to PDB
@@ -159,11 +160,11 @@ struct SHEETInformation {
 	std::string sheetID; //arbitrary unique ID; copy of sheetID as a string
 	core::Size num_strands = 1; //nominally these are SHEET records but we are only doing STRANDs
 	std::string name3_1; //name3 of start residue
-	char chainID1; //chain of start residue
+	std::string chainID1; //chain of start residue
 	int seqNum1; //sequence number of start residue
 	char icode1; //icode of start residue
 	std::string name3_2; //name3 of end residue
-	char chainID2;
+	std::string chainID2;
 	int seqNum2;
 	char icode2;
 	int strandClass = 0; //always 0, although actually it's an enum on -1:1 according to PDB
@@ -230,9 +231,9 @@ public:  // Accessors /////////////////////////////////////////////////////////
 	std::map< char, utility::vector1< std::string > >       & chain_sequences()       { return chain_sequences_; }
 
 	/// @brief    Access map for storing MODRES records.
-	/// @details  Key is 6-character resID of the modified residue.
-	std::map< std::string, ModifiedResidueInformation > const & modres_map() const { return modres_map_; }
-	std::map< std::string, ModifiedResidueInformation >       & modres_map()       { return modres_map_; }
+	/// @details  Key is resID of the modified residue.
+	std::map< ResID, ModifiedResidueInformation > const & modres_map() const { return modres_map_; }
+	std::map< ResID, ModifiedResidueInformation >       & modres_map()       { return modres_map_; }
 
 
 	// PDB Heterogen Section //////////////////////////////////////////////////
@@ -264,17 +265,17 @@ public:  // Accessors /////////////////////////////////////////////////////////
 	std::map< std::string, std::string >       & heterogen_formulae()       { return heterogen_formulae_; }
 
 	/// @brief   Access map for storing ResidueType base (non-variant) names; parsed from HETNAM records:
-	/// @details key is 6-character resID\n
+	/// @details key is resID\n
 	/// first value of pair is 3-letter-code; second value of pair is the base_name.
-	std::map< std::string, std::pair< std::string, std::string > > const & residue_type_base_names() const { return residue_type_base_names_; }
-	std::map< std::string, std::pair< std::string, std::string > >       & residue_type_base_names()       { return residue_type_base_names_; }
+	std::map< ResID, std::pair< std::string, std::string > > const & residue_type_base_names() const { return residue_type_base_names_; }
+	std::map< ResID, std::pair< std::string, std::string > >       & residue_type_base_names()       { return residue_type_base_names_; }
 
 	/// @brief   Access map for storing the default main-chain connectivity for this residue,
 	/// if provided by alternate 3-letter code files:
-	/// @details key is 6-character resID\n
+	/// @details key is resID\n
 	/// value is a char of a single-digit integer
-	std::map< std::string, char > const & default_mainchain_connectivity() const { return default_mainchain_connectivity_; }
-	std::map< std::string, char >       & default_mainchain_connectivity()       { return default_mainchain_connectivity_; }
+	std::map< ResID, char > const & default_mainchain_connectivity() const { return default_mainchain_connectivity_; }
+	std::map< ResID, char >       & default_mainchain_connectivity()       { return default_mainchain_connectivity_; }
 
 	// PDB Secondary Structure Section ////////////////////////////////////////
 	/// @brief   Access map for storing HELIX records.
@@ -290,24 +291,24 @@ public:  // Accessors /////////////////////////////////////////////////////////
 
 	// PDB Connectivity Annotation Section ////////////////////////////////////
 	/// @brief   Access map for storing SSBOND records.
-	/// @details key is 6-character resID of 1st residue in ssbond
+	/// @details key is resID of 1st residue in ssbond
 	/// @note    (A vector is needed because to futureproof if we ever handle
 	/// weird disorder situations.)
-	std::map< std::string, utility::vector1< SSBondInformation > > const & ssbond_map() const { return ssbond_map_; }
-	std::map< std::string, utility::vector1< SSBondInformation > >       & ssbond_map()       { return ssbond_map_; }
+	std::map< ResID, utility::vector1< SSBondInformation > > const & ssbond_map() const { return ssbond_map_; }
+	std::map< ResID, utility::vector1< SSBondInformation > >       & ssbond_map()       { return ssbond_map_; }
 
 
 	/// @brief   Access map for storing LINK records.
-	/// @details Key is 6-character resID of 1st residue in link.
+	/// @details Key is resID of 1st residue in link.
 	/// @note    (A vector is needed because a single saccharide residue can
 	/// have multiple branches.)
-	std::map< std::string, utility::vector1< LinkInformation > > const & link_map() const { return link_map_; }
-	std::map< std::string, utility::vector1< LinkInformation > >       & link_map()       { return link_map_; }
+	std::map< ResID, utility::vector1< LinkInformation > > const & link_map() const { return link_map_; }
+	std::map< ResID, utility::vector1< LinkInformation > >       & link_map()       { return link_map_; }
 
 	/// @brief   Access map for storing CISPEP records.
-	/// @details Key is 6-character resID of 1st residue in the peptide bond.
-	std::map< std::string, CisPeptideInformation > const & cispep_map() const { return cispep_map_; }
-	std::map< std::string, CisPeptideInformation >       & cispep_map()       { return cispep_map_; }
+	/// @details Key resID of 1st residue in the peptide bond.
+	std::map< ResID, CisPeptideInformation > const & cispep_map() const { return cispep_map_; }
+	std::map< ResID, CisPeptideInformation >       & cispep_map()       { return cispep_map_; }
 
 
 	// PDB Miscellaneous Features Section /////////////////////////////////////
@@ -394,18 +395,18 @@ private:
 	HeaderInformationOP header_;
 	RemarksOP remarks_;
 	std::map< char, utility::vector1< std::string > > chain_sequences_;  // for storing SEQRES records
-	std::map< std::string, ModifiedResidueInformation > modres_map_;  // key is 6-character resID
+	std::map< ResID, ModifiedResidueInformation > modres_map_;
 	std::map< std::string, std::string > heterogen_names_;  // key is hetID
 	std::map< std::string, std::string > heterogen_types_;  // key is hetID
 	std::map< std::string, utility::vector1< std::string > > heterogen_synonyms_;  // key is hetID
 	std::map< std::string, std::string > heterogen_formulae_;  // key is hetID
-	std::map< std::string, std::pair< std::string, std::string > > residue_type_base_names_;  // key is 6-char. resID
-	std::map< std::string, char > default_mainchain_connectivity_;  // key is 6-char. resID
+	std::map< ResID, std::pair< std::string, std::string > > residue_type_base_names_;
+	std::map< ResID, char > default_mainchain_connectivity_;
 	utility::vector1< HELIXInformation > HELIXInformations_;
 	utility::vector1< SHEETInformation > SHEETInformations_;
-	std::map< std::string, utility::vector1< SSBondInformation > > ssbond_map_;  // key is 6-character resID
-	std::map< std::string, utility::vector1< LinkInformation > > link_map_;  // key is 6-character resID
-	std::map< std::string, CisPeptideInformation > cispep_map_;  // key is 6-character resID
+	std::map< ResID, utility::vector1< SSBondInformation > > ssbond_map_;
+	std::map< ResID, utility::vector1< LinkInformation > > link_map_;
+	std::map< ResID, CisPeptideInformation > cispep_map_;
 	CrystInfo crystinfo_;  //fpd:  CRYST1 line
 	utility::vector0< ChainAtoms > chains_;
 	std::string foldtree_string_;

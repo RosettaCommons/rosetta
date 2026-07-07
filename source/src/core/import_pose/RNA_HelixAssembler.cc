@@ -776,9 +776,8 @@ RNA_HelixAssembler::fill_chain_info( pose::Pose & pose ){
 	using namespace core::pose;
 	using namespace core::pose::full_model_info;
 
-	utility::vector1< char > chains( pose.size(), ' ' );
 	PDBInfoOP pdb_info( new PDBInfo( pose ) );
-	pdb_info->set_chains( chains );
+	pdb_info->set_all_chains( " " );
 	pdb_info->obsolete( false ); // this is silly.
 
 	pose.pdb_info( pdb_info );

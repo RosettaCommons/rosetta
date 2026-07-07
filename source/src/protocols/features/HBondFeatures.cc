@@ -778,7 +778,7 @@ HBondFeatures::insert_site_pdb_row(
 ){
 	if ( !pose.pdb_info() ) return; //eg if this is a silent file structure
 
-	string const pdb_chain(1,pose.pdb_info()->chain(resNum));
+	string const pdb_chain( pose.pdb_info()->chain(resNum) );
 	int const pdb_resNum( pose.pdb_info()->number(resNum) );
 	string const pdb_iCode(1,pose.pdb_info()->icode(resNum));
 	Real const pdb_heavy_atom_temperature(

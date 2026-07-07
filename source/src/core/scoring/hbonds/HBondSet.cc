@@ -377,14 +377,14 @@ HBond::show(
 			<< std::endl;
 	}
 
-	char const don_pdb_chain(pose.pdb_info()->chain(don_res()));
+	std::string const don_pdb_chain(pose.pdb_info()->chain(don_res()));
 	Size const don_pdb_number(pose.pdb_info()->number(don_res()));
 	char const don_pdb_icode(pose.pdb_info()->icode(don_res()));
 	Size const don_atomno(pose.residue(don_res()).atom_base(don_hatm()));
 	std::string const don_res_name(pose.residue(don_res()).type().name3());
 	std::string const don_atom_name(pose.residue(don_res()).atom_name(don_atomno));
 
-	Size const acc_pdb_chain(pose.pdb_info()->chain(acc_res()));
+	std::string const acc_pdb_chain(pose.pdb_info()->chain(acc_res()));
 	Size const acc_pdb_number(pose.pdb_info()->number(acc_res()));
 	char const acc_pdb_icode(pose.pdb_info()->icode(acc_res()));
 	std::string const acc_res_name(pose.residue(acc_res()).type().name3());

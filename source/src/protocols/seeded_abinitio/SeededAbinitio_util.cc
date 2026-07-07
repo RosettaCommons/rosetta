@@ -156,8 +156,8 @@ combine_two_poses( core::pose::Pose design_pose , core::pose::PoseOP target_chai
 
 	core::pose::PDBInfoOP pdb_info_design( new core::pose::PDBInfo( design_pose ) );
 	core::pose::PDBInfoOP pdb_info_target( new core::pose::PDBInfo( *target_chain ) );
-	pdb_info_target->set_chains( 'A');
-	pdb_info_design->set_chains('B');
+	pdb_info_target->set_all_chains("A");
+	pdb_info_design->set_all_chains("B");
 
 	// take the target chain pose and append through a jump the newly folded protein pose
 

@@ -105,15 +105,6 @@ public: // Creation
 	{}
 
 
-	/// @brief Copy constructor
-	inline
-	SmallKeyVector( SmallKeyVector const & a ) :
-		v_( a.v_ ),
-		m_( a.m_ ),
-		u_( a.u_ )
-	{}
-
-
 	/// @brief Size constructor
 	inline
 	explicit
@@ -146,26 +137,7 @@ public: // Creation
 	{}
 
 
-	/// @brief Destructor
-	inline
-	~SmallKeyVector() {}
-
-
 public: // Assignment
-
-
-	/// @brief Copy assignment
-	inline
-	SmallKeyVector &
-	operator =( SmallKeyVector const & a )
-	{
-		if ( this != &a ) {
-			v_ = a.v_;
-			m_ = a.m_;
-			u_ = a.u_;
-		}
-		return *this;
-	}
 
 
 	/// @brief Uniform value assignment to current elements

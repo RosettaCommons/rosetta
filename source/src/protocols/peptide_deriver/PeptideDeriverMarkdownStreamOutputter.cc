@@ -133,8 +133,8 @@ void PeptideDeriverMarkdownStreamOutputter::end_structure() {
 	clear_buffers();
 }
 
-void PeptideDeriverMarkdownStreamOutputter::begin_receptor_partner_pair(char const receptor_chain_letter,
-	char const partner_chain_letter, core::Real const total_isc,
+void PeptideDeriverMarkdownStreamOutputter::begin_receptor_partner_pair(std::string const & receptor_chain_letter,
+	std::string const & partner_chain_letter, core::Real const total_isc,
 	std::string const & /*options_string*/) {
 
 	current_receptor_chain_letter_ = receptor_chain_letter;

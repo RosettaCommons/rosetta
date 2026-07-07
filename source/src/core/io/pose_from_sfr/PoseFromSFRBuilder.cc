@@ -227,7 +227,7 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 	// And LINK records to or from unrecognized residues?
 	using namespace core::chemical;
 	using LinkInformationVect = utility::vector1<LinkInformation>;
-	typedef std::map< std::string, utility::vector1< LinkInformation > > LinkMap;
+	typedef std::map< ResID, utility::vector1< LinkInformation > > LinkMap;
 
 	// AMW: In CIF nomenclature, LINKs to be handled:
 	// This is actually a "close contact" but it's O3' of adenine to C of FME, UPPER-UPPER
@@ -235,7 +235,7 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 
 	LinkMap pruned_links;
 	for ( const auto & iter : sfr.link_map() ) {
-		std::string const & resID1 = iter.first;
+		ResID const & resID1 = iter.first;
 		LinkInformationVect const & links = iter.second;
 		for ( const auto & link : links ) {
 			bool const link_has_metal( NomenclatureManager::is_metal( link.resName1 ) ||
@@ -426,9 +426,9 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 		}
 
 		core::io::ResidueInformation const & rinfo = rinfos_[ ii ];
-		char chainID = rinfo.chainID();
+		std::string const & chainID = rinfo.chainID();
 		std::string const & name3 = rinfo.rosetta_resName();
-		std::string const & resid = rinfo.resid();
+		ResID const & resid = rinfo.resid();
 
 		utility::vector1< std::string > known_connect_atoms_on_this_residue;
 
@@ -472,7 +472,7 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 		}
 
 		if ( TR.Trace.visible() ) {
-			TR.Trace << "Residue " << ii << "(PDB file numbering: " << resid << " )" << std::endl;
+			TR.Trace << "Residue " << ii << "(PDB file numbering: " << resid.str() << " )" << std::endl;
 			TR.Trace << "...same_chain_prev: " << same_chain_prev << std::endl;
 			TR.Trace << "...same_chain_next: " << same_chain_next << std::endl;
 			TR.Trace << "...is_lower_terminus: " << is_lower_terminus << std::endl;
@@ -516,7 +516,7 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 				variant += " upper-terminal";
 			}
 			utility_exit_with_message( "No match found for unrecognized residue at position " +
-				std::to_string(ii) + "( PDB ID: " + resid + " )" +
+				std::to_string(ii) + "( PDB ID: " + resid.str() + " )" +
 				"\nLooking for" + variant + " residue with 3-letter code: " + name3 +
 				( known_connect_atoms_on_this_residue.empty() ? "" : "\nWith inter-residue connections to atom(s) " + utility::join(known_connect_atoms_on_this_residue,",") ) +
 				"\nThis can be caused by wrong residue naming. E.g. a BMA (beta-mannose) is named MAN (alpha-mannose)");
@@ -572,7 +572,7 @@ PoseFromSFRBuilder::pass_2_quick_and_dirty_resolve_residue_types()
 
 		core::io::ResidueInformation const & rinfo = rinfos_[ ii ];
 		std::string const & name3 = rinfo.rosetta_resName();
-		std::string const & resid = rinfo.resid();
+		ResID const & resid = rinfo.resid();
 
 		/////////////////////////
 		// Handle residue to skip
@@ -661,7 +661,7 @@ PoseFromSFRBuilder::pass_2_quick_and_dirty_resolve_residue_types()
 		if ( rsd_type_cop == nullptr ) {
 			if ( !options_.ignore_unrecognized_res() ) {
 				std::string message = "No match found for unrecognized residue at position " +
-					std::to_string(ii) + "( PDB ID: " + resid + " ) 3-letter code " + name3;
+					std::to_string(ii) + "( PDB ID: " + resid.str() + " ) 3-letter code " + name3;
 				if ( ! residue_base_name.empty() ) {
 					message += " with base name " + residue_base_name;
 				}
@@ -692,7 +692,7 @@ PoseFromSFRBuilder::pass_2_quick_and_dirty_resolve_residue_types()
 		/////////////////////////////////////
 		// Deal with polymers and connections
 
-		char chainID = rinfo.chainID();
+		std::string const & chainID = rinfo.chainID();
 
 		bool const separate_chemical_entity = determine_separate_chemical_entity( chainID );
 		bool same_chain_prev = determine_same_chain_prev( ii, separate_chemical_entity );
@@ -726,7 +726,7 @@ PoseFromSFRBuilder::pass_2_quick_and_dirty_resolve_residue_types()
 			}
 		}
 
-		TR.Debug << "Residue " << ii << "(PDB file numbering: " << resid << " ) name3 " << name3 << std::endl;
+		TR.Debug << "Residue " << ii << "(PDB file numbering: " << resid.str() << " ) name3 " << name3 << std::endl;
 		//TR.Debug << "...same_chain_prev: " << same_chain_prev << std::endl;
 		//TR.Debug << "...same_chain_next: " << same_chain_next << std::endl;
 		TR.Debug << "...is_lower_terminus: " << is_lower_terminus << std::endl;
@@ -901,7 +901,7 @@ void PoseFromSFRBuilder::pass_3_verify_sufficient_backbone_atoms()
 			}
 			if ( !mainchain_core_present ) {
 				TR.Warning << "skipping pdb residue b/c it's missing too many mainchain atoms: " <<
-					rinfos_[ ii ].resid() << ' ' << rinfos_[ii].rosetta_resName() << ' ' << iirestype.name() << std::endl;
+					rinfos_[ ii ].resid().str() << ' ' << rinfos_[ii].rosetta_resName() << ' ' << iirestype.name() << std::endl;
 				for ( Size jj=1; jj<= nbb; ++jj ) {
 					std::string const & name(iirestype.atom_name(iimainchain[jj]));
 					if ( ! ii_atom_names.right.count(name) ||
@@ -921,7 +921,7 @@ void PoseFromSFRBuilder::pass_3_verify_sufficient_backbone_atoms()
 	}
 }
 
-bool PoseFromSFRBuilder::lower_terminus_is_occupied_according_to_link_map( std::string const & resid ) {
+bool PoseFromSFRBuilder::lower_terminus_is_occupied_according_to_link_map( ResID const & resid ) {
 
 	if ( sfr_.link_map().count( resid ) ) {  // if found in the linkage map
 		// The link map is keyed by resID of each branch point.
@@ -947,7 +947,7 @@ bool PoseFromSFRBuilder::lower_terminus_is_occupied_according_to_link_map( std::
 	return false;
 }
 
-bool PoseFromSFRBuilder::upper_terminus_is_occupied_according_to_link_map( std::string const & resid ) {
+bool PoseFromSFRBuilder::upper_terminus_is_occupied_according_to_link_map( ResID const & resid ) {
 	if ( sfr_.link_map().count( resid ) ) {  // if found in the linkage map
 		// The link map is keyed by resID of each branch point.
 		Size const n_branches( sfr_.link_map()[ resid ].size() );
@@ -984,8 +984,8 @@ void PoseFromSFRBuilder::pass_4_redo_termini()
 		if ( ! residue_types_[ ii ] ) { continue; }
 
 		ResidueInformation const & rinfo = rinfos_[ ii ];
-		std::string const & resid = rinfo.resid();
-		char chainID = rinfo.chainID();
+		ResID const & resid = rinfo.resid();
+		std::string chainID = rinfo.chainID();
 
 		if ( ! determine_check_Ntermini_for_this_chain( chainID ) ) { continue; }
 		if ( ! determine_check_Ctermini_for_this_chain( chainID ) ) { continue; }
@@ -1005,7 +1005,7 @@ void PoseFromSFRBuilder::pass_4_redo_termini()
 				// Do not adjust if it's an upper cutpoint. That variant type would have been assigned
 				// for a good reason.
 				if ( ! residue_types_[ ii ]->has_variant_type( chemical::CUTPOINT_UPPER ) ) {
-					TR << "Adding undetected lower terminus type to residue " << ii << ", " << resid << std::endl;
+					TR << "Adding undetected lower terminus type to residue " << ii << ", " << resid.str() << std::endl;
 					residue_types_[ ii ] = residue_type_set_->get_residue_type_with_variant_added(
 						*residue_types_[ ii ], chemical::LOWER_TERMINUS_VARIANT ).get_self_ptr();
 					type_changed = true;
@@ -1034,7 +1034,7 @@ void PoseFromSFRBuilder::pass_4_redo_termini()
 			// It wants it but can't have it -- one of those is Bad.
 			std::string upper_atom = residue_types_[ ii ]->atom_name( residue_types_[ ii ]->upper_connect_atom() );
 			if ( ! ( known_links_.count( resid ) && known_links_[ resid ].count( upper_atom ) > 0 ) ) {
-				TR << "Adding undetected upper terminus type to residue " << ii << ", " << resid << std::endl;
+				TR << "Adding undetected upper terminus type to residue " << ii << ", " << resid.str() << std::endl;
 				residue_types_[ ii ] = residue_type_set_->get_residue_type_with_variant_added(
 					*residue_types_[ ii ], chemical::UPPER_TERMINUS_VARIANT ).get_self_ptr();
 				type_changed = true;
@@ -1124,7 +1124,7 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 		}
 
 		// store residue name as in PDB file for interpretable error messages
-		std::string const & PDB_resid = rinfos_[ ii ].resid();
+		ResID const & PDB_resid = rinfos_[ ii ].resid();
 
 		// These sister atoms are THUS FAR only found in RNA (it's to perfectly copy
 		// native structure coordinates). So, at the moment, we only need to call
@@ -1183,7 +1183,7 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 		} else { // Append residue to current chain dependent on bond length.
 			if ( ! options_.missing_dens_as_jump() ) {
 				TR.Trace << ii_rsd_type.name() << " " << ii;
-				TR.Trace << " (PDB residue: " << PDB_resid << ")";
+				TR.Trace << " (PDB residue: " << PDB_resid.str() << ")";
 				TR.Trace << " is appended to chain " << rinfos_[ ii ].chainID() << std::endl;
 
 				residues.push_back( ii_rsd );
@@ -1431,11 +1431,11 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 	// that isn't already in the pose.
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		core::Size rinfo_ii( pose_to_rinfo_[ ii ] );
-		std::string const & resid( rinfos_[ rinfo_ii ].resid() );
+		ResID const & resid( rinfos_[ rinfo_ii ].resid() );
 		if ( known_links_.count( resid ) ) {
 			for ( auto const & link_pair : known_links_[resid] ) {
 				//std::string const & my_atom( link_pair.first );
-				std::string const & partner_resid( link_pair.second.first );
+				ResID const & partner_resid( link_pair.second.first );
 				core::Size partner_rinfo_ii( resid_to_index_[ partner_resid ] );
 				core::Size partner( pose_to_rinfo_.index( partner_rinfo_ii ) );
 				//std::string const & partner_atom( link_pair.second.second );
@@ -1445,13 +1445,13 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 				std::string partner_atom = stripped_whitespace( link_pair.second.second );
 
 				if ( partner == 0 ) {
-					TR.Warning << "Cannot find " << partner_resid << " in Pose -- skipping connection" << std::endl;
+					TR.Warning << "Cannot find " << partner_resid.str() << " in Pose -- skipping connection" << std::endl;
 					continue;
 				}
-				TR.Debug << "Dealing with link ii:" << ii << " resid: " << resid << " (" << pose.residue_type( ii ).name() << ") atom: " << my_atom << " partner: " << partner << " (" << pose.residue_type( partner ).name() << ") partner_resid: " << partner_resid << " partner_atom: " << partner_atom << std::endl;
+				TR.Debug << "Dealing with link ii:" << ii << " resid: " << resid.str() << " (" << pose.residue_type( ii ).name() << ") atom: " << my_atom << " partner: " << partner << " (" << pose.residue_type( partner ).name() << ") partner_resid: " << partner_resid.str() << " partner_atom: " << partner_atom << std::endl;
 				if ( ! pose.residue_type(ii).has( my_atom ) || ! pose.residue_type( partner ).has( partner_atom ) ) {
-					TR.Warning << "Cannot form link between " << resid << " " << my_atom
-						<< " and " << partner_resid << " " << partner_atom << " as atom(s) don't exist." << std::endl;
+					TR.Warning << "Cannot form link between " << resid.str() << " " << my_atom
+						<< " and " << partner_resid.str() << " " << partner_atom << " as atom(s) don't exist." << std::endl;
 					continue;
 				}
 				if ( ! is_connected( pose.conformation(), ii, my_atom, partner, partner_atom ) ) {
@@ -1490,8 +1490,8 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 						} else {
 
 							// The ResidueType selection code should find a connectable type if one is present.
-							TR.Warning << "Explicit link between " << rinfos_[ ii ].resid() << " " << my_atom
-								<<" and " << rinfos_[ partner ].resid() << " " << partner_atom
+							TR.Warning << "Explicit link between " << rinfos_[ ii ].resid().str() << " " << my_atom
+								<<" and " << rinfos_[ partner ].resid().str() << " " << partner_atom
 								<< " requested, but no availible connections are present!" << std::endl;
 							TR.Warning << "Types are " << pose.residue_type(ii).name() << " and " << pose.residue_type(partner).name() << std::endl;
 							show_residue_connections( pose.conformation(), ii );
@@ -1611,7 +1611,8 @@ PoseFromSFRBuilder::build_pdb_info_1_everything_but_temps( pose::Pose & pose ) {
 
 	// Structure file residue indices can be negative: do not change to Size
 	utility::vector1< int > pdb_numbering;
-	utility::vector1< char > pdb_chains, insertion_codes;
+	utility::vector1< std::string > pdb_chains;
+	utility::vector1< char > insertion_codes;
 	utility::vector1< std::string > segment_ids;
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		ResidueInformation const & rinfo = rinfos_[ pose_to_rinfo_[ ii ] ];
@@ -1697,13 +1698,13 @@ void
 PoseFromSFRBuilder::determine_residue_branching_info(
 	Size const seqpos,
 	utility::vector1< std::string > & known_connect_atoms_on_this_residue,
-	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > const & explicit_link_mapping )
+	std::map< ResID, std::map< std::string, std::pair< ResID, std::string > > > const & explicit_link_mapping )
 {
 	using namespace std;
 	using namespace core::io::pdb;
 	using namespace core::chemical;
 
-	std::string const & resid = rinfos_[ seqpos ].resid();
+	ResID const & resid = rinfos_[ seqpos ].resid();
 	std::string const & name3 = rinfos_[ seqpos ].resName(); // for debugging
 
 	// Carbohydrate base names will have "->?)-" as a prefix if their main-
@@ -1722,14 +1723,14 @@ PoseFromSFRBuilder::determine_residue_branching_info(
 			( sfr_.residue_type_base_names()[ resid ].second[ CARB_MAINCHAIN_CONN_POS ] == '?' );
 	}
 
-	TR.Trace << "Checking if resid " << resid << "(" << seqpos << ")" << " is in the link map " << endl;
+	TR.Trace << "Checking if resid " << resid.str() << "(" << seqpos << ")" << " is in the link map " << endl;
 	if ( explicit_link_mapping.count( resid ) ) {  // if found in the linkage map
-		TR.Trace << "Found resid " << resid << " in link map " << endl;
+		TR.Trace << "Found resid " << resid.str() << " in link map " << endl;
 		// We want to sort the linkages by partner number - std::set will allow us to do this
-		std::set< std::tuple<core::Size, std::string, std::string> > connections;
+		std::set< std::tuple<core::Size, ResID, std::string> > connections;
 		for ( auto const & elm_pair : explicit_link_mapping.at(resid) ) {
 			std::string const & link_atom = elm_pair.first;
-			std::string const & partner_resid = elm_pair.second.first;
+			ResID const & partner_resid = elm_pair.second.first;
 			//TR.Trace << "Link atom is " << link_atom << std::endl;
 			debug_assert( resid_to_index_.count( partner_resid ) );
 			core::Size const & partner = resid_to_index_[ partner_resid ];
@@ -1886,7 +1887,7 @@ PoseFromSFRBuilder::get_rsd_type(
 	std::string const & rosetta_residue_name3,
 	Size seqpos,
 	utility::vector1< std::string > const & known_connect_atoms_on_this_residue,
-	std::string const & resid,
+	ResID const & resid,
 	bool const is_lower_terminus,
 	bool const is_upper_terminus,
 	bool const is_d_aa,
@@ -1908,6 +1909,7 @@ PoseFromSFRBuilder::get_rsd_type(
 	using utility::vector1;
 
 	vector1< ResidueProperty > preferred_properties, discouraged_properties;
+	vector1< std::string > preferred_connects, discouraged_connects;
 	vector1< VariantType > variants, disallow_variants;
 
 	std::string residue_base_name( "" );  // used when we have more information then just a 3-letter code
@@ -1924,19 +1926,20 @@ PoseFromSFRBuilder::get_rsd_type(
 		if ( known_connect_atoms_on_this_residue.contains( "P" ) || known_connect_atoms_on_this_residue.contains( "N" ) ) {
 			variants.push_back( CUTPOINT_UPPER );
 		} else {
-			preferred_properties.push_back( LOWER_TERMINUS );
+			discouraged_connects.push_back( "LOWER" );
 		}
 	} else {
-		discouraged_properties.push_back( LOWER_TERMINUS );
+		// Non-terminus probably means we need a polymeric connection ... probably
+		preferred_connects.push_back( "LOWER" );
 	}
 	if ( is_upper_terminus ) {
 		if ( known_connect_atoms_on_this_residue.contains( "O3'" ) || known_connect_atoms_on_this_residue.contains( "C" ) ) {
 			variants.push_back( CUTPOINT_LOWER );
 		} else {
-			preferred_properties.push_back( UPPER_TERMINUS );
+			discouraged_connects.push_back( "UPPER" );
 		}
 	} else {
-		discouraged_properties.push_back( UPPER_TERMINUS );
+		preferred_connects.push_back( "UPPER" );
 	}
 	if ( is_d_aa ) {
 		preferred_properties.push_back( D_AA );
@@ -1967,6 +1970,8 @@ PoseFromSFRBuilder::get_rsd_type(
 		.disallow_variants( disallow_variants )
 		.preferred_properties( preferred_properties )
 		.discouraged_properties( discouraged_properties )
+		.preferred_connects( preferred_connects )
+		.discouraged_connects( discouraged_connects )
 		.patch_names( patch_names )
 		.ignore_atom_named_H( is_lower_terminus )
 		.check_nucleic_acid_virtual_phosphates( true )
@@ -2019,9 +2024,9 @@ Size PoseFromSFRBuilder::next_residue_skipping_null_residue_types( Size resid ) 
 	return resid;
 }
 
-bool PoseFromSFRBuilder::determine_separate_chemical_entity( char chainID ) const
+bool PoseFromSFRBuilder::determine_separate_chemical_entity( std::string const & chainID ) const
 {
-	std::string const & sep_chains = options_.chains_whose_residues_are_separate_chemical_entities();
+	utility::vector1<std::string> const & sep_chains = options_.chains_whose_residues_are_separate_chemical_entities();
 	return std::find( sep_chains.begin(), sep_chains.end(), chainID ) != sep_chains.end();
 }
 
@@ -2058,17 +2063,17 @@ bool PoseFromSFRBuilder::determine_same_chain_next( Size resid, bool separate_ch
 		rinfos_[resid].terCount() == rinfos_[res_next].terCount() && ! separate_chemical_entity;
 }
 
-bool PoseFromSFRBuilder::determine_check_Ntermini_for_this_chain( char chainID ) const
+bool PoseFromSFRBuilder::determine_check_Ntermini_for_this_chain( std::string const & chainID ) const
 {
-	std::string const & nterm_chains = options_.check_if_residues_are_Ntermini();
-	return "ALL" == nterm_chains ||
+	utility::vector1<std::string> const & nterm_chains = options_.check_if_residues_are_Ntermini();
+	return (nterm_chains.size()==1 && nterm_chains[1] == "ALL") ||
 		std::find( nterm_chains.begin(), nterm_chains.end(), chainID ) != nterm_chains.end();
 }
 
-bool PoseFromSFRBuilder::determine_check_Ctermini_for_this_chain( char chainID ) const
+bool PoseFromSFRBuilder::determine_check_Ctermini_for_this_chain( std::string const & chainID ) const
 {
-	std::string const & cterm_chains = options_.check_if_residues_are_Ctermini();
-	return "ALL" == cterm_chains ||
+	utility::vector1<std::string>const & cterm_chains = options_.check_if_residues_are_Ctermini();
+	return (cterm_chains.size()==1 && cterm_chains[1] == "ALL") ||
 		std::find( cterm_chains.begin(), cterm_chains.end(), chainID ) != cterm_chains.end();
 }
 

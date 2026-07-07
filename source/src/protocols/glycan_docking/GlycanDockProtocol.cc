@@ -219,7 +219,7 @@ GlycanDockProtocol::set_cmd_line_defaults()
 		option[OptionKeys::carbohydrates::glycan_dock::prepack_only](); // default = false
 
 	partners_provided_ = option[ OptionKeys::docking::partners ].user();
-	partners_ = option[ OptionKeys::docking::partners ]();
+	partners_ = core::pose::DockingPartners::docking_partners_from_string( option[ OptionKeys::docking::partners ]() );
 
 	// For Stage 1 GlycanDock trajectory initialization
 	stage1_rot_mag_ =
@@ -922,7 +922,7 @@ GlycanDockProtocol::apply( core::pose::Pose & pose )
 			"defined by a single chain ID.");
 	} else {
 		// will need pose to ensure chain IDs passed exist and seem correct
-		if ( partners_ == "" ) {
+		if ( partners_.is_empty() ) {
 			utility_exit_with_message("During GlycanDock, the -docking:partners "
 				"flag was passed, but nothing was provided! "
 				"Check your input. For example, passing "
@@ -1349,7 +1349,7 @@ GlycanDockProtocol::parse_my_tag( utility::tag::TagCOP tag,
 			"performing glycan sampling only)");
 	}
 
-	set_partners( tag->getOption<std::string>( "partners", "_") );
+	set_partners( core::pose::DockingPartners::docking_partners_from_string( tag->getOption<std::string>( "partners", "_") ) );
 
 	// Stage 1 - conformation initialization
 	set_stage1_rotate_glycan_about_com( (tag->getOption<bool>( "stage1_rotate_glycan_about_com", false )) );

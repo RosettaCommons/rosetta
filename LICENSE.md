@@ -1,4 +1,4 @@
-# Rosetta & PyRosetta licensing
+# Rosetta licensing
 
 ## Preamble
 
@@ -11,6 +11,8 @@ b. Use for commercial purposes is not permitted under the following license. To 
 c. All forks of the Rosetta code must maintain the current licensing restrictions. 
 
 d. Modifications and improvements to the Rosetta code are encouraged. Please see CONTRIBUTING.md for more details.
+
+e. Using Rosetta via the Python language interface (i.e. PyRosetta) is covered by a similar but distinct license. See LICENSE.PyRosetta.md for details. 
 
 # Rosetta Software Non-Commercial License Agreement
 

@@ -84,9 +84,6 @@ public:
 	DirectedEdgeListElement( DirectedEdge * edge, DirectedEdgeListElement * previous, DirectedEdgeListElement * next )
 	: edge_( edge ), previous_( previous ), next_( next ) {}
 
-
-	~DirectedEdgeListElement() {}
-
 	DirectedEdge * edge() {debug_assert( edge_ ); return edge_; }
 	void edge( DirectedEdge * setting ) { edge_ = setting; }
 	DirectedEdge const * const_edge() const {debug_assert( edge_ ); return edge_; }
@@ -129,21 +126,6 @@ public:
 	/// @brief owner and element constructor: points at a position in a list
 	DirectedEdgeListIterator( DirectedEdgeList const * owner, DirectedEdgeListElement * element )
 	: owner_( owner ), element_( element ) {}
-
-	/// @brief copy constructor
-	DirectedEdgeListIterator( DirectedEdgeListIterator const & src )
-	: owner_( src.owner_ ), element_( src.element_ ) {}
-
-	/// @brief non-virtual destructor, does nothing
-	~DirectedEdgeListIterator() {}
-
-	/// @brief assignmnet operator
-	DirectedEdgeListIterator & operator = ( DirectedEdgeListIterator const & rhs )
-	{
-		owner_ = rhs.owner_;
-		element_ = rhs.element_;
-		return *this;
-	}
 
 	/// @brief increment operator.  Point this iterator at the next element in the list.
 	inline
@@ -213,25 +195,9 @@ public:
 	DirectedEdgeListConstIterator( DirectedEdgeList const * owner, DirectedEdgeListElement const * element )
 	: owner_( owner ), element_( element ) {}
 
-	/// @brief copy constructor
-	DirectedEdgeListConstIterator( DirectedEdgeListConstIterator const & src )
-	: owner_( src.owner_ ), element_( src.element_ ) {}
-
 	/// @brief const-cast constructor
 	DirectedEdgeListConstIterator( DirectedEdgeListIterator const & src )
 	: owner_( src.owner_ ), element_( src.element_ ) {}
-
-
-	/// @brief non-virtual destructor, does nothing
-	~DirectedEdgeListConstIterator() {}
-
-	/// @brief assignmnet operator
-	DirectedEdgeListConstIterator & operator = ( DirectedEdgeListConstIterator const & rhs )
-	{
-		owner_ = rhs.owner_;
-		element_ = rhs.element_;
-		return *this;
-	}
 
 	/// @brief increment operator.  Point this iterator at the next element in the list.
 	inline

@@ -84,14 +84,35 @@ class IOTest(unittest.TestCase):
     def my_pyrosetta_protocol(packed_pose, **kwargs):
         import pyrosetta
         import pyrosetta.distributed.io as io
+        from pyrosetta.distributed.packed_pose.core import PackedPose
+        from pyrosetta.distributed.cluster import PackedPoseHasher, update_scores
 
         packed_pose = io.pose_from_sequence(kwargs["seq"])
+        my_pose_score = pyrosetta.pose_from_sequence(IOTest._my_pose_value)
+        my_pose_score.cache["test_cache"] = 123
+        pyrosetta.rosetta.core.pose.add_comment(my_pose_score, "test_comment_key", "test_comment_value")
         packed_pose = packed_pose.update_scores(
             my_string_score=IOTest._my_string_value,
             my_real_score=IOTest._my_real_value,
-            my_pose_score=pyrosetta.pose_from_sequence(IOTest._my_pose_value),
+            my_pose_score=my_pose_score,
             my_complex_score=IOTest._my_complex_value,
         )
+
+        _scores_dict_slow = dict(update_scores(PackedPose(packed_pose)).pose.cache)
+        _scores_dict_fast = dict(update_scores(PackedPose(packed_pose)).pose.cache.fast_items())
+        assert len(_scores_dict_slow) == len(_scores_dict_fast)
+        for k in _scores_dict_slow:
+            assert k in _scores_dict_fast
+            v1 = _scores_dict_slow[k]
+            v2 = _scores_dict_fast[k]
+            if isinstance(v1, pyrosetta.Pose):
+                assert isinstance(v2, pyrosetta.Pose)
+                h1 = PackedPoseHasher(v1, include_cache=True, include_comments=True).digest()
+                h2 = PackedPoseHasher(v2, include_cache=True, include_comments=True).digest()
+                assert h1 == h2
+            else:
+                assert type(v1) == type(v2)
+                assert v1 == v2
 
         return packed_pose
 
@@ -132,6 +153,7 @@ class IOTest(unittest.TestCase):
                         with self.assertRaises(AssertionError):  # output_scorefile_types=[".gz", ...] requires 'pandas' as a secure package
                             run(**instance_kwargs)
                     pyrosetta.secure_unpickle.add_secure_package("pandas")
+                    pyrosetta.secure_unpickle.add_secure_package("pyarrow")
                     run(**instance_kwargs)
                     # Test decoy outputs
                     _n_tasks = len(IOTest.create_tasks())

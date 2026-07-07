@@ -44,9 +44,8 @@ public: // Creation
 
 
 	/// @brief Destructor
-	inline
 	virtual
-	~irstream() {}
+	~irstream() = default;
 
 	irstream( irstream const & ) = delete;
 	irstream & operator =( irstream const & ) = delete;

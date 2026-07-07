@@ -52,9 +52,9 @@ public:
 	/// @brief initialize a grid of zeros with a given centerpoint, width and resolution (in angstroms).
 	void initialize(core::Vector const & center, core::Real width, core::Real resolution) override;
 	/// @brief set the chain around which to calculate the grid
-	void set_chain(char chain) override;
+	void set_chain(std::string const & chain) override;
 	/// @brief get the chain around which the grid is calculated
-	char get_chain();
+	std::string const & get_chain();
 	/// @brief populate the grid with values based on a passed pose
 	void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ligand_chain_id_to_exclude) override = 0;
 	/// @brief populate the grid with values based on a passed pose
@@ -139,7 +139,7 @@ private:
 	core::grid::CartGrid<core::Real> grid_;
 	std::string type_;
 	core::Vector center_ = { 0,0,0 };
-	char chain_;
+	std::string chain_;
 
 };
 

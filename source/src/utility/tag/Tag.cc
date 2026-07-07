@@ -108,9 +108,6 @@ void throw_exception(std::exception const&) {
 namespace utility {
 namespace tag {
 
-/// @details Auto-generated virtual destructor
-Tag::~Tag() = default;
-
 using namespace std;
 
 utility::vector0<TagCOP> const Tag::vEmpty_; // need to return this from getTags
