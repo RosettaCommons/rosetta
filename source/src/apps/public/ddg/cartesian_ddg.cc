@@ -19,6 +19,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/DockingPartners.hh>
 
 #include <basic/options/util.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -320,7 +321,7 @@ main( int argc, char * argv [] )
 			if ( option[ OptionKeys::ddg::interface ].user() ) {
 				std::string interface_str = option[ OptionKeys::ddg::interface ].value();
 				protocols::docking::DockJumps movable_jumps;
-				protocols::docking::setup_foldtree( pose, interface_str, movable_jumps );
+				protocols::docking::setup_foldtree( pose, core::pose::DockingPartners::docking_partners_from_string(interface_str), movable_jumps );
 				if ( movable_jumps.size() > 0 ) {
 					interface_ddg = movable_jumps[1];
 					TR << "Setting interface jump to " << interface_ddg << " from string " << interface_str << std::endl;
