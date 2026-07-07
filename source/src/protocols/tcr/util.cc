@@ -476,7 +476,7 @@ bool check_seq_match_from_multiple_input_db( std::string const &query, utility::
 }
 
 utility::vector1< std::pair<core::Size, core::Size> > get_cdr_pdb_pos_from_input_pose( core::pose::Pose const &inpose, TCRseqInfo::tcrposi const &selepos) {
-	char chainid = inpose.pdb_info()->chain( 1 );
+	std::string chainid = inpose.pdb_info()->chain( 1 );
 	core::Size val_cdr1_begin = inpose.pdb_info()->pdb2pose( chainid, selepos.cdr1.begin );
 	core::Size val_cdr1_end = inpose.pdb_info()->pdb2pose( chainid, selepos.cdr1.end );
 	core::Size val_cdr2hv4_begin = inpose.pdb_info()->pdb2pose( chainid, selepos.cdr2hv4.begin );

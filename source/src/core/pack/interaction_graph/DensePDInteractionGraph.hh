@@ -174,10 +174,10 @@ private:
 
 	bool alternate_state_is_being_considered_;
 
-	//no default constructor, uncopyable
-	DensePDNode();
-	DensePDNode( DensePDNode const & );
-	DensePDNode & operator = ( DensePDNode const & );
+public:
+	DensePDNode() = delete;
+	DensePDNode( DensePDNode const & ) = delete;
+	DensePDNode & operator = ( DensePDNode const & ) = delete;
 };
 
 class DensePDEdge : public PrecomputedPairEnergiesEdge
@@ -261,10 +261,10 @@ private:
 	core::PackerEnergy curr_state_energy_;
 	bool energies_updated_since_last_prep_for_simA_;
 
-	//no default constructor, uncopyable
-	DensePDEdge();
-	DensePDEdge( DensePDEdge const & );
-	DensePDEdge & operator = ( DensePDEdge const & );
+public:
+	DensePDEdge() = delete;
+	DensePDEdge( DensePDEdge const & ) = delete;
+	DensePDEdge & operator = ( DensePDEdge const & ) = delete;
 };
 
 class DensePDInteractionGraph : public PrecomputedPairEnergiesInteractionGraph
@@ -372,10 +372,10 @@ private:
 
 	static const int COMMIT_LIMIT_BETWEEN_UPDATES = 1024; // 2^10
 
-	//no default constructor, uncopyable
-	DensePDInteractionGraph();
-	DensePDInteractionGraph( DensePDInteractionGraph const & );
-	DensePDInteractionGraph & operator = ( DensePDInteractionGraph const & );
+public:
+	DensePDInteractionGraph() = delete;
+	DensePDInteractionGraph( DensePDInteractionGraph const & ) = delete;
+	DensePDInteractionGraph & operator = ( DensePDInteractionGraph const & ) = delete;
 };
 
 inline

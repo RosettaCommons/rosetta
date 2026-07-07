@@ -33,6 +33,7 @@
 #include <core/pose/datacache/ObserverCache.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/kinematics/Edge.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 // numeric headers
 #include <numeric/random/uniform.hh>
@@ -438,7 +439,7 @@ void PyMOLMover::send_energy(Pose const &pose, core::scoring::ScoreType score_ty
 			char icode = ' ';
 			int  res = i;
 			if ( info ) {
-				chain = info->chain(i);
+				chain = core::io::pdb::check_chain( info->chain(i) ).at(0); // Single letter to match PDB output.
 				icode = info->icode(i);
 				res = info->number(i);
 			}
@@ -498,7 +499,7 @@ void PyMOLMover::send_RAW_Energies(Pose const &pose, std::string energyType, uti
 		char icode = ' ';
 		int  res = i;
 		if ( info ) {
-			chain = info->chain(i);
+			chain = core::io::pdb::check_chain(info->chain(i)).at(0);
 			icode = info->icode(i);
 			res = info->number(i);
 		}
@@ -739,12 +740,12 @@ PyMOLMover::send_hbonds( core::pose::Pose const & pose){
 				// acc codes for acceptor atom of H bonds
 				std::string acc_res = std::to_string(info->number(hb.acc_res()));
 				char acc_icode = info->icode(hb.acc_res());
-				char acc_chain = info->chain(hb.acc_res());
+				char acc_chain = core::io::pdb::check_chain(info->chain(hb.acc_res())).at(0);
 
 				// don codes for donor atom of H bonds
 				std::string don_res = std::to_string(info->number(hb.don_res()));
 				char don_icode = info->icode(hb.don_res());
-				char don_chain = info->chain(hb.don_res());
+				char don_chain = core::io::pdb::check_chain(info->chain(hb.don_res())).at(0);
 				std::stringstream ss1, ss2;
 				std::string acc_info = acc_res + acc_icode + acc_chain;
 				std::string don_info = don_res + don_icode + don_chain;

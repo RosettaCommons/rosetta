@@ -185,7 +185,7 @@ void StartFrom::apply(core::pose::Pose & pose){
 
 		// Add hash-tagged data, if any.
 		if ( ! hash_starting_positions_.empty() ) {
-			std::string hash = core::pose::get_sha1_hash_excluding_chain(chain[0],pose);
+			std::string hash = core::pose::get_sha1_hash_excluding_chain(chain,pose);
 			position_id = hash_starting_positions_.find(hash);
 			if ( position_id != hash_starting_positions_.end() ) {
 				specific_tag_found = true;

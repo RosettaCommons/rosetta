@@ -805,7 +805,7 @@ void SurfacePotential::compute_pose_hpatch_score(
 			// output PDB numbering if there's a PDBInfo object present
 			core::conformation::Residue const & rsd = pose.residue( atomid.rsd() );
 			if ( pose.pdb_info() ) {
-				if ( pose.pdb_info()->chain( atomid.rsd() ) != ' ' ) {
+				if ( pose.pdb_info()->chain( atomid.rsd() ) != " " ) {
 					TR << pose.pdb_info()->chain( atomid.rsd() ) << "/";
 				}
 				TR << pose.pdb_info()->number( atomid.rsd() ) << "/" << utility::trim( rsd.atom_name( atomid.atomno() ) ) << " + ";

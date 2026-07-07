@@ -222,14 +222,8 @@ int main( int argc, char * argv [] )
 		int pdbnum = option [ pair_target_resnum ];
 		if ( pdbnum != -1 ) {
 
-			std::string const tmp_chain = option[ target_chain ];
-			if ( tmp_chain.length() != 1 ) {
-				TR << "ERROR!! Chain ID should be one character" << std::endl;
-				exit(1);
-			}
-			char cid = tmp_chain[0];
-
-			pair_constel_set(pdbnum, cid, pose_init);
+			std::string const & chain = option[ target_chain ];
+			pair_constel_set(pdbnum, chain, pose_init);
 		}
 
 		// option "-pair_target_mutations"
@@ -272,14 +266,8 @@ int main( int argc, char * argv [] )
 		pdbnum = option [ triple_target_resnum ];
 		if ( pdbnum != -1 ) {
 
-			std::string const tmp_chain = option[ target_chain ];
-			if ( tmp_chain.length() != 1 ) {
-				TR << "ERROR!! Chain ID should be one character" << std::endl;
-				exit(1);
-			}
-			char cid = tmp_chain[0];
-
-			triple_constel_set(pdbnum, cid, pose_init);
+			std::string const & chain = option[ target_chain ];
+			triple_constel_set(pdbnum, chain, pose_init);
 		}
 
 		// option "-target_cnl"

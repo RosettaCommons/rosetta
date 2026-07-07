@@ -439,7 +439,7 @@ MirrorSymmetricConformation::recalculate_transforms( ) const {
 
 	//fpd this should be multicomp friendly ... though I'm not sure if this is necessary?
 	for ( Size icomp=1; icomp <= ncomps; ++icomp ) {
-		char comptag = (ncomps==1)? 'A' : Symmetry_Info()->get_component(icomp);
+		std::string comptag = (ncomps==1)? "A" : Symmetry_Info()->get_component(icomp);
 		for ( Size isub=1; isub <= nsubunits; ++isub ) {
 			Size substart=(isub-1)*nres_per_sub+1, substop=isub*nres_per_sub;
 			Size ires=substart;

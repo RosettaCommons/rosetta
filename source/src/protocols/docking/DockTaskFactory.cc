@@ -25,6 +25,7 @@
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/chains_util.hh>
 
 //for resfile reading
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
@@ -79,7 +80,6 @@ DockTaskFactory::set_default()
 	norepack1_ = false;
 	norepack2_ = false;
 	resfile_ = false;
-	//design_chains_ = utility::tools::make_vector1( NULL );
 	design_chains_.clear();
 	additional_task_operations_.clear();
 
@@ -117,7 +117,7 @@ DockTaskFactory::init_from_options()
 	if ( option[ OptionKeys::docking::design_chains ].user() ) {
 		utility::vector1< std::string > chains = option[ OptionKeys::docking::design_chains ]();
 		for ( core::Size i = 1; i <= chains.size(); ++i ) {
-			design_chains_.push_back( chains[i][0] );
+			design_chains_.push_back( chains[i] );
 		}
 	}
 }
@@ -173,9 +173,10 @@ DockTaskFactory::create_and_attach_task_factory(
 		// check for movable jumps
 		for ( core::Size i = 1; i <= pose.num_jump(); ++i ) {
 			core::Size const cutpoint = pose.fold_tree().cutpoint_by_jump( i );
-			char chain = pose.pdb_info()->chain( pose.pdb_info()->number( cutpoint ) );
+			std::string chain = pose.pdb_info()->chain( pose.pdb_info()->number( cutpoint ) );
 			if ( find( design_chains_.begin(), design_chains_.end(), chain ) != design_chains_.end() ) {
-				tf->push_back( utility::pointer::make_shared< protocols::task_operations::RestrictChainToRepackingOperation >( chain ) );
+				core::Size chain_no = core::pose::get_chain_id_from_chain( chain, pose );
+				tf->push_back( utility::pointer::make_shared< protocols::task_operations::RestrictChainToRepackingOperation >( chain_no ) );
 			}
 		}
 	} else {

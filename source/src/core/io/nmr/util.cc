@@ -51,7 +51,7 @@ read_atom_selection_from_string(
 {
 	Size rsd(0);
 	std::string name("");
-	char chain('^');
+	std::string chain("^");
 	std::istringstream iss(str);
 	if ( !(iss >> rsd >> name >> chain) ) {
 		throw CREATE_EXCEPTION(utility::excn::BadInput, "AtomSelection reading error.");

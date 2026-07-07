@@ -19,6 +19,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <map>
+#include <string>
 
 namespace protocols {
 namespace constel {
@@ -41,7 +42,7 @@ private:
 	static core::Size nres_;
 
 	/// @brief chains with termini proximal to one another
-	static std::map<char, bool> proxnc_;
+	static std::map<std::string, bool> proxnc_;
 
 public:
 

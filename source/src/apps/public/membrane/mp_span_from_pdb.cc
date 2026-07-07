@@ -122,7 +122,7 @@ void spanfile_for_each_chain( Pose & pose, Real thickness, std::string spanfile)
 
 		// output filename depends on number of chains
 		if ( pose.chain( pose.size() ) > 1 ) {
-			char chain( split_poses[i]->pdb_info()->chain(i) );
+			std::string chain( split_poses[i]->pdb_info()->chain(i) );
 			split_spanfile = split_spanfile + chain + ".span";
 		} else {
 			split_spanfile = split_spanfile + ".span";

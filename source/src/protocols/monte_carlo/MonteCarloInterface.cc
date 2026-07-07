@@ -36,7 +36,7 @@ MonteCarloInterface::MonteCarloInterface(
 	Pose const & init_pose, // PoseCOP init_pose,
 	ScoreFunction const & scorefxn, // ScoreFunctionCOP scorefxn,
 	Real const temperature,
-	std::string interface,
+	core::pose::DockingPartners const & interface,
 	bool detect_disulfide_in_separated_pose
 ):
 
@@ -54,7 +54,7 @@ MonteCarloInterface::MonteCarloInterface(
 MonteCarloInterface::MonteCarloInterface(
 	ScoreFunction const & scorefxn, // ScoreFunctionCOP scorefxn,
 	Real const temperature,
-	std::string interface):
+	core::pose::DockingPartners const & interface):
 
 	protocols::moves::MonteCarlo( scorefxn, temperature )
 
@@ -116,7 +116,7 @@ MonteCarloInterface::read_cmd_line_options() {
 
 
 void
-MonteCarloInterface::set_interface( std::string const & interface ){
+MonteCarloInterface::set_interface( core::pose::DockingPartners const & interface ){
 	interface_definition_ = interface;
 	analyzer_->set_interface( interface );
 }
