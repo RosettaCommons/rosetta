@@ -845,7 +845,7 @@ GlobalResidueTypeSet::attempt_ccd_readin( std::string const & db_filename, std::
 
 	if ( lines.size() > 0 ) {
 		core::chemical::sdf::MolFileIOMoleculeOP molecule = mmCIF_parser.parse( lines, pdb_id);
-		if (molecule == nullptr) {
+		if ( molecule == nullptr ) {
 			TR.Warning << "Issue reading " << pdb_id << " from components file." << std::endl;
 			return;
 		}
