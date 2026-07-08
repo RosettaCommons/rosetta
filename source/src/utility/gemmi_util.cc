@@ -39,7 +39,7 @@ as_cif_value(json const & obj) {
 	if ( obj.is_boolean() ) { return obj.get<bool>() ? "YES" : "NO"; }
 	if ( obj.is_string() ) { return gemmi::cif::quote(obj.get<std::string>()); }
 	if ( obj.is_number_float() ) { return std::to_string(obj.get<double>()); }
-	if ( obj.is_number_integer() ) { return std::to_string(obj.get<ssize_t>()); }
+	if ( obj.is_number_integer() ) { return std::to_string(obj.get<platform::SSize>()); }
 	if ( obj.is_array() ) {
 		std::string s = obj[0].get<std::string>();
 		for ( platform::Size ii(1); ii < obj.size(); ++ii ) {
@@ -116,10 +116,10 @@ json
 convert_by_source_type( platform::Real value, platform::Size src_type ) {
 	// This is primarily signed/unsigned/float conversions
 	if ( 1 <= src_type && src_type <= 3 ) { // signed int
-		return ssize_t(value);
+		return platform::SSize(value);
 	} else if ( 4 <= src_type && src_type <= 6 ) { // unsigned int
 		debug_assert( value >= 0 );
-		return size_t(value);
+		return platform::Size(value);
 	} else { // Float
 		return value;
 	}
