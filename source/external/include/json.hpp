@@ -13646,8 +13646,8 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
 
     iter_impl() = default;
     ~iter_impl() = default;
-    iter_impl(iter_impl&&) noexcept = default;
-    iter_impl& operator=(iter_impl&&) noexcept = default;
+    iter_impl(iter_impl&&) = default; # ROSETTA edit to fix debug build on GCC 4.8
+    iter_impl& operator=(iter_impl&&) = default; # ROSETTA edit to fix debug build on GCC 4.8
 
     /*!
     @brief constructor for a given JSON instance
