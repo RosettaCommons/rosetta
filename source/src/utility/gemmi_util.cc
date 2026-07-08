@@ -20,7 +20,7 @@
 #include <utility/assert.hh>
 #include <utility/stream_util.hh>
 
-#include <numeric/types.hh>
+#include <platform/types.hh>
 
 #include <gemmi/cif.hpp>
 #include <boost/endian/conversion.hpp>
@@ -42,7 +42,7 @@ as_cif_value(json const & obj) {
 	if ( obj.is_number_integer() ) { return std::to_string(obj.get<ssize_t>()); }
 	if ( obj.is_array() ) {
 		std::string s = obj[0].get<std::string>();
-		for ( numeric::Size ii(1); ii < obj.size(); ++ii ) {
+		for ( platform::Size ii(1); ii < obj.size(); ++ii ) {
 			s += ' ';
 			s += obj[ii].get<std::string>();
 		}
@@ -80,15 +80,15 @@ gemmi_load_mmjson(std::string const & contents_of_file, std::string const & file
 		if ( !category.is_object() || category.empty() ) {
 			utility_exit_with_message("mmJSON file " + filename + " entry " + it.key() + " is malformed." );
 		}
-		numeric::Size cif_cols = category.size();
-		numeric::Size cif_rows = category.begin().value().size();
+		platform::Size cif_cols = category.size();
+		platform::Size cif_rows = category.begin().value().size();
 		if ( cif_rows > 1 ) {
 			items.emplace_back(gemmi::cif::LoopArg{});
 			gemmi::cif::Loop & loop = items.back().loop;
 			loop.tags.reserve(cif_cols);
 			loop.values.resize(cif_cols * cif_rows);
 		}
-		numeric::Size jj = 0;
+		platform::Size jj = 0;
 		for ( auto it2 = category.begin(); it2 != category.end(); ++it2, ++jj ) {
 			std::string tag = category_name + it2.key();
 			auto const & arr = it2.value();
@@ -99,7 +99,7 @@ gemmi_load_mmjson(std::string const & contents_of_file, std::string const & file
 			} else if ( cif_rows > 1 ) {
 				gemmi::cif::Loop & loop = items.back().loop;
 				loop.tags.emplace_back(tag);
-				for ( numeric::Size kk = 0; kk < cif_rows; ++kk ) {
+				for ( platform::Size kk = 0; kk < cif_rows; ++kk ) {
 					loop.values[jj + kk*cif_cols] = as_cif_value(arr[kk]);
 				}
 			}
@@ -113,7 +113,7 @@ gemmi_load_mmjson(std::string const & contents_of_file, std::string const & file
 json bcif_decode( json data, json const & encodings);
 
 json
-convert_by_source_type( numeric::Real value, numeric::Size src_type ) {
+convert_by_source_type( platform::Real value, platform::Size src_type ) {
 	// This is primarily signed/unsigned/float conversions
 	if ( 1 <= src_type && src_type <= 3 ) { // signed int
 		return ssize_t(value);
@@ -142,10 +142,10 @@ bcif_vector_decode( json const & data, json const & encoding ) {
 		if ( srcType != "Float32" && srcType != "Float64"  ) {
 			utility_exit_with_message("Can't interpret " + srcType + " as FixedPoint source type.");
 		}
-		numeric::Real factor = encoding["factor"].get<numeric::Real>();
-		std::vector< numeric::Real > vec;
+		platform::Real factor = encoding["factor"].get<platform::Real>();
+		std::vector< platform::Real > vec;
 		for ( auto & v: data ) {
-			vec.push_back( v.get<numeric::Real>() / factor ); // Always real
+			vec.push_back( v.get<platform::Real>() / factor ); // Always real
 		}
 		return vec;
 	} else if ( kind == "IntervalQuantization" ) {
@@ -153,31 +153,31 @@ bcif_vector_decode( json const & data, json const & encoding ) {
 		if ( srcType != "Float32" && srcType != "Float64" ) {
 			utility_exit_with_message("Can't interpret " + srcType + " as IntervalQuantization source type.");
 		}
-		numeric::Real min = encoding["min"].get<numeric::Real>();
-		numeric::Real max = encoding["max"].get<numeric::Real>();
-		numeric::Real numSteps = encoding["numSteps"].get<numeric::Real>(); // includes both fenceposts
-		numeric::Real step = (max - min)/(numSteps-1);
+		platform::Real min = encoding["min"].get<platform::Real>();
+		platform::Real max = encoding["max"].get<platform::Real>();
+		platform::Real numSteps = encoding["numSteps"].get<platform::Real>(); // includes both fenceposts
+		platform::Real step = (max - min)/(numSteps-1);
 
-		std::vector< numeric::Real > vec;
+		std::vector< platform::Real > vec;
 		for ( auto & v: data ) {
-			vec.push_back( min + v.get<numeric::Size>() * step ); // always real
+			vec.push_back( min + v.get<platform::Size>() * step ); // always real
 		}
 		return vec;
 	} else if ( kind == "RunLength" ) {
-		numeric::Size src_type = encoding["srcType"].get<numeric::Size>();
+		platform::Size src_type = encoding["srcType"].get<platform::Size>();
 		json vec = json::array();
-		for ( numeric::Size ii(0); ii < data.size()-1; ii += 2 ) {
+		for ( platform::Size ii(0); ii < data.size()-1; ii += 2 ) {
 			std::int32_t v = data[ii].get< std::int32_t >();
-			for ( numeric::Size jj(1); jj <= data[ii+1].get< numeric::Size >(); ++jj ) {
+			for ( platform::Size jj(1); jj <= data[ii+1].get< platform::Size >(); ++jj ) {
 				vec.push_back( convert_by_source_type(v, src_type) );
 			}
 		}
-		if ( vec.size() != encoding["srcSize"].get< numeric::Size >() ) {
+		if ( vec.size() != encoding["srcSize"].get< platform::Size >() ) {
 			utility_exit_with_message("In RunLength encoding, decoded size of " + std::to_string(vec.size()) + " doesn't match source size of " + encoding["srcSize"].dump() );
 		}
 		return vec;
 	} else if ( kind == "Delta" ) {
-		numeric::Size src_type = encoding["srcType"].get<numeric::Size>();
+		platform::Size src_type = encoding["srcType"].get<platform::Size>();
 		std::int32_t current = encoding["origin"].get< std::int32_t >();
 		json vec = json::array();
 		for ( auto & v: data ) {
@@ -187,7 +187,7 @@ bcif_vector_decode( json const & data, json const & encoding ) {
 		return vec;
 	} else if ( kind == "IntegerPacking" ) {
 		if ( encoding["isUnsigned"].get< bool >() ) {
-			numeric::Size nbytes = encoding["byteCount"].get< numeric::Size >();
+			platform::Size nbytes = encoding["byteCount"].get< platform::Size >();
 			std::uint32_t max_val;
 			if ( nbytes == 1 ) {
 				max_val = std::numeric_limits< std::uint8_t >::max();
@@ -207,12 +207,12 @@ bcif_vector_decode( json const & data, json const & encoding ) {
 				}
 				was_max = (val == max_val);
 			}
-			if ( vec.size() != encoding["srcSize"].get< numeric::Size >() ) {
+			if ( vec.size() != encoding["srcSize"].get< platform::Size >() ) {
 				utility_exit_with_message("In IntegerPacking encoding, decoded size of " + std::to_string(vec.size()) + " doesn't match source size of " + encoding["srcSize"].dump() );
 			}
 			return vec;
 		} else { // Signed IntegerPacking
-			numeric::Size nbytes = encoding["byteCount"].get< numeric::Size >();
+			platform::Size nbytes = encoding["byteCount"].get< platform::Size >();
 			std::int32_t max_val, min_val;
 			if ( nbytes == 1 ) {
 				max_val = std::numeric_limits< std::int8_t >::max();
@@ -234,7 +234,7 @@ bcif_vector_decode( json const & data, json const & encoding ) {
 				}
 				was_extreme = (val == max_val) || (val == min_val);
 			}
-			if ( vec.size() != encoding["srcSize"].get< numeric::Size >() ) {
+			if ( vec.size() != encoding["srcSize"].get< platform::Size >() ) {
 				utility_exit_with_message("In IntegerPacking encoding, decoded size of " + std::to_string(vec.size()) + " doesn't match source size of " + encoding["srcSize"].dump() );
 			}
 			return vec;
@@ -261,61 +261,61 @@ bcif_byte_array_decode( json const & data, json const & encoding) {
 	} else {
 		utility_exit_with_message(std::string("Can't interpret ByteArray data of type ") + data.type_name() );
 	}
-	numeric::Size type = encoding["type"].get<numeric::Size>();
+	platform::Size type = encoding["type"].get<platform::Size>();
 	// All values are little-ending coded.
 	switch ( type ) {
 	case 1: {// INT8
 		std::vector< std::int8_t > vec;
-		for ( numeric::Size offset(0); offset < byte_array.size(); offset += 1 ) {
+		for ( platform::Size offset(0); offset < byte_array.size(); offset += 1 ) {
 			vec.push_back( boost::endian::load_little_s16( byte_array.data() + offset ) );
 		}
 		return vec;
 	}
 	case 2: {// INT16
 		std::vector< std::int16_t > vec;
-		for ( numeric::Size offset(0); offset < byte_array.size(); offset += 2 ) {
+		for ( platform::Size offset(0); offset < byte_array.size(); offset += 2 ) {
 			vec.push_back( boost::endian::load_little_s16( byte_array.data() + offset ) );
 		}
 		return vec;
 	}
 	case 3: {// INT32
 		std::vector< std::int32_t > vec;
-		for ( numeric::Size offset(0); offset < byte_array.size(); offset += 4 ) {
+		for ( platform::Size offset(0); offset < byte_array.size(); offset += 4 ) {
 			vec.push_back( boost::endian::load_little_s32( byte_array.data() + offset ) );
 		}
 		return vec;
 	}
 	case 4: {// UINT8
 		std::vector< std::uint8_t > vec;
-		for ( numeric::Size offset(0); offset < byte_array.size(); offset += 1 ) {
+		for ( platform::Size offset(0); offset < byte_array.size(); offset += 1 ) {
 			vec.push_back( boost::endian::load_little_u16( byte_array.data() + offset ) );
 		}
 		return vec;
 	}
 	case 5: {// UNIT16
 		std::vector< std::uint16_t > vec;
-		for ( numeric::Size offset(0); offset < byte_array.size(); offset += 2 ) {
+		for ( platform::Size offset(0); offset < byte_array.size(); offset += 2 ) {
 			vec.push_back( boost::endian::load_little_u16( byte_array.data() + offset ) );
 		}
 		return vec;
 	}
 	case 6: {// UNIT32
 		std::vector< std::uint32_t > vec;
-		for ( numeric::Size offset(0); offset < byte_array.size(); offset += 4 ) {
+		for ( platform::Size offset(0); offset < byte_array.size(); offset += 4 ) {
 			vec.push_back( boost::endian::load_little_u32( byte_array.data() + offset ) );
 		}
 		return vec;
 	}
 	case 32: {// FLOAT32
 		std::vector< float > vec;
-		for ( numeric::Size offset(0); offset < byte_array.size(); offset += 4 ) {
+		for ( platform::Size offset(0); offset < byte_array.size(); offset += 4 ) {
 			vec.push_back( boost::endian::endian_load<float, 4, boost::endian::order::little>( byte_array.data() + offset ) );
 		}
 		return vec;
 	}
 	case 33: {// FLOAT64
 		std::vector< double > vec;
-		for ( numeric::Size offset(0); offset < byte_array.size(); offset += 8 ) {
+		for ( platform::Size offset(0); offset < byte_array.size(); offset += 8 ) {
 			vec.push_back( boost::endian::endian_load<double, 8, boost::endian::order::little>( byte_array.data() + offset ) );
 		}
 		return vec;
@@ -349,14 +349,14 @@ bcif_string_array_decode( json const & data, json const & encoding) {
 			vec.push_back("?"); // Theoretically will be masked later.
 			continue;
 		}
-		numeric::Size index = sindex;
+		platform::Size index = sindex;
 		if ( index+1 >= offsets.size() ) {
 			std::cerr << "Bad index " << index << " in StringArray decoding. Maximum offset " << offsets.size() << std::endl;
 			vec.push_back("?");
 			continue;
 		}
-		numeric::Size begin = offsets[index].get< numeric::Size >();
-		numeric::Size end = offsets[index+1].get< numeric::Size >();
+		platform::Size begin = offsets[index].get< platform::Size >();
+		platform::Size end = offsets[index+1].get< platform::Size >();
 		vec.push_back( stringData.substr( begin, end-begin ) );
 	}
 	return vec;
@@ -372,9 +372,9 @@ bcif_decode( json data, json const & encodings) {
 	}
 
 	debug_assert( encodings.is_array() );
-	numeric::Size nencodings = encodings.size();
+	platform::Size nencodings = encodings.size();
 
-	for ( numeric::Size ee(1); ee <= nencodings; ++ee ) {
+	for ( platform::Size ee(1); ee <= nencodings; ++ee ) {
 		auto const & encoding = encodings[ nencodings - ee ]; // Decode from the end backwards
 		std::string encoding_kind;
 		extract_nonempty_string_from_json( encoding, "kind", encoding_kind);
@@ -431,8 +431,8 @@ gemmi_load_bcif(std::string const & contents_of_file, std::string const & filena
 	for ( auto & category: dataBlock["categories"] ) {
 		std::string category_name = category["name"].get<std::string>() + ".";
 
-		numeric::Size cif_cols = category["columns"].size();
-		numeric::Size cif_rows = category["rowCount"];
+		platform::Size cif_cols = category["columns"].size();
+		platform::Size cif_rows = category["rowCount"];
 
 		if ( cif_rows > 1 ) {
 			items.emplace_back(gemmi::cif::LoopArg{});
@@ -441,7 +441,7 @@ gemmi_load_bcif(std::string const & contents_of_file, std::string const & filena
 			loop.values.resize(cif_cols * cif_rows);
 		}
 
-		for ( numeric::Size jj(0); jj < cif_cols; ++jj ) {
+		for ( platform::Size jj(0); jj < cif_cols; ++jj ) {
 			auto & column = category["columns"][jj];
 			std::string tag = category_name + column["name"].get<std::string>();
 
@@ -454,8 +454,8 @@ gemmi_load_bcif(std::string const & contents_of_file, std::string const & filena
 					if ( mask.size() > decoded.size() ) {
 						utility_exit_with_message("In BCIF file " + filename + " entry " + tag + " the mask (" + std::to_string(mask.size()) + ") is larger than the data (" + std::to_string(decoded.size()) + ")" );
 					}
-					for ( numeric::Size mm(0); mm < mask.size(); ++mm ) {
-						numeric::Size mask_val = std::stoi( mask[mm] );
+					for ( platform::Size mm(0); mm < mask.size(); ++mm ) {
+						platform::Size mask_val = std::stoi( mask[mm] );
 						if ( mask_val == 0 ) {
 							// do nothing
 						} else if ( mask_val == 1 ) {
@@ -473,7 +473,7 @@ gemmi_load_bcif(std::string const & contents_of_file, std::string const & filena
 			} else if ( cif_rows > 1 ) {
 				gemmi::cif::Loop & loop = items.back().loop;
 				loop.tags.emplace_back(tag);
-				for ( numeric::Size kk = 0; kk < cif_rows; ++kk ) {
+				for ( platform::Size kk = 0; kk < cif_rows; ++kk ) {
 					loop.values[jj + kk*cif_cols] = decoded[kk];
 				}
 			}
