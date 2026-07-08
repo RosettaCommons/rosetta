@@ -700,9 +700,8 @@ protected:
 		return *last_accepted_pose_;
 	}
 
-private:
-	/// unimplemented -- do not use
-	MonteCarlo const & operator = ( MonteCarlo const & ); // assignment operator -- do not use.
+public:
+	MonteCarlo & operator = ( MonteCarlo const & ) = delete;
 
 
 protected:

@@ -76,10 +76,7 @@ IGInterfaceEdgeUpweighter::set_skip_loop_chains( std::string const & chain_strin
 	utility::vector1<std::string> chains_vec = utility::string_split( chain_string, ',' );
 	for ( std::string const & iichain_string : chains_vec ) {
 		if ( iichain_string.size() == 0 ) continue;
-		if ( iichain_string.size() != 1 ) {
-			utility_exit_with_message("Chain identifier should not be more than one character!!!");
-		}
-		chains_to_ignore_loops_.insert( iichain_string[0] );
+		chains_to_ignore_loops_.insert( iichain_string );
 	}
 }
 

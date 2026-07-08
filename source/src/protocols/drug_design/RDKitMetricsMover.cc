@@ -98,10 +98,7 @@ RDKitMetricsMover::apply( Pose & pose ) {
 
 void
 RDKitMetricsMover::add_scores_for_chain( Pose & pose, std::string const & chain ) const {
-	if ( chain.size() != 1 ) {
-		utility_exit_with_message("In RDKitMetricsMover, chain designation '"+chain+"' shoud be a single letter.");
-	}
-	for ( core::Size ii: core::pose::get_resnums_for_chain( pose, chain[0] ) ) {
+	for ( core::Size ii: core::pose::get_resnums_for_chain( pose, chain ) ) {
 		add_scores_for_residue( pose, ii);
 	}
 }

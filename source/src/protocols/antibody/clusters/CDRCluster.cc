@@ -98,7 +98,7 @@ protocols::antibody::clusters::CDRCluster::save( Archive & arc ) const {
 	arc( CEREAL_NVP( pdb_end_insertion_code_ ) ); // char
 	arc( CEREAL_NVP( start_ ) ); // core::Size
 	arc( CEREAL_NVP( end_ ) ); // core::Size
-	arc( CEREAL_NVP( chain_ ) ); // char
+	arc( CEREAL_NVP( chain_ ) ); // std::string
 	arc( CEREAL_NVP( cis_trans_match_ ) ); // _Bool
 }
 

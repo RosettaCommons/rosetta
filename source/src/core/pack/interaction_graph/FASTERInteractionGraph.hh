@@ -189,10 +189,10 @@ private:
 	std::vector< bool > neighbor_relaxed_in_sBR_;
 	std::vector< core::PackerEnergy > perturbed_two_body_energies_;
 
-	//no default constructor, uncopyable
-	FASTERNode();
-	FASTERNode( FASTERNode const & );
-	FASTERNode & operator = ( FASTERNode const & );
+public:
+	FASTERNode() = delete;
+	FASTERNode( FASTERNode const & ) = delete;
+	FASTERNode & operator = ( FASTERNode const & ) = delete;
 };
 
 class FASTEREdge : public PrecomputedPairEnergiesEdge
@@ -313,10 +313,10 @@ private:
 
 private:
 	// Unimplemented functions
-	//no default constructor, uncopyable
-	FASTEREdge();
-	FASTEREdge( FASTEREdge const & );
-	FASTEREdge & operator = ( FASTEREdge const & );
+public:
+	FASTEREdge() = delete;
+	FASTEREdge( FASTEREdge const & ) = delete;
+	FASTEREdge & operator = ( FASTEREdge const & ) = delete;
 };
 
 class FASTERInteractionGraph : public PrecomputedPairEnergiesInteractionGraph
@@ -432,10 +432,10 @@ private:
 
 	static const int COMMIT_LIMIT_BETWEEN_UPDATES = 1024; // 2^10
 
-	//no default constructor, uncopyable
-	FASTERInteractionGraph();
-	FASTERInteractionGraph( FASTERInteractionGraph const & );
-	FASTERInteractionGraph & operator = ( FASTERInteractionGraph const & );
+public:
+	FASTERInteractionGraph() = delete;
+	FASTERInteractionGraph( FASTERInteractionGraph const & ) = delete;
+	FASTERInteractionGraph & operator = ( FASTERInteractionGraph const & ) = delete;
 };
 
 inline

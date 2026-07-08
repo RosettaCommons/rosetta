@@ -44,7 +44,7 @@ MinimizeLigand::MinimizeLigand():
 	ligand_torsion_restraints_.clear();
 }
 
-MinimizeLigand::MinimizeLigand(char chain, core::Real degrees):
+MinimizeLigand::MinimizeLigand(std::string const & chain, core::Real degrees):
 	chain_(chain), degrees_(degrees)
 {
 	ligand_torsion_restraints_.clear();
@@ -80,10 +80,6 @@ MinimizeLigand::remove_constraints( core::pose::Pose & pose ) {
 	for ( core::Size ii(1); ii<= ligand_torsion_restraints_.size(); ++ii ) {
 		ligand_torsion_restraints_[ii]->disable(pose);
 	}
-}
-
-bool MinimizeLigand::operator==(char const & chain) const{
-	return chain == chain_;
 }
 
 utility::vector1<protocols::ligand_docking::ResidueTorsionRestraintsOP>::iterator

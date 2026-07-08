@@ -534,7 +534,7 @@ SymmetricConformation::get_transformation( core::Size resid, bool input_is_subun
 		recalculate_transforms( );
 	}
 
-	char compid = 'A';
+	std::string compid = "A";
 	if ( symm_info_->get_num_components() >= 2 ) {
 		compid = symm_info_->get_component_of_residue( resid );
 	}
@@ -554,7 +554,7 @@ SymmetricConformation::apply_transformation(
 		recalculate_transforms( );
 	}
 
-	char compid = 'A';
+	std::string compid = "A";
 	if ( symm_info_->get_num_components() >= 2 ) {
 		debug_assert( symm_info_->get_component_of_residue(residfrom) == symm_info_->get_component_of_residue(residto) );
 		compid = symm_info_->get_component_of_residue( residfrom );
@@ -583,7 +583,7 @@ SymmetricConformation::apply_transformation_norecompute(
 	core::Size residfrom,
 	core::Size residto,
 	bool rotationonly ) const {
-	char compid = 'A';
+	std::string compid = "A";
 	if ( symm_info_->get_num_components() >= 2 ) {
 		debug_assert( symm_info_->get_component_of_residue(residfrom) == symm_info_->get_component_of_residue(residto) );
 		compid = symm_info_->get_component_of_residue( residfrom );
@@ -723,7 +723,7 @@ SymmetricConformation::clear_Tsymm( ) const {
 
 // @brief invert one transform about Z
 void
-SymmetricConformation::invert_Tsymm( char sub, core::Size subunit ) const {
+SymmetricConformation::invert_Tsymm( std::string const & sub, core::Size subunit ) const {
 	Tsymm_[sub][subunit].set_mirror_z(true);
 }
 
@@ -753,7 +753,7 @@ SymmetricConformation::recalculate_transforms( ) const {
 	bool each_subunit_has_vrt_control( true );
 	{ // scope
 		for ( Size icomp=1; icomp <= ncomps && each_subunit_has_vrt_control; ++icomp ) {
-			char comptag = (ncomps==1)? 'A' : symm_info_->get_component(icomp);
+			std::string comptag = (ncomps==1)? "A" : symm_info_->get_component(icomp);
 			for ( Size isub=1; isub <= nsubunits && each_subunit_has_vrt_control; ++isub ) {
 				Size vrt_ctrl(0);
 				for ( Size j=1; j<= f.num_jump(); ++j ) {
@@ -775,7 +775,7 @@ SymmetricConformation::recalculate_transforms( ) const {
 	}
 
 	for ( Size icomp=1; icomp <= ncomps; ++icomp ) {
-		char comptag = (ncomps==1)? 'A' : symm_info_->get_component(icomp);
+		std::string comptag = (ncomps==1)? "A" : symm_info_->get_component(icomp);
 		Tsymm_[comptag] = utility::vector1< SymmetryTransform >(nsubunits);
 
 		for ( Size isub=1; isub <= nsubunits; ++isub ) {

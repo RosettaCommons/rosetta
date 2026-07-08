@@ -47,7 +47,7 @@ namespace fragment {
 class ConstantLengthFragSetIterator_ : public FrameIteratorWorker_ {
 	friend class ConstantLengthFragSet;
 
-	ConstantLengthFragSetIterator_ & operator = (ConstantLengthFragSetIterator_ const&);
+	ConstantLengthFragSetIterator_ & operator = (ConstantLengthFragSetIterator_ const&) = delete;
 protected:
 	ConstantLengthFragSetIterator_( FrameList::const_iterator it, FrameList::const_iterator eit ) : it_( it ), eit_( eit ) {
 		if ( it != eit ) {

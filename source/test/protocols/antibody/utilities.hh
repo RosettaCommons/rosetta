@@ -145,7 +145,7 @@ assert_cdr_design_is_enabled_or_disabled(
 		TR_util << "CDR: " << ab_info->get_CDR_name( cdr ) << std::endl;
 		TR_util << "CDR Chain: " << ab_info->get_CDR_chain( cdr ) << std::endl;
 
-		if ( ab_info->is_camelid() && ab_info->get_CDR_chain( cdr ) == 'L' ) continue;
+		if ( ab_info->is_camelid() && ab_info->get_CDR_chain( cdr ) == "L" ) continue;
 
 
 		core::Size start = ab_info->get_CDR_start(cdr, pose);
@@ -187,7 +187,7 @@ assert_cdr_design_disabled(
 		TR_util << "CDR: " << ab_info->get_CDR_name( cdr ) << std::endl;
 		TR_util << "CDR Chain: " << ab_info->get_CDR_chain( cdr ) << std::endl;
 
-		if ( ab_info->is_camelid() && ab_info->get_CDR_chain( cdr ) == 'L' ) continue;
+		if ( ab_info->is_camelid() && ab_info->get_CDR_chain( cdr ) == "L" ) continue;
 
 		core::Size start = ab_info->get_CDR_start(cdr, pose);
 		core::Size end = ab_info->get_CDR_end(cdr, pose);
@@ -218,7 +218,7 @@ assert_cdr_packing_is_enabled_or_disabled(
 		TR_util << "CDR: " << ab_info->get_CDR_name( cdr ) << std::endl;
 		TR_util << "CDR Chain: " << ab_info->get_CDR_chain( cdr ) << std::endl;
 
-		if ( ab_info->is_camelid() && ab_info->get_CDR_chain( cdr ) == 'L' ) continue;
+		if ( ab_info->is_camelid() && ab_info->get_CDR_chain( cdr ) == "L" ) continue;
 
 		core::Size start = ab_info->get_CDR_start(cdr, pose);
 		core::Size end = ab_info->get_CDR_end(cdr, pose);

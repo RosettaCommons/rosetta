@@ -139,7 +139,7 @@ private:
 		bool const rna_protein_docking,
 		bool const virtual_anchor_provided,
 		bool const cutpoint_open_provided,
-		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & possible_cutpoint_open_numbering,
+		std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & possible_cutpoint_open_numbering,
 		core::pose::full_model_info::FullModelParametersOP & full_model_parameters,
 		utility::vector1< core::Size > & cutpoint_open_in_full_model );
 
@@ -153,8 +153,8 @@ private:
 
 	void
 	input_numbering_setup(
-		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & input_res_resnum_and_chain,
-		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & input_silent_res_resnum_and_chain,
+		std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & input_res_resnum_and_chain,
+		std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & input_silent_res_resnum_and_chain,
 		std::string const & sequence,
 		core::pose::full_model_info::FullModelParametersOP const & full_model_parameters,
 		utility::vector1< core::Size > & input_res,
@@ -184,7 +184,7 @@ private:
 	);
 	void
 	input_silent_numbering_setup(
-		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & input_silent_res_resnum_and_chain,
+		std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & input_silent_res_resnum_and_chain,
 		std::string const & sequence,
 		core::pose::full_model_info::FullModelParametersOP const & full_model_parameters,
 		utility::vector1< core::Size > const & input_res_user_defined,
@@ -197,7 +197,7 @@ private:
 
 	void
 	setup_obligate_pair(
-		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & extra_minimize_res,
+		std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & extra_minimize_res,
 		core::pose::full_model_info::FullModelParametersOP const & full_model_parameters,
 		utility::vector1< utility::vector1< int > > const & resnum_list,
 		core::pose::rna::RNA_SecStruct const & secstruct,
@@ -229,7 +229,7 @@ private:
 
 	void
 	refine_working_obligate_pairs(
-		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & remove_obligate_pair_rc,
+		std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & remove_obligate_pair_rc,
 		core::pose::full_model_info::FullModelParametersOP const & full_model_parameters,
 		utility::vector1< core::Size > const & obligate_pair,
 		utility::vector1< std::string > & obligate_pair_explicit,
@@ -268,14 +268,14 @@ private:
 	setup_final_res_lists(
 		utility::vector1< core::Size > const & working_res,
 		utility::vector1< core::Size > const & cutpoint_open_in_full_model,
-		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & extra_minimize_res_rc,
-		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & extra_minimize_chi_res_rc,
-		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & output_jump_res_rc,
+		std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & extra_minimize_res_rc,
+		std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & extra_minimize_chi_res_rc,
+		std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & output_jump_res_rc,
 		bool const minimize_rna_specified,
-		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & syn_chi_rc,
-		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & anti_chi_rc,
-		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & block_stack_above_rc,
-		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & block_stack_below_rc,
+		std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & syn_chi_rc,
+		std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & anti_chi_rc,
+		std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & block_stack_above_rc,
+		std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & block_stack_below_rc,
 		core::pose::full_model_info::FullModelParametersOP const & full_model_parameters // can use a const OP -- not a COP!
 	);
 	/////// Steps ////////
@@ -299,13 +299,13 @@ private:
 	get_seq_and_resnum( std::string const & pdb,
 		std::string & seq,
 		utility::vector1< int > & resnum,
-		utility::vector1< char > & chain,
+		utility::vector1< std::string > & chain,
 		utility::vector1< std::string > & segid ) const;
 
 	std::string
 	get_silent_seq( std::string const & silent_file ) const;
 
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > >
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > >
 	get_silent_resnum( std::string const & silent_file ) const;
 
 	bool

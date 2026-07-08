@@ -42,10 +42,7 @@ namespace scoring {
 
 class OneToAllNeighborIterator : public ResidueNeighborIterator
 {
-	OneToAllNeighborIterator & operator = (OneToAllNeighborIterator const & src );
 public:
-	~OneToAllNeighborIterator() override;
-
 	OneToAllNeighborIterator(
 		Size const pos1_in,
 		Size const pos2_in,
@@ -54,6 +51,11 @@ public:
 		utility::vector1< Real > * table_in,
 		utility::vector1< bool > * computed_in
 	);
+
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	OneToAllNeighborIterator & operator = (OneToAllNeighborIterator const & ) = delete;
 
 	ResidueNeighborIterator & operator = ( ResidueNeighborIterator const & src ) override;
 
@@ -97,10 +99,7 @@ private:
 
 class OneToAllNeighborConstIterator : public ResidueNeighborConstIterator
 {
-	OneToAllNeighborConstIterator & operator = (OneToAllNeighborConstIterator const & src );
 public:
-	~OneToAllNeighborConstIterator() override;
-
 	OneToAllNeighborConstIterator(
 		Size const pos1_in,
 		Size const pos2_in,
@@ -109,6 +108,11 @@ public:
 		utility::vector1< Real > const * table_in,
 		utility::vector1< bool > const * computed_in
 	);
+
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	OneToAllNeighborConstIterator & operator = (OneToAllNeighborConstIterator const & ) = delete;
 
 	ResidueNeighborConstIterator & operator = ( ResidueNeighborConstIterator const & src ) override;
 

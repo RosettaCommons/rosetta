@@ -63,10 +63,6 @@ private:
 
 	JobInputterFactory();
 
-	// Unimplemented -- uncopyable
-	JobInputterFactory( JobInputterFactory const & );
-	JobInputterFactory const & operator = ( JobInputterFactory const & );
-
 private:
 
 	JobInputterMap job_inputter_creator_map_;

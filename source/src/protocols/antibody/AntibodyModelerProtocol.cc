@@ -536,10 +536,11 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 
 		}
 
-		//JAB - IAM is now chain-order independant.
 		TR << "Running Interface AnalyzerMover" << std::endl;
-		std::string chains_str = "A_" +ab_info_->get_antibody_chain_string();
-		InterfaceAnalyzerMover analyzer = InterfaceAnalyzerMover(design::get_dock_chains_from_ab_dock_chains(ab_info_, chains_str), false /* tracer */, pack_scorefxn_, false /* compute_packstat */ , false /* pack_input */,  true /* pack_separated */) ;
+		core::pose::DockingPartners ab_dock_chains;
+		ab_dock_chains.partner1.push_back("A");
+		ab_dock_chains.partner2 = ab_info_->get_antibody_chains();
+		InterfaceAnalyzerMover analyzer = InterfaceAnalyzerMover(design::get_dock_chains_from_ab_dock_chains(ab_info_, ab_dock_chains), false /* tracer */, pack_scorefxn_, false /* compute_packstat */ , false /* pack_input */,  true /* pack_separated */) ;
 
 		analyzer.apply(pose); //Adds PoseExtraScore_Float to be output into scorefile.
 	}
@@ -625,10 +626,10 @@ void AntibodyModelerProtocol::display_constraint_residues( core::pose::Pose & po
 
 	core::Size H1_Cys(0), H3_Cys(0);
 
-	if (      pose.residue( pose.pdb_info()->pdb2pose('H',32 ) ).name3() == "CYS" ) {
-		H1_Cys = pose.pdb_info()->pdb2pose( 'H', 32 );
-	} else if ( pose.residue( pose.pdb_info()->pdb2pose('H',33 ) ).name3() == "CYS" ) {
-		H1_Cys = pose.pdb_info()->pdb2pose( 'H', 33 );
+	if (      pose.residue( pose.pdb_info()->pdb2pose("H",32 ) ).name3() == "CYS" ) {
+		H1_Cys = pose.pdb_info()->pdb2pose( "H", 32 );
+	} else if ( pose.residue( pose.pdb_info()->pdb2pose("H",33 ) ).name3() == "CYS" ) {
+		H1_Cys = pose.pdb_info()->pdb2pose( "H", 33 );
 	}
 
 	for ( core::Size ii = ab_info_->get_CDR_loop(h3).start(); ii <= ab_info_->get_CDR_loop(h3).stop(); ii++ ) {
@@ -645,7 +646,7 @@ void AntibodyModelerProtocol::display_constraint_residues( core::pose::Pose & po
 	// Specifying extended kink
 
 	core::Size hfr_46(0), h3_closest(0);
-	hfr_46 = pose.pdb_info()->pdb2pose( 'H', 46 );
+	hfr_46 = pose.pdb_info()->pdb2pose( "H", 46 );
 	if ( ab_info_->get_H3_kink_type() == Extended ) h3_closest = ab_info_->get_CDR_loop(h3).stop() - 5;
 	if ( h3_closest != 0 ) {
 		TR << "CONSTRAINTS: " << "AtomPair CA " << hfr_46 << " CA " << h3_closest

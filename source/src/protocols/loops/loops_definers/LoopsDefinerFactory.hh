@@ -50,10 +50,6 @@ private: // constructors
 
 	// Private constructor to make it singleton managed
 	LoopsDefinerFactory();
-	LoopsDefinerFactory(const LoopsDefinerFactory & src); // unimplemented
-
-	LoopsDefinerFactory const &
-	operator=( LoopsDefinerFactory const & ); // unimplemented
 
 public:
 

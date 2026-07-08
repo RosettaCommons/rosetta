@@ -138,7 +138,7 @@ main( int argc, char * argv [] )
 				for ( core::Size j = 1 ; j <= in_pose.size() ; ++j ) {
 					if ( out_pose.residue( j ).name() != in_pose.residue( j ).name() ) {
 						core::Size pdb_position( out_pose.pdb_info()->number( j ) );
-						char pdb_chain( out_pose.pdb_info()->chain( j ) );
+						std::string pdb_chain( out_pose.pdb_info()->chain( j ) );
 						TR << "Accepting mutation at position " << pdb_position << " chain " << pdb_chain
 							<< " from " << in_pose.residue( j ).name()
 							<< " to " << out_pose.residue( j ).name() << std::endl;

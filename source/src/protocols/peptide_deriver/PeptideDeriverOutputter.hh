@@ -52,8 +52,8 @@ public:
 	virtual void chain_pair_pose_prepared(core::pose::Pose const & pose) = 0;
 
 	/// @brief called by PeptideDeriverFilter when calculation commences on a receptor-partner pair
-	virtual void begin_receptor_partner_pair(char const receptor_chain_letter,
-		char const partner_chain_letter, core::Real const total_isc,
+	virtual void begin_receptor_partner_pair(std::string const & receptor_chain_letter,
+		std::string const & partner_chain_letter, core::Real const total_isc,
 		std::string const & options_string) = 0;
 
 	/// @brief called by PeptideDeriverFilter when calculation commences for
