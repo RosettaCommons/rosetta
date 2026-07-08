@@ -119,8 +119,8 @@ void extract_nonempty_object_from_json( nlohmann::json const & json, std::string
 bool extract_value_if_present(json const &j, std::string const & key, bool &value)
 {
 	auto it = j.find(key);
-	if( it != j.end() ) {
-		if( it->is_boolean() ) {
+	if ( it != j.end() ) {
+		if ( it->is_boolean() ) {
 			value = *it;
 			return true;
 		}
@@ -133,8 +133,8 @@ bool extract_value_if_present(json const &j, std::string const & key, bool &valu
 bool extract_value_if_present(json const &j, std::string const & key, int &value)
 {
 	auto it = j.find(key);
-	if( it != j.end() ) {
-		if( it->is_number() ) {
+	if ( it != j.end() ) {
+		if ( it->is_number() ) {
 			value = *it;
 			return true;
 		}
@@ -147,8 +147,8 @@ bool extract_value_if_present(json const &j, std::string const & key, int &value
 bool extract_value_if_present(json const &j, std::string const & key, double &value)
 {
 	auto it = j.find(key);
-	if( it != j.end() ) {
-		if( it->is_number() ) {
+	if ( it != j.end() ) {
+		if ( it->is_number() ) {
 			value = *it;
 			return true;
 		}
@@ -160,8 +160,8 @@ bool extract_value_if_present(json const &j, std::string const & key, double &va
 bool extract_value_if_present(json const &j, std::string const & key, std::string &value)
 {
 	auto it = j.find(key);
-	if( it != j.end() ) {
-		if( it->is_string() ) {
+	if ( it != j.end() ) {
+		if ( it->is_string() ) {
 			value = static_cast<std::string const &>(*it);
 			return true;
 		}

@@ -74,7 +74,7 @@ gemmi_load_mmjson(std::string const & contents_of_file, std::string const & file
 	auto & top = obj.begin().value();
 	if ( ! top.is_object() ) { utility_exit_with_message("mmJSON file " + filename + " entry " + block_name + " is not a JSON (dict) object." ); }
 
-	for ( auto it = top.begin(); it != top.end(); ++it) {
+	for ( auto it = top.begin(); it != top.end(); ++it ) {
 		std::string category_name = "_" + it.key() + ".";
 		auto const & category = it.value();
 		if ( !category.is_object() || category.empty() ) {
@@ -264,63 +264,63 @@ bcif_byte_array_decode( json const & data, json const & encoding) {
 	platform::Size type = encoding["type"].get<platform::Size>();
 	// All values are little-ending coded.
 	switch ( type ) {
-	case 1: {// INT8
+	case 1 : {// INT8
 		std::vector< std::int8_t > vec;
 		for ( platform::Size offset(0); offset < byte_array.size(); offset += 1 ) {
 			vec.push_back( boost::endian::load_little_s16( byte_array.data() + offset ) );
 		}
 		return vec;
 	}
-	case 2: {// INT16
+	case 2 : {// INT16
 		std::vector< std::int16_t > vec;
 		for ( platform::Size offset(0); offset < byte_array.size(); offset += 2 ) {
 			vec.push_back( boost::endian::load_little_s16( byte_array.data() + offset ) );
 		}
 		return vec;
 	}
-	case 3: {// INT32
+	case 3 : {// INT32
 		std::vector< std::int32_t > vec;
 		for ( platform::Size offset(0); offset < byte_array.size(); offset += 4 ) {
 			vec.push_back( boost::endian::load_little_s32( byte_array.data() + offset ) );
 		}
 		return vec;
 	}
-	case 4: {// UINT8
+	case 4 : {// UINT8
 		std::vector< std::uint8_t > vec;
 		for ( platform::Size offset(0); offset < byte_array.size(); offset += 1 ) {
 			vec.push_back( boost::endian::load_little_u16( byte_array.data() + offset ) );
 		}
 		return vec;
 	}
-	case 5: {// UNIT16
+	case 5 : {// UNIT16
 		std::vector< std::uint16_t > vec;
 		for ( platform::Size offset(0); offset < byte_array.size(); offset += 2 ) {
 			vec.push_back( boost::endian::load_little_u16( byte_array.data() + offset ) );
 		}
 		return vec;
 	}
-	case 6: {// UNIT32
+	case 6 : {// UNIT32
 		std::vector< std::uint32_t > vec;
 		for ( platform::Size offset(0); offset < byte_array.size(); offset += 4 ) {
 			vec.push_back( boost::endian::load_little_u32( byte_array.data() + offset ) );
 		}
 		return vec;
 	}
-	case 32: {// FLOAT32
+	case 32 : {// FLOAT32
 		std::vector< float > vec;
 		for ( platform::Size offset(0); offset < byte_array.size(); offset += 4 ) {
 			vec.push_back( boost::endian::endian_load<float, 4, boost::endian::order::little>( byte_array.data() + offset ) );
 		}
 		return vec;
 	}
-	case 33: {// FLOAT64
+	case 33 : {// FLOAT64
 		std::vector< double > vec;
 		for ( platform::Size offset(0); offset < byte_array.size(); offset += 8 ) {
 			vec.push_back( boost::endian::endian_load<double, 8, boost::endian::order::little>( byte_array.data() + offset ) );
 		}
 		return vec;
 	}
-	default:
+	default :
 		utility_exit_with_message("Can't interpret " + std::to_string(type) + " as BCIF encoding type");
 	}
 }
@@ -450,22 +450,22 @@ gemmi_load_bcif(std::string const & contents_of_file, std::string const & filena
 				utility_exit_with_message("In BCIF file " + filename + " entry " + tag + " the number of decoded entries (" + std::to_string(decoded.size()) + ") does not match that expected (" + std::to_string(cif_rows) + ")");
 			}
 			if ( column.count("mask") && !column["mask"].is_null() ) {
-					std::vector< std::string > mask = bcif_decode_data_obj( column["mask"] );
-					if ( mask.size() > decoded.size() ) {
-						utility_exit_with_message("In BCIF file " + filename + " entry " + tag + " the mask (" + std::to_string(mask.size()) + ") is larger than the data (" + std::to_string(decoded.size()) + ")" );
+				std::vector< std::string > mask = bcif_decode_data_obj( column["mask"] );
+				if ( mask.size() > decoded.size() ) {
+					utility_exit_with_message("In BCIF file " + filename + " entry " + tag + " the mask (" + std::to_string(mask.size()) + ") is larger than the data (" + std::to_string(decoded.size()) + ")" );
+				}
+				for ( platform::Size mm(0); mm < mask.size(); ++mm ) {
+					platform::Size mask_val = std::stoi( mask[mm] );
+					if ( mask_val == 0 ) {
+						// do nothing
+					} else if ( mask_val == 1 ) {
+						decoded[mm] = ".";
+					} else if ( mask_val == 2 ) {
+						decoded[mm] = "?";
+					} else {
+						utility_exit_with_message("Can't interpret BCIF mask value of `" + std::to_string(mask_val) + "` in entry " + tag);
 					}
-					for ( platform::Size mm(0); mm < mask.size(); ++mm ) {
-						platform::Size mask_val = std::stoi( mask[mm] );
-						if ( mask_val == 0 ) {
-							// do nothing
-						} else if ( mask_val == 1 ) {
-							decoded[mm] = ".";
-						} else if ( mask_val == 2 ) {
-							decoded[mm] = "?";
-						} else {
-							utility_exit_with_message("Can't interpret BCIF mask value of `" + std::to_string(mask_val) + "` in entry " + tag);
-						}
-					}
+				}
 			}
 
 			if ( cif_rows == 1 ) {
