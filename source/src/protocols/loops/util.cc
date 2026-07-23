@@ -224,7 +224,7 @@ void addScoresForLoopParts(
 
 	core::Size nres = pose.size();
 	utility::vector1< core::Size > all_loop_list;
-	for ( core::Size i = 1; i < nres; i ++ ) {
+	for ( core::Size i = 1; i <= nres; i ++ ) {
 		if ( loops.is_loop_residue(i) ) all_loop_list.push_back( i );
 	}
 	scorefxn(pose);
@@ -241,7 +241,7 @@ void addScoresForLoopParts(
 		}
 		utility::vector1< core::Size > loop_list;
 		utility::vector1< core::Size > non_loop_list;
-		for ( core::Size i = 1; i < nres; i ++ ) {
+		for ( core::Size i = 1; i <= nres; i ++ ) {
 			if ( ( i < loops[l].start() ) || ( i > loops[l].stop() ) ) {
 				loop_list.push_back( i );
 			} else {
@@ -544,7 +544,7 @@ protocols::loops::Loops find_non_protein_chunks(core::pose::Pose const & pose) {
 	Loop new_loop;
 	bool chunk_started = false;
 
-	for ( core::Size ires = 1; ires < pose.size(); ++ires ) {
+	for ( core::Size ires = 1; ires <= pose.size(); ++ires ) {
 		if ( pose.residue_type(ires).is_protein() ) continue;
 		if ( !chunk_started ) {
 			new_loop.set_start(ires);

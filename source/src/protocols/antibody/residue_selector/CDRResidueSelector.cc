@@ -130,7 +130,7 @@ void
 CDRResidueSelector::set_cdrs( utility::vector1< CDRNameEnum > cdrs ){
 	cdrs_.clear();
 	cdrs_.resize(8, false);
-	for ( core::Size i = 1; i < cdrs.size(); ++i ) {
+	for ( core::Size i = 1; i <= cdrs.size(); ++i ) {
 		cdrs_[ cdrs[ i ] ] = true;
 	}
 }

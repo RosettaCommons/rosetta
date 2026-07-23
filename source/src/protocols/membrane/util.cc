@@ -616,6 +616,7 @@ core::Size create_membrane_foldtree_anchor_com( core::pose::Pose & pose ) {
 	utility::vector1< core::Size > anchors;
 
 	// get residues closest to COMs for all chains which will be new jump anchor residues
+	// needs to < chains.size() because the MEM is an additional chain
 	for ( core::Size i = 1; i < chains.size(); ++i ) {
 		core::Size anchor = rsd_closest_to_chain_com( pose, chains[ i ] );
 		anchors.push_back( anchor );

@@ -158,7 +158,7 @@ bool UpstreamDownstreamCollisionFilter::passes_etable_filter( match_dspos1 const
 
 	using namespace core::scoring;
 	EnergyMap emap;
-	for ( core::Size ii = 1; ii < m.upstream_hits.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= m.upstream_hits.size(); ++ii ) {
 		if ( ii == m.originating_geom_cst_for_dspos ) continue; // don't collision check since we've presumably done so already
 		if ( us_ds_chemical_bond_[ ii ] ) continue;
 		for ( core::Size jj = 1; jj <= downstream_pose_->size(); ++jj ) {
