@@ -26,3 +26,4 @@ def main(wait: bool, streaming: bool, timeout: int) -> None:
 if __name__ == "__main__":
     args = parse_args()
     main(args.wait, args.streaming, args.timeout)
+
