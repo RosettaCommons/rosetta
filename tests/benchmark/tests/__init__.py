@@ -73,6 +73,7 @@ DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED = {
     "cryptography": ">=2.8",
     "dask": ">=2.16.0",
     "dask-jobqueue": ">=0.7.0",
+    "decorator": ">=4.3.0",
     "distributed": ">=2.16.0",
     "gitpython": ">=3.1.1",
     "jupyter": ">=1.0.0",
