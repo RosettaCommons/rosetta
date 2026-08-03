@@ -528,7 +528,10 @@ from pyrosetta.distributed.cluster.base import (
     TaskBase,
     _get_residue_type_set,
 )
-from pyrosetta.distributed.cluster.config import get_environment_manager
+from pyrosetta.distributed.cluster.config import (
+    get_environment_manager,
+    get_environment_manager_version,
+)
 from pyrosetta.distributed.cluster.converters import (
     is_empty as _is_empty,
     _maybe_issue_environment_warnings,
@@ -974,6 +977,14 @@ class PyRosettaCluster(IO, LoggingSupport, SchedulerManager, SecurityIO, TaskBas
     environment_manager: str = attr.field(
         default=attr.Factory(
             get_environment_manager,
+            takes_self=False,
+        ),
+        init=False,
+        validator=attr.validators.instance_of(str),
+    )
+    environment_manager_version: str = attr.field(
+        default=attr.Factory(
+            get_environment_manager_version,
             takes_self=False,
         ),
         init=False,

@@ -180,6 +180,8 @@ class IOTest(unittest.TestCase):
                                     self.assertIn("instance", entry.keys())
                                     self.assertIn("metadata", entry.keys())
                                     self.assertIn("scores", entry.keys())
+                                    self.assertIn("environment_manager", entry["metadata"])
+                                    self.assertIn("environment_manager_version", entry["metadata"])
                                     self.assertIn("my_string_score", entry["scores"])
                                     self.assertEqual(entry["scores"]["my_string_score"], IOTest._my_string_value)
                                     self.assertIn("my_real_score", entry["scores"])
@@ -202,8 +204,11 @@ class IOTest(unittest.TestCase):
                                 self.assertIn("instance", df.columns)
                                 self.assertIn("metadata", df.columns)
                                 self.assertIn("scores", df.columns)
+                                metadata = df["metadata"]
                                 scores = df["scores"]
                                 for index in scores.index:
+                                    self.assertIn("environment_manager", metadata.loc[index].keys())
+                                    self.assertIn("environment_manager_version", metadata.loc[index].keys())
                                     self.assertIn("my_string_score", scores.loc[index].keys())
                                     self.assertEqual(scores.loc[index]["my_string_score"], IOTest._my_string_value)
                                     self.assertIn("my_real_score", scores.loc[index].keys())

@@ -347,6 +347,7 @@ class IO:
                 "PyRosettaCluster_output_file": output_file,
             }
             extra_kwargs["PyRosettaCluster_environment_manager"] = self.environment_manager
+            extra_kwargs["PyRosettaCluster_environment_manager_version"] = self.environment_manager_version
             if self.toml:
                 extra_kwargs["PyRosettaCluster_toml"] = self.toml
             if self.toml_format:
