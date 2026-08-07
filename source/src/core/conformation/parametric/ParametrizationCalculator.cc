@@ -55,7 +55,7 @@ static basic::Tracer TR( "core.conformation.parametric.ParametrizationCalculator
 /// @brief Constructor.
 ///
 ParametrizationCalculator::ParametrizationCalculator() :
-	parameters_( new Parameters )
+	parameters_( utility::pointer::make_shared< Parameters >() )
 	//TODO -- initialize variables here.
 {
 }
@@ -217,7 +217,7 @@ ParametrizationCalculator::add_real_parameter(
 	std::string const &units,
 	ParameterizationCalculatorProperties const &properties
 ) {
-	RealValuedParameterOP param(  new RealValuedParameter );
+	RealValuedParameterOP param( utility::pointer::make_shared< RealValuedParameter >() );
 	param->set_parameter_name(parameter_name);
 	param->set_parameter_description(description);
 	param->set_short_parameter_description(short_description);
@@ -239,7 +239,7 @@ ParametrizationCalculator::add_realvector_parameter(
 	std::string const &units,
 	ParameterizationCalculatorProperties const &properties
 ) {
-	RealVectorValuedParameterOP param(  new RealVectorValuedParameter );
+	RealVectorValuedParameterOP param( utility::pointer::make_shared< RealVectorValuedParameter >() );
 	param->set_parameter_name(parameter_name);
 	param->set_parameter_description(description);
 	param->set_short_parameter_description(short_description);
@@ -262,7 +262,7 @@ ParametrizationCalculator::add_size_parameter(
 	std::string const &units,
 	ParameterizationCalculatorProperties const &properties
 ) {
-	SizeValuedParameterOP param( new SizeValuedParameter );
+	SizeValuedParameterOP param( utility::pointer::make_shared< SizeValuedParameter >() );
 	param->set_parameter_name(parameter_name);
 	param->set_parameter_description(description);
 	param->set_short_parameter_description(short_description);
@@ -285,7 +285,7 @@ ParametrizationCalculator::add_sizevector_parameter(
 	std::string const &units,
 	ParameterizationCalculatorProperties const &properties
 ) {
-	SizeVectorValuedParameterOP param( new SizeVectorValuedParameter );
+	SizeVectorValuedParameterOP param( utility::pointer::make_shared< SizeVectorValuedParameter >() );
 	param->set_parameter_name(parameter_name);
 	param->set_parameter_description(description);
 	param->set_short_parameter_description(short_description);
@@ -308,7 +308,7 @@ ParametrizationCalculator::add_boolean_parameter(
 	std::string const &units,
 	ParameterizationCalculatorProperties const &properties
 ) {
-	BooleanValuedParameterOP param( new BooleanValuedParameter );
+	BooleanValuedParameterOP param( utility::pointer::make_shared< BooleanValuedParameter >() );
 	param->set_parameter_name(parameter_name);
 	param->set_parameter_description(description);
 	param->set_short_parameter_description(short_description);
