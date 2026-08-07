@@ -96,6 +96,7 @@ sources = {
 			"singular_value_decomposition",
 			"EllipseParameters",
 			"minimum_bounding_ellipse",
+			"cholesky_decomposition",
     	],
 	"numeric/model_quality": [
 		"functions",

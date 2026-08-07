@@ -36,6 +36,11 @@
 
 // Project Headers
 #include <utility/vector1.hh>
+#include <protocols/helical_bundle/BundleParametrizationCalculator.hh>
+
+// C++ headers
+#include <map>
+#include <tuple>
 
 
 
@@ -148,6 +153,25 @@ private:
 	/// @details Defaults to 1.  Higher values indicate the nth set encountered in the ParametersSet list.
 	core::Size bundleparametersset_index_;
 
+	/// @brief Whether correlated perturbation mode is active.
+	bool use_correlated_perturbation_;
+
+	/// @brief Cholesky factor L (lower-triangular) such that Sigma = L * L^T.
+	/// @details Dimension equals the number of (helix, param) pairs involved in correlations.
+	utility::vector1< utility::vector1< core::Real > > cholesky_factor_;
+
+	/// @brief Maps (helix_index, BPC_Parameters enum) -> flat index in the covariance matrix.
+	std::map< std::pair< core::Size, BPC_Parameters >, core::Size > param_to_flat_index_;
+
+	/// @brief Reverse map: flat index -> (helix_index, BPC_Parameters enum).
+	utility::vector1< std::pair< core::Size, BPC_Parameters > > flat_index_to_param_;
+
+	/// @brief Perturbation sigmas for each flat index.
+	utility::vector1< core::Real > perturbation_sigmas_;
+
+	/// @brief User-specified correlation entries: (flat_i, flat_j, rho).
+	utility::vector1< std::tuple< core::Size, core::Size, core::Real > > correlation_entries_;
+
 
 private:
 	////////////////////////////////////////////////////////////////////////////////
@@ -183,6 +207,24 @@ private:
 		bool const before
 	) const;
 
+	/// @brief Parse Correlation sub-tags from XML, populating the correlation data structures.
+	void parse_correlation_tags(
+		utility::vector1< utility::tag::TagCOP > const & branch_tags
+	);
+
+	/// @brief Build the covariance matrix from sigmas and correlation entries, then compute Cholesky factor.
+	void compute_cholesky_factor();
+
+	/// @brief Perturb values using correlated Gaussian sampling via Cholesky decomposition.
+	/// @details Called by perturb_values() when use_correlated_perturbation_ is true.
+	/// Returns true for success, false for failure.
+	bool perturb_values_correlated( BundleParametersSetOP params_set ) const;
+
+	/// @brief Get or assign a flat index for a (helix_index, param_enum) pair.
+	core::Size get_or_assign_flat_index(
+		core::Size helix_index,
+		BPC_Parameters param_enum
+	);
 
 }; //PerturbBundle class
 
