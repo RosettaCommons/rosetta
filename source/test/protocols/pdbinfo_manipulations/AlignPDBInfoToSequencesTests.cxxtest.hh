@@ -30,6 +30,8 @@
 #include <utility/io/izstream.hh>
 #include <utility/stream_util.hh>
 
+#include <json.hpp>
+
 #include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
 
 static basic::Tracer TR("AlignPDBInfoToSequencesTests");

@@ -26,7 +26,7 @@
 
 #include <protocols/antibody/AntibodyNumberingConverterMover.hh>
 
-#include <protocols/antibody/grafting/json_based_cdr_detection.hh> //only active #ifdef _NLOHMANN_JSON_ENABLED_
+#include <protocols/antibody/grafting/json_based_cdr_detection.hh>
 
 // Grafting util function related includes
 #include <core/import_pose/import_pose.hh>
@@ -235,11 +235,7 @@ int antibody_main()
 	//check if user provides JSON CDR definition, else try to predict
 	// if user defines input json but this compiler does not support json, throw exception
 	if( option[ OptionKeys::antibody::json_cdr ].user() ) {
-#ifdef _NLOHMANN_JSON_ENABLED_
 		protocols::antibody::grafting::Json_based_CDR_Detector( report ).detect( as );
-#else
-		throw CREATE_EXCEPTION(_AE_json_cdr_detection_failed_, "This compiler version does not support nlohmann json! see https://github.com/nlohmann/json#supported-compilers");
-#endif // _NLOHMANN_JSON_ENABLED_
 	} else {
 		protocols::antibody::grafting::RegEx_based_CDR_Detector( report ).detect( as );
 	}

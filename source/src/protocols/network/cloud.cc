@@ -33,6 +33,8 @@
 #define CPPHTTPLIB_ZLIB_SUPPORT
 #include <httplib.h>
 
+#include <json.hpp>
+
 #ifdef MULTI_THREADED
 
 #include <condition_variable>
@@ -318,7 +320,7 @@ int NetworkQueue::get_execution_summary_id()
 
 		if ( res->status == 200 ) {
 
-			auto jr = json::parse(res->body);
+			auto jr = nlohmann::json::parse(res->body);
 
 			// std::cout << "parsed result: " << jr.dump(2).c_str();
 

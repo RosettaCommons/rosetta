@@ -80,6 +80,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>
+#include <utility/gemmi_util.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
 // External headers
@@ -131,11 +132,17 @@ std::ostream & operator<<( std::ostream & stream, FileType type ) {
 	case CIF_file :
 		stream << "mmCIF";
 		break;
+	case BCIF_file :
+		stream << "binaryCIF";
+		break;
 	case MMTF_file :
 		stream << "MMTF";
 		break;
 	case SRLZ_file :
 		stream << "SRLZ";
+		break;
+	case MMJSON_file :
+		stream << "mmJSON";
 		break;
 	default :
 		stream << "UNKNOWN";
@@ -156,10 +163,14 @@ extension_from_filetype(
 		return "pdb";
 	case CIF_file :
 		return "cif";
+	case BCIF_file :
+		return "bcif";
 	case MMTF_file :
 		return "mmtf";
 	case SRLZ_file :
 		return "srlz";
+	case MMJSON_file :
+		return "json";
 	default :
 		utility_exit_with_message( "Error in core::import_pose::extension_from_filetype(): Invalid filetype provided!" );
 		break;
@@ -173,9 +184,9 @@ filetype_from_extension(
 ) {
 	utility::vector1< std::string > split = utility::string_split( filename, '.');
 
-	std::string ext = split[split.size()-1];
+	std::string ext = split[split.size()];
 	if ( ext == "gz" ) {
-		ext = split[split.size()-2];
+		ext = split[split.size()-1];
 	}
 	ext = utility::lower(ext);
 
@@ -185,11 +196,18 @@ filetype_from_extension(
 		return CIF_file;
 	} else if ( ext == "mmcif" ) {
 		return CIF_file;
+	} else if ( ext == "bcif" ) { // BinaryCIF
+		return BCIF_file;
+	} else if ( ext == "json" ) { // mmJSON
+		return MMJSON_file;
+	} else if ( ext == "js" ) { // mmJSON
+		return MMJSON_file;
 	} else if ( ext == "mmtf" ) {
 		return MMTF_file;
 	} else if ( ext == "srlz" ) {
 		return SRLZ_file;
 	} else {
+		TR << "Cannot interpret extension `" << ext << "` as supported structure extension." << std::endl;
 		return Unknown_file;
 	}
 }
@@ -307,6 +325,11 @@ FileType
 determine_file_type( std::string const &contents_of_file) {
 	utility::vector1< std::string > lines( utility::split_by_newlines( contents_of_file ) );
 
+	if ( lines[1].substr(0,7) == "{\"data_" ) {
+		// Probably mmJSON
+		return MMJSON_file;
+	}
+
 	// The mmCIF format has a large number of initial underscores
 	// (We put this test first as the "has ATOM record" test will pass on standard mmCIF files,
 	// as they have a table that begins with "ATOM")
@@ -408,7 +431,7 @@ pose_from_file(
 	}
 
 	if ( file_type == Unknown_file ) {
-		utility_exit_with_message( "Cannot determine file type. Current supported types are: PDB, CIF, SRLZ, MMTF");
+		utility_exit_with_message( "Cannot determine file type. Current supported types are: PDB, CIF, BCIF, MMJSON, SRLZ, MMTF");
 	} else if ( file_type == PDB_file ) {
 		//fpd If the conformation is not of type core::Conformation, reset it
 		conformation::ConformationOP conformation_op( new conformation::Conformation() );
@@ -431,10 +454,17 @@ pose_from_file(
 		// check for foldtree info
 		read_additional_pdb_data( contents_of_file, pose, options, read_fold_tree );
 
-	} else if ( file_type == CIF_file ) {
+	} else if ( file_type == CIF_file || file_type == BCIF_file || file_type == MMJSON_file ) {
 		io::StructFileRepOP sfr;
 		try {
-			gemmi::cif::Document cifdoc = gemmi::cif::read_memory( contents_of_file.c_str(), contents_of_file.size(), filename.c_str() );
+			gemmi::cif::Document cifdoc;
+			if ( file_type == MMJSON_file ) {
+				cifdoc = utility::gemmi_load_mmjson( contents_of_file, filename );
+			} else if ( file_type == BCIF_file ) {
+				cifdoc = utility::gemmi_load_bcif( contents_of_file, filename );
+			} else {
+				cifdoc = gemmi::cif::read_memory( contents_of_file.c_str(), contents_of_file.size(), filename.c_str() );
+			}
 			if ( cifdoc.blocks.empty() ) { // More extensive checking?
 				TR.Warning << "mmCIF parser wasn't able to properly read '" << filename << "' " << std::endl;
 				return;

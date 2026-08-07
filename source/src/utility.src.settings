@@ -18,6 +18,7 @@ sources = {
 		"curl",
 		"dating",
 		"exit",
+		"gemmi_util",
 		"heap",
 		"inline_file_provider",
 		"integer_mapping",
