@@ -74,16 +74,6 @@ AtomBasedConstraintsScore::AtomBasedConstraintsScore(core::Size priority,
 	constrainable_atoms_.insert(std::pair<std::string, core::Size>("2HB", 10));
 }
 
-std::string AtomBasedConstraintsScore::get_constrained_atom_name( core::Size atom_id ) {
-	for ( auto const & elem : constrainable_atoms_ ) {
-		if ( elem.second == atom_id ) {
-			return elem.first;
-		}
-	}
-
-	return nullptr; // TODO this is a string return. why not just use std::find?
-}
-
 void AtomBasedConstraintsScore::do_caching(VallChunkOP chunk) {
 
 	trAtomBasedConstraintsScore.Debug << "caching backbone atoms for "

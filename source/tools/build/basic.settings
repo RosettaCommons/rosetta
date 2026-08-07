@@ -2209,6 +2209,23 @@ settings = {
         },
     },
 
+    "clang, |cxx_ver:>=21|" : {
+        "appends" : {
+            "flags" : {
+                "warn" : [
+                    "Wno-error=deprecated-declarations",
+                ],
+            },
+        },
+        "removes" : {
+            "flags" : {
+                "warn" : [
+		    "Wno-error=enum-constexpr-conversion",
+                ],
+            },
+        },
+    },
+
     # OSs #####################################################################
 
     "clang, linux" : {
