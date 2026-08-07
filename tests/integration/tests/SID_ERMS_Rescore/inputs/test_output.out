@@ -1,0 +1,3 @@
+Structure	RMSE	Ref15_Score	ERMS Rescore
+../inputs/inputs/1VGT.pdb	0.389898	-120.098	744.304
+../inputs/inputs/1VGX.pdb	0.388346	-120.098	733.522
