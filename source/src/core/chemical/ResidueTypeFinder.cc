@@ -55,7 +55,7 @@ static basic::Tracer TR( "core.chemical.ResidueTypeFinder" );
 //
 //  * for get_representative_type(), best to use as few desired constraints as possible.
 //
-//  * for get_all_residue_types() or get_best_match_residue_type_for_atom_names(), best to use
+//  * for get_all_residue_types() or get_best_match_residue_type_for_known_coords(), best to use
 //     as many constraints as possible that are specific to the desired residue type(s).
 //
 // TO DO:
@@ -181,13 +181,12 @@ ResidueTypeFinder::get_all_possible_residue_types( bool const allow_extra_varian
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ResidueTypeCOP
-ResidueTypeFinder::get_best_match_residue_type_for_atom_names( utility::vector1< std::string > const & atom_names )
+ResidueTypeFinder::get_best_match_residue_type_for_known_coords( std::map< std::string, Vector > const & coords )
 {
 	// will try to match these ('soft' constraints). Go ahead and strip out whitespace.
 	atom_names_soft_.clear();
-	for ( Size n = 1; n <= atom_names.size(); ++n ) {
-		std::string atom_name_temp = atom_names[ n ];
-		atom_names_soft_.push_back( ObjexxFCL::strip_whitespace( atom_name_temp ) );
+	for ( auto const & pair: coords ) {
+		atom_names_soft_.push_back( ObjexxFCL::stripped_whitespace( pair.first ) );
 	}
 
 	ResidueTypeCOPs rsd_types = get_all_possible_residue_types( true /* allow_extra_variants */ );
@@ -209,7 +208,7 @@ ResidueTypeFinder::get_best_match_residue_type_for_atom_names( utility::vector1<
 			TR.Trace << ' ' << rsd_types[ i ]->name() << std::endl;
 		}
 	}
-	return find_best_match( rsd_types, atom_names, ignore_atom_named_H_ );
+	return find_best_match( rsd_types, coords, ignore_atom_named_H_ );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
