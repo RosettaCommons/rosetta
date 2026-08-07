@@ -256,6 +256,11 @@ static MoverRegistrator< helical_bundle::MakeBundleHelixCreator > reg_MakeBundle
 static MoverRegistrator< helical_bundle::PerturbBundleCreator > reg_PerturbBundleCreator;
 static MoverRegistrator< helical_bundle::PerturbBundleHelixCreator > reg_PerturbBundleHelixCreator;
 
+static MoverRegistrator< beta_barrel::MakeBarrelCreator > reg_MakeBarrelCreator;
+static MoverRegistrator< beta_barrel::MakeBarrelStrandCreator > reg_MakeBarrelStrandCreator;
+static MoverRegistrator< beta_barrel::PerturbBarrelCreator > reg_PerturbBarrelCreator;
+static MoverRegistrator< beta_barrel::PerturbBarrelStrandCreator > reg_PerturbBarrelStrandCreator;
+
 static MoverRegistrator< hotspot_hashing::movers::PlaceSurfaceProbeCreator> reg_PlaceSurfaceProbeCreator;
 
 static MoverRegistrator< hybridization::HybridizeProtocolCreator > reg_HybridizeProtocolCreator;
