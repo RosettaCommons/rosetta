@@ -110,7 +110,7 @@ public:
 
 	/// @brief Clone function
 	/// @return pointer to new Vector< T>
-	MathVector< T> *clone() const
+	MathVector *clone() const
 	{
 		return new MathVector< T>( *this);
 	}
