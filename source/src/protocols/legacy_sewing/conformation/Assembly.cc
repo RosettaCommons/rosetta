@@ -1259,7 +1259,7 @@ Assembly::natives_select(
 utility::vector1<core::Size>
 Assembly::pose_loop_anchors() const {
 	utility::vector1<core::Size> loop_anchors;
-	for ( core::Size i=1; i<segments_.size(); ++i ) {
+	for ( core::Size i=1; i<=segments_.size(); ++i ) {
 		if ( !segments_.has_next(i) ) {
 			loop_anchors.push_back(pose_num(segments_[i].model_id_, segments_[i].residues_.back().resnum_));
 		}
@@ -1271,7 +1271,7 @@ Assembly::pose_loop_anchors() const {
 utility::vector1<core::Size>
 Assembly::disconnected_segments() const {
 	utility::vector1<core::Size> disconnected_segments;
-	for ( core::Size i=1; i<segments_.size(); ++i ) {
+	for ( core::Size i=1; i<=segments_.size(); ++i ) {
 		if ( !segments_.has_next(i) ) {
 			disconnected_segments.push_back(i);
 		}
