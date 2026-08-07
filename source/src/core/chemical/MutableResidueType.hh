@@ -749,7 +749,7 @@ public:
 		bool const update_xyz = false
 	);
 
-	// @brief Reset all the icoord records
+	// @brief Reset all the icoord records for atoms (though not for connection points)
 	void
 	clear_icoor();
 

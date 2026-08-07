@@ -164,7 +164,7 @@ private:
 
 	/// @brief Worker that actually takes care of file access for load_pdb_component
 	void
-	attempt_readin( std::string const & db_filename, std::string const & pdb_id, MutableResidueTypeOP & new_rsd_type, bool & found_file ) const;
+	attempt_ccd_readin( std::string const & db_filename, std::string const & pdb_id, MutableResidueTypeOP & new_rsd_type, bool & found_file ) const;
 
 	/// @brief Load a residue type from the components dictionary.
 	MutableResidueTypeOP

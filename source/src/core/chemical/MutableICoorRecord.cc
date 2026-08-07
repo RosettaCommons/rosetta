@@ -184,7 +184,7 @@ MutableICoorRecord::build_xyz( std::string const & stub, MutableResidueType cons
 void
 MutableICoorRecord::show( std::ostream & out ) const {
 	out << "MutableICoorRecord " << phi_ << "  " << theta_ << "  " << d_ << "  "
-		<< stub_atom1_ << " " << stub_atom2_ << stub_atom3_ << std::endl;
+		<< stub_atom1_ << " " << stub_atom2_ << " " << stub_atom3_ << std::endl;
 }
 
 } // chemical
