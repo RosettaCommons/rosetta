@@ -351,8 +351,11 @@ public:
 	void
 	set_interface_jump(core::Size const interface_jump);
 
-	// void
-	// set_interface( std::string const & interface );
+#ifdef PYROSETTA
+	/// @brief PyRosetta convienience function, to support usage in Bindcraft, etc.
+	void
+	set_interface( std::string const & interface );
+#endif
 
 	void
 	set_interface( core::pose::DockingPartners const & interface );

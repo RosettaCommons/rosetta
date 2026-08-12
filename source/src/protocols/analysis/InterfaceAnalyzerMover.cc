@@ -1943,10 +1943,11 @@ void InterfaceAnalyzerMover::set_interface_jump( core::Size const interface_jump
 	explicit_constructor_ = false;
 }
 
-//void InterfaceAnalyzerMover::set_interface( std::string const & interface ){
-// dock_chains_ = core::pose::DockingPartners::docking_partners_from_string( interface );
-// explicit_constructor_ = true;
-//}
+#ifdef PYROSETTA
+void InterfaceAnalyzerMover::set_interface( std::string const & interface ){
+	set_interface( core::pose::DockingPartners::docking_partners_from_string( interface ) );
+}
+#endif
 
 void InterfaceAnalyzerMover::set_interface( core::pose::DockingPartners const & interface ){
 	dock_chains_ = interface;
