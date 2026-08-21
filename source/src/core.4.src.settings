@@ -111,6 +111,7 @@ sources = {
 		"GenBornEnergy",
 		"GenericBondedEnergy",
 		"HRFDynamicsEnergy",
+		"HRF_GBM_Energy",
 		"HRF_MSLabelingEnergy",
 		"CCS_IMMSEnergy",
 		"MultipoleElecEnergy",

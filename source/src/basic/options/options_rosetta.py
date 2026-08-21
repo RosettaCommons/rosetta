@@ -1533,6 +1533,7 @@ Options = Option_Group( '',
 
 		Option( 'covalent_labeling_input', 'File', desc='Input covalent labeling data in the form of neighbor counts'),
 		Option( 'hrf_dynamics_input', 'File', desc='Input covalent labeling data in the form of protection factors for FA'),
+		Option( 'hrf_gbm_input', 'File', desc='File that contains expected residue neighbor counts used for hrf_gbm scoring'),
 		Option( 'covalent_labeling_fa_input', 'File', desc='Input covalent labeling data in the form of neighbor counts for FA'),
 		Option( 'depc_ms_input', 'File', desc='Input DEPC covalent labeling MS data in the form of His/Lys/Ser/Thr/Tyr residue numbers and labeling status of labeled (L) or unlabeled (U)'),
 		Option( 'elec_min_dis', 'Real', desc='changes the minimum distance cut-off for hack-elec energy', default='1.6'),
