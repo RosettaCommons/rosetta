@@ -68,6 +68,14 @@ double gaussian();
 /// and high.  Threadsafe since each thread uses its own random generator.
 int random_range(int low, int high);
 
+/// @brief Generate a random number drawn from the Von Mises distribution
+/// centered at 0 with concentration parameter kappa.  The Von Mises distribution
+/// is the circular analog of the Gaussian distribution; for large kappa it
+/// approximates a Gaussian with sigma = 1/sqrt(kappa).  When kappa is 0, this
+/// returns a uniform random angle in (-pi, pi].  Uses the Best-Fisher (1979)
+/// algorithm.  Threadsafe since each thread uses its own random generator.
+double von_mises( double kappa );
+
 
 /// @brief Random number generator system
 class RandomGenerator : public utility::VirtualBase
