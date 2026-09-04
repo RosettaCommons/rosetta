@@ -28,6 +28,7 @@
 // C++ Headers
 #include <fstream>
 #include <iostream>
+#include <limits>
 
 #include <utility/vector1.hh>
 
@@ -160,6 +161,60 @@ MotifLibrary::MotifLibrary(
 }
 
 void
+MotifLibrary::check_ctor_helper(
+	std::istream & motif_info,
+	bool check_for_bad_motifs,
+	std::set< std::tuple< std::string, std::string, std::string > > const & ligand_atom_type_triplets
+)
+{
+	std::string key_in;
+	while ( motif_info >> key_in ) {
+		if ( key_in != "SINGLE" ) continue;
+
+		std::string res1, r1atom1, r1atom2, r1atom3;
+		std::string res2, r2atom1, r2atom2, r2atom3;
+		motif_info >> res1 >> r1atom1 >> r1atom2 >> r1atom3
+			>> res2 >> r2atom1 >> r2atom2 >> r2atom3;
+
+		bool const keep_motif(ligand_atom_type_triplets.empty() ||
+			ligand_atom_type_triplets.count(std::make_tuple(r2atom1, r2atom2, r2atom3)) != 0);
+		if ( !keep_motif ) {
+			motif_info.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
+			motif_info.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
+			continue;
+		}
+
+		std::string rest_of_line;
+		std::getline(motif_info, rest_of_line);
+		std::string::size_type const remark_index(rest_of_line.find("REMARK "));
+
+		core::kinematics::Jump motif_jump;
+		motif_info >> motif_jump;
+		bool const bad_motif(motif_info.rdstate() != 0);
+		motif_info.clear();
+		motif_info.setstate(std::ios_base::goodbit);
+		if ( check_for_bad_motifs && bad_motif ) continue;
+
+		SingleMotifOP new_motif(new SingleMotif(
+			res1, r1atom1, r1atom2, r1atom3,
+			r2atom1, r2atom2, r2atom3, motif_jump));
+		if ( remark_index != std::string::npos ) {
+			new_motif->store_remark(rest_of_line.substr(remark_index + 7));
+		}
+		library_.push_back(new_motif);
+	}
+}
+
+MotifLibrary::MotifLibrary(
+	std::istream & motif_info,
+	bool check_for_bad_motifs,
+	std::set< std::tuple< std::string, std::string, std::string > > const & ligand_atom_type_triplets
+)
+{
+	check_ctor_helper(motif_info, check_for_bad_motifs, ligand_atom_type_triplets);
+}
+
+void
 MotifLibrary::add_to_library( Motif const & add_me )
 {
 	library_.push_back( add_me.clone() );
@@ -238,6 +293,23 @@ MotifLibrary::add_ligand_from_file( std::string const & motif_filename, bool che
 	for ( auto const & pmot : new_library ) {
 		add_to_library( *pmot );
 	}
+}
+
+void
+MotifLibrary::add_ligand_from_file(
+	std::string const & motif_filename,
+	bool check_for_bad_motifs,
+	std::set< std::tuple< std::string, std::string, std::string > > const & ligand_atom_type_triplets
+)
+{
+	std::ifstream motif_file;
+	motif_file.open( motif_filename.c_str() );
+	if ( !motif_file ) {
+		std::cout << "ERROR:  No motif file " << motif_filename << " - FAILING!\n";
+		return;
+	}
+
+	check_ctor_helper( motif_file, check_for_bad_motifs, ligand_atom_type_triplets );
 }
 
 } // namespace motifs

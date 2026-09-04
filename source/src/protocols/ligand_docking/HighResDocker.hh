@@ -105,7 +105,7 @@ protected:
 	void remove_ligand_dihedral_restraints(core::pose::Pose & pose, MinimizeLigandOPs & minimized_ligands) const;
 
 	TetherLigandOPs tether_ligands(core::pose::Pose & pose, std::string const & chain = "");
-	void remove_ligand_tethers(core::pose::Pose pose, TetherLigandOPs ligand_tethers);
+	void remove_ligand_tethers(core::pose::Pose & pose, TetherLigandOPs const & ligand_tethers);
 
 	void enable_ligand_rotamer_packing(
 		core::pose::Pose const & pose,

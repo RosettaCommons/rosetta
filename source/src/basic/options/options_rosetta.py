@@ -7208,6 +7208,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'minimum_significant_motifs_formed_cutoff', 'Integer', default = '0', desc = 'Minimum number of motifs from significant residues (defined by significant_residues_for_motifs) that are required for ligand to survive'),
 		Option( 'check_if_ligand_motifs_match_real', 'Boolean', default = 'false', desc = 'If collecting motifs from placed ligand, check if motifs are similar to existing ones in starting motif library'),
 		Option( 'minimum_ratio_of_real_motifs_from_ligand', 'Real', default = '0', desc = 'If checking that motifs from placed ligand match motifs in inputted library, ratio cutoff for how many must match real to keep ligand'),
+		Option( 'pre_check_proximity_buffer', 'Real', default = '5.0', desc = 'Distance buffer (in angstroms) for the significant-motif pre-check. Significant residues within (NBR_radius_sum + this buffer) of the placed ligand are counted toward sig_count even if they did not form an explicit motif, because HighResDocker may move the ligand into contact.'),
 		Option( 'clean_pdb_name', 'Boolean', default = 'true', desc = 'Use a cleaner naming scheme for naming the pdbs that are produced by liganddiscoverysearch'),
 	), # -motifs
 

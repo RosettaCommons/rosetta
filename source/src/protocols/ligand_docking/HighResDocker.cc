@@ -247,11 +247,11 @@ HighResDocker::tether_ligands(
 }
 
 void
-HighResDocker::remove_ligand_tethers(core::pose::Pose pose, TetherLigandOPs ligand_tethers){
+HighResDocker::remove_ligand_tethers(core::pose::Pose & pose, TetherLigandOPs const & ligand_tethers){
 	// TetherLigandOPs::const_iterator begin= ligand_tethers.begin(); // Unused variable causes warning.
 	// TetherLigandOPs::const_iterator const end= ligand_tethers.end(); // Unused variable causes warning.
 
-	for ( TetherLigandOP ligand_tether : ligand_tethers ) {
+	for ( TetherLigandOP const & ligand_tether : ligand_tethers ) {
 		ligand_tether->release(pose);
 	}
 }
@@ -273,40 +273,39 @@ HighResDocker::apply(core::pose::Pose & pose) {
 	// Rigid body exploration
 	utility::vector1<protocols::moves::MoverOP> rigid_body_movers= create_rigid_body_movers(pose);
 
+	protocols::minimization_packing::MinMoverOP min_mover;
+	if ( allow_minimization_ ) {
+		min_mover = utility::pointer::make_shared< protocols::minimization_packing::MinMover >(
+			movemap, score_fxn_, "lbfgs_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ );
+		min_mover->min_options()->nblist_auto_update(true);
+	}
 
 	for ( core::Size cycle = 1; cycle <= num_cycles_; ++cycle ) {
 
-		core::pack::task::PackerTaskOP packer_task;
-
-		packer_task = make_packer_task(pose, all_residues_);
-
-		protocols::moves::MoverOP pack_mover;
-		//for no repacking, make sure to go to else
-		if ( repack_every_Nth_ != 0 && cycle % repack_every_Nth_ == 1 ) {
-			TR.Debug << "making PackRotamersMover" << std::endl;
-			pack_mover = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >(score_fxn_, packer_task);
-		} else {
-			TR.Debug << "making RotamerTrialsMover" << std::endl;
-			pack_mover = utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMover >(score_fxn_, *packer_task);
-		}
-		// Wrap it in something to disable the torsion constraints before packing!
-		pack_mover = utility::pointer::make_shared< protocols::ligand_docking::UnconstrainedTorsionsMover >( pack_mover, minimized_ligands );
-
-		protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( movemap, score_fxn_, "lbfgs_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
-		min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
-
-		core::Real const score1 = (*score_fxn_)( pose );
+		core::Real score1 = 0.0;
+		if ( allow_minimization_ ) score1 = (*score_fxn_)( pose );
 		apply_rigid_body_moves(pose, rigid_body_movers);
 
-		//do not pack if not allowed
 		if ( allow_repacking_ ) {
+			core::pack::task::PackerTaskOP packer_task = make_packer_task(pose, all_residues_);
+			protocols::moves::MoverOP pack_mover;
+			if ( repack_every_Nth_ != 0 && cycle % repack_every_Nth_ == 1 ) {
+				TR.Debug << "making PackRotamersMover" << std::endl;
+				pack_mover = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >(score_fxn_, packer_task);
+			} else {
+				TR.Debug << "making RotamerTrialsMover" << std::endl;
+				pack_mover = utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMover >(score_fxn_, *packer_task);
+			}
+			pack_mover = utility::pointer::make_shared< protocols::ligand_docking::UnconstrainedTorsionsMover >( pack_mover, minimized_ligands );
 			pack_mover->apply(pose);
 		}
 
 
-		core::Real const score2 = (*score_fxn_)( pose );
-		if ( score2 - score1 < 15.0 ) {
-			min_mover->apply(pose);
+		if ( allow_minimization_ ) {
+			core::Real const score2 = (*score_fxn_)( pose );
+			if ( score2 - score1 < 15.0 ) {
+				min_mover->apply(pose);
+			}
 		}
 
 		monteCarlo->boltzmann( pose );

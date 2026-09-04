@@ -87,6 +87,7 @@ using utility::string_split;
 #include <iostream>
 #include <string>
 #include <map>
+#include <unordered_map>
 #include <queue>
 #include <functional>
 
@@ -153,6 +154,31 @@ using namespace OptionKeys;
 
 //declare global tracer for class
 static basic::Tracer ms_tr( "protocols.motifs.LigandDiscoverySearch" );
+
+namespace {
+
+struct MotifAtomTypeKey {
+	core::Size atom1;
+	core::Size atom2;
+	core::Size atom3;
+
+	bool operator ==( MotifAtomTypeKey const & other ) const {
+		return atom1 == other.atom1 && atom2 == other.atom2 && atom3 == other.atom3;
+	}
+};
+
+struct MotifAtomTypeKeyHash {
+	std::size_t operator ()( MotifAtomTypeKey const & key ) const {
+		std::size_t seed = std::hash< core::Size >()(key.atom1);
+		seed ^= std::hash< core::Size >()(key.atom2) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+		seed ^= std::hash< core::Size >()(key.atom3) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+		return seed;
+	}
+};
+
+typedef std::unordered_map< MotifAtomTypeKey, protocols::motifs::MotifCOPs, MotifAtomTypeKeyHash > MotifAtomTypeIndex;
+
+}
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -498,8 +524,6 @@ bool LigandDiscoverySearch::make_minipose(core::pose::PoseOP & minipose, const c
 		return false;
 	}
 
-	//dump the minipose for debugging
-	core::io::pdb::dump_pdb( *minipose, "minipose.pdb");
 	//delete ligand so we can reuse minipose and wipe from working pose
 	minipose->delete_residue_slow(minipose->size());
 	working_pose_->delete_residue_slow(working_pose_->size());
@@ -675,6 +699,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		return -1;
 	}
 
+	// Build this index lazily and reuse it across all valid anchor positions.
+	std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> mymap;
+
 	//run discovery over each position in working_positions_
 	for ( const auto & working_position : working_positions_ ) {
 
@@ -715,15 +742,20 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			return -1;
 		}
 
-		//derive motif_library_for_select_residue_ from motif_library and residue in working_pose_ and index working_position
-
-		motif_library_for_select_residue_ = get_motif_sublibrary_by_aa(working_pose_->residue(working_position).name3());
+		// Index the anchor-compatible motifs once by their ligand atom types.
+		MotifAtomTypeIndex placement_motif_index;
+		for ( auto const & motifcop : motif_library_for_select_residue_ ) {
+			MotifAtomTypeKey const key = {
+				static_cast< core::Size >(motifcop->res2_atom1_int()),
+				static_cast< core::Size >(motifcop->res2_atom2_int()),
+				static_cast< core::Size >(motifcop->res2_atom3_int())
+			};
+			placement_motif_index[key].push_back(motifcop);
+		}
 
 		//hash the motif library into a map of smaller motif lists based on the residue involved and 6 atom names/types
-		//define new map
-		std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> mymap;
 		//only hash if we use the flag check_if_ligand_motifs_match_real, since this is currently the only thing we use it for
-		if ( option[ OptionKeys::motifs::check_if_ligand_motifs_match_real] ) {
+		if ( option[ OptionKeys::motifs::check_if_ligand_motifs_match_real] && mymap.empty() ) {
 			protocols::motifs::hash_motif_library_into_map(motif_library_,mymap);
 		}
 
@@ -891,6 +923,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 			//mini pose to represent a smaller region of the protein near the binding pocket for early energy calculations
 			core::pose::PoseOP minipose(new pose::Pose);
+			bool minipose_has_ligand = false;
 
 			//now we have all trios, iterate through each trio and the motif sub-library
 
@@ -917,31 +950,25 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 				//run through the motif sublibrary and attempt to pair the ligand trio to the target residue based  on existing motifs
 				//iterate through motif sublibrary
 
-				ms_tr.Debug << "Looking through all motifs against this trio" << std::endl;
-				ms_tr.Debug << "#motifs = " << motif_library_for_select_residue_.size() << std::endl;
+				ms_tr.Debug << "Looking up motifs for this trio" << std::endl;
+				MotifAtomTypeKey const motif_key = {
+					ligand_atom_trios[i][1][2],
+					ligand_atom_trios[i][2][2],
+					ligand_atom_trios[i][3][2]
+				};
+				auto const motif_bucket_iter = placement_motif_index.find(motif_key);
+				if ( motif_bucket_iter == placement_motif_index.end() ) {
+					ms_tr.Debug << "# matching motifs = 0" << std::endl;
+					continue;
+				}
+				protocols::motifs::MotifCOPs const & matching_motifs = motif_bucket_iter->second;
+				ms_tr.Debug << "# matching motifs = " << matching_motifs.size() << std::endl;
 
 				int motif_counter = 0;
-
-				for ( auto motifcop : motif_library_for_select_residue_ ) {
+				for ( auto const & motifcop : matching_motifs ) {
 					++motif_counter;
-
 					if ( motif_counter % 10000 == 0 ) {
-						ms_tr.Trace << "On motif #" << motif_counter <<std::endl;
-					}
-
-					//compare the atoms on the ligand side of the motif to the atom trio; continue if not a match
-					//no need to check inverse order of trio, will get checked later
-
-					//fixing error with comparison of signed and unsigned ints
-					//making the motifcop res atoms be of size data type
-					core::Size motif_ligand_atom_1 = motifcop->res2_atom1_int();
-					core::Size motif_ligand_atom_2 = motifcop->res2_atom2_int();
-					core::Size motif_ligand_atom_3 = motifcop->res2_atom3_int();
-
-					//if motif atoms don't match trio atoms, continue
-					if ( motif_ligand_atom_1 != ligand_atom_trios[i][1][2] || motif_ligand_atom_2 != ligand_atom_trios[i][2][2] || motif_ligand_atom_3 != ligand_atom_trios[i][3][2] ) {
-						//at least one atom doesn't match, continue to next motif
-						continue;
+						ms_tr.Trace << "On matching motif #" << motif_counter << std::endl;
 					}
 
 					++pose_atom_check_counter;
@@ -1049,8 +1076,14 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						}
 					}
 
-					//append ligand to minipose for early scoring
-					minipose->append_residue_by_jump(*ligresOP, 1);
+					// Keep one ligand slot in the minipose and update its coordinates for
+					// subsequent placements, avoiding repeated fold-tree reconstruction.
+					if ( minipose_has_ligand ) {
+						minipose->replace_residue(minipose->size(), *ligresOP, false);
+					} else {
+						minipose->append_residue_by_jump(*ligresOP, 1);
+						minipose_has_ligand = true;
+					}
 
 					//set up values to be passed into score_minipose and used downstream
 					core::Real fa_rep;
@@ -1061,9 +1094,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					bool minipose_scoring = score_minipose(minipose,fa_rep,fa_atr,fa_atr_rep_score_before);
 
 
-
-					//delete the last residue off minipose (the ligand), since we no longer need it and can recycle the minipose for further iterations
-					minipose->delete_residue_slow(minipose->size());
 
 					//if the value is true, the minipose passes initial scoring
 					//if false, the placement can be killed
@@ -1115,14 +1145,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						ms_tr.Debug << "Early pre-check PASSED: proceeding to HighResDock." << std::endl;
 					}
 
-					//get free energy of pose with placed ligand before highresdock
-					//declaration of variable
-					core::Real delta_score = 10000;
-
-					//use working function based to get ddg before highresdock
-					delta_score = get_pose_ddg(working_fxn_, working_pose_);
-
-					ms_tr.Debug << "Pre-move delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", fa_atr_rep before = " << fa_atr_rep_score_before << std::endl;
+					ms_tr.Debug << "Pre-move fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", fa_atr_rep before = " << fa_atr_rep_score_before << std::endl;
 
 					//attempt to use movers to optimize placement a little more
 					//begin setting up objects to make HighResDocker mover work
@@ -1141,7 +1164,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					run_HighResDock_on_working_pose(my_HighResDocker);
 
 					//use working function to get ddg after highresdock
-					delta_score = get_pose_ddg(working_fxn_, working_pose_);
+					core::Real delta_score = get_pose_ddg(working_fxn_, working_pose_);
 
 					//this section up until collecting motifs off the placed ligand I do not think makes sense to put into its own function
 					//My reasoning is that this could be made into 2 small specific scoring functions, which seems like extra work
@@ -1454,21 +1477,14 @@ protocols::motifs::MotifCOPs LigandDiscoverySearch::get_motif_sublibrary_by_aa(s
 	//create temporary motifcops object to hold
 	protocols::motifs::MotifCOPs motif_holder;
 
-	for ( auto motifcop : motif_library_ ) {
-		//collect residue name from motifcop
-		std::string motif_residue_name(motifcop->restype_name1());
-
+	for ( auto const & motifcop : motif_library_ ) {
 		//if residue name matches that of the residue at the working position, add it to the motif_holder
-		if ( motif_residue_name == residue_name ) {
+		if ( motifcop->restype_name1() == residue_name ) {
 			motif_holder.push_back(motifcop);
 		}
 	}
 
-	//assign motif_holder contents to motif_library_for_select_residue_
-	motif_library_for_select_residue_ = motif_holder;
-
-
-	ms_tr.Debug << "Created motif sub-library for residue " << residue_name << " with " << motif_library_for_select_residue_.size() << " motifs in it." << std::endl;
+	ms_tr.Debug << "Created motif sub-library for residue " << residue_name << " with " << motif_holder.size() << " motifs in it." << std::endl;
 
 
 	return motif_holder;
