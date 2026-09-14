@@ -20,17 +20,18 @@
 
 #include <core/pose/datacache/CacheableObserverType.hh> // AUTO IWYU For CacheableObserverType, UI_OBSERVER
 
+#include <json.hpp>
 
 #ifdef ZEROMQ
 #include <protocols/network/util.hh>
 #include <utility/thread/shared_thread_local_data.impl.hh>
-#include <json.hpp>
 #endif
 
 namespace protocols {
 namespace network {
 
 using std::string;
+using nlohmann::json;
 
 
 #if defined(ZEROMQ)

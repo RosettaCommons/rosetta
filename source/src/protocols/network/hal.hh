@@ -22,7 +22,7 @@
 #include <utility/json_utilities.hh>
 #include <utility/exit.hh>
 
-#include <json.hpp>
+#include <json_fwd.hpp>
 
 #include <functional>
 #include <string>
@@ -38,8 +38,8 @@ struct CommandLineArguments
 };
 
 
-using SpecificationCallBack = std::function< json(void) >;
-using ExecutionerCallBack   = std::function< json(json const &) >;
+using SpecificationCallBack = std::function< nlohmann::json(void) >;
+using ExecutionerCallBack   = std::function< nlohmann::json(nlohmann::json const &) >;
 
 /// start HAL listener
 /// use main function `argc` and `argv` if you want auto-restart/abort functionality to work properly
@@ -56,20 +56,20 @@ void hal(HAs a, CommandLineArguments const &args);
 struct HA
 {
 	template <typename R, typename... As>
-	HA( std::function< R(core::pose::Pose &, As...) >, json::array_t const &);
+	HA( std::function< R(core::pose::Pose &, As...) >, nlohmann::json::array_t const &);
 
 	template <typename R, typename... As>
-	HA( R (*)(core::pose::Pose &, As...), json::array_t const &);
+	HA( R (*)(core::pose::Pose &, As...), nlohmann::json::array_t const &);
 
 
 	template <typename... As>
-	HA( std::function< core::pose::Pose (As...) >, json::array_t const &);
+	HA( std::function< core::pose::Pose (As...) >, nlohmann::json::array_t const &);
 
 	template <typename... As>
-	HA( core::pose::Pose (*)(As...), json::array_t const &);
+	HA( core::pose::Pose (*)(As...), nlohmann::json::array_t const &);
 
-	json specification;
-	std::function< json(json const &) > execute;
+	nlohmann::json specification;
+	std::function< nlohmann::json(nlohmann::json const &) > execute;
 };
 
 
@@ -169,7 +169,7 @@ struct ExtractArguments {};
 template <>
 struct ExtractArguments<0, 0>
 {
-	static std::tuple<> arguments(json const &, ArgumentNames<0> const &) {
+	static std::tuple<> arguments(nlohmann::json const &, ArgumentNames<0> const &) {
 		return std::tuple<>();
 	}
 };
@@ -177,7 +177,7 @@ struct ExtractArguments<0, 0>
 template <int N, int I, typename T>
 struct ExtractArguments<N, I, T>
 {
-	static std::tuple<T> arguments(json const &command, ArgumentNames<N> const &args) {
+	static std::tuple<T> arguments(nlohmann::json const &command, ArgumentNames<N> const &args) {
 		static_assert( I < N  and  I >= 0, "extract_arguments: index is out of range!");
 
 		//std::cout << "N=" << N << " I=" << I << std::endl;
@@ -193,7 +193,7 @@ struct ExtractArguments<N, I, T>
 template <int N, int I, typename T, typename... Ts>
 struct ExtractArguments<N, I, T, Ts...>
 {
-	static std::tuple<T, Ts...> arguments(json const &j, ArgumentNames<N> const &args)
+	static std::tuple<T, Ts...> arguments(nlohmann::json const &j, ArgumentNames<N> const &args)
 	{
 		return std::tuple_cat(ExtractArguments<N, I, T>::arguments(j, args), ExtractArguments<N, I + 1, Ts...>::arguments(j, args) );
 	}
@@ -201,17 +201,17 @@ struct ExtractArguments<N, I, T, Ts...>
 
 
 template <typename Result, typename... As>
-std::tuple<json, ArgumentNames<sizeof...(As)> > generate_specification( std::function< Result (core::pose::Pose &, As...) >, json::array_t const &args)//std::array<json, N> const &args)
+std::tuple<nlohmann::json, ArgumentNames<sizeof...(As)> > generate_specification( std::function< Result (core::pose::Pose &, As...) >, nlohmann::json::array_t const &args)//std::array<nlohmann::json, N> const &args)
 {
 	//static_assert( N <= sizeof...(As), "Too many arguments specified!");
 	if( args.size() > sizeof...(As) ) {
 		utility_exit_with_message("generate_specification: too many arguments provided!");
-		return json();
+		return nlohmann::json();
 	}
 
 	ArgumentNames<sizeof...(As)> type_names = { {HAL_Type< typename std::decay<As>::type >::name...} };
 
-	auto s = json::object();
+	auto s = nlohmann::json::object();
 	s[_f_pose_] = { {_f_type_, _t_pose_}, };
 
 	std::array<std::string, sizeof...(As) > names;
@@ -219,10 +219,10 @@ std::tuple<json, ArgumentNames<sizeof...(As)> > generate_specification( std::fun
 	for(uint i=0; i < sizeof...(As); ++i) {
 		std::string name = std::string("arg-") + std::to_string(i) + "(" + type_names.begin()[i] + ")";
 		std::string type = type_names.begin()[i];
-		json spec = { {_f_type_, type}, };
+		nlohmann::json spec = { {_f_type_, type}, };
 
 		if( i < args.size() ) {
-			json const & src = args[i];
+			nlohmann::json const & src = args[i];
 
 			if( src.is_string() ) name = args[i];
 			else if( src.is_object() ) {
@@ -242,27 +242,27 @@ std::tuple<json, ArgumentNames<sizeof...(As)> > generate_specification( std::fun
 
 
 template <typename... As>
-std::tuple<json, ArgumentNames<sizeof...(As)> > generate_specification( std::function< core::pose::Pose(As...) >, json::array_t const &args)//std::array<json, N> const &args)
+std::tuple<nlohmann::json, ArgumentNames<sizeof...(As)> > generate_specification( std::function< core::pose::Pose(As...) >, nlohmann::json::array_t const &args)//std::array<nlohmann::json, N> const &args)
 {
 	//static_assert( N <= sizeof...(As), "Too many arguments specified!");
 	if( args.size() > sizeof...(As) ) {
 		utility_exit_with_message("generate_specification: too many arguments provided!");
-		return json();
+		return nlohmann::json();
 	}
 
 	ArgumentNames<sizeof...(As)> type_names = { {HAL_Type< typename std::remove_const< typename std::remove_reference<As>::type >::type >::name...} };
 
-	auto s = json::object();
+	auto s = nlohmann::json::object();
 
 	std::array<std::string, sizeof...(As) > names;
 
 	for(uint i=0; i < sizeof...(As); ++i) {
 		std::string name = std::string("arg-") + std::to_string(i) + "(" + type_names.begin()[i] + ")";
 		std::string type = type_names.begin()[i];
-		json spec = { {_f_type_, type}, };
+		nlohmann::json spec = { {_f_type_, type}, };
 
 		if( i < args.size() ) {
-			json const & src = args[i];
+			nlohmann::json const & src = args[i];
 
 			if( src.is_string() ) name = args[i];
 			else if( src.is_object() ) {
@@ -284,7 +284,7 @@ std::tuple<json, ArgumentNames<sizeof...(As)> > generate_specification( std::fun
 
 
 template <typename R, typename... As>
-HA::HA( std::function< R (core::pose::Pose &, As...) > f, json::array_t const &args_specification)
+HA::HA( std::function< R (core::pose::Pose &, As...) > f, nlohmann::json::array_t const &args_specification)
 {
 	std::array<std::string, sizeof...(As)> names;
 
@@ -292,7 +292,7 @@ HA::HA( std::function< R (core::pose::Pose &, As...) > f, json::array_t const &a
 
 	//std::cout << "Specification: " << specification << std::endl;
 
-	execute = [names, f](json const &args) {
+	execute = [names, f](nlohmann::json const &args) {
 				  std::string pose_data;
 				  utility::extract_value_if_present(args, _f_pose_, pose_data);
 				  core::pose::PoseOP pose = protocols::network::bytes_to_pose(pose_data);
@@ -311,31 +311,31 @@ HA::HA( std::function< R (core::pose::Pose &, As...) > f, json::array_t const &a
 					  >::apply(f, std::tuple_cat( std::make_tuple(std::ref(*pose)), tpl) );
 
 					  auto pose_binary = protocols::network::pose_to_bytes(*pose);
-					  json result;
+					  nlohmann::json result;
 					  result[_f_pose_] = pose_binary;
 					  return result;
 				  }
 				  else {
 				  	  std::cout << "hal::HA: could not find Pose in given command, ignoring execute request..." << std::endl;
-					  return json();
+					  return nlohmann::json();
 				  }
 			  };
 }
 
 template <typename R, typename... As>
-HA::HA( R (*f)(core::pose::Pose &, As...), json::array_t const &a) : HA( std::function< R(core::pose::Pose &, As...) >(f), a) {}
+HA::HA( R (*f)(core::pose::Pose &, As...), nlohmann::json::array_t const &a) : HA( std::function< R(core::pose::Pose &, As...) >(f), a) {}
 
 
 template <typename... As>
-HA::HA( std::function< core::pose::Pose(As...)> f, json::array_t const &args_specification)
+HA::HA( std::function< core::pose::Pose(As...)> f, nlohmann::json::array_t const &args_specification)
 {
 	std::array<std::string, sizeof...(As)> names;
 
 	std::tie(specification, names) = generate_specification(f, args_specification);
 	//std::cout << "Specification: " << specification << std::endl;
 
-	//execute = [](json const &args) { return json(); };
-	execute = [names, f](json const &args) {
+	//execute = [](nlohmann::json const &args) { return nlohmann::json(); };
+	execute = [names, f](nlohmann::json const &args) {
 
 				  //{ std::cout << "names:"; for(auto const & n : names) std::cout << n << ' '; std::cout << std::endl; }
 
@@ -350,14 +350,14 @@ HA::HA( std::function< core::pose::Pose(As...)> f, json::array_t const &args_spe
 				  >::apply(f, tpl);
 
 				  auto pose_binary = protocols::network::pose_to_bytes(pose);
-				  json result;
+				  nlohmann::json result;
 				  result[_f_pose_] = pose_binary;
 				  return result;
 			  };
 }
 
 template <typename... As>
-HA::HA( core::pose::Pose (*f)(As...), json::array_t const &a) : HA( std::function< core::pose::Pose(As...) >(f), a) {}
+HA::HA( core::pose::Pose (*f)(As...), nlohmann::json::array_t const &a) : HA( std::function< core::pose::Pose(As...) >(f), a) {}
 
 
 
