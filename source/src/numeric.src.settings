@@ -35,6 +35,7 @@ sources = {
 	],
 	"numeric/crick_equations":[
 		"BundleParams",
+		"BundleParams_derivatives",
 		"HelixParams",
 	],
 	"numeric/expression_parser": [
