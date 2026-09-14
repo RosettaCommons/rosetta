@@ -114,8 +114,7 @@ run()
 	}
 
 	utility::io::ozstream dump_frag( option[ OptionKeys::struc_set_fragment_picker::frag_name ]() );
-	Size ct( 1 );
-	for ( ConstFrameIterator it=fragset->begin(), eit=fragset->end(); it!=eit; ++it, ++ct ) {
+	for ( ConstFrameIterator it=fragset->begin(), eit=fragset->end(); it!=eit; ++it ) {
 		(*it)->show( dump_frag );
 	}
 }

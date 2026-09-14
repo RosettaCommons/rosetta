@@ -30,10 +30,10 @@ namespace utility {
 
 template< typename T, std::size_t BUFFER_SIZE >
 using small_vector0 = utility::vector0< T >;
-	
+
 template< typename T, std::size_t BUFFER_SIZE >
 using small_vector1 = utility::vector1< T >;
-	
+
 } //namespace utility
 
 #endif
@@ -45,7 +45,7 @@ namespace utility {
 
 template< typename T, std::size_t L, std::size_t BUFFER_SIZE >
 class small_vectorL :
-    public boost::container::small_vector< T, BUFFER_SIZE >
+	public boost::container::small_vector< T, BUFFER_SIZE >
 {
 public:
 	using boost::container::small_vector< T, BUFFER_SIZE >::small_vector;
@@ -55,7 +55,22 @@ public:
 
 	using boost::container::small_vector< T, BUFFER_SIZE >::operator=;
 	small_vectorL & operator=( small_vectorL< T, L, BUFFER_SIZE > const & ) = default;
-	    
+
+	// Not sure why, but GCC 16.2 results in a warning-as-error when using this constructor,
+	// about overflowing the destination. Googling indicates this is an optimization-related false positive
+	// We make the constructor explicit and turn off diagnostics to get around that.
+#ifndef __clang__ // Clang apparently looks at a directive directed at GCC and assumes it also applies to it.
+// It then loudly complains that it doesn't understand what you're talking about.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-overflow="
+#endif
+	small_vectorL( std::size_t count, const T& value = T() ):
+		boost::container::small_vector< T, BUFFER_SIZE >(count, value)
+	{}
+#ifndef __clang__
+#pragma GCC diagnostic pop
+#endif
+
 	T & operator[]( std::size_t const i ){
 		debug_assert( i >= L );
 		debug_assert( i - L < size() );
@@ -67,7 +82,7 @@ public:
 		debug_assert( i - L < size() );
 		return boost::container::small_vector< T, BUFFER_SIZE >::operator[]( i-L );
 	}
-	    
+
 	T & at( std::size_t const i ){
 		debug_assert( i >= L );
 		debug_assert( i - L < size() );
@@ -83,7 +98,7 @@ public:
 
 template< typename T, std::size_t BUFFER_SIZE >
 using small_vector0 = small_vectorL< T, 0, BUFFER_SIZE >;
-	
+
 template< typename T, std::size_t BUFFER_SIZE >
 using small_vector1 = small_vectorL< T, 1, BUFFER_SIZE >;
 
