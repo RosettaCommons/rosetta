@@ -59,17 +59,14 @@ public:
 	// Not sure why, but GCC 16.2 results in a warning-as-error when using this constructor,
 	// about overflowing the destination. Googling indicates this is an optimization-related false positive
 	// We make the constructor explicit and turn off diagnostics to get around that.
-#ifndef __clang__ // Clang apparently looks at a directive directed at GCC and assumes it also applies to it.
-// It then loudly complains that it doesn't understand what you're talking about.
 #pragma GCC diagnostic push
+#if defined(__GNUC__) && !defined(__clang__) && (__GNUC__ >= 11)
 #pragma GCC diagnostic ignored "-Wstringop-overflow="
 #endif
 	small_vectorL( std::size_t count, const T& value = T() ):
 		boost::container::small_vector< T, BUFFER_SIZE >(count, value)
 	{}
-#ifndef __clang__
 #pragma GCC diagnostic pop
-#endif
 
 	T & operator[]( std::size_t const i ){
 		debug_assert( i >= L );
