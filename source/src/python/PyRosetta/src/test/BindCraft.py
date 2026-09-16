@@ -336,7 +336,12 @@ class BindCraftTest(unittest.TestCase):
         self.assertGreater(interface_scores['interface_packstat'], 0.4)
         self.assertLess(interface_scores['interface_packstat'], 0.6)
 
-        self.assertAlmostEqual(interface_scores['interface_dG'], 113.75)
+        # 113.75 for ubuntu-20.04.gcc.cxx11thread.serialization.python311.PyRosetta.unit
+        # 113.6 for ubuntu-20.04.clang.cxx11thread.serialization.python314.PyRosetta.unit
+        # 113.51 for ubuntu-20.04.gcc.cxx11thread.serialization.python310.PyRosetta.unit
+        self.assertGreater(interface_scores['interface_dG'], 112)
+        self.assertLess(interface_scores['interface_dG'], 115)
+
         self.assertAlmostEqual(interface_scores['interface_dSASA'], 1853.22)
         self.assertAlmostEqual(interface_scores['interface_dG_SASA_ratio'], 6.14)
         self.assertAlmostEqual(interface_scores['interface_fraction'], 31.9)
