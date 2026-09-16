@@ -86,6 +86,9 @@ MoveMap::clear()
 	dof_id_map_.clear();
 
 	jump_id_map_.clear();
+
+	parametric_ = false;
+	parametric_set_ = false;
 }
 
 /// set/get for JumpIDs --- fold-tree independent definition of jumps
@@ -756,6 +759,8 @@ core::kinematics::MoveMap::save( Archive & arc ) const {
 	arc( CEREAL_NVP( dof_id_map_ ) ); // DOF_ID_Map
 	arc( CEREAL_NVP( jump_id_map_ ) ); // JumpID_Map
 	arc( CEREAL_NVP( atom_id_map_) ); //AtomID_Map
+	arc( CEREAL_NVP( parametric_ ) );
+	arc( CEREAL_NVP( parametric_set_ ) );
 }
 
 /// @brief Automatically generated deserialization method
@@ -769,6 +774,8 @@ core::kinematics::MoveMap::load( Archive & arc ) {
 	arc( dof_id_map_ ); // DOF_ID_Map
 	arc( jump_id_map_ ); // JumpID_Map
 	arc( atom_id_map_ ); //AtomID_Map
+	arc( parametric_ );
+	arc( parametric_set_ );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::kinematics::MoveMap );

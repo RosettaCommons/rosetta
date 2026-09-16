@@ -540,6 +540,18 @@ public:
 	void
 	set( DOF_ID const & id, bool const setting );
 
+	/// @brief Set whether parametric DOFs (Crick parameters for helical bundles, barrels, etc.)
+	/// should be minimized. When enabled, residues under parametric control will have their
+	/// backbone torsional DOFs automatically excluded (to prevent redundant DOF control),
+	/// while their chi angles remain free if set_chi is also true.
+	inline void set_parametric( bool const setting ) { parametric_ = setting; parametric_set_ = true; }
+
+	/// @brief Get whether parametric DOFs are enabled for minimization.
+	inline bool get_parametric() const { return parametric_set_ ? parametric_ : false; }
+
+	/// @brief Was the parametric setting explicitly set?
+	inline bool parametric_is_set() const { return parametric_set_; }
+
 public: // accessors
 
 	/// @brief Returns if BB torsions are movable or not for residue  <seqpos>
@@ -853,6 +865,10 @@ private:
 	/// @brief flexible or fixed for a single specific ATOM.
 	///  Used for fine control of cartesian minimization/protocols
 	std::map< AtomID, bool > atom_id_map_;
+
+	/// @brief Whether parametric DOFs (Crick parameters) should be included in minimization.
+	bool parametric_ = false;
+	bool parametric_set_ = false;
 
 #ifdef    SERIALIZATION
 public:
