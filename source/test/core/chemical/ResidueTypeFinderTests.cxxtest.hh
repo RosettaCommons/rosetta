@@ -152,9 +152,14 @@ public:
 
 		ResidueTypeFinder rtf( *rts_ );
 		rtf.name3( "C12" );
-		ResidueTypeCOP res1 = rtf.get_best_match_residue_type_for_atom_names( { "N", "CA", "CB", "CE" } ); // Names from database version
+
+		core::Vector na(0,0,0);
+		std::map< std::string, core::Vector > const & db_coords { {"N",na}, {"CA",na}, {"CB",na}, {"CE",na} };
+		std::map< std::string, core::Vector > const & ccd_coords { {"C1",na}, {"N2",na}, {"OG1",na}, {"C2",na} };
+
+		ResidueTypeCOP res1 = rtf.get_best_match_residue_type_for_known_coords( db_coords );
 		TS_ASSERT_EQUALS( res1->name(), "C12" );
-		ResidueTypeCOP res2 = rtf.get_best_match_residue_type_for_atom_names( { "C1", "N2", "CG1", "OG1", "C2" } ); // Names from CCD version
+		ResidueTypeCOP res2 = rtf.get_best_match_residue_type_for_known_coords( ccd_coords );
 		TS_ASSERT_EQUALS( res2->name(), "pdb_C12" );
 	}
 
@@ -164,9 +169,14 @@ public:
 		ResidueTypeFinder rtf( *rts_ );
 		rtf.set_no_CCD_on_name3_match( true );
 		rtf.name3( "C12" );
-		ResidueTypeCOP res1 = rtf.get_best_match_residue_type_for_atom_names( { "N", "CA", "CB", "CE" } ); // Names from database version
+
+		core::Vector na(0,0,0);
+		std::map< std::string, core::Vector > const & db_coords { {"N",na}, {"CA",na}, {"CB",na}, {"CE",na} };
+		std::map< std::string, core::Vector > const & ccd_coords { {"C1",na}, {"N2",na}, {"OG1",na}, {"C2",na} };
+
+		ResidueTypeCOP res1 = rtf.get_best_match_residue_type_for_known_coords( db_coords ); // Names from database version
 		TS_ASSERT_EQUALS( res1->name(), "C12" );
-		ResidueTypeCOP res2 = rtf.get_best_match_residue_type_for_atom_names( { "C1", "N2", "CG1", "OG1", "C2" } ); // Names from CCD version
+		ResidueTypeCOP res2 = rtf.get_best_match_residue_type_for_known_coords( ccd_coords ); // Names from CCD version
 		TS_ASSERT_EQUALS( res2->name(), "C12" ); // Matches zero names, but that's what the set_no_CCD_on_name3_match(true) implies ...
 	}
 
