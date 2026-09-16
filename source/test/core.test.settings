@@ -361,6 +361,7 @@ sources = {
 		"ScoreFunction",
 		"ScoreFunctionFactory",
 		"ScoreTest",
+		"ScoreFunction_consistency",
 		"SplitUnfoldedTwoBodyPotential",
 		"SurfacePotential",
 		"SymmB3G",
