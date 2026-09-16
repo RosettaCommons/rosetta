@@ -14,7 +14,7 @@
 #include <utility/json_utilities.hh>
 
 
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 
 #include <devel/init.hh>
 
@@ -459,7 +459,7 @@ int main(int argc, char * argv [])
 
 }
 
-#else // ! ( defined(ZEROMQ) and  defined(_NLOHMANN_JSON_ENABLED_) )
+#else // ! ( defined(ZEROMQ)
 
 #include <utility/excn/Exceptions.hh>
 #include <devel/init.hh>
@@ -478,4 +478,4 @@ int main(int argc, char * argv [])
 	}
 }
 
-#endif // defined(ZEROMQ) and  defined(_NLOHMANN_JSON_ENABLED_)
+#endif // defined(ZEROMQ)
