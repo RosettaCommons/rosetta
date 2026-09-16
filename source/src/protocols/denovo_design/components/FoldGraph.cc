@@ -852,7 +852,7 @@ FoldGraph::compute_best_solution( SegmentNames const & staple_loops ) const
 						solutions[sol].push_back( new_visited );
 					} else {
 						Solution tmpset;
-						for ( core::Size t=1; t<solutions[sol].size(); ++t ) {
+						for ( core::Size t=1; t<=solutions[sol].size(); ++t ) {
 							tmpset.push_back( solutions[sol][t] );
 						}
 						tmpset.push_back( new_visited );
