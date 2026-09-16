@@ -118,6 +118,10 @@ END_CASE
 
 BEGIN_CASE ### n-terminal and general case##########################################
 
+BEGIN_SELECTOR
+HAS_ATOMS H
+END_SELECTOR
+
 ## these are the operations involved
 ## Change this to guassian calculated charges
 ADD_ATOM  CYA  CAbb   CT2   -0.17
