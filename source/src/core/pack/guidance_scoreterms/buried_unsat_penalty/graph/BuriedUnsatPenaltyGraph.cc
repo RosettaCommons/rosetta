@@ -831,8 +831,6 @@ BuriedUnsatPenaltyGraph::BuriedUnsatPenaltyGraph( // NOLINT(bugprone-copy-constr
 /// @brief Destructor.
 BuriedUnsatPenaltyGraph::~BuriedUnsatPenaltyGraph() {
 	parent::delete_everything();
-	delete bunsat_edge_pool_;
-	bunsat_edge_pool_ = nullptr;
 }
 
 //////////////////////

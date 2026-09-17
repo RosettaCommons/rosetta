@@ -231,7 +231,6 @@ EnergyGraph::EnergyGraph( EnergyGraph const & src ) // NOLINT(bugprone-copy-cons
 
 EnergyGraph::~EnergyGraph() {
 	delete_everything();
-	delete energy_edge_pool_; energy_edge_pool_ = nullptr;
 }
 
 void

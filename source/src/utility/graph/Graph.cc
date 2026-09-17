@@ -474,8 +474,6 @@ platform::Size Edge::count_dynamic_memory() const
 Graph::~Graph()
 {
 	delete_everything();
-	delete edge_list_element_pool_; edge_list_element_pool_ = nullptr;
-	delete edge_pool_; edge_pool_ = nullptr;
 }
 
 /// @brief default constructor; creates an empty graph (no nodes, no edges)
