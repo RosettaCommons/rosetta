@@ -125,7 +125,7 @@ DisulfideOptimizationMover::apply( core::pose::Pose & pose ) {
 	}
 
 	// Confirm that both are cysteine-type residues in a disulfide bond to each other.
-	if ( !pose.residue_type( cys_pos[ 1 ] ).is_disulfide_bonded() || !pose.residue_type( cys_pos[ 1 ] ).is_disulfide_bonded() ) {
+	if ( !pose.residue_type( cys_pos[ 1 ] ).is_disulfide_bonded() || !pose.residue_type( cys_pos[ 2 ] ).is_disulfide_bonded() ) {
 		TR.Error << "Residue " << cys_pos[ 1 ] << " name is " << pose.residue_type( cys_pos[ 1 ] ).name() << "." << std::endl;
 		TR.Error << "Residue " << cys_pos[ 2 ] << " name is " << pose.residue_type( cys_pos[ 2 ] ).name() << "." << std::endl;
 		TR.Error << "Residues " << cys_pos[ 1 ] << " and " << cys_pos[ 2 ] << " are not disulfide bonded at all.";

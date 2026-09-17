@@ -676,7 +676,7 @@ SecretionOptimizationMover::find_tm_regions( std::ostream & out, core::pose::Pos
 			iminus2 = i;
 		}
 		out << "i_indices is sorted out at " << i;
-		if ( energies_sorted[i].dG_ins <= energies_sorted[iplus].dG_ins && energies_sorted[i].dG_ins <= energies_sorted[iminus].dG_ins && energies_sorted[i].dG_ins <= dG_ins_threshold_ && energies_sorted[i].dG_ins <= energies_sorted[iplus2].dG_ins && energies_sorted[i].dG_ins <= energies_sorted[iminus2].dG_ins && energies_sorted[i].dG_ins <= dG_ins_threshold_ ) {
+		if ( energies_sorted[i].dG_ins <= energies_sorted[iplus].dG_ins && energies_sorted[i].dG_ins <= energies_sorted[iminus].dG_ins && energies_sorted[i].dG_ins <= dG_ins_threshold_ && energies_sorted[i].dG_ins <= energies_sorted[iplus2].dG_ins && energies_sorted[i].dG_ins <= energies_sorted[iminus2].dG_ins ) {
 			out << "Found a local minimum at index " << energies_sorted[i].index << " with sequence "<< energies_sorted[i].sequence <<  " with dG_ins_pred of: " << energies_sorted[i].dG_ins << std::endl;
 			for ( core::Size j = energies_sorted[i].index; j < energies_sorted[i].index + window_size_ + 1 ; ++j ) {
 				energies_sorted[i].possible_mutants.push_back({j, keep_, 0, 0});
