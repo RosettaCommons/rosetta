@@ -79,7 +79,8 @@ RotamerRecovery::RotamerRecovery(
 	VirtualBase(),
 	protocol_( src.protocol_ ),
 	comparer_( src.comparer_ ),
-	reporter_( src.reporter_ )
+	reporter_( src.reporter_ ),
+	ignore_unrecognized_res_( src.ignore_unrecognized_res_ )
 {}
 
 void

@@ -78,6 +78,7 @@ DesignTask::DesignTask(
 /// @brief value constructor
 DesignTask::DesignTask( DesignTask const & rval ) :
 	utility::VirtualBase(),
+	task_operations_( rval.task_operations_ ),
 	ncycle_( rval.ncycle_ ),
 	scorefxn_( rval.scorefxn_ ),
 	mover_( rval.mover_ ),
