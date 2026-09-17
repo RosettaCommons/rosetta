@@ -20,6 +20,8 @@
 #include <core/pose/xyzStripeHashPose.fwd.hh>
 #include <utility/VirtualBase.hh>
 
+#include <memory>
+
 
 namespace protocols {
 namespace sic_dock {
@@ -79,7 +81,7 @@ private:
 	// KAB - below variables commented out (-Wunused-private-field) on 2014-09-11
 	// double CTD, CTD2;
 
-	core::pose::xyzStripeHashPose *h1_,*h2_;
+	std::unique_ptr< core::pose::xyzStripeHashPose > h1_, h2_;
 };
 
 

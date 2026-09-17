@@ -462,8 +462,6 @@ platform::Size DirectedEdge::count_dynamic_memory() const
 Digraph::~Digraph()
 {
 	delete_everything();
-	delete edge_list_element_pool_; edge_list_element_pool_ = nullptr;
-	delete edge_pool_; edge_pool_ = nullptr;
 }
 
 /// @brief default constructor; creates an empty graph (no nodes, no edges)
