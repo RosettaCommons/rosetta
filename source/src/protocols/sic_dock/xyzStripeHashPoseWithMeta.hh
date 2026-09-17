@@ -114,10 +114,6 @@ public:
 				if ( r.has( "C") ) { atoms[++count]=r.xyz( "C"); meta[count]=r.atom_type(r.atom_index( "C")).lj_radius(); }
 				if ( r.has( "O") ) { atoms[++count]=r.xyz( "O"); meta[count]=r.atom_type(r.atom_index( "O")).lj_radius(); }
 				if ( r.has("CB") ) { atoms[++count]=r.xyz("CB"); meta[count]=r.atom_type(r.atom_index("CB")).lj_radius(); }
-			} else if ( core::pose::PoseCoordPickMode_BB==m ) {
-				if ( r.has("CA") ) { atoms[++count]=r.xyz("CA"); meta[count]=r.atom_type(r.atom_index("CA")).lj_radius(); }
-				if ( r.has( "C") ) { atoms[++count]=r.xyz( "C"); meta[count]=r.atom_type(r.atom_index( "C")).lj_radius(); }
-				if ( r.has("CB") ) { atoms[++count]=r.xyz("CB"); meta[count]=r.atom_type(r.atom_index("CB")).lj_radius(); }
 			} else {
 				int natom = (core::pose::PoseCoordPickMode_ALL==m) ? r.natoms() : r.nheavyatoms();
 				for ( int ia = 1; ia <= natom; ++ia ) {
