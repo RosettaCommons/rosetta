@@ -42,6 +42,7 @@ DomainInterfaceFilter::DomainInterfaceFilter():
 
 DomainInterfaceFilter::DomainInterfaceFilter( DomainInterfaceFilter const & src ):
 	filters::Filter( src.type_ ),
+	user_defined_name_( src.user_defined_name_ ),
 	cb_dist_cut_( src.cb_dist_cut_ ),
 	nearby_atom_cut_( src.nearby_atom_cut_ ),
 	vector_angle_cut_( src.vector_angle_cut_ ),

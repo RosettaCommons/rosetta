@@ -102,10 +102,13 @@ RMSDMetric::RMSDMetric( RMSDMetric const & src ):
 	override_atom_names_( src.override_atom_names_ ),
 	robust_( src.robust_),
 	name_mapping_( src.name_mapping_ ),
+	superimpose_( src.superimpose_ ),
 	cyclic_pose_(src.cyclic_pose_)
 {
 	residue_selector_ = src.residue_selector_;
 	residue_selector_ref_ = src.residue_selector_ref_;
+	residue_selector_super_ = src.residue_selector_super_;
+	residue_selector_super_ref_ = src.residue_selector_super_ref_;
 	ref_pose_ = src.ref_pose_;
 }
 

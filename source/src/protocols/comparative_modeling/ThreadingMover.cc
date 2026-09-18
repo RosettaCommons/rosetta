@@ -88,7 +88,9 @@ ThreadingMover::ThreadingMover(ThreadingMover const & object_to_copy) : protocol
 	build_query_loops_(object_to_copy.build_query_loops_),
 	repack_query_(object_to_copy.repack_query_),
 	randomize_loop_coords_(object_to_copy.randomize_loop_coords_),
-	min_loop_size_(object_to_copy.min_loop_size_)
+	min_loop_size_(object_to_copy.min_loop_size_),
+	atom_equiv_(object_to_copy.atom_equiv_),
+	frag_libs_(object_to_copy.frag_libs_)
 {}
 
 ThreadingMover::ThreadingMover(

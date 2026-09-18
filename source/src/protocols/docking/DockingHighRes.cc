@@ -122,6 +122,7 @@ DockingHighRes::DockingHighRes( DockingHighRes const & old_instance ) :
 		tf_ = utility::pointer::make_shared< core::pack::task::TaskFactory >( *old_instance.tf_ );
 	}
 	tf2_ = utility::pointer::make_shared< DockTaskFactory >( *old_instance.tf2_ );
+	ignore_default_task_ = old_instance.ignore_default_task_;
 }
 
 void DockingHighRes::init( DockJumps const movable_jumps )
