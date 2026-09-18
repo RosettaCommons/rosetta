@@ -56,17 +56,18 @@ public:
 	using boost::container::small_vector< T, BUFFER_SIZE >::operator=;
 	small_vectorL & operator=( small_vectorL< T, L, BUFFER_SIZE > const & ) = default;
 
-	// Not sure why, but GCC 16.2 results in a warning-as-error when using this constructor,
-	// about overflowing the destination. Googling indicates this is an optimization-related false positive
+	// Not sure why, but GCC 16.2 results in a warning-as-error about overflowing the destination
+	// when used implicitly from the base class.
+	// Googling indicates this is an optimization-related false positive
 	// We make the constructor explicit and turn off diagnostics to get around that.
-#pragma GCC diagnostic push
 #if defined(__GNUC__) && !defined(__clang__) && (__GNUC__ >= 11)
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstringop-overflow="
-#endif
 	small_vectorL( std::size_t count, const T& value = T() ):
 		boost::container::small_vector< T, BUFFER_SIZE >(count, value)
 	{}
 #pragma GCC diagnostic pop
+#endif
 
 	T & operator[]( std::size_t const i ){
 		debug_assert( i >= L );
