@@ -2198,12 +2198,21 @@ settings = {
         },
     },
 
+    "clang, |cxx_ver:>=17,<20.0|" : {
+        "appends" : {
+            "flags" : {
+                "warn" : [
+		    "Wno-error=enum-constexpr-conversion", # Made default in Clang 20
+                ],
+            },
+        },
+    },
+
     "clang, |cxx_ver:>=17|" : {
         "appends" : {
             "flags" : {
                 "warn" : [
                     "Wno-error=deprecated-declarations",
-		    "Wno-error=enum-constexpr-conversion",
                 ],
             },
         },

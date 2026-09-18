@@ -25,7 +25,7 @@ int main( int argc, char * argv [] ) {
 
 		using namespace protocols::comparative_modeling;
 		devel::init(argc, argv);
-		AlignmentClusteringOP cluster( new AlignmentClustering() );
+		AlignmentClustering cluster; // Constructor will run protocol.
 	} catch (utility::excn::Exception const & e ) {
 		e.display();
 		return -1;
