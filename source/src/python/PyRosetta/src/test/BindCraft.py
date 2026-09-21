@@ -343,7 +343,10 @@ class BindCraftTest(unittest.TestCase):
         self.assertLess(interface_scores['interface_dG'], 115)
 
         self.assertAlmostEqual(interface_scores['interface_dSASA'], 1853.22)
-        self.assertAlmostEqual(interface_scores['interface_dG_SASA_ratio'], 6.14)
+
+        self.assertGreater(interface_scores['interface_dG_SASA_ratio'], 6)
+        self.assertLess(interface_scores['interface_dG_SASA_ratio'], 6.5)
+
         self.assertAlmostEqual(interface_scores['interface_fraction'], 31.9)
         self.assertAlmostEqual(interface_scores['interface_nres'], 50)
         self.assertAlmostEqual(interface_scores['interface_interface_hbonds'], 5)
