@@ -34,6 +34,8 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
+#include <utility/tag/Tag.hh>
+#include <basic/datacache/DataMap.hh>
 #include <memory>
 
 #include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
@@ -181,6 +183,22 @@ public:
 
 	void helper__test_coord_recovery(){
 
+	}
+
+	protocols::constraint_movers::AddConstraintsToCurrentConformationMover::AtomSelector
+	parsed_atom_selector( std::string const & tag_string ) {
+		protocols::constraint_movers::AddConstraintsToCurrentConformationMover actccm;
+		basic::datacache::DataMap dm;
+		actccm.parse_my_tag( utility::tag::Tag::create( tag_string ), dm );
+		return actccm.atom_selector();
+	}
+
+	void test_parse_atom_selector(){
+		using AtomSelector = protocols::constraint_movers::AddConstraintsToCurrentConformationMover::AtomSelector;
+		TS_ASSERT( parsed_atom_selector( "<AddConstraintsToCurrentConformationMover/>" ) == AtomSelector::CA_ONLY );
+		TS_ASSERT( parsed_atom_selector( "<AddConstraintsToCurrentConformationMover CA_only=\"false\"/>" ) == AtomSelector::ALL );
+		TS_ASSERT( parsed_atom_selector( "<AddConstraintsToCurrentConformationMover bb_only=\"true\"/>" ) == AtomSelector::BB_ONLY );
+		TS_ASSERT( parsed_atom_selector( "<AddConstraintsToCurrentConformationMover sc_tip_only=\"true\"/>" ) == AtomSelector::SC_TIP_ONLY );
 	}
 
 	void test_sc_tip(){
