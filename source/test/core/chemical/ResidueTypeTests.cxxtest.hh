@@ -675,4 +675,40 @@ public:
 		TS_ASSERT_THROWS_ANYTHING( auto res_type = core::chemical::ResidueType::make( *mutable_type ); )
 	}
 
+	void test_depends_on_polymeric_connection() {
+		using namespace core::chemical;
+
+		ResidueTypeSetCOP rts = ChemicalManager::get_instance()->residue_type_set("fa_standard");
+
+		ResidueTypeCOP lower = rts->name_mapOP("GLY:protein_cutpoint_upper"); // Has modification at the lower connection
+
+		TS_ASSERT( ! lower->atom_depends_on_lower_polymeric_connection(lower->atom_index("N")) );
+		TS_ASSERT( ! lower->atom_depends_on_lower_polymeric_connection(lower->atom_index("C")) );
+		TS_ASSERT( ! lower->atom_depends_on_lower_polymeric_connection(lower->atom_index("O")) );
+		TS_ASSERT( lower->atom_depends_on_lower_polymeric_connection(lower->atom_index("H")) );
+		TS_ASSERT( lower->atom_depends_on_lower_polymeric_connection(lower->atom_index("OVU1")) ); // Depends indirectly.
+
+		TS_ASSERT( ! lower->atom_depends_on_upper_polymeric_connection(lower->atom_index("N")) );
+		TS_ASSERT( ! lower->atom_depends_on_upper_polymeric_connection(lower->atom_index("H")) );
+		TS_ASSERT( ! lower->atom_depends_on_upper_polymeric_connection(lower->atom_index("OVU1")) );
+		TS_ASSERT( ! lower->atom_depends_on_upper_polymeric_connection(lower->atom_index("C")) );
+		TS_ASSERT( lower->atom_depends_on_upper_polymeric_connection(lower->atom_index("O")) );
+
+		ResidueTypeCOP upper = rts->name_mapOP("GLY:protein_cutpoint_lower"); // Has modification at the upper connection
+
+		TS_ASSERT( ! upper->atom_depends_on_lower_polymeric_connection(upper->atom_index("N")) );
+		TS_ASSERT( ! upper->atom_depends_on_lower_polymeric_connection(upper->atom_index("C")) );
+		TS_ASSERT( ! upper->atom_depends_on_lower_polymeric_connection(upper->atom_index("O")) );
+		TS_ASSERT( upper->atom_depends_on_lower_polymeric_connection(upper->atom_index("H")) );
+		TS_ASSERT( ! upper->atom_depends_on_lower_polymeric_connection(upper->atom_index("OVL1")) );
+		TS_ASSERT( ! upper->atom_depends_on_lower_polymeric_connection(upper->atom_index("OVL2")) );
+
+		TS_ASSERT( ! upper->atom_depends_on_upper_polymeric_connection(upper->atom_index("N")) );
+		TS_ASSERT( ! upper->atom_depends_on_upper_polymeric_connection(upper->atom_index("C")) );
+		TS_ASSERT( upper->atom_depends_on_upper_polymeric_connection(upper->atom_index("O")) );
+		TS_ASSERT( ! upper->atom_depends_on_upper_polymeric_connection(upper->atom_index("H")) );
+		TS_ASSERT( upper->atom_depends_on_upper_polymeric_connection(upper->atom_index("OVL1")) ); // Depends indirectly.
+		TS_ASSERT( upper->atom_depends_on_upper_polymeric_connection(upper->atom_index("OVL2")) ); // Depends indirectly.
+	}
+
 };
