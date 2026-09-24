@@ -242,6 +242,11 @@
 #include <protocols/helical_bundle/PerturbBundleCreator.hh>
 #include <protocols/helical_bundle/PerturbBundleHelixCreator.hh>
 
+#include <protocols/beta_barrel/MakeBarrelCreator.hh>
+#include <protocols/beta_barrel/MakeBarrelStrandCreator.hh>
+#include <protocols/beta_barrel/PerturbBarrelCreator.hh>
+#include <protocols/beta_barrel/PerturbBarrelStrandCreator.hh>
+
 #include <protocols/hotspot_hashing/movers/PlaceSurfaceProbeCreator.hh>
 
 #include <protocols/hybridization/HybridizeProtocolCreator.hh>
