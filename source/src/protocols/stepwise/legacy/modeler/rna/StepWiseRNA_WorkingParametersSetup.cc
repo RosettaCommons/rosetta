@@ -233,7 +233,7 @@ StepWiseWorkingParametersSetup::get_user_input_alignment_res_list( core::Size co
 
 			ObjexxFCL::FArray1D < bool > const & partition_definition = working_parameters_->partition_definition();
 			bool contain_non_root_partition_seq_num = false;
-			for ( core::Size ii = 1; ii < working_alignment.size(); ii++ ) {
+			for ( core::Size ii = 1; ii <= working_alignment.size(); ii++ ) {
 				if ( partition_definition( working_alignment[ii] ) != partition_definition( root_res ) ) contain_non_root_partition_seq_num = true;
 			}
 
