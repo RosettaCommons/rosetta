@@ -62,6 +62,7 @@ RotamerBoltzmannWeight2::RotamerBoltzmannWeight2( RotamerBoltzmannWeight2 const 
 	protocols::filters::Filter( rval ),
 	score_type_( rval.score_type_ ),
 	calculator_id_( new_calculator_id() ),
+	scorefxn_( rval.scorefxn_ ),
 	calculator_( new protocols::pose_metric_calculators::RotamerBoltzCalculator( *rval.calculator_ ) )
 {
 	TR << "Created new calculator id: " << calculator_id_ << std::endl;

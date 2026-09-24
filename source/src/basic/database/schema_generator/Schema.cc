@@ -75,6 +75,7 @@ Schema::Schema(std::string const & table_name, PrimaryKey const & primary_key):
 Schema::Schema(
 	Schema const & src
 ) :
+	table_name_(src.table_name_),
 	primary_key_(src.primary_key_),
 	columns_(src.columns_),
 	foreign_keys_(src.foreign_keys_),
