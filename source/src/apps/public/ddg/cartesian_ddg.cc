@@ -272,7 +272,6 @@ main( int argc, char * argv [] )
 		devel::init(argc, argv);
 		bool legacy = option[ OptionKeys::ddg::legacy ].value(); //Default false
 		if ( !legacy ) {
-#ifdef _NLOHMANN_JSON_ENABLED_ //Json is required to run this ddg protocol
 			// read the pose
 			core::pose::Pose pose;
 			core::import_pose::pose_from_file( pose, basic::options::start_file(),
@@ -283,9 +282,6 @@ main( int argc, char * argv [] )
 				addmem->apply( pose );
 			}
 			protocols::ddg::CartesianddG::run(pose);
-#else
-			utility_exit_with_message("A JSON capable compiler is required to use this app");
-#endif
 		} else {
 
 

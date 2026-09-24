@@ -51,6 +51,8 @@
 
 static basic::Tracer TR("protocols.indexed_structure_store.DirectSegmentLookup.cxxtest");
 
+using nlohmann::json;
+
 namespace protocols { namespace indexed_structure_store {
 void to_json(json& j, DirectSegmentLookupResult const & r) {
 	j = json{

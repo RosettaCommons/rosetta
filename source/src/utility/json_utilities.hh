@@ -15,30 +15,8 @@
 #ifndef INCLUDED_utility_json_utilities_HH
 #define INCLUDED_utility_json_utilities_HH
 
-
-// exclude unsupported compilers
-#if !defined(JSON_SKIP_UNSUPPORTED_COMPILER_CHECK)
-#if defined(__clang__)
-#if (__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__) < 30400
-//#error "unsupported Clang version - see https://github.com/nlohmann/json#supported-compilers"
-#define _NLOHMANN_JSON_DISABLED_
-#endif
-#elif defined(__GNUC__) && !(defined(__ICC) || defined(__INTEL_COMPILER))
-#if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__) < 40800
-//#error "unsupported GCC version - see https://github.com/nlohmann/json#supported-compilers"
-#define _NLOHMANN_JSON_DISABLED_
-#endif
-#endif
-#endif
-
-#if not defined(_NLOHMANN_JSON_DISABLED_)
-#define _NLOHMANN_JSON_ENABLED_
-#endif
-
-#ifdef _NLOHMANN_JSON_ENABLED_
-
 // Unit headers
-#include <json.hpp> //external/include/json.hpp
+#include <json_fwd.hpp> //external/include/json_fwd.hpp
 
 // Protocol headers
 
@@ -74,19 +52,17 @@ void extract_nonempty_object_from_json( nlohmann::json const & json, std::string
 
 
 /// @brief lookup for element `key` and if it's type is compatible extract it to `value, return `true` on success, no exception is raised if key is not found
-bool extract_value_if_present(json const &j, std::string const & key, bool &value);
+bool extract_value_if_present(nlohmann::json const &j, std::string const & key, bool &value);
 
 /// @brief lookup for element `key` and if it's type is compatible extract it to `value, return `true` on success, no exception is raised if key is not found
-bool extract_value_if_present(json const &j, std::string const & key, int &value);
+bool extract_value_if_present(nlohmann::json const &j, std::string const & key, int &value);
 
 /// @brief lookup for element `key` and if it's type is compatible extract it to `value, return `true` on success, no exception is raised if key is not found
-bool extract_value_if_present(json const &j, std::string const & key, double &value);
+bool extract_value_if_present(nlohmann::json const &j, std::string const & key, double &value);
 
 /// @brief lookup for element `key` and if it's type is compatible extract it to `value, return `true` on success, no exception is raised if key is not found
-bool extract_value_if_present(json const &j, std::string const & key, std::string &value);
+bool extract_value_if_present(nlohmann::json const &j, std::string const & key, std::string &value);
 
 } // utility
-
-#endif // ifdef _NLOHMANN_JSON_ENABLED_
 
 #endif //INCLUDED_utility_json_utilities_HH
