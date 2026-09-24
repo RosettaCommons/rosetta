@@ -29,6 +29,7 @@
 //Utility headers
 
 //C++ headers
+#include <memory>
 #include <set>
 
 //External headers
@@ -204,7 +205,7 @@ public:
 
 private:
 
-	boost::unordered_object_pool< HashEdge > * hash_edge_pool_;
+	std::unique_ptr< boost::unordered_object_pool< HashEdge > > hash_edge_pool_;
 
 	std::map< int, std::set<core::Size> > model_indices_;
 	core::Size last_node_added_;

@@ -47,6 +47,7 @@
 
 // C++ headers
 #include <list>
+#include <memory>
 
 #include <utility/vector1.hh>
 
@@ -498,7 +499,7 @@ protected:
 private:
 	Energies whole_pose_context_enmeths_;
 	EnergyMap fixed_energies_;
-	boost::unordered_object_pool< MinimizationEdge > * minimization_edge_pool_;
+	std::unique_ptr< boost::unordered_object_pool< MinimizationEdge > > minimization_edge_pool_;
 
 };
 

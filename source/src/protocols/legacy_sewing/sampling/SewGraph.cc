@@ -145,8 +145,6 @@ operator<<(std::ostream& out, HashEdge const & edge ) {
 
 SewGraph::~SewGraph() {
 	delete_everything();
-	delete hash_edge_pool_;
-	hash_edge_pool_ = nullptr;
 }
 
 /// @details Notice that this does not call the parent( src ) copy constructor.
