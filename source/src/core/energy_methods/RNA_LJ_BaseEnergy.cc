@@ -325,7 +325,7 @@ RNA_LJ_BaseEnergy::eval_atom_energy(
 
 	Vector const heavy_atom_i( rsd1.xyz( m ) );
 
-	for ( Size j = 1; j < pose.size(); j ++ ) {
+	for ( Size j = 1; j <= pose.size(); j ++ ) {
 		if ( i == j ) continue;
 
 		conformation::Residue const & rsd2( pose.residue( j ) );

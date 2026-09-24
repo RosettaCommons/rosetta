@@ -293,7 +293,7 @@ void SurfacePotential::compute_residue_surface_energy( conformation::Residue con
 	// in (being considered) rotamer, not of the wild type sequence rotamer.  In a small percent of the cases, using the wild type
 	// nbr_atom will give a different count than when using the new rotamer nbr_atom position.
 	Real distanceBetweenAtoms = 0.0;
-	for ( Size res2_position = 1; res2_position < pose.size(); ++res2_position ) {
+	for ( Size res2_position = 1; res2_position <= pose.size(); ++res2_position ) {
 
 		if ( resid == res2_position ) { continue; }
 		conformation::Residue const & rsd2 = pose.residue( res2_position );
@@ -419,7 +419,7 @@ void SurfacePotential::compute_pose_surface_energy( pose::Pose const & pose, Rea
 		conformation::Residue const & rsd1 = pose.residue( res1_position );
 		Real distanceBetweenAtoms = 0.0;
 
-		for ( Size res2_position = 1; res2_position < pose.size(); ++res2_position ) {
+		for ( Size res2_position = 1; res2_position <= pose.size(); ++res2_position ) {
 			if ( pose.residue( res2_position ).aa() > core::chemical::num_canonical_aas ) continue;
 			if ( symm_info && !symm_info->bb_is_independent(res2_position) ) continue;
 
@@ -462,7 +462,7 @@ void SurfacePotential::compute_pose_surface_energy( pose::Pose const & pose, Rea
 
 
 	total_surface_energy_ = 0.0;
-	for ( Size ii=1; ii < residue_surface_energy_.size(); ++ii ) {
+	for ( Size ii=1; ii <= residue_surface_energy_.size(); ++ii ) {
 		total_surface_energy_ += residue_surface_energy_[ii];
 	}
 
