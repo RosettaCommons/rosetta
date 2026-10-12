@@ -196,9 +196,11 @@ public:
 	void test_parse_atom_selector(){
 		using AtomSelector = protocols::constraint_movers::AddConstraintsToCurrentConformationMover::AtomSelector;
 		TS_ASSERT( parsed_atom_selector( "<AddConstraintsToCurrentConformationMover/>" ) == AtomSelector::CA_ONLY );
+		TS_ASSERT( parsed_atom_selector( "<AddConstraintsToCurrentConformationMover CA_only=\"true\"/>" ) == AtomSelector::CA_ONLY );
 		TS_ASSERT( parsed_atom_selector( "<AddConstraintsToCurrentConformationMover CA_only=\"false\"/>" ) == AtomSelector::ALL );
 		TS_ASSERT( parsed_atom_selector( "<AddConstraintsToCurrentConformationMover bb_only=\"true\"/>" ) == AtomSelector::BB_ONLY );
 		TS_ASSERT( parsed_atom_selector( "<AddConstraintsToCurrentConformationMover sc_tip_only=\"true\"/>" ) == AtomSelector::SC_TIP_ONLY );
+		TS_ASSERT( parsed_atom_selector( "<AddConstraintsToCurrentConformationMover CA_only=\"false\" bb_only=\"true\"/>" ) == AtomSelector::BB_ONLY );
 	}
 
 	void test_sc_tip(){

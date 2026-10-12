@@ -325,35 +325,19 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 	cst_weight_ = tag->getOption< core::Real >( "cst_weight", cst_weight_ );
 	inter_chain_ = tag->getOption< bool >( "inter_chain", inter_chain_ );
 
-	AtomSelector sele = AtomSelector::ALL;
+	bool const bb_only = tag->getOption< bool >( "bb_only", false );
+	bool const sc_tip_only = tag->getOption< bool >( "sc_tip_only", false );
+	runtime_assert_msg( tag->getOption< bool >( "CA_only", false ) + bb_only + sc_tip_only <= 1, "Please use only one of 'bb_only', 'ca_only', and 'sc_tip_only'" );
 
-	if ( tag->hasOption( "bb_only" ) ) {
-		bool const bb_only = tag->getOption< bool >( "bb_only" );
-		if ( bb_only ) {
-			runtime_assert_msg( sele == AtomSelector::ALL, "Please use only one of 'bb_only', 'ca_only', and 'sc_tip_only'" );
-			sele = AtomSelector::BB_ONLY;
-		}
+	AtomSelector sele = AtomSelector::CA_ONLY;
+	if ( ! tag->getOption< bool >( "CA_only", true ) ) {
+		sele = AtomSelector::ALL;
 	}
-
-	if ( tag->hasOption( "CA_only" ) ) {
-		bool const CA_only = tag->getOption< bool >( "CA_only" );
-		if ( CA_only ) {
-			runtime_assert_msg( sele == AtomSelector::ALL, "Please use only one of 'bb_only', 'ca_only', and 'sc_tip_only'" );
-			sele = AtomSelector::CA_ONLY;
-		}
+	if ( bb_only ) {
+		sele = AtomSelector::BB_ONLY;
 	}
-
-	if ( tag->hasOption( "sc_tip_only" ) ) {
-		bool const sc_tip_only = tag->getOption< bool >( "sc_tip_only" );
-		if ( sc_tip_only ) {
-			runtime_assert_msg( sele == AtomSelector::ALL, "Please use only one of 'bb_only', 'ca_only', and 'sc_tip_only'" );
-			sele = AtomSelector::SC_TIP_ONLY;
-		}
-	}
-
-	// CA_only is the default unless explicitly disabled or another atom subset was requested
-	if ( sele == AtomSelector::ALL && tag->getOption< bool >( "CA_only", true ) ) {
-		sele = AtomSelector::CA_ONLY;
+	if ( sc_tip_only ) {
+		sele = AtomSelector::SC_TIP_ONLY;
 	}
 
 	set_atom_selector( sele );
