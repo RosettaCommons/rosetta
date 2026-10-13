@@ -32,6 +32,7 @@
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rosetta_scripts/MultiplePoseMover.hh>
+#include <protocols/rosetta_scripts/BatchedMultiplePoseMover.hh>
 
 // Package Headers
 #include <basic/Tracer.hh>
@@ -686,6 +687,21 @@ ParsedProtocol::apply_mover( Pose & pose, ParsedProtocolStep const & step ) {
 		if ( mp_mover ) {
 			mp_mover->set_previous_mover(last_mover_);
 		}
+	}
+
+	// If the mover about to be applied is a BatchedMultiplePoseMover,
+	// hand it the current pose followed by all remaining poses of the previous mover
+	protocols::rosetta_scripts::BatchedMultiplePoseMoverOP batched_mover(
+		utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::BatchedMultiplePoseMover >( step.mover )
+	);
+	if ( batched_mover ) {
+		utility::vector1< core::pose::PoseOP > batched_poses( 1, pose.clone() );
+		if ( last_mover_ ) {
+			while ( core::pose::PoseOP additional_pose = last_mover_->get_additional_output() ) {
+				batched_poses.push_back( additional_pose );
+			}
+		}
+		batched_mover->set_batched_poses( batched_poses );
 	}
 
 	TR<<"=======================BEGIN MOVER "<<mover_name<<" - "<<mover_user_name<<"======================="<<std::endl;
