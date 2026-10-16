@@ -28,6 +28,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/moves/MoverFactory.hh>
+#include <protocols/moves/AdditionalPosesMover.hh>
 #include <protocols/filters/FilterFactory.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
@@ -680,11 +681,11 @@ ParsedProtocol::apply_mover( Pose & pose, ParsedProtocolStep const & step ) {
 	TR.Debug << "apply_mover: This mover: " << mover_name << std::endl;
 
 	if ( last_mover_ ) {
-		protocols::rosetta_scripts::MultiplePoseMoverOP mp_mover(
-			utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::MultiplePoseMover >( step.mover )
+		protocols::moves::AdditionalPosesMoverOP ap_mover(
+			utility::pointer::dynamic_pointer_cast< protocols::moves::AdditionalPosesMover >( step.mover )
 		);
-		if ( mp_mover ) {
-			mp_mover->set_previous_mover(last_mover_);
+		if ( ap_mover ) {
+			ap_mover->set_previous_mover(last_mover_);
 		}
 	}
 

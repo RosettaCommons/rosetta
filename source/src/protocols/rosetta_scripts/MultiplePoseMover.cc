@@ -58,13 +58,12 @@ static basic::Tracer TR( "protocols.rosetta_scripts.MultiplePoseMover" );
 ////////////////////////////////////////////////////////////////////////
 
 MultiplePoseMover::MultiplePoseMover() :
-	protocols::moves::Mover( "MultiplePoseMover" ),
+	protocols::moves::AdditionalPosesMover( "MultiplePoseMover" ),
 	cached_(false),
 	max_input_poses_(0),
 	max_output_poses_(0),
 	rosetta_scripts_tag_(/* NULL */),
 	selector_tag_(/* NULL */),
-	previous_mover_(/* NULL */),
 	selectors_(),
 	pose_input_cache_(),
 	pose_output_cache_(),
@@ -118,7 +117,7 @@ core::pose::PoseOP MultiplePoseMover::get_additional_output()
 
 bool MultiplePoseMover::fill_input_cache()
 {
-	if ( !previous_mover_ ) {
+	if ( !previous_mover_set() ) {
 		// No previous mover (source)
 		return false;
 	}
@@ -128,8 +127,8 @@ bool MultiplePoseMover::fill_input_cache()
 		return false;
 	}
 
-	TR << "Obtaining additional pose from previous mover: " << previous_mover_->get_name() << std::endl;
-	core::pose::PoseOP another_pose = previous_mover_->get_additional_output();
+	TR << "Obtaining additional pose from previous mover: " << previous_mover_name() << std::endl;
+	core::pose::PoseOP another_pose = get_next_pose();
 	if ( !another_pose ) {
 		// Previous mover out of poses
 		return false;
@@ -429,9 +428,6 @@ void MultiplePoseMover::parse_my_tag(
 		TR << "Pose input caching enabled" << std::endl;
 	}
 }
-
-/// @brief Used by RosettaScripts to set the previous mover to pull poses from
-void MultiplePoseMover::set_previous_mover( protocols::moves::MoverOP const m ) { previous_mover_ = m; }
 
 void MultiplePoseMover::set_main_mover( protocols::moves::MoverOP const m ) { mover_ = m; }
 
