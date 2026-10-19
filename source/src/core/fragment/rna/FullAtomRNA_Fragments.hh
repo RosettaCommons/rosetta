@@ -47,6 +47,16 @@ namespace rna {
 
 class FullAtomRNA_Fragments; // defined below.
 
+/// @brief True if residues start .. start+length-1 are all L-RNA or all not L-RNA;
+///  is_l_rna reports which. Fragments from the (D-RNA) vall are mirrored into L-RNA windows,
+///  so a window spanning a D/L boundary cannot receive a fragment.
+bool
+window_has_uniform_rna_chirality(
+	core::pose::Pose const & pose,
+	Size const start,
+	Size const length,
+	bool & is_l_rna );
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 typedef std::tuple< std::string, std::string, RNA_FragmentHomologyExclusion, utility::vector1< SYN_ANTI_RESTRICTION > > FragmentLibraryPointerKey;

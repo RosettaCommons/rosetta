@@ -1351,6 +1351,30 @@ get_rna_base_coordinate_system_stub( core::conformation::Residue const & rsd )
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+core::Real
+rna_chirality_factor( chemical::ResidueType const & rsd_type )
+{
+	return rsd_type.is_l_rna() ? -1.0 : 1.0;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+numeric::xyzMatrix< core::Real >
+get_rna_base_coordinate_system_chirality_normalized( core::conformation::Residue const & rsd, Vector const & centroid )
+{
+	numeric::xyzMatrix< Real > M = get_rna_base_coordinate_system( rsd, centroid );
+	if ( rsd.is_l_rna() ) M.col_z( -1.0 * M.col_z() );
+	return M;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+core::kinematics::Stub
+get_rna_base_coordinate_system_stub_chirality_normalized( core::conformation::Residue const & rsd )
+{
+	Vector const centroid = get_rna_base_centroid( rsd, false /*verbose*/ );
+	return core::kinematics::Stub( get_rna_base_coordinate_system_chirality_normalized( rsd, centroid ), centroid );
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Check whether one of the atom beyond to a base and another to a phosphate. Doesn't have to be on the same nucleotide.
 bool
 is_base_phosphate_atom_pair( conformation::Residue const & rsd_1, conformation::Residue const & rsd_2, Size const atomno_1, Size const atomno_2 ){
@@ -1378,7 +1402,7 @@ is_base_phosphate_atom_pair( conformation::Residue const & rsd_1, conformation::
 ChiState
 get_residue_base_state( conformation::Residue const & rsd ) {
 	Real const CHI_CUTOFF = 15.0; //Kinda RANDOM..ROUGH average between north chi_anti (~79) and north chi_syn (~-50)
-	Real const chi = numeric::principal_angle_degrees( rsd.chi( CHI - NUM_RNA_MAINCHAIN_TORSIONS ) );
+	Real const chi = numeric::principal_angle_degrees( rna_chirality_factor( rsd.type() ) * rsd.chi( CHI - NUM_RNA_MAINCHAIN_TORSIONS ) );
 	if ( chi <= CHI_CUTOFF ) {
 		return SYN;
 	} else {
@@ -1391,7 +1415,7 @@ PuckerState
 get_residue_pucker_state( conformation::Residue const & rsd ) {
 	static RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 	Real const DELTA_CUTOFF( rna_fitted_torsion_info.delta_cutoff() );
-	Real delta = numeric::principal_angle_degrees( rsd.mainchain_torsion( DELTA ) );
+	Real delta = numeric::principal_angle_degrees( rna_chirality_factor( rsd.type() ) * rsd.mainchain_torsion( DELTA ) );
 	if ( delta <= DELTA_CUTOFF ) {
 		return NORTH;
 	} else {

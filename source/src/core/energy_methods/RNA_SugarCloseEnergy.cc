@@ -191,7 +191,7 @@ RNA_SugarCloseEnergy::add_sugar_ring_closure_constraints( conformation::Residue 
 
 	core::scoring::constraints::ConstraintOP dist_cst, angle1, angle2, angle3;
 	if ( use_phenix_sugar_close_ ) {
-		Real const delta = numeric::principal_angle_degrees( rsd.mainchain_torsion( DELTA ) );
+		Real const delta = numeric::principal_angle_degrees( core::chemical::rna::rna_chirality_factor( rsd.type() ) * rsd.mainchain_torsion( DELTA ) );
 		Real const delta_cutoff = rna_fitted_torsion_info_->delta_cutoff();
 		if ( delta < delta_cutoff ) { //NORTH
 			core::scoring::func::FuncOP f_dist_cst( utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( o4prime_c1prime_bond_north_, scale_rna_torsion_sd_ * bond_sd_ ) );

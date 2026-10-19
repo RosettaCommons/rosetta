@@ -109,6 +109,9 @@ sources = {
 	"fragment/picking/vall" : [
 		"vall"
 	],
+	"fragment/rna" : [
+		"L_RNA_Chirality",
+	],
 	"grid" : [
 		"CartGrid",
 	],

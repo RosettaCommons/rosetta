@@ -49,6 +49,8 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 #include <numeric/xyzVector.hh>
 
@@ -70,6 +72,35 @@ namespace fragment {
 namespace rna {
 
 static basic::Tracer TR( "protocols.rna.denovo.fragments.FullAtomRNA_Fragments" );
+
+/// @brief Sequence used to look up a window in the vall: one-letter code, except that non-canonical
+///  residues use their na_analogue and L-RNA residues use their D-RNA counterpart.
+static std::string
+get_vall_match_sequence( core::pose::Pose const & pose, Size const position, Size const size )
+{
+	std::string RNA_string = pose.sequence().substr( position - 1, size );
+	for ( Size ii = 0; ii < RNA_string.size(); ++ii ) {
+		chemical::ResidueType const & rsd_type = pose.residue_type( ii + position );
+		if ( rsd_type.na_analogue() == chemical::na_rad ) {
+			RNA_string[ ii ] = 'a';
+		} else if ( rsd_type.na_analogue() == chemical::na_rcy ) {
+			RNA_string[ ii ] = 'c';
+		} else if ( rsd_type.na_analogue() == chemical::na_rgu ) {
+			RNA_string[ ii ] = 'g';
+		} else if ( rsd_type.na_analogue() == chemical::na_ura ) {
+			RNA_string[ ii ] = 'u';
+		} else if ( rsd_type.aa() == chemical::na_lra ) {
+			RNA_string[ ii ] = 'a';
+		} else if ( rsd_type.aa() == chemical::na_lrc ) {
+			RNA_string[ ii ] = 'c';
+		} else if ( rsd_type.aa() == chemical::na_lrg ) {
+			RNA_string[ ii ] = 'g';
+		} else if ( rsd_type.aa() == chemical::na_lur ) {
+			RNA_string[ ii ] = 'u';
+		}
+	}
+	return RNA_string;
+}
 
 using core::Size;
 using core::Real;
@@ -272,23 +303,9 @@ FullAtomRNA_Fragments::pick_random_fragment(
 {
 	using namespace core::pose::full_model_info;
 
-	std::string const & RNA_sequence( pose.sequence() );
-	//std::string const & RNA_string = RNA_sequence.substr( position - 1, size );
-
 	// For every non-acgu character in the single letter sequence, we need to
-	// instead put in the na_analogue.
-	std::string RNA_string = RNA_sequence.substr( position - 1, size );
-	for ( Size ii = 0; ii < RNA_string.size(); ++ii ) {
-		if ( pose.residue_type( ii + position ).na_analogue() == chemical::na_rad ) {
-			RNA_string[ ii ] = 'a';
-		} else if ( pose.residue_type( ii + position ).na_analogue() == chemical::na_rcy ) {
-			RNA_string[ ii ] = 'c';
-		} else if ( pose.residue_type( ii + position ).na_analogue() == chemical::na_rgu ) {
-			RNA_string[ ii ] = 'g';
-		} else if ( pose.residue_type( ii + position ).na_analogue() == chemical::na_ura ) {
-			RNA_string[ ii ] = 'u';
-		}
-	}
+	// instead put in the na_analogue (or, for L-RNA, the D-RNA equivalent).
+	std::string const RNA_string = get_vall_match_sequence( pose, position, size );
 
 	// For the residues of interest, say which have to be syn or have to be anti
 	utility::vector1< SYN_ANTI_RESTRICTION > restriction( size, ANY );
@@ -348,23 +365,9 @@ FullAtomRNA_Fragments::apply_best_fragment(
 {
 	using namespace core::pose::full_model_info;
 
-	std::string const & RNA_sequence( pose.sequence() );
-	//std::string const & RNA_string = RNA_sequence.substr( position - 1, size );
-
 	// For every non-acgu character in the single letter sequence, we need to
-	// instead put in the na_analogue.
-	std::string RNA_string = RNA_sequence.substr( position - 1, size );
-	for ( Size ii = 0; ii < RNA_string.size(); ++ii ) {
-		if ( pose.residue_type( ii + position ).na_analogue() == chemical::na_rad ) {
-			RNA_string[ ii ] = 'a';
-		} else if ( pose.residue_type( ii + position ).na_analogue() == chemical::na_rcy ) {
-			RNA_string[ ii ] = 'c';
-		} else if ( pose.residue_type( ii + position ).na_analogue() == chemical::na_rgu ) {
-			RNA_string[ ii ] = 'g';
-		} else if ( pose.residue_type( ii + position ).na_analogue() == chemical::na_ura ) {
-			RNA_string[ ii ] = 'u';
-		}
-	}
+	// instead put in the na_analogue (or, for L-RNA, the D-RNA equivalent).
+	std::string const RNA_string = get_vall_match_sequence( pose, position, size );
 
 	// For the residues of interest, say which have to be syn or have to be anti
 	utility::vector1< SYN_ANTI_RESTRICTION > restriction( size, ANY );
@@ -446,6 +449,23 @@ FullAtomRNA_Fragments::apply_best_fragment(
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+window_has_uniform_rna_chirality(
+	core::pose::Pose const & pose,
+	Size const start,
+	Size const length,
+	bool & is_l_rna )
+{
+	is_l_rna = false;
+	if ( length == 0 ) return true;
+	is_l_rna = pose.residue_type( start ).is_l_rna();
+	for ( Size n = start + 1; n < start + length; ++n ) {
+		if ( pose.residue_type( n ).is_l_rna() != is_l_rna ) return false;
+	}
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 FullAtomRNA_Fragments::insert_fragment(
 	core::pose::Pose & pose,
@@ -458,6 +478,32 @@ FullAtomRNA_Fragments::insert_fragment(
 	using namespace core::id;
 
 	Size const size = torsion_set.get_size();
+
+	// The vall is D-RNA. An L-RNA window receives the mirror image of the fragment: every torsion
+	// is negated and the non-main-chain sugar coordinates are mirrored. A window that mixes D and L
+	// residues has no meaningful fragment, so it is left untouched.
+	static bool const invert_torsions_for_l_rna = basic::options::option[ basic::options::OptionKeys::rna::denovo::invert_torsions_for_l_rna ]();
+	bool mirror_fragment( false );
+	if ( invert_torsions_for_l_rna ) {
+		bool is_l_window( false );
+		if ( !window_has_uniform_rna_chirality( pose, position, size, is_l_window ) ) {
+			static bool warned_mixed_window( false );
+			if ( !warned_mixed_window ) {
+				TR.Warning << "Skipping fragment insertion at residue " << position << " (size " << size
+					<< "): window mixes D-RNA and L-RNA residues. Further skips will not be reported." << std::endl;
+				warned_mixed_window = true;
+			}
+			return;
+		}
+		mirror_fragment = is_l_window;
+		static bool announced_l_rna( false );
+		if ( mirror_fragment && !announced_l_rna ) {
+			TR << "L-RNA detected: inserting mirror-image (sign-inverted) vall fragments into L-RNA residues, starting at residue "
+				<< position << "." << std::endl;
+			announced_l_rna = true;
+		}
+	}
+	Real const factor = mirror_fragment ? -1.0 : 1.0;
 
 	for ( Size offset = 0; offset < size; offset++ ) {
 
@@ -482,7 +528,7 @@ FullAtomRNA_Fragments::insert_fragment(
 			//   torsions_sampled.insert( rna_torsion_id );
 			// }
 
-			pose.set_torsion( rna_torsion_id, torsion_set.torsions( j, offset ) );
+			pose.set_torsion( rna_torsion_id, factor * torsion_set.torsions( j, offset ) );
 		}
 	}
 
@@ -519,6 +565,7 @@ FullAtomRNA_Fragments::insert_fragment(
 			//   sugars_sampled.insert( position_offset );
 			// }
 
+			if ( mirror_fragment ) vecs = pose::rna::mirror_non_main_chain_sugar_coords( vecs );
 			pose::rna::apply_non_main_chain_sugar_coords( vecs, pose, reference_pose, position_offset );
 
 		}

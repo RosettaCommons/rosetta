@@ -15,6 +15,7 @@
 // Unit headers
 #include <protocols/rna/denovo/movers/RNA_FragmentMover.hh>
 #include <core/fragment/rna/RNA_Fragments.hh>
+#include <core/fragment/rna/FullAtomRNA_Fragments.hh>
 #include <core/fragment/rna/RNA_MatchType.hh>
 
 // Project headers
@@ -30,6 +31,8 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 // Numeric headers
 #include <numeric/random/random.hh>
@@ -174,6 +177,16 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 				if ( !pose.residue_type( pp ).is_RNA() ) {
 					frame_ok = false; break;
 				}
+			}
+		}
+
+		// A D-RNA vall fragment is mirrored into L-RNA windows, so a frame must not mix D and L residues.
+		if ( frame_ok && basic::options::option[ basic::options::OptionKeys::rna::denovo::invert_torsions_for_l_rna ]() ) {
+			bool is_l_rna( false );
+			if ( !core::fragment::rna::window_has_uniform_rna_chirality( pose, i, frag_size_, is_l_rna ) ) frame_ok = false;
+			for ( core::Size cc = 1; frame_ok && cc < symm_hack_arity_; ++cc ) {
+				core::Size const pp = ( i + cc * symmetry_reduced_pose_size - 1 ) % pose_size + 1;
+				if ( !core::fragment::rna::window_has_uniform_rna_chirality( pose, pp, frag_size_, is_l_rna ) ) frame_ok = false;
 			}
 		}
 

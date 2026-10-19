@@ -88,6 +88,20 @@ void RNA_IdealCoord::init() {
 		io::pdb::build_pose_from_pdb_as_is( *ref_pose, *rsd_set, file );
 		MiniPoseOP ref_mini_pose( utility::pointer::make_shared< MiniPose >( *ref_pose ) );
 		ref_mini_pose_list_.push_back( ref_mini_pose );
+
+		// Mirror image (x -> -x) for L-RNA: same bond lengths and angles, negated dihedrals.
+		// Only the coordinates are used when copying DOFs, so the D residue types can stay.
+		utility::vector1< id::AtomID > atom_ids;
+		utility::vector1< Vector > mirrored_xyz;
+		for ( Size i = 1; i <= ref_pose->size(); ++i ) {
+			for ( Size j = 1; j <= ref_pose->residue( i ).natoms(); ++j ) {
+				Vector const & xyz = ref_pose->residue( i ).xyz( j );
+				atom_ids.emplace_back( j, i );
+				mirrored_xyz.emplace_back( -xyz.x(), xyz.y(), xyz.z() );
+			}
+		}
+		ref_pose->batch_set_xyz( atom_ids, mirrored_xyz );
+		mirrored_ref_mini_pose_list_.push_back( utility::pointer::make_shared< MiniPose >( *ref_pose ) );
 	}
 }
 
@@ -130,7 +144,8 @@ void RNA_IdealCoord::apply_coords(
 		}
 	}
 
-	MiniPoseOP const & ref_mini_pose = ref_mini_pose_list_[res_class];
+	MiniPoseOP const & ref_mini_pose = res.is_l_rna() ?
+		mirrored_ref_mini_pose_list_[res_class] : ref_mini_pose_list_[res_class];
 	//Apply ideal dofs
 	if ( ignore_base ) {
 		std::map< core::id::AtomID , core::id::AtomID > atom_id_map;
@@ -188,7 +203,7 @@ void RNA_IdealCoord::apply(
 	runtime_assert( pucker <= 2 );
 
 	if ( pucker == ANY_PUCKER ) {
-		Real const delta  = pose.torsion( TorsionID(seqpos, id::BB, DELTA) );
+		Real const delta  = rna_chirality_factor( res.type() ) * pose.torsion( TorsionID(seqpos, id::BB, DELTA) );
 		if ( delta > delta_cutoff_ ) {
 			pucker = SOUTH;
 		} else {
@@ -200,12 +215,16 @@ void RNA_IdealCoord::apply(
 	Size res_class = 0;
 	switch ( res.aa() ) {
 	case na_rad :
+	case na_lra :
 		res_class = 1; break;
 	case na_rgu :
+	case na_lrg :
 		res_class = 3; break;
 	case na_rcy :
+	case na_lrc :
 		res_class = 5; break;
 	case na_ura :
+	case na_lur :
 		res_class = 7; break;
 	default :
 		// AMW TODO: This strategy is already encoded in ERRASER
@@ -237,7 +256,7 @@ void RNA_IdealCoord::apply_pucker(
 	debug_assert( pucker <= 2 );
 
 	if ( pucker == ANY_PUCKER ) {
-		Real const delta  = pose.torsion( TorsionID(seqpos, id::BB, DELTA) );
+		Real const delta  = rna_chirality_factor( res.type() ) * pose.torsion( TorsionID(seqpos, id::BB, DELTA) );
 		if ( delta > delta_cutoff_ ) {
 			pucker = SOUTH;
 		} else {

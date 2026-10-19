@@ -67,6 +67,8 @@ private:
 	void apply_coords( Pose & pose, Size const seqpos, Size const res_class, bool const ignore_base, bool const keep_backbone_torsion ) const;
 	// utility::vector1 < PoseOP > ref_pose_list_;
 	utility::vector1 < MiniPoseOP > ref_mini_pose_list_;
+	utility::vector1 < MiniPoseOP > mirrored_ref_mini_pose_list_; // L-RNA (mirror image) versions of the above
+
 	std::string const path_;
 	Real delta_cutoff_;
 };

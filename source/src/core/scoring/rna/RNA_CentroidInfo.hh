@@ -87,6 +87,8 @@ public:
 		return base_centroids_;
 	}
 
+	/// @brief Base stubs used for scoring and base-pair classification. For L-RNA these are
+	///  chirality-normalized (z axis negated) so that D-derived potentials apply to L:L pairs.
 	utility::vector1< kinematics::Stub > const &
 	base_stubs() const
 	{
@@ -101,6 +103,11 @@ public:
 
 	kinematics::Stub
 	get_base_coordinate_system( conformation::Residue const & rsd ) const;
+
+	/// @brief Same as base_stubs() entries: for L-RNA, the z axis is negated (left-handed frame).
+	///  Use for measuring geometry against D-derived potentials, never for building.
+	kinematics::Stub
+	get_base_coordinate_system_chirality_normalized( conformation::Residue const & rsd, Vector const & centroid ) const;
 
 private:
 

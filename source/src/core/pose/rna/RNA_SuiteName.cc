@@ -163,32 +163,35 @@ void RNA_SuiteName::init() {
 		fixedsizearray1< Size, 7 > { { 28, 60, 55, 50, 70, 35, 28 } } );
 }
 
+/// @brief Suite torsions (delta, epsilon, zeta of res-1; alpha, beta, gamma, delta of res).
+/// @details Suite clusters are defined for D-RNA; for an L-RNA suite the torsions are negated
+///  so the mirror-image conformer gets the D-RNA name. Uses the chirality of residue res.
+static utility::fixedsizearray1< Real, 7 >
+get_suite_torsions( Pose const & pose, Size const res ) {
+	using namespace chemical::rna;
+	Real const factor = rna_chirality_factor( pose.residue_type( res ) );
+	return utility::fixedsizearray1< Real, 7 >{ {
+		numeric::principal_angle_degrees( factor * pose.residue( res - 1 ).mainchain_torsion( DELTA ) ),
+		numeric::principal_angle_degrees( factor * pose.residue( res - 1 ).mainchain_torsion( EPSILON ) ),
+		numeric::principal_angle_degrees( factor * pose.residue( res - 1 ).mainchain_torsion( ZETA ) ),
+		numeric::principal_angle_degrees( factor * pose.residue( res ).mainchain_torsion( ALPHA ) ),
+		numeric::principal_angle_degrees( factor * pose.residue( res ).mainchain_torsion( BETA ) ),
+		numeric::principal_angle_degrees( factor * pose.residue( res ).mainchain_torsion( GAMMA ) ),
+		numeric::principal_angle_degrees( factor * pose.residue( res ).mainchain_torsion( DELTA ) ) } };
+}
+
 RNA_SuiteInfo
 RNA_SuiteName::closest_suite( Pose const & pose, Size const res ) const {
 	using namespace chemical::rna;
 	if ( is_rna_chainbreak( pose, res - 1 ) ) return closest_by_dist4( pose, res );
-	utility::fixedsizearray1< Real, 7 > torsions{ {
-		numeric::principal_angle_degrees( pose.residue( res - 1 ).mainchain_torsion( DELTA ) ),
-		numeric::principal_angle_degrees( pose.residue( res - 1 ).mainchain_torsion( EPSILON ) ),
-		numeric::principal_angle_degrees( pose.residue( res - 1 ).mainchain_torsion( ZETA ) ),
-		numeric::principal_angle_degrees( pose.residue( res ).mainchain_torsion( ALPHA ) ),
-		numeric::principal_angle_degrees( pose.residue( res ).mainchain_torsion( BETA ) ),
-		numeric::principal_angle_degrees( pose.residue( res ).mainchain_torsion( GAMMA ) ),
-		numeric::principal_angle_degrees( pose.residue( res ).mainchain_torsion( DELTA ) ) } };
+	utility::fixedsizearray1< Real, 7 > const torsions( get_suite_torsions( pose, res ) );
 	return closest_suite( torsions );
 }
 
 RNA_SuiteInfo
 RNA_SuiteName::closest_by_dist4( Pose const & pose, Size const res ) const {
 	using namespace chemical::rna;
-	utility::fixedsizearray1<Real, 7> torsions{ {
-		numeric::principal_angle_degrees( pose.residue( res - 1 ).mainchain_torsion( DELTA ) ),
-		numeric::principal_angle_degrees( pose.residue( res - 1 ).mainchain_torsion( EPSILON ) ),
-		numeric::principal_angle_degrees( pose.residue( res - 1 ).mainchain_torsion( ZETA ) ),
-		numeric::principal_angle_degrees( pose.residue( res ).mainchain_torsion( ALPHA ) ),
-		numeric::principal_angle_degrees( pose.residue( res ).mainchain_torsion( BETA ) ),
-		numeric::principal_angle_degrees( pose.residue( res ).mainchain_torsion( GAMMA ) ),
-		numeric::principal_angle_degrees( pose.residue( res ).mainchain_torsion( DELTA ) ) } };
+	utility::fixedsizearray1< Real, 7 > const torsions( get_suite_torsions( pose, res ) );
 	return closest_by_dist4( torsions );
 }
 
@@ -444,14 +447,8 @@ RNA_SuiteName::assign( Pose const & pose, Size const res ) const {
 	if ( !pose.residue( res ).is_RNA()  )     return suite_undefined_;
 	if ( is_rna_chainbreak(pose, res - 1) )   return suite_undefined_;
 	if ( is_rna_chainbreak(pose, res - 1) ) return suite_undefined_;
-	utility::fixedsizearray1< Real, 7 > torsions{ {
-		numeric::principal_angle_degrees( pose.residue( res - 1 ).mainchain_torsion( DELTA ) ),
-		numeric::principal_angle_degrees( pose.residue( res - 1 ).mainchain_torsion( EPSILON ) ),
-		numeric::principal_angle_degrees( pose.residue( res - 1 ).mainchain_torsion( ZETA ) ),
-		numeric::principal_angle_degrees( pose.residue( res ).mainchain_torsion( ALPHA ) ),
-		numeric::principal_angle_degrees( pose.residue( res ).mainchain_torsion( BETA ) ),
-		numeric::principal_angle_degrees( pose.residue( res ).mainchain_torsion( GAMMA ) ),
-		numeric::principal_angle_degrees( pose.residue( res ).mainchain_torsion( DELTA ) ) } };
+	if ( pose.residue( res - 1 ).is_l_rna() != pose.residue( res ).is_l_rna() ) return suite_undefined_; // mixed D:L suite
+	utility::fixedsizearray1< Real, 7 > const torsions( get_suite_torsions( pose, res ) );
 	return assign( torsions );
 }
 

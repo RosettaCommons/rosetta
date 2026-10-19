@@ -79,6 +79,13 @@ RNA_CentroidInfo::get_base_coordinate_system( conformation::Residue const & rsd,
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
+kinematics::Stub
+RNA_CentroidInfo::get_base_coordinate_system_chirality_normalized( conformation::Residue const & rsd, Vector const & centroid ) const
+{
+	return kinematics::Stub( get_rna_base_coordinate_system_chirality_normalized( rsd, centroid ), centroid );
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_CentroidInfo::initialize_base_centroids_and_stubs( pose::Pose const & pose )
 {
@@ -93,7 +100,7 @@ RNA_CentroidInfo::initialize_base_centroids_and_stubs( pose::Pose const & pose )
 
 		if ( res_i.is_NA() ) {
 			centroid_i = get_base_centroid( res_i );
-			stub_i     = get_base_coordinate_system( res_i, centroid_i );
+			stub_i     = get_base_coordinate_system_chirality_normalized( res_i, centroid_i );
 		}
 
 		base_centroids_.push_back( centroid_i );

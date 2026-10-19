@@ -97,6 +97,13 @@ apply_non_main_chain_sugar_coords(
 	Pose const & reference_pose,
 	Size const i);
 
+/// @brief Convert non-main-chain sugar coordinates taken from a D-RNA source (vall, ideal
+///  geometry) into those of the mirror-image sugar, for use on an L-RNA residue.
+/// @details The coordinates are expressed in the C3'/C4'/C5' stub, whose third axis is a cross
+///  product; reflecting the residue therefore leaves the local x and y unchanged and negates z.
+utility::vector1< Vector >
+mirror_non_main_chain_sugar_coords( utility::vector1< Vector > const & non_main_chain_sugar_coords );
+
 void
 apply_ideal_c2endo_sugar_coords(
 	Pose & pose,

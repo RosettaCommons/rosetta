@@ -198,6 +198,11 @@ RNA_SuitePotential::eval_score(
 		return false;  // No valid suite
 	}
 
+	// The suite potential is fit to D-RNA. An L:L suite is scored as its mirror image;
+	// a mixed D:L suite has no counterpart in the training data.
+	if ( pose.residue_type( rsdnum1 ).is_l_rna() != pose.residue_type( rsdnum2 ).is_l_rna() ) return false;
+	Real const factor = rna_chirality_factor( pose.residue_type( rsdnum1 ) );
+
 	// Find the suite torsions
 	torsion_ids[ 1 ] = TorsionID( rsdnum1, BB, DELTA );
 	torsion_ids[ 2 ] = TorsionID( rsdnum1, BB, EPSILON );
@@ -211,10 +216,12 @@ RNA_SuitePotential::eval_score(
 	for ( Size i = 1; i <= torsion_ids.size(); ++i ) {
 		// A suite must have all its torsions being valid
 		if ( !is_torsion_valid( pose, torsion_ids[i] ) ) return false;
-		torsions[ i ] = pose.torsion( torsion_ids[i] );
+		torsions[ i ] = factor * pose.torsion( torsion_ids[i] );
 	}
 
 	eval_score( torsions, score, deriv );
+	// dE/d(torsion) = factor * dE/d(mirrored torsion)
+	for ( Size i = 1; i <= deriv.size(); ++i ) deriv[ i ] *= factor;
 	// TR << rsdnum1 << "--" << rsdnum2 << ": " << score_ << std::endl;
 	return true;
 }

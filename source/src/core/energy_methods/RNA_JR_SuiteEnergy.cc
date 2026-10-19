@@ -93,6 +93,10 @@ RNA_JR_SuiteEnergy::residue_pair_energy(
 	Size const rsdnum1( rsd1.seqpos() ), rsdnum2( rsd2.seqpos() );
 	if ( rsdnum1 + 1 != rsdnum2 ) return;
 
+	// Suite clusters are D-RNA; score L:L suites as their mirror image, skip mixed D:L suites.
+	if ( rsd1.is_l_rna() != rsd2.is_l_rna() ) return;
+	Real const factor = core::chemical::rna::rna_chirality_factor( rsd1.type() );
+
 	utility::vector1< TorsionID > torsion_ids;
 	torsion_ids.emplace_back( rsdnum1, id::BB, DELTA );
 	torsion_ids.emplace_back( rsdnum1, id::BB, EPSILON );
@@ -106,7 +110,7 @@ RNA_JR_SuiteEnergy::residue_pair_energy(
 
 	for ( Size i = 1; i <= torsion_ids.size(); ++i ) {
 		if ( !is_torsion_valid( pose, torsion_ids[i] ) ) return;
-		torsions[i] = pose.torsion( torsion_ids[i] );
+		torsions[i] = factor * pose.torsion( torsion_ids[i] );
 	}
 	RNA_SuiteAssignment assignment( suitename_.assign( torsions ) );
 	Real const dist( assignment.dist );

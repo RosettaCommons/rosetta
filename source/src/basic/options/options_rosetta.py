@@ -8034,6 +8034,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		   Option( 'staged_constraints', 'Boolean', desc= "Apply constraints in stages depending on sequence separation",default= 'false' ),
 		   Option( 'jump_library_file', 'String', desc= "Input file for jumps",default="RNA18_HUB_2.154_2.5.jump" ),
        Option( 'vall_torsions', 'String', desc='Torsions file containing information on fragments from RNA models', default='RNA18_HUB_2.154_2.5.torsions' ),
+		   Option( 'invert_torsions_for_l_rna', 'Boolean', desc= "When inserting fragments from the (D-RNA) vall into L-RNA residues, negate all torsions and mirror the sugar coordinates so L-RNA receives mirror-image geometry. Only affects poses containing L-RNA. Set to false only if -vall_torsions points at a library that is already mirrored and the pose is pure L-RNA.", default='true' ),
 		   Option( 'use_1jj2_torsions', 'Boolean',desc= "Use original (ribosome) fragments, 1JJ2", default='false' ),
 	     Option( 'fuzz_fragments', 'Real', desc="When picking fragments, fuzz fragments with multiple samples with Gaussians of this standard deviation", default='0'),
 		   Option( 'rna_lores_chainbreak_weight', 'Real', desc= "chainbreak weight for lo res sampling",default='0.0' ),

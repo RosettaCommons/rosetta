@@ -28,9 +28,25 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <utility>
 
 static basic::Tracer TR( "core.import_pose.RNA_JumpMover" );
+
+/// @brief Mirror image of a jump between two residues that are both mirrored.
+/// @details Atom-tree stubs are built with their third axis as a cross product, so reflecting
+///  the structure maps each stub S to R*S*F, with F = diag(1,1,-1). The jump's rotation M and
+///  translation t then become F*M*F and F*t.
+static core::kinematics::Jump
+mirror_jump( core::kinematics::Jump const & jump )
+{
+	numeric::xyzMatrix< core::Real > const F( numeric::xyzMatrix< core::Real >::diag( 1.0, 1.0, -1.0 ) );
+	core::kinematics::Jump mirrored( jump );
+	mirrored.set_rotation( F * jump.get_rotation() * F );
+	mirrored.set_translation( F * jump.get_translation() );
+	return mirrored;
+}
 
 using namespace core;
 using namespace core::pose::rna;
@@ -155,7 +171,7 @@ RNA_JumpMover::add_new_RNA_jump(
 
 	std::string atom_name1, atom_name2;
 	runtime_assert( rna_jump_library_ != nullptr );
-	kinematics::Jump const new_jump = rna_jump_library_->get_random_base_pair_jump(
+	kinematics::Jump new_jump = rna_jump_library_->get_random_base_pair_jump(
 		pose.residue_type(jump_pos1),
 		pose.residue_type(jump_pos2),
 		e1, e2, o,
@@ -164,6 +180,13 @@ RNA_JumpMover::add_new_RNA_jump(
 		forward1, forward2 );
 
 	if ( !success ) return; //shh don't do anything.
+
+	// The jump library is D-RNA. An L:L base pair gets the mirror image. (Mixed D:L pairs have no
+	// counterpart in the library and get the unmodified jump, as before.)
+	static bool const invert_for_l_rna = basic::options::option[ basic::options::OptionKeys::rna::denovo::invert_torsions_for_l_rna ]();
+	if ( invert_for_l_rna && pose.residue_type( jump_pos1 ).is_l_rna() && pose.residue_type( jump_pos2 ).is_l_rna() ) {
+		new_jump = mirror_jump( new_jump );
+	}
 
 	fold_tree.set_jump_atoms( which_jump, atom_name1, atom_name2 );
 

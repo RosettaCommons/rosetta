@@ -159,17 +159,21 @@ add_rna_chi_rotamers( conformation::ResidueOP const & rot,
 		break;
 	}
 
+	// Fitted chi distributions are for D-RNA; L-RNA uses the mirror image.
+	Real const factor = rna_chirality_factor( rot->type() );
+
 	GaussianParameter const & gaussian_parameter( gaussian_parameter_set[1] );
 	fill_chi_rotamers_with_center_and_stddev( rot, rotamers,
 		chi_steps,
-		gaussian_parameter.center, gaussian_parameter.width );
+		factor * gaussian_parameter.center, gaussian_parameter.width );
 
 	//Add in syn configurations for purines.
-	if ( rot->aa() == chemical::na_rad || rot->aa() == chemical::na_rgu ) {
+	if ( rot->aa() == chemical::na_rad || rot->aa() == chemical::na_rgu ||
+			rot->aa() == chemical::na_lra || rot->aa() == chemical::na_lrg ) {
 		GaussianParameter const & gaussian_parameter2( gaussian_parameter_set[2] );
 		fill_chi_rotamers_with_center_and_stddev( rot, rotamers,
 			chi_steps,
-			gaussian_parameter2.center, gaussian_parameter2.width );
+			factor * gaussian_parameter2.center, gaussian_parameter2.width );
 	}
 }
 
@@ -206,7 +210,7 @@ build_rna_chi_rotamers(
 	static Real const delta_cutoff = rna_fitted_torsion_info.delta_cutoff();
 
 	//Different chi angles depending on sugar pucker.
-	Real const delta( principal_angle_degrees( existing_residue.mainchain_torsion( chemical::rna::DELTA ) ) );
+	Real const delta( principal_angle_degrees( chemical::rna::rna_chirality_factor( existing_residue.type() ) * existing_residue.mainchain_torsion( chemical::rna::DELTA ) ) );
 
 	// Note: do not necessarily include current chi, unless specified by user!
 	if ( include_current && sample_rna_chi ) {
@@ -351,7 +355,9 @@ build_three_prime_phosphate_rotamers( utility::vector1< conformation::ResidueOP 
 
 	Size const number_of_starting_rotamers = rotamers.size();
 	for ( Size n = 1 ; n <= number_of_starting_rotamers; ++n ) {
-		utility::vector1< Real > const epsilon_torsions  = get_epsilon_torsions( rotamers[n]->mainchain_torsion( DELTA ),
+		// Epsilon sampling is fit to D-RNA: classify the mirrored delta, then mirror the samples back.
+		Real const factor = rna_chirality_factor( rotamers[n]->type() );
+		utility::vector1< Real > const epsilon_torsions  = get_epsilon_torsions( factor * rotamers[n]->mainchain_torsion( DELTA ),
 			true /*extra epsilon*/, 10.0 /*bin size*/ );
 		runtime_assert( rotamers[n]->has_variant_type( chemical::THREE_PRIME_PACKABLE_PHOSPHATE ) );
 		// this nested iteration is totally ghetto -- would be better to unify with fang's protocols/rotamer_sample/rna/RNA_SuiteRotamer code.
@@ -362,7 +368,7 @@ build_three_prime_phosphate_rotamers( utility::vector1< conformation::ResidueOP 
 				Size const chi_number_j = rotamers[n]->type().RNA_info().chi_number_pseudozeta();
 				runtime_assert( chi_number_i > 0 );
 				runtime_assert( chi_number_j > 0 );
-				new_rsd->set_chi( chi_number_i, epsilon );
+				new_rsd->set_chi( chi_number_i, factor * epsilon );
 				new_rsd->set_chi( chi_number_j, full );
 				rotamers.push_back( new_rsd );
 			} //j

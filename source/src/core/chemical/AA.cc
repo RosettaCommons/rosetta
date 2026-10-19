@@ -151,6 +151,12 @@ std::map< std::string, AA > setup_name2aa() {
 	n2aa[ "RGU" ] = na_rgu;
 	n2aa[ "URA" ] = na_ura;
 
+	// L-RNA (lets custom L-RNA params files say AA LRA, etc.)
+	n2aa[ "LRA" ] = na_lra;
+	n2aa[ "LRC" ] = na_lrc;
+	n2aa[ "LRG" ] = na_lrg;
+	n2aa[ "LUR" ] = na_lur;
+
 	n2aa[ "H2O" ] = aa_h2o;
 	n2aa[ "HOH" ] = aa_h2o; //ok to have redundant?
 
@@ -199,6 +205,12 @@ std::map< char, AA > setup_oneletter2aa() {
 	l2aa[ 'c' ] = na_rcy;
 	l2aa[ 'g' ] = na_rgu;
 	l2aa[ 'u' ] = na_ura;
+
+	// L-RNA (mirror-image a, c, g, u).
+	l2aa[ '1' ] = na_lra;
+	l2aa[ '2' ] = na_lrc;
+	l2aa[ '3' ] = na_lrg;
+	l2aa[ '4' ] = na_lur;
 
 	l2aa[ 'w' ] = aa_h2o;
 	l2aa[ 'z' ] = aa_unp;

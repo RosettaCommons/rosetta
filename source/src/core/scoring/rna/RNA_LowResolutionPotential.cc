@@ -1377,7 +1377,7 @@ RNA_LowResolutionPotential::get_base_backbone(
 {
 	using namespace core::chemical::rna;
 	Vector const centroid_i = get_rna_base_centroid( rsd1 );
-	kinematics::Stub const stub_i( get_rna_base_coordinate_system_stub( rsd1 ) );
+	kinematics::Stub const stub_i( get_rna_base_coordinate_system_stub_chirality_normalized( rsd1 ) );
 	return get_base_backbone( rsd1, rsd2, centroid_i, stub_i, m );
 }
 

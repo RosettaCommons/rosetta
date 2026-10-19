@@ -542,6 +542,15 @@ apply_non_main_chain_sugar_coords(
 	}
 }
 
+/////////////////////////////////////////////////////////////////////
+utility::vector1< Vector >
+mirror_non_main_chain_sugar_coords( utility::vector1< Vector > const & non_main_chain_sugar_coords )
+{
+	utility::vector1< Vector > mirrored( non_main_chain_sugar_coords );
+	for ( Vector & v : mirrored ) v.z( -v.z() );
+	return mirrored;
+}
+
 // AMW TODO: find invocations of this function, replace with RNA_IdealCoord
 // Used in ConstrainToIdealMover
 ////////////////////////////////////////////////////////////////////
@@ -559,24 +568,29 @@ apply_ideal_c2endo_sugar_coords(
 		return;
 	}
 
+	// L-RNA residues get the mirror image: negated torsions and mirrored sugar coordinates.
+	bool const is_l_rna = pose.residue_type( i ).is_l_rna();
+	Real const factor = core::chemical::rna::rna_chirality_factor( pose.residue_type( i ) );
+
 	//Torsion angles associated with a 2'-endo sugar in 1jj2 (large ribosomal subunit xtal structure ).
-	pose.set_torsion( id::TorsionID( i, id::BB, 1), 69.404192 );
-	pose.set_torsion( id::TorsionID( i, id::BB, 2), -173.031790 );
-	pose.set_torsion( id::TorsionID( i, id::BB, 3), 58.877828 );
-	pose.set_torsion( id::TorsionID( i, id::BB, 4), 147.202313 );
-	pose.set_torsion( id::TorsionID( i, id::BB, 5), -85.360367 );
-	pose.set_torsion( id::TorsionID( i, id::BB, 6), -38.381256 );
-	pose.set_torsion( id::TorsionID( i, id::CHI, 1), 111.708846 );
-	pose.set_torsion( id::TorsionID( i, id::CHI, 2), -36.423711 );
-	pose.set_torsion( id::TorsionID( i, id::CHI, 3), 156.438552 );
-	pose.set_torsion( id::TorsionID( i, id::CHI, 4), 179.890442 );
+	pose.set_torsion( id::TorsionID( i, id::BB, 1), factor * 69.404192 );
+	pose.set_torsion( id::TorsionID( i, id::BB, 2), factor * -173.031790 );
+	pose.set_torsion( id::TorsionID( i, id::BB, 3), factor * 58.877828 );
+	pose.set_torsion( id::TorsionID( i, id::BB, 4), factor * 147.202313 );
+	pose.set_torsion( id::TorsionID( i, id::BB, 5), factor * -85.360367 );
+	pose.set_torsion( id::TorsionID( i, id::BB, 6), factor * -38.381256 );
+	pose.set_torsion( id::TorsionID( i, id::CHI, 1), factor * 111.708846 );
+	pose.set_torsion( id::TorsionID( i, id::CHI, 2), factor * -36.423711 );
+	pose.set_torsion( id::TorsionID( i, id::CHI, 3), factor * 156.438552 );
+	pose.set_torsion( id::TorsionID( i, id::CHI, 4), factor * 179.890442 );
 
-	static utility::vector1< Vector > _non_main_chain_sugar_coords;
-	_non_main_chain_sugar_coords.push_back( Vector(  0.329122,   -0.190929,   -1.476983  ) );
-	_non_main_chain_sugar_coords.push_back( Vector( -0.783512,   -1.142556,   -1.905737  ) );
-	_non_main_chain_sugar_coords.push_back( Vector( -1.928054,   -0.731911,   -1.195034  ) );
+	static utility::vector1< Vector > const _non_main_chain_sugar_coords {
+		Vector(  0.329122,   -0.190929,   -1.476983  ),
+		Vector( -0.783512,   -1.142556,   -1.905737  ),
+		Vector( -1.928054,   -0.731911,   -1.195034  ) };
+	static utility::vector1< Vector > const _mirrored_non_main_chain_sugar_coords( mirror_non_main_chain_sugar_coords( _non_main_chain_sugar_coords ) );
 
-	apply_non_main_chain_sugar_coords( _non_main_chain_sugar_coords, pose, pose, i );
+	apply_non_main_chain_sugar_coords( is_l_rna ? _mirrored_non_main_chain_sugar_coords : _non_main_chain_sugar_coords, pose, pose, i );
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -585,7 +599,8 @@ assign_pucker(
 	Pose const & pose,
 	Size const rsd_id
 ) {
-	Real const delta = pose.torsion( id::TorsionID( rsd_id, id::BB,  4 ) );
+	// L-RNA deltas are the negatives of their D-RNA counterparts.
+	Real const delta = core::chemical::rna::rna_chirality_factor( pose.residue_type( rsd_id ) ) * pose.torsion( id::TorsionID( rsd_id, id::BB,  4 ) );
 	PuckerState const pucker_state = ( delta < torsion_info.delta_cutoff() ) ? NORTH : SOUTH;
 	return pucker_state;
 }
@@ -620,9 +635,10 @@ apply_pucker(
 			nu2 = torsion_info.nu2_south();
 			nu1 = torsion_info.nu1_south();
 		}
-		pose.set_torsion( id::TorsionID( i, id::BB,  4 ), delta );
-		pose.set_torsion( id::TorsionID( i, id::CHI, 2 ), nu2 );
-		pose.set_torsion( id::TorsionID( i, id::CHI, 3 ), nu1 );
+		Real const factor = core::chemical::rna::rna_chirality_factor( pose.residue_type( i ) );
+		pose.set_torsion( id::TorsionID( i, id::BB,  4 ), factor * delta );
+		pose.set_torsion( id::TorsionID( i, id::CHI, 2 ), factor * nu2 );
+		pose.set_torsion( id::TorsionID( i, id::CHI, 3 ), factor * nu1 );
 	}
 }
 ////////////////////////////////////////////////////////////////////

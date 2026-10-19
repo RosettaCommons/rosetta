@@ -129,6 +129,24 @@ get_rna_base_coordinate_system( core::conformation::Residue const & rsd, numeric
 core::kinematics::Stub
 get_rna_base_coordinate_system_stub( core::conformation::Residue const & rsd );
 
+/// @brief +1.0 for D-RNA (and any residue that is not L-RNA), -1.0 for L-RNA.
+/// @details Every dihedral of an L-RNA residue is the negative of the matching dihedral
+///  in its D enantiomer, so multiplying by this factor maps a torsion into the
+///  D-RNA frame used by the vall library, the fitted torsion potentials, and the pucker cutoffs.
+core::Real
+rna_chirality_factor( chemical::ResidueType const & rsd_type );
+
+/// @brief Base coordinate system for scoring and classification.
+/// @details Identical to get_rna_base_coordinate_system() for D-RNA. For L-RNA the z axis is
+///  negated, so a point's local coordinates match those of the mirror-image point around the
+///  D enantiomer, and D-derived base-pair/stacking statistics apply unchanged to L:L pairs.
+///  The result is a left-handed frame for L-RNA: use it only to measure geometry, never to build it.
+numeric::xyzMatrix< core::Real >
+get_rna_base_coordinate_system_chirality_normalized( core::conformation::Residue const & rsd, numeric::xyzVector<core::Real> const & centroid );
+
+core::kinematics::Stub
+get_rna_base_coordinate_system_stub_chirality_normalized( core::conformation::Residue const & rsd );
+
 bool
 is_base_phosphate_atom_pair( conformation::Residue const & rsd_1, conformation::Residue const & rsd_2, Size const atomno_1, Size const atomno_2);
 

@@ -228,8 +228,8 @@ RNA_PairwiseLowResolutionEnergy::get_centroid_information(
 		//Recalculate from scratch.
 		centroid1 = rna_centroid_info.get_base_centroid( rsd1 );
 		centroid2 = rna_centroid_info.get_base_centroid( rsd2 );
-		stub1 = rna_centroid_info.get_base_coordinate_system( rsd1, centroid1 );
-		stub2 = rna_centroid_info.get_base_coordinate_system( rsd2, centroid2 );
+		stub1 = rna_centroid_info.get_base_coordinate_system_chirality_normalized( rsd1, centroid1 );
+		stub2 = rna_centroid_info.get_base_coordinate_system_chirality_normalized( rsd2, centroid2 );
 	} else {
 		//Use centroid informtion already calculated in setup_for_scoring.
 		centroid1 = rna_centroid_info.base_centroids()[ rsd1.seqpos() ];

@@ -458,7 +458,7 @@ StackElecEnergy::residue_pair_energy_one_way(
 
 	if ( might_be_designing_ ) {
 		Vector centroid1 = rna_centroid_info.get_base_centroid( rsd1 );
-		stub_i = rna_centroid_info.get_base_coordinate_system( rsd1, centroid1 );
+		stub_i = rna_centroid_info.get_base_coordinate_system_chirality_normalized( rsd1, centroid1 );
 	}
 
 	Real score( 0.0 );
