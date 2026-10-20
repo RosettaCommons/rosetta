@@ -948,8 +948,32 @@ parse_out_non_standard_residues( vector1< core::sequence::SequenceOP > & fasta_s
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
+std::string
+expand_l_rna_shorthand( std::string const & sequence ) {
+	static std::string const letters( "acgu" );
+	static utility::vector1< std::string > const names{ "LRAD", "LRCY", "LRGU", "LURA" };
+	std::string expanded;
+	bool in_bracket( false );
+	for ( Size n = 0; n < sequence.size(); ++n ) {
+		char const c = sequence[ n ];
+		if ( c == '[' ) in_bracket = true;
+		if ( c == ']' ) in_bracket = false;
+		if ( in_bracket || c < '1' || c > '4' ) {
+			expanded += c;
+			continue;
+		}
+		Size const index = c - '1';
+		expanded += letters[ index ];
+		if ( n + 1 < sequence.size() && sequence[ n + 1 ] == '[' ) continue; // already annotated
+		expanded += "[" + names[ index + 1 ] + "]";
+	}
+	return expanded;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
 std::map< Size, std::string >
 parse_out_non_standard_residues( std::string & sequence ) {
+	sequence = expand_l_rna_shorthand( sequence );
 	utility::vector1< std::string > fullname_list; // a vector of non-standard full names
 	std::vector< Size > oneletter_to_fullname_index; // for each one-letter sequence, zero means no fullname given
 	std::string one_letter_sequence;

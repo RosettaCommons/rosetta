@@ -36,6 +36,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
+#include <core/sequence/util.hh>
 
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
@@ -102,20 +103,31 @@ public:
 	void test_one_letter_codes_give_l_rna() {
 		pose::Pose l_pose;
 		pose::make_pose_from_sequence( l_pose, "1234", "fa_standard" );
-		TS_ASSERT_EQUALS( l_pose.sequence(), "1234" );
+		// L-RNA types keep the RNA letters as one-letter codes; 1-4 is input shorthand only.
+		TS_ASSERT_EQUALS( l_pose.sequence(), "acgu" );
 		for ( Size i = 1; i <= l_pose.size(); ++i ) TS_ASSERT( l_pose.residue_type( i ).is_l_rna() );
 		TS_ASSERT_EQUALS( l_pose.residue_type( 1 ).aa(), chemical::na_lra );
 		TS_ASSERT_EQUALS( l_pose.residue_type( 2 ).aa(), chemical::na_lrc );
 		TS_ASSERT_EQUALS( l_pose.residue_type( 3 ).aa(), chemical::na_lrg );
 		TS_ASSERT_EQUALS( l_pose.residue_type( 4 ).aa(), chemical::na_lur );
-		TS_ASSERT_EQUALS( chemical::oneletter_code_from_aa( chemical::na_lrg ), '3' );
+
+		// FASTA / -sequence input: shorthand expands to the annotated form.
+		TS_ASSERT_EQUALS( sequence::expand_l_rna_shorthand( "ga13u" ), "gaa[LRAD]g[LRGU]u" );
+		TS_ASSERT_EQUALS( sequence::expand_l_rna_shorthand( "g1u" ), "ga[LRAD]u" );
+		TS_ASSERT_EQUALS( sequence::expand_l_rna_shorthand( "g3[LRGU:LowerRNA]u" ), "gg[LRGU:LowerRNA]u" );
+		TS_ASSERT_EQUALS( sequence::expand_l_rna_shorthand( "Z[MG]a2" ), "Z[MG]ac[LRCY]" );
+		std::string seq( "gc12" );
+		std::map< Size, std::string > const nonstandard = sequence::parse_out_non_standard_residues( seq );
+		TS_ASSERT_EQUALS( seq, "gcac" );
+		TS_ASSERT_EQUALS( nonstandard.size(), 2 );
+		TS_ASSERT_EQUALS( nonstandard.at( 3 ), "LRAD" );
+		TS_ASSERT_EQUALS( nonstandard.at( 4 ), "LRCY" );
 	}
 
 	void test_mirrored_types_and_torsions_give_mirror_image() {
 		pose::Pose d_pose, l_pose;
 		pose::make_pose_from_sequence( d_pose, "gcaugc", "fa_standard" );
 		pose::make_pose_from_sequence( l_pose, "321432", "fa_standard" );
-		pose::rna::apply_ideal_c2endo_sugar_coords( d_pose, 3 );
 		mirror_torsions( d_pose, l_pose );
 		assert_mirror_images( d_pose, l_pose );
 	}
@@ -216,7 +228,7 @@ public:
 
 		pose::Pose d_pose, l_pose;
 		pose::make_pose_from_sequence( d_pose, "ggcuucggcc", "fa_standard" );
-		pose::make_pose_from_sequence( l_pose, "3324433422", "fa_standard" );
+		pose::make_pose_from_sequence( l_pose, "3324423322", "fa_standard" );
 		// Some non-A-form structure so that suites, puckers and stacking are not all identical.
 		// (Applied to both poses: the C2'-endo sugar ring has non-ideal bond geometry, not just torsions.)
 		for ( Size const i : { 5, 6 } ) {

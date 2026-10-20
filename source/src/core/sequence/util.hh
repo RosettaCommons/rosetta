@@ -193,6 +193,13 @@ parse_out_non_standard_residues( utility::vector1< core::sequence::SequenceOP > 
 std::map< core::Size, std::string > /* info on any non-standard residue names */
 parse_out_non_standard_residues( std::string & sequence /* gets replaced with one letter sequence*/ );
 
+/// @brief Expand the L-RNA shorthand 1, 2, 3, 4 (L-a, L-c, L-g, L-u) into the annotated form
+///  a[LRAD], c[LRCY], g[LRGU], u[LURA]. Digits inside brackets are left alone, and a digit that
+///  already carries a bracketed name only has its letter restored. L-RNA residue types keep the
+///  one-letter codes a, c, g, u, so the rest of Rosetta sees ordinary RNA letters.
+std::string
+expand_l_rna_shorthand( std::string const & sequence );
+
 std::string
 create_fasta_file( std::string const & pname, std::string const & seq );
 

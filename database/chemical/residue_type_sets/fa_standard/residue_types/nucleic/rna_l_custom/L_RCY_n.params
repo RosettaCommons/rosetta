@@ -1,7 +1,7 @@
 #rosetta residue topology file
 #version 0.1
 NAME L_RCY
-IO_STRING  0C 2
+IO_STRING  0C c
 TYPE POLYMER #residue type
 AA LRC
 NA_ANALOGUE RCY

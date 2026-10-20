@@ -1014,7 +1014,9 @@ SetICoor::apply( MutableResidueType & rsd ) const
 	check_residue_has_atom( stub2, rsd, "SetICoor patch:");
 	check_residue_has_atom( stub3, rsd, "SetICoor patch:");
 	bool const rebuild_icoor_xyz( true );
-	rsd.set_icoor( atom, phi_, theta_, d_, stub1, stub2, stub3, rebuild_icoor_xyz );
+	// RNA patches are written for D-RNA. On an L-RNA type (the mirror image) the dihedral flips sign.
+	Real const phi( rsd.is_l_rna() ? -phi_ : phi_ );
+	rsd.set_icoor( atom, phi, theta_, d_, stub1, stub2, stub3, rebuild_icoor_xyz );
 	return false;
 }
 
@@ -1658,22 +1660,22 @@ ChiralFlipNaming::apply( MutableResidueType & rsd ) const {
 	} else if ( rsd.aa() == na_rad ) {
 		rsd.aa( na_lra );
 		rsd.name3( " 0A" );
-		rsd.name1( '1' ); // L-RNA one-letter codes are 1-4 (a, c, g, u stay D-RNA)
+		rsd.na_analogue( "RAD" ); // base identity for fragment lookup, VDW, base-pair classification, ...
 		rsd.interchangeability_group( " 0A" );
 	} else if ( rsd.aa() == na_rcy ) {
 		rsd.aa( na_lrc );
 		rsd.name3( " 0C" );
-		rsd.name1( '2' ); // L-RNA one-letter codes are 1-4 (a, c, g, u stay D-RNA)
+		rsd.na_analogue( "RCY" ); // base identity for fragment lookup, VDW, base-pair classification, ...
 		rsd.interchangeability_group( " 0C" );
 	} else if ( rsd.aa() == na_rgu ) {
 		rsd.aa( na_lrg );
 		rsd.name3( " 0G" );
-		rsd.name1( '3' ); // L-RNA one-letter codes are 1-4 (a, c, g, u stay D-RNA)
+		rsd.na_analogue( "RGU" ); // base identity for fragment lookup, VDW, base-pair classification, ...
 		rsd.interchangeability_group( " 0G" );
 	} else if ( rsd.aa() == na_ura ) {
 		rsd.aa( na_lur );
 		rsd.name3( " 0U" );
-		rsd.name1( '4' ); // L-RNA one-letter codes are 1-4 (a, c, g, u stay D-RNA)
+		rsd.na_analogue( "URA" ); // base identity for fragment lookup, VDW, base-pair classification, ...
 		rsd.interchangeability_group( " 0U" );
 	} else {
 		// e.g. DHLU, DC01--will be caught later and set to DAL etc. for canonicals

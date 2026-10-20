@@ -98,7 +98,13 @@ ReferenceEnergy::residue_energy(
 	if ( !aa_weights_.empty() ) {
 		///
 		AA const & aa( rsd.aa() );
-		AA const aa2 ( is_d_aminoacid(aa) ? get_l_equivalent(aa) : aa);
+		AA aa2 ( is_d_aminoacid(aa) ? get_l_equivalent(aa) : aa);
+		// L-RNA uses the reference weight of its D-RNA counterpart. Map it before the bounds check:
+		// the L-RNA AA values lie past the end of a weights list that stops at the canonical RNAs.
+		if ( aa2 == na_lra ) aa2 = na_rad;
+		if ( aa2 == na_lrc ) aa2 = na_rcy;
+		if ( aa2 == na_lrg ) aa2 = na_rgu;
+		if ( aa2 == na_lur ) aa2 = na_ura;
 		if ( Size(aa2) > aa_weights_.size() ) return;
 
 		if ( rsd.type().base_analogue() == na_rad ) {
@@ -108,14 +114,6 @@ ReferenceEnergy::residue_energy(
 		} else if ( rsd.type().base_analogue() == na_rgu ) {
 			emap[ core::scoring::ref ] += aa_weights_[ na_rgu ];
 		} else if ( rsd.type().base_analogue() == na_ura ) {
-			emap[ core::scoring::ref ] += aa_weights_[ na_ura ];
-		} else if ( aa2 == na_lra ) { // Catch L-RNA
-			emap[ core::scoring::ref ] += aa_weights_[ na_rad ];
-		} else if ( aa2 == na_lrc ) {
-			emap[ core::scoring::ref ] += aa_weights_[ na_rcy ];
-		} else if ( aa2 == na_lrg ) {
-			emap[ core::scoring::ref ] += aa_weights_[ na_rgu ];
-		} else if ( aa2 == na_lur ) {
 			emap[ core::scoring::ref ] += aa_weights_[ na_ura ];
 		} else {
 			emap[ core::scoring::ref ] += aa_weights_[ aa2 ];

@@ -6,7 +6,10 @@ in the same pose, and what is still D-only.
 ## Short version
 
 * Write L-RNA residues as `1`, `2`, `3`, `4` (L-a, L-c, L-g, L-u) in `-sequence` or the FASTA file.
-  `a c g u` are still D-RNA. Example for a D strand and an L strand:
+  `a c g u` are still D-RNA. The digits are input shorthand: `1` is expanded to `a[LRAD]`, the
+  annotated form Rosetta already supports. Inside Rosetta the L types keep the one-letter codes
+  `a c g u`, so `pose.sequence()` prints letters and the annotated sequence shows `[LRAD]` etc.
+  Example for a D strand and an L strand:
 
   ```
   >D chain A:1-8
@@ -92,9 +95,22 @@ with `−z`, which is still a vector fixed to the base.
 ### Packing and residue types
 * `core/pack/rotamer_set/rna_rotamer_building_functions.cc`: χ rotamer centers, the purine syn
   check, and the 3'-phosphate ε samples are mirrored for L residues.
-* `core/chemical/PatchOperation.cc`: the `L_RNA` patch now also mirrors proton-χ (2'-OH) samples,
-  and gives the L types one-letter codes `1`–`4`.
-* `core/chemical/AA.cc`: one-letter codes `1`–`4` and AA names `LRA`, `LRC`, `LRG`, `LUR`.
+* `core/chemical/PatchOperation.cc`:
+  * the `L_RNA` patch now also mirrors proton-χ (2'-OH) samples, and sets `na_analogue` of each L
+    type to its D counterpart (so code that identifies the base through `na_analogue()` works),
+  * `SET_ICOOR` negates the dihedral when it patches an L-RNA type. All RNA variant patches are
+    written for D-RNA; without this the 5'-terminal phosphate (`LowerRNA`) and other patched atoms
+    of L residues were built with D handedness.
+* `core/chemical/AA.cc`: `1`–`4` parse to the L-RNA AA types (for `make_pose_from_sequence`), and
+  AA names `LRA`, `LRC`, `LRG`, `LUR` exist for params files.
+* `core/sequence/util.{hh,cc}`: `expand_l_rna_shorthand()`, applied in
+  `parse_out_non_standard_residues()` (the `-sequence` / FASTA path used by rna_denovo).
+
+### Pre-existing L-RNA scoring bugs fixed
+* `ref`: L-RNA scored 0 because the L AA values lie past the end of the weights list; they now use
+  the D weights.
+* `rna_torsion`: guanosine-specific χ terms (syn-G bonus, old guanosine χ potential) now apply to L-G.
+* Low-res `get_bin()` (RNA_LowResolutionPotential) exited on L-RNA residues.
 
 ## Limitations (still D-only or unsupported)
 
@@ -121,8 +137,11 @@ The four custom files (`L_RAD_n.params` etc.) are exact mirrors of the stock `rn
 so they duplicate the built-in `LRAD`/`LRCY`/`LRGU`/`LURA`. Corrected copies are kept, **unregistered**, in
 `database/chemical/residue_type_sets/fa_standard/residue_types/nucleic/rna_l_custom/`. Fixes:
 `AA LRA|LRC|LRG|LUR` (was the D code), `NA_ANALOGUE RCY` for C (was `RAD`), and
-`IO_STRING ␣0X n` with one-letter codes `1`–`4`. Do **not** register them in `residue_types.txt`
-alongside the `L_RNA` patch: two types would claim the same AA and one-letter code. To use them,
+`IO_STRING ␣0X n` (PDB name ` 0A` etc., matching the built-in types). The one-letter codes stay
+`a c g u`: much of the RNA code (jump library, `rna_vdw`, chunk library, base-pair classification)
+looks residues up by one-letter code, so a digit code would break it. Use the `1`–`4` shorthand in
+sequences instead. Do **not** register them in `residue_types.txt` alongside the `L_RNA` patch: two
+types would claim the same AA. To use them,
 remove `patches/nucleic/rna/L_RNA.txt` from `patches.txt` first.
 
 ## FullModelParameters / FASTA notes
@@ -130,15 +149,19 @@ remove `patches/nucleic/rna/L_RNA.txt` from `patches.txt` first.
 Earlier local changes (bracket handling in `FullModelParameters`, `name1()` remapping in
 `check_full_model_info_OK`) are not needed here. Upstream already strips brackets and fills
 `non_standard_residue_map` when it parses the FASTA (`core::import_pose::get_sequence_information`,
-`core::sequence::parse_out_non_standard_residues`). The L types now have real one-letter codes, so
-the `name1()` comparison succeeds. Bracketed names such as `3[LRGU]` also still work.
+`core::sequence::parse_out_non_standard_residues`). The shorthand expands to that bracketed form,
+and the L types' one-letter codes are `a c g u`, so the `name1()` comparison succeeds. Bracketed
+names such as `g[LRGU]` or `3[LRGU]` also work.
 
 ## Tests
 
 `test/core/fragment/rna/L_RNA_Chirality.cxxtest.hh` (`fragment/rna` in `core.test.settings`):
-* `1234` gives L-RNA types,
+* `1234` gives L-RNA types, and the FASTA shorthand expands to the annotated form,
 * mirrored torsions give an exact mirror image (all internal distances equal),
 * puckers, C2'-endo ideal geometry and `RNA_IdealCoord` agree between D and mirrored L,
 * fragment insertion negates torsions for L, leaves D untouched, and skips mixed windows,
 * every hi-res (`rna_res_level_energy4` + suite terms) and low-res (`rna_lores`) score term is equal
   for a D pose and its L mirror.
+
+Verified: all tests above pass in a release build, as do the existing `chemical`, `sequence`, `pose/rna`
+and `test_rna_sfxn` unit tests. A full `rna_denovo` run on a mixed D/L system has not been done yet.

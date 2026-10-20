@@ -1,7 +1,7 @@
 #rosetta residue topology file
 #version 0.1
 NAME L_RAD
-IO_STRING  0A 1
+IO_STRING  0A a
 TYPE POLYMER #residue type
 AA LRA
 NA_ANALOGUE RAD

@@ -1,7 +1,7 @@
 #rosetta residue topology file
 #version 0.1
 NAME L_URA
-IO_STRING  0U 4
+IO_STRING  0U u
 TYPE POLYMER #residue type
 AA LUR
 NA_ANALOGUE URA

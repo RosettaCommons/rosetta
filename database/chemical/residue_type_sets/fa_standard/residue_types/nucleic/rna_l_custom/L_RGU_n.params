@@ -1,7 +1,7 @@
 #rosetta residue topology file
 #version 0.1
 NAME L_RGU
-IO_STRING  0G 3
+IO_STRING  0G g
 TYPE POLYMER #residue type
 AA LRG
 NA_ANALOGUE RGU
