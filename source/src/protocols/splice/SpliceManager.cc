@@ -333,7 +333,7 @@ SpliceManager::update_pose_stem_positions() {
 }
 
 void SpliceManager::check_sequence_profile(core::pose::Pose & pose, core::id::SequenceMappingOP smap, core::sequence::SequenceProfileOP seqprof){
-	for ( core::Size row = 1; row < seqprof->size(); row++ ) { //go over all the PSSM sements provided by the user
+	for ( core::Size row = 1; row <= seqprof->size(); row++ ) { //go over all the PSSM sements provided by the user
 		utility::vector1< core::Size > cur_prof_row = seqprof->prof_row(row);
 
 

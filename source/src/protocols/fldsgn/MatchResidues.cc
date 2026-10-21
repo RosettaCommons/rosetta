@@ -62,7 +62,7 @@ core::Real
 MatchResidues::compute_comb( core::pose::Pose const & pose, VecSize const & comb ) const
 {
 	std::map< core::id::AtomID, core::id::AtomID > atom_id_map;
-	for ( core::Size i = 1; i < comb.size(); i++ ) {
+	for ( core::Size i = 1; i <= comb.size(); i++ ) {
 		const core::id::AtomID mod_id(pose.residue_type( comb[i] ).atom_index( "CA" ), comb[i] );
 		const core::id::AtomID ref_id(pose.residue_type( reference_residues_indexes_[i] ).atom_index( "CA" ), reference_residues_indexes_[i]);
 		atom_id_map.insert( std::make_pair(mod_id, ref_id) );
@@ -75,7 +75,7 @@ MatchResidues::superimpose_comb( core::pose::Pose & pose, VecSize const & comb )
 {
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, pose, core::id::AtomID::BOGUS_ATOM_ID() );
-	for ( core::Size i = 1; i < comb.size(); ++i ) {
+	for ( core::Size i = 1; i <= comb.size(); ++i ) {
 		const core::id::AtomID mod_id(pose.residue_type( comb[i] ).atom_index( "CA" ), comb[i] );
 		const core::id::AtomID ref_id(pose.residue_type( reference_residues_indexes_[i] ).atom_index( "CA" ), reference_residues_indexes_[i]);
 		atom_map.set( mod_id, ref_id);
