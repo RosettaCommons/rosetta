@@ -42,14 +42,6 @@ PeptideDeriverBasicStreamOutputter::PeptideDeriverBasicStreamOutputter(utility::
 
 }
 
-PeptideDeriverBasicStreamOutputter::~PeptideDeriverBasicStreamOutputter()= default;
-
-PeptideDeriverBasicStreamOutputter::PeptideDeriverBasicStreamOutputter( PeptideDeriverBasicStreamOutputter const & src ) {
-	out_p_=src.out_p_;
-	prefix_=src.prefix_;
-
-}
-
 PeptideDeriverBasicStreamOutputterOP
 PeptideDeriverBasicStreamOutputter::clone() const {
 	return utility::pointer::make_shared< PeptideDeriverBasicStreamOutputter >( *this );
@@ -59,8 +51,8 @@ void PeptideDeriverBasicStreamOutputter::begin_structure(core::pose::Pose const 
 	(*out_p_) << prefix_ << "# structure: " << name << std::endl;
 }
 
-void PeptideDeriverBasicStreamOutputter::begin_receptor_partner_pair(char const receptor_chain_letter,
-	char const partner_chain_letter, core::Real const total_isc,
+void PeptideDeriverBasicStreamOutputter::begin_receptor_partner_pair(std::string const & receptor_chain_letter,
+	std::string const & partner_chain_letter, core::Real const total_isc,
 	std::string const & options_string) {
 	(*out_p_) << prefix_ << "# options: " << options_string << std::endl;
 	(*out_p_) << prefix_ << "> chain_pair: receptor= " << receptor_chain_letter << " partner= " << partner_chain_letter << " total_isc= " << avoid_negative_zero(total_isc, 1e-7) << std::endl;

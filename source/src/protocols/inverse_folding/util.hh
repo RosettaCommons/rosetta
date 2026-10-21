@@ -32,10 +32,10 @@
 #include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
 
-#ifdef USE_PYTORCH
+#ifdef USE_TORCH
 // Torch header
 #include <torch/script.h>
-#endif //USE_PYTORCH
+#endif //USE_TORCH
 
 // Eigen header
 #include <Eigen/Dense>
@@ -74,7 +74,7 @@ compute_distance_matrix(std::vector<Eigen::Vector3d> const & coordinates);
 std::vector<core::Size>
 tokenize( std::string const & seq, core::Size mask_position);
 
-#ifdef USE_PYTORCH
+#ifdef USE_TORCH
 
 ///@brief Process coordinates into features
 std::tuple<torch::Tensor, torch::Tensor, torch::Tensor, torch::Tensor>
@@ -129,7 +129,7 @@ collate_structure(
         core::Size n_edge_features = 11
 );
 
-#endif //USE_PYTORCH
+#endif //USE_TORCH
 } //inverse_folding
 } //protocols
 

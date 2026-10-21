@@ -9,7 +9,7 @@
 
 /// @file   core/energy_methods/CCS_IMMSEnergy.cc
 /// @author SM Bargeen Alam Turzo (turzo.1@osu.edu)
-
+/// @author Akshaya Narayanasamy (akshaya.researcher@gmail.com)
 #include <core/energy_methods/CCS_IMMSEnergy.hh>
 #include <core/energy_methods/CCS_IMMSEnergyCreator.hh>
 
@@ -67,7 +67,35 @@ CCS_IMMSEnergyCreator::score_types_for_method() const {
 	return sts;
 }
 
+//IM complex score
+core::scoring::methods::EnergyMethodOP
+CCS_IMMSComplexEnergyCreator::create_energy_method(core::scoring::methods::EnergyMethodOptions const &) const
+{
+	return utility::pointer::make_shared<CCS_IMMSComplexEnergy>();
+}
 
+core::scoring::ScoreTypes
+CCS_IMMSComplexEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
+	ScoreTypes sts;
+	sts.push_back(ccs_imms_complex);
+	return sts;
+}
+
+//IMMS with Cryo EM Energy
+core::scoring::methods::EnergyMethodOP
+CCS_IMMS_with_CryoEMEnergyCreator::create_energy_method(core::scoring::methods::EnergyMethodOptions const &) const
+{
+	return utility::pointer::make_shared<CCS_IMMS_with_CryoEMEnergy>();
+}
+
+core::scoring::ScoreTypes
+CCS_IMMS_with_CryoEMEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
+	ScoreTypes sts;
+	sts.push_back(ccs_imms_cryoem);
+	return sts;
+}
 // constructor
 CCS_IMMSEnergy::CCS_IMMSEnergy() :
 	core::scoring::methods::WholeStructureEnergy( utility::pointer::make_shared< CCS_IMMSEnergyCreator >() )
@@ -78,11 +106,54 @@ CCS_IMMSEnergy::CCS_IMMSEnergy() :
 	prad_     = basic::options::option[ basic::options::OptionKeys::score::ccs_prad ]();
 }
 
+CCS_IMMSComplexEnergy::CCS_IMMSComplexEnergy() :
+	core::scoring::methods::WholeStructureEnergy(utility::pointer::make_shared<CCS_IMMSComplexEnergyCreator>())
+{
+	runtime_assert_string_msg(basic::options::option[basic::options::OptionKeys::score::ccs_exp].user(),
+		"Error in CCS_IMMSComplexEnergy constructor: the user must specify an experimental value using the -score:ccs_exp flag.");
+	ccs_exp_ = basic::options::option[basic::options::OptionKeys::score::ccs_exp]();
+	nrot_ = basic::options::option[basic::options::OptionKeys::score::ccs_nrots]();
+	prad_ = basic::options::option[basic::options::OptionKeys::score::ccs_prad]();
+	// Always use multimer for this energy
+	use_multimer_ = true;
+
+	// complex energy scoring
+	lb_ = 60;   // Lower bound for complex score
+	ub_ = 1350; // Upper bound for complex score
+}
+
+CCS_IMMS_with_CryoEMEnergy::CCS_IMMS_with_CryoEMEnergy() :
+	core::scoring::methods::WholeStructureEnergy(utility::pointer::make_shared<CCS_IMMS_with_CryoEMEnergyCreator>())
+{
+	runtime_assert_string_msg(basic::options::option[basic::options::OptionKeys::score::ccs_exp].user(),
+		"Error in CCS_IMMS_with_CryoEMEnergy constructor: the user must specify an experimental value using the -score:ccs_exp flag.");
+	ccs_exp_ = basic::options::option[basic::options::OptionKeys::score::ccs_exp]();
+	nrot_ = basic::options::option[basic::options::OptionKeys::score::ccs_nrots]();
+	prad_ = basic::options::option[basic::options::OptionKeys::score::ccs_prad]();
+
+	// Never use multimer for this energy
+	use_multimer_ = false;
+
+	// cryoem energy scoring
+	lb_ = 25;   // Lower bound for cryoem energy
+	ub_ = 125;  // Upper bound for cryoem energy
+}
+
 
 /// clone
 core::scoring::methods::EnergyMethodOP
 CCS_IMMSEnergy::clone() const {
 	return utility::pointer::make_shared< CCS_IMMSEnergy >( *this );
+}
+
+core::scoring::methods::EnergyMethodOP
+CCS_IMMSComplexEnergy::clone() const {
+	return utility::pointer::make_shared<CCS_IMMSComplexEnergy>(*this);
+}
+
+core::scoring::methods::EnergyMethodOP
+CCS_IMMS_with_CryoEMEnergy::clone() const {
+	return utility::pointer::make_shared<CCS_IMMS_with_CryoEMEnergy>(*this);
 }
 /* Up to close everything is working */
 /////////////////////////////////////////////////////////////////////////////
@@ -90,7 +161,7 @@ CCS_IMMSEnergy::clone() const {
 /////////////////////////////////////////////////////////////////////////////
 
 core::Real
-parcs_ccs(core::pose::Pose &mypose , core::Size const nrot, core::Real const prad) // Function for CCS calculation
+parcs_ccs(core::pose::Pose &mypose , core::Size const nrot, core::Real const prad, bool use_multimer) // Function for CCS calculation
 {
 	core::Size tota_natoms = mypose.total_atoms();
 	utility::vector1 < core::Real > eff_radius;
@@ -129,7 +200,11 @@ parcs_ccs(core::pose::Pose &mypose , core::Size const nrot, core::Real const pra
 		accumulator += numeric::geometry::projection_area(ycoord,zcoord,eff_radius,prad);
 		counter += 3;
 	}
-	return ( accumulator /  static_cast<core::Real>(counter) ); //Compute the average as the sum over the number of elements, and return it.
+	core::Real ccs = ( accumulator /  static_cast<core::Real>(counter) ); //Compute the average as the sum over the number of elements, and return it.
+	if ( use_multimer ) {
+		ccs = 0.8 * std::pow(ccs, 1.04);
+	}
+	return ccs;
 }
 
 
@@ -140,25 +215,38 @@ parcs_ccs(core::pose::Pose &mypose , core::Size const nrot, core::Real const pra
 /////////////////////////////////////////////////////////////////////////////
 
 core::Real
-CCS_IMMSEnergy::calc_IMMS_score(const core::Real &CCS_pred, const core::Real &CCS_exp)
-const {
+calc_IMMS_score_utility(const core::Real &CCS_pred, const core::Real &CCS_exp,
+	const core::Real &lb, const core::Real &ub, const core::Real &max_score) {
 	core::Real diff = std::abs(CCS_pred - CCS_exp);
-	core::Real ub = 100;
-	core::Real lb = 10;
 	core::Real CCS_score;
-	if ( diff <=lb ) {
+	if ( diff <= lb ) {
 		CCS_score = 0;
 	} else if ( diff < ub ) {
-		core::Real b = -(diff - ub) / (ub-lb);
-		core::Real b2= b*b;
-		core::Real b3= b2*b;
-		CCS_score = 100*( 2*b3 -3*b2 +1 );
+		core::Real b = -(diff - ub) / (ub - lb);
+		core::Real b2 = b*b;
+		core::Real b3 = b2*b;
+		CCS_score = max_score * (2*b3 - 3*b2 + 1);
 	} else {
-		CCS_score = 100.0;
+		CCS_score = max_score;
 	}
 	return CCS_score;
 }
 
+core::Real
+CCS_IMMSEnergy::calc_IMMS_score(const core::Real &CCS_pred, const core::Real &CCS_exp)
+const {
+	return calc_IMMS_score_utility(CCS_pred, CCS_exp, 10.0, 100.0, 100.0);
+}
+
+core::Real
+CCS_IMMSComplexEnergy::calc_IMMS_score(const core::Real &CCS_pred, const core::Real &CCS_exp) const {
+	return calc_IMMS_score_utility(CCS_pred, CCS_exp, lb_, ub_, 100.0);
+}
+
+core::Real
+CCS_IMMS_with_CryoEMEnergy::calc_IMMS_score(const core::Real &CCS_pred, const core::Real &CCS_exp) const {
+	return calc_IMMS_score_utility(CCS_pred, CCS_exp, lb_, ub_, 125.0);
+}
 
 void
 CCS_IMMSEnergy::finalize_total_energy(core::pose::Pose &mypose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & emap) const
@@ -168,11 +256,39 @@ CCS_IMMSEnergy::finalize_total_energy(core::pose::Pose &mypose, core::scoring::S
 	emap[ core::scoring::ccs_imms] = ccs_score;
 }
 
+void
+CCS_IMMSComplexEnergy::finalize_total_energy(core::pose::Pose &mypose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & emap) const
+{
+	core::Real pred_ccs = parcs_ccs(mypose, nrot_, prad_, use_multimer_);
+	core::Real ccs_score = calc_IMMS_score(pred_ccs, ccs_exp_);
+	emap[ core::scoring::ccs_imms_complex] = ccs_score;
+}
 
 void
-CCS_IMMSEnergy::indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const
-{/*context_graphs_required[ core::scoring::twelve_A_neighbor_graph ] = true;*/}
+CCS_IMMS_with_CryoEMEnergy::finalize_total_energy(core::pose::Pose &mypose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & emap) const
+{
+	core::Real pred_ccs = parcs_ccs(mypose, nrot_, prad_, use_multimer_);
+	core::Real ccs_score = calc_IMMS_score(pred_ccs, ccs_exp_);
+	emap[ core::scoring::ccs_imms_cryoem] = ccs_score;
+}
 
+void
+CCS_IMMSEnergy::indicate_required_context_graphs(utility::vector1<bool>&) const
+{
+	// No context graphs required
+}
+
+void
+CCS_IMMSComplexEnergy::indicate_required_context_graphs(utility::vector1<bool>&) const
+{
+	// No context graphs required
+}
+
+void
+CCS_IMMS_with_CryoEMEnergy::indicate_required_context_graphs(utility::vector1<bool>&) const
+{
+	// No context graphs required
+}
 
 core::Size
 CCS_IMMSEnergy::version() const
@@ -180,6 +296,16 @@ CCS_IMMSEnergy::version() const
 	return 1;
 }
 
+core::Size
+CCS_IMMSComplexEnergy::version() const
+{
+	return 1;
+}
 
+core::Size
+CCS_IMMS_with_CryoEMEnergy::version() const
+{
+	return 1;
+}
 }
 }

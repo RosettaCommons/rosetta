@@ -26,10 +26,10 @@ Check if new code in branch if beautified according to Rosetta standards.
 
 ----
 ### beautify
-Automatically beautify new (relative to master) code in a branch and commit the results.
+Automatically beautify new (relative to the main branch) code in a branch and commit the results.
 
 ----
 ### submodule_regression
 Checks to see if the current main commit has issues with the submodule versions.
-In particular, it looks to see if it introduces a regression (removes submodule commits which are in main's master)
-or if the version trails behind the submodule's master version.
+In particular, it looks to see if it introduces a regression (removes submodule commits which are in rosetta's main branch)
+or if the version trails behind the submodule's main branch.

@@ -1,0 +1,27 @@
+
+cd %(workdir)s
+
+# making script terminate with error after any command that return non zero exit code
+set -e
+
+#
+# After that, do whatever you want.
+
+#
+# It's nice to test that the executable exists first, to ensure the test actually runs:
+
+[ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
+
+# Files will be diffed verbatim, so if you want to log output and compare it,
+# you'll need to filter out lines that change randomly (e.g. timings).
+# Prefixing your tests with "nice" is probably good form as well.
+# Don't forget to use -testing:INTEGRATION_TEST  so results are reproducible.
+# Here's a typical test for a Mini binary, assuming there's a "flags" file
+# in this directory too:
+
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST -parser:script_vars rotamer_library="%(rosetta_main)s/source/external/bcl/rotamer_library"  2>&1 \
+     | egrep -vf ../../ignore_list \
+     > log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+# ^^^^ you want to add this line after each call to app-protocol in case they terminate abnormally

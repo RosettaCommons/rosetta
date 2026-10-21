@@ -43,6 +43,7 @@ class ChemicalReaction;
 
 typedef ::RDKit::RWMOL_SPTR  RWMolOP;
 typedef ::RDKit::ROMOL_SPTR  ROMolOP;
+typedef utility::pointer::shared_ptr< Atom > AtomOP;
 
 typedef utility::pointer::shared_ptr< ChemicalReaction >  ChemicalReactionOP;
 typedef utility::pointer::shared_ptr< ChemicalReaction const >  ChemicalReactionCOP;

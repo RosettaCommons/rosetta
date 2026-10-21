@@ -437,7 +437,7 @@ JobGenealogist::newick_tree() const {
 	utility::vector1< std::list< JGResultNodeCAP > > parentless_results_for_input_source;
 	parentless_results_for_input_source.resize( num_input_sources_ );
 
-	for ( unsigned int i = 1; i < job_nodes_for_dag_node_.size(); ++i ) {
+	for ( unsigned int i = 1; i <= job_nodes_for_dag_node_.size(); ++i ) {
 		for ( auto const & job_node_cop : job_nodes_for_dag_node_[ i ] ) {
 			debug_assert( job_node_cop != nullptr );
 			if ( job_node_cop->parents().empty() ) {
@@ -647,15 +647,15 @@ CEREAL_REGISTER_TYPE( protocols::jd3::JobGenealogist )
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-protocols::jd3::compare_job_nodes::save( Archive & arc ) const {
-	arc( cereal::base_class< compare_job_nodes >( this ) );
+protocols::jd3::compare_job_nodes::save( Archive & ) const {
+	// No data currently, so this is a no-op.
 }
 
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-protocols::jd3::compare_job_nodes::load( Archive & arc ) {
-	arc( cereal::base_class< compare_job_nodes >( this ) );
+protocols::jd3::compare_job_nodes::load( Archive & ) {
+	// No data currently, so this is a no-op.
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::compare_job_nodes );

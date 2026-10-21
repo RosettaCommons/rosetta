@@ -187,7 +187,13 @@ PerResidueEsmProbabilitiesMetric::fill_return_map( std::map< core::Size, utility
 				prob_index < EsmPerplexityTensorflowProtocol::alphabet_.size(); ++prob_index ) {
 			char const curr_aa = EsmPerplexityTensorflowProtocol::alphabet_[prob_index];
 			core::chemical::AA const aa_enum = core::chemical::aa_from_oneletter_code(curr_aa);
-			return_map[selected_position][aa_enum] = softmax_vec[prob_index + 1];
+			core::Real probability = softmax_vec[prob_index + 1];
+			// check for NaN/inf to avoid problems later
+			if ( std::isnan(probability) || std::isinf(probability) ) {
+				probability = 0.0;
+			}
+
+			return_map[selected_position][aa_enum] = probability;
 		}
 	}
 }
@@ -249,6 +255,7 @@ PerResidueEsmProbabilitiesMetric::provide_citation_info(basic::citation_manager:
 		"Wrote the PerResidueEsmProbabilitiesMetric."
 		)
 	);
+	citations.add( EsmPerplexityTensorflowProtocol::get_ESM_neural_net_citation() );
 }
 } //esm_perplexity
 } //protocols

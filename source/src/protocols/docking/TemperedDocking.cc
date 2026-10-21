@@ -327,7 +327,7 @@ TemperedDocking::set_defaults()
 	autofoldtree_ = true;
 
 	sc_min_ = false;
-	partners_ = "_";
+	partners_ = core::pose::DockingPartners();
 	n_cycles_ = 10000;
 
 }
@@ -403,7 +403,7 @@ TemperedDocking::init_from_options()
 
 	// This defaults to "_"
 	if ( option[ OptionKeys::docking::partners ].user() ) {
-		set_partners(option[ OptionKeys::docking::partners ]());
+		set_partners( core::pose::DockingPartners::docking_partners_from_string( option[ OptionKeys::docking::partners ]() ) );
 	}
 
 	// Defaults to false
@@ -451,7 +451,7 @@ TemperedDocking::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 	//get through partners
 	if ( tag->hasOption( "partners" ) ) {
 		std::string const partners( tag->getOption<std::string>( "partners") );
-		set_partners(partners);
+		set_partners( core::pose::DockingPartners::docking_partners_from_string(partners) );
 	}
 
 }//end parse_my_tag

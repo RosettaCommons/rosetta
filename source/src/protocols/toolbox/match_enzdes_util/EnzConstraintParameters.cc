@@ -741,7 +741,7 @@ EnzConstraintParameters::update_pdb_remarks(
 				rem_pdbposA = pdbinfo.number( seqposA );
 			}
 		}
-		if ( chainA[0] != pdbinfo.chain( seqposA ) ) {
+		if ( chainA != pdbinfo.chain( seqposA ) ) {
 			remark_changed = true;
 			chainA = pdbinfo.chain( seqposA );
 		}
@@ -754,7 +754,7 @@ EnzConstraintParameters::update_pdb_remarks(
 			remark_changed = true;
 			rem_pdbposB = pdbinfo.number( seqposB );
 		}
-		if ( chainB[0] != pdbinfo.chain( seqposB ) ) {
+		if ( chainB != pdbinfo.chain( seqposB ) ) {
 			remark_changed = true;
 			chainB = pdbinfo.chain( seqposB );
 		}

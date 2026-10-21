@@ -2004,14 +2004,6 @@ public:
 		return rsd_type_.is_metalbinding();
 	}
 
-	/// @brief Returns true if this residue is a surface residue
-	bool
-	is_surface() const
-	{
-		return rsd_type_.is_surface();
-	}
-
-
 	/// @brief Returns true if the residue has side chain orbitals
 	bool
 	has_sc_orbitals() const

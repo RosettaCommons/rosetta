@@ -20,3 +20,13 @@
 #include <protocols/chemistries/ChemistryCreators.hh>
 #include <protocols/chemistries/PatchChemistryCreator.hh>
 
+#include <protocols/rotamer_gen/FragmentRotamersCreator.hh>
+#include <protocols/rotamer_gen/RDKitRotamersCreator.hh>
+
+#include <protocols/drug_design/RandomFragmentLigandCreator.hh>
+#include <protocols/drug_design/ReactionBasedAnalogSamplerCreator.hh>
+#include <protocols/drug_design/ReactionGrowCreator.hh>
+#include <protocols/drug_design/ReactionFragmentCreator.hh>
+#include <protocols/drug_design/ReactionMultiTransformCreator.hh>
+#include <protocols/drug_design/SubstituentReplaceCreator.hh>
+#include <protocols/drug_design/SubstructureReplaceCreator.hh>

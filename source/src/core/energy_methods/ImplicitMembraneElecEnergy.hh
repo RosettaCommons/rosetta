@@ -76,7 +76,7 @@ public:
 	core::scoring::methods::EnergyMethodOP clone() const override;
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~ImplicitMembraneElecEnergy() override;
+	~ImplicitMembraneElecEnergy() override;
 
 	void
 	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;

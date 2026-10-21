@@ -17,7 +17,10 @@
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
+#include <protocols/jd2/util.hh>
+
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/types.hh>
@@ -166,6 +169,16 @@ void move_ligand_neighbor_to_desired_position(
 
 }
 
+void
+add_string_real_pair( core::pose::Pose & pose, std::string const & string, core::Real real ) {
+	// Some older protocols rely on having the data present in the dummy Job when not running under JD2 -- maintain that
+	protocols::jd2::add_string_real_pair_to_current_job(string, real);
+
+	// if statement to avoid double-reporting of the scores in the output PDB if we're under JD2
+	if ( ! protocols::jd2::jd2_used() ) {
+		core::pose::setPoseExtraScore(pose, string, real);
+	}
+}
 
 } //namespace ligand_docking
 } //namespace protocols

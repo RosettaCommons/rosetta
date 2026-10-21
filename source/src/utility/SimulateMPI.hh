@@ -30,6 +30,7 @@
 
 // C++ headers
 #include <list>
+#include <memory>
 #include <string>
 
 namespace utility {
@@ -277,7 +278,7 @@ public:
 
 private:
 
-	static SimulateMPIData * simulation_;
+	static std::unique_ptr< SimulateMPIData > simulation_;
 	static int rank_;
 
 };

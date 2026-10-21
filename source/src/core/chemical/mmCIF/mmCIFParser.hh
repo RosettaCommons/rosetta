@@ -41,7 +41,7 @@
 #include <core/types.hh>
 #include <core/chemical/sdf/MolFileIOData.fwd.hh>
 
-class Block; // Pseudo-forward from the external cifparse library
+#include <utility/gemmi_util.fwd.hh>
 
 namespace core {
 namespace chemical {
@@ -65,10 +65,12 @@ public:
 	/// with streamed mmCIF files, ie, the lazy loader.
 	sdf::MolFileIOMoleculeOP parse(  std::string const &lines, std::string const &pdb_id);
 
+protected:
+
 	/// @brief -the secret sauce. Pull tables form the block segment to construct parameters
 	/// return a MolFileIOMolecule
 	sdf::MolFileIOMoleculeOP
-	get_molfile_molecule(Block& block);
+	get_molfile_molecule(gemmi::cif::Block& block);
 
 private:
 	/// @brief When you are lazy, create a map of strings and sizes to convert the string

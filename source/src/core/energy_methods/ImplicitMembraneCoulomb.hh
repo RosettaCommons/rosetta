@@ -39,7 +39,7 @@ public:
 	ImplicitMembraneCoulomb(ImplicitMembraneCoulomb const & src);
 
 	/// @brief Destructor.
-	virtual ~ImplicitMembraneCoulomb();
+	~ImplicitMembraneCoulomb() override;
 
 	/// @brief Clone operation: make a copy of this object, and return an owning pointer to the copy.
 	ImplicitMembraneCoulombOP clone() const;

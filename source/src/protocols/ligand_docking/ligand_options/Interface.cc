@@ -23,7 +23,7 @@ namespace ligand_options {
 
 Interface::Interface(
 	core::Size num,
-	InterfaceInfo info
+	InterfaceInfo const & info
 ) : utility::vector1<InterfaceInfo>(num, info)
 {}
 

@@ -55,7 +55,7 @@ ResidueMask::ResidueMask(Pose& ps, std::string const &fname) :
 		if ( rc == '_' ) {
 			rc = ' ';
 		}
-		mask[ps.pdb_info()->pdb2pose(rc, ri)] = true;
+		mask[ps.pdb_info()->pdb2pose(std::string{rc}, ri)] = true;
 	}
 }
 

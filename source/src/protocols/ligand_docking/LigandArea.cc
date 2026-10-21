@@ -34,7 +34,7 @@ static basic::Tracer ligand_area_tracer( "protocols.ligand_docking.ligand_option
 
 LigandArea::LigandArea():
 	VirtualBase(),
-	chain_('?'),
+	chain_("?"),
 	cutoff_(0),
 	Calpha_restraints_(0),
 	minimize_ligand_(0),
@@ -51,7 +51,7 @@ void LigandArea::parse_my_tag(
 	utility::tag::TagCOP tag
 ){
 	if ( ! tag->hasOption("chain") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'LigandArea' requires 'chain' tag");
-	chain_= tag->getOption<char>("chain");
+	chain_= tag->getOption<std::string>("chain");
 
 	if ( ! tag->hasOption("cutoff") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'LigandArea' requires 'cutoff' tag");
 	cutoff_= tag->getOption<core::Real>("cutoff");
@@ -98,7 +98,7 @@ void LigandArea::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	AttributeList attributes;
 	attributes + optional_name_attribute();
 
-	attributes + Attr::required_attribute( "chain", xsct_char, "The ligand's chain" )
+	attributes + Attr::required_attribute( "chain", xs_string, "The ligand's chain" )
 		+ Attr::required_attribute( "cutoff", xsct_real, "The distance cutoff from the ligand" )
 		+ Attr( "Calpha_restraints", xsct_real, "Size of one standard deviation (in Angstroms) for restraints on C-alphas" )
 		+ Attr( "minimize_ligand", xsct_real, "Size of one standard deviation (in degrees) for ligand torsion"

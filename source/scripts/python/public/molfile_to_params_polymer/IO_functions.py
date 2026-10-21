@@ -509,6 +509,7 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
         if a.poly_o_bb == True: obb = a
         if a.poly_upper == True: upper = a
         if a.poly_lower == True: lower = a
+        if a.bonds[0].a2.poly_n_bb == True: hbb = a
     #print(nbb)
 
     # For writing the pdb names of atoms used to compute internal coords
@@ -518,6 +519,8 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
     obb.input_stub1,  obb.input_stub2,  obb.input_stub3  = cbb, cabb, upper
     upper.input_stub1, upper.input_stub2, upper.input_stub3 = cbb, cabb, nbb
     lower.input_stub1, lower.input_stub2, lower.input_stub3 = nbb, cabb, cbb
+    if "hbb" in locals(): #If backbone conjugation occurs, hbb does not exist
+        hbb.input_stub1,  hbb.input_stub2,  hbb.input_stub3  = nbb, cabb, lower
 
     # Calculate ideal values for icoords
     # NOTE - these values are conformation-dependent, which means that unless the NCAAs are prepared identically
@@ -530,6 +533,8 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
     obb.d,  obb.theta,  obb.phi  = calc_internal_coords(obb,  obb.input_stub1,  obb.input_stub2,  obb.input_stub3)
     upper.d, upper.theta, upper.phi  = calc_internal_coords(upper, upper.input_stub1, upper.input_stub2, upper.input_stub3)
     lower.d, lower.theta, lower.phi  = calc_internal_coords(lower, lower.input_stub1, lower.input_stub2, lower.input_stub3)
+    if "hbb" in locals(): #If backbone conjugation occurs, hbb does not exist
+        hbb.d, hbb.theta, hbb.phi    = calc_internal_coords(hbb,  hbb.input_stub1,  hbb.input_stub2,  hbb.input_stub3)
 
     def write_icoords(a):
         if not a.poly_n_bb and not a.poly_ca_bb and not a.poly_c_bb and not a.poly_upper and not a.poly_o_bb:

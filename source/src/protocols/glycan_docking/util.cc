@@ -47,6 +47,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/types.hh>
 
 #include <core/select/util.hh>
@@ -83,37 +84,25 @@ namespace glycan_docking {
 
 //--------------------------------------------------
 core::select::residue_selector::ChainSelectorCOP
-setup_glycoligand_selector
-( std::string const & docking_partners /* e.g. A_X */ )
+setup_glycoligand_selector( core::pose::DockingPartners const & docking_partners )
 {
 	TR.Debug << "Setting up glycoligand ChainSelector" << std::endl;
 
 	// Here, we are using GlycanDock for a two-body system
 	// (an upstream protein receptor and a downstream glycoligand)
 	// Turn the downstream component of docking_partners
-	// into comma separated chain IDs for use with the ChainSelector
-	// ChainSelector requires this string format if passing multiple chain IDs
-	// e.g., "AB_X" --> <"AB", "X"> --> "A,B" and "X"
-	utility::vector1< std::string > const in_docking_partners_split
-		(utility::string_split( docking_partners, '_' ));
-	// Assert that this is a two-body docking problem only
-	if ( in_docking_partners_split.size() != 2 ) {
+
+	// Assert that this is a two-body docking problem
+	if ( docking_partners.partner1.empty() || docking_partners.partner2.empty() ) {
 		utility_exit_with_message("Provided docking partners '" +
-			docking_partners + "' did not result in "
+			docking_partners.str() + "' did not result in "
 			"a two-body docking problem! E.g. A_X or AB_X. "
 			"Check your input and retry.");
 	}
-	// e.g. AB_X --> <"AB", "X"> --> "X"
-	std::string const glycan_chain_id = in_docking_partners_split[2];
-
-	// Although we hope the glycan chain ID is a single chain (e.g. X)
-	// we still should separate it by commas for the ChainSelector
-	std::string const glycan_chain_id_comma
-		( protocols::docking::comma_separated_partner_chains( glycan_chain_id ) );
 
 	// Systems like A_X and AB_X are fine in GlycanDock,
 	// but have not tested systems like A_XY. Likely would break app
-	if ( glycan_chain_id_comma.size() > 1 ) {
+	if ( docking_partners.partner2.size() > 1 ) {
 		TR.Warning << "GlycanDock has not been tested on "
 			"systems in which the glycoligand has more than one chain ID! "
 			"Unexpected behavior and results may occur." << std::endl;
@@ -122,7 +111,7 @@ setup_glycoligand_selector
 	// Create the ChainSelector object
 	core::select::residue_selector::ChainSelectorCOP out_glycolig_selector
 		( utility::pointer::make_shared
-		< core::select::residue_selector::ChainSelector >( glycan_chain_id_comma ) );
+		< core::select::residue_selector::ChainSelector >( docking_partners.partner2 ) );
 
 	TR.Debug << "Finished setting up glycoligand ChainSelector" << std::endl;
 
@@ -1066,10 +1055,10 @@ calc_GlycanDock_intf_metrics
 
 //--------------------------------------------------
 protocols::analysis::InterfaceAnalyzerMoverOP
-get_GlycanDock_IAM
-( std::string const & docking_partners,
-	core::scoring::ScoreFunctionOP sf )
-{
+get_GlycanDock_IAM(
+	core::pose::DockingPartners const & docking_partners,
+	core::scoring::ScoreFunctionOP sf
+) {
 	protocols::analysis::InterfaceAnalyzerMoverOP IAM
 		( utility::pointer::make_shared
 		< protocols::analysis::InterfaceAnalyzerMover >() );

@@ -153,7 +153,61 @@ directory it is built to, and what settings it ultimately uses.
 
     return requested, actual
 
+def split_ver( ver_string, leng=None ):
+    "Splits a dotted version specification into a tuple, optionally matching the length"
+    split = tuple(int(v) for v in ver_string.split('.'))
+    if leng is None:
+        return split
+    elif leng == len(split):
+        return split
+    elif leng < len(split):
+        return split[:leng]
+    else:
+        return split + ( (0,) * (len(split) - leng) )
 
+def cxx_version_match( spec, ver ):
+    """Does the provided version match the specification?
+    Specifications are a comma separated list of comparisons, all of which need to match, e.g. '>3.5,<=5.2'
+    """
+    if '*' in ver:
+        return False # Initial, pre-compiler knowledge specification
+
+    ver_tuple = split_ver(ver)
+    vt_len = len(ver_tuple)
+
+    #Relies on Python lexigraphical sorting of tuples
+    for case in spec.split(','):
+        case = case.strip()
+        if case.startswith("<="):
+            if not ver_tuple <= split_ver(case[2:], vt_len):
+                return False
+        elif case.startswith(">="):
+            if not ver_tuple >= split_ver(case[2:], vt_len):
+                return False
+        elif case.startswith(">"):
+            if not ver_tuple > split_ver(case[1:], vt_len):
+                return False
+        elif case.startswith("<"):
+            if not ver_tuple < split_ver(case[1:], vt_len):
+                return False
+        else:
+            raise ValueError("Cannot interpret version specification `" + case + "`")
+
+    return True
+
+def expand_pattern( pattern, options ):
+    """Expand a pattern from within the settings keys, substituting values if appropriate.
+    Will return None if the pattern doesn't match.
+
+    Right now this is rather rudimentary, only handling cxx_ver
+    """
+    if '|cxx_ver:' in pattern:
+        pre, ver_spec, post = pattern.split('|')
+        if cxx_version_match(ver_spec[len('cxx_ver:'):], options.cxx_ver):
+            return pre + options.cxx_ver + post
+        else:
+            return None
+    return None
 
 def setup_build_settings(options):
     """Select the build settings needed to generate the combined settings.
@@ -239,6 +293,12 @@ combinatorically unmanageable.
         supported.update(user)
     possible += [ "user" ]
 
+    # If we have ranges in the specifications, we may need to expand them later
+    patterned = []
+    for key in list(supported.keys()):
+        if '|' in key:
+            patterned.append( key )
+
     # Actual ids are those possible ids which are actually supported
     # by the settings in the settings file.
     actual = []
@@ -249,6 +309,10 @@ combinatorically unmanageable.
         # to recognize the absence of a given id.
         if id in supported and supported[id]:
             actual += [ id ]
+        else:
+            for pattern in patterned:
+                if id == expand_pattern(pattern, options):
+                    actual += [ pattern ]
 
     # Create the build settings which match all actual build ids
     settings = []

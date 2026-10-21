@@ -87,6 +87,8 @@
 #include <core/energy_methods/HRF_MSLabelingEnergyCreator.hh>
 #include <core/energy_methods/HRFDynamicsEnergyCreator.hh>
 #include <core/energy_methods/CCS_IMMSEnergyCreator.hh>
+#include <core/energy_methods/CCS_IMMSComplexEnergyCreator.hh>
+#include <core/energy_methods/CCS_IMMS_with_CryoEMEnergyCreator.hh>
 #include <core/energy_methods/CovalentLabelingEnergyCreator.hh>
 #include <core/energy_methods/CovalentLabelingFAEnergyCreator.hh>
 #include <core/energy_methods/DEPC_MS_EnergyCreator.hh>
@@ -487,6 +489,8 @@ static EnergyMethodRegistrator< energy_methods::DEPC_MS_EnergyCreator > DEPC_MS_
 static EnergyMethodRegistrator< energy_methods::HRFDynamicsEnergyCreator > HRFDynamicsEnergyCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::HRF_MSLabelingEnergyCreator > HRF_MSLabelingEnergyCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::CCS_IMMSEnergyCreator > CCS_IMMSEnergyCreator_registrator;
+static EnergyMethodRegistrator< energy_methods::CCS_IMMSComplexEnergyCreator > CCS_IMMSComplexEnergyCreator_registrator;
+static EnergyMethodRegistrator< energy_methods::CCS_IMMS_with_CryoEMEnergyCreator > CCS_IMMS_with_CryoEMEnergyCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::RG_Energy_FastCreator > RG_Energy_FastCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::RG_LocalEnergyCreator > RG_LocalEnergyCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::SA_EnergyCreator > SA_EnergyCreator_registrator;
@@ -1028,6 +1032,7 @@ init_source_revision(){
 		if ( utility::Version::package() != "devel" ) TR << " " << utility::Version::package();
 		if ( utility::Version::revision() != "None" ) TR << " r" << utility::Version::revision();
 		TR << " " << utility::Version::version() << " " << utility::Version::commit() << " " << utility::Version::url() << " " << utility::Version::date() << std::endl;
+		TR << "Rosetta extras: " << utility::Version::extras() << std::endl;
 	}
 }
 
@@ -1276,6 +1281,15 @@ void init(int argc, char * argv [])
 
 	//Tracers control output to std::cout and std::cerr
 	init_tracers();
+
+#ifndef PYROSETTA
+	// We want to print this in pretty much all cases (though silence it if we're completely muted.
+	if ( TR.Error.visible() ) {
+		std::cout << "********  (C) Copyright Rosetta Commons Member Institutions.  ***************" << std::endl;
+		std::cout << "* Use of Rosetta for commercial purposes may require purchase of a license. *" << std::endl;
+		std::cout << "********  See LICENSE.md or email license@uw.edu for more details. **********" << std::endl;
+	}
+#endif
 
 	//Read flag config file (common options/custom setup)
 	check_load_fconfig();

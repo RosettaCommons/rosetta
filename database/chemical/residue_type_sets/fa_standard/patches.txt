@@ -86,6 +86,7 @@ patches/branching/S-linked_conjugation.txt
 patches/branching/sidechain_electrophile_conjugation.txt
 patches/branching/phg_cd1_conjugation.txt
 patches/branching/phg_cd2_conjugation.txt
+patches/branching/C-linked_conjugation.txt
 
 ## protein
 patches/Cterm_amidation.txt
@@ -131,6 +132,7 @@ patches/glu_carboxylated.txt
 
 patches/cys_acetylated.txt
 patches/tyr_diiodinated.txt
+patches/Nterm2_Oxobutrylation.txt
 
 ## The following were added by Andy M. Chen in July 2009
 ##   for post-translational modifications

@@ -2690,8 +2690,8 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 
 	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
 	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
-	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos();
-	if ( rsd1_is_protein && rsd2_is_protein && rsd12_peptide_bonded ) {
+	bool rsd12_peptide_bonded = rsd1_is_protein && rsd2_is_protein && !rsd1.is_upper_terminus() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos();
+	if ( rsd12_peptide_bonded ) {
 
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd1params.upper_connect_angle_params() );
 		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
@@ -2807,8 +2807,8 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
 
 	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
 	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
-	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos();
-	if ( rsd1_is_protein && rsd2_is_protein && rsd12_peptide_bonded ) {
+	bool rsd12_peptide_bonded = rsd1_is_protein && rsd2_is_protein && !rsd1.is_upper_terminus() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos();
+	if ( rsd12_peptide_bonded ) {
 
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd2params.lower_connect_angle_params() );
 		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
@@ -2929,8 +2929,8 @@ CartesianBondedEnergy::eval_interresidue_bond_energy(
 
 	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
 	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
-	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos();
-	if ( rsd1_is_protein && rsd2_is_protein && rsd12_peptide_bonded ) {
+	bool rsd12_peptide_bonded = rsd1_is_protein && rsd2_is_protein && !rsd1.is_upper_terminus() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos();
+	if ( rsd12_peptide_bonded ) {
 
 		/////////////
 		/// finally, compute the bondlength across the interface
@@ -3658,8 +3658,8 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 
 	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
 	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
-	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() && !rsd2.is_lower_terminus() && rsd2.has_lower_connect() && rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos();
-	if ( rsd1_is_protein && rsd2_is_protein && rsd12_peptide_bonded ) {
+	bool rsd12_peptide_bonded = rsd1_is_protein && rsd2_is_protein && !rsd1.is_upper_terminus() && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() && !rsd2.is_lower_terminus() && rsd2.has_lower_connect() && rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos();
+	if ( rsd12_peptide_bonded ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
 		// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
@@ -3786,8 +3786,8 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 
 	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
 	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
-	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() && !rsd2.is_lower_terminus() && rsd2.has_lower_connect() && rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos();
-	if ( rsd1_is_protein && rsd2_is_protein && rsd12_peptide_bonded ) {
+	bool rsd12_peptide_bonded = rsd1_is_protein && rsd2_is_protein && !rsd1.is_upper_terminus() && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() && !rsd2.is_lower_terminus() && rsd2.has_lower_connect() && rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos();
+	if ( rsd12_peptide_bonded ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
 		// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
@@ -3910,8 +3910,8 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 
 	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
 	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
-	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() && !rsd2.is_lower_terminus() && rsd2.has_lower_connect() && rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos();
-	if ( rsd1_is_protein && rsd2_is_protein && rsd12_peptide_bonded ) {
+	bool rsd12_peptide_bonded = rsd1_is_protein && rsd2_is_protein && !rsd1.is_upper_terminus() && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() && !rsd2.is_lower_terminus() && rsd2.has_lower_connect() && rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos();
+	if ( rsd12_peptide_bonded ) {
 
 		// lookup Kd and d0
 		core::scoring::methods::CartBondedParametersCOP len_params = rsd2params.cprev_n_bond_length_params();

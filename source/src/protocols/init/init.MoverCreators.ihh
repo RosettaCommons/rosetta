@@ -140,6 +140,9 @@
 #include <protocols/docking/DockingSlideIntoContactCreator.hh>
 #include <protocols/docking/EnsureExclusivelySharedJumpMoverCreator.hh>
 
+#include <protocols/drug_design/ApplyChemistryMoverCreator.hh>
+#include <protocols/drug_design/DrugDesignMoverCreator.hh>
+#include <protocols/drug_design/RDKitMetricsMoverCreator.hh>
 
 #include <protocols/docking/membrane/MPDockingMoverCreator.hh>
 #include <protocols/docking/membrane/MPDockingSetupMoverCreator.hh>

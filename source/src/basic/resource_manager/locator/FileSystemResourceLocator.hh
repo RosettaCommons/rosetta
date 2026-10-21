@@ -60,8 +60,7 @@ public:
 	stream() override;
 
 private:
-	/// @brief This is private and unimplemented. The FileStream shouldn't be copied
-	FileStream( FileStream const & );
+	FileStream( FileStream const & ) = delete;
 
 private: // members
 	utility::io::izstream stream_;

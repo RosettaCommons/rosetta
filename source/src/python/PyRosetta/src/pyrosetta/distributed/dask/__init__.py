@@ -24,15 +24,17 @@ def worker_extra(init_flags=None, local_directory=None):
     the dask worker default directory ./dask-worker-space is used.
 
     For example, to execute on a SLURM scheduler via dask_jobqueue:
-
+    ```
     from dask_jobqueue import SLURMCluster
     import pyrosetta.distributed.dask
     cluster = SLURMCluster(
         cores=1,
         processes=1,
         memory="4GB",
-        extra=pyrosetta.distributed.dask.worker_extra(init_flags, local_directory)
+        worker_extra_args=pyrosetta.distributed.dask.worker_extra(init_flags, local_directory)
     )
+    ```
+    Set `extra` instead of `worker_extra_args` if using dask-jobqueue version < 0.8.0
     """
     extras = []
     if local_directory:

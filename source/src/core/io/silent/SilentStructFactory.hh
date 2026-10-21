@@ -38,9 +38,6 @@ public:
 private:
 	SilentStructFactory();
 
-	SilentStructFactory(SilentStructFactory const &); // unimplemented
-	SilentStructFactory const & operator=( SilentStructFactory const & ); // unimplemented
-
 public:
 
 	void factory_register( SilentStructCreatorCOP creator );

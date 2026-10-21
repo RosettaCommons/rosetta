@@ -1,0 +1,94 @@
+<!-- <root
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="schema.xsd"
+/> -->
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" />
+		<ScoreFunction name="r15_cst" weights="ref2015_cst.wts" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+		<IncludeCurrent name="incl_curr" />
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<RESIDUE_SELECTORS>
+		<Index name="select_thioether" resnums="2,9" />
+	</RESIDUE_SELECTORS>
+	<MOVERS>
+
+		<PeptideStubMover name="make_pep" reset="true">
+			<Append resname="GLY" />
+			<Append resname="DALA" />
+			<Append resname="GLY" />
+			<Append resname="GLY" />
+			<Append resname="GLY" />
+			<Append resname="GLY" />
+			<Append resname="GLY" />
+			<Append resname="GLY" />
+			<Append resname="CYS" />
+			<Append resname="GLY" />
+		</PeptideStubMover>
+
+		<SetTorsion name="set_omegas">
+			<Torsion angle="180" torsion_name="omega" residue="1" />
+			<Torsion angle="180" torsion_name="omega" residue="2" />
+			<Torsion angle="180" torsion_name="omega" residue="3" />
+			<Torsion angle="180" torsion_name="omega" residue="4" />
+			<Torsion angle="180" torsion_name="omega" residue="5" />
+			<Torsion angle="180" torsion_name="omega" residue="6" />
+			<Torsion angle="180" torsion_name="omega" residue="7" />
+			<Torsion angle="180" torsion_name="omega" residue="8" />
+			<Torsion angle="180" torsion_name="omega" residue="9" />
+		</SetTorsion>
+
+		<RandomizeBBByRamaPrePro name="random_rama" />
+
+		<DeclareBond name="add_termini" atom1="C" atom2="N" res1="1" res2="2" add_termini="true" />
+
+		<CrosslinkerMover name="cyclize" linker_name="lanthionine"
+			residue_selector="select_thioether" scorefxn="r15"
+			filter_by_constraints_energy="false"
+			filter_by_sidechain_distance="false"
+			pack_and_minimize_linker_and_sidechains="false"
+		/>
+
+		<GeneralizedKIC name="genkic" selector="lowest_energy_selector" closure_attempts="1000"
+			stop_when_n_solutions_found="1" selector_scorefunction="r15" correct_polymer_dependent_atoms="true" >
+			<AddResidue res_index="5" />
+			<AddResidue res_index="6" />
+			<AddResidue res_index="7" />
+			<AddResidue res_index="8" />
+			<AddResidue res_index="9" />
+			<AddResidue res_index="2" />
+			<AddResidue res_index="3" />
+			<AddTailResidue res_index="1" />
+			<AddTailResidue res_index="10" />
+			<SetPivots res1="5" atom1="CA" res2="9" atom2="CB" res3="3" atom3="CA" />
+			<CloseBond res1="9" atom1="SG" res2="2" atom2="CB" bondlength="1.827" angle1="102.028" angle2="112.284" />
+			<AddPerturber effect="randomize_backbone_by_rama_prepro" >
+				<AddResidue index="5" />
+				<AddResidue index="6" />
+				<AddResidue index="7" />
+				<AddResidue index="8" />
+				<AddResidue index="3" />
+			</AddPerturber>
+			<AddFilter type="loop_bump_check" />
+		</GeneralizedKIC>
+
+		<FastRelax name="frlx" scorefxn="r15_cst" repeats="1" task_operations="incl_curr" />
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="make_pep" />
+		<Add mover="set_omegas" />
+		<Add mover="random_rama" />
+		<Add mover="add_termini" />
+		<Add mover="cyclize" />
+		<Add mover="genkic" />
+		<Add mover="frlx" />
+	</PROTOCOLS>
+
+</ROSETTASCRIPTS>

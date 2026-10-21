@@ -17,15 +17,38 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
+#ifdef WITH_PYTHON
+#include <iostream>
+#include <fstream>
+#include <core/scoring/cryst/util.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/chains_util.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/cryst.OptionKeys.gen.hh>
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmData.hh>
+#include <core/conformation/symmetry/SymDof.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/util.hh>
+#include <core/conformation/ResidueFactory.hh>
+
+#include <core/scoring/symmetry/SymmetricEnergies.hh>
+#include <core/scoring/ScoreFunction.hh>
+
+#include <core/scoring/Energies.hh>
+
+#include <core/chemical/ResidueTypeSet.hh>
+#endif
 
 #include <basic/Tracer.hh>
 
 #include <numeric/xyzVector.fwd.hh>
-
-
-
-// Utility headers
 
 // Python interpreter
 #ifdef WITH_PYTHON
@@ -35,11 +58,6 @@
     PyErr_PrintEx(0); \
     utility_exit_with_message(msg); \
   }
-#endif
-
-// C++ headers
-
-#ifndef WIN32
 #endif
 
 namespace core {

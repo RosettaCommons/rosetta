@@ -389,7 +389,7 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 
 	// update PDBinfo
 	if ( pose.pdb_info() ) {
-		pose.pdb_info()->chain( pose.size(), 'z' );
+		pose.pdb_info()->chain( pose.size(), "z" );
 		pose.pdb_info()->number( pose.size(), 1 );
 		pose.pdb_info()->obsolete( false );
 	}
@@ -455,7 +455,7 @@ void fix_pdbinfo_damaged_by_insertion(
 	PDBInfo & pdbinfo = *pose.pdb_info();
 
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		if ( pdbinfo.number( ii ) != 0 || ( pdbinfo.chain( ii ) != ' ' && pdbinfo.chain( ii ) != '^' ) ) {
+		if ( pdbinfo.number( ii ) != 0 || ( pdbinfo.chain( ii ) != " " && pdbinfo.chain( ii ) != "^" ) ) {
 			// This residue is fine.
 			continue;
 		}
@@ -465,7 +465,7 @@ void fix_pdbinfo_damaged_by_insertion(
 		}
 
 		int const num_prev = pdbinfo.number( ii - 1 );
-		char const chn_prev = pdbinfo.chain( ii - 1 );
+		std::string const chn_prev = pdbinfo.chain( ii - 1 );
 		if ( ii == pose.size() ) {
 			pdbinfo.number( ii, num_prev + 1 );
 			pdbinfo.chain( ii, chn_prev );
@@ -473,11 +473,11 @@ void fix_pdbinfo_damaged_by_insertion(
 		}
 
 		Size next_sensible_seqpos = ii + 1;
-		while ( pdbinfo.number( next_sensible_seqpos ) == 0 && ( pdbinfo.chain( next_sensible_seqpos ) == ' ' || pdbinfo.chain( next_sensible_seqpos ) == '^' ) ) ++next_sensible_seqpos;
+		while ( pdbinfo.number( next_sensible_seqpos ) == 0 && ( pdbinfo.chain( next_sensible_seqpos ) == " " || pdbinfo.chain( next_sensible_seqpos ) == "^" ) ) ++next_sensible_seqpos;
 
 		// If this is the last residue of a chain, also easy.
 		if ( pdbinfo.chain( next_sensible_seqpos ) != chn_prev ) {
-			pdbinfo.number( ii, chn_prev + 1 );
+			pdbinfo.number( ii, num_prev + 1 );
 			pdbinfo.chain( ii, chn_prev );
 			continue;
 		}
@@ -1251,7 +1251,7 @@ disulfide_pairs_from_sfr(
 			// affect what conformation is preferred.
 
 			// Are they all the same?
-			std::string id1 = ssbond.second[ best_representative ].resID2;
+			core::io::ResID id1 = ssbond.second[ best_representative ].resID2;
 			bool identical = true;
 			for ( Size i = 2; i <= ssbond.second.size(); ++i ) {
 				if ( ssbond.second[ i ].resID2 != id1 ) {
@@ -1888,7 +1888,7 @@ utility::vector1< Size > pdb_to_pose( pose::Pose const & pose, utility::vector1<
 }
 
 /// @brief Convert PDB numbering to pose numbering. Must exist somewhere else, but I couldn't find it. -- rhiju
-utility::vector1< Size > pdb_to_pose( pose::Pose const & pose, std::tuple< utility::vector1< int >, utility::vector1<char>, utility::vector1<std::string> > const & pdb_res ){
+utility::vector1< Size > pdb_to_pose( pose::Pose const & pose, std::tuple< utility::vector1< int >, utility::vector1<std::string>, utility::vector1<std::string> > const & pdb_res ){
 	utility::vector1< Size > pose_res;
 	runtime_assert( std::get<0>( pdb_res ).size() == std::get<1>( pdb_res ).size() );
 	for ( Size n = 1; n <= std::get<0>( pdb_res ).size(); n++ ) {
@@ -1899,12 +1899,12 @@ utility::vector1< Size > pdb_to_pose( pose::Pose const & pose, std::tuple< utili
 
 /// @brief Convert PDB numbering to pose numbering. Must exist somewhere else, but I couldn't find it. -- rhiju
 Size
-pdb_to_pose( pose::Pose const & pose, int const res_num, char const chain /* = ' ' */ ) {
+pdb_to_pose( pose::Pose const & pose, int const res_num, std::string const & chain /* = " " */ ) {
 	bool found_match( false );
 	Size res_num_in_full_numbering( 0 );
 	for ( Size n = 1; n <= pose.size() ; n++ ) {
 		if ( res_num != pose.pdb_info()->number( n ) ) continue;
-		if ( chain != ' ' && pose.pdb_info()->chain( n ) != ' ' &&
+		if ( chain != " " && pose.pdb_info()->chain( n ) != " " &&
 				pose.pdb_info()->chain( n ) != chain ) continue;
 		res_num_in_full_numbering = n;
 		if ( found_match != 0 ) utility_exit_with_message( "Ambiguous match to pdb number " + ObjexxFCL::string_of(res_num ) + " and chain " + ObjexxFCL::string_of( chain ) );

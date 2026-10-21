@@ -11,7 +11,7 @@
 /// @brief A class for using the MIF-ST model developed by Yang et al.
 /// @author Moritz Ertelt (moritz.ertelt@gmail.com)
 
-#ifdef USE_PYTORCH
+#ifdef USE_TORCH
 
 #ifndef INCLUDED_protocols_inverse_folding_MIFST_hh
 #define INCLUDED_protocols_inverse_folding_MIFST_hh
@@ -38,6 +38,9 @@
 #include <utility/vector1.hh>
 
 // Torch header
+#ifdef Assert
+	#undef Assert
+#endif
 #include <torch/script.h>
 
 // Eigen header
@@ -61,7 +64,6 @@ public:
     MIFST operator=( MIFST const & ) = delete;
 
     /// @brief Get the citation for MIF-ST
-    /// @details TODO: fill in details for Yang et al.
     static
     basic::citation_manager::CitationCollectionBaseCOP
     get_MIFST_neural_net_citation();
@@ -107,4 +109,4 @@ private: //data
 
 #endif //INCLUDED_protocols_inverse_folding_MIFST_hh
 
-#endif //USE_PYTORCH
+#endif //USE_TORCH

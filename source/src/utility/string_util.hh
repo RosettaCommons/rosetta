@@ -179,39 +179,21 @@ lower( std::string const & s );
 utility::vector1< std::string >
 quoted_split(std::string const & s );
 
-/// @brief combine strings with anything
-std::string join(utility::vector1<std::string> const & s, std::string const & connector);
-
-/// @brief combine vector with anything
-template<class T>
-std::string join(utility::vector1<T> const & vector, std::string const & connector)
-{
+/// @brief Combine an iterable of values
+/// (either strings or something that can be converted to strings with <<)
+/// connecting multiple values with connector
+template<class Iterable>
+std::string join(Iterable const & iter, std::string const & connector){
 	std::ostringstream os;
-	if ( vector.empty() ) return "";
-	typename utility::vector1<T>::const_iterator begin= vector.begin();
+	// TL: if iter is empty, we can't dereference s.begin()
+	if ( iter.empty() ) return "";
+	auto begin = iter.begin();
 	os << *begin++;
-	for ( ; begin != vector.end(); ++begin ) {
+	for ( ; begin != iter.end(); ++begin ) {
 		os<< connector<< *begin;
 	}
 	return os.str();
 }
-
-/// @brief combine strings with anything
-std::string join(std::vector<std::string> const & s, std::string const & connector);
-
-/// @brief Join vector of strings in to single string
-template< platform::SSize L>
-std::string join(vectorL<L, std::string> const & s, std::string const & connector){
-	std::ostringstream os;
-	if ( s.empty() ) return "";
-	typename utility::vectorL<L, std::string>::const_iterator begin= s.begin();
-	os << *begin++;
-	for ( ; begin != s.end(); ++begin ) {
-		os<< connector<< *begin;
-	}
-	return os.str();
-}
-
 
 /// @brief replace space separations in a string with a connector such as '_'
 std::string
@@ -419,37 +401,37 @@ bool is_false_string( std::string const & value_str );
 
 /// @brief Compactifies vectors of ints:  1 2 3 9 10 11 to "1-3 9-11"
 std::string
-make_tag_with_dashes( utility::vector1< int > res_vector,
+make_tag_with_dashes( utility::vector1< int > const & res_vector,
 	char const delimiter = ' ' );
 
-// Compactifies vectors of ints and chars (resnum and chain):  1A 2A 3A 9B 10B 11B to "A:1-3 B:9-11"
+/// @brief Compactifies vectors of ints and strings (resnum and chain):  1A 2A 3A 9B 10B 11B to "A:1-3 B:9-11"
 std::string
-make_tag_with_dashes( utility::vector1< int > res_vector,
-	utility::vector1< char > chain_vector,
-	utility::vector1< std::string > segid_vector,
+make_tag_with_dashes( utility::vector1< int > const & res_vector,
+	utility::vector1< std::string > const & chain_vector,
+	utility::vector1< std::string > const & segid_vector,
 	char const delimiter = ' ' );
 
 std::string
-make_segtag_with_dashes( utility::vector1< int > res_vector,
-	utility::vector1< std::string > segid_vector,
+make_segtag_with_dashes( utility::vector1< int > const & res_vector,
+	utility::vector1< std::string > const & segid_vector,
 	char const delimiter = ' ');
 
 std::string
-make_tag( utility::vector1< int > res_vector );
+make_tag( utility::vector1< int > const & res_vector );
 
 /// @brief  converts string like "1-3 20-22" or "A:1-5 B:20-22" to vectors containing resnums and chains.
-std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > >
+std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > >
 get_resnum_and_chain_and_segid( std::string const & s, bool & string_is_ok );
 
 /// @brief  converts string like "1-3 20-22" or "A:1-5 B:20-22" to vectors containing resnums and chains.
-std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string >  >
+std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string >  >
 get_resnum_and_chain( std::string const & s );
 
 /// @brief helper function for get_resnum_and_chain
 bool
 get_resnum_and_chain_from_one_tag( std::string const & tag,
 	utility::vector1< int > & resnum,
-	utility::vector1< char > & chains ,
+	utility::vector1< std::string > & chains ,
 	utility::vector1< std::string > & segids );
 
 /// @brief  converts string like "1-3 20-22" or "A:1-5 B:20-22" to vectors containing resnums and chains.

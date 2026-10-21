@@ -164,7 +164,7 @@ private: // methods
 
 	///@brief Helper function to get the ranked positions based on maximum difference in probabilities.
 	std::vector<core::Size> sample_positions(
-		std::map<core::Size, std::map<core::chemical::AA, core::Real>> const & values,
+		std::map<core::Size, std::map<core::chemical::AA, core::Real>> & values,
 		core::pose::Pose const & pose
 	) const;
 
@@ -181,7 +181,7 @@ private: // methods
 
 	///@brief Helper function to calculate differences between current and other AAs, as well as disabling unwanted AAs
 	utility::vector1<std::pair<core::Size, core::Real>> calculate_position_diffs(
-		std::map<core::Size, std::map<core::chemical::AA, core::Real>> const & probabilities,
+		std::map<core::Size, std::map<core::chemical::AA, core::Real>> & probabilities,
 		core::pose::Pose const& pose
 	) const;
 

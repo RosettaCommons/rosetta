@@ -69,7 +69,7 @@ std::string Column::print(utility::sql_database::sessionOP db_session) const{
 		switch(db_session->get_db_mode()) {
 		case utility::sql_database::DatabaseMode::sqlite3 :
 			column_string += this->type_->print(db_session) + " PRIMARY KEY AUTOINCREMENT"; //only way to autoincrement in SQLite is with a primary key
-			name_ + " " + type_->print(db_session);
+			//name_ + " " + type_->print(db_session);
 			break;
 		case utility::sql_database::DatabaseMode::mysql :
 			column_string += this->type_->print(db_session) + " AUTO_INCREMENT";

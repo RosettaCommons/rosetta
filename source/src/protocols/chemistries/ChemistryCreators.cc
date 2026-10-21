@@ -19,6 +19,21 @@
 namespace protocols {
 namespace chemistries {
 
+ChemistryOP
+ReprotonateCreator::create_chemistry() const {
+	return ChemistryOP( new ReprotonateChemistry );
+}
+
+std::string
+ReprotonateCreator::keyname() const {
+	return ReprotonateChemistry::class_name();
+}
+
+void
+ReprotonateCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ReprotonateChemistry::provide_xml_schema( xsd );
+}
+
 } //namespace chemistries
 } //namespace protocols
 

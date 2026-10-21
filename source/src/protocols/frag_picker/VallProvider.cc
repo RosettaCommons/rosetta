@@ -66,7 +66,7 @@ VallChunkOP VallProvider::find_chunk(std::string pdb_id, char chain_id, core::Si
 		if ( c->get_chain_id() != chain_id ) {
 			continue;
 		}
-		for ( core::Size j = 1; j < c->size(); ++j ) {
+		for ( core::Size j = 1; j <= c->size(); ++j ) {
 			if ( c->at(j)->resi() == residue_id ) {
 				return c;
 			}

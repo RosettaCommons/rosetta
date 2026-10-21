@@ -90,7 +90,7 @@ def setup_from_options(options):
             interpolation = ExtendedInterpolation()
         )
 
-        with open(options.config) as f: user_config.readfp(f)
+        with open(options.config) as f: user_config.read_file(f)
 
     else:
         print(f"\n\n>>> Config file `{options.config}` not found. You may want to manually copy `benchmark.template.ini` to `{options.config}` and edit the settings\n\n")
@@ -140,6 +140,9 @@ def setup_from_options(options):
     config['merge_base'] = options.merge_base
 
     if options.skip_compile is not None: config['skip_compile'] = options.skip_compile
+
+    if options.branch is not None: config['branch'] = options.branch
+
 
     #print(f'Results path: {config["results_root"]}')
     #print('Config:{}, Platform:{}'.format(json.dumps(config, sort_keys=True, indent=2), Platform))
@@ -288,8 +291,9 @@ def run_test(setup):
 
         if state_override:
             log_prefix = \
-                f'WARNING: Previous test results does not have `.execution.results.json` file, so comparision with None was performed instead!\n' \
-                f'WARNING: Overriding calcualted test state `{res[_StateKey_]}` → `{_S_failed_}`...\n\n'
+                f'WARNING: Previous test results does not have `.execution.results.json` file, so comparison with None was performed instead!\n' \
+                f'WARNING: This can often be fixed by merging with the latest `main`.\n' \
+                f'WARNING: Overriding calculated test state `{res[_StateKey_]}` → `{_S_failed_}`...\n\n'
 
             res[_LogKey_] = log_prefix + res[_LogKey_]
             res[_StateKey_] = _S_failed_
@@ -396,6 +400,8 @@ def main(args):
     parser.add_argument("--merge-base", default='origin/master', help="Specify SHA1/branch-name that will be used for `merge-base` value when simulating PR testing" )
 
     parser.add_argument("--mount", action="append", help="Specify one of the mount points, like: --mount release_root:/some/path. This option could be used multiple times if needed" )
+
+    parser.add_argument("--branch", default=None, help="Specify git `branch` that should be set in config when running tests" )
 
 
     parser.add_argument('args', nargs=argparse.REMAINDER)

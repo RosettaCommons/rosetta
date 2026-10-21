@@ -32,8 +32,8 @@ working_dir = config['working_dir']
 hpc_driver  = benchmark.hpc_driver()
 extension   = benchmark.calculate_extension()
 
-ntasks = 20 if debug else 80
-node_time_to_request = 1.5 if debug else 12
+ntasks = 20 if debug else 45
+node_time_to_request = 1.5 if debug else 24
 
 #Approximately 3200 CPU-hours for this test
 

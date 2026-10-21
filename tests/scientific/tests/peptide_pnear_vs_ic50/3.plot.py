@@ -107,6 +107,37 @@ def plot_graph( evals, rmsdvals, hbonds, pnear, delta_g_folding, fig, axs, i, j 
     textstring  = r"$P_{Near}$" + pnearstring.format(pnear=pnear) + r"$\Delta$" + r"$G_{folding}$" + dgfoldingstring.format(delta_g_folding=delta_g_folding)
     plt.text( .05, .05, textstring, transform=ax.transAxes, fontdict=fontsmall )
 
+def grab_table_from_log(logfile):
+    table_lines = []
+    in_table = False
+    with open(logfile) as f:
+        for line in f:
+            if line.startswith("MPI_worker"):
+                in_table = True
+                continue
+            elif line.startswith("End summary"):
+                in_table = False
+                break
+            elif in_table:
+                line = line.split()
+                if len(line) == 13:
+                    table_lines.append( line )
+
+    return table_lines
+
+def grab_key_values(logfile):
+    values = {}
+    with open(logfile) as f:
+        for line in f:
+            line = line.split()
+            if len(line) != 2:
+                continue
+            if line[0][-1] != ':':
+                continue
+            values[ line[0] ] = line[1]
+
+    return values
+
 def plot_one_dataset( fig, axs, suffix='1A', row=1 ) :
 
     # inputs are header labels from the scorefile to plot, for instance "total_score" and "rmsd"
@@ -122,14 +153,21 @@ def plot_one_dataset( fig, axs, suffix='1A', row=1 ) :
     logfile = logfile_names[suffix]
 
     print ( "Reading data from " + logfile + "." )
-    rmsd_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_worker " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $3} }'" ) ).split() ]
-    rmsd_vals_to_lowest = [ float(i) for i in str( subprocess.getoutput( "grep MPI_worker " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $4} }'" ) ).split() ]
-    hbonds = [ float(i) for i in str( subprocess.getoutput( "grep MPI_worker " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $6} }'" ) ).split() ]
-    energy_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_worker " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $5} }'" ) ).split() ]
-    pnear_val = float( subprocess.getoutput( "grep 'PNear:' " + logfile + " | awk '{print $2}'" ) )
-    pnear_val_to_lowest = float( subprocess.getoutput( "grep 'PNearLowest:' " + logfile + " | awk '{print $2}'" ) )
-    delta_g_folding_val = float( str(subprocess.getoutput( "grep 'kB\*T\*ln(Keq):' " + logfile + " | awk '{print $2}'" ) ) )
-    delta_g_folding_val_to_lowest = float( str(subprocess.getoutput( "grep 'kB\*T\*ln(KeqLowest):' " + logfile + " | awk '{print $2}'" ) ) )
+    table = grab_table_from_log(logfile)
+    if len(table) == 0:
+        print( "ERROR reading data from table in " + logfile + "!" )
+        return
+    key_values = grab_key_values(logfile)
+
+    rmsd_vals = [ float(l[2]) for l in table ]
+    rmsd_vals_to_lowest = [ float(l[3]) for l in table ]
+    hbonds = [ float(l[5]) for l in table ]
+    energy_vals = [ float(l[4]) for l in table ]
+
+    pnear_val = float( key_values[ 'PNear:' ] )
+    pnear_val_to_lowest = float( key_values[ 'PNearLowest:' ] )
+    delta_g_folding_val = float( key_values[ '-kB*T*ln(Keq):' ] )
+    delta_g_folding_val_to_lowest = float( key_values[ '-kB*T*ln(KeqLowest):' ] )
     minenergy = min(energy_vals)
     maxrms = max( rmsd_vals )
     maxrms_to_lowest = max( rmsd_vals_to_lowest )

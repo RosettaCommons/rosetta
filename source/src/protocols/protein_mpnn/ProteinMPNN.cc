@@ -11,7 +11,7 @@
 /// @brief For the ProteinMPNN PyTorch model developed by Dauparas et al.
 /// @author Brian Koepnick (koepnick@uw.edu)
 
-#ifdef USE_PYTORCH
+#ifdef USE_TORCH
 
 // Project headers:
 #include <protocols/protein_mpnn/ProteinMPNN.hh>
@@ -459,4 +459,4 @@ ProteinMPNNOptions::reset( const core::pose::Pose & pose ){
 } //protein_mpnn
 } //protocols
 
-#endif //USE_PYTORCH
+#endif //USE_TORCH

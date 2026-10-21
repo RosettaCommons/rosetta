@@ -12,6 +12,9 @@ INCLUDE(../build/${LINK_RULES}.build.cmake)
 ADD_DEFINITIONS(-DNDEBUG)
 ADD_DEFINITIONS(-DUSEMPI)
 
+ADD_COMPILE_DEFINITIONS(OMPI_SKIP_MPICXX=1) # fixes compile error with openmpi on ubuntu
+INCLUDE(../build/modules/mpi.cmake)
+
 SET(COMPILE_FLAGS "-pipe -w -O3 -ffast-math -fno-finite-math-only -funroll-loops -finline-functions -finline-limit=20000 -s")
 
 # from build_staticmpi ...
@@ -31,6 +34,7 @@ INCLUDE(../build/build.settings.cmake)
 INCLUDE(../build/compiler.cmake)
 
 INCLUDE( ../build/build.post.cmake )
+
 ## Top level binaries
 INCLUDE( ../build/apps.all.cmake )
 INCLUDE( ../build/pilot_apps.all.cmake )

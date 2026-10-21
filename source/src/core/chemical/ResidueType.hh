@@ -1171,9 +1171,6 @@ public:
 	/// @brief is membrane?
 	bool is_membrane() const;
 
-	/// @brief is surface? (e.g. enamel)
-	bool is_surface() const;
-
 	/// @brief does this residue have sidechain orbitals?
 	bool has_sc_orbitals() const;
 

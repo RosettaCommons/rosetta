@@ -197,16 +197,8 @@ void BCLFragmentMutateMover::apply(
 
 #ifdef USEBCL
 
-	// restrict chain  ID to single letter
-	if ( get_base_ligand_chain().size() != 1 ) {
-		utility_exit_with_message
-			(
-			"BCLFragmentMutateMover chain ID '" + get_base_ligand_chain() + "' must be a single letter."
-		);
-	}
-
 	// get ligand identifiers
-	utility::vector1< core::Size> ligand_resnums( core::pose::get_resnums_for_chain( pose, get_base_ligand_chain()[0] ));
+	utility::vector1< core::Size> ligand_resnums( core::pose::get_resnums_for_chain( pose, get_base_ligand_chain() ));
 
 	// require that we actually have a ligand specified by the selected resnum
 	if ( !ligand_resnums.size() ) {
@@ -266,7 +258,7 @@ void BCLFragmentMutateMover::apply(
 
 		// set new residue in pose
 		pose.replace_residue( ligand_resnum, new_ligand, false); // orient backbone bool NA for ligands
-		pose.pdb_info()->set_resinfo( pose.total_residue(), get_base_ligand_chain()[0] , pose.total_residue(), ' ');
+		pose.pdb_info()->set_resinfo( pose.total_residue(), get_base_ligand_chain() , pose.total_residue(), ' ');
 	}
 #else
 	core::chemical::bcl::require_bcl();

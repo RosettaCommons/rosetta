@@ -46,6 +46,8 @@ typedef ResidueGraph::vertex_descriptor VD;
 typedef ResidueGraph::edge_descriptor ED;
 typedef utility::vector1< VD > VDs;
 
+constexpr ResidueGraph::vertex_descriptor INVALID_VD = nullptr;
+
 // A note regarding iterator "const-ness":
 // Unlike iterators for the standard library containers, which can be dereferenced to directly obtain container members,
 // the boost graph iterators dereference to vertex/edge descriptors, which are functionally equivalent to index values

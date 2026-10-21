@@ -116,7 +116,7 @@ private: // helper types and functions for parsing
 		int & PDBnum_end, // only defined for RANGE id_type
 		char & icode,
 		char & icode_end, // only defined for RANGE id_type
-		char & chain,
+		std::string & chain,
 		residue_identifier_type & id_type) const;
 
 	void
@@ -129,7 +129,7 @@ private: // helper types and functions for parsing
 	Size
 	locate_resid(
 		core::pose::Pose const & pose,
-		char const chain,
+		std::string const & chain,
 		Size const PDBnum,
 		char const icode,
 		Size const lineno) const;
@@ -140,6 +140,12 @@ private: // helper types and functions for parsing
 		utility::vector1< std::string > const & tokens,
 		std::map< std::string, ResfileCommandOP > const & command_map,
 		Size const lineno) const;
+
+private:
+
+	/// Utility function -- used to convert chain into a printable form.
+	std::string
+	chain_printable(std::string const & chain) const;
 
 private:
 	std::string fname_initialized_from_;

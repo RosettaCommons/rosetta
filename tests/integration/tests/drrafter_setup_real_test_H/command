@@ -60,7 +60,7 @@ date > start-time.ignore
 # fi
 # `which python3` -m pip install networkx mrcfile >> install_log.ignore 2>&1
 
-`which python3` %(minidir)s/src/apps/public/DRRAFTER/DRRAFTER.py -fasta fasta.txt -secstruct secstruct.txt -start_struct full_start_struct.pdb -map_file empty_segmented_map.mrc -map_reso 8.0 -residues_to_model A:1-101 B:1-77 -include_residues_around D:137 D:395 -include_as_rigid_body_structures part_of_PBS_helix.pdb start_PBS_bp_helix.pdb trna_helix_1.pdb trna_helix_2.pdb  trna_helix_3.pdb  trna_helix_4.pdb vrna_helix_1.pdb vrna_helix_2.pdb vrna_helix_3.pdb vrna_helix_4.pdb vrna_helix_5.pdb -job_name test 2>&1 \
+%(python3)s %(minidir)s/src/apps/public/DRRAFTER/DRRAFTER.py -fasta fasta.txt -secstruct secstruct.txt -start_struct full_start_struct.pdb -map_file empty_segmented_map.mrc -map_reso 8.0 -residues_to_model A:1-101 B:1-77 -include_residues_around D:137 D:395 -include_as_rigid_body_structures part_of_PBS_helix.pdb start_PBS_bp_helix.pdb trna_helix_1.pdb trna_helix_2.pdb  trna_helix_3.pdb  trna_helix_4.pdb vrna_helix_1.pdb vrna_helix_2.pdb vrna_helix_3.pdb vrna_helix_4.pdb vrna_helix_5.pdb -job_name test 2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 

@@ -61,11 +61,11 @@ date > start-time.ignore
 # fi
 # `which python3` -m pip install networkx mrcfile >> install_log.ignore 2>&1
 
-`which python3` %(minidir)s/src/apps/public/DRRAFTER/auto-DRRAFTER_setup_next_round.py -out_pref mini_example -curr_round FINAL_R3 -nmodels 10 -rosetta_directory %(raw_bin_dir)s/ -rosetta_extension .%(binext)s -test  2>&1 \
+%(python3)s %(minidir)s/src/apps/public/DRRAFTER/auto-DRRAFTER_setup_next_round.py -out_pref mini_example -curr_round FINAL_R3 -nmodels 10 -rosetta_directory %(raw_bin_dir)s/ -rosetta_extension .%(binext)s -test  2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 
-`which python3` %(minidir)s/src/apps/public/DRRAFTER/finalize_models.py -fasta input_files/fasta.txt -out_pref mini_example -final_round FINAL_R3 2>&1 \
+%(python3)s %(minidir)s/src/apps/public/DRRAFTER/finalize_models.py -fasta input_files/fasta.txt -out_pref mini_example -final_round FINAL_R3 2>&1 \
     | egrep -vf ../../ignore_list \
     >> log
 

@@ -48,53 +48,53 @@ cutoffs_weighted_rms_dict.update( dict( zip ( protein, cutoffs_weighted_rms )))
 
 # open results output file
 with open( outfile, "w" ) as f:
-	f.write( "#pdb\tsampled_rms\tpnear\tweighted_rms\n" )
+    f.write( "#pdb\tsampled_rms\tpnear\tweighted_rms\n" )
 
-	for target in targets: 
-		
-		# Rescore the pdbs to compute RMS values
-		get_refined = subprocess.check_output(f'ls {working_dir}/output/{target}/*_0001.pdb', shell=True).decode("utf-8").split('\n')
-		rescore_list_file = f'{working_dir}/output/{target}/refined_pdbs.txt'
+    for target in targets:
 
-		with open( rescore_list_file, 'w' ) as g:
-			for relaxed_pdb in get_refined[:-1]: 
-				g.write( relaxed_pdb + "\n" )
+        # Rescore the pdbs to compute RMS values
+        get_refined = subprocess.check_output(f'ls {working_dir}/output/{target}/*_0001.pdb', shell=True).decode("utf-8").split('\n')
+        rescore_list_file = f'{working_dir}/output/{target}/refined_pdbs.txt'
 
-		executable = f'{rosetta_dir}/source/bin/score_jd2.{extension}'
-		arguments = f"-database {rosetta_dir}/database -in:file:native {rosetta_dir}/tests/scientific/data/{testname}/{target}/{target}_native.pdb -mp:setup:spanfiles {rosetta_dir}/tests/scientific/data/{testname}/{target}/{target}.span -in:membrane -mp:lipids:has_pore false -in:file:l {rescore_list_file} -score:weights franklin2019 -out:file:scorefile {working_dir}/output/{target}/{target}.rescore"
-		cmd = executable + " " + arguments; print(f'{cmd!r}')
-		benchmark.execute('Running Rosetta', cmd )
+        with open( rescore_list_file, 'w' ) as g:
+            for relaxed_pdb in get_refined[:-1]:
+                g.write( relaxed_pdb + "\n" )
 
-		# Calculate the discrimination score
-		decoy_disc_data = subprocess.check_output( f'python3 score_energy_landscape.py -terms rms total_score -abinitio_scorefile {working_dir}/output/{target}/{target}.rescore', shell=True ).decode("utf-8").replace('\n', '\t').split('\t')
+        executable = f'{rosetta_dir}/source/bin/score_jd2.{extension}'
+        arguments = f"-database {rosetta_dir}/database -in:file:native {rosetta_dir}/tests/scientific/data/{testname}/{target}/{target}_native.pdb -mp:setup:spanfiles {rosetta_dir}/tests/scientific/data/{testname}/{target}/{target}.span -in:membrane -mp:lipids:has_pore false -in:file:l {rescore_list_file} -score:weights franklin2019 -out:file:scorefile {working_dir}/output/{target}/{target}.rescore"
+        cmd = executable + " " + arguments; print(f'{cmd!r}')
+        benchmark.execute('Running Rosetta', cmd )
 
-		if ( len(decoy_disc_data) != 8 ): 
-			sys.exit( "Score energy landscape script failed!" )
+        # Calculate the discrimination score
+        decoy_disc_data = subprocess.check_output( f'python3 score_energy_landscape.py -terms rms total_score -abinitio_scorefile {working_dir}/output/{target}/{target}.rescore', shell=True ).decode("utf-8").replace('\n', '\t').split('\t')
 
-		sampled_rms = round( float(decoy_disc_data[3]), 3 )
-		pnear = round( float(decoy_disc_data[4]), 3 )
-		weighted_rms = round( float(decoy_disc_data[5]), 3)
+        if ( len(decoy_disc_data) != 8 ):
+            sys.exit( "Score energy landscape script failed!" )
 
-		target_results = {}
+        sampled_rms = round( float(decoy_disc_data[3]), 3 )
+        pnear = round( float(decoy_disc_data[4]), 3 )
+        weighted_rms = round( float(decoy_disc_data[5]), 3)
 
-		# check for sampled_rms below cutoff
-		f.write( target + "\t" )
-		f.write( str(sampled_rms) + "\t" )
-		if ( sampled_rms > cutoffs_sampled_rms_dict[ target ] ): 
-			failures.append( "sampled_rms " + target + " value: " + str(sampled_rms) )
+        target_results = {}
 
-		# check for pnear better than cutoff
-		# NOTE: Pnear isn't actually used here because it requires better sampling
-		f.write( str(pnear) + "\t" )
-		# if ( pnear < cutoffs_pnear_dict[ target ] ): 
-		# 	failures.append( target )
+        # check for sampled_rms below cutoff
+        f.write( target + "\t" )
+        f.write( str(sampled_rms) + "\t" )
+        if ( sampled_rms > cutoffs_sampled_rms_dict[ target ] ):
+            failures.append( "sampled_rms " + target + " value: " + str(sampled_rms) )
 
-		# check for weighted rms better than cutoff
-		f.write( str(weighted_rms) )
-		if ( weighted_rms > cutoffs_weighted_rms_dict[ target ] ): 
-			failures.append( "weighted_rms " + target + " value: " + str(weighted_rms) )
+        # check for pnear better than cutoff
+        # NOTE: Pnear isn't actually used here because it requires better sampling
+        f.write( str(pnear) + "\t" )
+        # if ( pnear < cutoffs_pnear_dict[ target ] ):
+        #     failures.append( target )
 
-		results.update( {target : [sampled_rms, pnear, weighted_rms]} )
-		f.write( "\n" )
+        # check for weighted rms better than cutoff
+        f.write( str(weighted_rms) )
+        if ( weighted_rms > cutoffs_weighted_rms_dict[ target ] ):
+            failures.append( "weighted_rms " + target + " value: " + str(weighted_rms) )
+
+        results.update( {target : [sampled_rms, pnear, weighted_rms]} )
+        f.write( "\n" )
 
 benchmark.save_variables('debug targets nstruct working_dir testname results scorefiles cutoffs_sampled_rms_dict cutoffs_pnear_dict cutoffs_weighted_rms_dict failures')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)

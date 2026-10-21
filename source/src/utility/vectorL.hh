@@ -309,6 +309,9 @@ public: // Methods
 	vectorL &
 	append( vectorL const & v )
 	{
+#if defined(__GNUC__) and __GNUC__ == 11
+		reserve( size() + v.size() ); // Work around compiler warning issue with GCC 11
+#endif
 		insert( end(), v.begin(), v.end() );
 		return *this;
 	}

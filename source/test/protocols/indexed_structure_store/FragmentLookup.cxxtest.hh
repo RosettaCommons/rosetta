@@ -104,9 +104,7 @@ public:
 		core::pose::PoseOP test_pose = core::import_pose::pose_from_file("protocols/indexed_structure_store/test_structure.pdb", core::import_pose::PDB_file);
 
 		FragmentSpecification test_spec;
-		test_spec.fragment_atoms.push_back("N");
-		test_spec.fragment_atoms.push_back("CA");
-		test_spec.fragment_atoms.push_back("C");
+		test_spec.fragment_atoms = {"N", "CA", "C"};
 		test_spec.fragment_length = 5;
 
 		BinaryFragmentStoreBackend backend("protocols/indexed_structure_store/test_store");

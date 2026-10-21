@@ -67,7 +67,7 @@ LIBS=-L/usr/local/lib
 
 OBJECTS1 = \
 $(NAME1).o \
-sos_minor_gmp.o alf_tools_gmp.o binding.o \
+gmpvar.o sos_minor_gmp.o alf_tools_gmp.o binding.o \
 adjust.o alfcx.o alfcx_tools.o cavballs.o delcx.o truncate_real.o \
 measure_tools.o surface_tools.o surface_only.o surface_deriv_coord.o \
 volume_tools.o volume_only.o volume_deriv_coord.o \

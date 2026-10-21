@@ -24,6 +24,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/util.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -47,6 +48,7 @@ namespace core {
 namespace pose {
 
 static basic::Tracer TR( "core.pose.util" );
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void jumps_from_pose(core::pose::Pose const & pose, Jumps & jumps) {
 	for ( Size i = 1; i <= pose.num_jump(); ++i ) {
@@ -56,20 +58,17 @@ void jumps_from_pose(core::pose::Pose const & pose, Jumps & jumps) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void conf2pdb_chain_default_map( core::pose::Pose const & pose, std::map<core::Size,char> & chainmap ) {
+void conf2pdb_chain_default_map( core::pose::Pose const & pose, std::map<core::Size,std::string> & chainmap ) {
 	chainmap.clear();
-	char letter = 'A';
 	for ( core::Size i = 1; i <= pose.conformation().num_chains(); ++i ) {
-		chainmap[i] = letter;
-		if ( 'Z'==letter ) utility_exit_with_message("too many chains to map to letters!!!");
-		letter = static_cast<char>(letter + 1);
+		chainmap[i] = core::conformation::canonical_chain_letter_for_chain_number(i);
 	}
 }
 
-std::map< core::Size, char > conf2pdb_chain( core::pose::Pose const & pose ) {
+std::map< core::Size, std::string > conf2pdb_chain( core::pose::Pose const & pose ) {
 	using core::Size;
 	using core::pose::PDBInfo;
-	typedef std::map< core::Size, char > Conf2PDB;
+	typedef std::map< core::Size, std::string > Conf2PDB;
 
 	// TODO: Wiping out the mapping completely is rather silly
 	// Ideally we should either get the "default" PDBInfo (if not present),
@@ -84,7 +83,7 @@ std::map< core::Size, char > conf2pdb_chain( core::pose::Pose const & pose ) {
 
 	for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 		core::Size const conf = pose.chain( i );
-		char const pdb = pose.pdb_info()->chain( i );
+		std::string const & pdb = pose.pdb_info()->chain( i );
 
 		auto c2p = conf2pdb.find( conf );
 		if ( c2p != conf2pdb.end() ) { // must check if existing record inconsistent
@@ -263,7 +262,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 ) {
 	using core::Size;
 	using core::pose::PDBInfo;
-	typedef std::map< core::Size, char > Conf2PDB;
+	typedef std::map< core::Size, std::string > Conf2PDB;
 
 	if ( !pose.pdb_info().get() ) {
 		TR.Warning << "renumber_pdbinfo_based_on_conf_chains(): no PDBInfo, returning" << std::endl;
@@ -335,7 +334,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 
 		for ( ; res <= chain_end; ++res ) {
 			// handle the pdb chain only if necessary
-			char chain = pdbinfo.chain( res );
+			std::string chain = pdbinfo.chain( res );
 			if ( pdbinfo.chain( res ) == PDBInfo::empty_record() && fix_chains && c2p != conf2pdb.end() ) {
 				chain = c2p->second;
 			}
@@ -370,13 +369,6 @@ bool renumber_pdbinfo_based_on_conf_chains(
 
 bool
 has_chain(std::string const & chain, core::pose::Pose const & pose){
-	debug_assert(chain.size()==1);// chain is one char
-	char chain_char= chain[0];
-	return has_chain(chain_char, pose);
-}
-
-bool
-has_chain(char const & chain, core::pose::Pose const & pose){
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
 		TR.Warning << "In has_chain(): Pose doesn't have a PDBInfo object - making a temporary default one." << std::endl;
@@ -395,18 +387,9 @@ has_chain(core::Size chain_id, core::pose::Pose const & pose){
 	return chain_id >= 1 && chain_id <= pose.conformation().num_chains();
 }
 
-utility::vector1< core::Size >
-get_chain_ids_from_chains(utility::vector1< std::string > const & chains, core::pose::Pose const & pose ) {
-	utility::vector1< char > chains_char;
-	for ( std::string const & chain: chains ) {
-		debug_assert( chain.size() >= 1 );
-		chains_char.push_back( chain[0] );
-	}
-	return get_chain_ids_from_chains( chains_char, pose );
-}
 
 utility::vector1< core::Size >
-get_chain_ids_from_chains(utility::vector1< char > const & chains, core::pose::Pose const & pose ) {
+get_chain_ids_from_chains(utility::vector1< std::string > const & chains, core::pose::Pose const & pose ) {
 	std::set< core::Size > chain_ids;
 
 	PDBInfoCOP pdb_info( pose.pdb_info() );
@@ -416,7 +399,7 @@ get_chain_ids_from_chains(utility::vector1< char > const & chains, core::pose::P
 	}
 
 	for ( core::Size ii(1); ii <= pose.size(); ++ii ) {
-		char chain( pdb_info->chain( ii ) );
+		std::string chain( pdb_info->chain( ii ) );
 		if ( std::find( chains.begin(), chains.end(), chain ) != chains.end() ) {
 			core::Size chain_id( pose.chain(ii) );
 			chain_ids.insert( chain_id );
@@ -428,26 +411,13 @@ get_chain_ids_from_chains(utility::vector1< char > const & chains, core::pose::P
 
 utility::vector1<core::Size>
 get_chain_ids_from_chain(std::string const & chain, core::pose::Pose const & pose){
-	debug_assert(chain.size()==1);// chain is one char
-	char chain_char= chain[0];
-	return get_chain_ids_from_chain(chain_char, pose);
-}
-
-utility::vector1<core::Size>
-get_chain_ids_from_chain(char const & chain, core::pose::Pose const & pose){
-	utility::vector1< char > chains;
-	chains.push_back( chain );
+	utility::vector1< std::string > chains;
+	chains.push_back(chain);
 	return get_chain_ids_from_chains( chains, pose );
 }
 
 core::Size
 get_chain_id_from_chain(std::string const & chain, core::pose::Pose const & pose){
-	debug_assert(chain.size()==1);// chain is one char
-	return get_chain_id_from_chain( chain[0], pose );
-}
-
-core::Size
-get_chain_id_from_chain(char const & chain, core::pose::Pose const & pose){
 	utility::vector1<core::Size> chain_ids = get_chain_ids_from_chain(chain, pose);
 	if ( chain_ids.size() == 0 ) {
 		throw CREATE_EXCEPTION(utility::excn::RangeError, " chain_id "+utility::to_string(chain)+" does not exist");
@@ -457,7 +427,7 @@ get_chain_id_from_chain(char const & chain, core::pose::Pose const & pose){
 	return chain_ids[1];
 }
 
-char
+std::string
 get_chain_from_chain_id( core::Size const & chain_id, core::pose::Pose const & pose ) {
 	debug_assert( chain_id <= pose.num_chains() );
 	PDBInfoCOP pdb_info( pose.pdb_info() );
@@ -503,7 +473,7 @@ get_jump_id_from_chain_id( core::Size const & chain_id, const core::pose::Pose &
 }
 
 utility::vector1<core::Size>
-get_jump_ids_from_chain( char const & chain, core::pose::Pose const & pose ) {
+get_jump_ids_from_chain( std::string const & chain, core::pose::Pose const & pose ) {
 	utility::vector1<core::Size> jump_ids;
 
 	PDBInfoCOP pdb_info( pose.pdb_info() );
@@ -514,7 +484,7 @@ get_jump_ids_from_chain( char const & chain, core::pose::Pose const & pose ) {
 
 	for ( core::Size jump_id=1; jump_id <= pose.num_jump(); jump_id++ ) {
 		core::Size downstream_residue_id( pose.fold_tree().downstream_jump_residue(jump_id) );
-		char downstream_chain( pdb_info->chain(downstream_residue_id) );
+		std::string const & downstream_chain( pdb_info->chain(downstream_residue_id) );
 		if ( chain == downstream_chain ) {
 			jump_ids.push_back( jump_id );
 		}
@@ -523,21 +493,9 @@ get_jump_ids_from_chain( char const & chain, core::pose::Pose const & pose ) {
 	return jump_ids; // Will be returned in sorted order
 }
 
-utility::vector1<core::Size>
-get_jump_ids_from_chain(std::string const & chain, core::pose::Pose const & pose){
-	debug_assert(chain.size()==1);// chain is one char
-	char chain_char= chain[0];
-	return get_jump_ids_from_chain(chain_char, pose);
-}
 
 core::Size
 get_jump_id_from_chain( std::string const & chain, core::pose::Pose const & pose ) {
-	debug_assert( chain.size() == 1 );
-	return get_jump_id_from_chain( chain[0], pose );
-}
-
-core::Size
-get_jump_id_from_chain( char const & chain, core::pose::Pose const & pose ) {
 	utility::vector1<core::Size> jumps( get_jump_ids_from_chain( chain, pose ) );
 	if ( jumps.empty() ) {
 		// Explicit cast here so we can use operator+
@@ -556,7 +514,7 @@ get_chain_id_from_jump_id(core::Size const & jump_id, core::pose::Pose const & p
 	return pose.chain(downstream_residue_id);
 }
 
-char
+std::string
 get_chain_from_jump_id(core::Size const & jump_id, core::pose::Pose const & pose){
 	debug_assert( jump_id <= pose.num_jump() );
 	core::Size downstream_residue_id( pose.fold_tree().downstream_jump_residue(jump_id) );
@@ -570,7 +528,7 @@ get_chain_from_jump_id(core::Size const & jump_id, core::pose::Pose const & pose
 }
 
 utility::vector1<core::Size>
-get_resnums_for_chain( core::pose::Pose const & pose, char chain ) {
+get_resnums_for_chain( core::pose::Pose const & pose, std::string const & chain ) {
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
 		TR.Warning << "Attempted to find chain for Pose without annotated chain letters - making default chain letters." << std::endl;
@@ -631,7 +589,7 @@ bool res_in_chain( core::pose::Pose const & pose, core::Size resnum, std::string
 		TR.Warning << "In res_in_chain(): Pose doesn't have a PDBInfo object - making a temporary default one." << std::endl;
 		pdb_info = utility::pointer::make_shared< PDBInfo >( pose );
 	}
-	return pdb_info->chain( resnum ) == chain[0];
+	return pdb_info->chain( resnum ) == chain;
 }
 
 core::Size get_hash_from_pos(PointPosition const & pos) {
@@ -642,7 +600,7 @@ core::Size get_hash_from_pos(PointPosition const & pos) {
 	return hash;
 }
 
-core::Size get_hash_from_chain(char const & chain, core::pose::Pose const & pose, std::string const & extra_label)
+core::Size get_hash_from_chain(std::string const & chain, core::pose::Pose const & pose, std::string const & extra_label)
 {
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
@@ -670,7 +628,7 @@ core::Size get_hash_from_chain(char const & chain, core::pose::Pose const & pose
 	return hash;
 }
 
-core::Size get_hash_excluding_chain(char const & chain, core::pose::Pose const & pose, std::string const & extra_label)
+core::Size get_hash_excluding_chain(std::string const & chain, core::pose::Pose const & pose, std::string const & extra_label)
 {
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
@@ -698,12 +656,6 @@ core::Size get_hash_excluding_chain(char const & chain, core::pose::Pose const &
 	return hash;
 }
 
-std::string get_sha1_hash_from_chain(char const & chain, core::pose::Pose const & pose, std::string const & extra_label)
-{
-	utility::vector1< std::string > chains;
-	chains.push_back( utility::to_string( chain ) );
-	return get_sha1_hash_from_chains(chains, pose, extra_label);
-}
 
 std::string
 get_sha1_hash_from_chains(utility::vector1< std::string > const & chains, core::pose::Pose const & pose, std::string const & extra_label) {
@@ -716,7 +668,7 @@ get_sha1_hash_from_chains(utility::vector1< std::string > const & chains, core::
 	std::stringstream coord_stream;
 
 	for ( core::Size res_num = 1; res_num <= pose.size(); ++res_num ) {
-		if ( ! chains.contains( utility::to_string( pdb_info->chain( res_num ) ) ) ) {
+		if ( ! chains.contains( pdb_info->chain( res_num ) ) ) {
 			continue;
 		}
 		core::Size natoms = pose.conformation().residue(res_num).natoms();
@@ -733,12 +685,6 @@ get_sha1_hash_from_chains(utility::vector1< std::string > const & chains, core::
 
 }
 
-std::string get_sha1_hash_excluding_chain(char const & chain, core::pose::Pose const & pose, std::string const & extra_label)
-{
-	utility::vector1< std::string > chains;
-	chains.push_back( utility::to_string( chain ) );
-	return get_sha1_hash_excluding_chains(chains, pose, extra_label);
-}
 
 std::string get_sha1_hash_excluding_chain(std::string const & chain, core::pose::Pose const & pose, std::string const & extra_label)
 {

@@ -57,7 +57,7 @@ main( int argc, char * argv [] )
 		//create and use IdentifyLigandMotifs
 		IdentifyLigandMotifs ilm;
 		//create MotifLibrary to hold motif library that ILM will generate
-		//protocols::motifs::MotifLibrary motifs = ilm.process_file_list();
+
 		ilm.process_file_list();
 		ilm.write_motifs_to_disk();
 	} catch (utility::excn::Exception const & e ) {

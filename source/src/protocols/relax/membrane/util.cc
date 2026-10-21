@@ -114,8 +114,8 @@ void add_mutant_to_vectors(
 		} else {
 			// PDB numbering
 
-			// get chain
-			char chain = wt_id_mut[ 0 ];
+			// get chain (Input format enforces the limit of being a single character)
+			std::string chain{ wt_id_mut[ 0 ] };
 
 			// remove the chain and the underscore from the string
 			wt_id_mut.erase( 0, 2 );

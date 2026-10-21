@@ -10,6 +10,7 @@
 /// @file protocols/protein_mpnn/ProteinMPNNProbabilitiesMetric.hh
 /// @brief A metric for predicting amino acid probabilities using ProteinMPNN (Dauparas et al.).
 /// @author Moritz Ertelt (moritz.ertelt@googlemail.com)
+/// @modified Jason C. Klima -- Added deterministic_flag option
 
 
 #ifndef INCLUDED_protocols_protein_mpnn_ProteinMPNNProbabilitiesMetric_HH
@@ -127,6 +128,13 @@ public:
 	/// @details If this returns nullptr, it means that no residue selector is being used.
 	core::select::residue_selector::ResidueSelectorCOP residue_selector() const;
 
+	/// @brief Set to true to run in deterministic mode.
+	void
+	set_deterministic_flag(bool deterministic_flag);
+
+	/// @brief Get the deterministic_flag mode.
+	bool deterministic_flag() const;
+
 private: //Data
 
 	/// @brief The output filename of the pssm
@@ -142,13 +150,16 @@ private: //Data
 	/// @brief An optional residue selector to limit the returned probabilities to a selection
 	core::select::residue_selector::ResidueSelectorCOP residue_selector_ = nullptr;
 
-#ifdef USE_PYTORCH
+	/// @brief An optional boolean flag to run in deterministic mode
+	bool deterministic_flag_ = false;
+
+#ifdef USE_TORCH
 	/// @brief Fill the return_map with the probabilities from the softmax_map for all amino acids
 	/// @param[in] softmax_map The map containing all probabilities or logits
 	/// @param[in] return_map The map that will be returned by the calculate function, will be filled with probabilities/logits by this function
 	static void fill_return_map(const std::map<core::Size, utility::vector1<core::Real>> &softmax_map,
 		std::map<core::Size, std::map<core::chemical::AA, core::Real>> &return_map);
-#endif // USE_PYTORCH
+#endif // USE_TORCH
 	/// @brief Get the sequence of the selection
 	static std::string get_selection_sequence(std::string const &pose_sequence,
 		std::map<core::Size, utility::vector1<core::Real>> const &position_map) ;

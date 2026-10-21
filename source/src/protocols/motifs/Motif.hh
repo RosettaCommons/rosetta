@@ -66,12 +66,12 @@ public:
 	Motif(
 		core::pose::Pose const & pose,
 		core::Size const pdb_residue_position_1,
-		char const pdb_chain_id1,
+		std::string const & pdb_chain_id1,
 		std::string const & res1_atom1,
 		std::string const & res1_atom2,
 		std::string const & res1_atom3,
 		core::Size const pdb_residue_position_2,
-		char const pdb_chain_id2,
+		std::string const & pdb_chain_id2,
 		std::string const & res2_atom1,
 		std::string const & res2_atom2,
 		std::string const & res2_atom3
@@ -294,6 +294,22 @@ public:
 		core::Size const & res2_atom2_index_in,
 		core::Size const & res2_atom3_index_in,
 		bool one_three = true
+	) const;
+
+	// check if atom types between this object and another motif match; returns a boolean
+	// if amino acid residue names on each motif and atoms involved match, then this returns true, otherwise it returns false
+	// notably, this match does not check if the ligand name side matches
+	virtual bool
+	motif_atom_match_lax(
+		Motif compare
+	) const;
+
+	// check if atom types between this object and another motif match; returns a boolean
+	// if residue names on each side of each motif and atoms involved match, then this returns true, otherwise it returns false
+	// notably, this match does  check if the ligand name side matches
+	virtual bool
+	motif_atom_match_strict(
+		Motif compare
 	) const;
 
 	// For output

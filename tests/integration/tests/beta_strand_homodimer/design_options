@@ -3,7 +3,7 @@
 -symmetry:symmetry_definition symmdef
 -nstruct 1 #try 5000 or so for production runs
 # -out::pdb_gz true #do this for production runs
--pack_min_runs 1
+-pack_min_runs 2 # >1 Needed to reproduce a bug with multiple runs
 -make_ala_interface true 
 -find_bb_hbond_E true 
 -no_his_his_pairE true 

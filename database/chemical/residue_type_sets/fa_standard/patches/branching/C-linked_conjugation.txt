@@ -1,0 +1,126 @@
+## full-atom C-linked conjugation patches for ALA/DALA
+## This patch is used for C-linked Lanthionine.
+
+## full-atom C-linked conjugation patches for ALPHA-AMINOBUTYRIC ACID (DBB or AAB) adding Cystine(SG) steriochemical linkage
+## assumes that DBB has been renamed to one of DBR DBS DDBR DDBS based on steriochem at postions 2 and 3 ie 2S3S is DBS
+## This patch is used for C-linked Methyllanthionine.
+
+NAME C-conjugated
+TYPES SC_BRANCH_POINT
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NOT VARIANT_TYPE SC_BRANCH_POINT
+NOT VARIANT_TYPE PHOSPHORYLATION
+NOT VARIANT_TYPE SULFATION
+NOT VARIANT_TYPE DEPROTONATED
+END_SELECTOR
+
+
+BEGIN_CASE  ## Alanine #########################################################
+
+BEGIN_SELECTOR
+AA ALA DAL
+END_SELECTOR
+
+
+# Delete the extra hydrogen atoms on the sidechain CB:
+DELETE_ATOM 3HB
+DELETE_ATOM 2HB
+DELETE_ATOM 1HB
+
+# Add a new amide proton, a new sidechain connection, and a new virtual atom:
+ADD_ATOM  1HB  HNbb H 0.31 0.00
+ADD_ATOM  2HB  HNbb H 0.31 0.00
+ADD_ATOM  V1  VIRT VIRT 0.00
+ADD_CONNECT CB ICOOR -166.60000 110.00000 1.8000 CB CA N
+
+# Add new bonds:
+ADD_BOND CB 1HB 
+ADD_BOND CB 2HB 
+ADD_BOND CB V1
+
+# Set position of the new HD and V1 atoms:
+SET_ICOOR  1HB  -120.00 70.5 1.10000 CB CA CONN%LASTCONN
+SET_ICOOR  2HB  120.00  70.5 1.10000 CB CA CONN%LASTCONN
+SET_ICOOR V1 0.00 64.77 1.807 CB CA CONN%LASTCONN
+
+REDEFINE_CHI 1 N CA CB V1
+
+# Add proton chi:
+ADD_PROTON_CHI 1 SAMPLES 18 0 20 40 60 80 100 120 140 160 180 200 220 240 260 280 300 320 340 EXTRA 0
+
+# Update properties:
+DELETE_PROPERTY CANONICAL_AA
+ADD_PROPERTY BRANCH_POINT
+
+END_CASE
+
+BEGIN_CASE  ## AAB with 3S steriochem #########################################################
+
+BEGIN_SELECTOR
+NAME3 DBS DDBS 
+END_SELECTOR
+
+# Delete the extra hydrogen atoms on the sidechain CB: 
+DELETE_ATOM 2HB 
+DELETE_ATOM 1HB 
+
+# Add a new amide proton, a new sidechain connection, and a new virtual atom:
+ADD_ATOM  1HB  Hapo HA 0.31 0.00
+
+#add virutal atom
+ADD_ATOM  V1  VIRT VIRT 0.00
+
+ADD_CONNECT CB ICOOR -166.60000 110.00000 1.8000 CB CA N
+
+# Add new bonds:
+ADD_BOND CB 1HB
+ADD_BOND CB V1
+
+# Set position of the new HD and V1 atoms:
+SET_ICOOR 1HB -120.00 70.5 1.10000 CB CG CA
+SET_ICOOR V1 -120.00 64.77 1.807 CB CA CG
+
+REDEFINE_CHI 1 N CA CB V1
+#REDEFINE_CHI 1 N CA CB CONN%LASTCONN
+
+# Add proton chi:
+ADD_PROTON_CHI 1 SAMPLES 18 0 20 40 60 80 100 120 140 160 180 200 220 240 260 280 300 320 340 EXTRA 0
+
+ADD_PROPERTY BRANCH_POINT
+
+END_CASE
+
+BEGIN_CASE  ## AAB with 3R steriochem #########################################################
+
+BEGIN_SELECTOR
+NAME3 DBR DDBR
+END_SELECTOR
+
+# Delete the extra hydrogen atoms on the sidechain CB:
+DELETE_ATOM 2HB
+DELETE_ATOM 1HB
+
+# Add a new amide proton, a new sidechain connection, and a new virtual atom:
+ADD_ATOM  1HB  Hapo HA 0.31 0.00
+ADD_ATOM  V1  VIRT VIRT 0.00
+
+ADD_CONNECT CB ICOOR -166.60000 110.00000 1.8000 CB CA N
+
+# Add new bonds:
+ADD_BOND CB 1HB
+ADD_BOND CB V1
+
+# Set position of the new HD and V1 atoms:
+SET_ICOOR 1HB 120.00 70.5 1.10000 CB CG CA
+SET_ICOOR V1 120.00 64.77 1.807 CB CA CG
+
+REDEFINE_CHI 1 N CA CB V1
+
+# Add proton chi:
+ADD_PROTON_CHI 1 SAMPLES 18 0 20 40 60 80 100 120 140 160 180 200 220 240 260 280 300 320 340 EXTRA 0
+
+ADD_PROPERTY BRANCH_POINT
+
+END_CASE

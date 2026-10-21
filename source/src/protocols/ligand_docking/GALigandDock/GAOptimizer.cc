@@ -53,7 +53,6 @@ GAOptimizer::run( LigandConformers & genes ) {
 		show_status( genes, "input pool (scored with soft_rep)" );
 	}
 
-
 	LigandConformers genes_new;
 	for ( core::Size i=1; i<=protocol_.size(); ++i ) {
 		GADockStageParams const &stage_i = protocol_[i];
@@ -104,6 +103,7 @@ GAOptimizer::run( LigandConformers & genes ) {
 		for ( core::Size j = 1; j <= stage_i.repeats; ++j ) {
 			update_tags( genes );
 			next_generation( genes, genes_new, stage_i.pool, stage_i.pmut );
+
 			optimize_generation( genes_new, stage_i.ramp_schedule );
 			if ( TR.Debug.visible() ) {
 				show_status( genes_new, "generated in stage "+std::to_string(i)+" iter "+std::to_string(j) );
@@ -234,7 +234,11 @@ GAOptimizer::next_generation(
 		LigandConformer newgene( genes[iparent] );
 
 		if ( ( numeric::random::rg().uniform() <= pmut ) || (npoolin == 1) ) {
-			newgene = mutate( newgene );
+			if ( !altcrossover_ ) {
+				newgene = mutate( newgene );
+			} else {
+				newgene = mutate_ft( newgene, single_mutation_ );
+			}
 			move = "mutate";
 			tag = "mut."+std::to_string(iparent)+" ["+newgene.generation_tag()+"]";
 
@@ -244,7 +248,11 @@ GAOptimizer::next_generation(
 				ipartner = numeric::random::rg().random_range(1, npoolin);
 			}
 
-			newgene = crossover( newgene, genes[ipartner] );
+			if ( altcrossover_ ) {
+				newgene = crossover_ft (newgene, genes[ipartner] );
+			} else {
+				newgene = crossover( newgene, genes[ipartner] );
+			}
 
 			move = "crossover";
 			tag = "cross."+std::to_string(iparent)+"."+std::to_string(ipartner)+" ["+newgene.generation_tag()+"]";
@@ -257,6 +265,7 @@ GAOptimizer::next_generation(
 		newgene.set_generation_tag( tag );
 		genes_new.push_back( newgene );
 		l_sampling += " "+tag;
+
 	}
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "Sampling summary: " << l_sampling << std::endl;

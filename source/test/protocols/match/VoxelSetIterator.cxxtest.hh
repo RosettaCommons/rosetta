@@ -708,6 +708,6 @@ public:
 			//iter.calc_bin_and_pos();
 		}
 
-		TS_ASSERT( true );
+		TS_ASSERT( count >= 1 );
 	}
 };

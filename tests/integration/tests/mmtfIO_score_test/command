@@ -37,7 +37,7 @@ cd %(workdir)s
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 # If there's some change in how the mmtf files are constructed, dump a readable version
-python3 ../../dump_mmtf_to_json.py *_0001.mmtf *_0002.mmtf > dump_log 2>&1
+%(python3)s ../../dump_mmtf_to_json.py *_0001.mmtf *_0002.mmtf > dump_log 2>&1
 
 # Check if written mmtf files can be read
 %(bin)s/score_jd2.%(binext)s %(additional_flags)s @options -database %(database)s -testing:INTEGRATION_TEST -out:prefix test1_ 2>&1 \

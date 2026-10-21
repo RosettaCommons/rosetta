@@ -183,7 +183,7 @@ public:
 			for ( Size j = 1; j <= ref_poses[ i ].size(); ++j ) {
 
 				Size pdb_res = ref_poses[ i ].pdb_info()->number( j );
-				char pdb_chain = ref_poses[ i ].pdb_info()->chain( j );
+				std::string pdb_chain = ref_poses[ i ].pdb_info()->chain( j );
 
 				Size this_res = pose.pdb_info()->pdb2pose( pdb_chain, pdb_res );
 

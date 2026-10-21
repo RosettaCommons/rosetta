@@ -16,18 +16,38 @@ import pyrosetta.distributed.io as io
 import pyrosetta.distributed.packed_pose as packed_pose
 import pyrosetta.distributed.tasks.rosetta_scripts as rosetta_scripts
 
+from pyrosetta.utility import get_package_version
 
+
+__dask_version__ = get_package_version("dask")
+
+@unittest.skipIf(__dask_version__ is None, "Skipping because 'dask' version is undetermined.")
 class TestDaskDistribution(unittest.TestCase):
-    
+
     _dask_scheduler = None
-    
+
     with tempfile.TemporaryDirectory() as workdir:
-        
+
         def setUp(self, local_dir=workdir):
             if not self._dask_scheduler:
-                self.local_cluster = dask.distributed.LocalCluster(
-                    n_workers=2, threads_per_worker=2, diagnostics_port=None, local_dir=local_dir
+                n_workers = 2
+                threads_per_worker = 2
+                dashboard_address = None
+                local_cluster_kwargs = dict(
+                    n_workers=n_workers,
+                    threads_per_worker=threads_per_worker,
+                    dashboard_address=dashboard_address,
+                    local_directory=local_dir,
                 )
+                if __dask_version__ <= (2, 1, 0):
+                    local_cluster_kwargs["local_dir"] = local_cluster_kwargs.pop(
+                        "local_directory", local_dir
+                    )
+                if __dask_version__ < (2026, 6, 0):
+                    local_cluster_kwargs["diagnostics_port"] = local_cluster_kwargs.pop(
+                        "dashboard_address", dashboard_address
+                    )
+                self.local_cluster = dask.distributed.LocalCluster(**local_cluster_kwargs)
                 cluster = self.local_cluster
             else:
                 self.local_cluster = None
@@ -37,7 +57,7 @@ class TestDaskDistribution(unittest.TestCase):
 
         def tearDown(self):
             self.client.close()
-            
+
             if self.local_cluster:
                 self.local_cluster.close()
 
@@ -73,22 +93,22 @@ class TestDaskDistribution(unittest.TestCase):
             self.assertEqual(task.result(), 2)
 
 
-if __name__ == "__main__":
-    
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s.%(msecs).03d %(name)s %(message)s",
-        datefmt='%Y-%m-%dT%H:%M:%S'
-    )
-
-    parser = argparse.ArgumentParser(
-        description="Run initial pyrosetta.distributed smoke test over given scheduler."
-    )
-    parser.add_argument("scheduler", type=str, nargs="?", help="Target scheduler endpoint for test.")
-    args = parser.parse_args()
-
-    TestDaskDistribution._dask_scheduler = args.scheduler
-
-    test_suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestDaskDistribution)
-    runner = unittest.TextTestRunner()
-    runner.run(test_suite)
+# if __name__ == "__main__":
+#
+#     logging.basicConfig(
+#         level=logging.INFO,
+#         format="%(asctime)s.%(msecs).03d %(name)s %(message)s",
+#         datefmt='%Y-%m-%dT%H:%M:%S'
+#     )
+#
+#     parser = argparse.ArgumentParser(
+#         description="Run initial pyrosetta.distributed smoke test over given scheduler."
+#     )
+#     parser.add_argument("scheduler", type=str, nargs="?", help="Target scheduler endpoint for test.")
+#     args = parser.parse_args()
+#
+#     TestDaskDistribution._dask_scheduler = args.scheduler
+#
+#     test_suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestDaskDistribution)
+#     runner = unittest.TextTestRunner()
+#     runner.run(test_suite)

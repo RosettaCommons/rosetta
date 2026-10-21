@@ -164,7 +164,7 @@ std::queue<MakeJunctionsMover::Design> MakeJunctionsMover::read_in_designs(){
 	return(designs);
 }
 
-void MakeJunctionsMover::parse_attach_description(std::string attach_description,std::string & pdb_location,char & chain, core::Size & n_term_trim, core::Size & c_term_trim, core::Size & n_repeats,core::Size &n_term_attach_length, core::Size &c_term_attach_length,std::string & n_term_seq, std::string & c_term_seq){
+void MakeJunctionsMover::parse_attach_description(std::string attach_description,std::string & pdb_location,std::string & chain, core::Size & n_term_trim, core::Size & c_term_trim, core::Size & n_repeats,core::Size &n_term_attach_length, core::Size &c_term_attach_length,std::string & n_term_seq, std::string & c_term_seq){
 	//TR << "attach_description" << attach_description << std::endl;
 	utility::vector1<std::string> command = utility::string_split(attach_description,',');
 	pdb_location = command[2];
@@ -173,7 +173,7 @@ void MakeJunctionsMover::parse_attach_description(std::string attach_description
 		err << "\nUser must input chain name" << std::endl;
 		throw CREATE_EXCEPTION(utility::excn::BadInput,err.str());
 	} else {
-		chain = command[3].at(0);
+		chain = command[3];
 	}
 	n_term_trim = std::stoi(command[4]);
 	c_term_trim = std::stoi(command[5]);
@@ -228,7 +228,7 @@ void MakeJunctionsMover::generate_start_pose(core::pose::Pose & pose, core::pose
 bool MakeJunctionsMover::attach_next_part(core::pose::Pose & pose, std::string attach_termini, std::string attach_description){
 	core::Size n_term_trim,c_term_trim,n_term_attach_length,c_term_attach_length,n_repeats;
 	std::string pdb_location,n_term_seq,c_term_seq;
-	char attach_chain;
+	std::string attach_chain;
 	parse_attach_description(attach_description,pdb_location,attach_chain,n_term_trim,c_term_trim,n_repeats,n_term_attach_length,c_term_attach_length,n_term_seq,c_term_seq);
 	core::pose::Pose attach_pose = get_and_cache_pdb(pdb_location);
 	core::Real pose_score = sfxn_->score(pose);

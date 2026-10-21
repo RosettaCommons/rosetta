@@ -35,12 +35,11 @@ DnaDesignDef::DnaDesignDef( std::string const & strdef )
 	// command-line dna_defs are of the format "C.501.ADE"
 	// split on '.'
 	utility::vector1< std::string > parts( string_split( strdef, '.' ) );
-	utility::vector1< std::string >::const_iterator part( parts.begin() );
-	chain = (*(part++))[0];
-	std::istringstream inum_stream( *(part++) );
-	inum_stream >> pdbpos;
-	if ( part == parts.end() ) return;
-	name3 = *part;
+	runtime_assert( parts.size() >= 2 );
+	chain = parts[1];
+	pdbpos = std::stoi(parts[2]);
+	if ( parts.size() == 2 ) return;
+	name3 = parts[3];
 	// We have to catch this here rather than doing a aa_from_name call later in the taskop.
 	// Why? Because we sometimes feed the taskop true name3s, and aa_from_name can't handle
 	// that for obvious reasons. This is not fast, but it's outside of a tight loop and

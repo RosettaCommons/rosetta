@@ -13,6 +13,7 @@
 
 // Unit headers
 #include <core/conformation/util.hh>
+#include <core/conformation/carbohydrates/util.hh>
 
 // Package headers
 #include <core/conformation/Conformation.hh>
@@ -71,6 +72,34 @@ static basic::Tracer TR( "core.conformation.util" );
 
 namespace core {
 namespace conformation {
+
+
+static std::string const chr_chains_reg("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz" );
+static std::string const chr_chains_ext("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz!@#$&.<>?]|-_\\~=%" );
+
+std::string
+canonical_chain_letter_for_chain_number(core::Size chain_num, bool extended) {
+	std::string const & chr_chains = extended ? chr_chains_ext : chr_chains_reg;
+
+	if ( chain_num <= chr_chains.size() ) {
+		return std::string{chr_chains[chain_num-1]};
+	}
+	std::string chain_string;
+	while ( chain_num > 0 ) {
+		char val = chr_chains[ (chain_num-1)%chr_chains.size() ];
+		chain_string = std::string{val} + chain_string;
+		chain_num = (chain_num-1)/chr_chains.size(); // Truncation intended
+	}
+	return chain_string;
+}
+
+bool
+is_chain_valid(std::string const & chain) {
+	return (! chain.empty() ) &&
+		chain != " " &&
+		chain != "^" &&
+		chain != std::string{ '\0' }; // String constructed from a single null character
+}
 
 void
 orient_residue_for_ideal_bond(
@@ -319,20 +348,36 @@ idealize_position(
 
 	if ( rsd.is_polymer() ) {
 		// add polymer nbrs?
-		if ( seqpos > 1 && !rsd.is_lower_terminus() && !conformation.fold_tree().is_cutpoint( seqpos-1 ) ) {
-			lower_connect = true;
-			ResidueOP prev_rsd( ResidueFactory::create_residue( conformation.residue( seqpos-1 ).type() ) );
-			idl.prepend_polymer_residue_before_seqpos( *prev_rsd, 1, true );
-			idl_pos = 2;
-		}
+		if ( rsd.is_carbohydrate() ) {
+			if ( seqpos > 1 && !rsd.is_lower_terminus() ) {
+				lower_connect = true;
+				core::Size parent_res_seqpos( conformation::carbohydrates::find_seqpos_of_saccharides_parent_residue( rsd ) );
+				ResidueOP prev_rsd( ResidueFactory::create_residue( conformation.residue( parent_res_seqpos ).type() ) );
+				idl.prepend_polymer_residue_before_seqpos( *prev_rsd, 1, true );
+				idl_pos = 2;
+			}
 
-		if ( seqpos < conformation.size() && !rsd.is_upper_terminus() && !conformation.fold_tree().is_cutpoint( seqpos ) ) {
-			upper_connect = true;
-			ResidueOP next_rsd( ResidueFactory::create_residue( conformation.residue( seqpos+1 ).type() ) );
-			idl.append_polymer_residue_after_seqpos( *next_rsd, idl_pos, true );
+			if ( seqpos < conformation.size() && !rsd.is_upper_terminus() && !conformation.fold_tree().is_cutpoint( seqpos ) ) {
+				upper_connect = true;
+				core::Size child_res_seqpos( conformation::carbohydrates::find_seqpos_of_saccharides_mainchain_child( rsd ) );
+				ResidueOP next_rsd( ResidueFactory::create_residue( conformation.residue( child_res_seqpos ).type() ) );
+				idl.append_polymer_residue_after_seqpos( *next_rsd, idl_pos, true );
+			}
+		} else {
+			if ( seqpos > 1 && !rsd.is_lower_terminus() && !conformation.fold_tree().is_cutpoint( seqpos-1 ) ) {
+				lower_connect = true;
+				ResidueOP prev_rsd( ResidueFactory::create_residue( conformation.residue( seqpos-1 ).type() ) );
+				idl.prepend_polymer_residue_before_seqpos( *prev_rsd, 1, true );
+				idl_pos = 2;
+			}
+
+			if ( seqpos < conformation.size() && !rsd.is_upper_terminus() && !conformation.fold_tree().is_cutpoint( seqpos ) ) {
+				upper_connect = true;
+				ResidueOP next_rsd( ResidueFactory::create_residue( conformation.residue( seqpos+1 ).type() ) );
+				idl.append_polymer_residue_after_seqpos( *next_rsd, idl_pos, true );
+			}
 		}
 	}
-
 	//// now set the torsion angles in the ideal conformation... This is to prepare for replacing rsd with
 	//// the idealized version
 

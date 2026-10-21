@@ -126,7 +126,7 @@ tokenize( std::string const & seq, core::Size mask_position) {
 	return tokenized_seq;
 }
 
-#ifdef USE_PYTORCH
+#ifdef USE_TORCH
 std::tuple<torch::Tensor, torch::Tensor, torch::Tensor, torch::Tensor>
 process_coords(core::pose::Pose const & pose, core::select::residue_selector::ResidueSubset const & subset) {
 
@@ -372,7 +372,7 @@ collate_structure(
 }
 
 
-#endif //USE_PYTORCH
+#endif //USE_TORCH
 } //inverse_folding
 } //protocols
 

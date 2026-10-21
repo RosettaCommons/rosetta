@@ -35,7 +35,7 @@ cd %(workdir)s
 
 
 [ -x %(minidir)s/scripts/python/public/cryo_dock_and_assemble/cryo_dock_and_assemble.py ] || exit 1
-%(minidir)s/scripts/python/public/cryo_dock_and_assemble/cryo_dock_and_assemble.py \
+%(python)s %(minidir)s/scripts/python/public/cryo_dock_and_assemble/cryo_dock_and_assemble.py \
 	--rosetta_bin_location %(raw_bin_dir)s \
 	--rosetta_database %(database)s \
 	--bin_extension .%(binext)s \

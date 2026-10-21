@@ -116,8 +116,7 @@ public:
 
 
 private:
-	// deny use of the copy constructor (no pass-by-value)
-	RotamerSetBase( RotamerSetBase const & );
+	RotamerSetBase( RotamerSetBase const & ) = delete;
 
 	/// @brief BasicDataCache indexed by enum in core/pack/rotamer_set/RotamerSetCacheableDataType.hh
 	/// @warning DataCache must always be initialized with the number of cacheable

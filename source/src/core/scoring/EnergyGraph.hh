@@ -293,7 +293,7 @@ EnergyEdge::store_active_energies( EnergyMap const & emap, ScoreTypes const & su
 {
 	utility::vector1< int > const & st2active( get_energy_owner()->score_type_2_active() );
 
-	for ( Size ii = 1, iilag = 0; ii <= subset.size(); ++ii, ++iilag ) {
+	for ( Size ii = 1; ii <= subset.size(); ++ii ) {
 		if ( st2active[ subset[ ii ]] >= 0 ) {
 			array_[ st2active[ subset[ ii ]] ] = emap[ subset[ ii ] ];
 		}
@@ -333,7 +333,7 @@ void EnergyEdge::add_to_energy_map( EnergyMap & emap, ScoreTypes const & subset 
 {
 	utility::vector1< int > const & st2active( get_energy_owner()->score_type_2_active() );
 
-	for ( Size ii = 1, iilag = 0; ii <= subset.size(); ++ii, ++iilag ) {
+	for ( Size ii = 1; ii <= subset.size(); ++ii ) {
 		if ( st2active[ subset[ ii ]] >= 0 ) {
 			emap[ subset[ ii ] ] += array_[ st2active[ subset[ ii ]] ];
 		}

@@ -214,7 +214,7 @@ public:
 	) const override {}
 
 private:
-	RotamerSet_( RotamerSet_ const & );
+	RotamerSet_( RotamerSet_ const & ) = delete;
 
 
 protected:

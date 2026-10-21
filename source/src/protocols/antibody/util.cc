@@ -22,6 +22,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/init_id_map.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/types.hh>
 #include <core/id/AtomID_Map.hh>
@@ -124,7 +125,7 @@ get_cdr_loops(
 
 		if ( ! cdrs[ i ] ) continue;
 		auto cdr = static_cast<CDRNameEnum>( i );
-		if ( ab_info->is_camelid() && ab_info->get_CDR_chain( cdr ) == 'L' ) continue;
+		if ( ab_info->is_camelid() && ab_info->get_CDR_chain( cdr ) == "L" ) continue;
 
 		cdr_loops->add_loop(ab_info->get_CDR_loop(cdr, pose, stem_size));
 	}
@@ -340,7 +341,9 @@ select_epitope_residues(AntibodyInfoCOP ab_info, core::pose::Pose const & pose, 
 	vector1<bool> epitope(pose.size(), false);
 	if ( ! ab_info->antigen_present() ) return epitope;
 
-	std::string interface = ab_info->get_antibody_chain_string()+"_"+ab_info->get_antigen_chain_string();
+	core::pose::DockingPartners interface;
+	interface.partner1 = ab_info->get_antibody_chains();
+	interface.partner2 = ab_info->get_antigen_chains();
 
 	//I really should have just used a TF and operation.  Oh well.  Now we have an interface namespace...
 
@@ -348,8 +351,8 @@ select_epitope_residues(AntibodyInfoCOP ab_info, core::pose::Pose const & pose, 
 
 	//Turn off L or H residues at the interface
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
-		char chain = core::pose::get_chain_from_chain_id(pose.chain(i), pose);
-		if ( chain == 'L' || chain == 'H' ) {
+		std::string chain = core::pose::get_chain_from_chain_id(pose.chain(i), pose);
+		if ( chain == "L" || chain == "H" ) {
 			interface_residues[i] = false;
 		}
 	}
@@ -486,23 +489,23 @@ void simple_fold_tree(
 	return;
 } // simple_fold_tree
 
-std::string
+core::pose::DockingPartners
 setup_LH_A_foldtree(AntibodyInfoCOP ab_info, core::pose::Pose & pose){
 	vector1< int > movable_jumps(1, 1);
-	vector1< char > antigen_chains = ab_info->get_antigen_chains();
-	std::string antigen(antigen_chains.begin(), antigen_chains.end());
-	std::string dock_chains = "LH_"+antigen;
+	core::pose::DockingPartners dock_chains;
+	dock_chains.partner1 = utility::vector1<std::string>{"L","H"};
+	dock_chains.partner2 = ab_info->get_antigen_chains();
 	protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
 	return dock_chains;
 
 }
 
-std::string
+core::pose::DockingPartners
 setup_A_LH_foldtree(AntibodyInfoCOP ab_info, core::pose::Pose & pose){
 	vector1< int > movable_jumps(1, 1);
-	vector1< char > antigen_chains = ab_info->get_antigen_chains();
-	std::string antigen(antigen_chains.begin(), antigen_chains.end());
-	std::string dock_chains = antigen+"_LH";
+	core::pose::DockingPartners dock_chains;
+	dock_chains.partner1 = ab_info->get_antigen_chains();
+	dock_chains.partner2 = utility::vector1<std::string>{"L","H"};
 	protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
 	return dock_chains;
 }
@@ -544,7 +547,7 @@ bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::
 	TR.Debug <<  "Checking Kink/Extended CDR H3 Base Angle" << std::endl;
 
 
-	char const light_chain = 'L';
+	std::string const light_chain = "L";
 
 	if ( is_camelid ) {
 		return( true );
@@ -943,7 +946,7 @@ get_matching_landmark(
 		}
 	}
 
-	PDBLandmarkOP empty_landmark( new PDBLandmark('X', 0, ' ') );
+	PDBLandmarkOP empty_landmark( new PDBLandmark("X", 0, ' ') );
 	return empty_landmark;
 
 }

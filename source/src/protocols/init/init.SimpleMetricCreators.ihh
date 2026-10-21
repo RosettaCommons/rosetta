@@ -33,6 +33,8 @@
 #include <core/pack/guidance_scoreterms/sap/SapScoreMetricCreator.hh>
 #include <core/pack/guidance_scoreterms/sap/PerResidueSapScoreMetricCreator.hh>
 
+#include <core/simple_metrics/per_residue_metrics/PerResidueBfactorMetricCreator.hh> // Added by CT 2 Feb 2024
+
 //Simple Metrics in Protocols should go into:
 // protocols/analysis/simple_metrics
 

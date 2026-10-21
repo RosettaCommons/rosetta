@@ -74,15 +74,30 @@ public:
 	/// @brief constructor with typename; reads the nloop_ value from the global options system.
 	PackRotamersMover( std::string const & );
 
+	/// @brief Constructs a PackRotamersMover with TaskFactory  <taskfactory>
+	/// evaluated using  <scorefxn>
+	///
+	/// ScoreFunction  scorefxn     /function to minimize while changine rotamers
+	/// TaskFactory    taskfactory  /object specifying what to design/pack
+	/// core::Size (int)     nloop  /number of rounds to run packing
+	PackRotamersMover(
+		ScoreFunctionCOP scorefxn,
+		TaskFactoryCOP task_factory = nullptr,
+		core::Size nloop = 1
+	);
+
 	/// @brief Constructs a PackRotamersMover with PackerTask  <task>
 	/// evaluated using  <scorefxn>
+	///
+	/// Note: The version with the TaskFactory is likely preferred,
+	/// unless you have reasons for using a fixed task.
 	///
 	/// ScoreFunction  scorefxn   /function to minimize while changine rotamers
 	/// PackerTask     task       /object specifying what to design/pack
 	/// core::Size (int)     nloop      /number of rounds to run packing
 	PackRotamersMover(
 		ScoreFunctionCOP scorefxn,
-		PackerTaskCOP task = nullptr,
+		PackerTaskCOP task,
 		core::Size nloop = 1
 	);
 

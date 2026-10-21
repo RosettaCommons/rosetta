@@ -1,0 +1,10 @@
+-parser:protocol inputs/design.xml
+-in:file:s "inputs/Abl_Inactive_A.pdb inputs/LIG_0001.fa.pdb"
+-extra_res_fa inputs/LIG.fa.params
+-parser:script_vars mutfrag="inputs/LIG.sdf"
+-parser:script_vars medchem_fragments="inputs/medchem_fragments"
+-nstruct 1
+-in:file:fullatom
+-restore_talaris_behavior
+-ignore_zero_occupancy false
+-linmem_ig 10

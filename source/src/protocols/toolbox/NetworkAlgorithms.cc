@@ -23,6 +23,7 @@
 // Utility headers
 
 //// C++ headers
+#include <limits.h> // For INT_MAX
 
 //Auto Headers
 

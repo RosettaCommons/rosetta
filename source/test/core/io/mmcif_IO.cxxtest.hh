@@ -31,9 +31,7 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <basic/Tracer.hh>
 
-#include <cifparse/CifFile.h>
-#include <cifparse/CifParserBase.h>
-#include <cifparse/ISTable.h>
+#include <gemmi/cif.hpp>
 
 typedef utility::pointer::shared_ptr< CifFile > CifFileOP;
 typedef utility::pointer::shared_ptr< CifParser > CifParserOP;
@@ -58,34 +56,34 @@ public:
 	}
 
 	void test_mmcif_input() {
-		// Of course cifparse isn't namespaced ...
-		std::string diagnostics; //output from the parser about errors, etc.
-		CifFileOP cifFile( new CifFile);
-		{
-			CifParserOP cifParser( new CifParser(cifFile.get()) );
-			cifParser->Parse("core/io/1QYS.cif", diagnostics);
-			if ( !diagnostics.empty() ) {
-				TR.Error << "Diagnostics:" << std::endl;
-				TR.Error << diagnostics << std::endl;
-			}
-			//cifParser no longer needed.
+		try {
+			gemmi::cif::Document cifdoc = gemmi::cif::read_file( "core/io/1QYS.cif" );
+
+			TS_ASSERT(cifdoc.blocks.size() > 0);
+			gemmi::cif::Block block = cifdoc.blocks[0];
+
+			gemmi::cif::Table entry = block.find("_entry.", {"id"});
+			TS_ASSERT( entry.size() > 0 );
+			std::string structure_id = gemmi::cif::as_string(entry[0][0]);
+			TS_ASSERT_EQUALS(structure_id, "1QYS");
+
+			gemmi::cif::Table poly = block.find("_entity_poly.", {"pdbx_seq_one_letter_code_can"});
+			TS_ASSERT( poly.size() > 0 );
+			std::string seq = gemmi::cif::as_string(poly[0][0]);
+			TR << "Sequence " << seq << std::endl;
+			TS_ASSERT_EQUALS(seq, "MGDIQVQVNIDDNGKNFDYTYTVTTESELQKVLNELMDYIKKQGAKRVRISITARTKKEAEKFAAILIKVFAELGYNDIN\nVTFDGDTVTVEGQLEGGSLEHHHHHH");
+
+			gemmi::cif::Table atoms = block.find("_atom_site.", {"label_atom_id"});
+			TR << "Number of atoms: " << atoms.size() << std::endl;
+			TS_ASSERT_EQUALS(atoms.size(), 692 );
+			std::string atom_2 = gemmi::cif::as_string(atoms[1][0]);
+			TR << "Atom #2 is: " << atom_2 << std::endl;
+			TS_ASSERT_EQUALS(atom_2, "CA" );
+		} catch (std::runtime_error const & e) {
+			TR.Error << "Diagnostics:" << std::endl;
+			TR.Error << e.what() << std::endl;
+			TS_ASSERT(false);
 		}
-		Block& block = cifFile->GetBlock(cifFile->GetFirstBlockName());
-		ISTable& entry = block.GetTable("entry");
-		std::string structure_id = entry(0, "id");
-		TS_ASSERT_EQUALS(structure_id, "1QYS");
-
-		ISTable& poly = block.GetTable("entity_poly");
-		std::string seq = poly(0, "pdbx_seq_one_letter_code_can");
-		TR << "Sequence " << seq << std::endl;
-		TS_ASSERT_EQUALS(seq, "MGDIQVQVNIDDNGKNFDYTYTVTTESELQKVLNELMDYIKKQGAKRVRISITARTKKEAEKFAAILIKVFAELGYNDIN\nVTFDGDTVTVEGQLEGGSLEHHHHHH");
-
-		ISTable& atoms = block.GetTable("atom_site");
-		TS_ASSERT_EQUALS(atoms.GetNumRows(), 692 );
-		TR << "Number of atoms: " << atoms.GetNumRows() << std::endl;
-		std::string atom_2 = atoms(1, "label_atom_id");
-		TS_ASSERT_EQUALS(atom_2, "CA" );
-		TR << "Atom #2 is: " << atom_2 << std::endl;
 	}
 
 	void test_mmcif_vs_pdb_input() {

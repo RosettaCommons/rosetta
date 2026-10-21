@@ -22,6 +22,7 @@
 
 // C++ Headers
 #include <ostream>
+#include <tuple>
 
 #include <utility/assert.hh> // AUTO IWYU For debug_assert
 
@@ -44,17 +45,10 @@ ClaimStrength::ClaimStrength( ClaimStrength const& src ) :
 
 
 bool ClaimStrength::operator< ( ClaimStrength const& other ) const {
-	if ( other.subtype_ < subtype_ ) {
-		return true;
-	} else if ( other.subtype_ > subtype_ ) {
-		return false;
-	} else {
-		if ( other.subprio_ < subprio_ ) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+	// Operands were reversed: the previous implementation returned true exactly
+	// when *this was lexicographically greater than other in (subtype_, subprio_),
+	// so the operator was fully inverted relative to its name and to operator==.
+	return std::tie( subtype_, subprio_ ) < std::tie( other.subtype_, other.subprio_ );
 }
 
 

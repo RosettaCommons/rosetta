@@ -108,9 +108,6 @@ void throw_exception(std::exception const&) {
 namespace utility {
 namespace tag {
 
-/// @details Auto-generated virtual destructor
-Tag::~Tag() = default;
-
 using namespace std;
 
 utility::vector0<TagCOP> const Tag::vEmpty_; // need to return this from getTags
@@ -745,7 +742,8 @@ void Tag::read( std::string const & str ) {
 
 	TagOP tag; // don't need to initialize this at all
 	tag_grammar g;
-	bool full = parse(begin, end, g[ var(tag) = arg1 ] ).full;
+	auto parsed = parse(begin, end, g[ var(tag) = arg1 ] ); // on a separate line to get around GCC 3.12 peculiarities
+	bool full = parsed.full;
 
 	if ( tag && full ) {
 		*this = *tag;

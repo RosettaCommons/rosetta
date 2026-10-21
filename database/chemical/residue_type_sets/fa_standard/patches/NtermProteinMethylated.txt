@@ -327,6 +327,41 @@ DELETE_PROPERTY CANONICAL_NUCLEIC
 END_CASE
 
 
+BEGIN_CASE ### CA SP2 CASE ##########################################
+
+BEGIN_SELECTOR
+NAME3 DBU DHA
+END_SELECTOR
+
+## these are the operations involved
+DELETE_ATOM H ## deletes all bonds to this atom
+ADD_ATOM H   Hpol HC 0.193
+ADD_BOND N H
+#Borrow and adjust charges from A82 to 0.193
+ADD_ATOM 1C   CH3 CT3 -0.2
+ADD_ATOM 1CH1 Hapo HA 0.131
+ADD_ATOM 1CH2 Hapo HA 0.131
+ADD_ATOM 1CH3 Hapo HA 0.131
+ADD_BOND N 1C
+ADD_BOND 1C 1CH1
+ADD_BOND 1C 1CH2
+ADD_BOND 1C 1CH3
+
+## 5/23/2013 sp2 bond angles (60), planat hydrogen placement (1H 180)
+SET_ICOOR H 180 60.0 1 N CA C
+SET_ICOOR 1C 180 70.5 1.45 N CA H
+SET_ICOOR 1CH1  -84.044006   71.360284    1.082267 1C N CA
+SET_ICOOR 1CH2  122.078056   66.682399    1.083159 1C N 1CH1
+SET_ICOOR 1CH3  120.977283   71.438584    1.084823 1C N 1CH2
+
+SET_ATOMIC_CHARGE H 0.193
+
+SET_POLYMER_CONNECT LOWER NONE
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+
 BEGIN_CASE ## ALPHA-METHYL-PROLINE #################################################
 
 ## these define which residues match this case

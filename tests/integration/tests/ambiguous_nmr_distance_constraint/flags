@@ -1,0 +1,6 @@
+-parser:protocol inputs/test.xml
+-nstruct 1
+-in:file:s inputs/6VLJ.pdb
+-inout:write_all_connect_info
+-inout:connect_info_cutoff 0.0
+-output_virtual true

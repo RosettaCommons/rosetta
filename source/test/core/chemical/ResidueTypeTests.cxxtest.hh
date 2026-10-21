@@ -33,10 +33,15 @@
 #include <core/chemical/residue_io.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/residue_support.hh>
+#include <core/chemical/Patch.hh>
 
 #include <core/chemical/sdf/mol_writer.hh>
 
+#include <core/conformation/Residue.hh>
+#include <core/conformation/ResidueFactory.hh>
+
 #include <core/pose/Pose.hh>
+#include <core/pose/annotated_sequence.hh>
 
 #include <core/kinematics/Stub.hh>
 
@@ -93,6 +98,7 @@ void add_atom(
 	rsd.add_atom( name, type, mm_type, charge);
 
 	TS_ASSERT_EQUALS(rsd.natoms(), natoms);
+	TS_ASSERT_EQUALS(rsd.nheavyatoms(), nheavyatoms);
 }
 
 void add_bond(core::chemical::MutableResidueType & rsd, std::string const& a1, std::string const& a2){
@@ -654,6 +660,19 @@ public:
 		TS_ASSERT_EQUALS(check_that_get_bond_and_get_connecting_atoms_works[2], target);
 
 
+	}
+
+	void test_bad_atom_ordering(){
+		core::pose::Pose pose;
+		core::pose::make_pose_from_sequence( pose, "TESTMYIDEAPLEASE", "fa_standard" );
+		core::Size const resid = 4;
+		core::conformation::Residue const & r = pose.residue(resid);
+		core::chemical::Patch patch;
+		patch.read_file( "core/chemical/bad_atom_ordering.patch" );
+		utility::vector1< core::chemical::VariantType > types;
+		patch.types( types );
+		auto mutable_type = patch.apply( r.type() );
+		TS_ASSERT_THROWS_ANYTHING( auto res_type = core::chemical::ResidueType::make( *mutable_type ); )
 	}
 
 };

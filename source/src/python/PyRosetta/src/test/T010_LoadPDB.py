@@ -12,45 +12,116 @@
 ## @brief  Serve as example on how to import rosetta, load pdb and as script that create database
 ## @brief        binaries on windows.
 ## @author Sergey Lyskov
+## @author Jason C. Klima
 
 from __future__ import print_function
 
+import os
 import pyrosetta
 import pyrosetta.rosetta as rosetta
+import tempfile
+import unittest
 
-pyrosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
-import os; os.chdir('.test.output')
-
-print( pyrosetta.version() )
-
-pose = rosetta.core.import_pose.pose_from_file("../test/data/test_in.pdb")
-
-scorefxn = rosetta.core.scoring.get_score_function()
-scorefxn(pose)
+try:
+    import lzma as xz
+    _skip_xz = False
+except ImportError:
+    _skip_xz = True
 
 
-pose2 = pyrosetta.pose_from_sequence("ARNDCEQGHILKMFPSTWYV", 'fa_standard')
+class LoadPDBTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        pyrosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+        print( pyrosetta.version() )
+        cls.pose = pyrosetta.pose_from_sequence("DSEEKFLRRIGRFGYGYGPYE")
+        cls.scorefxn = rosetta.core.scoring.get_score_function()
+        cls.workdir = tempfile.TemporaryDirectory()
 
-scorefxn = rosetta.core.scoring.get_score_function()
-scorefxn(pose2)
+    @classmethod
+    def tearDownClass(cls):
+        cls.workdir.cleanup()
+
+    def test_load_pdb(self):
+        import pyrosetta
+
+        os.chdir('.test.output')
+        pose = rosetta.core.import_pose.pose_from_file("../test/data/test_in.pdb")
+
+        scorefxn = rosetta.core.scoring.get_score_function()
+        scorefxn(pose)
 
 
-pose3 = pyrosetta.pose_from_sequence("DSEEKFLRRIGRFGYGYGPYE",'centroid')
+        pose2 = pyrosetta.pose_from_sequence("ARNDCEQGHILKMFPSTWYV", 'fa_standard')
 
-# Creating standard centroid score function and scoring
-scorefxn = rosetta.core.scoring.ScoreFunctionFactory.create_score_function('score3')
-scorefxn(pose3)
-
-pose_fs = pyrosetta.pose_from_sequence("DSEEKFLRRIGRFGYGYGPYE")
-pose_fs.delete_polymer_residue(2)  # Testing that attached PDB info have right size...
+        scorefxn = rosetta.core.scoring.get_score_function()
+        scorefxn(pose2)
 
 
-poses = pyrosetta.poses_from_silent('../test/data/test_in.silent')
-for pose in poses:
-    scorefxn = rosetta.core.scoring.get_score_function()
-    scorefxn(pose)
+        pose3 = pyrosetta.pose_from_sequence("DSEEKFLRRIGRFGYGYGPYE",'centroid')
 
-import pyrosetta.toolbox
+        # Creating standard centroid score function and scoring
+        scorefxn = rosetta.core.scoring.ScoreFunctionFactory.create_score_function('score3')
+        scorefxn(pose3)
 
-# commenting this out for now to avoid release failures during debug builds when network is out
-# pyrosetta.toolbox.pose_from_rcsb('1brs')
+        pose_fs = pyrosetta.pose_from_sequence("DSEEKFLRRIGRFGYGYGPYE")
+        pose_fs.delete_polymer_residue(2)  # Testing that attached PDB info have right size...
+
+
+        poses = pyrosetta.poses_from_silent('../test/data/test_in.silent')
+        for pose in poses:
+            scorefxn = rosetta.core.scoring.get_score_function()
+            scorefxn(pose)
+
+        import pyrosetta.toolbox
+
+        # commenting this out for now to avoid release failures during debug builds when network is out
+        # pyrosetta.toolbox.pose_from_rcsb('1brs')
+
+    @unittest.skipIf(_skip_xz, "The package 'xz' is not installed.")
+    def test_roundtrip_pdb(self):
+        for ext in (".pdb", ".pdb.bz2", ".bz2", ".pdb.gz", ".gz", ".pdb.xz", ".xz"):
+            pdb_file = os.path.join(self.workdir.name, "tmp_pdb{0}".format(ext))
+            pyrosetta.dump_pdb(self.pose, pdb_file)
+            pose_out = pyrosetta.pose_from_file(pdb_file)
+            self.assertEqual(pose_out.size(), self.pose.size())
+
+    @unittest.skipIf(_skip_xz, "The package 'xz' is not installed.")
+    def test_roundtrip_scored_pdb(self):
+        for ext in (".pdb", ".pdb.bz2", ".bz2", ".pdb.gz", ".gz", ".pdb.xz", ".xz"):
+            pdb_file = os.path.join(self.workdir.name, "tmp_scored_pdb{0}".format(ext))
+            pyrosetta.dump_scored_pdb(self.pose, pdb_file, self.scorefxn)
+            pose_out = pyrosetta.pose_from_file(pdb_file)
+            self.assertEqual(pose_out.size(), self.pose.size())
+
+    def test_roundtrip_file(self):
+        for ext in (".cif", ".mmcif", ".mmtf"):
+            pdb_file = os.path.join(self.workdir.name, "tmp_file{0}".format(ext))
+            pyrosetta.dump_file(self.pose, pdb_file)
+            pose_out = pyrosetta.pose_from_file(pdb_file)
+            self.assertEqual(pose_out.size(), self.pose.size())
+            if ext in (".cif", ".mmcif"):
+                pyrosetta.dump_cif(self.pose, pdb_file)
+            elif ext == ".mmtf":
+                pyrosetta.dump_mmtf(self.pose, pdb_file)
+            else:
+                continue
+            pose_out = pyrosetta.pose_from_file(pdb_file)
+            self.assertEqual(pose_out.size(), self.pose.size())
+
+    def test_pdbstring_io(self):
+        self.assertIn("ATOM", pyrosetta.io.to_pdbstring(self.pose))
+        pose_out = pyrosetta.io.pose_from_pdbstring(pyrosetta.io.to_pdbstring(self.pose))
+        self.assertEqual(pose_out.size(), self.pose.size())
+        pose = pyrosetta.Pose()
+        pdbstring = pyrosetta.io.to_pdbstring(self.pose)
+        pose_out = pyrosetta.io.pose_from_pdbstring(pose, pdbstring)
+        self.assertEqual(pose_out.size(), self.pose.size())
+        pose_out = pyrosetta.io.pose_from_pdbstring(pose=pose, pdbcontents=pdbstring)
+        self.assertEqual(pose_out.size(), self.pose.size())
+        pose = pyrosetta.Pose()
+        pose_out = pyrosetta.io.pose_from_pdbstring(pdbstring, pose)
+        self.assertEqual(pose_out.size(), self.pose.size())
+
+if __name__ == "__main__":
+    unittest.main()

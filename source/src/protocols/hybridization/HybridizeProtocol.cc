@@ -79,6 +79,7 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
+#include <core/conformation/carbohydrates/util.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -738,7 +739,7 @@ void HybridizeProtocol::add_template(
 	std::string const & cst_fn,
 	std::string const & symm_file,
 	core::Real const weight,
-	utility::vector1<char> const & randchains,
+	utility::vector1<std::string> const & randchains,
 	bool const align_pdb_info)
 {
 	core::chemical::ResidueTypeSetCOP const residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
@@ -771,7 +772,7 @@ void HybridizeProtocol::add_null_template(
 	template_weights_.push_back(weight);
 	template_chunks_.push_back(protocols::loops::Loops());
 	template_contigs_.push_back(protocols::loops::Loops());
-	randomize_chains_.push_back(utility::vector1<char>(0));
+	randomize_chains_.push_back(utility::vector1<std::string>());
 }
 
 void HybridizeProtocol::add_template(
@@ -779,7 +780,7 @@ void HybridizeProtocol::add_template(
 	std::string const & cst_fn,
 	std::string const & symm_file,
 	core::Real const weight,
-	utility::vector1<char> const & rand_chains,
+	utility::vector1<std::string> const & rand_chains,
 	std::string const & filename,
 	bool const align_pdb_info)
 {
@@ -1214,7 +1215,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			}
 
 			for ( core::Size i=1; i<=templates_[initial_template_index]->size(); ++i ) {
-				char chain = templates_[initial_template_index]->pdb_info()->chain(i);
+				std::string chain = templates_[initial_template_index]->pdb_info()->chain(i);
 				if ( std::find(
 						randomize_chains_[initial_template_index].begin(),
 						randomize_chains_[initial_template_index].end(),
@@ -1255,7 +1256,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 				for ( core::Size i=1; i<=templates_[initial_template_index]->size(); ++i ) {
 					core::conformation::Residue const & rsd_i = template_orig.residue(i);
-					char chain = templates_[initial_template_index]->pdb_info()->chain(i);
+					std::string chain = templates_[initial_template_index]->pdb_info()->chain(i);
 					if ( std::find(
 							randomize_chains_[initial_template_index].begin(),
 							randomize_chains_[initial_template_index].end(),
@@ -1292,12 +1293,48 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			for ( core::Size ires=1; ires <= templates_[initial_template_index]->size(); ++ires ) {
 				if ( templates_[initial_template_index]->pdb_info()->number(ires) > (int)nres_tgt ) {
 					TR.Debug << "Insert hetero residue: " << templates_[initial_template_index]->residue(ires).name3() << std::endl;
-					if ( templates_[initial_template_index]->residue(ires).is_polymer()
+					if ( templates_[initial_template_index]->residue(ires).is_carbohydrate() ) {
+						if ( !templates_[initial_template_index]->residue(ires).is_lower_terminus() ) {
+							core::Size offset = pose.size() + 1 - ires;
+							core::Size parent_res_seqpos( conformation::carbohydrates::find_seqpos_of_saccharides_parent_residue( templates_[initial_template_index]->residue(ires) ) );
+							int self_lower=0;
+							int parent_upper=0;
+							//self_lower = templates_[initial_template_index]->residue(ires).lower_connect_id();
+							//parent_upper = templates_[initial_template_index]->residue(parent_res_seqpos).connect_atom( templates_[initial_template_index]->residue(ires) );
+							for ( core::Size i(1); i <= templates_[initial_template_index]->residue(ires).connect_map_size(); ++i ) {
+								TR.Debug<<"     "<<i<<" "<<templates_[initial_template_index]->residue(ires).residue_connection_partner(i)<<" "<<templates_[initial_template_index]->residue(ires).residue_connection_conn_id(i)<<std::endl;
+								if ( templates_[initial_template_index]->residue(ires).connect_map( i ).resid() == parent_res_seqpos ) {
+									//self_lower = templates_[initial_template_index]->residue(ires).connect_map( i ).connid();
+									self_lower = i;
+									parent_upper=templates_[initial_template_index]->residue(ires).connect_map( i ).connid();
+									//parent_upper=templates_[initial_template_index]->residue(ires).residue_connection_conn_id(i);
+								}
+							}
+							parent_res_seqpos += offset;
+							TR.Debug <<"  appending by bond "<<pose.size()+1<<" lower "<<self_lower<<" anchor "<<parent_res_seqpos<<" parent upper "<<parent_upper<<std::endl;
+							pose.append_residue_by_bond(templates_[initial_template_index]->residue(ires), false, self_lower, parent_res_seqpos, parent_upper, false, false);
+						} else {
+							TR.Debug <<"  appending by jump "<<ires<<" is Polymer "<<templates_[initial_template_index]->residue(ires).is_polymer()<<" is Lower "<<templates_[initial_template_index]->residue(ires).is_lower_terminus()<<" is Upper "<<pose.residue(pose.size()).is_upper_terminus()<<std::endl;
+							for ( core::Size i(1); i <= templates_[initial_template_index]->residue(ires).connect_map_size(); ++i ) {
+								TR.Debug<<"     "<<i<<" "<<templates_[initial_template_index]->residue(ires).residue_connection_partner(i)<<" "<<templates_[initial_template_index]->residue(ires).residue_connection_conn_id(i)<<std::endl;
+							}
+							pose.append_residue_by_jump(templates_[initial_template_index]->residue(ires), 1);
+
+						}
+					} else if ( templates_[initial_template_index]->residue(ires).is_polymer()
 							&& !templates_[initial_template_index]->residue(ires).is_lower_terminus()
 							&& !pose.residue(pose.size()).is_upper_terminus() ) {
+						TR.Debug <<"  appending by bond "<<ires<<std::endl;
 						pose.append_residue_by_bond(templates_[initial_template_index]->residue(ires));
+						for ( core::Size i(1); i <= templates_[initial_template_index]->residue(ires).connect_map_size(); ++i ) {
+							TR.Debug<<"     "<<i<<" "<<templates_[initial_template_index]->residue(ires).residue_connection_partner(i)<<" "<<templates_[initial_template_index]->residue(ires).residue_connection_conn_id(i)<<std::endl;
+						}
 					} else {
+						TR.Debug <<"  appending by jump "<<ires<<" is Polymer "<<templates_[initial_template_index]->residue(ires).is_polymer()<<" is Lower "<<templates_[initial_template_index]->residue(ires).is_lower_terminus()<<" is Upper "<<pose.residue(pose.size()).is_upper_terminus()<<std::endl;
 						pose.append_residue_by_jump(templates_[initial_template_index]->residue(ires), 1);
+						for ( core::Size i(1); i <= templates_[initial_template_index]->residue(ires).connect_map_size(); ++i ) {
+							TR.Debug<<"     "<<i<<" "<<templates_[initial_template_index]->residue(ires).residue_connection_partner(i)<<" "<<templates_[initial_template_index]->residue(ires).residue_connection_conn_id(i)<<std::endl;
+						}
 					}
 					hetatms.push_back( std::make_pair( ires, pose.size() ) );
 				}
@@ -2046,15 +2083,10 @@ HybridizeProtocol::parse_my_tag(
 			std::string const symm_file = (*tag_it)->getOption<std::string>( "symmdef", "" );
 
 			// randomize some chains
-			utility::vector1< char > rand_chains;
+			utility::vector1< std::string  > rand_chains;
 			if ( (*tag_it)->hasOption( "randomize" ) ) {
 				std::string rand_chain_str = (*tag_it)->getOption<std::string>( "randomize", "" );
-				utility::vector1< std::string > rand_chain_strs = utility::string_split( rand_chain_str, ',');
-				for ( core::Size j = 1; j<=rand_chain_strs.size(); ++j ) {
-					if ( rand_chain_strs[j].length() != 0 ) {
-						rand_chains.push_back( rand_chain_strs[j][0] );
-					}
-				}
+				rand_chains = utility::string_split( rand_chain_str, ',');
 			}
 			bool const align_pdb_info = (*tag_it)->getOption<bool>( "auto_align", true );
 			add_template(template_fn, cst_fn, symm_file, weight, rand_chains, align_pdb_info);

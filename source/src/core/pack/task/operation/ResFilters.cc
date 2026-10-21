@@ -672,7 +672,7 @@ ResiduePDBIndexIs::ResiduePDBIndexIs()
 : parent()
 {}
 
-ResiduePDBIndexIs::ResiduePDBIndexIs( char chain, int pos )
+ResiduePDBIndexIs::ResiduePDBIndexIs( std::string const & chain, int pos )
 : parent()
 {
 	indices_.push_back( ChainPos(chain,pos) );
@@ -711,7 +711,7 @@ void ResiduePDBIndexIs::parse_tag( TagCOP tag )
 			// split pdb chain.pos token by '.'
 			utility::vector1< std::string > chainposstr( utility::string_split( value, '.' ) );
 			if ( chainposstr.size() != 2 ) utility_exit_with_message("can't parse pdb index " + value);
-			char chain( *chainposstr.front().begin() );
+			std::string chain( chainposstr.front() );
 			std::istringstream ss( chainposstr.back() );
 			int pdbnum;
 			ss >> pdbnum;
@@ -769,7 +769,7 @@ ResiduePDBIndexIsnt::ResiduePDBIndexIsnt()
 : parent()
 {}
 
-ResiduePDBIndexIsnt::ResiduePDBIndexIsnt( char chain, int pos )
+ResiduePDBIndexIsnt::ResiduePDBIndexIsnt( std::string const & chain, int pos )
 : parent( chain, pos )
 {}
 
@@ -807,7 +807,7 @@ ChainIs::ChainIs()
 : parent()
 {}
 
-ChainIs::ChainIs( char const chain )
+ChainIs::ChainIs( std::string const & chain )
 : parent(),
 	chain_( chain )
 {}
@@ -825,7 +825,7 @@ ResFilterOP ChainIs::clone() const { return utility::pointer::make_shared< Chain
 
 void ChainIs::parse_tag( TagCOP tag )
 {
-	chain_ = tag->getOption<char>("chain", 'A');
+	chain_ = tag->getOption<std::string>("chain", "A");
 }
 
 std::string ChainIs::keyname() { return "ChainIs"; }
@@ -835,18 +835,12 @@ void ChainIs::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 }
 
 utility::tag::AttributeList
-ChainIs::get_xml_schema_attributes( utility::tag::XMLSchemaDefinition & xsd )
+ChainIs::get_xml_schema_attributes( utility::tag::XMLSchemaDefinition & )
 {
 	using namespace utility::tag;
-	XMLSchemaRestriction chain_character;
-	chain_character.name( "chain_character" );
-	chain_character.base_type( xs_string );
-	chain_character.add_restriction( xsr_pattern, "[a-zA-Z]" );
-
-	xsd.add_top_level_element( chain_character );
 
 	AttributeList attributes;
-	attributes + XMLSchemaAttribute::required_attribute( "chain", "chain_character" , "Select chain by chain ID." );
+	attributes + XMLSchemaAttribute::required_attribute( "chain", xs_string , "Select chain by chain ID." );
 	return attributes;
 }
 
@@ -867,7 +861,7 @@ ChainIsnt::ChainIsnt()
 : parent()
 {}
 
-ChainIsnt::ChainIsnt( char const chain )
+ChainIsnt::ChainIsnt( std::string const & chain )
 : parent( chain )
 {}
 

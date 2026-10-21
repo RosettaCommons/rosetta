@@ -70,7 +70,7 @@ pnear_to_lowest = None
 in_table = False
 for line in logfile_contents:
     try:
-        sline = line.split():
+        sline = line.split()
         if in_table:
             if line.startswith("End summary"):
                 in_table = False
@@ -78,6 +78,8 @@ for line in logfile_contents:
             rmsd_vals.append( float(sline[2]) )
             rmsd_vals_to_lowest.append( float(sline[3]) )
             energy_vals.append( float(sline[4]) )
+        elif len(sline) == 0:
+            continue # Ignore blank line
         elif sline[0] == "MPI_worker_node":
             in_table = True
             continue

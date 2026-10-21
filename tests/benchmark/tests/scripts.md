@@ -20,7 +20,7 @@ When you add an XML file to the repository, you should list it in one (and only 
 There are four kinds of scripts that would be listed in the untested_scripts.py file:
  -- xmls that are xi:included into other scripts, and cannot independently be tested (because they are incomplete)
  -- scripts that are now out of date and that cannot be trivially updated with the rewriter,
- -- scripts that rely on code that has not yet been merged into master, and
+ -- scripts that rely on code that has not yet been merged into the `main` branch, and
  -- scripts that are symlinked to from the integration test directory as part of a full integration test and that don't need additional testing.
 
 -----

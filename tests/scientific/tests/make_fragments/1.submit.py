@@ -115,7 +115,7 @@ if not os.path.isdir(frag_db_prefix): pathlib.Path(frag_db_prefix).mkdir(exist_o
 
 seqres_fn = os.path.join(frag_db_prefix, "pdb_seqres.txt")
 if not os.path.isfile(seqres_fn):
-    with closing(request.urlopen("ftp://ftp.rcsb.org/pub/pdb/derived_data/pdb_seqres.txt")) as r:
+    with closing(request.urlopen("https://files.rcsb.org/pub/pdb/derived_data/pdb_seqres.txt")) as r:
             with open(seqres_fn, 'wb') as f:
                         shutil.copyfileobj(r, f)
     # subprocess.call(["curl", "ftp://ftp.rcsb.org/pub/pdb/derived_data/pdb_seqres.txt", "-o", seqres_fn])

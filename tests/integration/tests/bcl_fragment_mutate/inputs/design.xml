@@ -1,0 +1,133 @@
+<ROSETTASCRIPTS>
+    	<SCOREFXNS>
+    		# Talaris2014 score functions are more suited for protein-ligand interactions 
+    		# than REF2015 (https://journals.plos.org/plosone/article/authors?id=10.1371/journal.pone.0240450)
+		<ScoreFunction name="t14" weights="talaris2014"/>
+	        <ScoreFunction name="t14w" weights="talaris2014">
+                        <Reweight scoretype="coordinate_constraint" weight="1.0"/>
+                </ScoreFunction>
+	        <ScoreFunction name="t14c" weights="talaris2014_cart">
+                        <Reweight scoretype="coordinate_constraint" weight="1.0"/>
+                </ScoreFunction>
+    	</SCOREFXNS>
+        <RESIDUE_SELECTORS>
+		# Residue selector for our small.neutralize molecule
+		<Chain name="ligand" chains="X"/>
+		# The receptor
+		<Not name="receptor" selector="ligand"/>
+		# The ligand and all neighboring residues
+		<Neighborhood name="interface" selector="ligand" distance="8"/>
+		# All residues outside of the protein-ligand interface
+		<Not name="not_interface" selector="interface"/>
+        </RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+                # Turn off design but allow repacking
+		<RestrictToRepacking name="rtrp"/>
+	    	# Repack the interface
+                <OperateOnResidueSubset name="repack_interface" selector="interface" >
+                        <RestrictToRepackingRLT/>
+                </OperateOnResidueSubset>
+                # Keep non-interface residues rigid
+                <OperateOnResidueSubset name="fix_notinterface" selector="not_interface" >
+                        <PreventRepackingRLT/>
+                </OperateOnResidueSubset>
+	</TASKOPERATIONS>
+        <SIMPLE_METRICS>
+        	# We do not specify any SimpleMetrics for this demo, but in the selectivity design demo they are critical.
+        </SIMPLE_METRICS>
+	<MOVERS>
+		# Constraint movers
+        	<AddConstraintsToCurrentConformationMover name="cst" coord_dev="1.0" CA_only="0" bb_only="1"/>
+		<ClearConstraintsMover name="uncst"/>
+		<AtomCoordinateCstMover name="relax_cst" coord_dev="1.0" bounded="false" bound_width="0" 
+		sidechain="true" native="false" func_groups="false"/>
+	
+		# Minimization movers
+		<MinMover name="min" scorefxn="t14w" chi="true" bb="true" cartesian="false" type="lbfgs_armijo_nonmonotone"/>
+		<ParsedProtocol name="min_cycle">
+                        <Add mover_name="cst"/>
+                        <Add mover_name="min"/>
+                        <Add mover_name="uncst"/>
+                </ParsedProtocol>	
+
+		# Relax
+		<VirtualRoot name="root" removable="1" />
+		<VirtualRoot name="remove" remove="1" />
+		<FastRelax name="relax" scorefxn="t14w" ramp_down_constraints="false" repeats="1" task_operations="rtrp,repack_interface,fix_notinterface"/>
+		<ParsedProtocol name="relax_cycle">
+                        <Add mover_name="root"/>
+                        <Add mover_name="relax_cst"/>
+                        <Add mover_name="min"/>
+                        <Add mover_name="remove"/>
+                        <Add mover_name="uncst"/>
+                </ParsedProtocol>	
+
+		##########################################################################################################
+		#                                       Start BCL Drug Design Movers                                     #
+		##########################################################################################################
+
+		<BCLFragmentMutateMover name="extend_with_linker" 
+		ligand_chain="X" 
+		object_data_label="ExtendWithLinker(
+		ov_reverse=True,ov_shuffle_h=False,	
+		ring_library=%%rotamer_library%%/ring_libraries/drug_ring_database.simple.aro.small.sdf.gz, 
+		extend_within_prob=0.0,direct_link_prob=100000,
+		druglikeness_type=None,
+		mutable_atoms=18)"
+		/>
+
+		<BCLFragmentMutateMover name="halogenate_core" 
+		ligand_chain="X" 
+		object_data_label="Halogenate(
+		druglikeness_type=None,
+		mutable_atoms=11 12 13 14 15,
+		reversible=1,
+		allowed_halogens=F Cl)"
+		/>
+		
+		<BCLFragmentMutateMover name="alchemy_core" 
+		ligand_chain="X" 
+		object_data_label="Alchemy(
+		druglikeness_type=None,
+		mutable_atoms=11 12 13 14 15,
+		allowed_elements=C,
+		restrict_to_bonded_h=1)"
+		/>
+		
+		##########################################################################################################
+		#                                         End BCL Drug Design Movers                                     #
+		##########################################################################################################
+		
+		# Protein-ligand interaction energy
+		<InterfaceScoreCalculator name="add_scores" chains="X" scorefxn="t14" compute_grid_scores="0" />
+
+		# Full protocol
+		<ParsedProtocol name="run" mode="sequence">
+			# Minimize the ligand scaffold in the receptor binding pocket;
+			# Note that in a production setting you would probably want to do this minimization or
+			# relax step first prior to running design so that you do not have to re-run it for each
+			# pose you expect to get from nstruct (i.e., if nstruct=10 you only want to do this 1x
+			# instead of 10x)
+			<Add mover_name="min_cycle"/>
+
+			# Design on the ligand scaffold
+			<Add mover_name="extend_with_linker"/>
+			<Add mover_name="alchemy_core"/>
+			<Add mover_name="halogenate_core"/>
+			
+			# Relax the new design
+			<Add mover_name="relax_cycle"/>
+			
+			# Score the final complex
+			<Add mover_name="add_scores"/>
+		</ParsedProtocol>
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		# I could have made the "run" ParsedProtocol just a sequence of Movers and Filters here, but 
+		# personally I prefer to keep this section simple. Feel free to do whatever you like to do.
+        	<Add mover_name="run"/>
+	</PROTOCOLS>
+	<OUTPUT />
+</ROSETTASCRIPTS>

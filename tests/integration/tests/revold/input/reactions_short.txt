@@ -1,0 +1,4 @@
+reaction_id	components	Reaction
+amide_formation	2	[*:5][C:1](=[O:2])[Cl:3].[NX3;H2;!$(NC=*):4][C:0]>>[*:5][C:1](=[O:2])[NH:4][C:0]
+ether_formation	2	[CX4;!$(C=*):1][Cl].[OX2H:4][CX4;!$(C=O):2]>>[C:1][O:4][C:2]
+reduc_amination	2	[NX3;H2:1][c:2].[c:3][CH:4]=[OX1]>>[c:2][NH:1][CH2:4][c:3]

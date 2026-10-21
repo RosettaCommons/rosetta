@@ -962,6 +962,30 @@ ADD_PROPERTY LOWER_TERMINUS ## implies terminus
 END_CASE
 
 
+BEGIN_CASE ### CA SP2 CASE ##########################################
+
+BEGIN_SELECTOR
+NAME3 DBU DHA
+END_SELECTOR
+
+## these are the operations involved
+DELETE_ATOM H ## deletes all bonds to this atom
+ADD_ATOM 1H   Hpol HC 0.193
+ADD_ATOM 2H   Hpol HC 0.193
+ADD_BOND N 1H
+ADD_BOND N 2H
+
+## 5/23/2013 sp2 bond angles (60), planat hydrogen placement (1H 180)
+#SET_ICOOR N -180.0 61.499098 1.431991 CA C O
+SET_ICOOR 1H 180 60.0 1 N CA C
+SET_ICOOR 2H 180 60.0 1 N CA 1H
+
+SET_POLYMER_CONNECT LOWER NONE
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+
 BEGIN_CASE ### THE GENERAL CASE ##########################################
 
 ## these are the operations involved

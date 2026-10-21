@@ -93,8 +93,8 @@ public:
 
 
 private:
-	OrbitalsStatistics(OrbitalsStatistics const & );  /// Non-copyable due to std::ofstream member, we need so PyRosetta builder
-	/// can figure out not to try to create copy constructor.
+	OrbitalsStatistics( OrbitalsStatistics const & ) = delete;
+	OrbitalsStatistics & operator=( OrbitalsStatistics const & ) = delete;
 
 	utility::vector1< numeric::histograms::TwoDHistogram<core::Size, core::SSize> > histogram_vector_;
 	numeric::histograms::TwoDHistogram<core::Size, core::SSize> twoD_histogram_;

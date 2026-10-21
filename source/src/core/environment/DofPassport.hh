@@ -97,7 +97,7 @@ private:
 
 	DofPassport( std::string const & mover, Size env_id);
 
-	DofPassport( DofPassport const& );
+	DofPassport( DofPassport const& ) = delete;
 
 	//General code used by most (all?) access checks.
 	bool access_check( EnvCore const& env, bool type_specific_check ) const;

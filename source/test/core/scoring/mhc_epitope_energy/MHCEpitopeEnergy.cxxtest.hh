@@ -421,6 +421,8 @@ public:
 			}
 		}
 
+		TS_ASSERT_LESS_THAN_EQUALS( num_init_asp, pose.size() );
+
 		// Setup rotamer sets
 		RotamerSetsOP rotsets( utility::pointer::make_shared<RotamerSets>() );
 		rotsets->set_task( task );

@@ -1,0 +1,9 @@
+## the atom_type_set and mm-atom_type_set to be used for the subsequent paramet$
+TYPE_SET_MODE full_atom
+ATOM_TYPE_SET fa_standard
+ELEMENT_SET default
+MM_ATOM_TYPE_SET fa_standard
+ORBITAL_TYPE_SET fa_standard
+##
+## Test params files 
+suvorexant.params

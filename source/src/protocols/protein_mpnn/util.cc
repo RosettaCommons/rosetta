@@ -11,7 +11,7 @@
 /// @brief Utility functions for ProteinMPNN
 /// @author Brian Koepnick (koepnick@uw.edu)
 
-#ifdef USE_PYTORCH
+#ifdef USE_TORCH
 
 #include <protocols/protein_mpnn/util.hh>
 
@@ -296,4 +296,4 @@ seqs_from_tensor( const torch::Tensor & seq_t, core::Size num_res, core::Size ba
 } //protein_mpnn
 } //protocols
 
-#endif //USE_PYTORCH
+#endif //USE_TORCH

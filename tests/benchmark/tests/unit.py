@@ -16,8 +16,9 @@ import os, json, functools
 import codecs
 import pprint
 
-import imp
-imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
+# A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
+import importlib.util, sys
+importlib.util.spec_from_file_location(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py').loader.exec_module(sys.modules[__name__])
 
 _api_version_ = '1.1'
 
@@ -75,9 +76,11 @@ def run_test_suite(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
         compiler = platform['compiler']
         extras   = ','.join(platform['extras'])
 
+        python_exe = local_python_install(platform, config).python # Will install a local python
+
         if platform['os'].startswith('aarch64') and '--timeout' not in additional_flags: additional_flags += ' --timeout 480'
 
-        command_line = 'cd {}/source && test/run.py --verbose --compiler={compiler} --mode={mode} --extras={extras} -j{jobs} --mute all {additional_flags}'.format(rosetta_dir, jobs=jobs, compiler=compiler, extras=extras, mode=mode, additional_flags=additional_flags)
+        command_line = 'cd {}/source && {python_exe} test/run.py --verbose --compiler={compiler} --mode={mode} --extras={extras} -j{jobs} --mute all {additional_flags}'.format(rosetta_dir, python_exe=python_exe, jobs=jobs, compiler=compiler, extras=extras, mode=mode, additional_flags=additional_flags)
         TR( 'Running unit test script: {}'.format(command_line) )
 
         if debug: res, output = 0, 'unit.py: debug is enabled, skipping unit-tests script run...\n'

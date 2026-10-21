@@ -375,7 +375,7 @@ END_CASE
 #############################################################################################
 BEGIN_CASE
 BEGIN_SELECTOR
-NAME3 AIB
+NAME3 AIB DBU DHA
 END_SELECTOR
 
 ADD_ATOM  CO  CObb   C     0.62

@@ -1569,7 +1569,9 @@ ElectronDensity::calcRhoC(
 	ObjexxFCL::FArray3D< core::Real > &mask,
 	core::Real fixed_mask_B /* = -1 */,
 	core::Real B_upper_limit /* = 600 */,
-	core::Real force_mask /*=-1*/ ) {
+	core::Real force_mask /*=-1*/,
+	bool forcemask_is_rho_value /*=false*/ // if forcemask provided, is it a distance or a rho value?
+) {
 
 	// get rho_c
 	rhoC.dimension(density.u1() , density.u2() , density.u3());
@@ -1580,6 +1582,11 @@ ElectronDensity::calcRhoC(
 	bool use_Bs = pose_has_nonzero_Bs( pose );
 	if ( !use_Bs ) {
 		TR << "Input pose has no nonzero B factors ... setting to baseline" << std::endl;
+	}
+
+	core::Real denscut_mask = 1e-4;
+	if ( forcemask_is_rho_value && force_mask > 0 ) {
+		denscut_mask = force_mask;
 	}
 
 	utility::vector1< core::Real > per_atom_ks(pose.size(), 0.0);
@@ -1599,18 +1606,18 @@ ElectronDensity::calcRhoC(
 
 		core::Real C = per_atom_Cs[i], k = per_atom_ks[i];
 		if ( C < 1e-6 ) continue;
-		ATOM_MASK_SQS[i] = (1.0/k) * ( std::log( C ) - std::log(1e-4) );  // 1e-4 is the density value where the mask goes to 0
+		ATOM_MASK_SQS[i] = (1.0/k) * ( std::log( C ) - std::log(denscut_mask) );  // 1e-4 is the density value where the mask goes to 0
 
 		// for b factor minimization, we don't want the mask to change.
 		// so we fix the mask at a high B value
 		if ( fixed_mask_B>0 ) {
 			core::Real mK = sig_j.k( fixed_mask_B, B_upper_limit );
 			core::Real mC = sig_j.C( mK );
-			ATOM_MASK_SQS[i] = (1.0/mK) * (std::log( mC ) - std::log(1e-4));
+			ATOM_MASK_SQS[i] = (1.0/mK) * (std::log( mC ) - std::log(denscut_mask));
 		}
 
 		// force mask
-		if ( force_mask>0 ) {
+		if ( !forcemask_is_rho_value && force_mask>0 ) {
 			ATOM_MASK_SQS[i] = force_mask*force_mask;
 		}
 
@@ -1634,7 +1641,7 @@ ElectronDensity::calcRhoC(
 		core::Real ATOM_MASK_SQ = ATOM_MASK_SQS[i];
 
 		// dist cutoff for density
-		core::Real ATOM_DENS_SQ = (1.0/k) * (std::log( C ) - std::log(1e-4));
+		core::Real ATOM_DENS_SQ = (1.0/k) * (std::log( C ) - std::log(denscut_mask));
 
 		numeric::xyzVector< core::Real> atm_j, del_ij, atm_idx;
 		atm_idx =  pose_grid[i].x_;
@@ -2139,7 +2146,8 @@ core::Real ElectronDensity::matchRes(
 	core::pose::Pose const &pose,
 	core::conformation::symmetry::SymmetryInfoCOP symmInfo /*=NULL*/,
 	bool bfactors /* = false */,
-	bool cacheCCs /* = false */) {
+	bool cacheCCs /* = false */,
+	bool no_foreground /* = false */) {
 	// make sure map is loaded
 	if ( !isLoaded_ ) {
 		TR.Error << "ElectronDensity::matchRes called but no map is loaded!\n";
@@ -2456,7 +2464,11 @@ core::Real ElectronDensity::matchRes(
 
 	for ( int x=0; x<bbox_dims[0]*bbox_dims[1]*bbox_dims[2]; ++x ) {
 		// fetch this point
-		clc_x = rho_calc_bg[x] + rho_calc_fg[x];
+		if ( no_foreground ) {
+			clc_x = rho_calc_bg[x];
+		} else {
+			clc_x = rho_calc_bg[x] + rho_calc_fg[x];
+		}
 		obs_x = rho_obs[x];
 
 		core::Real wt = 1-inv_rho_mask[x];
@@ -2492,7 +2504,11 @@ core::Real ElectronDensity::matchRes(
 			int npoints = rho_dx_pt_ij.size();
 			for ( int n=1; n<=npoints; ++n ) {
 				const int x(rho_dx_pt_ij[n]);
-				clc_x = rho_calc_bg[x] + rho_calc_fg[x];
+				if ( no_foreground ) {
+					clc_x = rho_calc_bg[x];
+				} else {
+					clc_x = rho_calc_bg[x] + rho_calc_fg[x];
+				}
 				obs_x = rho_obs[x];
 				core::Real inv_eps_x = inv_rho_mask[x];
 				core::Real eps_x = 1-inv_eps_x;

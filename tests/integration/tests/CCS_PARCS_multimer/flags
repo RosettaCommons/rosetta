@@ -1,0 +1,5 @@
+-ccs_nrots 300
+-in:file:s ./1AQF.pdb
+-ccs_prad 1.0
+-ccs_multimer
+

@@ -111,6 +111,7 @@ sources = {
 	],
 	"core/pose": [
 		"annotated_sequence",
+		"DockingPartners",
 		"MiniPose",
 		"PDBInfo",
 		"PDBPoseMap",
@@ -209,6 +210,7 @@ sources = {
         	"CurrentProbabilityMetric",
 		"HbondMetric",
 		"LoadedProbabilitiesMetric",
+		"PerResidueBfactorMetric",
 		"PerResidueClashMetric",
 		"PerResidueDensityFitMetric",
 		"PerResidueEnergyMetric",
@@ -962,5 +964,4 @@ subprojects = [
 	"core.2",
 	"utility",
 	"ObjexxFCL",
-	"cifparse",
 ]

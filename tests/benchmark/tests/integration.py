@@ -19,8 +19,9 @@ from collections import defaultdict
 import json
 import codecs
 
-import imp
-imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
+# A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
+import importlib.util, sys
+importlib.util.spec_from_file_location(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py').loader.exec_module(sys.modules[__name__])
 
 _api_version_ = '1.1'
 
@@ -414,9 +415,10 @@ def run(test, repository_root, working_dir, platform, config, hpc_driver=None, v
     elif test == 'release_debug':            return run_integration_tests('release_debug',            repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test == 'release_debug_no_symbols': return run_integration_tests('release_debug_no_symbols', repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test == 'mpi':                      return run_integration_tests('release_debug',            repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--suffix mpi')
-    elif test == 'pytorch':                  return run_integration_tests('debug',                    repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--suffix pytorch')
+    elif test == 'torch':                    return run_integration_tests('debug',                    repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--suffix torch')
     elif test == 'tensorflow':               return run_integration_tests('debug',                    repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--suffix tensorflow')
     elif test == 'thread':                   return run_integration_tests('debug',                    repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--suffix thread')
+    elif test == 'bcl':                      return run_integration_tests('debug',                    repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--suffix bcl')
     elif test == 'addsan':                   return run_integration_tests('addsan',                   repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test == 'ubsan':
         os.environ["UBSAN_OPTIONS"]="print_stacktrace=1" # Get the backtrace in the log when running ubsan

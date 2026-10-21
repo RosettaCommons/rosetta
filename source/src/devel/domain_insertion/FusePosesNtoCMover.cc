@@ -74,7 +74,7 @@ FusePosesNtoCMover::FusePosesNtoCMover()
 	nterm_span_tag_(""),
 	relax_mover_(/* NULL */), rs_specified_relax_mover_(false), debugmode_(false)
 {
-	chains_to_use_.push_back('A');
+	chains_to_use_.push_back("A");
 	chain_mappings_.clear();
 	fuse_positions_.clear();
 	fusion_regions_.clear();
@@ -195,9 +195,10 @@ FusePosesNtoCMover::parse_my_tag(
 		tr << "Chains specified in tag: ";
 		chains_to_use_.clear();
 		std::string chains( tag->getOption<std::string>("chains") );
-		for ( std::string::const_iterator chain_it = chains.begin(); chain_it != chains.end(); ++chain_it ) {
-			chains_to_use_.push_back( *chain_it );
-			tr << *chain_it << " ";
+		// We assume we're only a single chain letter
+		for ( char chain_letter: chains ) {
+			chains_to_use_.push_back( std::string{chain_letter} );
+			tr << chain_letter << " ";
 		}
 		tr << std::endl;
 	}
@@ -388,7 +389,7 @@ FusePosesNtoCMover::generate_superposition_map(
 	//remember: pose is nterminal half, fuse_pose cterminal half
 	for ( core::Size chain_it(1); chain_it <= chains_to_use_.size(); ++chain_it ) {
 
-		char chain( chains_to_use_[ chain_it ] );
+		std::string const & chain( chains_to_use_[ chain_it ] );
 		core::Size pose_seqpos( pose.pdb_info()->pdb2pose( chain, pose_pdbpos ) );
 		core::Size fuse_pose_seqpos( fuse_pose.pdb_info()->pdb2pose( chain, fuse_pose_pdbpos ) );
 
@@ -557,7 +558,7 @@ FusePosesNtoCMover::truncate_pose_at_fusion_site(
 	core::pose::PoseOP to_return( new core::pose::Pose( pose ) );
 	for ( core::Size chain_it(1); chain_it <= chains_to_use_.size(); ++chain_it ) {
 
-		char chain( chains_to_use_[ chain_it ] );
+		std::string chain( chains_to_use_[ chain_it ] );
 		core::Size fusion_seqpos( to_return->pdb_info()->pdb2pose( chain, fusion_pdbpos ) );
 		core::Size pose_chain_no( to_return->chain( fusion_seqpos) );
 
@@ -674,11 +675,11 @@ FusePosesNtoCMover::setup_chain_mappings(
 	for ( core::Size chain(1); chain <= chains_to_use_.size(); ++chain ) {
 
 		for ( core::Size i = 1; i <= pose.conformation().num_chains() ; ++i ) {
-			char pdb_chain_code( pose.pdb_info()->chain( pose.conformation().chain_begin( i ) ) );
+			std::string const & pdb_chain_code( pose.pdb_info()->chain( pose.conformation().chain_begin( i ) ) );
 
 			if ( pdb_chain_code == chains_to_use_[ chain ] ) {
 				for ( core::Size j =1; j <= fuse_pose_->conformation().num_chains() ; ++j ) {
-					char fusepdb_chain_code( fuse_pose_->pdb_info()->chain( fuse_pose_->conformation().chain_begin( j ) ) );
+					std::string const & fusepdb_chain_code( fuse_pose_->pdb_info()->chain( fuse_pose_->conformation().chain_begin( j ) ) );
 					if ( fusepdb_chain_code == chains_to_use_[chain] ) {
 						chain_mappings_.push_back( std::pair<core::Size, core::Size>( j, i ) );
 						break;
@@ -810,7 +811,7 @@ SetupCoiledCoilFoldTreeMover::apply( core::pose::Pose & pose )
 	utility::vector1< core::Size > pose_chains;
 	for ( core::Size chain(1); chain <= coiled_coil_chains_.size(); ++chain ) {
 		for ( core::Size i = 1; i <= pose.conformation().num_chains(); ++i ) {
-			char pdb_chain_code( pose.pdb_info()->chain( pose.conformation().chain_begin( i ) ) );
+			std::string pdb_chain_code( pose.pdb_info()->chain( pose.conformation().chain_begin( i ) ) );
 			if ( pdb_chain_code == coiled_coil_chains_[ chain ] ) pose_chains.push_back( i );
 		} //loop over pose chains
 	}
@@ -863,9 +864,9 @@ SetupCoiledCoilFoldTreeMover::parse_my_tag(
 		tr << "Chains specified in tag: ";
 		coiled_coil_chains_.clear();
 		std::string chains( tag->getOption<std::string>("chains") );
-		for ( std::string::const_iterator chain_it = chains.begin(); chain_it != chains.end(); ++chain_it ) {
-			coiled_coil_chains_.push_back( *chain_it );
-			tr << *chain_it << " ";
+		for ( char chain_letter: chains ) {
+			coiled_coil_chains_.push_back( std::string{chain_letter} );
+			tr << chain_letter << " ";
 		}
 		tr << std::endl;
 	}

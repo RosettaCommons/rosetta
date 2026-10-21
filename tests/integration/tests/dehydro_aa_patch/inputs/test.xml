@@ -1,0 +1,59 @@
+<!-- <root
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="schema.xsd"
+/> -->
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<RESIDUE_SELECTORS>
+		<Index name="start" resnums="1" />
+	</RESIDUE_SELECTORS>
+	<MOVERS>
+
+		<PeptideStubMover name="make_pep" reset="true">
+			<Append resname="DBU" />
+			<Append resname="GLY" />
+		</PeptideStubMover>
+
+		<SetTorsion name="set_omegas">
+			<Torsion angle="180" torsion_name="omega" residue="1" />
+		</SetTorsion>
+
+		<RandomizeBBByRamaPrePro name="random_rama" />
+
+	ModifyVariantType name="nterm" add_type="N_ACETYLATION" residue_selector="start" update_polymer_bond_dependent_atoms="true" />
+	<ModifyVariantType name="add_oxo" add_type="NTERM2_OXOBUTRYLATION" residue_selector="start" update_polymer_bond_dependent_atoms="true" />
+	<ModifyVariantType name="rm_oxo" remove_type="NTERM2_OXOBUTRYLATION" residue_selector="start" update_polymer_bond_dependent_atoms="true" />
+	<ModifyVariantType name="add_nterm" add_type="LOWER_TERMINUS_VARIANT" residue_selector="start" update_polymer_bond_dependent_atoms="true" /> #NtermProteinFull
+	<ModifyVariantType name="rm_nterm" remove_type="LOWER_TERMINUS_VARIANT" residue_selector="start" update_polymer_bond_dependent_atoms="true" /> #NtermProteinFull
+	<ModifyVariantType name="add_methyl" add_type="METHYLATED_NTERM_VARIANT" residue_selector="start" update_polymer_bond_dependent_atoms="true" /> #NtermProteinFull
+	<ModifyVariantType name="rm_methyl" remove_type="METHYLATED_NTERM_VARIANT" residue_selector="start" update_polymer_bond_dependent_atoms="true" /> #NtermProteinFull
+	<ModifyVariantType name="add_acetyl" add_type="ACETYLATED_NTERMINUS_VARIANT" residue_selector="start" update_polymer_bond_dependent_atoms="true" /> #NtermProteinFull
+	<ModifyVariantType name="rm_acetyl" remove_type="ACETYLATED_NTERMINUS_VARIANT" residue_selector="start" update_polymer_bond_dependent_atoms="true" /> #NtermProteinFull
+	<ModifyVariantType name="add_nacetyl" add_type="N_ACETYLATION" residue_selector="start" update_polymer_bond_dependent_atoms="true" /> #NtermProteinFull
+	<ModifyVariantType name="rm_nacetyl" remove_type="N_ACETYLATION" residue_selector="start" update_polymer_bond_dependent_atoms="true" /> #NtermProteinFull
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="make_pep" />
+		<Add mover="set_omegas" />
+		<Add mover="random_rama" />
+		<Add mover="add_oxo" />
+		<Add mover="rm_oxo" />
+		<Add mover="add_nterm" />
+		<Add mover="rm_nterm" />
+		<Add mover="add_methyl" />
+		<Add mover="rm_methyl" />
+		<Add mover="add_acetyl" />
+		<Add mover="rm_acetyl" />
+		<Add mover="add_nacetyl" />
+	</PROTOCOLS>
+
+</ROSETTASCRIPTS>
