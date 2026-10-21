@@ -92,9 +92,10 @@ bool nonadduct_variants_match( ResidueTypeBase const & res1, ResidueTypeBase con
 /// @author Vikram K. Mulligan.
 utility::vector1 < VariantType > get_terminal_varianttypes();
 
-/// @brief look for best match to atom_names
+/// @brief look for best match to coords
+/// @details Acts primarily on atom names, but will call ties based on chirality.
 ResidueTypeCOP find_best_match( ResidueTypeCOPs const & rsd_type_list,
-	utility::vector1< std::string > const & atom_names,
+	std::map< std::string, Vector > const & coords,
 	bool const ignore_atom_named_H = false );
 
 /// @brief Fang-Chieh Chou 8/10/2012. Use larger LJ_WDEPTH for protons to avoid clashes in RNA

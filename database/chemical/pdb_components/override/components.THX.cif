@@ -1,0 +1,364 @@
+data_THX
+#
+
+_chem_comp.id                                   THX
+_chem_comp.name                                 
+;PHOSPHONIC ACID
+6-({6-[6-(6-CARBAMOYL-3,6,7,8-TETRAHYDRO-3,6-DIAZA-AS-INDACENE-2-CARBONYL)-3,6,7,8-TETRAHYDRO-3,6-DIAZA-AS-INDOCENE-2-CA
+RBONYL]-3,6,7,8-TETRAHYDRO-3,6-DIAZA-AS-INDACENE-2-CARBONL}-AMINO)-HEXYL ESTER 5-(5-METHYL-2,4-DIOXO-3,4-DIHYDRO-2H-PYRIMIDIN-1-YL)-TETRAHYDRO-FURAN-2-YLMETHYL ESTER
+;
+
+_chem_comp.type                                 "DNA LINKING"
+_chem_comp.pdbx_type                            ATOMN
+_chem_comp.formula                              "C50 H53 N10 O12 P"
+_chem_comp.mon_nstd_parent_comp_id              ?
+_chem_comp.pdbx_synonyms                        CDPI3
+_chem_comp.pdbx_formal_charge                   0
+_chem_comp.pdbx_initial_date                    1999-07-08
+_chem_comp.pdbx_modified_date                   2020-06-17
+_chem_comp.pdbx_ambiguous_flag                  N
+_chem_comp.pdbx_release_status                  REL
+_chem_comp.pdbx_replaced_by                     ?
+_chem_comp.pdbx_replaces                        ?
+_chem_comp.formula_weight                       1016.989
+_chem_comp.one_letter_code                      N
+_chem_comp.three_letter_code                    THX
+_chem_comp.pdbx_model_coordinates_details       ?
+_chem_comp.pdbx_model_coordinates_missing_flag  N
+_chem_comp.pdbx_ideal_coordinates_details       ?
+_chem_comp.pdbx_ideal_coordinates_missing_flag  N
+_chem_comp.pdbx_model_coordinates_db_code       1AUL
+_chem_comp.pdbx_subcomponent_list               ?
+_chem_comp.pdbx_processing_site                 EBI
+#   #
+loop_
+_chem_comp_atom.comp_id
+_chem_comp_atom.atom_id
+_chem_comp_atom.alt_atom_id
+_chem_comp_atom.type_symbol
+_chem_comp_atom.charge
+_chem_comp_atom.pdbx_align
+_chem_comp_atom.pdbx_aromatic_flag
+_chem_comp_atom.pdbx_leaving_atom_flag
+_chem_comp_atom.pdbx_stereo_config
+_chem_comp_atom.model_Cartn_x
+_chem_comp_atom.model_Cartn_y
+_chem_comp_atom.model_Cartn_z
+_chem_comp_atom.pdbx_model_Cartn_x_ideal
+_chem_comp_atom.pdbx_model_Cartn_y_ideal
+_chem_comp_atom.pdbx_model_Cartn_z_ideal
+_chem_comp_atom.pdbx_component_atom_id
+_chem_comp_atom.pdbx_component_comp_id
+_chem_comp_atom.pdbx_ordinal
+THX  "C1'"   C1*   C  0  1  N  N  R   -9.090  -10.136   1.539   0.040   0.264  -18.799  "C1'"   THX    1  
+THX  C10     C10   C  0  1  N  N  N  -11.919  -12.352   6.891   1.307   1.186   -7.279  C10     THX    2  
+THX  C11     C11   C  0  1  N  N  N  -10.378  -12.285   6.743   0.674   1.015   -5.897  C11     THX    3  
+THX  C12     C12   C  0  1  N  N  N   -9.898  -10.804   6.802   1.759   1.111   -4.823  C12     THX    4  
+THX  C13     C13   C  0  1  N  N  N   -7.663  -11.503   6.468   1.923   0.996   -2.394  C13     THX    5  
+THX  C14     C14   C  0  1  Y  N  N   -6.344  -11.395   5.768   1.315   0.831   -1.066  C14     THX    6  
+THX  C15     C15   C  0  1  Y  N  N   -5.883  -10.398   4.650   1.985   0.855    0.115  C15     THX    7  
+THX  C16     C16   C  0  1  Y  N  N   -4.568  -10.886   4.522   1.039   0.664    1.151  C16     THX    8  
+THX  C17     C17   C  0  1  Y  N  N   -4.235  -11.891   5.270  -0.218   0.516    0.537  C17     THX    9  
+THX  C18     C18   C  0  1  Y  N  N   -2.903  -12.542   5.293  -1.343   0.306    1.329  C18     THX   10  
+THX  C19     C19   C  0  1  Y  N  N   -1.976  -12.001   4.370  -1.224   0.245    2.695  C19     THX   11  
+THX  C2      C2    C  0  1  N  N  N   -7.668  -11.403  -0.132  -0.783  -2.022  -18.846  C2      THX   12  
+THX  "C2'"   C2*   C  0  1  N  N  N  -10.563   -9.585   1.705  -1.286   0.867  -19.298  "C2'"   THX   13  
+THX  C20     C20   C  0  1  Y  N  N   -2.481  -10.820   3.557   0.023   0.391    3.320  C20     THX   14  
+THX  C21     C21   C  0  1  Y  N  N   -3.750  -10.386   3.634   1.145   0.599    2.547  C21     THX   15  
+THX  C22     C22   C  0  1  N  N  N   -4.280   -9.633   2.569   2.346   0.721    3.458  C22     THX   16  
+THX  C23     C23   C  0  1  N  N  N   -2.974   -9.353   1.726   1.774   0.556    4.876  C23     THX   17  
+THX  C24     C24   C  0  1  N  N  N   -0.650  -10.218   2.119  -0.557   0.170    5.677  C24     THX   18  
+THX  C25     C25   C  0  1  Y  N  N   -0.014   -9.377   1.070  -0.108   0.155    7.077  C25     THX   19  
+THX  C26     C26   C  0  1  Y  N  N   -0.611   -8.199   0.229  -0.910  -0.018    8.159  C26     THX   20  
+THX  C27     C27   C  0  1  Y  N  N    0.606   -7.932  -0.547  -0.092   0.028    9.315  C27     THX   21  
+THX  C28     C28   C  0  1  Y  N  N    1.627   -8.717  -0.279   1.227   0.246    8.875  C28     THX   22  
+THX  C29     C29   C  0  1  Y  N  N    2.971   -8.672  -0.918   2.251   0.342    9.812  C29     THX   23  
+THX  "C3'"   C3*   C  0  1  N  N  S  -10.982  -10.263   2.984  -2.007   1.319  -18.005  "C3'"   THX   24  
+THX  C30     C30   C  0  1  Y  N  N    3.117   -7.661  -1.929   1.973   0.225   11.152  C30     THX   25  
+THX  C31     C31   C  0  1  Y  N  N    1.883   -6.802  -2.174   0.662   0.007   11.603  C31     THX   26  
+THX  C32     C32   C  0  1  Y  N  N    0.706   -6.979  -1.513  -0.360  -0.089   10.685  C32     THX   27  
+THX  C33     C33   C  0  1  N  N  N   -0.415   -6.167  -1.905  -1.657  -0.320   11.427  C33     THX   28  
+THX  C34     C34   C  0  1  N  N  N    0.352   -5.002  -2.598  -1.255  -0.346   12.910  C34     THX   29  
+THX  C35     C35   C  0  1  N  N  N    2.576   -5.231  -3.906   0.965  -0.086   14.020  C35     THX   30  
+THX  C36     C36   C  0  1  Y  N  N    2.343   -4.094  -4.873   0.356  -0.251   15.348  C36     THX   31  
+THX  C37     C37   C  0  1  Y  N  N    1.083   -3.223  -5.108   1.026  -0.226   16.530  C37     THX   32  
+THX  C38     C38   C  0  1  Y  N  N    1.638   -2.391  -6.150   0.081  -0.418   17.566  C38     THX   33  
+THX  C39     C39   C  0  1  Y  N  N    2.872   -2.613  -6.471  -1.177  -0.566   16.952  C39     THX   34  
+THX  C4      C4    C  0  1  N  N  N   -7.654  -10.925  -2.525   0.303  -3.728  -20.015  C4      THX   35  
+THX  "C4'"   C4*   C  0  1  N  N  R  -10.049  -11.421   3.233  -0.832   1.432  -17.001  "C4'"   THX   36  
+THX  C40     C40   C  0  1  Y  N  N    3.650   -1.877  -7.512  -2.301  -0.775   17.744  C40     THX   37  
+THX  C41     C41   C  0  1  Y  N  N    2.917   -0.813  -8.161  -2.182  -0.836   19.110  C41     THX   38  
+THX  C42     C42   C  0  1  Y  N  N    1.480   -0.654  -7.702  -0.934  -0.690   19.735  C42     THX   39  
+THX  C43     C43   C  0  1  Y  N  N    0.949   -1.398  -6.695   0.187  -0.482   18.962  C43     THX   40  
+THX  C44     C44   C  0  1  N  N  N   -0.208   -0.922  -6.040   1.387  -0.359   19.873  C44     THX   41  
+THX  C45     C45   C  0  1  N  N  N   -0.687    0.145  -7.033   0.817  -0.523   21.291  C45     THX   42  
+THX  C46     C46   C  0  1  N  N  N    0.515    1.212  -8.959  -1.514  -0.909   22.093  C46     THX   43  
+THX  C5      C5    C  0  1  N  N  N   -8.565   -9.847  -2.277   1.292  -2.802  -20.425  C5      THX   44  
+THX  "C5'"   C5*   C  0  1  N  N  N  -10.831  -12.734   3.272  -1.335   1.277  -15.564  "C5'"   THX   45  
+THX  C5M     C5M   C  0  1  N  N  N   -9.013   -9.082  -3.485   2.437  -3.244  -21.300  C5M     THX   46  
+THX  C6      C6    C  0  1  N  N  N   -9.008   -9.564  -1.047   1.193  -1.516  -20.026  C6      THX   47  
+THX  C7      C7    C  0  1  N  N  N  -14.078  -13.645   5.318  -0.230   1.165  -10.809  C7      THX   48  
+THX  C8      C8    C  0  1  N  N  N  -12.915  -14.486   5.903   0.855   1.261   -9.735  C8      THX   49  
+THX  C9      C9    C  0  1  N  N  N  -12.361  -13.815   7.190   0.221   1.090   -8.353  C9      THX   50  
+THX  N1      N1    N  0  1  N  N  N   -8.580  -10.341   0.087   0.148  -1.131  -19.232  N1      THX   51  
+THX  N10     N10   N  0  1  N  N  N    0.459    0.190  -7.974  -0.622  -0.723   21.101  N10     THX   52  
+THX  N15     N15   N  0  1  N  N  N   -0.629    1.965  -9.148  -1.102  -0.922   23.377  N15     THX   53  
+THX  N3      N3    N  0  1  N  N  N   -7.270  -11.625  -1.415  -0.709  -3.310  -19.229  N3      THX   54  
+THX  N4      N4    N  0  1  N  N  N   -8.642  -10.608   6.050   1.153   0.947   -3.499  N4      THX   55  
+THX  N5      N5    N  0  1  Y  N  N   -5.256  -12.303   6.121  -0.028   0.622   -0.821  N5      THX   56  
+THX  N6      N6    N  0  1  N  N  N   -1.981  -10.056   2.564   0.335   0.358    4.685  N6      THX   57  
+THX  N7      N7    N  0  1  Y  N  N    1.367   -9.650   0.703   1.195   0.321    7.501  N7      THX   58  
+THX  N8      N8    N  0  1  N  N  N    1.600   -5.743  -2.966   0.194  -0.135   12.915  N8      THX   59  
+THX  N9      N9    N  0  1  Y  N  N    3.438   -3.670  -5.757  -0.986  -0.460   15.593  N9      THX   60  
+THX  O1P     O1P   O  0  1  N  N  N  -14.473  -12.788   1.805  -1.828   2.277  -12.919  O1P     THX   61  
+THX  O2      O2    O  0  1  N  N  N   -7.225  -12.081   0.786  -1.704  -1.658  -18.140  O2      THX   62  
+THX  O2P     O2P   O  0  1  N  Y  N  -13.355  -14.853   2.703  -1.539  -0.227  -13.045  O2P     THX   63  
+THX  "O3'"   O3*   O  0  1  N  N  N  -10.881   -9.334   4.080  -2.643   2.585  -18.192  "O3'"   THX   64  
+THX  O3P     O3P   O  0  1  N  N  N  -13.566  -12.748   4.281   0.360   1.324  -12.100  O3P     THX   65  
+THX  O4      O4    O  0  1  N  N  N   -7.232  -11.228  -3.624   0.370  -4.893  -20.362  O4      THX   66  
+THX  "O4'"   O4*   O  0  1  N  N  N   -9.127  -11.450   2.126   0.031   0.331  -17.364  "O4'"   THX   67  
+THX  "O5'"   O5*   O  0  1  N  N  N  -11.877  -12.721   2.248  -0.233   1.385  -14.660  "O5'"   THX   68  
+THX  O6      O6    O  0  1  N  N  N   -7.882  -12.343   7.345   3.122   1.175   -2.496  O6      THX   69  
+THX  O7      O7    O  0  1  N  N  N    0.014  -11.110   2.654  -1.735   0.014    5.414  O7      THX   70  
+THX  O8      O8    O  0  1  N  N  N    3.680   -5.785  -3.908   2.164   0.093   13.918  O8      THX   71  
+THX  O9      O9    O  0  1  N  N  N    1.534    1.420  -9.612  -2.691  -1.065   21.831  O9      THX   72  
+THX  P       P     P  0  1  N  N  S  -13.423  -13.373   2.671  -0.832   1.213  -13.175  P       THX   73  
+THX  "H1'"   H1*   H  0  1  N  N  N   -8.328   -9.510   2.099   0.879   0.839  -19.192  "H1'"   THX   74  
+THX  H101    1H10  H  0  0  N  N  N  -12.389  -12.004   5.971   2.047   0.402   -7.439  H101    THX   75  
+THX  H102    2H10  H  0  0  N  N  N  -12.236  -11.701   7.707   1.792   2.160   -7.338  H102    THX   76  
+THX  H111    1H11  H  0  0  N  N  N  -10.081  -12.727   5.795  -0.065   1.799   -5.736  H111    THX   77  
+THX  H112    2H11  H  0  0  N  N  N   -9.909  -12.851   7.548   0.189   0.040   -5.837  H112    THX   78  
+THX  H121    1H12  H  0  0  N  N  N  -10.669  -10.161   6.381   2.499   0.327   -4.983  H121    THX   79  
+THX  H122    2H12  H  0  0  N  N  N   -9.743  -10.516   7.843   2.244   2.085   -4.882  H122    THX   80  
+THX  H15     H15   H  0  1  N  N  N   -6.369   -9.570   4.092   3.048   0.997    0.241  H15     THX   81  
+THX  H18     H18   H  0  1  N  N  N   -2.573  -13.333   5.956  -2.313   0.192    0.867  H18     THX   82  
+THX  H19     H19   H  0  1  N  N  N   -0.990  -12.455   4.308  -2.105   0.082    3.299  H19     THX   83  
+THX  "H2'1"  1H2*  H  0  0  N  N  N  -11.228   -9.900   0.887  -1.097   1.721  -19.948  "H2'1"  THX   84  
+THX  "H2'2"  2H2*  H  0  0  N  N  N  -10.601   -8.486   1.823  -1.876   0.112  -19.820  "H2'2"  THX   85  
+THX  H221    1H22  H  0  0  N  N  N   -4.988  -10.209   1.997   2.809   1.701    3.347  H221    THX   86  
+THX  H222    2H22  H  0  0  N  N  N   -4.752   -8.723   2.933   3.067  -0.067    3.245  H222    THX   87  
+THX  H231    1H23  H  0  0  N  N  N   -3.032   -9.899   0.685   1.957   1.455    5.465  H231    THX   88  
+THX  H232    2H23  H  0  0  N  N  N   -2.713   -8.199   1.692   2.215  -0.313    5.363  H232    THX   89  
+THX  H26     H26   H  0  1  N  N  N   -1.612   -7.685   0.235  -1.980  -0.168    8.142  H26     THX   90  
+THX  H29     H29   H  0  1  N  N  N    3.845   -9.294  -0.644   3.266   0.509    9.485  H29     THX   91  
+THX  "H3'"   H3*   H  0  1  N  N  N  -12.004  -10.628   2.890  -2.727   0.568  -17.679  "H3'"   THX   92  
+THX  H30     H30   H  0  1  N  N  N    4.061   -7.613  -2.506   2.777   0.301   11.870  H30     THX   93  
+THX  H331    1H33  H  0  0  N  N  N   -1.067   -6.677  -2.633  -2.097  -1.274   11.135  H331    THX   94  
+THX  H332    2H33  H  0  0  N  N  N   -0.983   -5.834  -1.051  -2.355   0.494   11.236  H332    THX   95  
+THX  H341    1H34  H  0  0  N  N  N   -0.151   -4.662  -3.472  -1.498  -1.313   13.352  H341    THX   96  
+THX  H342    2H34  H  0  0  N  N  N    0.586   -4.191  -1.877  -1.756   0.455   13.453  H342    THX   97  
+THX  H37     H37   H  0  1  N  N  N    0.065   -3.224  -4.679   2.090  -0.084   16.657  H37     THX   98  
+THX  "H4'"   H4*   H  0  1  N  N  N   -9.516  -11.270   4.163  -0.312   2.382  -17.124  "H4'"   THX   99  
+THX  H40     H40   H  0  1  N  N  N    4.678   -2.092  -7.829  -3.271  -0.890   17.282  H40     THX  100  
+THX  H41     H41   H  0  1  N  N  N    3.430   -0.191  -8.904  -3.063  -0.999   19.714  H41     THX  101  
+THX  H441    1H44  H  0  0  N  N  N   -0.958   -1.742  -5.921   1.851   0.620   19.761  H441    THX  102  
+THX  H442    2H44  H  0  0  N  N  N    0.045   -0.447  -5.081   2.109  -1.148   19.660  H442    THX  103  
+THX  H451    1H45  H  0  0  N  N  N   -1.589   -0.186  -7.557   1.000   0.375   21.879  H451    THX  104  
+THX  H452    2H45  H  0  0  N  N  N   -0.797    1.115  -6.543   1.258  -1.393   21.778  H452    THX  105  
+THX  "H5'1"  1H5*  H  0  0  N  N  N  -10.168  -13.581   3.087  -2.061   2.059  -15.347  "H5'1"  THX  106  
+THX  "H5'2"  2H5*  H  0  0  N  N  N  -11.293  -12.875   4.245  -1.806   0.301  -15.447  "H5'2"  THX  107  
+THX  H5M1    1H5M  H  0  0  N  N  N   -8.255   -9.152  -4.265   2.341  -4.309  -21.512  H5M1    THX  108  
+THX  H5M2    2H5M  H  0  0  N  N  N   -9.949   -9.497  -3.851   2.417  -2.684  -22.235  H5M2    THX  109  
+THX  H5M3    3H5M  H  0  0  N  N  N   -9.161   -8.037  -3.214   3.380  -3.060  -20.786  H5M3    THX  110  
+THX  H6      H6    H  0  1  N  N  N   -9.650   -8.695  -0.948   1.937  -0.794  -20.332  H6      THX  111  
+THX  H71     1H7   H  0  1  N  N  N  -14.543  -13.055   6.109  -0.970   1.949  -10.648  H71     THX  112  
+THX  H72     2H7   H  0  1  N  N  N  -14.833  -14.305   4.889  -0.715   0.190  -10.749  H72     THX  113  
+THX  H81     1H8   H  0  1  N  N  N  -13.273  -15.489   6.141   1.595   0.477   -9.895  H81     THX  114  
+THX  H82     2H8   H  0  1  N  N  N  -12.118  -14.574   5.165   1.339   2.235   -9.794  H82     THX  115  
+THX  H91     1H9   H  0  1  N  N  N  -11.509  -14.386   7.561  -0.518   1.874   -8.192  H91     THX  116  
+THX  H92     2H9   H  0  1  N  N  N  -13.133  -13.812   7.961  -0.262   0.115   -8.293  H92     THX  117  
+THX  H151    1H15  H  0  0  N  N  N   -1.341    1.590  -9.788  -1.744  -1.056   24.091  H151    THX  118  
+THX  H152    2H15  H  0  0  N  N  N   -0.905    2.601  -8.385  -0.163  -0.797   23.586  H152    THX  119  
+THX  H3      H3    H  0  1  N  N  N   -6.605  -12.399  -1.561  -1.389  -3.939  -18.941  H3      THX  120  
+THX  HN4     HN4   H  0  1  N  N  N   -8.329   -9.728   5.611   0.197   0.804   -3.418  HN4     THX  121  
+THX  HN5     HN5   H  0  1  N  N  N   -5.249  -13.062   6.819  -0.722   0.559   -1.495  HN5     THX  122  
+THX  HN7     HN7   H  0  1  N  N  N    2.003  -10.374   1.085   1.963   0.466    6.925  HN7     THX  123  
+THX  HN9     HN9   H  0  1  N  N  N    4.394   -4.054  -5.829  -1.680  -0.523   14.918  HN9     THX  124  
+THX  HOP2    2HOP  H  0  0  N  Y  N  -12.681  -15.228   3.258  -0.856  -0.890  -13.219  HOP2    THX  125  
+THX  "HO'3"  3HO*  H  0  0  N  Y  N  -11.145   -9.761   4.886  -3.300   2.467  -18.892  "HO'3"  THX  126  
+#   #
+loop_
+_chem_comp_bond.comp_id
+_chem_comp_bond.atom_id_1
+_chem_comp_bond.atom_id_2
+_chem_comp_bond.value_order
+_chem_comp_bond.pdbx_aromatic_flag
+_chem_comp_bond.pdbx_stereo_config
+_chem_comp_bond.pdbx_ordinal
+THX  "C1'"  "C2'"   SING  N  N    1  
+THX  "C1'"  N1      SING  N  N    2  
+THX  "C1'"  "O4'"   SING  N  N    3  
+THX  "C1'"  "H1'"   SING  N  N    4  
+THX  C10    C11     SING  N  N    5  
+THX  C10    C9      SING  N  N    6  
+THX  C10    H101    SING  N  N    7  
+THX  C10    H102    SING  N  N    8  
+THX  C11    C12     SING  N  N    9  
+THX  C11    H111    SING  N  N   10  
+THX  C11    H112    SING  N  N   11  
+THX  C12    N4      SING  N  N   12  
+THX  C12    H121    SING  N  N   13  
+THX  C12    H122    SING  N  N   14  
+THX  C13    C14     SING  N  N   15  
+THX  C13    N4      SING  N  N   16  
+THX  C13    O6      DOUB  N  N   17  
+THX  C14    C15     DOUB  Y  N   18  
+THX  C14    N5      SING  Y  N   19  
+THX  C15    C16     SING  Y  N   20  
+THX  C15    H15     SING  N  N   21  
+THX  C16    C17     SING  Y  N   22  
+THX  C16    C21     DOUB  Y  N   23  
+THX  C17    C18     DOUB  Y  N   24  
+THX  C17    N5      SING  Y  N   25  
+THX  C18    C19     SING  Y  N   26  
+THX  C18    H18     SING  N  N   27  
+THX  C19    C20     DOUB  Y  N   28  
+THX  C19    H19     SING  N  N   29  
+THX  C2     N1      SING  N  N   30  
+THX  C2     N3      SING  N  N   31  
+THX  C2     O2      DOUB  N  N   32  
+THX  "C2'"  "C3'"   SING  N  N   33  
+THX  "C2'"  "H2'1"  SING  N  N   34  
+THX  "C2'"  "H2'2"  SING  N  N   35  
+THX  C20    C21     SING  Y  N   36  
+THX  C20    N6      SING  N  N   37  
+THX  C21    C22     SING  N  N   38  
+THX  C22    C23     SING  N  N   39  
+THX  C22    H221    SING  N  N   40  
+THX  C22    H222    SING  N  N   41  
+THX  C23    N6      SING  N  N   42  
+THX  C23    H231    SING  N  N   43  
+THX  C23    H232    SING  N  N   44  
+THX  C24    C25     SING  N  N   45  
+THX  C24    N6      SING  N  N   46  
+THX  C24    O7      DOUB  N  N   47  
+THX  C25    C26     DOUB  Y  N   48  
+THX  C25    N7      SING  Y  N   49  
+THX  C26    C27     SING  Y  N   50  
+THX  C26    H26     SING  N  N   51  
+THX  C27    C28     SING  Y  N   52  
+THX  C27    C32     DOUB  Y  N   53  
+THX  C28    C29     DOUB  Y  N   54  
+THX  C28    N7      SING  Y  N   55  
+THX  C29    C30     SING  Y  N   56  
+THX  C29    H29     SING  N  N   57  
+THX  "C3'"  "C4'"   SING  N  N   58  
+THX  "C3'"  "O3'"   SING  N  N   59  
+THX  "C3'"  "H3'"   SING  N  N   60  
+THX  C30    C31     DOUB  Y  N   61  
+THX  C30    H30     SING  N  N   62  
+THX  C31    C32     SING  Y  N   63  
+THX  C31    N8      SING  N  N   64  
+THX  C32    C33     SING  N  N   65  
+THX  C33    C34     SING  N  N   66  
+THX  C33    H331    SING  N  N   67  
+THX  C33    H332    SING  N  N   68  
+THX  C34    N8      SING  N  N   69  
+THX  C34    H341    SING  N  N   70  
+THX  C34    H342    SING  N  N   71  
+THX  C35    C36     SING  N  N   72  
+THX  C35    N8      SING  N  N   73  
+THX  C35    O8      DOUB  N  N   74  
+THX  C36    C37     DOUB  Y  N   75  
+THX  C36    N9      SING  Y  N   76  
+THX  C37    C38     SING  Y  N   77  
+THX  C37    H37     SING  N  N   78  
+THX  C38    C39     SING  Y  N   79  
+THX  C38    C43     DOUB  Y  N   80  
+THX  C39    C40     DOUB  Y  N   81  
+THX  C39    N9      SING  Y  N   82  
+THX  C4     C5      SING  N  N   83  
+THX  C4     N3      SING  N  N   84  
+THX  C4     O4      DOUB  N  N   85  
+THX  "C4'"  "C5'"   SING  N  N   86  
+THX  "C4'"  "O4'"   SING  N  N   87  
+THX  "C4'"  "H4'"   SING  N  N   88  
+THX  C40    C41     SING  Y  N   89  
+THX  C40    H40     SING  N  N   90  
+THX  C41    C42     DOUB  Y  N   91  
+THX  C41    H41     SING  N  N   92  
+THX  C42    C43     SING  Y  N   93  
+THX  C42    N10     SING  N  N   94  
+THX  C43    C44     SING  N  N   95  
+THX  C44    C45     SING  N  N   96  
+THX  C44    H441    SING  N  N   97  
+THX  C44    H442    SING  N  N   98  
+THX  C45    N10     SING  N  N   99  
+THX  C45    H451    SING  N  N  100  
+THX  C45    H452    SING  N  N  101  
+THX  C46    N10     SING  N  N  102  
+THX  C46    N15     SING  N  N  103  
+THX  C46    O9      DOUB  N  N  104  
+THX  C5     C5M     SING  N  N  105  
+THX  C5     C6      DOUB  N  N  106  
+THX  "C5'"  "O5'"   SING  N  N  107  
+THX  "C5'"  "H5'1"  SING  N  N  108  
+THX  "C5'"  "H5'2"  SING  N  N  109  
+THX  C5M    H5M1    SING  N  N  110  
+THX  C5M    H5M2    SING  N  N  111  
+THX  C5M    H5M3    SING  N  N  112  
+THX  C6     N1      SING  N  N  113  
+THX  C6     H6      SING  N  N  114  
+THX  C7     C8      SING  N  N  115  
+THX  C7     O3P     SING  N  N  116  
+THX  C7     H71     SING  N  N  117  
+THX  C7     H72     SING  N  N  118  
+THX  C8     C9      SING  N  N  119  
+THX  C8     H81     SING  N  N  120  
+THX  C8     H82     SING  N  N  121  
+THX  C9     H91     SING  N  N  122  
+THX  C9     H92     SING  N  N  123  
+THX  N15    H151    SING  N  N  124  
+THX  N15    H152    SING  N  N  125  
+THX  N3     H3      SING  N  N  126  
+THX  N4     HN4     SING  N  N  127  
+THX  N5     HN5     SING  N  N  128  
+THX  N7     HN7     SING  N  N  129  
+THX  N9     HN9     SING  N  N  130  
+THX  O1P    P       DOUB  N  N  131  
+THX  O2P    P       SING  N  N  132  
+THX  O2P    HOP2    SING  N  N  133  
+THX  "O3'"  "HO'3"  SING  N  N  134  
+THX  O3P    P       SING  N  N  135  
+THX  "O5'"  P       SING  N  N  136  
+#   #
+loop_
+_pdbx_chem_comp_descriptor.comp_id
+_pdbx_chem_comp_descriptor.type
+_pdbx_chem_comp_descriptor.program
+_pdbx_chem_comp_descriptor.program_version
+_pdbx_chem_comp_descriptor.descriptor
+THX  SMILES            ACDLabs               10.04  "O=C(N)N%11c1c(c2cc(nc2cc1)C(=O)N%10c3c(c4cc(nc4cc3)C(=O)N9c5c(c6cc(nc6cc5)C(=O)NCCCCCCOP(=O)(O)OCC8OC(N7C(=O)NC(=O)C(=C7)C)CC8O)CC9)CC%10)CC%11"  
+THX  SMILES_CANONICAL  CACTVS                3.341  "CC1=CN([C@H]2C[C@H](O)[C@@H](CO[P@](O)(=O)OCCCCCCNC(=O)c3[nH]c4ccc5N(CCc5c4c3)C(=O)c6[nH]c7ccc8N(CCc8c7c6)C(=O)c9[nH]c%10ccc%11N(CCc%11c%10c9)C(N)=O)O2)C(=O)NC1=O"  
+THX  SMILES            CACTVS                3.341  "CC1=CN([CH]2C[CH](O)[CH](CO[P](O)(=O)OCCCCCCNC(=O)c3[nH]c4ccc5N(CCc5c4c3)C(=O)c6[nH]c7ccc8N(CCc8c7c6)C(=O)c9[nH]c%10ccc%11N(CCc%11c%10c9)C(N)=O)O2)C(=O)NC1=O"  
+THX  SMILES_CANONICAL  "OpenEye OEToolkits"  1.5.0  "CC1=CN(C(=O)NC1=O)[C@H]2C[C@@H]([C@H](O2)CO[P@@](=O)(O)OCCCCCCNC(=O)c3cc4c([nH]3)ccc5c4CCN5C(=O)c6cc7c([nH]6)ccc8c7CCN8C(=O)c9cc1c([nH]9)ccc2c1CCN2C(=O)N)O"  
+THX  SMILES            "OpenEye OEToolkits"  1.5.0  "CC1=CN(C(=O)NC1=O)C2CC(C(O2)COP(=O)(O)OCCCCCCNC(=O)c3cc4c([nH]3)ccc5c4CCN5C(=O)c6cc7c([nH]6)ccc8c7CCN8C(=O)c9cc1c([nH]9)ccc2c1CCN2C(=O)N)O"  
+THX  InChI             InChI                 1.03   "InChI=1S/C50H53N10O12P/c1-26-24-60(50(67)56-45(26)62)44-23-42(61)43(72-44)25-71-73(68,69)70-19-5-3-2-4-15-52-46(63)36-20-30-27-12-16-57(39(27)9-6-33(30)53-36)47(64)37-21-31-28-13-17-58(40(28)10-7-34(31)54-37)48(65)38-22-32-29-14-18-59(49(51)66)41(29)11-8-35(32)55-38/h6-11,20-22,24,42-44,53-55,61H,2-5,12-19,23,25H2,1H3,(H2,51,66)(H,52,63)(H,68,69)(H,56,62,67)/t42-,43+,44+/m0/s1"  
+THX  InChIKey          InChI                 1.03   LIOBYMQDEBYUBC-HHWNUHTHSA-N  
+#   #
+loop_
+_pdbx_chem_comp_identifier.comp_id
+_pdbx_chem_comp_identifier.type
+_pdbx_chem_comp_identifier.program
+_pdbx_chem_comp_identifier.program_version
+_pdbx_chem_comp_identifier.identifier
+THX  "SYSTEMATIC NAME"  ACDLabs               10.04  "5'-O-[(S)-{[6-({[6-({6-[(6-carbamoyl-3,6,7,8-tetrahydropyrrolo[3,2-e]indol-2-yl)carbonyl]-3,6,7,8-tetrahydropyrrolo[3,2-e]indol-2-yl}carbonyl)-3,6,7,8-tetrahydropyrrolo[3,2-e]indol-2-yl]carbonyl}amino)hexyl]oxy}(hydroxy)phosphoryl]thymidine"  
+THX  "SYSTEMATIC NAME"  "OpenEye OEToolkits"  1.5.0  "6-[[3-[[3-[(3-aminocarbonyl-2,6-dihydro-1H-pyrrolo[4,5-e]indol-7-yl)carbonyl]-2,6-dihydro-1H-pyrrolo[4,5-e]indol-7-yl]carbonyl]-2,6-dihydro-1H-pyrrolo[4,5-e]indol-7-yl]carbonylamino]hexyl [(2R,3S,5R)-3-hydroxy-5-(5-methyl-2,4-dioxo-pyrimidin-1-yl)oxolan-2-yl]methyl hydrogen phosphate"  
+#   #
+loop_
+_pdbx_chem_comp_audit.comp_id
+_pdbx_chem_comp_audit.action_type
+_pdbx_chem_comp_audit.date
+_pdbx_chem_comp_audit.processing_site
+THX  "Create component"   1999-07-08  EBI   
+THX  "Modify descriptor"  2011-06-04  RCSB  
+THX  "Modify synonyms"    2020-06-05  PDBE  
+THX  "Fix leaving annotations"  2026-04-29 RoccoMoretti 
+#
+_pdbx_chem_comp_synonyms.ordinal     1
+_pdbx_chem_comp_synonyms.comp_id     THX
+_pdbx_chem_comp_synonyms.name        CDPI3
+_pdbx_chem_comp_synonyms.provenance  ?
+_pdbx_chem_comp_synonyms.type        ?
+##
+

@@ -1,0 +1,66 @@
+data_ZPT
+#
+
+_chem_comp.id                                   ZPT
+_chem_comp.name                                 "Platinum from Trichloro(ethene)platinate(II)"
+_chem_comp.type                                 NON-POLYMER
+_chem_comp.pdbx_type                            HETAIN
+_chem_comp.formula                              "Pt"
+_chem_comp.mon_nstd_parent_comp_id              ?
+_chem_comp.pdbx_synonyms                        "Zeise's salt"
+_chem_comp.pdbx_formal_charge                   +2
+_chem_comp.pdbx_initial_date                    2016-07-13
+_chem_comp.pdbx_modified_date                   2020-06-17
+_chem_comp.pdbx_ambiguous_flag                  Y
+_chem_comp.pdbx_release_status                  REL
+_chem_comp.pdbx_replaced_by                     ?
+_chem_comp.pdbx_replaces                        ?
+_chem_comp.formula_weight                       329.490
+_chem_comp.one_letter_code                      ?
+_chem_comp.three_letter_code                    ZPT
+_chem_comp.pdbx_model_coordinates_details       ?
+_chem_comp.pdbx_model_coordinates_missing_flag  Y
+_chem_comp.pdbx_ideal_coordinates_details       Corina
+_chem_comp.pdbx_ideal_coordinates_missing_flag  Y
+_chem_comp.pdbx_model_coordinates_db_code       5K08
+_chem_comp.pdbx_subcomponent_list               ?
+_chem_comp.pdbx_processing_site                 RCSB
+#   #
+loop_
+_chem_comp_atom.comp_id
+_chem_comp_atom.atom_id
+_chem_comp_atom.alt_atom_id
+_chem_comp_atom.type_symbol
+_chem_comp_atom.charge
+_chem_comp_atom.pdbx_align
+_chem_comp_atom.pdbx_aromatic_flag
+_chem_comp_atom.pdbx_leaving_atom_flag
+_chem_comp_atom.pdbx_stereo_config
+_chem_comp_atom.model_Cartn_x
+_chem_comp_atom.model_Cartn_y
+_chem_comp_atom.model_Cartn_z
+_chem_comp_atom.pdbx_model_Cartn_x_ideal
+_chem_comp_atom.pdbx_model_Cartn_y_ideal
+_chem_comp_atom.pdbx_model_Cartn_z_ideal
+_chem_comp_atom.pdbx_component_atom_id
+_chem_comp_atom.pdbx_component_comp_id
+_chem_comp_atom.pdbx_ordinal
+ZPT  PT   PT   PT   2  0  N  N  N  0  0  0  ?  ?  ?  PT   ZPT   1  
+#   #
+loop_
+_pdbx_chem_comp_audit.comp_id
+_pdbx_chem_comp_audit.action_type
+_pdbx_chem_comp_audit.date
+_pdbx_chem_comp_audit.processing_site
+ZPT  "Create component"  2016-07-13  RCSB  
+ZPT  "Initial release"   2016-09-21  RCSB  
+ZPT  "Modify synonyms"   2020-06-05  PDBE  
+ZPT  "Convert to ion"    2026-05-01  RoccoMoretti
+#
+_pdbx_chem_comp_synonyms.ordinal     1
+_pdbx_chem_comp_synonyms.comp_id     ZPT
+_pdbx_chem_comp_synonyms.name        "Zeise's salt"
+_pdbx_chem_comp_synonyms.provenance  ?
+_pdbx_chem_comp_synonyms.type        ?
+##
+

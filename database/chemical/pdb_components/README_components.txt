@@ -16,4 +16,7 @@ Some of the component definitions from the wwPDB are junk. (The crystallographer
 Others are okay for the purposes of the PDB, but cause issues with the best-effort ResidueType generation system Rosetta has.
 To account for this, we have an overrides/ directory. 
 
-Simply put the fixed definition (one file per ligand) into the overrides/ directory, and then put the filename/path to the file in the overrides.txt file. 
+Simply put the fixed definition (one file per ligand) into the overrides/ directory, and then put the filename/path to the file in the overrides.txt file.
+
+Please edit the _pdbx_chem_comp_audit table to give the date and the reason for any edits, such that we can later assess if we can/should replace them with an updated official version.
+(You can also use the README in the overrides/ directory to provide additional information.)
