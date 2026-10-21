@@ -429,6 +429,7 @@ def read_tripos_mol2(f, do_find_rings=True):
         elif line.startswith("@"):
             mode = line
             molfile.footer.append(line+"\n")
+            molfile.footer.append(line[1:]+"\n")
         elif mode == "@<TRIPOS>MOLECULE":
             linecnt += 1
             if linecnt == 1: molfile.title = line.strip()

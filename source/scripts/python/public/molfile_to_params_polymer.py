@@ -141,6 +141,11 @@ and for visualizing exactly what was done to the ligand.
                         help = "modifier for the polymer flag, " +
                         "adjusts PDB style naming to be correct for peptoids"
                        )
+    parser.add_argument("--keep-names",
+                        default=False,
+                        action="store_true",
+                        help="leaves atom names untouched except for duplications"
+    )
     parser.add_argument('--partial_charges',
                         default=None,
                         help="file that contains the partial charges of each atom in the input file",
@@ -211,11 +216,16 @@ and for visualizing exactly what was done to the ligand.
     assign_rigid_ids(m.atoms)
     num_frags = fragment_ligand(m)
     build_fragment_trees(m)
-    assign_internal_coords(m)
     if args.polymer:
         print("Preforming polymer modifications")
-        polymer_assign_pdb_like_atom_names_to_sidechain( m.atoms, m.bonds, args.peptoid )
-        polymer_assign_backbone_atom_names( m.atoms, m.bonds, args.peptoid )
+        if args.keep_names:
+            for a in m.atoms:
+                a.pdb_name = a.name
+        else:
+            polymer_assign_pdb_like_atom_names_to_sidechain( m.atoms, m.bonds, args.peptoid )
+            polymer_assign_backbone_atom_names( m.atoms, m.bonds, args.peptoid )
+        # Connections get renamed even if we don't rename other atoms
+        polymer_assign_connection_atom_names( m.atoms, m.bonds, args.peptoid )
         # if instructed to write out all pdb files
         if not args.no_pdb :
             for molfile in molfiles[1:]:
@@ -223,6 +233,7 @@ and for visualizing exactly what was done to the ligand.
                 polymer_reorder_atoms(molfile)
         polymer_reorder_atoms(m)
     #uniquify_atom_names(m.atoms)
+    assign_internal_coords(m)
     if not args.no_param:
         for i in range(num_frags):
             if num_frags == 1: param_file = "%s.params" % args.name
@@ -273,7 +284,7 @@ and for visualizing exactly what was done to the ligand.
             if not args.all_in_one_pdb:
                 pdb_file_name = "%s_%04i.pdb" % (args.pdb, i+1)
                 pdb_file = open(pdb_file_name, 'w')
-                if not args.clobber and os.path.exists(pdb_file):
+                if not args.clobber and os.path.exists(pdb_file_name):
                     print( "File %s already exists -- skip!" % pdb_file )
                     print( "Use --clobber to overwrite existing files." )
                     break
