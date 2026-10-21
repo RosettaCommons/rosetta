@@ -194,7 +194,7 @@ void RotamerRecovery::get_rotamer_recovery(core::pose::Pose & native, utility::v
 		utility::vector1< utility::vector1< core::Real > > pose_chis( chis_from_pose(pose) );
 
 		runtime_assert( pose_bb_bins.size() == nat_bb_bins.size() );
-		runtime_assert( pose_rots.size() == pose_rots.size() );
+		runtime_assert( pose_rots.size() == nat_rots.size() );
 		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( pose_bb_bins[ii] == nat_bb_bins[ii] ) {
 				bb_bins_correct[ii]++;

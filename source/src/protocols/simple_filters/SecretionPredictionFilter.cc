@@ -187,7 +187,7 @@ SecretionPredictionFilter::find_tm_regions( std::ostream & out,  const Pose & po
 		if ( iplus2 >= tot ) { iplus2 = i; }
 		if ( iminus <= 0 ) { iminus = i; }
 		if ( iminus2 <= 0 ) { iminus2 = i; }
-		if ( energies[i].dG_ins <= energies[iplus].dG_ins && energies[i].dG_ins <= energies[iminus].dG_ins && energies[i].dG_ins <= dG_ins_threshold_ && energies[i].dG_ins <= energies[iplus2].dG_ins && energies[i].dG_ins <= energies[iminus2].dG_ins && energies[i].dG_ins <= dG_ins_threshold_ ) {
+		if ( energies[i].dG_ins <= energies[iplus].dG_ins && energies[i].dG_ins <= energies[iminus].dG_ins && energies[i].dG_ins <= dG_ins_threshold_ && energies[i].dG_ins <= energies[iplus2].dG_ins && energies[i].dG_ins <= energies[iminus2].dG_ins ) {
 			out << "Found a local minimum at index " << energies[i].index << " with sequence "<< energies[i].sequence <<  " with dG_ins_pred of: " << energies[i].dG_ins << '\n';
 			for ( core::Size j = energies[i].index; j <= energies[i].index + window_size_ - 1 ; ++j ) {
 				energies[i].possible_mutants.push_back({j, keep_, 0, 0});
