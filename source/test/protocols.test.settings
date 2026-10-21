@@ -439,6 +439,7 @@ sources = {
 		"HighResEnsemble",
 		"ligand_scores",
 		"LigandDockingLoaders",
+        	"PlaceWaters",
 		"packer_palette_compatibility",
 		"ProtLigEnsemble",
 		"ResidueTorsionRestraints",

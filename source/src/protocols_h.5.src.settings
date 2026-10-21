@@ -94,6 +94,7 @@ sources = {
 		"MolarMassFilter",
 		"MolecularMassFilter",
 		"MoveMapBuilder",
+        	"PlaceWaters",
 		"ProtLigEnsemble",
 		"RandomConformerMover",
 		"RandomConformers",
