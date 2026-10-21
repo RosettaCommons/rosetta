@@ -33,6 +33,7 @@
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 // Package headers
 #include <basic/datacache/DataMap.fwd.hh>
@@ -64,7 +65,6 @@ using namespace protocols::moves;
 
 MultipleOutputWrapper::MultipleOutputWrapper() :
 	Mover( "MultipleOutputWrapper" ),
-	mover_tag_(/* NULL */),
 	rosetta_scripts_tag_(/* NULL */),
 	reference_pose_(/* NULL */),
 	max_poses_(0),
@@ -103,29 +103,27 @@ core::pose::PoseOP MultipleOutputWrapper::get_additional_output()
 
 bool MultipleOutputWrapper::generate_pose(core::pose::Pose & pose)
 {
-	// Empty objects... may not work...
-	basic::datacache::DataMap data;
-	if ( !keep_mover_state_ ) {
-		mover_ = nullptr;
-	}
-
-	if ( !mover_ && rosetta_scripts_tag_ ) {
-		protocols::rosetta_scripts::RosettaScriptsParser parser;
-		mover_ = parser.parse_protocol_tag( rosetta_scripts_tag_, basic::options::option );
-	}
-
-	if ( !mover_ && mover_tag_ ) {
-		mover_ = MoverFactory::get_instance()->newMover(mover_tag_, data);
-	}
-
 	runtime_assert( mover_ != nullptr );
+
+	protocols::moves::MoverOP local_mover;
+
+	if ( keep_mover_state_ ) {
+		local_mover = mover_;
+	} else {
+		if ( rosetta_scripts_tag_ ) {
+			protocols::rosetta_scripts::RosettaScriptsParser parser;
+			local_mover = parser.parse_protocol_tag( rosetta_scripts_tag_, basic::options::option );
+		} else {
+			local_mover = mover_->clone();
+		}
+	}
 
 	core::Size attempts;
 	for ( attempts = 1; attempts <= max_attempts_; ++attempts ) {
 
-		mover_->apply(pose);
+		local_mover->apply(pose);
 
-		protocols::moves::MoverStatus status = mover_->get_last_move_status();
+		protocols::moves::MoverStatus status = local_mover->get_last_move_status();
 		set_last_move_status(status);
 		if ( status != protocols::moves::MS_SUCCESS ) {
 			TR << "Sub-mover or protocol reported failure on attempt " << attempts << " of " << max_attempts_ << std::endl;
@@ -179,6 +177,18 @@ void MultipleOutputWrapper::parse_my_tag(
 		keep_mover_state_ = tag->getOption<bool>("keep_mover_state");
 	}
 
+	if ( tag->hasOption("mover") ) {
+		mover_ = rosetta_scripts::parse_mover( tag->getOption< std::string >( "mover", "null" ), data );
+	}
+
+	if ( mover_ && tag->getTags().size() > 0 ) {
+		TR.Warning << "MultipleOutputWrapper specified with mover in options and as subtags -- using subtag definiton only." << std::endl;
+	}
+
+	if ( tag->getTags().size() > 0  ) {
+		TR.Warning << "MultipleOutputWrapper has multiple subtag specifications -- only using the first" << std::endl;
+	}
+
 	try {
 
 		// Children of tag are movers
@@ -187,22 +197,19 @@ void MultipleOutputWrapper::parse_my_tag(
 			if ( curr_tag->getName() == "ROSETTASCRIPTS" ) {
 				// Treat subtag as a ROSETTASCRIPTS protocol
 				protocols::rosetta_scripts::RosettaScriptsParser parser;
-				protocols::moves::MoverOP mover( parser.parse_protocol_tag( curr_tag, basic::options::option ) );
-				rosetta_scripts_tag_ = curr_tag;
+				mover_ = parser.parse_protocol_tag( curr_tag, basic::options::option );
 			} else {
 				// Treat subtag as a regular mover tag
-				std::string name = curr_tag->getOption<std::string>("name");
 				protocols::moves::MoverOP new_mover(
 					protocols::moves::MoverFactory::get_instance()->
 					newMover(curr_tag, data)
 				);
-				mover_tag_ = curr_tag;
+				mover_ = MoverFactory::get_instance()->newMover(curr_tag, data);
 			}
-			// Only first mover used -- add warning when multiple defined?
-			break;
+			break; // Warned about multiple tags above
 		}
 
-		if ( !mover_tag_ && !rosetta_scripts_tag_ ) {
+		if ( !mover_ ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception, "No mover or ROSETTASCRIPTS tag found.");
 		}
 
@@ -231,7 +238,8 @@ void MultipleOutputWrapper::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 		+ optional_name_attribute()
 		+ Attr( "max_output_poses", xsct_non_negative_integer, "XRW TO DO" )
 		+ Attr( "max_attempts", xsct_non_negative_integer, "XRW TO DO" )
-		+ Attr( "keep_mover_state", xsct_rosetta_bool, "XRW TO DO" );
+		+ Attr( "keep_mover_state", xsct_rosetta_bool, "XRW TO DO" )
+		+ Attr( "mover", xs_string, "The mover to apply multiple times" );
 
 	XMLSchemaSimpleSubelementList subelements;
 	subelements.add_already_defined_subelement(
