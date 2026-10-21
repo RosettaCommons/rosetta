@@ -24,6 +24,8 @@
 // Package Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pack/palette/PackerPalette.fwd.hh>
+#include <core/pack/rotamer_set/UnboundRotamersOperation.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/options/option.hh>
@@ -105,7 +107,7 @@ protected:
 	void remove_ligand_dihedral_restraints(core::pose::Pose & pose, MinimizeLigandOPs & minimized_ligands) const;
 
 	TetherLigandOPs tether_ligands(core::pose::Pose & pose, std::string const & chain = "");
-	void remove_ligand_tethers(core::pose::Pose pose, TetherLigandOPs ligand_tethers);
+	void remove_ligand_tethers(core::pose::Pose & pose, TetherLigandOPs const & ligand_tethers);
 
 	void enable_ligand_rotamer_packing(
 		core::pose::Pose const & pose,
@@ -116,14 +118,21 @@ protected:
 	core::pack::task::PackerTaskOP
 	make_packer_task(
 		core::pose::Pose const & pose,
-		bool all_residues= false
+		bool all_residues= false,
+		core::pack::palette::PackerPaletteCOP palette = nullptr,
+		core::pack::rotamer_set::UnboundRotamersOperationOP unbound_rotamers = nullptr
 	) const;
 
 	core::pack::task::PackerTaskOP
 	make_packer_task_from_vector(
 		core::pose::Pose const & pose,
-		ligand_options::Interface const & allow_repack
+		ligand_options::Interface const & allow_repack,
+		core::pack::palette::PackerPaletteCOP palette = nullptr,
+		core::pack::rotamer_set::UnboundRotamersOperationOP unbound_rotamers = nullptr
 	) const;
+
+	core::pack::palette::PackerPaletteOP
+	make_packer_palette(core::pose::Pose const & pose) const;
 
 	utility::vector1<protocols::moves::MoverOP>
 	create_rigid_body_movers(core::pose::Pose const & pose) const;

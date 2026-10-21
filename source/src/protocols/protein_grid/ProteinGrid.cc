@@ -12,6 +12,7 @@
 
 #include <protocols/protein_grid/ProteinGrid.hh>
 #include <core/types.hh>
+#include <cmath>
 
 #include <numeric/xyzVector.hh>
 
@@ -768,16 +769,26 @@ bool ProteinGrid::placed_ligand_clash_analysis(core::conformation::ResidueOP lig
 	//iterate over all atoms in the ligresOP to see if any clash with the pose
 	for ( core::Size residue_atom_iterator = 1; residue_atom_iterator <= ligresOP->natoms(); ++residue_atom_iterator ) {
 		//convert coordinates of current atom into format that can be read into space fill matrix matrix
-		numeric::xyzVector<int> atom_xyz = ligresOP->xyz(residue_atom_iterator);
+		numeric::xyzVector<core::Real> atom_xyz = ligresOP->xyz(residue_atom_iterator);
 
 		//apply the xyz shift to each value (and do before applying the resolution increase factor)
-		atom_xyz.x() = std::floor((atom_xyz.x() + xyz_shift_[1]) * resolution_);
-		atom_xyz.y() = std::floor((atom_xyz.y() + xyz_shift_[2]) * resolution_);
-		atom_xyz.z() = std::floor((atom_xyz.z() + xyz_shift_[3]) * resolution_);
+		//keep the grid indices as Reals so we can detect non-finite values (e.g. NaN) and out-of-grid coordinates
+		core::Real const grid_x = std::floor((atom_xyz.x() + xyz_shift_[1]) * resolution_);
+		core::Real const grid_y = std::floor((atom_xyz.y() + xyz_shift_[2]) * resolution_);
+		core::Real const grid_z = std::floor((atom_xyz.z() + xyz_shift_[3]) * resolution_);
+
+		//if any atom maps to a non-finite or out-of-grid index, treat the placement as clashing
+		//(reject it) rather than indexing the protein matrix out of bounds (which segfaults)
+		if ( !std::isfinite(grid_x) || !std::isfinite(grid_y) || !std::isfinite(grid_z) ) {
+			return true;
+		}
+		if ( grid_x < 1 || grid_x > xyz_bound_[1] || grid_y < 1 || grid_y > xyz_bound_[2] || grid_z < 1 || grid_z > xyz_bound_[3] ) {
+			return true;
+		}
 
 		//plug the atom xyz coordinates into the proteinmatrix and see what the value is
 		//if the value is odd, then it is occupied by the pose (or technically could be a placed ligand, but that would indicate a clash as well)
-		if ( protein_matrix_[atom_xyz.x()][atom_xyz.y()][atom_xyz.z()] % 2 == 1 ) {
+		if ( protein_matrix_[static_cast<core::Size>(grid_x)][static_cast<core::Size>(grid_y)][static_cast<core::Size>(grid_z)] % 2 == 1 ) {
 			return true;
 		}
 	}
