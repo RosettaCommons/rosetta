@@ -291,7 +291,8 @@ GlycanSampler::GlycanSampler( GlycanSampler const & src ):
 	randomize_first_(src.randomize_first_),
 	inner_ncycles_( src.inner_ncycles_),
 	match_sampling_of_modeler_( src.match_sampling_of_modeler_),
-	final_residue_subset_( src.final_residue_subset_)
+	final_residue_subset_( src.final_residue_subset_),
+	root_prob_sampling_( src.root_prob_sampling_ )
 {
 	if ( src.selector_ ) selector_ = src.selector_->clone();
 	if ( src.scorefxn_ ) scorefxn_ = src.scorefxn_->clone();

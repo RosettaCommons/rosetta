@@ -160,7 +160,8 @@ MembraneEnergyLandscapeSampler::MembraneEnergyLandscapeSampler( MembraneEnergyLa
 	flag_axis_( src.flag_axis_ ),
 	azimuthal_delta_( src.azimuthal_delta_ ),
 	repack_( src.repack_ ),
-	pH_mode_( src.pH_mode_ )
+	pH_mode_( src.pH_mode_ ),
+	dump_structures_( src.dump_structures_ )
 {}
 
 ////////////////////////////////////////////////////////////////////////////////

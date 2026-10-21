@@ -180,6 +180,7 @@ SegmentInsert::SegmentInsert( SegmentInsert const & rval ) :
 	interval_( rval.interval_ ),
 	ss_( rval.ss_ ),
 	aa_( rval.aa_ ),
+	keep_known_bb_torsions_at_junctions_( rval.keep_known_bb_torsions_at_junctions_ ),
 	insert_connection_scheme_( rval.insert_connection_scheme_ ),
 	insert_pose_( rval.insert_pose_ ),
 	insert_pose_torsion_override_movemap_( rval.insert_pose_torsion_override_movemap_ )
@@ -198,6 +199,7 @@ SegmentInsert & SegmentInsert::operator =( SegmentInsert const & rval ) {
 		interval_ = rval.interval_;
 		ss_ = rval.ss_;
 		aa_ = rval.aa_;
+		keep_known_bb_torsions_at_junctions_ = rval.keep_known_bb_torsions_at_junctions_;
 		insert_connection_scheme_ = rval.insert_connection_scheme_;
 		insert_pose_ = rval.insert_pose_;
 		insert_pose_torsion_override_movemap_ = rval.insert_pose_torsion_override_movemap_;

@@ -129,7 +129,8 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 	comp_file_contents_L_alpha_(src.comp_file_contents_L_alpha_),
 	comp_file_contents_D_alpha_(src.comp_file_contents_D_alpha_),
 	comp_file_contents_L_beta_(src.comp_file_contents_L_beta_),
-	comp_file_contents_D_beta_(src.comp_file_contents_D_beta_)
+	comp_file_contents_D_beta_(src.comp_file_contents_D_beta_),
+	abba_bins_(src.abba_bins_)
 {}
 
 /// @brief Destructor.

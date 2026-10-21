@@ -299,6 +299,7 @@ AbrelaxApplication::AbrelaxApplication( AbrelaxApplication const & src ) :
 	silent_options_( new core::io::silent::SilentFileOptions( *src.silent_options_ )),
 	silent_score_file_( src.silent_score_file_ ),
 	native_pose_( src.native_pose_ ),
+	init_pose_obj_( src.init_pose_obj_ ),
 	loops_in_( src.loops_in_ ),
 	pca_( src.pca_ ),
 	bRelax_( src.bRelax_ ),
@@ -313,7 +314,11 @@ AbrelaxApplication::AbrelaxApplication( AbrelaxApplication const & src ) :
 	fragset_small_( src.fragset_small_ ),
 	fragset_templates_( src.fragset_templates_ ),
 	evaluator_( src.evaluator_ ),
-	abrelax_checkpoints_( src.abrelax_checkpoints_ )
+	abrelax_checkpoints_( src.abrelax_checkpoints_ ),
+	use_trRosetta_constraints_( src.use_trRosetta_constraints_ )
+#ifdef USE_TENSORFLOW
+	, trRosetta_cst_generator_( src.trRosetta_cst_generator_ )
+#endif // USE_TENSORFLOW
 {}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

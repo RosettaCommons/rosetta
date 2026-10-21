@@ -120,6 +120,7 @@ MPDockingMover::MPDockingMover( MPDockingMover const & src ) :
 	highres_scorefxn_( src.highres_scorefxn_ ),
 	center_( src.center_ ),
 	normal_( src.normal_ ),
+	jump_num_( src.jump_num_ ),
 	native_( src.native_ )
 {}
 

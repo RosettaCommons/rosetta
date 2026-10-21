@@ -65,7 +65,8 @@ CDRSeqDesignOptions::CDRSeqDesignOptions(CDRSeqDesignOptions const & src):
 	cdr_(src.cdr_),
 	design_(src.design_),
 	design_strategy_(src.design_strategy_),
-	fallback_strategy_(src.fallback_strategy_)
+	fallback_strategy_(src.fallback_strategy_),
+	disallow_aa_(src.disallow_aa_)
 
 {
 }

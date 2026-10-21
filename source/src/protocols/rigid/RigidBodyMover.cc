@@ -223,7 +223,8 @@ RigidBodyPerturbMover::RigidBodyPerturbMover( RigidBodyPerturbMover const & src 
 	trans_mag_( src.trans_mag_ ),
 	partner_( src.partner_ ),
 	interface_( src.interface_ ),
-	movable_jumps_( src.movable_jumps_ )
+	movable_jumps_( src.movable_jumps_ ),
+	ok_for_centroid_calculation_( src.ok_for_centroid_calculation_ )
 {}
 
 RigidBodyPerturbMover::~RigidBodyPerturbMover() = default;

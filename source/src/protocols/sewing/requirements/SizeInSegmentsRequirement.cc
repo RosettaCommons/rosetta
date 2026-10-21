@@ -48,6 +48,7 @@ SizeInSegmentsRequirement::~SizeInSegmentsRequirement()=default;
 
 SizeInSegmentsRequirement::SizeInSegmentsRequirement( SizeInSegmentsRequirement const & src):
 	AssemblyRequirement( src ),
+	size_( src.size_ ),
 	minimum_size_( src.minimum_size_ ),
 	maximum_size_( src.maximum_size_ )
 {

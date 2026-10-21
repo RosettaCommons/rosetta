@@ -122,6 +122,7 @@ AntibodyCDRGrafter::AntibodyCDRGrafter( AntibodyCDRGrafter const & src ):
 	graft_mover_(src.graft_mover_),
 	anchored_graft_mover_(src.anchored_graft_mover_),
 	use_secondary_graft_mover_(src.use_secondary_graft_mover_),
+	stop_after_closure_(src.stop_after_closure_),
 	nter_overhang_(src.nter_overhang_),
 	cter_overhang_(src.cter_overhang_),
 	numbering_scheme_(src.numbering_scheme_),

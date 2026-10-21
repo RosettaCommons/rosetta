@@ -48,7 +48,8 @@ DownstreamAlgorithm::DownstreamAlgorithm( DownstreamAlgorithm const & other ) :
 	utility::VirtualBase(),
 	geom_cst_id_( other.geom_cst_id_ ),
 	bbgrid_( other.bbgrid_ ),
-	active_site_grid_( other.active_site_grid_ )
+	active_site_grid_( other.active_site_grid_ ),
+	dsbuilder_( other.dsbuilder_ )
 {}
 
 DownstreamAlgorithm const &
@@ -58,6 +59,7 @@ DownstreamAlgorithm::operator = ( DownstreamAlgorithm const & rhs )
 		geom_cst_id_ = rhs.geom_cst_id_;
 		bbgrid_ = rhs.bbgrid_;
 		active_site_grid_ = rhs.active_site_grid_;
+		dsbuilder_ = rhs.dsbuilder_;
 	}
 	return *this;
 }

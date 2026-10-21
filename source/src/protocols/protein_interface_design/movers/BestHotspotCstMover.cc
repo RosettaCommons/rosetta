@@ -69,7 +69,9 @@ BestHotspotCstMover::BestHotspotCstMover(
 BestHotspotCstMover::BestHotspotCstMover( BestHotspotCstMover const & init ) :
 	//utility::VirtualBase(),
 	protocols::moves::Mover( init ),
-	host_chain_(init.host_chain_), n_resi_( init.n_resi_ )
+	host_chain_(init.host_chain_),
+	cb_force_constant_( init.cb_force_constant_ ),
+	n_resi_( init.n_resi_ )
 {
 	if ( init.stub_set_ ) stub_set_ = utility::pointer::make_shared< protocols::hotspot_hashing::HotspotStubSet >( *init.stub_set_ );
 }

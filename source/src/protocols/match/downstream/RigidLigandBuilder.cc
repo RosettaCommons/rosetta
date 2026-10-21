@@ -59,6 +59,7 @@ RigidLigandBuilder::RigidLigandBuilder( RigidLigandBuilder const & other ) :
 	orientation_atoms_( other.orientation_atoms_ ),
 	atoms_123_( other.atoms_123_ ),
 	radii_123_( other.radii_123_ ),
+	ats123_reqd_in_active_site_( other.ats123_reqd_in_active_site_ ),
 	atom_radii_( other.atom_radii_ ),
 	atom_required_in_active_site_( other.atom_required_in_active_site_ ),
 	non_collision_detection_atoms_reqd_in_active_site_( other.non_collision_detection_atoms_reqd_in_active_site_ ),

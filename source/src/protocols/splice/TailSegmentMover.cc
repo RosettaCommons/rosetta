@@ -112,6 +112,8 @@ TailSegmentMover & TailSegmentMover::operator=( TailSegmentMover const & rhs ){
 	movemap_        = rhs.movemap_->clone();
 	movemap_lesstail_    = rhs.movemap_lesstail_->clone();
 	foldtree_ = utility::pointer::make_shared< core::kinematics::FoldTree >(*rhs.foldtree_); //no clone operation, and no proper copy ctor
+	temp_initial_ = rhs.temp_initial_;
+	temp_final_ = rhs.temp_final_;
 	return *this;
 }
 

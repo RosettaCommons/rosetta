@@ -73,6 +73,7 @@ CircularPermutation::CircularPermutation( CircularPermutation const & rval ) :
 	//utility::VirtualBase(),
 	Super( rval ),
 	new_terminal_pos_( rval.new_terminal_pos_ ),
+	ignore_chain_( rval.ignore_chain_ ),
 	split_( rval.split_ )
 {}
 
