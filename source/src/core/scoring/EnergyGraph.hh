@@ -26,6 +26,9 @@
 // Utility headers
 #include <utility/vector1.hh>
 
+// C++ headers
+#include <memory>
+
 #ifdef    SERIALIZATION
 // Cereal headers
 #include <cereal/types/polymorphic.fwd.hpp>
@@ -266,7 +269,7 @@ protected:
 
 private:
 
-	boost::unordered_object_pool< EnergyEdge > * energy_edge_pool_;
+	std::unique_ptr< boost::unordered_object_pool< EnergyEdge > > energy_edge_pool_;
 	utility::graph::ArrayPool< Real >                     energy_array_pool_;
 
 	ScoreTypes              active_2b_score_types_;
