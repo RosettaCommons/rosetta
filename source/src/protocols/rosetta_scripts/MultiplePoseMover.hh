@@ -19,6 +19,7 @@
 
 // Package headers
 #include <protocols/moves/Mover.hh>
+#include <protocols/moves/AdditionalPosesMover.hh>
 #include <protocols/rosetta_scripts/PoseSelector.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
@@ -40,7 +41,7 @@ class MultiplePoseMover;
 typedef utility::pointer::shared_ptr< MultiplePoseMover > MultiplePoseMoverOP;
 typedef utility::pointer::shared_ptr< MultiplePoseMover const > MultiplePoseMoverCOP;
 
-class MultiplePoseMover : public protocols::moves::Mover {
+class MultiplePoseMover : public protocols::moves::AdditionalPosesMover {
 
 public:
 	/// @brief No-argument constructor
@@ -62,11 +63,11 @@ public:
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
-	/// @brief Used by RosettaScripts to set the previous mover to pull poses from
-	void set_previous_mover( protocols::moves::MoverOP const m );
-
 	/// @brief sets rosettascripts tag
 	void set_rosetta_scripts_tag( utility::tag::TagCOP tag );
+
+	/// @brief sets the mover to use on each structure (versus the RosettaScripts script)
+	void set_main_mover( protocols::moves::MoverOP const m );
 
 	std::string
 	get_name() const override;
@@ -93,8 +94,8 @@ private:
 	bool cached_;
 	core::Size max_input_poses_, max_output_poses_;
 	utility::tag::TagCOP rosetta_scripts_tag_;
+	protocols::moves::MoverOP mover_; // Use a mover instead of a RosettaScripts tag
 	utility::tag::TagCOP selector_tag_;
-	protocols::moves::MoverOP previous_mover_;
 	utility::vector1 < PoseSelectorOP > selectors_;
 
 	// Pose caches and counters

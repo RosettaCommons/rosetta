@@ -1,0 +1,4 @@
+-parser:protocol inputs/test.xml
+-score:weights ref2015_cart
+-s inputs/1l2y_pro.pdb
+-nstruct 1

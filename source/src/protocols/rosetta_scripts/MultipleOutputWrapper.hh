@@ -69,7 +69,6 @@ public:
 
 private:
 	std::string name_;
-	utility::tag::TagCOP mover_tag_;
 	utility::tag::TagCOP rosetta_scripts_tag_;
 	core::pose::PoseOP reference_pose_;
 	core::Size max_poses_;
