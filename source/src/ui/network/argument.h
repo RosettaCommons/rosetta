@@ -23,7 +23,7 @@ class Argument : public QObject
 
 protected:
 	Argument();
-	//Argument(json const &);
+	//Argument(nlohmann::json const &);
 
 public:
 
@@ -36,7 +36,7 @@ public:
 
 	/// factory method: tries to analyze JSON object and build on of Argument's derived class from it.
 	/// return null on failure
-	static ArgumentSP create(json const &);
+	static ArgumentSP create(nlohmann::json const &);
 
 
 	/// clone Argument. Note that underlying QObject is not clonned so you will need to re-connect any signal/slots on a new instance manually
@@ -48,7 +48,7 @@ public:
 
 
 	/// Encode argument into JSON object
-	virtual json encode() const = 0;
+	virtual nlohmann::json encode() const = 0;
 
 
 	/// qDebug helper
@@ -56,7 +56,7 @@ public:
 
 
 	// init from JSON, note that this version is always succeeded
-	void init(json const &);
+	void init(nlohmann::json const &);
 
 
 protected:
@@ -76,7 +76,7 @@ class BooleanArgument : public Argument
 public:
 
 	// try to init from JSON, return true on success and false otherwise
-	bool init(json const &);
+	bool init(nlohmann::json const &);
 
 
 	/// clone Argument. Note that underlying QObject is not clonned so you will need to re-connect any signal/slots on a new instance manually
@@ -88,7 +88,7 @@ public:
 
 
 	/// Encode argument into JSON object
-	json encode() const override;
+	nlohmann::json encode() const override;
 
 
 	/// qDebug helper
@@ -114,7 +114,7 @@ class IntegerArgument : public Argument
 public:
 
 	// try to init from JSON, return true on success and false otherwise
-	bool init(json const &);
+	bool init(nlohmann::json const &);
 
 
 	/// clone Argument. Note that underlying QObject is not clonned so you will need to re-connect any signal/slots on a new instance manually
@@ -126,7 +126,7 @@ public:
 
 
 	/// Encode argument into JSON object
-	json encode() const override;
+	nlohmann::json encode() const override;
 
 
 	/// qDebug helper
@@ -154,7 +154,7 @@ class FloatArgument : public Argument
 public:
 
 	// try to init from JSON, return true on success and false otherwise
-	bool init(json const &);
+	bool init(nlohmann::json const &);
 
 	/// clone Argument. Note that underlying QObject is not clonned so you will need to re-connect any signal/slots on a new instance manually
 	ArgumentSP clone() const override;
@@ -164,7 +164,7 @@ public:
 
 
 	/// Encode argument into JSON object
-	json encode() const override;
+	nlohmann::json encode() const override;
 
 
 	operator QString() const override;
@@ -189,7 +189,7 @@ class StringArgument : public Argument
 public:
 
 	// try to init from JSON, return true on success and false otherwise
-	bool init(json const &);
+	bool init(nlohmann::json const &);
 
 	/// clone Argument. Note that underlying QObject is not clonned so you will need to re-connect any signal/slots on a new instance manually
 	ArgumentSP clone() const override;
@@ -199,7 +199,7 @@ public:
 
 
 	/// Encode argument into JSON object
-	json encode() const override;
+	nlohmann::json encode() const override;
 
 	operator QString() const override;
 
@@ -227,7 +227,7 @@ public:
 
 
 	// try to init from JSON, return true on success and false otherwise
-	bool init(json const &);
+	bool init(nlohmann::json const &);
 
 	/// clone Argument. Note that underlying QObject is not clonned so you will need to re-connect any signal/slots on a new instance manually
 	ArgumentSP clone() const override;
@@ -237,7 +237,7 @@ public:
 
 
 	/// Encode argument into JSON object
-	//json encode() const override;
+	//nlohmann::json encode() const override;
 
 	operator QString() const override;
 

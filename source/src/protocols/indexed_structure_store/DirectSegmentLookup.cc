@@ -44,7 +44,10 @@
 
 static basic::Tracer TR("protocols.indexed_structure_store.DirectSegmentLookup");
 
+using nlohmann::json;
+
 namespace ndarray {
+
 
 /**
 *  @brief Create a view into an array with interior contiguous dimensions merged.

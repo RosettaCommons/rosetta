@@ -22,7 +22,6 @@
 #include <utility/json_utilities.hh>
 
 #ifdef __ANTIBODY_GRAFTING__
-#ifdef _NLOHMANN_JSON_ENABLED_
 #include <protocols/antibody/grafting/cdr_detection.hh>
 
 #include <protocols/antibody/grafting/antibody_sequence.fwd.hh>
@@ -58,7 +57,6 @@ private:
 } // namespace antibody
 } // namespace protocols
 
-#endif // _NLOHMANN_JSON_ENABLED_
 #endif // __ANTIBODY_GRAFTING__
 
 #endif // INCLUDED_protocols_antibody_grafting_json_based_cdr_detection_HH

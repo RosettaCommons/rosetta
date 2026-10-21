@@ -13,10 +13,9 @@
 
 #include <utility/json_utilities.hh>
 
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 #include <protocols/network/hal.hh>
 #include <protocols/network/util.hh>
-#include <json.hpp>
 #include <protocols/network/ui_mover.hh>
 #include <core/import_pose/import_pose.hh>
 #endif
@@ -87,7 +86,7 @@ using namespace basic::options::OptionKeys;
 using namespace basic::options::OptionKeys::stepwise::monte_carlo;
 using utility::vector1;
 
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 using namespace utility;
 using namespace protocols::network;
 #endif
@@ -191,7 +190,7 @@ public:
 		Vector center_vector = ( align_pose != nullptr ) ? get_center_of_mass( *align_pose ) : Vector( 0.0 );
 		protocols::viewer::add_conformation_viewer ( pose->conformation(), "current", 500, 500, false, ( align_pose != nullptr ), center_vector );
 
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 		pose->center();
 		protocols::network::AddUIObserver( *pose );
 #endif
@@ -227,7 +226,7 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 core::pose::Pose
 #else
 void
@@ -239,13 +238,13 @@ stepwise_monte_carlo()
 	protocols::jd3::JobDistributorOP jd = protocols::jd3::JobDistributorFactory::create_job_distributor();
 	protocols::jd3::JobQueenOP queen( new StepWiseJobQueen );
 	jd->go( queen );
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 	return Pose();
 #endif
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 core::pose::Pose
 #else
 void
@@ -281,7 +280,7 @@ stepwise_monte_carlo_legacy()
 #ifdef GL_GRAPHICS
 	pose.center();
 #endif
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 	pose.center();
 #endif
 
@@ -337,12 +336,12 @@ stepwise_monte_carlo_legacy()
 	while ( stepwise_job_distributor->has_another_job() ) {
 		stepwise_job_distributor->apply( pose );
 	}
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 	return pose;
 #endif
 }
 
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 ///////////////////////////////////////////////////////////////
 core::pose::Pose
 my_main()
@@ -484,7 +483,7 @@ main( int argc, char * argv [] )
 			std::cout << "The use of -superimpose_over_all is deprecated. The behavior in question now defaults to TRUE and is turned off by providing a particular residue that is part of an anchoring input domain as -alignment_anchor_res." << std::endl;
 		}
 
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 		{ // creating dummy pose object to trigger database load so later we can create Pose immeditaly
 			core::pose::Pose p;
 			core::import_pose::pose_from_pdbstring(p, "ATOM     17  N   ILE A   1      16.327  47.509  23.466  1.00  0.00\n");
