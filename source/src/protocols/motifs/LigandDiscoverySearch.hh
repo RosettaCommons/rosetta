@@ -28,6 +28,7 @@
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <protocols/motifs/Motif.fwd.hh>
+#include <protocols/motifs/motif_utils.hh>
 #include <protocols/motifs/MotifHit.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.fwd.hh>
@@ -178,7 +179,11 @@ public:
 	// @brief main function to run ligand discovery operations
 	//needs to have values set for working_pose_, motif_library_, and all_residues_
 	//parameter is a string to be a prefix name to use for outputted file names
-	core::Size discover(std::string output_prefix);
+	core::Size discover(
+		std::string output_prefix,
+		core::Size ligand_residue_position = 0,
+		std::string const & input_ligand_start_step = "clash_check"
+	);
 
 	// @brief function to get a sub-library of motifs from the main library, based on the residue being used (only get for select residue)
 	//function may have use outside discover, so public can use it
@@ -231,6 +236,15 @@ private:
 
 	// @brief This function uses a HighResDockOP object for using highresdock in discover() to try to optimize the ligand placement
 	void run_HighResDock_on_working_pose(const protocols::ligand_docking::HighResDockerOP my_HighResDocker);
+
+	// @brief run high-resolution docking and apply the shared post-docking score filters
+	bool run_highresdock_and_score(const protocols::ligand_docking::HighResDockerOP high_res_docker, core::Real & delta_score, core::Real & fa_rep, core::Real & fa_atr, core::Real & fa_atr_rep_score_after, core::Real & whole_score);
+
+	// @brief apply the shared post-docking system score filters without running high-resolution docking
+	bool score_post_highresdock(core::Real & delta_score, core::Real & fa_rep, core::Real & fa_atr, core::Real & fa_atr_rep_score_after, core::Real & whole_score, std::string * failure_reason = nullptr);
+
+	// @brief collect motifs from a placed ligand and apply the configured motif-count filters
+	bool collect_and_filter_placement_motifs(const std::map<protocols::motifs::motif_atoms, protocols::motifs::MotifCOPs> & motif_map, std::string const & pdb_name, utility::vector1<core::Real> & motif_data);
 
 	// @brief A function to reset the working_pose_ back to its original state, as found in original_pose
 	void reset_working_pose();

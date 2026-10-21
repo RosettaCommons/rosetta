@@ -731,11 +731,403 @@ void LigandDiscoverySearch::run_HighResDock_on_working_pose(const protocols::lig
 	my_HighResDocker->apply(*working_pose_);
 }
 
+bool LigandDiscoverySearch::run_highresdock_and_score(
+	protocols::ligand_docking::HighResDockerOP const high_res_docker,
+	core::Real & delta_score,
+	core::Real & fa_rep,
+	core::Real & fa_atr,
+	core::Real & fa_atr_rep_score_after,
+	core::Real & whole_score
+)
+{
+	run_HighResDock_on_working_pose(high_res_docker);
+	return score_post_highresdock(delta_score, fa_rep, fa_atr, fa_atr_rep_score_after, whole_score);
+}
+
+bool LigandDiscoverySearch::score_post_highresdock(
+	core::Real & delta_score,
+	core::Real & fa_rep,
+	core::Real & fa_atr,
+	core::Real & fa_atr_rep_score_after,
+	core::Real & whole_score,
+	std::string * failure_reason
+)
+{
+	delta_score = get_pose_ddg(working_fxn_, working_pose_);
+
+	bool const use_atr_rep = option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ];
+	bool const use_ligand_wts = option[ OptionKeys::motifs::score_with_ligand_wts_function ];
+	fa_atr_rep_score_after = 0;
+	whole_score = 0;
+	bool passes_filters = true;
+	if ( failure_reason != nullptr ) {
+		failure_reason->clear();
+	}
+	auto record_failure = [failure_reason, &passes_filters](std::string const & message) {
+		passes_filters = false;
+		if ( failure_reason != nullptr ) {
+			if ( !failure_reason->empty() ) {
+				*failure_reason += "; ";
+			}
+			*failure_reason += message;
+		}
+	};
+
+	if ( use_atr_rep ) {
+		fa_atr_rep_score_after = fa_atr_rep_fxn_->score(*working_pose_);
+		if ( fa_atr_rep_score_after > fa_atr_rep_cutoff_ ) {
+			if ( failure_reason == nullptr ) {
+				return false;
+			}
+			record_failure("fa_atr_rep score " + std::to_string(fa_atr_rep_score_after) +
+				" exceeds cutoff " + std::to_string(fa_atr_rep_cutoff_));
+		}
+		fa_rep = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_rep];
+		fa_atr = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_atr];
+	}
+	if ( use_ligand_wts ) {
+		whole_score = whole_score_fxn_->score(*working_pose_);
+		if ( whole_score > whole_fxn_cutoff_ ) {
+			if ( failure_reason == nullptr ) {
+				return false;
+			}
+			record_failure("whole-system score " + std::to_string(whole_score) +
+				" exceeds cutoff " + std::to_string(whole_fxn_cutoff_));
+		}
+		fa_rep = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_rep];
+		fa_atr = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_atr];
+	}
+
+	if ( use_atr_rep || use_ligand_wts ) {
+		ms_tr.Debug << "Post-dock delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep;
+		if ( use_atr_rep ) {
+			ms_tr.Debug << ", fa_atr_rep after = " << fa_atr_rep_score_after;
+		}
+		if ( use_ligand_wts ) {
+			ms_tr.Debug << ", whole = " << whole_score;
+		}
+		ms_tr.Debug << std::endl;
+	}
+
+	if ( delta_score > ddg_cutoff_ ) {
+		record_failure("system ddG " + std::to_string(delta_score) +
+			" exceeds cutoff " + std::to_string(ddg_cutoff_));
+	}
+	if ( fa_atr > fa_atr_cutoff_ ) {
+		record_failure("fa_atr " + std::to_string(fa_atr) +
+			" exceeds cutoff " + std::to_string(fa_atr_cutoff_));
+	}
+	if ( fa_rep > fa_rep_cutoff_ ) {
+		record_failure("fa_rep " + std::to_string(fa_rep) +
+			" exceeds cutoff " + std::to_string(fa_rep_cutoff_));
+	}
+
+	return passes_filters;
+}
+
+bool LigandDiscoverySearch::collect_and_filter_placement_motifs(
+	std::map<protocols::motifs::motif_atoms, protocols::motifs::MotifCOPs> const & motif_map,
+	std::string const & pdb_name,
+	utility::vector1<core::Real> & motif_data
+)
+{
+	IdentifyLigandMotifs ilm;
+	motif_data = ilm.evaluate_motifs_of_pose(working_pose_, motif_map, pdb_name);
+	return motif_data[1] >= min_motifs_cutoff_ &&
+		motif_data[2] != 0 &&
+		motif_data[3] >= min_sig_motifs_cutoff_ &&
+		motif_data[5] >= real_motif_ratio_cutoff_;
+}
+
 //main function to run ligand discovery operations
 //needs to have values set for working_pose_, motif_library_, and all_residues_
 //parameter is a string to be a prefix name to use for outputted file names
-core::Size LigandDiscoverySearch::discover(std::string output_prefix)
+core::Size LigandDiscoverySearch::discover(std::string output_prefix, core::Size ligand_residue_position, std::string const & input_ligand_start_step)
 {
+	if ( ligand_residue_position != 0 ) {
+		core::Size start_step_index = 0;
+		if ( input_ligand_start_step == "clash_check" ) {
+			start_step_index = 0;
+		} else if ( input_ligand_start_step == "preliminary_scoring" ) {
+			start_step_index = 1;
+		} else if ( input_ligand_start_step == "space_fill" ) {
+			start_step_index = 2;
+		} else if ( input_ligand_start_step == "high_res_docking" ) {
+			start_step_index = 3;
+		} else if ( input_ligand_start_step == "system_scoring" ) {
+			start_step_index = 4;
+		} else if ( input_ligand_start_step == "motif_collection" ) {
+			start_step_index = 5;
+		} else {
+			ms_tr.Error << "Invalid input ligand start step '" << input_ligand_start_step
+				<< "'. Valid steps are clash_check, preliminary_scoring, space_fill, "
+				<< "high_res_docking, system_scoring, and motif_collection." << std::endl;
+			return -1;
+		}
+		bool const run_clash_check = start_step_index <= 0;
+		bool const run_preliminary_scoring = start_step_index <= 1;
+		bool const run_space_fill = start_step_index <= 2;
+		bool const run_high_res_docking = start_step_index <= 3;
+		bool const run_system_scoring = start_step_index <= 4;
+		bool const run_motif_collection = start_step_index <= 5;
+
+		if ( working_pose_ == nullptr || ligand_residue_position < 1 || ligand_residue_position > working_pose_->size() ) {
+			ms_tr.Error << "The selected input ligand residue index is invalid." << std::endl;
+			return -1;
+		}
+		if ( working_pose_->pdb_info() == nullptr ) {
+			ms_tr.Error << "Cannot select an input ligand without PDB residue numbering information." << std::endl;
+			return -1;
+		}
+
+		core::conformation::ResidueOP ligresOP( new core::conformation::Residue( working_pose_->residue(ligand_residue_position) ) );
+		char const ligand_chain = working_pose_->pdb_info()->chain(ligand_residue_position);
+		int const ligand_pdb_number = working_pose_->pdb_info()->number(ligand_residue_position);
+		char const ligand_insertion_code = working_pose_->pdb_info()->icode(ligand_residue_position);
+		std::string const ligand_source_id = std::string(1, ligand_chain == ' ' ? '_' : ligand_chain) + "_res_" +
+			std::to_string(ligand_pdb_number) +
+			(ligand_insertion_code == ' ' ? "" : std::string(1, ligand_insertion_code));
+
+		working_pose_ = working_pose_->clone();
+		working_pose_->delete_residue_slow(ligand_residue_position);
+		if ( working_pose_->size() == 0 ) {
+			ms_tr.Error << "Removing the selected ligand left no receptor residues to evaluate against." << std::endl;
+			return -1;
+		}
+
+		core::Real const resolution = option[ OptionKeys::motifs::resolution_scale_factor_float ];
+		if ( option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].user() &&
+				option[ OptionKeys::motifs::binding_pocket_center_sf ].user() &&
+				option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].size() >= 3 &&
+				option[ OptionKeys::motifs::binding_pocket_center_sf ].size() >= 3 ) {
+			utility::vector1<core::Size> const input_dimensions = option[ OptionKeys::motifs::binding_pocket_dimensions_sf ]();
+			utility::vector1<core::Size> dimensions(3, 0);
+			for ( core::Size i = 1; i <= 3; ++i ) {
+				dimensions[i] = input_dimensions[i];
+			}
+			utility::vector1<int> const center = option[ OptionKeys::motifs::binding_pocket_center_sf ]();
+			numeric::xyzVector<int> center_xyz(center[1], center[2], center[3]);
+			clash_pose_grid_ = utility::pointer::make_shared<protocols::protein_grid::ProteinGrid>(
+				working_pose_, resolution, center_xyz, dimensions
+			);
+		} else {
+			clash_pose_grid_ = utility::pointer::make_shared<protocols::protein_grid::ProteinGrid>(working_pose_, resolution);
+		}
+
+		sf_pose_grid_ = utility::pointer::make_shared<protocols::protein_grid::ProteinGrid>(*clash_pose_grid_);
+		sf_pose_grid_->project_lj_radii();
+		protocols::protein_grid::ProteinGridOP working_sf_pose_grid =
+			utility::pointer::make_shared<protocols::protein_grid::ProteinGrid>(*sf_pose_grid_);
+		utility::vector1<core::Real> occupied_ratios(2, 0);
+		occupied_ratios[1] = working_sf_pose_grid->get_grid_occupied_cell_ratio();
+		occupied_ratios[2] = working_sf_pose_grid->get_sub_grid_occupied_cell_ratio();
+
+		if ( option[ OptionKeys::motifs::output_space_fill_matrix_pdbs ] ) {
+			working_sf_pose_grid->export_protein_matrix_to_pdb(output_prefix + "_empty_");
+		}
+
+		bool const skip_highresdock = option[ OptionKeys::motifs::input_ligand_skip_highresdock ];
+		original_pose_ = *working_pose_->clone();
+		protocols::ligand_docking::HighResDockerOP high_res_docker =
+			make_HighResDockOP_for_discovery(working_fxn_);
+		core::chemical::MutableResidueTypeOP ligand_type(
+			new core::chemical::MutableResidueType(ligresOP->type())
+		);
+
+		core::pose::PoseOP minipose(new core::pose::Pose);
+		std::string failed_onramp_steps;
+		auto record_onramp_failure = [&failed_onramp_steps](std::string const & step, std::string const & reason) {
+			if ( !failed_onramp_steps.empty() ) {
+				failed_onramp_steps += "; ";
+			}
+			failed_onramp_steps += step + ": " + reason;
+		};
+		bool const input_ligand_clashes = run_clash_check && clash_pose_grid_->placed_ligand_clash_analysis(ligresOP);
+		if ( input_ligand_clashes ) {
+			std::string const reason = "input ligand clashes with the receptor";
+			ms_tr << "Input ligand " << ligresOP->name() << " " << reason << "; continuing the on-ramp." << std::endl;
+			record_onramp_failure("clash_check", reason);
+		}
+		core::Real fa_rep = 0;
+		core::Real fa_atr = 0;
+		core::Real fa_atr_rep_score_before = 0;
+		if ( run_preliminary_scoring ) {
+			if ( !make_minipose(minipose, ligresOP) ) {
+				std::string const reason = "no nearby receptor residues were available to construct a scoring minipose";
+				ms_tr << "Input ligand " << reason << "; continuing the on-ramp." << std::endl;
+				record_onramp_failure("preliminary_scoring", reason);
+			} else {
+				minipose->append_residue_by_jump(*ligresOP, 1);
+				if ( !score_minipose(minipose, fa_rep, fa_atr, fa_atr_rep_score_before) ) {
+					std::string reason;
+					if ( fa_rep > fa_rep_cutoff_ ) {
+						reason += "fa_rep " + std::to_string(fa_rep) + " exceeds cutoff " + std::to_string(fa_rep_cutoff_);
+					}
+					if ( fa_atr > fa_atr_cutoff_ ) {
+						if ( !reason.empty() ) reason += "; ";
+						reason += "fa_atr " + std::to_string(fa_atr) + " exceeds cutoff " + std::to_string(fa_atr_cutoff_);
+					}
+					if ( fa_atr_rep_score_before > fa_atr_rep_cutoff_ ) {
+						if ( !reason.empty() ) reason += "; ";
+						reason += "fa_atr_rep score " + std::to_string(fa_atr_rep_score_before) +
+							" exceeds cutoff " + std::to_string(fa_atr_rep_cutoff_);
+					}
+					ms_tr << "Input ligand failed preliminary energy filters (" << reason << "); continuing the on-ramp." << std::endl;
+					record_onramp_failure("preliminary_scoring", reason);
+				}
+				minipose->delete_residue_slow(minipose->size());
+			}
+		}
+
+		bool const use_space_fill =
+			option[ OptionKeys::motifs::space_fill_cutoff_score ].user() ||
+			option[ OptionKeys::motifs::space_fill_cutoff_score_sub ].user() ||
+			option[ OptionKeys::motifs::space_fill_cutoff_differential_score_sub ].user();
+		if ( run_space_fill && use_space_fill ) {
+			working_sf_pose_grid->placed_ligand_space_fill_analysis(ligresOP);
+			core::Real const whole_fill = working_sf_pose_grid->get_grid_occupied_cell_ratio();
+			core::Real const sub_fill = working_sf_pose_grid->get_sub_grid_occupied_cell_ratio();
+			core::Real const sub_fill_differential = sub_fill - occupied_ratios[2];
+			if ( option[ OptionKeys::motifs::output_space_fill_matrix_pdbs ] ) {
+				working_sf_pose_grid->export_protein_matrix_to_pdb(output_prefix + "_onramp_" + ligresOP->name() + "_");
+			}
+			working_sf_pose_grid = utility::pointer::make_shared<protocols::protein_grid::ProteinGrid>(*sf_pose_grid_);
+
+			bool passes_space_fill = false;
+			std::string space_fill_failure_reason;
+			if ( option[ OptionKeys::motifs::space_fill_cutoff_score ].user() ) {
+				core::Real const cutoff = option[ OptionKeys::motifs::space_fill_cutoff_score ];
+				passes_space_fill = passes_space_fill || whole_fill >= cutoff;
+				if ( whole_fill < cutoff ) {
+					space_fill_failure_reason += "whole occupancy " + std::to_string(whole_fill) + " is below cutoff " + std::to_string(cutoff);
+				}
+			}
+			if ( option[ OptionKeys::motifs::space_fill_cutoff_score_sub ].user() ) {
+				core::Real const cutoff = option[ OptionKeys::motifs::space_fill_cutoff_score_sub ];
+				passes_space_fill = passes_space_fill || sub_fill >= cutoff;
+				if ( sub_fill < cutoff ) {
+					if ( !space_fill_failure_reason.empty() ) space_fill_failure_reason += "; ";
+					space_fill_failure_reason += "sub-area occupancy " + std::to_string(sub_fill) + " is below cutoff " + std::to_string(cutoff);
+				}
+			}
+			if ( option[ OptionKeys::motifs::space_fill_cutoff_differential_score_sub ].user() ) {
+				core::Real const cutoff = option[ OptionKeys::motifs::space_fill_cutoff_differential_score_sub ];
+				passes_space_fill = passes_space_fill || sub_fill_differential >= cutoff;
+				if ( sub_fill_differential < cutoff ) {
+					if ( !space_fill_failure_reason.empty() ) space_fill_failure_reason += "; ";
+					space_fill_failure_reason += "sub-area occupancy differential " + std::to_string(sub_fill_differential) +
+						" is below cutoff " + std::to_string(cutoff);
+				}
+			}
+			if ( !passes_space_fill ) {
+				ms_tr << "Input ligand failed space-fill filters (" << space_fill_failure_reason << "); continuing the on-ramp." << std::endl;
+				record_onramp_failure("space_fill", space_fill_failure_reason);
+			}
+		}
+
+		working_pose_->append_residue_by_jump(*ligresOP, working_pose_->size(), "", "", true);
+		add_ligand_to_pose_residuetypeset(ligand_type);
+		core::Real delta_score = 0;
+
+		bool const use_atr_rep = option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ];
+		bool const use_ligand_wts = option[ OptionKeys::motifs::score_with_ligand_wts_function ];
+		core::Real fa_atr_rep_score_after = 0;
+		core::Real whole_score = 0;
+		if ( run_high_res_docking && !skip_highresdock ) {
+			run_HighResDock_on_working_pose(high_res_docker);
+		} else if ( run_high_res_docking && skip_highresdock ) {
+			ms_tr << "Skipping high-resolution docking for the input ligand by request." << std::endl;
+		}
+		if ( run_system_scoring ) {
+			std::string system_score_failure_reason;
+			if ( !score_post_highresdock(delta_score, fa_rep, fa_atr, fa_atr_rep_score_after, whole_score, &system_score_failure_reason) ) {
+				ms_tr << "Input ligand failed system scoring filters (" << system_score_failure_reason << "); continuing the on-ramp." << std::endl;
+				record_onramp_failure("system_scoring", system_score_failure_reason);
+			}
+		}
+
+		std::map<protocols::motifs::motif_atoms, protocols::motifs::MotifCOPs> motif_map;
+		protocols::motifs::hash_motif_library_into_map(motif_library_, motif_map);
+		std::string pdb_name = output_prefix + "_onramp_" + ligresOP->name() + "_" + ligand_source_id;
+		std::string const pdb_short_unique_name = pdb_name;
+		core::pose::add_comment(*working_pose_, "Placement: Output prefix:", output_prefix);
+		core::pose::add_comment(*working_pose_, "Placement: Input ligand residue:", ligand_source_id);
+		core::pose::add_comment(*working_pose_, "Placement: Ligand name:", ligresOP->name());
+		if ( input_ligand_clashes ) {
+			core::pose::add_comment(*working_pose_, "On-ramp: Clash check:", "FAILED - input ligand clashes with the receptor");
+		}
+		if ( run_high_res_docking && skip_highresdock ) {
+			core::pose::add_comment(*working_pose_, "On-ramp: HighResDock:", "Skipped by input_ligand_skip_highresdock");
+		}
+		if ( run_system_scoring ) {
+			core::pose::add_comment(*working_pose_, "Scoring: Post-HighResDock system ddG:", std::to_string(delta_score));
+		}
+		if ( run_system_scoring && (use_atr_rep || use_ligand_wts) ) {
+			core::pose::add_comment(*working_pose_, "Scoring: Ligand fa_atr:", std::to_string(fa_atr));
+			core::pose::add_comment(*working_pose_, "Scoring: Ligand fa_rep:", std::to_string(fa_rep));
+		}
+		if ( run_system_scoring && use_atr_rep ) {
+			core::pose::add_comment(*working_pose_, "Scoring: System fa_atr and fa_rep score:", std::to_string(fa_atr_rep_score_after));
+		}
+		if ( run_system_scoring && use_ligand_wts ) {
+			core::pose::add_comment(*working_pose_, "Scoring: Whole system score:", std::to_string(whole_score));
+		}
+
+		std::string comment_table_header = "ligand_name,source_residue,fa_atr,fa_rep,ddg,fa_atr_rep,whole_score,";
+		std::string comment_table_data = ligresOP->name() + "," + ligand_source_id + ",";
+		comment_table_data += run_system_scoring && (use_atr_rep || use_ligand_wts) ? std::to_string(fa_atr) + "," + std::to_string(fa_rep) + "," : ",,";
+		comment_table_data += run_system_scoring ? std::to_string(delta_score) + "," : ",";
+		comment_table_data += run_system_scoring && use_atr_rep ? std::to_string(fa_atr_rep_score_after) + "," : ",";
+		comment_table_data += run_system_scoring && use_ligand_wts ? std::to_string(whole_score) + "," : ",";
+
+		if ( run_motif_collection && option[ OptionKeys::motifs::collect_motifs_from_placed_ligand ] ) {
+			utility::vector1<core::Real> motif_data;
+			if ( !collect_and_filter_placement_motifs(motif_map, pdb_short_unique_name, motif_data) ) {
+				std::string reason;
+				if ( motif_data[1] < min_motifs_cutoff_ ) {
+					reason += "total motif count " + std::to_string(motif_data[1]) + " is below minimum " + std::to_string(min_motifs_cutoff_);
+				}
+				if ( motif_data[2] == 0 ) {
+					if ( !reason.empty() ) reason += "; ";
+					reason += "no motif contacts were found";
+				}
+				if ( motif_data[3] < min_sig_motifs_cutoff_ ) {
+					if ( !reason.empty() ) reason += "; ";
+					reason += "significant motif count " + std::to_string(motif_data[3]) + " is below minimum " + std::to_string(min_sig_motifs_cutoff_);
+				}
+				if ( motif_data[5] < real_motif_ratio_cutoff_ ) {
+					if ( !reason.empty() ) reason += "; ";
+					reason += "real motif ratio " + std::to_string(motif_data[5]) + " is below minimum " + std::to_string(real_motif_ratio_cutoff_);
+				}
+				ms_tr << "Input ligand failed motif collection filters (" << reason << "); continuing the on-ramp." << std::endl;
+				record_onramp_failure("motif_collection", reason);
+			}
+			pdb_name += "_motifs_" + std::to_string(motif_data[1]);
+			comment_table_header += "total_motif_count,significant_motif_count,real_motif_count,real_motif_ratio,";
+			comment_table_data += std::to_string(motif_data[1]) + "," + std::to_string(motif_data[3]) + "," +
+				std::to_string(motif_data[4]) + "," + std::to_string(motif_data[5]) + ",";
+		} else {
+			comment_table_header += "total_motif_count,significant_motif_count,real_motif_count,real_motif_ratio,";
+			comment_table_data += ",,,,";
+		}
+
+		pdb_name += ".pdb";
+		if ( option[ OptionKeys::motifs::clean_pdb_name ] ) {
+			pdb_name = output_prefix + "_" + ligresOP->name() + "_onramp.pdb";
+		}
+		core::pose::add_comment(*working_pose_, "Table Header", comment_table_header);
+		core::pose::add_comment(*working_pose_, "Table Values", comment_table_data);
+		if ( !failed_onramp_steps.empty() ) {
+			core::pose::add_comment(*working_pose_, "On-ramp: Failed steps:", failed_onramp_steps);
+		}
+
+		core::io::pdb::dump_pdb(*working_pose_, pdb_name);
+		reset_working_pose();
+
+		return 1;
+
+	}
+
 	//create identifyligandmotifs object for use with deriving motifs from placed ligands
 	IdentifyLigandMotifs ilm;
 
@@ -1272,78 +1664,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						add_ligand_to_pose_residuetypeset(lig_mrt);
 					}
 
-					//apply the highresdocker to working_pose
-					run_HighResDock_on_working_pose(my_HighResDocker);
-
-					//use working function to get ddg after highresdock
-					delta_score = get_pose_ddg(working_fxn_, working_pose_);
-
-					//this section up until collecting motifs off the placed ligand I do not think makes sense to put into its own function
-					//My reasoning is that this could be made into 2 small specific scoring functions, which seems like extra work
-					//The creation of the PDB comments uses a lot of upstream variables that would be a pain to pass into a function, so it may be better to just leave it inline in discover()
-
-					//declaration of fa_atr_rep_score_after (may not be used)
 					core::Real fa_atr_rep_score_after = 0;
-					//optional check of fa_atr_rep after running highresdock
-					//post_highresdock_fa_atr_rep_score
-					if ( use_atr_rep ) {
-						fa_atr_rep_score_after = fa_atr_rep_fxn_->score(*working_pose_);
-
-						//check if after is worse than cutoff
-						if ( fa_atr_rep_score_after > fa_atr_rep_cutoff_ ) {
-							reset_working_pose();
-							++clashing_counter;
-							continue;
-						}
-
-						//reset atr and rep values based on score of whole pose
-						fa_rep = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_rep];
-						fa_atr = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_atr];
-					}
-
 					core::Real whole_score = 0;
-
-					//run optional check of using ligand.wts score function as additional cutoff before attempting to keep
-					if ( use_ligand_wts ) {
-						// score the function with the whole ligand.tws function
-						whole_score = whole_score_fxn_->score(*working_pose_);
-
-						//check if the score is below the cutoff, kill if higher
-						if ( whole_score > whole_fxn_cutoff_ ) {
-							reset_working_pose();
-							++clashing_counter;
-							continue;
-						}
-
-						//print the score
-
-						ms_tr.Debug << "ligand.wts score function score: " << whole_score << std::endl;
-
-						//reset atr and rep values based on score of whole pose
-						fa_rep = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_rep];
-						fa_atr = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_atr];
-					}
-
-					//only print post dock delta score if we did a score with the whole or atrrep function
-					if ( use_atr_rep || use_ligand_wts ) {
-						//ms_tr << "Post-dock delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", coordinate_constraint = " << sc_constraint_check << std::endl;
-
-						ms_tr.Debug << "Post-dock delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep;
-
-						//with atr_rep
-						if ( use_atr_rep ) {
-							ms_tr.Debug << ", fa_atr_rep after = " << fa_atr_rep_score_after;
-						}
-						if ( use_ligand_wts ) {
-							//without atr_rep
-							ms_tr.Debug << ", whole = " << whole_score;
-						}
-						ms_tr.Debug << std::endl;
-					}
-					//check if whole_score is within cutoff, kill if not
-					//need to remove ligand from poses so that they can be recycled
-					//in theory, atr and rep should only improve, but this check helps make sure of that
-					if ( delta_score > ddg_cutoff_ || fa_atr > fa_atr_cutoff_ || fa_rep > fa_rep_cutoff_ ) {
+					if ( !run_highresdock_and_score(my_HighResDocker, delta_score, fa_rep, fa_atr, fa_atr_rep_score_after, whole_score) ) {
 						reset_working_pose();
 						++clashing_counter;
 						continue;
@@ -1428,9 +1751,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						//5 - ratio of motifs that are considered close enough compared to the total number of motifs that are collected (real motif ratio)
 						utility::vector1< core::Real > placement_motifs_data;
 
-						//run evaluate_motifs_of_pose from the ilm, which returns a vector with data on motifs from the placed ligand
-						//comments are written to the pose, so we do not have to do that in this function now
-						placement_motifs_data = ilm.evaluate_motifs_of_pose(working_pose_, mymap, pdb_short_unique_name);
+						bool const passes_motif_filters =
+							collect_and_filter_placement_motifs(mymap, pdb_short_unique_name, placement_motifs_data);
 
 						ms_tr.Trace << "Collected motif data from placed ligand." << std::endl;
 
@@ -1441,7 +1763,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						//if at least one mandatory residue did not get a motif, kill
 						//if the number of significant motifs made is greater than or equal to the cutoff, keep the placement, otherwise kill
 						//determine if real ratio is greater than cutoff: minimum_ratio_of_real_motifs_from_ligand
-						if ( placement_motifs_data[1] < min_motifs_cutoff_ || placement_motifs_data[2] == 0 || placement_motifs_data[3] < min_sig_motifs_cutoff_ || placement_motifs_data[5] < real_motif_ratio_cutoff_ ) {
+						if ( !passes_motif_filters ) {
 							reset_working_pose();
 							++clashing_counter;
 							continue;

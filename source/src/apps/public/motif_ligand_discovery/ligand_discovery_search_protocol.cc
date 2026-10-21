@@ -81,6 +81,7 @@ using namespace protocols::dna;
 #include <string>
 #include <queue>
 #include <functional>
+#include <tuple>
 
 // option key includes
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -192,11 +193,48 @@ main( int argc, char * argv [] )
 		protocols::motifs::MotifCOPs motifcops = motifs.library();
 		ms_tr << "Collected motifs library with " << motifcops.size() << " motifs. " << std::endl;
 
+		bool const use_input_ligand = option[ OptionKeys::motifs::input_ligand_residue ].user();
+		std::string const input_ligand_start_step = option[ OptionKeys::motifs::input_ligand_start_step ];
+		if ( !use_input_ligand && option[ OptionKeys::motifs::input_ligand_start_step ].user() ) {
+			ms_tr.Error << "input_ligand_start_step requires input_ligand_residue." << std::endl;
+			return -1;
+		}
+		if ( !use_input_ligand && option[ OptionKeys::motifs::input_ligand_skip_highresdock ].user() ) {
+			ms_tr.Error << "input_ligand_skip_highresdock requires input_ligand_residue." << std::endl;
+			return -1;
+		}
+		int input_ligand_pdb_number = 0;
+		char input_ligand_chain = ' ';
+		char input_ligand_insertion_code = ' ';
+		if ( use_input_ligand ) {
+			auto const residue_selector = option[ OptionKeys::motifs::input_ligand_residue ].resnum_and_chain();
+			utility::vector1<int> const & selected_residue_numbers = std::get<0>(residue_selector);
+			utility::vector1<char> const & selected_chains = std::get<1>(residue_selector);
+			if ( selected_residue_numbers.size() != 1 || selected_chains.size() != 1 ) {
+				ms_tr.Error << "input_ligand_residue must identify exactly one PDB residue, e.g. A:479." << std::endl;
+				return -1;
+			}
+			input_ligand_pdb_number = selected_residue_numbers[1];
+			input_ligand_chain = selected_chains[1];
+			if ( option[ OptionKeys::motifs::input_ligand_insertion_code ].user() ) {
+				std::string const insertion_code = option[ OptionKeys::motifs::input_ligand_insertion_code ];
+				if ( insertion_code.size() != 1 ) {
+					ms_tr.Error << "input_ligand_insertion_code must be exactly one character." << std::endl;
+					return -1;
+				}
+				input_ligand_insertion_code = insertion_code[0];
+			}
+		} else if ( option[ OptionKeys::motifs::input_ligand_insertion_code ].user() ) {
+			ms_tr.Error << "input_ligand_insertion_code requires input_ligand_residue." << std::endl;
+			return -1;
+		}
+
 		//load in ligands
 
 		std::string tag = "fa_standard";
 		std::string directory = "";
 		core::chemical::ResidueTypeCOPs all_rsd_types;
+		core::chemical::GlobalResidueTypeSetOP input_residue_set;
 
 		if ( option[ OptionKeys::motifs::params_directory_path ].user() ) {
 			directory = option[ OptionKeys::motifs::params_directory_path ];
@@ -204,8 +242,8 @@ main( int argc, char * argv [] )
 
 		//uses params_directory_path flag
 		if ( option[ OptionKeys::motifs::params_directory_path ].user() ) {
-			core::chemical::GlobalResidueTypeSet residue_set(tag, directory);
-			core::chemical::ResidueTypeCOPs const & temp_all_rsd_types( core::chemical::ResidueTypeFinder( residue_set ).get_all_possible_residue_types() );
+			input_residue_set = core::chemical::GlobalResidueTypeSetOP(new core::chemical::GlobalResidueTypeSet(tag, directory));
+			core::chemical::ResidueTypeCOPs const & temp_all_rsd_types( core::chemical::ResidueTypeFinder( *input_residue_set ).get_all_possible_residue_types() );
 			all_rsd_types = temp_all_rsd_types;
 		}
 
@@ -235,7 +273,11 @@ main( int argc, char * argv [] )
 
 			//import pose from pdb
 			pose::Pose pose_pointer_helper;
-			core::import_pose::pose_from_file( pose_pointer_helper, *filename , core::import_pose::PDB_file);
+			if ( use_input_ligand && input_residue_set != nullptr ) {
+				core::import_pose::pose_from_file(pose_pointer_helper, *input_residue_set, *filename, false, core::import_pose::PDB_file);
+			} else {
+				core::import_pose::pose_from_file( pose_pointer_helper, *filename , core::import_pose::PDB_file);
+			}
 			pose::PoseOP pose(new pose::Pose(pose_pointer_helper));
 
 			//get discovery position(s), load into Size vector
@@ -262,7 +304,36 @@ main( int argc, char * argv [] )
 
 			//run discovery
 			ms_tr << "Running discovery for " << pdbprefix << std::endl;
-			lds.discover(pdbprefix);
+			if ( use_input_ligand ) {
+				if ( pose->pdb_info() == nullptr ) {
+					ms_tr.Error << "Input pose has no PDB numbering information; cannot locate the selected ligand." << std::endl;
+					return -1;
+				}
+				core::Size ligand_residue_position = 0;
+				core::Size matching_residue_count = 0;
+				for ( core::Size residue_position = 1; residue_position <= pose->size(); ++residue_position ) {
+					if ( pose->pdb_info()->chain(residue_position) == input_ligand_chain &&
+							pose->pdb_info()->number(residue_position) == input_ligand_pdb_number &&
+							pose->pdb_info()->icode(residue_position) == input_ligand_insertion_code ) {
+						ligand_residue_position = residue_position;
+						++matching_residue_count;
+					}
+				}
+				if ( matching_residue_count != 1 ) {
+					ms_tr.Error << "Expected exactly one PDB residue matching chain " << input_ligand_chain
+						<< ", residue " << input_ligand_pdb_number << ", insertion code '"
+						<< input_ligand_insertion_code << "'; found " << matching_residue_count << "." << std::endl;
+					return -1;
+				}
+				if ( !pose->residue(ligand_residue_position).is_ligand() ) {
+					ms_tr.Error << "The selected PDB residue is not recognized as a ligand: "
+						<< pose->residue(ligand_residue_position).name() << std::endl;
+					return -1;
+				}
+				lds.discover(pdbprefix, ligand_residue_position, input_ligand_start_step);
+			} else {
+				lds.discover(pdbprefix);
+			}
 		}
 	}
 catch (utility::excn::Exception const & e ) {

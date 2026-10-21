@@ -7163,6 +7163,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		#Option( 'protein_discovery_locus', 'Real', default = '0', desc = 'Value to indicate the index/locus that a user wants to run ligand discovery for on a protein'),
 		#changing to ve an integer vector so that you can use more than 1 locus in a single object and store the loci within the object instead of externally
 		Option( 'protein_discovery_locus', 'IntegerVector', desc = 'Value to indicate the index/locus that a user wants to run ligand discovery for on a protein'),
+		Option( 'input_ligand_residue', 'ResidueChainVector', desc = 'PDB chain and residue number of a ligand already present in the input complex; when set, evaluate this ligand instead of placing ligand-library entries by motifs. Load its residue type with -extra_res_fa or params_directory_path'),
+		Option( 'input_ligand_insertion_code', 'String', desc = 'Optional one-character PDB insertion code for the ligand selected with input_ligand_residue'),
+		Option( 'input_ligand_start_step', 'String', default = 'clash_check', desc = 'First discovery step to run for the selected input ligand: clash_check, preliminary_scoring, space_fill, high_res_docking, system_scoring, or motif_collection'),
+		Option( 'input_ligand_skip_highresdock', 'Boolean', default = 'false', desc = 'Skip high-resolution docking when evaluating a ligand already present in the input complex'),
 		Option( 'fa_rep_cutoff', 'Real', default = '10000', desc = 'Value for ligand discovery cutoff for fa_rep score'),
 		Option( 'fa_atr_cutoff', 'Real', default = '10000', desc = 'Value for ligand discovery cutoff for fa_atr score'),
 		Option( 'fa_atr_rep_cutoff', 'Real', default = '10000', desc = 'Value for ligand discovery cutoff for fa_atr_rep score function score'),
