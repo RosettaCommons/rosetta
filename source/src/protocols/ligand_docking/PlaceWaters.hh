@@ -251,7 +251,7 @@ private:// data
 	core::grid::CartGrid<core::Real> h_grid_;
 	core::Real grid_size_;
 	std::string ligand_chain_;
-	char water_chain_;
+	std::string water_chain_;
 	std::string water_type_;
 	core::Real resolution_;
 	core::Real cutoff_;

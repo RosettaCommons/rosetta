@@ -112,7 +112,7 @@ PlaceWaters::apply( core::pose::Pose & adding_water ){ //change "adding_water" t
 	//core::pose::Pose adding_water(pose);
 	debug_assert(ligand_chain_.size() == 1);
 	core::Size chain_id = core::pose::get_chain_id_from_chain(ligand_chain_, adding_water);
-	utility::vector1<core::Size> resnums( core::pose::get_resnums_for_chain (adding_water, chain_id));
+	utility::vector1<core::Size> resnums( core::pose::get_resnums_for_chain_id(adding_water, chain_id));
 
 	if ( resnums.size() > 1 ) {
 		utility_exit_with_message( "Specified ligand chain has more than 1 residue.");
@@ -731,7 +731,7 @@ PlaceWaters::parse_my_tag(
 	if ( tag->hasOption("output_water_coords") ) { output_water_coords_ = tag->getOption<bool>("output_water_coords", false); }
 
 	ligand_chain_ = tag->getOption<std::string>("ligand_chain");
-	water_chain_ = tag->getOption<char>("water_chain", 'W');
+	water_chain_ = tag->getOption<std::string>("water_chain", "W");
 	resolution_ = tag->getOption<core::Real>("resolution", 0.15);
 	cutoff_ = tag->getOption<core::Real>("cutoff", 1.5);
 	grid_size_ = tag->getOption<core::Real>("grid_size", 0.0);

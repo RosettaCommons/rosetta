@@ -39,7 +39,7 @@ public:
 		protocols::ligand_docking::PlaceWatersOP pw_op = protocols::ligand_docking::PlaceWatersOP(utility::pointer::dynamic_pointer_cast<protocols::ligand_docking::PlaceWaters> (base_mover_op) );
 
 		//make tag without input size
-		std::string xml_file = "<PlaceWaters chain=\"X\" water=\"TP3.params\"/>";
+		std::string xml_file = "<PlaceWaters ligand_chain=\"X\" water=\"TP3.params\"/>";
 		std::stringstream ss( xml_file );
 		utility::tag::TagOP tag ( new utility::tag::Tag() );
 		tag->read (ss);
@@ -49,7 +49,7 @@ public:
 		pw_op->parse_my_tag( tag, data);
 		TS_ASSERT_EQUALS ( pw_op->get_grid_size(), 0.0 );
 
-		xml_file = "<PlaceWaters grid_size=\"10.0\"  chain=\"X\" water=\"TP3.params\" />";
+		xml_file = "<PlaceWaters grid_size=\"10.0\"  ligand_chain=\"X\" water=\"TP3.params\" />";
 		std::stringstream ss2( xml_file );
 		tag->read (ss2);
 
