@@ -38,6 +38,11 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+// Numeric headers
+#include <numeric/angle.functions.hh>
+#include <numeric/linear_algebra/cholesky_decomposition.hh>
+#include <numeric/random/random.hh>
+
 // STL headers:
 #include <sstream>
 
@@ -55,7 +60,8 @@ PerturbBundle::PerturbBundle():
 	Mover("PerturbBundle"),
 	default_calculator_( new BundleParametrizationCalculator(false) ),
 	individual_helix_calculators_(),
-	bundleparametersset_index_(1)
+	bundleparametersset_index_(1),
+	use_correlated_perturbation_(false)
 {}
 
 
@@ -64,7 +70,13 @@ PerturbBundle::PerturbBundle( PerturbBundle const & src ):
 	protocols::moves::Mover( src ),
 	default_calculator_( utility::pointer::static_pointer_cast< BundleParametrizationCalculator >( src.default_calculator_->clone() ) ),
 	individual_helix_calculators_( /*Cloned below*/),
-	bundleparametersset_index_(src.bundleparametersset_index_)
+	bundleparametersset_index_(src.bundleparametersset_index_),
+	use_correlated_perturbation_(src.use_correlated_perturbation_),
+	cholesky_factor_(src.cholesky_factor_),
+	param_to_flat_index_(src.param_to_flat_index_),
+	flat_index_to_param_(src.flat_index_to_param_),
+	perturbation_sigmas_(src.perturbation_sigmas_),
+	correlation_entries_(src.correlation_entries_)
 {
 	// Deep-cloning the individual helix calculators:
 	for ( core::Size i(1), imax(src.individual_helix_calculators_.size()); i<=imax; ++i ) {
@@ -191,8 +203,9 @@ PerturbBundle::parse_my_tag(
 	reset_helices(); //Make sure we have no defined helices.
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
 	for ( auto const & branch_tag : branch_tags ) {
-		runtime_assert_string_msg( branch_tag->getName() == "Helix",
-			"Error in PerturbBundle::parse_my_tag(): Sub-tags for the PerturbBundle mover must be \"Helix\".  Could not parse \"" + branch_tag->getName() + "\"." );
+		runtime_assert_string_msg( branch_tag->getName() == "Helix" || branch_tag->getName() == "Correlation",
+			"Error in PerturbBundle::parse_my_tag(): Sub-tags for the PerturbBundle mover must be \"Helix\" or \"Correlation\".  Could not parse \"" + branch_tag->getName() + "\"." );
+		if ( branch_tag->getName() != "Helix" ) continue;
 		core::Size helix_index( branch_tag->getOption<core::Size>("helix_index", 0) );
 		runtime_assert_string_msg(helix_index>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was added, but its index was set to 0.  This is not allowed." );
 		BundleParametrizationCalculatorOP this_calculator( add_helix(helix_index) ); //Add and initialize this helix.  By default, no degrees of freedom may be perturbed.  Store the current helix index in this_helix.
@@ -204,6 +217,9 @@ PerturbBundle::parse_my_tag(
 			}
 		}
 	}
+
+	// Parse Correlation sub-tags (if any)
+	parse_correlation_tags( branch_tags );
 
 } //parse_my_tag
 
@@ -293,6 +309,9 @@ PerturbBundle::get_calculator_for_helix(
 /// @brief Perturb the helical bundle parameter values in the pose, subject to the options already set.
 /// @details Called by the apply() function.  Returns true for success, false for failure.
 bool PerturbBundle::perturb_values( BundleParametersSetOP params_set) const {
+	if ( use_correlated_perturbation_ ) {
+		return perturb_values_correlated( params_set );
+	}
 
 	//Get the symmetry of the bundle:
 	core::Size const symmetry( params_set->bundle_symmetry() < 2 ? 1 : params_set->bundle_symmetry() );
@@ -498,6 +517,21 @@ void PerturbBundle::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 	utility::tag::XMLSchemaSimpleSubelementList ssl;
 	ssl.add_simple_subelement( "Helix", subtag_attributes, "Tags describing the perturbation of individual helices in the bundle.");
 
+	AttributeList correlation_attlist;
+	correlation_attlist
+		+ XMLSchemaAttribute::required_attribute( "helix1", xsct_positive_integer, "Index of the first helix." )
+		+ XMLSchemaAttribute::required_attribute( "param1", xs_string, "Parameter name on helix1 (e.g. r0, omega0, delta_omega0)." )
+		+ XMLSchemaAttribute::required_attribute( "helix2", xsct_positive_integer, "Index of the second helix." )
+		+ XMLSchemaAttribute::required_attribute( "param2", xs_string, "Parameter name on helix2 (e.g. r0, omega0, delta_omega0)." )
+		+ XMLSchemaAttribute::required_attribute( "correlation", xsct_real,
+			"Pearson correlation coefficient between the two parameters, in range [-1, 1]. "
+			"Both parameters must have perturbation magnitudes set via their _perturbation attributes. "
+			"The covariance is computed as rho * sigma1 * sigma2." );
+	ssl.add_simple_subelement( "Correlation", correlation_attlist,
+		"Specify a pairwise correlation between two bundle parameters for correlated perturbation. "
+		"When any Correlation sub-tags are present, parameters involved in correlations are perturbed "
+		"jointly using multivariate Gaussian sampling via Cholesky decomposition." );
+
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Perturb helical bundles by direct manipulation of their bundle parameters", attlist, ssl );
 }
 
@@ -512,6 +546,260 @@ PerturbBundle::provide_citation_info(basic::citation_manager::CitationCollection
 		"vmulligan@flatironinstitute.org"
 		)
 	);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//          CORRELATED PERTURBATION FUNCTIONS                                //
+////////////////////////////////////////////////////////////////////////////////
+
+/// @brief Get or assign a flat index for a (helix_index, param_enum) pair.
+core::Size
+PerturbBundle::get_or_assign_flat_index(
+	core::Size const helix_index,
+	BPC_Parameters const param_enum
+) {
+	auto const key = std::make_pair( helix_index, param_enum );
+	auto const it = param_to_flat_index_.find( key );
+	if ( it != param_to_flat_index_.end() ) {
+		return it->second;
+	}
+	core::Size const new_index = flat_index_to_param_.size() + 1;
+	param_to_flat_index_[ key ] = new_index;
+	flat_index_to_param_.push_back( key );
+	return new_index;
+}
+
+/// @brief Parse Correlation sub-tags from XML.
+void
+PerturbBundle::parse_correlation_tags(
+	utility::vector1< utility::tag::TagCOP > const & branch_tags
+) {
+	param_to_flat_index_.clear();
+	flat_index_to_param_.clear();
+	perturbation_sigmas_.clear();
+	correlation_entries_.clear();
+	use_correlated_perturbation_ = false;
+
+	bool found_any = false;
+
+	for ( auto const & branch_tag : branch_tags ) {
+		if ( branch_tag->getName() != "Correlation" ) continue;
+		found_any = true;
+
+		core::Size const helix1 = branch_tag->getOption< core::Size >( "helix1" );
+		std::string const param1_name = branch_tag->getOption< std::string >( "param1" );
+		core::Size const helix2 = branch_tag->getOption< core::Size >( "helix2" );
+		std::string const param2_name = branch_tag->getOption< std::string >( "param2" );
+		core::Real const rho = branch_tag->getOption< core::Real >( "correlation" );
+
+		runtime_assert_string_msg( rho >= -1.0 && rho <= 1.0,
+			"Error in PerturbBundle::parse_correlation_tags(): Correlation coefficient must be in [-1, 1]. Got " + std::to_string(rho) + "." );
+
+		BPC_Parameters const param1_enum = BundleParametrizationCalculator::parameter_enum_from_name( param1_name );
+		runtime_assert_string_msg( param1_enum != BPC_unknown_parameter && param1_enum <= BPC_last_parameter_to_be_sampled,
+			"Error in PerturbBundle::parse_correlation_tags(): \"" + param1_name + "\" is not a valid perturbable bundle parameter." );
+		BPC_Parameters const param2_enum = BundleParametrizationCalculator::parameter_enum_from_name( param2_name );
+		runtime_assert_string_msg( param2_enum != BPC_unknown_parameter && param2_enum <= BPC_last_parameter_to_be_sampled,
+			"Error in PerturbBundle::parse_correlation_tags(): \"" + param2_name + "\" is not a valid perturbable bundle parameter." );
+
+		core::Size const idx1 = get_or_assign_flat_index( helix1, param1_enum );
+		core::Size const idx2 = get_or_assign_flat_index( helix2, param2_enum );
+
+		runtime_assert_string_msg( idx1 != idx2,
+			"Error in PerturbBundle::parse_correlation_tags(): Cannot specify a correlation of a parameter with itself "
+			"(helix " + std::to_string(helix1) + " " + param1_name + " with helix " + std::to_string(helix2) + " " + param2_name + ")." );
+
+		correlation_entries_.push_back( std::make_tuple( idx1, idx2, rho ) );
+	}
+
+	if ( !found_any ) return;
+
+	// Now collect perturbation sigmas for each parameter in the flat index.
+	core::Size const D = flat_index_to_param_.size();
+	perturbation_sigmas_.resize( D, 0.0 );
+
+	for ( core::Size i = 1; i <= D; ++i ) {
+		core::Size const helix_index = flat_index_to_param_[i].first;
+		BPC_Parameters const param_enum = flat_index_to_param_[i].second;
+
+		BundleParametrizationCalculatorCOP calc = get_calculator_for_helix( helix_index );
+		if ( calc == nullptr ) calc = default_calculator_;
+
+		core::conformation::parametric::RealValuedParameterCOP param = calc->real_parameter_cop( static_cast<core::Size>(param_enum) );
+		runtime_assert_string_msg( param != nullptr,
+			"Error in PerturbBundle::parse_correlation_tags(): Parameter " +
+			BundleParametrizationCalculator::parameter_name_from_enum( param_enum ) +
+			" on helix " + std::to_string(helix_index) + " is not a real-valued parameter." );
+
+		runtime_assert_string_msg( param->perturbation_set(),
+			"Error in PerturbBundle::parse_correlation_tags(): Parameter " +
+			BundleParametrizationCalculator::parameter_name_from_enum( param_enum ) +
+			" on helix " + std::to_string(helix_index) + " does not have a perturbation magnitude set. "
+			"All parameters referenced in Correlation tags must have a _perturbation attribute specified." );
+
+		perturbation_sigmas_[i] = param->perturbation_magnitude();
+	}
+
+	compute_cholesky_factor();
+}
+
+/// @brief Build the covariance matrix from sigmas and correlation entries, then compute Cholesky factor.
+void
+PerturbBundle::compute_cholesky_factor() {
+	core::Size const D = flat_index_to_param_.size();
+	runtime_assert( D > 0 );
+
+	// Build covariance matrix: diagonal = sigma_i^2, off-diagonal = rho_ij * sigma_i * sigma_j
+	utility::vector1< utility::vector1< double > > cov( D, utility::vector1< double >( D, 0.0 ) );
+	for ( core::Size i = 1; i <= D; ++i ) {
+		cov[i][i] = perturbation_sigmas_[i] * perturbation_sigmas_[i];
+	}
+	for ( auto const & entry : correlation_entries_ ) {
+		core::Size const i = std::get<0>( entry );
+		core::Size const j = std::get<1>( entry );
+		double const rho = std::get<2>( entry );
+		double const cov_ij = rho * perturbation_sigmas_[i] * perturbation_sigmas_[j];
+		cov[i][j] = cov_ij;
+		cov[j][i] = cov_ij;
+	}
+
+	cholesky_factor_ = numeric::linear_algebra::cholesky_factor( cov );
+	use_correlated_perturbation_ = true;
+
+	if ( TR.visible() ) {
+		TR << "Correlated perturbation enabled with " << D << " parameters and "
+			<< correlation_entries_.size() << " correlation(s)." << std::endl;
+	}
+}
+
+/// @brief Perturb values using correlated Gaussian sampling via Cholesky decomposition.
+bool
+PerturbBundle::perturb_values_correlated( BundleParametersSetOP params_set ) const {
+	using namespace core::conformation::parametric;
+
+	core::Size const symmetry( params_set->bundle_symmetry() < 2 ? 1 : params_set->bundle_symmetry() );
+	core::Size const symmetry_copies( params_set->bundle_symmetry_copies() == 0 ? symmetry : params_set->bundle_symmetry_copies() );
+	core::Size const n_helices( params_set->n_helices() );
+	runtime_assert_string_msg( n_helices > 0,
+		"In PerturbBundle::perturb_values_correlated(): the number of helices in the pose is 0." );
+	runtime_assert_string_msg( params_set->n_parameters() == n_helices * symmetry_copies,
+		"In PerturbBundle::perturb_values_correlated(): the pose has corrupted BundleParametersSet data." );
+
+	// Step 1: Draw independent standard normal samples
+	core::Size const D = flat_index_to_param_.size();
+	utility::vector1< core::Real > z( D );
+	for ( core::Size i = 1; i <= D; ++i ) {
+		z[i] = numeric::random::gaussian();
+	}
+
+	// Step 2: Multiply by Cholesky factor to get correlated perturbations: delta = L * z
+	utility::vector1< core::Real > delta( D, 0.0 );
+	for ( core::Size i = 1; i <= D; ++i ) {
+		for ( core::Size j = 1; j <= D; ++j ) {
+			delta[i] += cholesky_factor_[i][j] * z[j];
+		}
+	}
+
+	// Step 3: Apply correlated perturbations to parameters in the first symmetry repeat
+	for ( core::Size i = 1; i <= D; ++i ) {
+		core::Size const helix_index = flat_index_to_param_[i].first;
+		BPC_Parameters const param_enum = flat_index_to_param_[i].second;
+
+		runtime_assert_string_msg( helix_index <= n_helices,
+			"In PerturbBundle::perturb_values_correlated(): Correlation references helix " +
+			std::to_string(helix_index) + " but only " + std::to_string(n_helices) + " helices exist." );
+
+		BundleParametersOP params( utility::pointer::dynamic_pointer_cast< parameters::BundleParameters >(
+			params_set->parameters( helix_index ) ) );
+		runtime_assert( params != nullptr );
+
+		RealValuedParameterOP curparam( utility::pointer::dynamic_pointer_cast< RealValuedParameter >(
+			params->parameter_op( static_cast<core::Size>(param_enum) ) ) );
+		runtime_assert( curparam != nullptr );
+
+		core::Real new_val = curparam->value() + delta[i];
+
+		// Apply range corrections matching RealValuedParameter::generate_perturbed_value()
+		if ( curparam->parameter_type() == PT_angle ) {
+			new_val = numeric::principal_angle_radians( new_val );
+		} else {
+			if ( new_val < 0 ) {
+				if ( curparam->parameter_type() == PT_generic_nonnegative_valued_real ) new_val = 0;
+				else if ( curparam->parameter_type() == PT_generic_positive_valued_real ) new_val = 1e-12;
+			}
+		}
+
+		curparam->set_value( new_val, true );
+	}
+
+	// Step 4: Independently perturb any parameters NOT in the correlated set
+	for ( core::Size ihelix = 1; ihelix <= n_helices; ++ihelix ) {
+		BundleParametrizationCalculatorCOP curcalculator( get_calculator_for_helix( ihelix ) );
+		if ( curcalculator == nullptr ) curcalculator = default_calculator_;
+
+		BundleParametersOP params( utility::pointer::dynamic_pointer_cast< parameters::BundleParameters >(
+			params_set->parameters( ihelix ) ) );
+		runtime_assert( params != nullptr );
+
+		for ( core::Size iparam = 1; iparam <= static_cast<core::Size>(BPC_last_parameter_to_be_sampled); ++iparam ) {
+			auto const key = std::make_pair( ihelix, static_cast<BPC_Parameters>(iparam) );
+			if ( param_to_flat_index_.count( key ) ) continue; // Already perturbed via correlated path
+
+			RealValuedParameterCOP curparam_calculator( curcalculator->real_parameter_cop( iparam ) );
+			if ( curparam_calculator == nullptr ) continue;
+			if ( !curparam_calculator->can_be_perturbed() && !curparam_calculator->can_be_copied() && !curparam_calculator->can_be_set() ) continue;
+			if ( !curparam_calculator->perturbation_set() && !curparam_calculator->copying_information_was_set() && !curparam_calculator->value_was_set() ) continue;
+
+			RealValuedParameterOP curparam( utility::pointer::dynamic_pointer_cast< RealValuedParameter >(
+				params->parameter_op( iparam ) ) );
+			runtime_assert( curparam != nullptr );
+
+			if ( curparam_calculator->can_be_perturbed() && curparam_calculator->perturbation_set() ) {
+				curparam->set_value( curparam_calculator->generate_perturbed_value( curparam->value() ), true );
+			} else if ( curparam_calculator->can_be_set() && curparam_calculator->value_was_set() ) {
+				curparam->set_value( curparam_calculator->value(), true );
+			}
+		}
+	}
+
+	// Step 5: Handle symmetry copies (identical to existing code in perturb_values)
+	if ( symmetry_copies > 1 ) {
+		core::Real delta_omega0_offset( 0.0 );
+		core::Real const delta_omega0_offset_increment( numeric::constants::d::pi_2 / static_cast<core::Real>(symmetry) );
+
+		core::Size helix_index( 0 );
+		for ( core::Size isym = 1; isym <= symmetry_copies; ++isym ) {
+			for ( core::Size ihelix = 1; ihelix <= n_helices; ++ihelix ) {
+				++helix_index;
+				if ( helix_index <= n_helices ) continue; // First repeat already handled
+
+				BundleParametersOP ref_params( utility::pointer::dynamic_pointer_cast< parameters::BundleParameters >(
+					params_set->parameters( ihelix ) ) );
+				BundleParametersOP cur_params( utility::pointer::dynamic_pointer_cast< parameters::BundleParameters >(
+					params_set->parameters( helix_index ) ) );
+				runtime_assert( ref_params != nullptr );
+				runtime_assert( cur_params != nullptr );
+
+				for ( core::Size iparam = 1; iparam <= static_cast<core::Size>(BPC_last_parameter_to_be_sampled); ++iparam ) {
+					RealValuedParameterOP refparam( utility::pointer::dynamic_pointer_cast< RealValuedParameter >(
+						ref_params->parameter_op( iparam ) ) );
+					RealValuedParameterOP curparam( utility::pointer::dynamic_pointer_cast< RealValuedParameter >(
+						cur_params->parameter_op( iparam ) ) );
+					debug_assert( refparam != nullptr );
+					debug_assert( curparam != nullptr );
+
+					if ( iparam == static_cast<core::Size>(BPC_delta_omega0) ) {
+						curparam->set_value( refparam->value() + delta_omega0_offset, true );
+					} else {
+						curparam->set_value( refparam->value(), true );
+					}
+				}
+			}
+			delta_omega0_offset += delta_omega0_offset_increment;
+		}
+	}
+
+	return true;
 }
 
 std::string PerturbBundleCreator::keyname() const {
