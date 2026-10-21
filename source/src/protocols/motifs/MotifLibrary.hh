@@ -133,6 +133,14 @@ private:
 	void
 	check_ctor_helper(std::istream & motif_info, bool check_for_bad_motifs, std::set< std::tuple< std::string, std::string, std::string > > const & ligand_atom_type_triplets);
 
+	bool
+	load_ligand_index_cache(
+		std::string const & motif_filename,
+		std::string const & cache_filename,
+		bool check_for_bad_motifs,
+		std::set< std::tuple< std::string, std::string, std::string > > const & ligand_atom_type_triplets
+	);
+
 
 };
 

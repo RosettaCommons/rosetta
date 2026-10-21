@@ -63,6 +63,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <cstddef>
 #include <queue>
 #include <functional>
 #include <map>
@@ -191,14 +192,18 @@ private:
 	// This previously just was code in discover(), but it is better to compartmentalize for readability
 	void setup_score_functions();
 
-	// @brief function used to make a minipose (focused pose around placed ligand to get quicker scoring of metrics like fa_atr and fa_rep)
-	//if returns true, a minipose was successfully made; if returns false, minipose is still empty because no other residues were recruited to it
-	bool make_minipose(core::pose::PoseOP & minipose, const core::conformation::ResidueOP ligresOP);
+	// @brief Score the current ligand placement directly against every nearby protein
+	// residue. This avoids reusing a minipose whose protein neighborhood was selected
+	// for a different ligand placement.
+	bool score_ligand_placement(const core::conformation::ResidueOP & ligresOP, core::Real & fa_rep, core::Real & fa_atr, core::Real & fa_atr_rep_score_before);
 
-	// @brief function to score the minipose iteratively on fa_rep, fa_atr, and fa_atr+fa_rep
-	//this is performed iteratively in order to more quickly filter on select criteria with more and quicker filtering happening at earlier steps
-	//returns a boolean based on whether the minipose score was good enough at all steps or not (false means it failed, and the placement will be killed)
-	bool score_minipose(const core::pose::PoseOP & minipose, core::Real & fa_rep, core::Real & fa_atr, core::Real & fa_atr_rep_score_before);
+	// @brief Cheap necessary-condition filter for motif-count requirements. A false
+	// result means the placement cannot possibly pass count_significant_motifs().
+	bool passes_motif_geometry_precheck(const core::conformation::ResidueOP & ligresOP) const;
+
+	// @brief Quantized all-heavy-atom coordinate fingerprint used to remove nearly
+	// identical rigid placements before expensive scoring and HighResDock.
+	std::size_t ligand_placement_key(const core::conformation::ResidueOP & ligresOP, core::Real tolerance) const;
 
 	// @brief create a constraint set on the 3 ligand motif atoms (the last residue in working_pose_) to reduce their movement before applying a highresdock
 	void add_constraints_to_working_pose(const core::Size trip_atom_1, const core::Size trip_atom_2, const core::Size trip_atom_3, const core::Size working_position, const core::conformation::ResidueOP ligresOP);

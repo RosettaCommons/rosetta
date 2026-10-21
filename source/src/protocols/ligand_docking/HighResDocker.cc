@@ -280,24 +280,45 @@ HighResDocker::apply(core::pose::Pose & pose) {
 		min_mover->min_options()->nblist_auto_update(true);
 	}
 
+	core::pack::palette::PackerPaletteOP packer_palette;
+	core::pack::rotamer_set::UnboundRotamersOperationOP unbound_rotamers;
+	protocols::minimization_packing::PackRotamersMoverOP pack_rotamers_mover;
+	protocols::minimization_packing::RotamerTrialsMoverOP rotamer_trials_mover;
+	protocols::moves::MoverOP unconstrained_pack_rotamers;
+	protocols::moves::MoverOP unconstrained_rotamer_trials;
+	if ( allow_repacking_ ) {
+		packer_palette = make_packer_palette(pose);
+		unbound_rotamers = utility::pointer::make_shared< core::pack::rotamer_set::UnboundRotamersOperation >();
+		unbound_rotamers->initialize_from_command_line();
+		pack_rotamers_mover = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >();
+		pack_rotamers_mover->score_function(score_fxn_);
+		rotamer_trials_mover = utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMover >();
+		rotamer_trials_mover->score_function(score_fxn_);
+		unconstrained_pack_rotamers = utility::pointer::make_shared< protocols::ligand_docking::UnconstrainedTorsionsMover >(
+			pack_rotamers_mover, minimized_ligands);
+		unconstrained_rotamer_trials = utility::pointer::make_shared< protocols::ligand_docking::UnconstrainedTorsionsMover >(
+			rotamer_trials_mover, minimized_ligands);
+	}
+
 	for ( core::Size cycle = 1; cycle <= num_cycles_; ++cycle ) {
 
-		core::Real score1 = 0.0;
-		if ( allow_minimization_ ) score1 = (*score_fxn_)( pose );
+		// boltzmann() either accepts pose or restores the last accepted pose, so its cached score is exact here.
+		core::Real const score1 = allow_minimization_ ? monteCarlo->last_accepted_score() : 0.0;
+
 		apply_rigid_body_moves(pose, rigid_body_movers);
 
 		if ( allow_repacking_ ) {
-			core::pack::task::PackerTaskOP packer_task = make_packer_task(pose, all_residues_);
-			protocols::moves::MoverOP pack_mover;
+			core::pack::task::PackerTaskOP packer_task = make_packer_task(
+				pose, all_residues_, packer_palette, unbound_rotamers);
 			if ( repack_every_Nth_ != 0 && cycle % repack_every_Nth_ == 1 ) {
 				TR.Debug << "making PackRotamersMover" << std::endl;
-				pack_mover = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >(score_fxn_, packer_task);
+				pack_rotamers_mover->task(packer_task);
+				unconstrained_pack_rotamers->apply(pose);
 			} else {
 				TR.Debug << "making RotamerTrialsMover" << std::endl;
-				pack_mover = utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMover >(score_fxn_, *packer_task);
+				rotamer_trials_mover->task(*packer_task);
+				unconstrained_rotamer_trials->apply(pose);
 			}
-			pack_mover = utility::pointer::make_shared< protocols::ligand_docking::UnconstrainedTorsionsMover >( pack_mover, minimized_ligands );
-			pack_mover->apply(pose);
 		}
 
 
@@ -443,41 +464,25 @@ HighResDocker::apply(core::pose::Pose & pose, core::Real & current_score, std::s
 core::pack::task::PackerTaskOP
 HighResDocker::make_packer_task_from_vector(
 	core::pose::Pose const & pose,
-	ligand_options::Interface const & allow_repack
+	ligand_options::Interface const & allow_repack,
+	core::pack::palette::PackerPaletteCOP palette,
+	core::pack::rotamer_set::UnboundRotamersOperationOP unbound_rotamers
 ) const{
 	static bool pose_already_packed= false;
 
-	// Initialize the PackerPalette:
-	core::pack::palette::CustomBaseTypePackerPaletteOP palette( utility::pointer::make_shared< core::pack::palette::CustomBaseTypePackerPalette >() );
-	for ( core::Size i(1), imax(pose.total_residue()); i<=imax; ++i ) {
-		core::chemical::ResidueType const & this_res_type( pose.residue_type(i) );
-		if ( this_res_type.is_ligand() ) {
-			if ( !palette->has_type( this_res_type.base_name() ) ) {
-				palette->add_type( this_res_type.base_name() );
-			}
-
-			//Add all other residue types with the same name3:
-			core::chemical::ResidueTypeSetCOP rsd_type_set( pose.residue_type_set_for_pose( this_res_type.mode() ) );
-			core::chemical::ResidueTypeCOPs allowed_types( core::chemical::ResidueTypeFinder( *rsd_type_set ).name3( this_res_type.name3() ).get_all_possible_residue_types() ); // a vector1
-			for ( core::Size i(1), imax(allowed_types.size()); i<=imax; ++i ) {
-				if ( !palette->has_type( allowed_types[i]->base_name() ) ) {
-					palette->add_type( allowed_types[i]->base_name() );
-				}
-			}
-		}
-	}
+	if ( !palette ) palette = make_packer_palette(pose);
 
 	core::pack::task::PackerTaskOP pack_task( core::pack::task::TaskFactory::create_packer_task(pose, palette) );
 	pack_task->initialize_from_command_line(); // -ex1 -ex2  etc.
 
-	core::pack::rotamer_set::UnboundRotamersOperationOP unboundrot_( new core::pack::rotamer_set::UnboundRotamersOperation() );
-	unboundrot_->initialize_from_command_line();
-	pack_task->append_rotamerset_operation( unboundrot_ );
+	if ( !unbound_rotamers ) {
+		unbound_rotamers = utility::pointer::make_shared< core::pack::rotamer_set::UnboundRotamersOperation >();
+		unbound_rotamers->initialize_from_command_line();
+	}
+	pack_task->append_rotamerset_operation( unbound_rotamers );
 
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
-		/// If several params files have the same name, allow switching among them
-		/// This was previously only enabled with mutate_same_name3.  Now default.
-		if ( ! pose.residue(i).is_ligand() ) continue;
+		if ( !pose.residue(i).is_ligand() ) continue;
 		TR.Debug<<  "enabling packing for ligand residue "<< i << std::endl;
 		enable_ligand_rotamer_packing(pose, i, pack_task);
 	}
@@ -500,7 +505,6 @@ HighResDocker::make_packer_task_from_vector(
 		core::pack::task::parse_resfile(pose, *pack_task, resfile_);
 	}
 
-
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( allow_repack[i].type == ligand_options::InterfaceInfo::non_interface  ) {
 			pack_task->nonconst_residue_task( i ).prevent_repacking();
@@ -518,20 +522,47 @@ HighResDocker::make_packer_task_from_vector(
 	return pack_task;
 }
 
+core::pack::palette::PackerPaletteOP
+HighResDocker::make_packer_palette(core::pose::Pose const & pose) const
+{
+	core::pack::palette::CustomBaseTypePackerPaletteOP palette(
+		utility::pointer::make_shared< core::pack::palette::CustomBaseTypePackerPalette >());
+	for ( core::Size i(1), imax(pose.total_residue()); i<=imax; ++i ) {
+		core::chemical::ResidueType const & this_res_type( pose.residue_type(i) );
+		if ( this_res_type.is_ligand() ) {
+			if ( !palette->has_type( this_res_type.base_name() ) ) {
+				palette->add_type( this_res_type.base_name() );
+			}
+
+			//Add all other residue types with the same name3:
+			core::chemical::ResidueTypeSetCOP rsd_type_set( pose.residue_type_set_for_pose( this_res_type.mode() ) );
+			core::chemical::ResidueTypeCOPs allowed_types( core::chemical::ResidueTypeFinder( *rsd_type_set ).name3( this_res_type.name3() ).get_all_possible_residue_types() ); // a vector1
+			for ( core::Size i(1), imax(allowed_types.size()); i<=imax; ++i ) {
+				if ( !palette->has_type( allowed_types[i]->base_name() ) ) {
+					palette->add_type( allowed_types[i]->base_name() );
+				}
+			}
+		}
+	}
+	return palette;
+}
+
 core::pack::task::PackerTaskOP
 HighResDocker::make_packer_task(
 	core::pose::Pose const & pose,
-	bool all_residues
+	bool all_residues,
+	core::pack::palette::PackerPaletteCOP palette,
+	core::pack::rotamer_set::UnboundRotamersOperationOP unbound_rotamers
 ) const{
 
 	//original value of all_residues was intended to be false
 	if ( all_residues ) {
 		ligand_options::Interface interface(pose.size(), ligand_options::InterfaceInfo(ligand_options::InterfaceInfo::is_interface)); // 0 is false, #
-		return make_packer_task_from_vector(pose, interface);
+		return make_packer_task_from_vector(pose, interface, palette, unbound_rotamers);
 	} else { // the packer task interface should match the movemap interface
 		InterfaceBuilderOP sc_interface_builder= movemap_builder_->get_sc_interface_builder();
 		ligand_options::Interface side_chain_interface= sc_interface_builder->build(pose);
-		return make_packer_task_from_vector(pose, side_chain_interface);
+		return make_packer_task_from_vector(pose, side_chain_interface, palette, unbound_rotamers);
 	}
 }
 

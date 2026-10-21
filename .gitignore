@@ -40,3 +40,6 @@ source/src/python/PyRosetta/src/pyrosetta.egg-info
 .windows-vc-tools-signature
 source/external/libtorch/
 source/external/*
+sandbox/
+bsub_tests/
+scripts/

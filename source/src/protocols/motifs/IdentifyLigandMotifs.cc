@@ -720,15 +720,18 @@ utility::vector1< core::Real > IdentifyLigandMotifs::count_significant_motifs(co
 	// Result vector: [1]=total, [2]=mandatory_ok, [3]=sig_count
 	utility::vector1< core::Real > result (3, 0);
 
-	// Only residue-contact counts are needed here. Avoid cloning the pose,
-	// rebuilding ligand atom trios, and constructing motifs that are discarded.
-	motif_scorefxn_->score(*working_pose);
-	utility::vector1< core::Size > prot_pos_that_made_motifs;
+	// Only residue-contact counts are needed here. Prepare score-method caches,
+	// but avoid a full-pose score, pose cloning, atom trios, and motif objects.
+	motif_scorefxn_->setup_for_scoring(*working_pose);
 	core::Size const nres = working_pose->size();
+	utility::vector1< bool > residue_has_motif(nres, false);
+	core::Size ligand_for_proximity = 0;
+	core::Size total_motifs = 0;
 	for ( core::Size lig_pos = 1; lig_pos <= nres; ++lig_pos ) {
 		core::conformation::Residue const & ligres = working_pose->residue(lig_pos);
 		if ( !working_pose->residue_type(lig_pos).is_ligand() ) continue;
 		if ( ligres.nheavyatoms() - ligres.n_virtual_atoms() < 3 ) continue;
+		if ( ligand_for_proximity == 0 ) ligand_for_proximity = lig_pos;
 
 		core::Real const lig_nbr_radius = ligres.nbr_radius();
 		for ( core::Size prot_pos = 1; prot_pos <= nres; ++prot_pos ) {
@@ -742,26 +745,21 @@ utility::vector1< core::Real > IdentifyLigandMotifs::count_significant_motifs(co
 			core::Real const pack_score = get_packing_score(*working_pose, lig_pos, prot_pos, *motif_scorefxn_);
 			core::Real const hb_score = get_hbond_score(*working_pose, lig_pos, prot_pos, *motif_scorefxn_);
 			if ( (pack_score < -0.5 || hb_score < -0.3) && pack_score + hb_score < -1.0 ) {
-				prot_pos_that_made_motifs.push_back(prot_pos);
+				++total_motifs;
+				residue_has_motif[prot_pos] = true;
 			}
 		}
 	}
 
-	result[1] = prot_pos_that_made_motifs.size();
+	result[1] = total_motifs;
 	ms_tr.Debug << "Ligand placement created " << result[1] << " total motifs (pre-check)" << std::endl;
 
 	result[2] = 1;
 	if ( option[ OptionKeys::motifs::mandatory_residues_for_motifs].user() ) {
 		utility::vector1< int > const mandatory_residues = option[ OptionKeys::motifs::mandatory_residues_for_motifs];
 		for ( auto const mandatory_residue : mandatory_residues ) {
-			bool found = false;
-			for ( auto const motif_residue : prot_pos_that_made_motifs ) {
-				if ( motif_residue == static_cast< core::Size >(mandatory_residue) ) {
-					found = true;
-					break;
-				}
-			}
-			if ( !found ) {
+			if ( mandatory_residue <= 0 || static_cast< core::Size >(mandatory_residue) > nres
+				|| !residue_has_motif[static_cast< core::Size >(mandatory_residue)] ) {
 				ms_tr.Debug << "No motifs made for mandatory residue index " << mandatory_residue << " (pre-check)" << std::endl;
 				result[2] = 0;
 				return result;
@@ -771,31 +769,17 @@ utility::vector1< core::Real > IdentifyLigandMotifs::count_significant_motifs(co
 
 	if ( option[ OptionKeys::motifs::significant_residues_for_motifs].user() ) {
 		utility::vector1< int > const significant_residues = option[ OptionKeys::motifs::significant_residues_for_motifs];
-		core::Size lig_pos = 0;
-		for ( core::Size r = 1; r <= nres; ++r ) {
-			if ( working_pose->residue_type(r).is_ligand() ) {
-				lig_pos = r;
-				break;
-			}
-		}
-
 		core::Real const proximity_buffer = option[ OptionKeys::motifs::pre_check_proximity_buffer ];
 		for ( auto const significant_residue : significant_residues ) {
 			if ( significant_residue <= 0 || static_cast< core::Size >(significant_residue) > nres ) continue;
 			core::Size const sig_pos = static_cast< core::Size >(significant_residue);
-			bool counted = false;
-			for ( auto const motif_residue : prot_pos_that_made_motifs ) {
-				if ( motif_residue == sig_pos ) {
-					++result[3];
-					counted = true;
-					break;
-				}
-			}
-			if ( !counted && lig_pos > 0 ) {
-				core::Real const cutoff = working_pose->residue(lig_pos).nbr_radius()
+			if ( residue_has_motif[sig_pos] ) {
+				++result[3];
+			} else if ( ligand_for_proximity > 0 ) {
+				core::Real const cutoff = working_pose->residue(ligand_for_proximity).nbr_radius()
 					+ working_pose->residue(sig_pos).nbr_radius() + proximity_buffer;
 				core::Real const nbr_dist = working_pose->residue(sig_pos).nbr_atom_xyz()
-					.distance(working_pose->residue(lig_pos).nbr_atom_xyz());
+					.distance(working_pose->residue(ligand_for_proximity).nbr_atom_xyz());
 				if ( nbr_dist <= cutoff ) {
 					++result[3];
 				}
