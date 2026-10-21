@@ -55,7 +55,7 @@ static basic::Tracer TR( "core.conformation.parametric.ParametrizationCalculator
 /// @brief Constructor.
 ///
 ParametrizationCalculator::ParametrizationCalculator() :
-	parameters_( new Parameters )
+	parameters_( utility::pointer::make_shared< Parameters >() )
 	//TODO -- initialize variables here.
 {
 }
@@ -217,16 +217,9 @@ ParametrizationCalculator::add_real_parameter(
 	std::string const &units,
 	ParameterizationCalculatorProperties const &properties
 ) {
-	RealValuedParameterOP param(  new RealValuedParameter );
-	param->set_parameter_name(parameter_name);
-	param->set_parameter_description(description);
-	param->set_short_parameter_description(short_description);
-	param->set_parameter_units(units);
+	RealValuedParameterOP param( utility::pointer::make_shared< RealValuedParameter >() );
 	if ( type == PT_generic_positive_valued_real ) param->set_value(1.0);
-	param->set_parameter_type(type); //Checks compatible type.
-	param->set_can_be_set_sampled_perturbed_copied( properties.can_be_set, properties.can_be_copied, properties.can_be_sampled, properties.can_be_perturbed );
-	param->set_global_for_parameters_set( properties.global_for_parameters_set );
-	add_parameter( param );
+	configure_and_add_parameter( param, parameter_name, type, description, short_description, units, properties );
 }
 
 /// @brief Add a vector-valued parameter to this calculator.
@@ -239,16 +232,9 @@ ParametrizationCalculator::add_realvector_parameter(
 	std::string const &units,
 	ParameterizationCalculatorProperties const &properties
 ) {
-	RealVectorValuedParameterOP param(  new RealVectorValuedParameter );
-	param->set_parameter_name(parameter_name);
-	param->set_parameter_description(description);
-	param->set_short_parameter_description(short_description);
-	param->set_parameter_units(units);
+	RealVectorValuedParameterOP param( utility::pointer::make_shared< RealVectorValuedParameter >() );
 	if ( type == PT_generic_positive_valued_real ) param->set_value(utility::vector1<core::Real>(1, 1.0));
-	param->set_parameter_type(type); //Checks compatible type.
-	param->set_can_be_set_sampled_perturbed_copied( properties.can_be_set, properties.can_be_copied, properties.can_be_sampled, properties.can_be_perturbed );
-	param->set_global_for_parameters_set( properties.global_for_parameters_set );
-	add_parameter( param );
+	configure_and_add_parameter( param, parameter_name, type, description, short_description, units, properties );
 }
 
 /// @brief Add a core::Size-valued parameter to this calculator.
@@ -262,16 +248,9 @@ ParametrizationCalculator::add_size_parameter(
 	std::string const &units,
 	ParameterizationCalculatorProperties const &properties
 ) {
-	SizeValuedParameterOP param( new SizeValuedParameter );
-	param->set_parameter_name(parameter_name);
-	param->set_parameter_description(description);
-	param->set_short_parameter_description(short_description);
-	param->set_parameter_units(units);
+	SizeValuedParameterOP param( utility::pointer::make_shared< SizeValuedParameter >() );
 	if ( type == PT_generic_natural_number ) param->set_value(1);
-	param->set_parameter_type(type); //Checks compatible type.
-	param->set_can_be_set_sampled_perturbed_copied( properties.can_be_set, properties.can_be_copied, properties.can_be_sampled, properties.can_be_perturbed );
-	param->set_global_for_parameters_set( properties.global_for_parameters_set );
-	add_parameter( param );
+	configure_and_add_parameter( param, parameter_name, type, description, short_description, units, properties );
 }
 
 /// @brief Add a integer vector-valued parameter to this calculator.
@@ -285,16 +264,9 @@ ParametrizationCalculator::add_sizevector_parameter(
 	std::string const &units,
 	ParameterizationCalculatorProperties const &properties
 ) {
-	SizeVectorValuedParameterOP param( new SizeVectorValuedParameter );
-	param->set_parameter_name(parameter_name);
-	param->set_parameter_description(description);
-	param->set_short_parameter_description(short_description);
-	param->set_parameter_units(units);
+	SizeVectorValuedParameterOP param( utility::pointer::make_shared< SizeVectorValuedParameter >() );
 	if ( type == PT_generic_natural_number_vector ) param->set_value(utility::vector1< core::Size >(1,1) );
-	param->set_parameter_type(type); //Checks compatible type.
-	param->set_can_be_set_sampled_perturbed_copied( properties.can_be_set, properties.can_be_copied, properties.can_be_sampled, properties.can_be_perturbed );
-	param->set_global_for_parameters_set( properties.global_for_parameters_set );
-	add_parameter( param );
+	configure_and_add_parameter( param, parameter_name, type, description, short_description, units, properties );
 }
 
 /// @brief Add a Boolean-valued parameter to this calculator.
@@ -308,15 +280,8 @@ ParametrizationCalculator::add_boolean_parameter(
 	std::string const &units,
 	ParameterizationCalculatorProperties const &properties
 ) {
-	BooleanValuedParameterOP param( new BooleanValuedParameter );
-	param->set_parameter_name(parameter_name);
-	param->set_parameter_description(description);
-	param->set_short_parameter_description(short_description);
-	param->set_parameter_units(units);
-	param->set_parameter_type(type); //Checks compatible type.
-	param->set_can_be_set_sampled_perturbed_copied( properties.can_be_set, properties.can_be_copied, properties.can_be_sampled, properties.can_be_perturbed );
-	param->set_global_for_parameters_set( properties.global_for_parameters_set );
-	add_parameter( param );
+	BooleanValuedParameterOP param( utility::pointer::make_shared< BooleanValuedParameter >() );
+	configure_and_add_parameter( param, parameter_name, type, description, short_description, units, properties );
 }
 
 /// @brief Add a custom parameter
@@ -330,17 +295,33 @@ ParametrizationCalculator::add_custom_parameter(
 	ParameterizationCalculatorProperties const &properties,
 	ParameterOP parameter_in
 ) {
-	parameter_in->set_parameter_name(parameter_name);
-	parameter_in->set_parameter_description(description);
-	parameter_in->set_short_parameter_description(short_description);
-	parameter_in->set_parameter_units(units);
-	parameter_in->set_parameter_type(type); //Checks compatible type.
-	parameter_in->set_can_be_set_sampled_perturbed_copied( properties.can_be_set, properties.can_be_copied, properties.can_be_sampled, properties.can_be_perturbed );
-	parameter_in->set_global_for_parameters_set( properties.global_for_parameters_set );
-	add_parameter( parameter_in );
+	configure_and_add_parameter( parameter_in, parameter_name, type, description, short_description, units, properties );
 }
 
 ////////////////////// PRIVATE FUNCTIONS ///////////////////////////
+
+/// @brief Configure common properties on a parameter and add it to this calculator.
+/// @details Sets the name, description, short description, units, type, capabilities, and global flag,
+/// then adds the parameter. Used by add_*_parameter() and add_custom_parameter() to avoid duplication.
+void
+ParametrizationCalculator::configure_and_add_parameter(
+	ParameterOP param,
+	std::string const &parameter_name,
+	ParameterType type,
+	std::string const &description,
+	std::string const &short_description,
+	std::string const &units,
+	ParameterizationCalculatorProperties const &properties
+) {
+	param->set_parameter_name(parameter_name);
+	param->set_parameter_description(description);
+	param->set_short_parameter_description(short_description);
+	param->set_parameter_units(units);
+	param->set_parameter_type(type); //Checks compatible type.
+	param->set_can_be_set_sampled_perturbed_copied( properties.can_be_set, properties.can_be_copied, properties.can_be_sampled, properties.can_be_perturbed );
+	param->set_global_for_parameters_set( properties.global_for_parameters_set );
+	add_parameter( param );
+}
 
 /// @brief Add a parameter to this calculator.
 ///
