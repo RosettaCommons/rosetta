@@ -204,12 +204,12 @@ main( int argc, char * argv [] )
 			return -1;
 		}
 		int input_ligand_pdb_number = 0;
-		char input_ligand_chain = ' ';
+		std::string input_ligand_chain = " ";
 		char input_ligand_insertion_code = ' ';
 		if ( use_input_ligand ) {
 			auto const residue_selector = option[ OptionKeys::motifs::input_ligand_residue ].resnum_and_chain();
 			utility::vector1<int> const & selected_residue_numbers = std::get<0>(residue_selector);
-			utility::vector1<char> const & selected_chains = std::get<1>(residue_selector);
+			utility::vector1<std::string> const & selected_chains = std::get<1>(residue_selector);
 			if ( selected_residue_numbers.size() != 1 || selected_chains.size() != 1 ) {
 				ms_tr.Error << "input_ligand_residue must identify exactly one PDB residue, e.g. A:479." << std::endl;
 				return -1;
@@ -312,7 +312,7 @@ main( int argc, char * argv [] )
 				core::Size ligand_residue_position = 0;
 				core::Size matching_residue_count = 0;
 				for ( core::Size residue_position = 1; residue_position <= pose->size(); ++residue_position ) {
-					if ( pose->pdb_info()->chain(residue_position) == input_ligand_chain &&
+					if ( utility::to_string(pose->pdb_info()->chain(residue_position)) == input_ligand_chain &&
 							pose->pdb_info()->number(residue_position) == input_ligand_pdb_number &&
 							pose->pdb_info()->icode(residue_position) == input_ligand_insertion_code ) {
 						ligand_residue_position = residue_position;
