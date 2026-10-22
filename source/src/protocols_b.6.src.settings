@@ -113,6 +113,7 @@ sources = {
 		"LigandDiscoverySearch",
 		"LigandMotifSearch",
 		"Motif",
+		"MotifCloud",
 		"motif_utils",
 		"MotifDnaPacker",
 		"MotifHit",

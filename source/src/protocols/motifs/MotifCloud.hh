@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file
-/// @brief aginsparg, jcheng, ccummings, sthyme; MotifCloud object, which is a saveable spatial projection of motifs about residues in a PDB system
+/// @brief Sparse voxelized projections of ligand-motif partner anchors around selected pose residues.
 
 
 #include <core/types.hh>
@@ -41,6 +41,7 @@
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/AtomTypeSet.hh>
 
 #include <core/pose/PDBInfo.fwd.hh>
 
@@ -57,6 +58,7 @@
 #include <utility/io/ozstream.fwd.hh>
 #include <utility/file/FileName.fwd.hh>
 #include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.fwd.hh>
 
 // c++ headers
@@ -66,6 +68,7 @@
 #include <queue>
 #include <functional>
 #include <map>
+#include <array>
 
 // option key includes
 
@@ -93,65 +96,57 @@
 //for data type debugging
 #include <typeinfo>
 
+namespace protocols {
+namespace motifs {
+
 class MotifCloud
 {
 public:
 
-	/// @brief condensing the data type name for the main 4D vector (or matrix) that represents the motif cloud
-	// currently laid out in that the matrix internal data can only be of Size.
-	// 4D vector has the first 3 dimensinos represent 1 angstrom vectors projected about a pose; 4th dimension is a vector1 with length equal to the number of atom types in fa_standard with unsigned ints to represent counts of each atom type found in each voxel (default to 0)
-	typedef utility::vector1<utility::vector1<utility::vector1<utility::vector1<core::Size>>>> MotifMatrix;
+	/// @brief Integer pose-space voxel coordinate; each voxel spans one angstrom per axis.
+	using VoxelIndex = std::array<int, 3>;
+	/// @brief Counts keyed by 1-based fa_standard atom type index.
+	using AtomTypeCounts = std::map<core::Size, core::Size>;
+	using SparseMotifMatrix = std::map<VoxelIndex, AtomTypeCounts>;
+	using PerResidueMotifMatrices = std::map<core::Size, SparseMotifMatrix>;
 
 	// destructor
 	~MotifCloud();
 
 	//constructors:
 
-	// @brief create a new motifcloud from a given pose and motifs library that are hashed based on amino acid residue and atoms on the ligand side
-	MotifCloud(core::pose::PoseOP in_pose, protocols::motifs::MotifCOPs motif_library);
+	// @brief create motif projections from selected pose residue indices; an empty selection means all residues
+	// Projected coordinates and the aggregate use the shared pose XYZ frame.
+	MotifCloud(
+		core::pose::PoseOP in_pose,
+		protocols::motifs::MotifCOPs motif_library,
+		utility::vector1<core::Size> const & source_residue_indices = utility::vector1<core::Size>()
+	);
 
-	// @brief fill out a motifcloud from data read in from a file, where we had previously saved a motifcloud before
-	//DO THIS LATER AFTER ACTUALLY MAKING A MOTIFCLOUD
-	//MotifMatrix(whatever data is needed to make the motifmatrix from how we save it externally);
-
-
+	SparseMotifMatrix const & aggregate_matrix() const { return aggregate_motif_matrix_; }
+	PerResidueMotifMatrices const & per_residue_matrices() const { return per_residue_matrices_; }
+	core::chemical::AtomTypeSetCOP atom_type_set() const { return atom_type_set_; }
+	void write_visualization_pdb(SparseMotifMatrix const & matrix, std::string const & filename) const;
 
 private:
 
 	//Functions==========================================================================================
 
-	// @brief default constructor
-	//will need to use class functions to seed values for input pose and other potential input data
-	//should only use parameterized or copy constructor
-	MotifCloud();
-
-	// @brief blanket function to initialize relevant variables and options upon creation of a 
-	void initialize();
-
 	// @brief seed the atom_type_set_ with the fa_standard library
 	void generate_fa_standard_atom_type_set();
 
-	// @brief seed the num_atom_types_ value based on the number of atom types in the atom_type_set_
-	void set_num_atom_types();
-
-	// @brief critical function that builds/rebuilds (overwrites existing) the motif_matrix_ around the pose in working_pose_
-	//called on creation of the object
-	//this will scale the size of the first 3 dimensions of the matrix about the working pose and provide integer shifts to effectively translate coordinates in the pose to voxelized indices in the matrix
-	//all values in the 4th dimension (counts of each fa_standard atom type) will be seeded to 0 in each voxel in the 3d space
-	void wrap_matrix_around_pose();
-
-	// @brief reset (or set) the xyz shift and bound matrices to be 3 values of zeroes
-	void reset_xyz_vectors();
+	// @brief project motifs from residues in the working pose
+	void project_motifs_from_residues(utility::vector1<core::Size> const & source_residue_indices);
 
 	//Member Variables===================================================================================
 
-	/// @brief condensing the data type name for the main 4D vector (or matrix) that represents the motif cloud
-	// currently laid out in that the matrix internal data can only be of Size.
-	// 4D vector has the first 3 dimensinos represent 1 angstrom vectors projected about a pose; 4th dimension is a vector1 with length equal to the number of atom types in fa_standard with unsigned ints to represent counts of each atom type found in each voxel (default to 0)
-	MotifMatrix motif_matrix_;
+	/// @brief sparse aggregate projected anchor counts keyed by pose-space voxel and fa_standard atom-type index
+	SparseMotifMatrix aggregate_motif_matrix_;
 
-	// @brief the corresponding pose that the motif_matrix_ is wrapped around
-	//it is possible that this will go unused if the user loads in a motif_matrix, as the original pose isn't explicitly necessary to represent the motif matrix if we have already projected motifs
+	/// @brief sparse projected anchor counts for each source residue, keyed by its 1-based pose index
+	PerResidueMotifMatrices per_residue_matrices_;
+
+	// @brief the pose whose shared XYZ frame is used for voxel coordinates
 	core::pose::PoseOP working_pose_;
 
 	// @brief the full input motifs list provided by the user
@@ -161,16 +156,10 @@ private:
 	//will be filled out when iterating over residues to project motifs from, and populated using the motif_utils get_motif_sublibrary_by_aa() function. Keys will be strings for residue 3 letter codes
 	std::map< std::string, protocols::motifs::MotifCOPs > motif_library_map_by_residue_;
 
-	// @brief vector to hold the values that atom coordinates shift by in the x,y,z directions
-	utility::vector1<int> xyz_shift_;
-
-	// @brief vector to hold the xyz boundaries of the matrix (not the pose coordinates, but the boundaries that are shifted and potentially scaled within the matrix)
-	utility::vector1<core::Size> xyz_bound_;
-
-	// @brief atom type set to derive atom type ints from to pudate the cloud
+	// @brief fa_standard atom type set used to interpret atom type indices in voxel counts
 	core::chemical::AtomTypeSetCOP atom_type_set_;
 
-	// @brief the number of atom types in the atom_type_set_
-	core::Size num_atom_types_;
-
 };
+
+} // namespace motifs
+} // namespace protocols

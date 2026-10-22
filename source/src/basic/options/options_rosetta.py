@@ -7110,6 +7110,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'place_adduct_waters', 'Boolean', default = 'true', desc="used to dna_motif_collector - whether or not adduct waters are placed before motifs are collected, there will be no water interaction calculated if this is false" ),
 		Option( 'list_motifs', 'FileVector', desc="File(s) containing list(s) of PDB files to process" ),
 		Option( 'motif_filename', 'String', desc="File containing motifs" ),
+		Option( 'motif_cloud_residue_indices', 'IntegerVector', desc = '1-based pose residue indices from which to project motif partner residues into a MotifCloud'),
+		Option( 'motif_cloud_output_prefix', 'String', default = 'motif_cloud', desc = 'Prefix for MotifCloud aggregate and per-residue visualization PDB files'),
 		Option( 'file_prefix', 'String', default = 'motif', desc="File containing motifs" ),
 		Option( 'build_residue_file', 'String', desc="File containing the target positions for building and incorporating motifs" ),
 		Option( 'motif_flexible_loop_file', 'String', desc="File containing the flexible loop definition" ),

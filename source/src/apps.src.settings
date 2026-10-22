@@ -191,6 +191,7 @@ sources = {
 		"determine_real_motifs",
 		"identify_ligand_motifs",
 		"ligand_discovery_search_protocol",
+		"motif_cloud",
 		"remove_duplicate_motifs",
 	],
 	"public/pose_sewing": [
