@@ -8,9 +8,26 @@ class TestAlignment(unittest.TestCase):
 
     @staticmethod
     def _rotation_matrix(axis, theta):
-        from numpy import cross, eye
-        from scipy.linalg import expm, norm
-        return expm(cross(eye(3), axis/norm(axis)*theta))
+        """
+        NumPy-only equivalent of the SciPy implementation:
+            from numpy import cross, eye
+            from scipy.linalg import expm, norm
+            return expm(cross(eye(3), axis/norm(axis)*theta))
+        """
+        from numpy import array, cos, eye, sin
+        from numpy.linalg import norm
+
+        axis = array(axis, dtype=float)
+        axis /= norm(axis)
+        x, y, z = axis
+
+        K = array([
+            [0, -z,  y],
+            [z,  0, -x],
+            [-y, x,  0],
+        ])
+
+        return eye(3) + sin(theta) * K + (1 - cos(theta)) * (K @ K)
 
     def test_superimpose(self):
         numpy.random.seed(1663)

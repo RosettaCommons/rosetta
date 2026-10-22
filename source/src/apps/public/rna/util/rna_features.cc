@@ -117,7 +117,7 @@ rna_features_from_pose( core::io::rna::RDAT & rdat, pose::Pose & pose )
 	using namespace core::chemical::rna;
 
 	vector1< std::string > feature_names;
-	vector1< char > chains;
+	vector1< std::string > chains;
 	vector1< char > seqchars;
 	vector1< int > resnums;
 	vector1< vector1< core::Real > > all_feature_vals;

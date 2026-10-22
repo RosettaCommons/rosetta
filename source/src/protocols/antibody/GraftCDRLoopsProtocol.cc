@@ -387,10 +387,10 @@ void GraftCDRLoopsProtocol::display_constraint_residues( core::pose::Pose & pose
 
 	core::Size H1_Cys(0), H3_Cys(0);
 
-	if (      pose.residue( pose.pdb_info()->pdb2pose('H',32 ) ).name3() == "CYS" ) {
-		H1_Cys = pose.pdb_info()->pdb2pose( 'H', 32 );
-	} else if ( pose.residue( pose.pdb_info()->pdb2pose('H',33 ) ).name3() == "CYS" ) {
-		H1_Cys = pose.pdb_info()->pdb2pose( 'H', 33 );
+	if (      pose.residue( pose.pdb_info()->pdb2pose("H",32 ) ).name3() == "CYS" ) {
+		H1_Cys = pose.pdb_info()->pdb2pose( "H", 32 );
+	} else if ( pose.residue( pose.pdb_info()->pdb2pose("H",33 ) ).name3() == "CYS" ) {
+		H1_Cys = pose.pdb_info()->pdb2pose( "H", 33 );
 	}
 
 	for ( core::Size ii = ab_info_->get_CDR_loop(h3).start(); ii <= ab_info_->get_CDR_loop(h3).stop(); ii++ ) {
@@ -406,7 +406,7 @@ void GraftCDRLoopsProtocol::display_constraint_residues( core::pose::Pose & pose
 	// Specifying extended kink
 
 	core::Size hfr_46(0), h3_closest(0);
-	hfr_46 = pose.pdb_info()->pdb2pose( 'H', 46 );
+	hfr_46 = pose.pdb_info()->pdb2pose( "H", 46 );
 	if ( ab_info_->get_H3_kink_type() == Extended ) h3_closest = ab_info_->get_CDR_loop(h3).stop() - 5;
 	if ( h3_closest != 0 ) {
 		TR << "CONSTRAINTS: " << "AtomPair CA " << hfr_46 << " CA " << h3_closest

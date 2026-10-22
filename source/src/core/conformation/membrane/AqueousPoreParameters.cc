@@ -99,8 +99,6 @@ AqueousPoreParameters::AqueousPoreParameters(
 	pore_rotation_angle_( pore_rotation_angle )
 {}
 
-AqueousPoreParameters::~AqueousPoreParameters() {}
-
 AqueousPoreParameters::AqueousPoreParameters( AqueousPoreParameters const & src )
 : utility::VirtualBase( src ),
 	min_center_x_( src.min_center_x_ ),

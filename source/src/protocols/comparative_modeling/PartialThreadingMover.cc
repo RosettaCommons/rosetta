@@ -62,7 +62,7 @@ void PartialThreadingMover::apply( core::pose::Pose & query_pose ) {
 
 	//fpd update PDBinfo to have correct residue numbering
 	utility::vector1< int > pdb_numbering;
-	utility::vector1< char > pdb_chains;
+	utility::vector1< std::string > pdb_chains;
 
 	//////////
 	// 1) delete all unaligned residues
@@ -74,7 +74,7 @@ void PartialThreadingMover::apply( core::pose::Pose & query_pose ) {
 			query_pose.conformation().delete_residue_slow(resi);
 		} else {
 			pdb_numbering.push_back( resi );
-			pdb_chains.push_back( 'A' );
+			pdb_chains.push_back( "A" );
 		}
 	} // for resi
 

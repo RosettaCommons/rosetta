@@ -100,11 +100,10 @@ izstream::open(
 
 	// Attach zip_istream to ifstream if gzip file
 	if ( compression_ == GZIP ) {
-		// zip_stream_p_ deleted by close() above so don't have to here
-		zip_stream_p_ = new zip_istream( if_stream_ );
-		if ( ( !zip_stream_p_ ) || ( !( *zip_stream_p_ ) ) || ( !zip_stream_p_->is_gzip() ) ) {
+		zip_stream_p_.reset( new zip_istream( if_stream_ ) );
+		if ( !zip_stream_p_ || !( *zip_stream_p_ ) || !zip_stream_p_->is_gzip() ) {
 			// zip_stream not in good state
-			delete zip_stream_p_; zip_stream_p_ = nullptr;
+			zip_stream_p_.reset();
 			if_stream_.close();
 			if_stream_.setstate( ios_base::failbit ); // set failbit so failure can be detected
 		}

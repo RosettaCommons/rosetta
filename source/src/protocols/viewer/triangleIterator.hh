@@ -18,6 +18,7 @@
 
 #include <numeric/xyzVector.hh>
 
+#include <memory>
 #include <vector>
 
 #include <ObjexxFCL/FArray3D.fwd.hh>
@@ -55,7 +56,7 @@ private:
 	// grids and dimensions
 	float threshold_;
 	ObjexxFCL::FArray3D_float const * densityPtr;
-	ObjexxFCL::FArray4D_float * gradPtr;
+	std::unique_ptr< ObjexxFCL::FArray4D_float > gradPtr;
 	numeric::xyzVector_int size;
 
 	// ques for future triangles

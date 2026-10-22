@@ -734,7 +734,9 @@ AntibodyDesignMover::setup_modeler(){
 	modeler_->interface_detection_dis(interface_dis_);
 	modeler_->neighbor_detection_dis(neighbor_dis_);
 
-	std::string ab_dock_chains = "A_" +ab_info_->get_antibody_chain_string();
+	core::pose::DockingPartners ab_dock_chains;
+	ab_dock_chains.partner1.push_back( "A" );
+	ab_dock_chains.partner2 = ab_info_->get_antibody_chains();
 	modeler_->ab_dock_chains(ab_dock_chains);
 	modeler_->set_overhang(2); //The default overhang so that a few residues into the CDR have give.
 
@@ -1157,7 +1159,7 @@ AntibodyDesignMover::run_optimization_cycle(core::pose::Pose& pose, protocols::m
 	cdrs_to_min[ cdr ] = true;
 	for ( core::Size i = 1; i <= neighbor_min.size(); ++i ) {
 
-		if ( ab_info_->is_camelid() && ab_info_->get_CDR_chain( neighbor_min[ i ] ) == 'L' ) {
+		if ( ab_info_->is_camelid() && ab_info_->get_CDR_chain( neighbor_min[ i ] ) == "L" ) {
 			cdrs_to_min[ neighbor_min[ i ] ] = false;
 		} else {
 			TR <<"Add min neighbors : "<< ab_info_->get_CDR_name( neighbor_min[ i ] )<<std::endl;
@@ -1522,7 +1524,7 @@ AntibodyDesignMover::apply(core::pose::Pose & pose){
 	if ( remove_antigen_ && ab_info_->antigen_present() ) {
 		DeleteChainsMover remove_chains_mover = DeleteChainsMover();
 
-		remove_chains_mover.set_chains(utility::to_string(ab_info_->get_antigen_chain_string()));
+		remove_chains_mover.set_chains( ab_info_->get_antigen_chains() );
 		remove_chains_mover.apply( pose );
 
 		//Reinit AbInfo.  Will call reinit function once we actually have that.
@@ -1669,10 +1671,13 @@ AntibodyDesignMover::finalize_pose(AntibodyInfoCOP ab_info, core::pose::Pose & p
 	check_fix_aho_cdr_numbering(ab_info, pose);
 
 	if ( run_final_AIM_ ) {
-		std::string chains_str = "A_" +ab_info->get_antibody_chain_string();
+
+		core::pose::DockingPartners ab_chains;
+		ab_chains.partner1.push_back( "A" );
+		ab_chains.partner2 = ab_info->get_antibody_chains();
 
 		protocols::analysis::InterfaceAnalyzerMover analyzer = protocols::analysis::InterfaceAnalyzerMover(
-			get_dock_chains_from_ab_dock_chains(ab_info, chains_str),
+			get_dock_chains_from_ab_dock_chains(ab_info, ab_chains),
 			false /* tracer */,
 			scorefxn_,
 			false /* compute_packstat */ ,

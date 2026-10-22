@@ -77,7 +77,7 @@ public:
 	core::Size max_pools();
 
 private:
-	QuotaDebug(QuotaDebug const &);
+	QuotaDebug(QuotaDebug const &) = delete;
 };
 
 /// @brief The core of the fragment picking machinery

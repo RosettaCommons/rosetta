@@ -90,10 +90,6 @@ MembraneGeometry::MembraneGeometry(
 }
 
 
-/// @brief Destructor
-MembraneGeometry::~MembraneGeometry() {}
-
-
 /// @brief Are we accommodating the aqueous pore?
 bool
 MembraneGeometry::has_pore() const {

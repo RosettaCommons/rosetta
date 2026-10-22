@@ -55,13 +55,6 @@ private:
 	// Private constructor to make it singleton managed
 	AssemblyScorerFactory();
 
-	AssemblyScorerFactory const &
-	operator=( AssemblyScorerFactory const & ); // unimplemented
-	/*
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static AssemblyScorerFactory * create_singleton_instance();
-	*/
 public:
 	// Warning this is not called because of the singleton pattern
 	virtual ~AssemblyScorerFactory();

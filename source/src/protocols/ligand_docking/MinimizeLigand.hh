@@ -38,7 +38,7 @@ class MinimizeLigand : public protocols::moves::Mover
 {
 public:
 	MinimizeLigand();
-	MinimizeLigand(char chain, core::Real degrees);
+	MinimizeLigand(std::string const & chain, core::Real degrees);
 	~MinimizeLigand() override;
 	MinimizeLigand(MinimizeLigand const & that);
 
@@ -49,13 +49,11 @@ public:
 
 	std::string get_name() const override;
 
-	bool operator==(char const & chain) const;
-
 	utility::vector1<protocols::ligand_docking::ResidueTorsionRestraintsOP>::iterator begin();
 	utility::vector1<protocols::ligand_docking::ResidueTorsionRestraintsOP>::iterator end();
 
 private:
-	char chain_;
+	std::string chain_;
 	core::Real degrees_; // Size of one standard deviation
 	utility::vector1< protocols::ligand_docking::ResidueTorsionRestraintsOP > ligand_torsion_restraints_;
 };

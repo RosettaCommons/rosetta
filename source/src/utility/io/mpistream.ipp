@@ -79,6 +79,7 @@ basic_mpi_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::print_header( std::string
 		buf[ 1 ] = header.size();
 		buf[ 2 ] = MPI_STREAM_SEND;
 		buf[ 3 ] = channel_id_;
+		// MpiFileBuffer routes file writes through rank 0, regardless of the opening rank.
 		int master_rank = 0;
 
 		//		std::cerr << "sending from client " << my_rank_ << std::endl;
@@ -180,6 +181,7 @@ buffer_
 		buf[ 1 ] = avail_out;
 		buf[ 2 ] = MPI_STREAM_SEND;
 		buf[ 3 ] = channel_id_;
+		// MpiFileBuffer routes file writes through rank 0, regardless of the opening rank.
 		int master_rank = 0;
 
 		//		std::cerr << "sending from client " << my_rank_ << std::endl;

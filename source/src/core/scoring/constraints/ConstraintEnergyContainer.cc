@@ -48,8 +48,6 @@ CstResNeighbIterator::CstResNeighbIterator(
 {}
 
 
-CstResNeighbIterator::~CstResNeighbIterator() = default;
-
 ResidueNeighborIterator &
 CstResNeighbIterator::operator = ( ResidueNeighborIterator const & rhs)
 {
@@ -198,8 +196,6 @@ CstResNeighbConstIterator::CstResNeighbConstIterator(
 	focused_node_( focused_node ),
 	edge_iter_( edge_iter )
 {}
-
-CstResNeighbConstIterator::~CstResNeighbConstIterator() = default;
 
 ResidueNeighborConstIterator &
 CstResNeighbConstIterator::operator = ( ResidueNeighborConstIterator const & rhs )

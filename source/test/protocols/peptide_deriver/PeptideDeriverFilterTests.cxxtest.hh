@@ -55,8 +55,8 @@ public:
 		(*ut_) << "chain_pair_pose_prepared" << std::endl;
 	}
 
-	virtual void begin_receptor_partner_pair(char const receptor_chain_letter,
-		char const partner_chain_letter, core::Real const /*total_isc*/,
+	virtual void begin_receptor_partner_pair(std::string const & receptor_chain_letter,
+		std::string const & partner_chain_letter, core::Real const /*total_isc*/,
 		std::string const & options_string) {
 		(*ut_) << "begin_receptor_partner_pair" <<
 			" receptor=" << receptor_chain_letter <<
@@ -188,11 +188,11 @@ public:
 			TS_ASSERT_EQUALS(filter.get_is_dump_cyclic_poses(), true);
 			TS_ASSERT_EQUALS(filter.get_is_dump_peptide_pose(), true);
 			TS_ASSERT_EQUALS(filter.get_restrict_receptors_to_chains().size(), 2);
-			TS_ASSERT_EQUALS(filter.get_restrict_receptors_to_chains()[1], 'A');
-			TS_ASSERT_EQUALS(filter.get_restrict_receptors_to_chains()[2], 'B');
+			TS_ASSERT_EQUALS(filter.get_restrict_receptors_to_chains()[1], "A");
+			TS_ASSERT_EQUALS(filter.get_restrict_receptors_to_chains()[2], "B");
 			TS_ASSERT_EQUALS(filter.get_restrict_partners_to_chains().size(), 2);
-			TS_ASSERT_EQUALS(filter.get_restrict_partners_to_chains()[1], 'B');
-			TS_ASSERT_EQUALS(filter.get_restrict_partners_to_chains()[2], 'C');
+			TS_ASSERT_EQUALS(filter.get_restrict_partners_to_chains()[1], "B");
+			TS_ASSERT_EQUALS(filter.get_restrict_partners_to_chains()[2], "C");
 		}
 catch (utility::excn::Exception & e ) {
 	std::cerr << "Raised exception: " << e.msg() << std::endl;

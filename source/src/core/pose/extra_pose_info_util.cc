@@ -668,11 +668,11 @@ void tag_into_pose( core::pose::Pose & pose, std::string const & tag ) {
 ///////////////////////////////////////////////////////////////////////////////
 void
 set_output_res_and_chain( pose::Pose & extended_pose,
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & output_resnum_and_chain )
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > const & output_resnum_and_chain )
 {
 	using namespace pose;
 	utility::vector1< int > const & output_res_num = std::get< 0 >( output_resnum_and_chain );
-	utility::vector1< char > const & output_chain = std::get< 1 >( output_resnum_and_chain );
+	utility::vector1< std::string > const & output_chain = std::get< 1 >( output_resnum_and_chain );
 	utility::vector1< std::string > const & output_segid = std::get< 2 >( output_resnum_and_chain );
 	if ( output_res_num.size() == 0 ) return;
 	runtime_assert( output_res_num.size() == extended_pose.size() );
@@ -681,7 +681,7 @@ set_output_res_and_chain( pose::Pose & extended_pose,
 	pdb_info->set_numbering( output_res_num );
 
 	bool chain_interesting = std::any_of( output_chain.begin(), output_chain.end(),
-		[]( char const c ) { return c != ' '; } );
+		[]( std::string const & c ) { return c != " "; } );
 	bool segid_interesting = std::any_of( output_segid.begin(), output_segid.end(),
 		[]( std::string const & s ) { return s != "    "; } );
 

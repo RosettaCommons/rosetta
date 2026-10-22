@@ -26,7 +26,7 @@ namespace utility {
 //
 class Show {
 public:
-	virtual ~Show() {};
+	virtual ~Show() = default;
 
 	virtual void show(std::ostream &) const {};
 };

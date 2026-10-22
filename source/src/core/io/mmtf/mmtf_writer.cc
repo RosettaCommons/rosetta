@@ -194,12 +194,12 @@ aiChain
 make_chain(utility::vector0<AtomInformation> const & chain_atoms)
 {
 	aiChain AIC_out;
-	std::map< std::tuple< char, core::Size, std::string, char >, core::Size >rsd_map;
+	std::map< std::tuple< std::string, core::Size, std::string, char >, core::Size >rsd_map;
 
 	core::Size current_index(0);
 	for ( core::Size i=0; i<chain_atoms.size(); ++i ) {
 		core::io::AtomInformation const & ai(chain_atoms[i]);
-		std::tuple< char, core::Size, std::string, char > const current_id(ai.chainID, ai.resSeq, ai.resName, ai.iCode);
+		std::tuple< std::string, core::Size, std::string, char > const current_id(ai.chainID, ai.resSeq, ai.resName, ai.iCode);
 		auto const search(rsd_map.find(current_id));
 		if ( search != rsd_map.end() ) AIC_out[search->second].push_back(chain_atoms[i]);
 		else {
@@ -245,15 +245,13 @@ add_bonds_to_sd(::mmtf::StructureData & sd,
 	aiModels const & AIM, std::map<core::Size, sd_index> const & atom_num_to_sd_map)
 {
 	int32_t groupIndex = 0;
-	int32_t chainIndex = 0; // unused
-	int32_t modelIndex = 0;
 	unsigned int atomIndex = 0;
 	//int group_bonds(0), inter_bonds(0);
 	std::vector<core::Size>type_check;
 	// TODO this function sucks :(
-	for ( core::Size i=0; i<AIM.size(); ++i, ++modelIndex ) {  // for each model
+	for ( core::Size i=0; i<AIM.size(); ++i ) {  // for each model
 		aiPose const & AIP(AIM[i]);
-		for ( core::Size j=0; j<AIP.size(); ++j, ++chainIndex ) {  // for each chain
+		for ( core::Size j=0; j<AIP.size(); ++j ) {  // for each chain
 			for ( core::Size k=0; k<AIP[j].size(); ++k, ++groupIndex ) {  // for each group
 				for ( core::Size l=0; l<AIP[j][k].size(); ++l, ++atomIndex ) {  // for each atom
 					AtomInformation const & ai = AIP[j][k][l];
@@ -362,7 +360,13 @@ add_extra_data(
 			[](core::io::StructFileRepOP const & sfr) {return sfr->heterogen_names();});
 	} else if ( !options.write_glycan_pdb_codes() ) {
 		resize_and_add_if_not_empty(sfrs, "rosetta::residue_type_base_names", sd.modelProperties, sd.msgpack_zone,
-			[](core::io::StructFileRepOP const & sfr) {return sfr->residue_type_base_names();});
+			[](core::io::StructFileRepOP const & sfr) {
+				std::map< std::string, std::pair< std::string, std::string > > base_names;
+				for ( auto const & pairing: sfr->residue_type_base_names() ) {
+					base_names[ resid_to_tag( pairing.first ) ] = pairing.second;
+				}
+				return base_names;
+			});
 	}
 
 	// 2. reproducibility / logging info

@@ -57,7 +57,7 @@ class HolderClass {
 public:
 	HolderClass() = default;
 	HolderClass( core::Size size ) :
-		items(size)
+		items(size, nullptr)
 	{}
 
 	utility::deep_copy_vector1< ClonableBaseOP > items;
@@ -114,7 +114,19 @@ public:
 		HolderClass copy;
 		copy.items.push_back( utility::pointer::make_shared< ClonableBase >(4) );
 
+#ifndef __clang__ // Clang apparently looks at a directive directed at GCC and assumes it also applies to it.
+// It then loudly complains that it doesn't understand what you're talking about.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+
+		// Not sure why, but this is triggering a warning on GCC 16.2, for deleting the contents of copy.items
 		copy = source;
+
+#ifndef __clang__
+#pragma GCC diagnostic pop
+#endif
+
 
 		TS_ASSERT_EQUALS( source.items.size(), 3 );
 		TS_ASSERT_EQUALS( copy.items.size(), 3 );

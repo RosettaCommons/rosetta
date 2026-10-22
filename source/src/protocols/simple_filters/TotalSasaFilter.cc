@@ -143,7 +143,7 @@ TotalSasaFilter::report( std::ostream & out, core::pose::Pose const & pose ) con
 
 		runtime_assert( pose.size() == (residue_sasa.value()).size() );
 		for ( core::Size i = 1; i<=pose.size(); ++i ) {
-			char res_chain = pose.pdb_info()->chain(i);
+			std::string res_chain = pose.pdb_info()->chain(i);
 			int res_pdbnum = pose.pdb_info()->number(i);
 			core::Real this_sasa = residue_sasa.value()[i];
 			out << pose.residue( i ).name3() << res_pdbnum << " " << res_chain << " : " << this_sasa << '\n';
@@ -224,7 +224,7 @@ TotalSasaFilter::compute( core::pose::Pose const & pose ) const {
 			}
 
 			if ( report_per_residue_sasa_ && (polar_ || hydrophobic_) ) {
-				char res_chain = pose.pdb_info()->chain(pos);
+				std::string res_chain = pose.pdb_info()->chain(pos);
 				int res_pdbnum = pose.pdb_info()->number(pos);
 
 				TR << pose.residue( pos ).name3() << res_pdbnum << " " << res_chain << " ";

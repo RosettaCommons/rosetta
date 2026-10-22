@@ -382,7 +382,7 @@ LigandConformerBuilder::downstream_pose_from_hit(
 	//we should also set a different chain for the downstream pose
 	core::pose::PDBInfoOP pdbinf( new core::pose::PDBInfo( *pose ) );
 	pose->pdb_info( pdbinf );
-	pose->pdb_info()->chain( 1, 'X' );
+	pose->pdb_info()->chain( 1, "X" );
 
 	return pose;
 

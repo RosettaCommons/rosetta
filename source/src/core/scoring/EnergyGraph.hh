@@ -26,6 +26,9 @@
 // Utility headers
 #include <utility/vector1.hh>
 
+// C++ headers
+#include <memory>
+
 #ifdef    SERIALIZATION
 // Cereal headers
 #include <cereal/types/polymorphic.fwd.hpp>
@@ -266,7 +269,7 @@ protected:
 
 private:
 
-	boost::unordered_object_pool< EnergyEdge > * energy_edge_pool_;
+	std::unique_ptr< boost::unordered_object_pool< EnergyEdge > > energy_edge_pool_;
 	utility::graph::ArrayPool< Real >                     energy_array_pool_;
 
 	ScoreTypes              active_2b_score_types_;
@@ -293,7 +296,7 @@ EnergyEdge::store_active_energies( EnergyMap const & emap, ScoreTypes const & su
 {
 	utility::vector1< int > const & st2active( get_energy_owner()->score_type_2_active() );
 
-	for ( Size ii = 1, iilag = 0; ii <= subset.size(); ++ii, ++iilag ) {
+	for ( Size ii = 1; ii <= subset.size(); ++ii ) {
 		if ( st2active[ subset[ ii ]] >= 0 ) {
 			array_[ st2active[ subset[ ii ]] ] = emap[ subset[ ii ] ];
 		}
@@ -333,7 +336,7 @@ void EnergyEdge::add_to_energy_map( EnergyMap & emap, ScoreTypes const & subset 
 {
 	utility::vector1< int > const & st2active( get_energy_owner()->score_type_2_active() );
 
-	for ( Size ii = 1, iilag = 0; ii <= subset.size(); ++ii, ++iilag ) {
+	for ( Size ii = 1; ii <= subset.size(); ++ii ) {
 		if ( st2active[ subset[ ii ]] >= 0 ) {
 			emap[ subset[ ii ] ] += array_[ st2active[ subset[ ii ]] ];
 		}

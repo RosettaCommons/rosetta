@@ -179,7 +179,7 @@ class ResidueIndexDescriptionPDB : public ResidueIndexDescription
 {
 public:
 	ResidueIndexDescriptionPDB(
-		char chain,
+		std::string const & chain,
 		int resindex,
 		char insertion_code = ' ' // space character represents no insertion code
 	) :
@@ -189,7 +189,7 @@ public:
 	{}
 	ResidueIndexDescriptionPDB(
 		RID_SourceCOP source,
-		char chain,
+		std::string const & chain,
 		int resindex,
 		char insertion_code = ' ' // space character represents no insertion code
 	) :
@@ -201,7 +201,7 @@ public:
 
 	~ResidueIndexDescriptionPDB() override;
 
-	char chain() const { return chain_; }
+	std::string chain() const { return chain_; }
 	int resindex() const { return resindex_; }
 	char insertion_code() const { return insertion_code_; }
 
@@ -210,7 +210,7 @@ public:
 	void show( std::ostream & ) const override;
 
 private:
-	char chain_;   // chain character
+	std::string chain_;   // chain
 	int resindex_;
 	char insertion_code_;
 
@@ -311,14 +311,14 @@ public:
 class ResidueIndexDescriptionChainEnd : public ResidueIndexDescription
 {
 public:
-	ResidueIndexDescriptionChainEnd(char chain, bool chain_start = false):
+	ResidueIndexDescriptionChainEnd(std::string const & chain, bool chain_start = false):
 		chain_start_( chain_start ),
 		chain_letter_( chain )
 	{}
 
 	ResidueIndexDescriptionChainEnd(
 		RID_SourceCOP source,
-		char chain,
+		std::string const & chain,
 		bool chain_start = false
 	):
 		ResidueIndexDescription(source),
@@ -354,7 +354,7 @@ private:
 	/// If equal to -1, use chain letter instead.
 	signed int chain_no_ = -1;
 	/// @brief If valid (non-null), identify chain by letter
-	char chain_letter_ = 0x00; // This is NUL, not the character '0'
+	std::string chain_letter_ = ""; // empty string
 
 #ifdef    SERIALIZATION
 protected:

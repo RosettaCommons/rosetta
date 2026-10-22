@@ -106,9 +106,9 @@ void ScoringGridLoader::parse_gridset_tag( utility::tag::TagCOP tag, utility::ta
 	}
 
 	if ( tag->hasOption("ligand_chain") ) {
-		grid_set->chain(tag->getOption<char>("ligand_chain"));
+		grid_set->chain(tag->getOption<std::string>("ligand_chain"));
 	} else if ( parent->hasOption("ligand_chain") ) {
-		grid_set->chain(parent->getOption<char>("ligand_chain"));
+		grid_set->chain(parent->getOption<std::string>("ligand_chain"));
 	}
 
 	if ( tag->hasOption("normalize_mode") ) {
@@ -188,7 +188,7 @@ void ScoringGridLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	attributes + XMLSchemaAttribute::attribute_w_default( "name", xs_string, "The name of the GridSet for the listed set of grids", "default" )
 		+ XMLSchemaAttribute( "width", xsct_real, "The reach of the grid, in Angstroms" )
 		+ XMLSchemaAttribute( "resolution", xsct_real, "The distance between grid points, in Angstroms" )
-		+ XMLSchemaAttribute( "ligand_chain", xsct_char, "The chain in the input Pose that the ligand will be" )
+		+ XMLSchemaAttribute( "ligand_chain", xs_string, "The chain in the input Pose that the ligand will be" )
 		+ XMLSchemaAttribute( "normalize_mode", "grid_score_normalization", "The normalization function to use to"
 		" aid the comparison of scores between different ligands." );
 

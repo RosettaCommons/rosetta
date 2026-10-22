@@ -79,8 +79,6 @@ private:
 private:
 
 	CenrotLibrary();
-	CenrotLibrary( CenrotLibrary const & ); // unimplemented
-	CenrotLibrary const & operator = ( CenrotLibrary const & ); // unimplemented
 
 private:
 

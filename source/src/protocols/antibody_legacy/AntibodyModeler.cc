@@ -563,7 +563,7 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 
 	core::Size nres = pose_in.size();
 	core::pose::PDBInfoCOP pdb_info = pose_in.pdb_info();
-	char second_chain = 'H';
+	std::string second_chain = "H";
 	core::Size rb_cutpoint(0);
 
 	for ( core::Size i = 1; i <= nres; ++i ) {
@@ -1024,12 +1024,12 @@ AntibodyModeler::display_constraint_residues() {
 
 	core::Size H1_Cys(0), H3_Cys(0);
 
-	if ( antibody_in_.Fv.residue( antibody_in_.Fv.pdb_info()->pdb2pose( 'H',
+	if ( antibody_in_.Fv.residue( antibody_in_.Fv.pdb_info()->pdb2pose( "H",
 			32 ) ).name3() == "CYS" ) {
-		H1_Cys = antibody_in_.Fv.pdb_info()->pdb2pose( 'H', 32 );
+		H1_Cys = antibody_in_.Fv.pdb_info()->pdb2pose( "H", 32 );
 	} else if ( antibody_in_.Fv.residue( antibody_in_.Fv.pdb_info()->pdb2pose(
-			'H', 33 ) ).name3() == "CYS" ) {
-		H1_Cys = antibody_in_.Fv.pdb_info()->pdb2pose( 'H', 33 );
+			"H", 33 ) ).name3() == "CYS" ) {
+		H1_Cys = antibody_in_.Fv.pdb_info()->pdb2pose( "H", 33 );
 	}
 
 	for ( core::Size ii = antibody_in_.cdrh_[3][1]; ii <= antibody_in_.cdrh_[3][2];
@@ -1048,7 +1048,7 @@ AntibodyModeler::display_constraint_residues() {
 	// Specifying extended kink
 
 	core::Size hfr_46(0), h3_closest(0);
-	hfr_46 = antibody_in_.Fv.pdb_info()->pdb2pose( 'H', 46 );
+	hfr_46 = antibody_in_.Fv.pdb_info()->pdb2pose( "H", 46 );
 	if ( antibody_in_.extended_ ) {
 		h3_closest = antibody_in_.cdrh_[3][2] - 5;
 	}

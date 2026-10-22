@@ -184,9 +184,8 @@ void MolecularDynamics::getCartesianDerivatives(
 
 	// now loop over the torsions in the map (the map MUST be a map of everything!)
 
-	int imap( 1 ); // for indexing into de_dvars( imap )
 	for ( auto it=min_map.begin(), ite=min_map.end();
-			it != ite; ++it, ++imap ) {
+			it != ite; ++it ) {
 		using namespace id;
 
 		DOF_Node const & dof_node( **it );
@@ -1275,7 +1274,7 @@ void MolecularDynamics::applyForces_ConjugateGradient(
 
 		}
 	} else { // this block is for Step == 0 - its just a standard SD Step
-		for ( core::Size i = 1; i < cartom.size(); i++ ) {
+		for ( core::Size i = 1; i <= cartom.size(); i++ ) {
 			cartom[i].old_position    =  cartom[i].position; // save position (old position = current position)
 			cartom[i].old_force       =  cartom[i].force * forcemul; // save old forces
 			cartom[i].old_velocity    =  -cartom[i].force * forcemul; // save old directions, equal to old force
@@ -1483,7 +1482,7 @@ void MolecularDynamics::testCartesianDerivatives( core::scoring::ScoreFunction c
 	}
 
 
-	for ( core::Size i = 1; i < cartom.size(); i++ ) {
+	for ( core::Size i = 1; i <= cartom.size(); i++ ) {
 
 		if (  ( fabs( cartom[i].force.x()  -  numeriv[i].x()     ) > 0.1 ) ||
 				( fabs( cartom[i].force.y()  -  numeriv[i].y()     ) > 0.1 ) ||

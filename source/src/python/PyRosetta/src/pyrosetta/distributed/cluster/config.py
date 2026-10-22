@@ -9,7 +9,10 @@ __author__ = "Jason C. Klima"
 
 import logging
 import os
+import re
+import shlex
 import shutil
+import subprocess
 import sys
 import warnings
 
@@ -71,12 +74,41 @@ class EnvironmentConfig:
             else:
                 self.environment_manager = "conda"
                 warnings.warn(
-                    f"Warning: could not configure an environment manager for `PyRosettaCluster`. "
+                    "Could not configure an environment manager for `PyRosettaCluster`. "
                     + "Please ensure that either of 'pixi', 'uv', 'mamba', or 'conda' is installed. "
                     + "Using 'conda' as the default environment manager.",
                     UserWarning,
                     stacklevel=7,
                 )
+
+    @property
+    def environment_manager_version(self) -> str:
+        """Return the version of the given environment manager."""
+
+        cmd = [self.environment_manager, "--version"]
+        try:
+            output = subprocess.check_output(
+                cmd,
+                text=True,
+                stderr=subprocess.STDOUT,
+            ).strip()
+        except (FileNotFoundError, subprocess.CalledProcessError):
+            version = ""
+        else:
+            found = re.search(r"v?(\d+(?:\.\d+)+)", output)
+            version = found.group(1) if found else ""
+
+        if not version:
+            cmd_str = shlex.join(cmd)
+            warnings.warn(
+                f"Could not determine the {self.environment_manager!r} environment manager version "
+                + f"for `PyRosettaCluster` from running `{cmd_str}`. Please ensure that the environment "
+                "manager version is saved for environment reproducibility.",
+                UserWarning,
+                stacklevel=7,
+            )
+
+        return version
 
     @property
     def env_export_cmd(self) -> str:
@@ -129,6 +161,11 @@ def get_environment_config() -> EnvironmentConfig:
 def get_environment_manager() -> str:
     """Get the configured environment manager."""
     return get_environment_config().environment_manager
+
+
+def get_environment_manager_version() -> str:
+    """Get the configured environment manager version."""
+    return get_environment_config().environment_manager_version
 
 
 def get_environment_cmd() -> str:

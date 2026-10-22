@@ -401,10 +401,10 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 utility::vector1< Size > pdb_to_pose( pose::Pose const & pose, utility::vector1< int > const & pdb_res );
 
 /// @brief Convert PDB numbering/chain to pose numbering. Must exist somewhere else, but I couldn't find it. -- rhiju
-utility::vector1< Size > pdb_to_pose( pose::Pose const & pose, std::tuple< utility::vector1< int >, utility::vector1<char>, utility::vector1<std::string> > const & pdb_res );
+utility::vector1< Size > pdb_to_pose( pose::Pose const & pose, std::tuple< utility::vector1< int >, utility::vector1<std::string>, utility::vector1<std::string> > const & pdb_res );
 
 /// @brief Convert PDB numbering to pose numbering. Must exist somewhere else, but I couldn't find it. -- rhiju
-Size pdb_to_pose( pose::Pose const & pose, int const res_num, char const chain = ' ' );
+Size pdb_to_pose( pose::Pose const & pose, int const res_num, std::string const & chain = " " );
 
 /// @brief Convert pose numbering to pdb numbering. Must exist somewhere else, but I couldn't find it. -- rhiju
 utility::vector1< Size > pose_to_pdb( pose::Pose const & pose, utility::vector1< Size > const & pose_res );

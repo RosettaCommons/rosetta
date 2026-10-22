@@ -72,7 +72,7 @@ get_movable_jumps(
 	using namespace core;
 	using namespace protocols;
 	pose::PDBInfoCOP pdb_info = pose.pdb_info();
-	char second_chain = '_';
+	std::string second_chain = "_";
 	Size cutpoint = 0;
 	utility::vector1_int movable_jumps_;
 	kinematics::FoldTree f( pose.fold_tree() );

@@ -18,6 +18,7 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.fwd.hh>
 #include <map>
+#include <string>
 
 namespace protocols {
 namespace ligand_docking {
@@ -29,7 +30,7 @@ typedef utility::pointer::shared_ptr< LigandArea const > LigandAreaCOP;
 typedef utility::vector1< LigandAreaOP > LigandAreaOPs;
 typedef utility::vector1< LigandAreaCOP > LigandAreaCOPs;
 
-typedef std::map<char, LigandAreaOP> LigandAreas;
+typedef std::map<std::string, LigandAreaOP> LigandAreas;
 
 } //namespace ligand_docking
 } //namespace protocols

@@ -147,12 +147,6 @@ public: // Creation
 	}
 
 
-	/// @brief Destructor
-	inline
-	~BitVector()
-	{}
-
-
 public: // Assignment
 
 

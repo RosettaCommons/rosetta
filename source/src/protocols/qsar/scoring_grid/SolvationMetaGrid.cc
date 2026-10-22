@@ -183,7 +183,7 @@ std::string SolvationMetaGrid::get_type() const
 	return grid_name();
 }
 
-void SolvationMetaGrid::set_chain(char chain)
+void SolvationMetaGrid::set_chain(std::string const & chain)
 {
 	auto it = grid_set_.begin();
 	for ( ; it != grid_set_.end(); ++it ) {

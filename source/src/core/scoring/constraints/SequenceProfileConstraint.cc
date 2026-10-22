@@ -35,8 +35,6 @@
 #include <core/scoring/func/XYZ_Func.hh>
 #include <utility/vector1.hh>
 
-#include <boost/lexical_cast.hpp>
-
 
 #ifdef SERIALIZATION
 // Utility serialization headers
@@ -154,7 +152,7 @@ SequenceProfileConstraint::read_def(
 		seqpos_ = residue_index;
 		const_cast<SequenceProfile * >(sequence_profile_.get())->prof_row( aa_scores, residue_index );
 	} else {
-		auto residue_index(boost::lexical_cast<Size>(version));
+		Size residue_index( version );
 		std::string profile_filename;
 
 		is >> profile_filename;

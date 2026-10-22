@@ -86,30 +86,7 @@ struct ConnectionEvent { // do not derive from GeneralEvent
 	{}
 
 
-	/// @brief copy constructor
-	inline
-	ConnectionEvent( ConnectionEvent const & rval ) :
-		conformation( rval.conformation ),
-		tag( rval.tag )
-	{}
-
-
-	/// @brief default destructor
-	inline
-	virtual
-	~ConnectionEvent() {}
-
-
-	/// @brief copy assignment
-	inline
-	ConnectionEvent &
-	operator =( ConnectionEvent const & rval ) {
-		if ( this != &rval ) {
-			conformation = rval.conformation;
-			tag = rval.tag;
-		}
-		return *this;
-	}
+	virtual ~ConnectionEvent() = default;
 
 
 	/// @brief the Conformation firing the signal

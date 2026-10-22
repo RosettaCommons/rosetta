@@ -60,7 +60,6 @@ namespace disulfides {
 * could form a bond, not just the best one. Maybe even include non-cysteines!
 */
 class CentroidDisulfideNeighborIterator : public ResidueNeighborIterator {
-	CentroidDisulfideNeighborIterator & operator = (CentroidDisulfideNeighborIterator const & );
 public:
 
 	CentroidDisulfideNeighborIterator(
@@ -73,7 +72,10 @@ public:
 		CentroidDisulfideEnergyContainer * owner
 	);
 
-	~CentroidDisulfideNeighborIterator() override;
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	CentroidDisulfideNeighborIterator & operator = (CentroidDisulfideNeighborIterator const & ) = delete;
 
 	ResidueNeighborIterator & operator = ( ResidueNeighborIterator const & ) override;
 	ResidueNeighborIterator const & operator ++ () override;
@@ -113,7 +115,6 @@ public:
 
 /// @brief Just a const version of CentroidDisulfideNeighborIterator
 class CentroidDisulfideNeighborConstIterator : public ResidueNeighborConstIterator {
-	CentroidDisulfideNeighborConstIterator & operator = (CentroidDisulfideNeighborConstIterator const & );
 public:
 	CentroidDisulfideNeighborConstIterator(
 		CentroidDisulfideEnergyContainer const * owner,
@@ -123,7 +124,10 @@ public:
 
 	CentroidDisulfideNeighborConstIterator( CentroidDisulfideEnergyContainer const * owner );
 
-	~CentroidDisulfideNeighborConstIterator() override;
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	CentroidDisulfideNeighborConstIterator & operator = (CentroidDisulfideNeighborConstIterator const & ) = delete;
 
 	ResidueNeighborConstIterator & operator = ( ResidueNeighborConstIterator const & ) override;
 	ResidueNeighborConstIterator const & operator ++ () override;

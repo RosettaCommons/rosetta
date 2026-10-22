@@ -34,9 +34,6 @@ class EnergiesAccessor(PoseCacheAccessorBase, MutableMapping):
             dict(self.pose.energies().active_total_energies().items())
         )
 
-    def __getitem__(self, key):
-        return self.all[key]
-
     def __setitem__(self, key, value):
         raise NotImplementedError(
             "Cannot set an item to pose energies. Consider scoring the pose with a score function."

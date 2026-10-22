@@ -93,12 +93,6 @@ public: // Creation
 	clone() const = 0;
 
 
-	/// @brief Destructor
-	inline
-	virtual
-	~AnyOption() {}
-
-
 protected: // Assignment
 
 

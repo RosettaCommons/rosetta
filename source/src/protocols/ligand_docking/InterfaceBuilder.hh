@@ -99,7 +99,7 @@ private:
 	bool is_interface_residue(
 		core::conformation::Residue const & potential_interface_residue,
 		core::conformation::Residue const & ligand_interface_residue,
-		char const chain
+		std::string const & chain
 	)const;
 
 };

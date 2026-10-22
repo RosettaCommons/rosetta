@@ -130,7 +130,7 @@ void
 CDRResidueSelector::set_cdrs( utility::vector1< CDRNameEnum > cdrs ){
 	cdrs_.clear();
 	cdrs_.resize(8, false);
-	for ( core::Size i = 1; i < cdrs.size(); ++i ) {
+	for ( core::Size i = 1; i <= cdrs.size(); ++i ) {
 		cdrs_[ cdrs[ i ] ] = true;
 	}
 }
@@ -259,7 +259,7 @@ CDRResidueSelector::apply(
 
 
 		if ( ! cdrs_[ i ] ) continue;
-		if ( local_ab_info->is_camelid() && local_ab_info->get_CDR_chain( cdr ) == 'L' ) continue;
+		if ( local_ab_info->is_camelid() && local_ab_info->get_CDR_chain( cdr ) == "L" ) continue;
 
 
 

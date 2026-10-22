@@ -30,21 +30,19 @@ Svm_node_rosetta::Svm_node_rosetta(platform::Size index, platform::Real value){
 	value_ = value;
 }
 
-Svm_node_rosetta::~Svm_node_rosetta()= default;
+void SvmModelDeleter::operator()(svm_model* model) const {
+	svm_free_model_content( model );
+	free( model );
+}
 
-
-Svm_rosetta::Svm_rosetta(string const & model_filename){
-	svm_model_ = svm_load_model(model_filename.c_str());
+Svm_rosetta::Svm_rosetta(string const & model_filename) :
+	svm_model_( svm_load_model(model_filename.c_str()) )
+{
 	runtime_assert_string_msg( svm_model_, "Error in constructor for Svm_rosetta class: Could not read file \"" + model_filename + "\"." );
 }
 
-Svm_rosetta::~Svm_rosetta(){
-	svm_free_model_content( svm_model_ );
-	free( svm_model_ );
-}
-
 platform::Size Svm_rosetta::get_nr_class() const {
-	return((platform::Size)svm_get_nr_class(svm_model_));
+	return((platform::Size)svm_get_nr_class(svm_model_.get()));
 }
 
 vector1 < platform::Real > Svm_rosetta::predict_probability(vector1 <Svm_node_rosettaOP> const & features) const {
@@ -56,10 +54,10 @@ vector1 < platform::Real > Svm_rosetta::predict_probability(vector1 <Svm_node_ro
 		x[ii-1].value = (double)features[ii]->value();
 	}
 	x[features.size()].index = -1;
-	int nr_class = svm_get_nr_class(svm_model_);
+	int nr_class = svm_get_nr_class(svm_model_.get());
 	//double *prob_estimates = (double *) malloc(nr_class*sizeof(double));
 	auto *prob_estimates = new double[nr_class];
-	/*double predict_label =*/ svm_predict_probability(svm_model_,x,prob_estimates);
+	/*double predict_label =*/ svm_predict_probability(svm_model_.get(),x,prob_estimates);
 	vector1 <platform::Real> probs_to_return;
 	for ( int ii=0; ii<nr_class; ++ii ) {
 		probs_to_return.push_back(prob_estimates[ii]);
@@ -79,7 +77,7 @@ platform::Real Svm_rosetta::predict( vector1 <Svm_node_rosettaOP> const & featur
 		x[ii-1].value = (double)features[ii]->value();
 	}
 	x[features.size()].index = -1;
-	platform::Real predict_value( svm_predict(svm_model_,x) );
+	platform::Real predict_value( svm_predict(svm_model_.get(),x) );
 	delete[] x;
 	return(predict_value);
 }

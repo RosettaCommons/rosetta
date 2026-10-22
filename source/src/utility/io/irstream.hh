@@ -44,9 +44,11 @@ public: // Creation
 
 
 	/// @brief Destructor
-	inline
 	virtual
-	~irstream() {}
+	~irstream() = default;
+
+	irstream( irstream const & ) = delete;
+	irstream & operator =( irstream const & ) = delete;
 
 
 protected: // Creation
@@ -56,21 +58,6 @@ protected: // Creation
 	inline
 	irstream()
 	= default;
-
-
-private: // Creation
-
-
-	/// @brief Copy constructor: Undefined
-	irstream( irstream const & );
-
-
-private: // Methods: assignment
-
-
-	/// @brief Copy assignment: Undefined
-	irstream &
-	operator =( irstream const & );
 
 
 public: // Methods: conversion

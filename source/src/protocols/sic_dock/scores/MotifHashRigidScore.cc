@@ -13,7 +13,6 @@
 #include <basic/options/keys/mh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
-#include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/pose/xyzStripeHashPose.hh>
 
@@ -54,11 +53,8 @@ MotifHashRigidScore::MotifHashRigidScore(
 	xshe_(/* NULL */),
 	xshh_(/* NULL */),
 	xspp_(/* NULL */),
-	ssinfo1_(nullptr),
-	ssinfo2_(nullptr),
 	// nss1_(0),
 	// nss2_(0),
-	reshash_(nullptr),
 	nhashlookups_(0)
 {
 	core::scoring::dssp::Dssp(pose1_).insert_ss_into_pose_no_IG_helix(pose1_);
@@ -90,18 +86,14 @@ MotifHashRigidScore::MotifHashRigidScore(
 	hash_pose1_ = pose1_.size() >= pose2_.size();
 	Pose const & hashpose(hash_pose1_?pose1_:pose2_);
 	Pose const & listpose(hash_pose1_?pose2_:pose1_);
-	reshash_ = new core::pose::xyzStripeHashPose(hashpose,core::pose::PoseCoordPickMode_CBorCA,sqrt(MAX_MOTIF_D2));
+	reshash_.reset( new core::pose::xyzStripeHashPose(hashpose,core::pose::PoseCoordPickMode_CBorCA,sqrt(MAX_MOTIF_D2)) );
 	for ( int ir = 1; ir <= (int)listpose.size(); ++ir ) {
 		if     ( listpose.residue(ir).has("CB") ) reslist_.push_back(std::make_pair(listpose.residue(ir).xyz("CB"),ir));
 		else if ( listpose.residue(ir).has("CA") ) reslist_.push_back(std::make_pair(listpose.residue(ir).xyz("CA"),ir));
 	}
 }
 
-MotifHashRigidScore::~MotifHashRigidScore(){
-	if ( ssinfo1_ ) delete ssinfo1_;
-	if ( ssinfo2_ ) delete ssinfo2_;
-	if ( reshash_ ) delete reshash_;
-}
+MotifHashRigidScore::~MotifHashRigidScore() = default;
 
 
 core::scoring::motif::Real6
@@ -157,8 +149,6 @@ MotifHashRigidScore::score_meta( Xforms const & x1s, Xforms const & x2s, int & n
 				if ( x.t.length_squared() >  49.0 ) tres1.insert(ir);
 				if ( x.t.length_squared() >  49.0 ) tres2.insert(jr);
 				tot_weighted += sqrt( raw );
-				// sselemsc1[ssinfo1_->ss_element_id(ir)] += sqrt(raw)+raw/30.0;
-				// sselemsc2[ssinfo2_->ss_element_id(jr)] += sqrt(raw)+raw/30.0;//!!!!!!!!!!!!!!!!!!!!!!!!
 				// if( x.t.length_squared() <  64.0 ){
 				if ( mres1.find(ir)==mres1.end() ) { mres1[ir]=0; } mres1[ir] += raw;
 				if ( mres2.find(jr)==mres2.end() ) { mres2[jr]=0; } mres2[jr] += raw;

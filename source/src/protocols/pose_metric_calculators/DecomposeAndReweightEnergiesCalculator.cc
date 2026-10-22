@@ -418,7 +418,7 @@ DecomposeAndReweightEnergiesCalculator::nonzero_weight_score_types() const
 	utility::vector1<core::scoring::ScoreType> score_types;
 
 	for ( int i = 1; i < core::scoring::n_score_types; ++i ) {
-		for ( core::Size j = 1; j < weight_map_vector.size(); ++j ) {
+		for ( core::Size j = 1; j <= weight_map_vector.size(); ++j ) {
 			if ( weight_map_vector[j][core::scoring::ScoreType(i)] ) {
 				score_types.push_back(core::scoring::ScoreType(i));
 				break;
