@@ -7102,6 +7102,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'elec_max_threshold', 'Real', default = '9999.0', desc = 'Used for motif extraction - fa_elec scores above this value will cause a motif to be discarded'),
 		Option( 'duplicate_dist_cutoff', 'Real', default = '1.0', desc = 'Value for determining whether a motif is different from others already in a library'),
 		Option( 'duplicate_angle_cutoff', 'Real', default = '0.4', desc = 'Value for determining whether a motif is different from others already in a library'),
+		Option( 'placement_deduplication_tolerance', 'Real', default = '0.25', desc = 'Cartesian bin width in Angstroms used to deduplicate nearly identical ligand placements before expensive scoring and HighResDock. Values <= 0 disable placement deduplication.'),
 		Option( 'motif_output_directory', 'String', desc = 'used in dna_motif_collector - path for the directory where all the collected motifs are dumped as 2-residue pdbs'),
 		Option( 'eliminate_weak_motifs', 'Boolean', default = 'true', desc="used to dna_motif_collector - controls whether only the top 1-2 motifs are counted for every protein position in a protein-DNA interface" ),
 		Option( 'duplicate_motif_cutoff', 'Real', default = '0.2', desc = 'used in dna_motif_collector - RMSD cutoff for an identical base placed via a motif to see if that motif already exists in a motif library'),
@@ -7181,6 +7182,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'z_min_holes', 'Real', desc = 'If going to investigate a sub_region of a pdb, this defines the min z value of the region'),
 		Option( 'z_max_holes', 'Real', desc = 'If going to investigate a sub_region of a pdb, this defines the max z value of the region'),
 		Option( 'highresdocker_allow_minimization', 'Boolean', default = 'true', desc = 'Bool to indicate whether to allow (true) minimization or not (false) in the apply function of HighResDocker'),
+		Option( 'discovery_coordinate_constraint_weight', 'Real', default = '1.0', lower = '0.0', desc = 'Weight of motif atom coordinate restraints during discovery HighResDock only; zero reproduces unrestrained docking'),
+		Option( 'discovery_dihedral_constraint_weight', 'Real', default = '1.0', lower = '0.0', desc = 'Weight of ligand torsion restraints during discovery HighResDock only; excluded from reported DDG'),
+		Option( 'discovery_direct_ddg', 'Boolean', default = 'false', desc = 'Experimental exact ligand pair DDG for fa_atr/fa_rep-only scoring; otherwise use separated-pose scoring'),
+		Option( 'discovery_verify_ddg', 'Boolean', default = 'false', desc = 'A/B validation: evaluate and time both DDG methods and fail on disagreement'),
 		Option( 'highresdocker_allow_repacking', 'Boolean', default = 'true', desc='Boolean in ligand_docking/HighResDocker to prevent apply function from repacking. Often want value to be true, but this allows option to make it false.'),
 		Option( 'highresdocker_use_all_residues', 'Boolean', default = 'false', desc='Boolean in ligand_docking/HighResDocker to determine whether to use all residues in generation of packer_task.'),
 		Option( 'ligand_motif_output_directory_name', 'String', default = '', desc = 'Name the directory to which motif pdbs will be outputted to, default of location where script is called. Follow a directory name with a /.'),
@@ -7208,6 +7213,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'minimum_significant_motifs_formed_cutoff', 'Integer', default = '0', desc = 'Minimum number of motifs from significant residues (defined by significant_residues_for_motifs) that are required for ligand to survive'),
 		Option( 'check_if_ligand_motifs_match_real', 'Boolean', default = 'false', desc = 'If collecting motifs from placed ligand, check if motifs are similar to existing ones in starting motif library'),
 		Option( 'minimum_ratio_of_real_motifs_from_ligand', 'Real', default = '0', desc = 'If checking that motifs from placed ligand match motifs in inputted library, ratio cutoff for how many must match real to keep ligand'),
+		Option( 'pre_check_proximity_buffer', 'Real', default = '5.0', desc = 'Distance buffer (in angstroms) for the significant-motif pre-check. Significant residues within (NBR_radius_sum + this buffer) of the placed ligand are counted toward sig_count even if they did not form an explicit motif, because HighResDocker may move the ligand into contact.'),
 		Option( 'clean_pdb_name', 'Boolean', default = 'true', desc = 'Use a cleaner naming scheme for naming the pdbs that are produced by liganddiscoverysearch'),
 	), # -motifs
 

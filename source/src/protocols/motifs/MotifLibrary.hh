@@ -30,6 +30,9 @@
 
 // C++ Headers
 #include <iosfwd>
+#include <set>
+#include <string>
+#include <tuple>
 
 //Auto Headers
 namespace protocols {
@@ -86,9 +89,19 @@ public:
 		std::istream & motif_info, bool check_for_bad_motifs, utility::vector1< std::string > const & ligand_atom_names
 	);
 
+	// Constructor that retains only motifs matching an ordered ligand atom-type triplet.
+	MotifLibrary(
+		std::istream & motif_info,
+		bool check_for_bad_motifs,
+		std::set< std::tuple< std::string, std::string, std::string > > const & ligand_atom_type_triplets
+	);
+
 	// Add ligand motif from a PDB file; file stream will not terminate if motif orthogonality test fails
 	void
 	add_ligand_from_file( std::string const & motif_filename, bool check_for_bad_motifs, utility::vector1< std::string > const & ligand_atom_names );
+
+	void
+	add_ligand_from_file( std::string const & motif_filename, bool check_for_bad_motifs, std::set< std::tuple< std::string, std::string, std::string > > const & ligand_atom_type_triplets );
 
 	// Number of motifs
 	core::Size
@@ -116,6 +129,17 @@ private:
 	// @brief function to help with constructor with identifier that is more leanient on failed orthogonality checks
 	void
 	check_ctor_helper(std::istream & motif_info, bool check_for_bad_motifs, utility::vector1< std::string > const & ligand_atom_names);
+
+	void
+	check_ctor_helper(std::istream & motif_info, bool check_for_bad_motifs, std::set< std::tuple< std::string, std::string, std::string > > const & ligand_atom_type_triplets);
+
+	bool
+	load_ligand_index_cache(
+		std::string const & motif_filename,
+		std::string const & cache_filename,
+		bool check_for_bad_motifs,
+		std::set< std::tuple< std::string, std::string, std::string > > const & ligand_atom_type_triplets
+	);
 
 
 };

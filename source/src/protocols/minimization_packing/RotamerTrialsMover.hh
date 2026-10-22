@@ -89,6 +89,7 @@ public:
 	// setters
 	void score_function( core::scoring::ScoreFunctionCOP sf );
 	void task_factory( core::pack::task::TaskFactoryCOP tf );
+	void task( core::pack::task::PackerTask const & task_in );
 
 public:
 
