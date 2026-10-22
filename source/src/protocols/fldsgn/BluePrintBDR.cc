@@ -519,7 +519,7 @@ bool BluePrintBDR::centroid_build(
 	// ensure modified_archive_pose is completely full-atom, otherwise mismatch
 	// will occur when restoring sidechains at the end of the procedure
 	bool mod_ap_is_full_atom = true;
-	for ( core::Size i = 1, ie = modified_archive_pose.size(); mod_ap_is_full_atom && i != ie; ++i ) {
+	for ( core::Size i = 1, ie = modified_archive_pose.size(); mod_ap_is_full_atom && i <= ie; ++i ) {
 		mod_ap_is_full_atom &= ( modified_archive_pose.residue( i ).type().mode() == core::chemical::FULL_ATOM_t );
 	}
 

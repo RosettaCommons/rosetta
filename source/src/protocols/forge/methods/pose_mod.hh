@@ -62,8 +62,7 @@ grow_left_r(
 	bool const had_lower_terminus = pose.residue( anchor ).is_lower_terminus();
 
 	// grow extension
-	core::Size current_pos = anchor; // tracks the anchor as it moves
-	for ( ResidueOPIterator i = begin; i != end; ++i, ++current_pos ) {
+	for ( ResidueOPIterator i = begin; i != end; ++i ) {
 		pose.conformation().safely_prepend_polymer_residue_before_seqpos( **i, anchor, !use_existing_crd ); // will remove any terminus
 	}
 

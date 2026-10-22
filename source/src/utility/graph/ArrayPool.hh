@@ -58,26 +58,6 @@ public:
 		size_( size )
 	{}
 
-	/// @brief Copy constructor -- point this Array0 at a block of memory
-	Array0( Array0< T > const & other ) :
-		array_( other.array_ ),
-		size_( other.size_ )
-	{}
-
-	/// @brief Assignment operator -- point this Array0 at a different block of memory.
-	Array0< T > const &
-	operator = ( Array0< T > const & rhs ) {
-		if ( &rhs != this ) {
-			array_ = rhs.array_;
-			size_ = rhs.size_;
-		}
-		return *this;
-	}
-
-	/// @brief The destructor does not deallocate the memory that this Array0 points at.
-	/// That is the responsibility of some other class.  Array0 is for bounds checking only.
-	~Array0() = default;
-
 public:
 	/// Accessors and mutators.
 

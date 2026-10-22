@@ -413,7 +413,7 @@ core::Size FragmentLibrary::reagents_size( core::Size reaction_index, core::Size
 	return reactions_[ reaction_index ]->reagents( position ).size();
 }
 
-core::pose::PoseOP FragmentLibrary::create_pose( core::conformation::Residue& ligand, char ligand_chain ) const {
+core::pose::PoseOP FragmentLibrary::create_pose( core::conformation::Residue& ligand, std::string const & ligand_chain ) const {
 
 	core::pose::PoseOP ligand_pose = utility::pointer::make_shared< core::pose::Pose >();
 	ligand_pose->detached_copy( *pose_ );
@@ -435,7 +435,7 @@ core::pose::PoseOP FragmentLibrary::create_pose( core::conformation::Residue& li
 	return ligand_pose;
 }
 
-core::pose::PoseOP FragmentLibrary::create_ligand_pose( LigandIdentifier const& id, bool create_rotamers, char ligand_chain ) const {
+core::pose::PoseOP FragmentLibrary::create_ligand_pose( LigandIdentifier const& id, bool create_rotamers, std::string const & ligand_chain ) const {
 
 	TR.Debug << "Turn id " << id << " into smiles." << std::endl;
 
@@ -448,7 +448,7 @@ core::pose::PoseOP FragmentLibrary::create_ligand_pose( LigandIdentifier const& 
 	return create_ligand_pose( smiles, create_rotamers, ligand_chain );
 }
 
-core::pose::PoseOP FragmentLibrary::create_ligand_pose(std::string const& smiles, bool create_rotamers, char ligand_chain) const {
+core::pose::PoseOP FragmentLibrary::create_ligand_pose(std::string const& smiles, bool create_rotamers, std::string const & ligand_chain) const {
 	TR.Debug << "Try to create ligand for " << smiles << std::endl;
 	return create_pose( *create_ligand( smiles, create_rotamers ), ligand_chain );
 }

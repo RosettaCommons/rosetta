@@ -48,8 +48,6 @@ CDRClusterSet::CDRClusterSet(AntibodyInfo * ab_info){
 	clear();
 }
 
-CDRClusterSet::~CDRClusterSet()= default;
-
 void
 CDRClusterSet::identify_and_set_cdr_cluster(core::pose::Pose const & pose, CDRNameEnum cdr){
 	clear(cdr);

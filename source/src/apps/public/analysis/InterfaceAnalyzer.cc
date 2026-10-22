@@ -25,6 +25,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/pose/PDBInfo.hh>
 
 // Utility Headers
@@ -114,7 +115,7 @@ void IAMover::assign_IA_mover(core::pose::Pose & pose){
 		std::set< int > fixed_chains; //This is a set of the CHAIN IDs, not residue ids
 		TR << "Fixed chains are: " ;
 		for ( core::Size j = 1; j <= fixed_chains_string.size(); ++j ) {
-			char this_chain (fixed_chains_string[ j ][0]);
+			std::string this_chain = fixed_chains_string[ j ];
 			for ( core::Size i = 1; i<=pose.size(); ++i ) {
 				if ( pose.pdb_info()->chain( i ) == this_chain ) {
 					fixed_chains.insert( pose.chain(i) );
@@ -135,7 +136,7 @@ void IAMover::assign_IA_mover(core::pose::Pose & pose){
 			jobname
 		);
 	} else if ( basic::options::option[interface].active() ) {
-		std::string dock_chains = basic::options::option[interface].value();
+		core::pose::DockingPartners dock_chains = core::pose::DockingPartners::docking_partners_from_string( basic::options::option[interface].value() );
 		TR << "Using interface definition: "<<dock_chains <<std::endl;
 		IAM_ = utility::pointer::make_shared< protocols::analysis::InterfaceAnalyzerMover >(
 			dock_chains,

@@ -134,6 +134,8 @@ public:
 	clear_segments()
 	{
 		segments_.clear();
+		// The BondAngleMap is derived data from segments_
+		bond_angle_map_.clear();
 	}
 
 	/// @brief get the number of segments

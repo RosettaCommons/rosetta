@@ -595,7 +595,7 @@ void residue_subset(std::string setf, utility::vector1<core::Size>& rset,
 		exit(0);
 	}
 
-	char cid;
+	char cid; // Due to input format limited to a single character
 	int idx;
 	char ico;
 	while ( setfs >> cid >> idx >> ico ) {
@@ -608,7 +608,7 @@ void residue_subset(std::string setf, utility::vector1<core::Size>& rset,
 			ico = ' ';
 		}
 
-		rset.push_back(ps.pdb_info()->pdb2pose(cid, idx, ico));
+		rset.push_back(ps.pdb_info()->pdb2pose(std::string{cid}, idx, ico));
 	}
 }
 

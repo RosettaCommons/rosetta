@@ -858,7 +858,7 @@ output_rna_motifs(
 		}
 
 		vector1< int > res;
-		vector1< char > chain;
+		vector1< std::string > chain;
 		vector1< std::string > segid;
 		for ( auto const & m : motif ) {
 			res.push_back( pose.pdb_info()->number( m ) );

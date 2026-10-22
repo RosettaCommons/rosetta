@@ -32,7 +32,7 @@ triangleIterator::triangleIterator(FArray3D_float const & density, float const &
 	densityPtr = &density;
 	size = numeric::xyzVector<int>(density.size1(), density.size2(), density.size3());
 
-	gradPtr = new FArray4D_float(3, size[0], size[1], size[2]);
+	gradPtr.reset( new FArray4D_float(3, size[0], size[1], size[2]) );
 	computeGradient();
 	threshold_ = threshold;
 
@@ -43,9 +43,7 @@ triangleIterator::triangleIterator(FArray3D_float const & density, float const &
 	aquireNextQueue();
 }
 
-triangleIterator::~triangleIterator() {
-	delete gradPtr; gradPtr = nullptr;
-}
+triangleIterator::~triangleIterator() = default;
 
 bool triangleIterator::hasNext() const {
 	return !vertQueue.empty();

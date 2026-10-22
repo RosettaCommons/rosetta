@@ -85,8 +85,8 @@ ExtractSubposeMover::apply(Pose & pose) {
 		Real const contact_dist_sq = contact_dist_ * contact_dist_;
 		utility::vector1<std::string> primary_sub_strings, secondary_sub_strings, tertiary_sub_strings, all_sub_strings;
 		utility::vector1<std::string> all_names = sym_dof_names(pose);
-		std::map<char,Sizes> comp_subs;
-		utility::vector1<char> secondary_comps;
+		std::map<std::string,Sizes> comp_subs;
+		utility::vector1<std::string> secondary_comps;
 		core::Size n_sec_tert_subs = 0;
 
 		for ( core::Size i = 1; i <= all_names.size(); i++ ) {

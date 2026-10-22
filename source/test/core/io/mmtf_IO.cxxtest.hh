@@ -53,6 +53,8 @@
 
 static basic::Tracer TR("core.io.mmtf_IO.cxxtest");
 
+using core::io::ResID;
+
 class mmtf_IO : public CxxTest::TestSuite
 {
 private:
@@ -265,7 +267,7 @@ public:
 				ep_MD.decode("rosetta::residue_type_base_names", true, returned);
 				TS_ASSERT_EQUALS(returned.size(), 1);
 				for ( auto const & k_v : returned.at(0) ) {
-					TS_ASSERT_EQUALS(k_v.second, sfr->residue_type_base_names().at(k_v.first));
+					TS_ASSERT_EQUALS(k_v.second, sfr->residue_type_base_names().at( core::io::mmtf::resid_from_tag(k_v.first)) );
 				}
 			}
 			{ // Stage 2: test in context of dump_mmtf
@@ -476,10 +478,10 @@ public:
 
 		core::io::mmtf::add_link_and_ss_information(sd, *sfr, all_AIs, ai_to_model, 0);
 
-		std::map< std::string, utility::vector1< core::io::LinkInformation > > const &
+		std::map< ResID, utility::vector1< core::io::LinkInformation > > const &
 			link_map(sfr->link_map());
-		TS_ASSERT(link_map.at("   1 A").size() == 3);
-		TS_ASSERT(link_map.at("   2 A").size() == 1);
+		TS_ASSERT(link_map.at(ResID(1,"A")).size() == 3);
+		TS_ASSERT(link_map.at(ResID(2,"A")).size() == 1);
 
 		{ // test first
 			core::io::LinkInformation expected_link_01, expected_link_02, expected_link_03;
@@ -487,41 +489,24 @@ public:
 			expected_link_01.name2 = utility::pad_atom_name("bb");
 			expected_link_01.resSeq1 = 1;
 			expected_link_01.resSeq2 = 2;
-			expected_link_01.chainID1 = 'A';
-			expected_link_01.chainID2 = 'A';
+			expected_link_01.chainID1 = "A";
+			expected_link_01.chainID2 = "A";
 			expected_link_01.iCode1 = ' ';
 			expected_link_01.iCode2 = ' ';
 			expected_link_01.length = 0;
-			{
-				std::stringstream strstr;
-				strstr << std::setw( 4 ) << std::right << expected_link_01.resSeq1 << expected_link_01.iCode1 << expected_link_01.chainID1;
-				expected_link_01.resID1 = strstr.str();
-			}
-			{
-				std::stringstream strstr;
-				strstr << std::setw( 4 ) << std::right << expected_link_01.resSeq2 << expected_link_01.iCode2 << expected_link_01.chainID2;
-				expected_link_01.resID2 = strstr.str();
-			}
-			TR << ">" << expected_link_01.resID1 << "<" << std::endl;
+			expected_link_01.resID1 = ResID(expected_link_01.resSeq1,expected_link_01.chainID1,expected_link_01.iCode1);
+			expected_link_01.resID2 = ResID(expected_link_01.resSeq2,expected_link_01.chainID2,expected_link_01.iCode2);
 
 			expected_link_02.name1 = utility::pad_atom_name("aa");
 			expected_link_02.name2 = utility::pad_atom_name("cc");
 			expected_link_02.resSeq1 = 1;
 			expected_link_02.resSeq2 = 3;
-			expected_link_02.chainID1 = 'A';
-			expected_link_02.chainID2 = 'A';
+			expected_link_02.chainID1 = "A";
+			expected_link_02.chainID2 = "A";
 			expected_link_02.iCode1 = ' ';
 			expected_link_02.iCode2 = ' ';
-			{
-				std::stringstream strstr;
-				strstr << std::setw( 4 ) << std::right << expected_link_02.resSeq1 << expected_link_02.iCode1 << expected_link_02.chainID1;
-				expected_link_02.resID1 = strstr.str();
-			}
-			{
-				std::stringstream strstr;
-				strstr << std::setw( 4 ) << std::right << expected_link_02.resSeq2 << expected_link_02.iCode2 << expected_link_02.chainID2;
-				expected_link_02.resID2 = strstr.str();
-			}
+			expected_link_02.resID1 = ResID(expected_link_02.resSeq1,expected_link_02.chainID1,expected_link_02.iCode1);
+			expected_link_02.resID2 = ResID(expected_link_02.resSeq2,expected_link_02.chainID2,expected_link_02.iCode2);
 			expected_link_02.length = 0;
 
 			expected_link_03.name1 = utility::pad_atom_name("aa");
@@ -532,16 +517,8 @@ public:
 			expected_link_03.chainID2 = 'B';
 			expected_link_03.iCode1 = ' ';
 			expected_link_03.iCode2 = ' ';
-			{
-				std::stringstream strstr;
-				strstr << std::setw( 4 ) << std::right << expected_link_03.resSeq1 << expected_link_03.iCode1 << expected_link_03.chainID1;
-				expected_link_03.resID1 = strstr.str();
-			}
-			{
-				std::stringstream strstr;
-				strstr << std::setw( 4 ) << std::right << expected_link_03.resSeq2 << expected_link_03.iCode2 << expected_link_03.chainID2;
-				expected_link_03.resID2 = strstr.str();
-			}
+			expected_link_03.resID1 = ResID(expected_link_03.resSeq1,expected_link_03.chainID1,expected_link_03.iCode1);
+			expected_link_03.resID2 = ResID(expected_link_03.resSeq2,expected_link_03.chainID2,expected_link_03.iCode2);
 			expected_link_03.length = 0;
 
 			utility::vector1< core::io::LinkInformation > expected_vector;
@@ -549,7 +526,6 @@ public:
 			expected_vector.push_back(expected_link_02);
 			expected_vector.push_back(expected_link_03);
 			TR << expected_vector << std::endl;
-			TR << expected_link_01.resID1 << std::endl;
 			TR << link_map.at(expected_link_01.resID1) << std::endl;
 
 			TS_ASSERT( link_map.at(expected_link_01.resID1) == expected_vector);
@@ -561,39 +537,23 @@ public:
 			expected_link_01.name2 = utility::pad_atom_name("bb");
 			expected_link_01.resSeq1 = 1;
 			expected_link_01.resSeq2 = 2;
-			expected_link_01.chainID1 = 'A';
-			expected_link_01.chainID2 = 'A';
+			expected_link_01.chainID1 = "A";
+			expected_link_01.chainID2 = "A";
 			expected_link_01.iCode1 = ' ';
 			expected_link_01.iCode2 = ' ';
-			{
-				std::stringstream strstr;
-				strstr << std::setw( 4 ) << std::right << expected_link_01.resSeq1 << expected_link_01.iCode1 << expected_link_01.chainID1;
-				expected_link_01.resID1 = strstr.str();
-			}
-			{
-				std::stringstream strstr;
-				strstr << std::setw( 4 ) << std::right << expected_link_01.resSeq2 << expected_link_01.iCode2 << expected_link_01.chainID2;
-				expected_link_01.resID2 = strstr.str();
-			}
+			expected_link_01.resID1 = ResID(expected_link_01.resSeq1,expected_link_01.chainID1,expected_link_01.iCode1);
+			expected_link_01.resID2 = ResID(expected_link_01.resSeq2,expected_link_01.chainID2,expected_link_01.iCode2);
 
 			expected_link_02.name1 = utility::pad_atom_name("aa");
 			expected_link_02.name2 = utility::pad_atom_name("cc");
 			expected_link_02.resSeq1 = 1;
 			expected_link_02.resSeq2 = 3;
-			expected_link_02.chainID1 = 'A';
-			expected_link_02.chainID2 = 'A';
+			expected_link_02.chainID1 = "A";
+			expected_link_02.chainID2 = "A";
 			expected_link_02.iCode1 = ' ';
 			expected_link_02.iCode2 = ' ';
-			{
-				std::stringstream strstr;
-				strstr << std::setw( 4 ) << std::right << expected_link_02.resSeq1 << expected_link_02.iCode1 << expected_link_02.chainID1;
-				expected_link_02.resID1 = strstr.str();
-			}
-			{
-				std::stringstream strstr;
-				strstr << std::setw( 4 ) << std::right << expected_link_02.resSeq2 << expected_link_02.iCode2 << expected_link_02.chainID2;
-				expected_link_02.resID2 = strstr.str();
-			}
+			expected_link_02.resID1 = ResID(expected_link_02.resSeq1,expected_link_02.chainID1,expected_link_02.iCode1);
+			expected_link_02.resID2 = ResID(expected_link_02.resSeq2,expected_link_02.chainID2,expected_link_02.iCode2);
 			utility::vector1< core::io::LinkInformation > expected_vector;
 			expected_vector.push_back(expected_link_01);
 			expected_vector.push_back(expected_link_02);
@@ -679,8 +639,8 @@ public:
 		TS_ASSERT_EQUALS(true, ai_pose[0][0][0].resName == pdb_pose->residue(1).name3() );
 
 		for ( core::Size i=2; i<=pdb_pose->size(); ++i ) {
-			char prev_chain_id( pdb_pose->pdb_info()->chain(i-1) );
-			char chain_id( pdb_pose->pdb_info()->chain(i) );
+			std::string prev_chain_id( pdb_pose->pdb_info()->chain(i-1) );
+			std::string chain_id( pdb_pose->pdb_info()->chain(i) );
 			if ( prev_chain_id != chain_id ) {
 				++chain_num;
 				group_num = 0;

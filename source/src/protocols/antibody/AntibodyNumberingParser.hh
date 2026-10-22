@@ -117,15 +117,15 @@ private:
 class PDBLandmark : public utility::VirtualBase {
 
 public:
-	PDBLandmark(char chain, core::Size resnum,  char insertion_code);
+	PDBLandmark(std::string const & chain, core::Size resnum,  char insertion_code);
 
 	/// @brief Alternative constructor to hold numbering scheme type as well.
-	PDBLandmark(char chain, core::Size resnum, char insertion_code, AntibodyNumberingSchemeEnum scheme);
+	PDBLandmark(std::string const & chain, core::Size resnum, char insertion_code, AntibodyNumberingSchemeEnum scheme);
 
 	core::Size
 	resnum() const { return resnum_;}
 
-	char
+	std::string const &
 	chain() const { return chain_; }
 
 	char
@@ -145,10 +145,10 @@ public:
 	get_string() const;
 
 private:
-	AntibodyNumberingSchemeEnum numbering_scheme_;
+	AntibodyNumberingSchemeEnum numbering_scheme_ = AHO_Scheme; // Default arbitrary, mainly to avoid uninitialized variable.
 
 	core::Size resnum_; //PDB residue number
-	char chain_;
+	std::string chain_;
 	char insertion_code_;
 
 };

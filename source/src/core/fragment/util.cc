@@ -375,7 +375,7 @@ bool fill_template_frames_from_pdb(
 		//first we need to figure out which residues we are dealing with
 		Size pdb_start_res( pose_it->pdb_info()->number( 1 ) );
 		Size pdb_stop_res( pose_it->pdb_info()->number( pose_it->size() ) );
-		char pdb_res_chain( pose_it->pdb_info()->chain( 1 ) );
+		std::string pdb_res_chain( pose_it->pdb_info()->chain( 1 ) );
 		char pdb_start_res_icode( pose_it->pdb_info()->icode( 1 ) );
 		char pdb_stop_res_icode( pose_it->pdb_info()->icode( pose_it->size() ) );
 

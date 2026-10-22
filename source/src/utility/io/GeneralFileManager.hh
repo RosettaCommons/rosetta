@@ -45,9 +45,6 @@ public:
 	/// @brief File contents constructor.
 	GeneralFileContents( std::string const & filename );
 
-	/// @brief Destructor.
-	~GeneralFileContents() override;
-
 	/// @brief Clone function: make a copy of this object and return an owning pointer to the copy.
 	GeneralFileContentsOP clone() const;
 
@@ -108,9 +105,6 @@ public:
 
 	/// @brief File contents constructor.
 	GeneralFileContentsVector( std::string const & filename );
-
-	/// @brief Destructor.
-	~GeneralFileContentsVector() override;
 
 	/// @brief Clone function: make a copy of this object and return an owning pointer to the copy.
 	GeneralFileContentsVectorOP clone() const;

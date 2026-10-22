@@ -109,16 +109,10 @@ public: // Creation
 
 
 	/// @brief Default constructor
-	inline
-	ClassKeyMap()
-	= default;
-
-
-	/// @brief Copy constructor
-	inline
-	ClassKeyMap( ClassKeyMap const & a ) :
-		v_( a.v_ )
-	{}
+	// The templated iterator-range constructor below is a user-declared constructor,
+	// which suppresses the implicit default. Keep an explicit = default so that
+	// expressions like `ClassKeyMap<K,T,C> m;` continue to compile.
+	ClassKeyMap() = default;
 
 
 	/// @brief Iterator range constructor
@@ -130,30 +124,13 @@ public: // Creation
 	) :
 		v_( beg, end )
 	{
-		for ( Index i = 1, e = v_.size(); i != e; ++i ) {
+		for ( Index i = 1, e = v_.size(); i <= e; ++i ) {
 			add_key( v_[ i ].first );
 		}
 	}
 
 
-	/// @brief Destructor
-	inline
-	~ClassKeyMap() {}
-
-
 public: // Assignment
-
-
-	/// @brief Copy assignment
-	inline
-	ClassKeyMap &
-	operator =( ClassKeyMap const & a )
-	{
-		if ( this != &a ) {
-			v_ = a.v_;
-		}
-		return *this;
-	}
 
 
 	/// @brief Uniform value assignment to current elements
@@ -206,7 +183,7 @@ public: // Assignment
 	{
 		clear();
 		v_.assign( beg, end );
-		for ( Index i = 1, e = v_.size(); i != e; ++i ) {
+		for ( Index i = 1, e = v_.size(); i <= e; ++i ) {
 			add_key( v_[ i ].first );
 		}
 	}

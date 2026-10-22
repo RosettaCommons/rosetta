@@ -83,10 +83,10 @@ utility::vector1<SSElementSelector::SSElement> SSElementSelector::parse_ss(core:
 	bool skip_first_SS=false;
 	if ( chain_!="" ) {
 		//check chain existence
-		if ( !has_chain(chain_[0],pose) ) {
+		if ( !has_chain(chain_,pose) ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "chain does not exist");
 		}
-		utility::vector1<core::Size> resnums = get_resnums_for_chain(pose, chain_[0]);
+		utility::vector1<core::Size> resnums = get_resnums_for_chain(pose, chain_);
 		start_pose_res=resnums[1];
 		end_pose_res=resnums[resnums.size()];
 		TR.Debug << "Chain " << chain_ << " selected; resi " << start_pose_res << "-" << end_pose_res << std::endl;

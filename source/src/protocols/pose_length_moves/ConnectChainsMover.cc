@@ -130,7 +130,7 @@ void ConnectChainsMover::assemble_missing_chain(map<std::string, Chain> & connec
 			core::pose::PoseOP chainA_plus = connected_chains.at(chain_assembled).poseOP->clone();
 			core::pose::PoseOP chainB = connected_chains.at(chain_remainder_split[1]).poseOP;
 			Real chainB_rmsd = connected_chains.at(chain_assembled).rmsd;
-			NearNativeLoopCloserOP loopCloserOP(utility::pointer::make_shared<NearNativeLoopCloser>(resAdjustmentStartLow_,resAdjustmentStartHigh_,resAdjustmentStopLow_,resAdjustmentStopHigh_,resAdjustmentStartLow_sheet_,resAdjustmentStartHigh_sheet_,resAdjustmentStopLow_sheet_,resAdjustmentStopHigh_sheet_,loopLengthRangeLow_,loopLengthRangeHigh_,1,1,'A','B',rmsThreshold_,0,true,false,true,"lookback",allowed_loop_abegos_,label_loop_,fragment_store_path_,fragment_store_format_,fragment_store_compression_,numb_stubs_to_consider_));
+			NearNativeLoopCloserOP loopCloserOP(utility::pointer::make_shared<NearNativeLoopCloser>(resAdjustmentStartLow_,resAdjustmentStartHigh_,resAdjustmentStopLow_,resAdjustmentStopHigh_,resAdjustmentStartLow_sheet_,resAdjustmentStartHigh_sheet_,resAdjustmentStopLow_sheet_,resAdjustmentStopHigh_sheet_,loopLengthRangeLow_,loopLengthRangeHigh_,1,1,"A","B",rmsThreshold_,0,true,false,true,"lookback",allowed_loop_abegos_,label_loop_,fragment_store_path_,fragment_store_format_,fragment_store_compression_,numb_stubs_to_consider_));
 			vector1 < vector1 < std::string > > labels_chainA;
 			vector1 < vector1 < std::string > > labels_chainB;
 			//cache labels before
@@ -159,12 +159,12 @@ void ConnectChainsMover::assemble_missing_chain(map<std::string, Chain> & connec
 					chainA_plus->pdb_info()->add_reslabel(ii+labels_chainA.size(), tmp_labels[jj]);
 				}
 			}
-			utility::vector1< char > pdb_chains;
+			utility::vector1< std::string > pdb_chains;
 			for ( core::Size ii=1; ii<=chainA->total_residue(); ++ii ) {
-				pdb_chains.push_back('A');
+				pdb_chains.push_back("A");
 			}
 			for ( core::Size ii=1; ii<=chainB->total_residue(); ++ii ) {
-				pdb_chains.push_back('B');
+				pdb_chains.push_back("B");
 			}
 			chainA_plus->pdb_info()->set_chains(pdb_chains);
 			if ( chainA_rmsd > rmsThreshold_ || chainB_rmsd > rmsThreshold_ ) { //no closure needed if rmsd is > threshold. But fill in the DB so this is not re-tried

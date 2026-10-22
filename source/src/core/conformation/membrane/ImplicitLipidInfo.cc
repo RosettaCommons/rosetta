@@ -98,8 +98,6 @@ ImplicitLipidInfo::ImplicitLipidInfo(
 	initialize_implicit_lipid_electricfield_parameters();
 }
 
-ImplicitLipidInfo::~ImplicitLipidInfo() {}
-
 ImplicitLipidInfoOP
 ImplicitLipidInfo::clone() const {
 	return ImplicitLipidInfoOP( new ImplicitLipidInfo( *this ) );

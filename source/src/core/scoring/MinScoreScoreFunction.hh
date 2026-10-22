@@ -50,10 +50,8 @@ public:
 
 private:
 
-	MinScoreScoreFunction &
-	operator=( MinScoreScoreFunction const & );
-
-	MinScoreScoreFunction( MinScoreScoreFunction const & );
+	MinScoreScoreFunction & operator=( MinScoreScoreFunction const & ) = delete;
+	MinScoreScoreFunction( MinScoreScoreFunction const & ) = delete;
 
 public:
 

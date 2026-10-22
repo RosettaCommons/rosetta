@@ -44,7 +44,6 @@ namespace scoring {
 namespace disulfides {
 
 class DisulfResNeighbIterator : public ResidueNeighborIterator {
-	DisulfResNeighbIterator & operator = (DisulfResNeighbIterator const & );
 public:
 
 	DisulfResNeighbIterator(
@@ -57,7 +56,10 @@ public:
 		FullatomDisulfideEnergyContainer * owner
 	);
 
-	~DisulfResNeighbIterator() override;
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	DisulfResNeighbIterator & operator = (DisulfResNeighbIterator const & ) = delete;
 
 	ResidueNeighborIterator & operator = ( ResidueNeighborIterator const & ) override;
 	ResidueNeighborIterator const & operator ++ () override;
@@ -87,7 +89,6 @@ private:
 };
 
 class DisulfResNeighbConstIterator : public ResidueNeighborConstIterator {
-	DisulfResNeighbConstIterator & operator = (DisulfResNeighbConstIterator const & );
 public:
 	DisulfResNeighbConstIterator(
 		FullatomDisulfideEnergyContainer const * owner,
@@ -97,7 +98,10 @@ public:
 
 	DisulfResNeighbConstIterator( FullatomDisulfideEnergyContainer const * owner );
 
-	~DisulfResNeighbConstIterator() override;
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	DisulfResNeighbConstIterator & operator = (DisulfResNeighbConstIterator const & ) = delete;
 
 	ResidueNeighborConstIterator & operator = ( ResidueNeighborConstIterator const & ) override;
 	ResidueNeighborConstIterator const & operator ++ () override;

@@ -61,7 +61,7 @@ static basic::Tracer TR("protocols.antibody.grafting");
 
 
 
-int find_chain(Pose const &pose, char pdb_chain_letter, string const &template_name)
+int find_chain(Pose const &pose, std::string const & pdb_chain_letter, string const &template_name)
 {
 	int chain = -1;
 	// Finding right chain in SCS template and delete eveything else
@@ -120,20 +120,20 @@ core::pose::PoseOP construct_antibody(AntibodySequence const &A, SCS_ResultSet c
 	TR.Debug << "Conserved FRL regions: " << conserved_frl_residues << std::endl;
 
 	struct {
-		char chain;
+		std::string chain;
 		core::pose::PoseOP &pose;
 		AntibodyChainNumbering numbering;
 		string trimmed_sequence;
 		utility::CSI::CSI_Enum color;
 		utility::vector1< core::Size > conserved_fr_residues; // chothia numbering is assumed (and true for members of the database)
 	} J[] {
-		{'H', frh, an.heavy, trimmed_heavy_fr.fr1 + A.h1_sequence() + trimmed_heavy_fr.fr2 + A.h2_sequence() + trimmed_heavy_fr.fr3 + A.h3_sequence() + trimmed_heavy_fr.fr4, TR.Blue, conserved_frh_residues},
-		{'L', frl, an.light, trimmed_light_fr.fr1 + A.l1_sequence() + trimmed_light_fr.fr2 + A.l2_sequence() + trimmed_light_fr.fr3 + A.l3_sequence() + trimmed_light_fr.fr4, TR.Green, conserved_frl_residues},
+		{"H", frh, an.heavy, trimmed_heavy_fr.fr1 + A.h1_sequence() + trimmed_heavy_fr.fr2 + A.h2_sequence() + trimmed_heavy_fr.fr3 + A.h3_sequence() + trimmed_heavy_fr.fr4, TR.Blue, conserved_frh_residues},
+		{"L", frl, an.light, trimmed_light_fr.fr1 + A.l1_sequence() + trimmed_light_fr.fr2 + A.l2_sequence() + trimmed_light_fr.fr3 + A.l3_sequence() + trimmed_light_fr.fr4, TR.Green, conserved_frl_residues},
 	};
 
 	std::locale loc;
 	for(auto &j : J) {
-		auto chain_lower = char(std::tolower(j.chain,loc));
+		auto chain_lower = char(std::tolower(j.chain[0],loc));
 
 		TR << "Adjusting fr" << chain_lower << " template sequence [" << j.pose->pdb_info()->name() << "]..." << std::endl;
 
@@ -221,16 +221,16 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 	AntibodyNumbering an( Chothia_Numberer().number(A, trimmed_heavy_fr, trimmed_light_fr) );
 
 	struct {
-		string name; char chain; string pdb;
+		string name; std::string chain; string pdb;
 		AntibodyChainNumbering::NumberingVector cdr_numbering;  // Numbering for framework regions just befor and after CDR
 		core::Size length; // length of CDR to be inserted
 	} G[] {
-		{"h1", 'H', scs.h1->pdb,  an.heavy.cdr1, A.h1_sequence().size()},
-		{"h2", 'H', scs.h2->pdb,  an.heavy.cdr2, A.h2_sequence().size()},
-		{"h3", 'H', scs.h3->pdb,  an.heavy.cdr3, A.h3_sequence().size()},
-		{"l1", 'L', scs.l1->pdb,  an.light.cdr1, A.l1_sequence().size()},
-		{"l2", 'L', scs.l2->pdb,  an.light.cdr2, A.l2_sequence().size()},
-		{"l3", 'L', scs.l3->pdb,  an.light.cdr3, A.l3_sequence().size()},
+		{"h1", "H", scs.h1->pdb,  an.heavy.cdr1, A.h1_sequence().size()},
+		{"h2", "H", scs.h2->pdb,  an.heavy.cdr2, A.h2_sequence().size()},
+		{"h3", "H", scs.h3->pdb,  an.heavy.cdr3, A.h3_sequence().size()},
+		{"l1", "L", scs.l1->pdb,  an.light.cdr1, A.l1_sequence().size()},
+		{"l2", "L", scs.l2->pdb,  an.light.cdr2, A.l2_sequence().size()},
+		{"l3", "L", scs.l3->pdb,  an.light.cdr3, A.l3_sequence().size()},
 	};
 
 	AntibodyEnumManager enum_manager = AntibodyEnumManager();

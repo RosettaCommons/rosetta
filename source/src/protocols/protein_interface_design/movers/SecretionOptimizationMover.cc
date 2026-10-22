@@ -622,7 +622,7 @@ SecretionOptimizationMover::find_tm_regions( std::ostream & out, core::pose::Pos
 	//energies will have ALL of the tm regions in the sequence
 	utility::vector1<tm_region> energies;
 	//there was a SymmetryInfoCOP here but it is no longer necessary
-	utility::vector1<core::Size> chain_resnums = core::pose::get_resnums_for_chain(pose,chain_to_degrease_[0]);
+	utility::vector1<core::Size> chain_resnums = core::pose::get_resnums_for_chain(pose,chain_to_degrease_);
 	core::Size scan_start = chain_resnums.front();
 	core::Size scan_end = chain_resnums.back() - window_size_ + 1;
 	out << "Degreasing chain " << chain_to_degrease_ << " from indices " << std::to_string(scan_start) << " to " << std::to_string(scan_end) << std::endl;

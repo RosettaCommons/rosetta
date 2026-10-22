@@ -14,6 +14,10 @@ import tempfile
 import time
 import unittest
 
+from pyrosetta.utility import get_package_version
+
+
+__dask_version__ = get_package_version("dask")
 
 class TestDaskArgs(unittest.TestCase):
 
@@ -36,8 +40,14 @@ class TestDaskArgs(unittest.TestCase):
         import pyrosetta.distributed.tasks.score as score
 
         # Setup cluster scheduler and working directory
+        dashboard_address = None
+        local_cluster_kwargs = dict(n_workers=0, dashboard_address=dashboard_address)
+        if __dask_version__ < (2026, 6, 0):
+            local_cluster_kwargs["diagnostics_port"] = local_cluster_kwargs.pop(
+                "dashboard_address", dashboard_address
+            )
         with tempfile.TemporaryDirectory() as workdir, LocalCluster(
-            n_workers=0, diagnostics_port=None
+            **local_cluster_kwargs
         ) as cluster:
 
             # Context manager controls launch & teardown of test worker
@@ -102,8 +112,8 @@ class TestDaskArgs(unittest.TestCase):
                 cluster_result = delayed(protocol)(pose).compute()
 
             self.assertEqual(
-                cluster_result.scores["total_score"],
-                local_result.scores["total_score"]
+                cluster_result.pose.cache["total_score"],
+                local_result.pose.cache["total_score"]
             )
 
 

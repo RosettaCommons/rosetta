@@ -153,7 +153,7 @@ BackboneSampler::apply( Pose & pose )
 	mc.reset( pose );
 
 	TR << "Running " << bb_moves_ << " trials..." << std::endl;
-	for ( core::Size ii =1; ii != bb_moves_; ++ii ) {
+	for ( core::Size ii =1; ii <= bb_moves_; ++ii ) {
 		bbg8t3amover.apply( pose );
 		mc.boltzmann( pose, bbg8t3amover.type() );
 	}

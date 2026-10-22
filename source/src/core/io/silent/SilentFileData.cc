@@ -173,7 +173,7 @@ SilentFileData::get_sequence( std::string const & filename )
 }
 
 
-std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > >
+std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > >
 SilentFileData::get_resnum( std::string const & filename )
 {
 	utility::io::izstream data( filename.c_str() );
@@ -184,7 +184,7 @@ SilentFileData::get_resnum( std::string const & filename )
 	}
 
 	utility::vector1< int > resnum;
-	utility::vector1< char > chain;
+	utility::vector1< std::string > chain;
 	utility::vector1< std::string > segid;
 
 	std::string line;
@@ -200,7 +200,7 @@ SilentFileData::get_resnum( std::string const & filename )
 	if ( resnum.size() == 0 ) {
 		std::string sequence  = get_sequence( filename );
 		for ( Size n = 1; n <= sequence.size(); n++ ) {
-			resnum.push_back( n ); chain.push_back( 'A' ); segid.push_back( "    " );
+			resnum.push_back( n ); chain.push_back( "A" ); segid.push_back( "    " );
 		}
 	}
 	return std::make_tuple( resnum, chain, segid );

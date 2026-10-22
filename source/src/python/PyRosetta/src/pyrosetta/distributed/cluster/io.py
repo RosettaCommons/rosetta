@@ -169,7 +169,7 @@ class IO:
         """
 
         _pdbstring = io.to_pdbstring(result)
-        _scores_dict = dict(update_scores(PackedPose(result)).pose.cache)
+        _scores_dict = dict(update_scores(PackedPose(result)).pose.cache.fast_items())
         _filtered_scores_dict = IO._filter_scores_dict(self.serializer.deepcopy_kwargs(_scores_dict))
 
         return (result, _pdbstring, _scores_dict, _filtered_scores_dict)
@@ -347,6 +347,7 @@ class IO:
                 "PyRosettaCluster_output_file": output_file,
             }
             extra_kwargs["PyRosettaCluster_environment_manager"] = self.environment_manager
+            extra_kwargs["PyRosettaCluster_environment_manager_version"] = self.environment_manager_version
             if self.toml:
                 extra_kwargs["PyRosettaCluster_toml"] = self.toml
             if self.toml_format:

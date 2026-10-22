@@ -37,8 +37,6 @@ subset_mapping & subset_mapping::operator = ( subset_mapping const & rhs )
 	return *this;
 }
 
-subset_mapping::~subset_mapping() = default;
-
 void subset_mapping::set_source_size( platform::Size src_size )
 {
 	src_2_dst_.resize( src_size );

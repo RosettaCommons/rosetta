@@ -287,7 +287,7 @@ public:
 			// usual atomic numbers from periodic table
 			//int donElemNum, accElemNum;  // unused ~Labonte
 
-			char don_chain, acc_chain;
+			std::string don_chain, acc_chain;
 			int don_pdbresnum, acc_pdbresnum;
 			char don_pdbicode, acc_pdbicode;
 
@@ -296,7 +296,7 @@ public:
 				don_pdbresnum = pose.pdb_info()->number( don_resnum ); acc_pdbresnum = pose.pdb_info()->number( acc_resnum );
 				don_pdbicode = pose.pdb_info()->icode( don_resnum ); acc_pdbicode = pose.pdb_info()->icode( acc_resnum );
 			} else {
-				don_chain = 'A'; acc_chain = 'A';
+				don_chain = "A"; acc_chain = "A";
 				don_pdbresnum = don_resnum; acc_pdbresnum = acc_resnum;
 				don_pdbicode = ' '; acc_pdbicode = ' ';
 			}

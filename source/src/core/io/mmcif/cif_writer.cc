@@ -243,14 +243,14 @@ dump_cif(
 
 			vec.push_back( iter2.name1 );
 			vec.push_back( iter2.resName1 );
-			vec.emplace_back(1,iter2.chainID1 );
+			vec.emplace_back( iter2.chainID1 );
 			std::stringstream ss;
 			ss << iter2.resSeq1;
 			vec.push_back( ss.str() );
 			vec.emplace_back(1,iter2.iCode1 );
 			vec.push_back( iter2.name2 );
 			vec.push_back( iter2.resName2 );
-			vec.emplace_back(1,iter2.chainID2 );
+			vec.emplace_back( iter2.chainID2 );
 			ss.str( std::string() );
 			ss << iter2.resSeq2;
 			vec.push_back( ss.str() );
@@ -269,14 +269,14 @@ dump_cif(
 			std::vector< std::string > vec;
 			vec.push_back( iter2.name1 );
 			vec.push_back( iter2.resName1 );
-			vec.emplace_back(1,iter2.chainID1 );
+			vec.emplace_back( iter2.chainID1 );
 			std::stringstream ss;
 			ss << iter2.resSeq1;
 			vec.push_back( ss.str() );
 			vec.emplace_back(1,iter2.iCode1 );
 			vec.push_back( iter2.name2 );
 			vec.push_back( iter2.resName2 );
-			vec.emplace_back(1,iter2.chainID2 );
+			vec.emplace_back( iter2.chainID2 );
 			ss.str( std::string() );
 			ss << iter2.resSeq2;
 			vec.push_back( ss.str() );
@@ -360,7 +360,7 @@ dump_cif(
 			vec.push_back( utility::strip(ai.name) ); // label_atom_id
 			vec.emplace_back(1, ai.altLoc == ' ' ? '.' : ai.altLoc ); // label_alt_id
 			vec.push_back( utility::strip(ai.resName) ); // label_comp_id
-			vec.emplace_back(1, ai.chainID == ' ' ? '?' : ai.chainID ); // label_asym_id
+			vec.emplace_back( ai.chainID == " " ? "?" : ai.chainID ); // label_asym_id
 			ss2.str(std::string());
 			ss2 << ai.resSeq;
 			vec.push_back( ss2.str() ); // label_seq_id
@@ -394,7 +394,7 @@ dump_cif(
 				vec.push_back( sfr->modeltag() ); //pdbx_PDB_model_num
 			}
 
-			vec.emplace_back(1, ai.chainID == ' ' ? '?' : ai.chainID ); // auth_asym_id
+			vec.emplace_back( ai.chainID == " " ? "?" : ai.chainID ); // auth_asym_id
 
 			vec.push_back( "." ); //label_entity_id -- AJ indicates that '.' (but not '?') is fine here
 

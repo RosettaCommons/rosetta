@@ -145,7 +145,7 @@ MPFindInterfaceMover::parse_my_tag(
 
 	// Read in docking partners
 	if ( tag->hasOption( "partners" ) ) {
-		partners_ = tag->getOption< std::string >( "partners" );
+		partners_ = core::pose::DockingPartners::docking_partners_from_string(tag->getOption< std::string >( "partners" ));
 	}
 
 	// TODO: to implement
@@ -469,15 +469,6 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	// compute interface score again
 	protocols::jd2::add_string_real_pair_to_current_job( "intf_score", calc_intf_score( pose, sfxn_hires_, jump_ ) );
 
-	// get start and end residue of downstream chain
-	utility::vector1< std::string > partners( utility::string_split( partners_, '_' ) );
-
-	core::Size start = chain_end_res( pose, get_chain_id_from_chain( partners[1], pose) ) + 1;
-	core::Size end = chain_end_res( pose, get_chain_id_from_chain( partners[2], pose) );
-	TR << "chain " << partners[2] << " start " << start << " end " << end << std::endl;
-
-	// compute ligand RMSD
-	// core::Real Lrmsd = CA_rmsd( pose, native_, start, end );
 	core::Real Lrmsd = all_atom_rmsd_nosuper( pose, native_ );
 	TR << "ligand RMSD: " << Lrmsd << std::endl;
 
@@ -553,7 +544,7 @@ MPFindInterfaceMover::init_from_cmd() {
 
 	// docking partners
 	if ( option[ OptionKeys::docking::partners ].user() ) {
-		partners_ = option[ OptionKeys::docking::partners ]();
+		partners_ = core::pose::DockingPartners::docking_partners_from_string( option[ OptionKeys::docking::partners ]() );
 	}
 
 	TR << "init: partners " << partners_ << std::endl;
@@ -640,16 +631,15 @@ void MPFindInterfaceMover::superimpose_upstream_partner( Pose & pose ) {
 
 	using namespace protocols::simple_moves;
 
-	// get partner 1: ALL CHAINS MUST BE IN PDB CONSECUTIVELY!!!
-	utility::vector1< std::string > partners( utility::string_split( partners_, '_' ) );
-	utility::vector1< std::string > partner1( utility::split( partners[1] ) );
+	// ALL CHAINS MUST BE IN PDB CONSECUTIVELY!!!
 
 	// get residue range for superposition: get start residue
 	core::Size start(0);
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( start == 0 &&
-				partner1[1] == utility::to_string( pose.pdb_info()->chain( i ) ) ) {
+				partners_.partner1.has_value( pose.pdb_info()->chain( i ) ) ) {
 			start = i;
+			break;
 		}
 	}
 
@@ -657,8 +647,9 @@ void MPFindInterfaceMover::superimpose_upstream_partner( Pose & pose ) {
 	core::Size end(0);
 	for ( core::Size j = pose.size(); j >= 1; --j ) {
 		if ( end == 0 &&
-				partner1[partner1.size()] == utility::to_string( pose.pdb_info()->chain( j ) ) ) {
+				partners_.partner1.has_value( pose.pdb_info()->chain( j ) ) ) {
 			end = j;
+			break;
 		}
 	}
 	TR << "range start: " << start << ", end: " << end << std::endl;

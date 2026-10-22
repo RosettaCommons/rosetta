@@ -225,7 +225,6 @@ JobDirectedEdge::count_dynamic_memory() const
 JobDigraph::~JobDigraph()
 {
 	delete_everything();
-	delete job_edge_pool_; job_edge_pool_ = nullptr;
 }
 
 /// @brief default constructor; creates an empty graph (no nodes, no edges)

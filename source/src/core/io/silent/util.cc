@@ -85,25 +85,33 @@ initialize_tag_is_done( std::string const & silent_file ){
 void
 figure_out_residue_numbers_from_line( std::istream & line_stream,
 	utility::vector1< int > & residue_numbers,
-	utility::vector1< char > & chains,
+	utility::vector1< std::string > & chains,
 	utility::vector1< std::string > & segids )
 {
 	std::string resnum_string;
 	line_stream >> resnum_string; // the tag (RES_NUM)
 	runtime_assert( resnum_string == "RES_NUM" );
+
+	utility::vector1< std::string > resnum_strings;
 	line_stream >> resnum_string;
 	while ( !line_stream.fail() ) {
+		resnum_strings.push_back( resnum_string );
+		line_stream >> resnum_string;
+	}
+	if ( ! resnum_strings.empty() ) {
+		resnum_strings.pop_back(); // This is the structure tag
+	}
+	for ( std::string const & resnum_string: resnum_strings ) {
 		bool string_ok( false );
-		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > resnum_and_chain = utility::get_resnum_and_chain_and_segid( resnum_string, string_ok );
+		std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > > resnum_and_chain = utility::get_resnum_and_chain_and_segid( resnum_string, string_ok );
 		utility::vector1< int >  const & resnums      = std::get< 0 >( resnum_and_chain );
-		utility::vector1< char > const & chainchars  = std::get< 1 >( resnum_and_chain );
+		utility::vector1< std::string > const & chainchars  = std::get< 1 >( resnum_and_chain );
 		utility::vector1< std::string > const & segidstrs  = std::get< 2 >( resnum_and_chain );
 		if ( string_ok ) {
 			for ( int resnum : resnums ) residue_numbers.push_back( resnum );
-			for ( char chainchar : chainchars ) chains.push_back( chainchar );
+			for ( std::string const & chainchar : chainchars ) chains.push_back( chainchar );
 			for ( auto const & segidstr : segidstrs ) segids.push_back( segidstr );
-		} else break;
-		line_stream >> resnum_string;
+		}
 	}
 }
 

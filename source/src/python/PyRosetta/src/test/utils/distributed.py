@@ -24,8 +24,6 @@ from typing import (
     Any,
     Callable,
     List,
-    NoReturn,
-    Optional,
     TypeVar,
     cast,
 )
@@ -62,12 +60,22 @@ def has_pyrosetta_distributed_package_requirements() -> bool:
         return False
 
 
+def has_numpy_installed() -> bool:
+    """Test if `numpy` is installed in the virtual environment."""
+    try:
+        import numpy
+        return True
+    except ImportError as ex:
+        print(f"{type(ex).__name__}: {ex}")
+        return False
+
+
 def has_python_version(major: int, minor: int) -> bool:
     """Test if the Python version is greater than or equal to the provided `major` and `minor` values."""
     return tuple(sys.version_info) >= (major, minor)
 
 
-def exit_if_missing_pyrosetta_distributed_requirements(returncode: int = 0) -> Optional[NoReturn]:
+def exit_if_missing_pyrosetta_distributed_requirements(returncode: int = 0) -> None:
     """Exit the Python process if the `pyrosetta.distributed` framework requirements are missing from the virtual environment."""
 
     if not has_python_version(3, 6):
@@ -78,6 +86,14 @@ def exit_if_missing_pyrosetta_distributed_requirements(returncode: int = 0) -> O
         sys.exit(returncode)
     if not has_pyrosetta_distributed_package_requirements():
         print(f"Packages required for `pyrosetta.distributed` framework tests are missing. Skipping the tests...")
+        sys.exit(returncode)
+
+
+def exit_if_missing_numpy_requirement(returncode: int = 0) -> None:
+    """Exit the Python process if `numpy` is missing from the virtual environment."""
+
+    if not has_numpy_installed():
+        print(f"The `numpy` package required for the tests is missing. Skipping the tests...")
         sys.exit(returncode)
 
 

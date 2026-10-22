@@ -345,9 +345,9 @@ IdentifyLigandMotifs::output_single_motif_to_pdb(
 	pose.conformation().insert_chain_ending( 1 );
 
 	core::Size lig_pos_pdb( src_pose.pdb_info()->number( lig_pos ) );
-	char lig_pos_chain( src_pose.pdb_info()->chain( lig_pos ) );
+	std::string lig_pos_chain( src_pose.pdb_info()->chain( lig_pos ) );
 	std::string lig_talk = "Ligatoms" + delimiter + string_of( lig_atoms[1] )  + delimiter + string_of( lig_atoms[2] )  + delimiter + string_of( lig_atoms[3]) ;
-	std::string motif_file_name_2 = motif_file_name + src_pose.residue_type( lig_pos ).name1() + string_of( lig_pos_pdb ) +  delimiter + lig_talk + delimiter +  string_of( lig_pos_chain ) + delimiter;
+	std::string motif_file_name_2 = motif_file_name + src_pose.residue_type( lig_pos ).name1() + string_of( lig_pos_pdb ) +  delimiter + lig_talk + delimiter + lig_pos_chain + delimiter;
 
 	std::string motif_file_name_3 = motif_file_name_2 + pdb_name;
 	//only add extension if not already ending in ".pdb" + extension;

@@ -111,6 +111,7 @@ sources = {
 	],
 	"core/pose": [
 		"annotated_sequence",
+		"DockingPartners",
 		"MiniPose",
 		"PDBInfo",
 		"PDBPoseMap",

@@ -287,9 +287,10 @@ private:
 	//bool resolved_considered_bb_move_;
 	//bool node_contacted_by_graph_about_bb_move_;
 
-	// uncopyable
-	FlexbbNode();
-	FlexbbNode( FlexbbNode const & );
+public:
+	FlexbbNode() = delete;
+	FlexbbNode( FlexbbNode const & ) = delete;
+	FlexbbNode & operator = ( FlexbbNode const & ) = delete;
 
 };
 
@@ -421,9 +422,10 @@ private:
 	bool nodes_considering_bb_move_;
 
 
-	// uncopyable
-	FlexbbEdge();
-	FlexbbEdge( FlexbbEdge const & );
+public:
+	FlexbbEdge() = delete;
+	FlexbbEdge( FlexbbEdge const & ) = delete;
+	FlexbbEdge & operator = ( FlexbbEdge const & ) = delete;
 };
 
 

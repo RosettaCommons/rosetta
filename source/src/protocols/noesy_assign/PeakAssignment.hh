@@ -53,8 +53,6 @@ namespace noesy_assign {
 /// WHICH RELIES ON THREAD-UNSAFE SINGLETON CovalentCompliance
 class PeakAssignment : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
-	~PeakAssignment() override;
 	typedef core::scoring::constraints::AmbiguousNMRDistanceConstraintOP NmrConstraintOP;
 	typedef core::scoring::constraints::AmbiguousNMRDistanceConstraint NmrConstraint;
 

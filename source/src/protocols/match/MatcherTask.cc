@@ -1052,7 +1052,7 @@ MatcherTask::set_active_site_residue_list_to_preexisting_partial_match()
 				if ( switch_to_different_build_points_required ) use_different_build_points_for_each_geometric_constraint( n_geometric_constraints );
 			}
 
-			core::Size upstream_seqpos(  pose_pdbinfo->pdb2pose(resB_chain.c_str()[0],resB_num) );
+			core::Size upstream_seqpos(  pose_pdbinfo->pdb2pose(resB_chain,resB_num) );
 			utility::vector1< core::Size > res_id;
 			runtime_assert( upstream_pose_->residue_type( upstream_seqpos ).is_protein() );
 			TR << "An interaction for geometric constraint " << cst_block << " already seems to be present in the pose at seqpos " << upstream_seqpos << ". Matching for this geomcst will only be done at this position." << std::endl;

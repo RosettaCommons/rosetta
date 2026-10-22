@@ -128,12 +128,12 @@ PocketConstraint::PocketConstraint(
 
 	std::string resid(option[ OptionKeys::pocket_grid::central_relax_pdb_num ]);
 	int  central_relax_pdb_number;
-	char chain = ' ';
+	std::string chain = " ";
 	std::size_t fpos( resid.find(':') );
 	if ( fpos != std::string::npos ) {
 		central_relax_pdb_number = ObjexxFCL::int_of( resid.substr(0,fpos) );
 		if ( fpos != resid.size()-1 ) {
-			chain = resid[ fpos+1 ];
+			chain = resid.substr(fpos+1);
 		}
 	} else {
 		central_relax_pdb_number = ObjexxFCL::int_of( resid );
@@ -142,7 +142,7 @@ PocketConstraint::PocketConstraint(
 	for ( int j = 1, resnum = pose.size(); j <= resnum; ++j ) {
 		if ( pose.pdb_info()->number(j) == central_relax_pdb_number ) {
 			//seqpos_ = j;
-			if ( chain != ' ' ) {
+			if ( chain != " " ) {
 				if ( pose.pdb_info()->chain(j) == chain ) {
 					seqpos_ = j;
 				}
@@ -197,12 +197,12 @@ void PocketConstraint::set_target_res( core::pose::Pose const & pose, core::Size
 void PocketConstraint::set_target_res_pdb( core::pose::Pose const & pose, std::string resid ){
 	//std::cout<<size_x_<<" "<<size_y_<<" "<<size_z_<<"\n";
 	int  central_relax_pdb_number;
-	char chain = ' ';
+	std::string chain = " ";
 	std::size_t fpos( resid.find(':') );
 	if ( fpos != std::string::npos ) {
 		central_relax_pdb_number = ObjexxFCL::int_of( resid.substr(0,fpos) );
 		if ( fpos != resid.size()-1 ) {
-			chain = resid[ fpos+1 ];
+			chain = resid.substr( fpos+1 );
 		}
 	} else {
 		central_relax_pdb_number = ObjexxFCL::int_of( resid );
@@ -212,7 +212,7 @@ void PocketConstraint::set_target_res_pdb( core::pose::Pose const & pose, std::s
 	for ( int j = 1, resnum = pose.size(); j <= resnum; ++j ) {
 		if ( pose.pdb_info()->number(j) == central_relax_pdb_number ) {
 			//seqpos_ = j;
-			if ( chain != ' ' ) {
+			if ( chain != " " ) {
 				if ( pose.pdb_info()->chain(j) == chain ) {
 					seqpos_ = j;
 				}
