@@ -881,10 +881,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix, core::Size
 		}
 
 		core::conformation::ResidueOP ligresOP( new core::conformation::Residue( working_pose_->residue(ligand_residue_position) ) );
-		char const ligand_chain = working_pose_->pdb_info()->chain(ligand_residue_position);
+		std::string const ligand_chain = utility::to_string(working_pose_->pdb_info()->chain(ligand_residue_position));
 		int const ligand_pdb_number = working_pose_->pdb_info()->number(ligand_residue_position);
 		char const ligand_insertion_code = working_pose_->pdb_info()->icode(ligand_residue_position);
-		std::string const ligand_source_id = std::string(1, ligand_chain == ' ' ? '_' : ligand_chain) + "_res_" +
+		std::string const ligand_source_id = (ligand_chain.empty() || ligand_chain == " " ? "_" : ligand_chain) + "_res_" +
 			std::to_string(ligand_pdb_number) +
 			(ligand_insertion_code == ' ' ? "" : std::string(1, ligand_insertion_code));
 

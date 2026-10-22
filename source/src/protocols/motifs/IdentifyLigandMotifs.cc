@@ -39,6 +39,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/extra_pose_info_util.hh>
+#include <utility/string_util.hh>
 
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/ScoreType.hh>
@@ -297,12 +298,10 @@ IdentifyLigandMotifs::output_single_motif_to_pdb(
 {
 
 	//core::Size prot_pos_pdb( src_pose.pdb_info()->number( prot_pos ) );
-	//char prot_pos_chain( src_pose.pdb_info()->chain( prot_pos ) );
-
 	TR.Debug << "Trying to find prot_pos_pdb from prot_pos: " << prot_pos << std::endl;
 	//core::Size prot_pos_pdb( src_pose.pdb_info()->number( prot_pos ) );
 	core::Size prot_pos_pdb = prot_pos; // safe fallback: pose numbering
-	char prot_pos_chain = 'A';
+	std::string prot_pos_chain = "A";
 
 	//check if pdbinfo exists
 	// a synthetic pose (like a minipose) may not have pdb info, and trying to extract a rsidue number could break things
@@ -311,7 +310,7 @@ IdentifyLigandMotifs::output_single_motif_to_pdb(
 
 		if ( prot_pos >= 1 && prot_pos <= src_pose.size() && prot_pos <= pdb_info.nres() ) {
 			prot_pos_pdb = pdb_info.number( prot_pos );
-			prot_pos_chain = pdb_info.chain( prot_pos );
+			prot_pos_chain = utility::to_string( pdb_info.chain( prot_pos ) );
 		}
 	}
 	TR.Debug << "Residue number: prot_pos_pdb: " << prot_pos_pdb << std::endl;
@@ -325,7 +324,7 @@ IdentifyLigandMotifs::output_single_motif_to_pdb(
 	std::string extension( ".pdb" );
 	std::string motif_file_name(
 		output_path +
-		src_pose.residue_type( prot_pos ).name3() + string_of( prot_pos_pdb ) + string_of( prot_pos_chain ) + delimiter );
+		src_pose.residue_type( prot_pos ).name3() + string_of( prot_pos_pdb ) + prot_pos_chain + delimiter );
 
 
 	conformation::Residue protres( src_pose.residue( prot_pos ) );
@@ -939,8 +938,6 @@ std::tuple<bool, std::string, std::string> IdentifyLigandMotifs::single_motif_ex
 		ms_tr.Debug << "For motif " << ligmotifcop->remark() << " there are " << real_motifs.size() << " motifs in the real library to match against" << std::endl;
 
 		//create a bool that determines if we found a real match for the motif or not
-		bool real_match_found = false;
-
 		//iterate over the library and compare
 		for ( auto const & realmotifcop : real_motifs ) {
 
@@ -984,8 +981,6 @@ std::tuple<bool, std::string, std::string> IdentifyLigandMotifs::single_motif_ex
 				//add comment about real motif match for placement motif
 				//core::pose::add_comment(*working_pose, "Placement motifs: Real motif check - " + ligmotifcop->remark(), real_motif_match_info);
 				
-
-				//real_match_found = true;
 
 				//greedy algorithm, stop for current ligmotifcop when we hit the first match since we got what we wanted
 				//break;
