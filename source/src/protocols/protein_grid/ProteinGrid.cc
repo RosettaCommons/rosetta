@@ -212,6 +212,7 @@ void ProteinGrid::initialize_from_options()
 	//not planning to have devoted constructors to define these variables
 	print_whole_matrix_ = basic::options::option[ basic::options::OptionKeys::protein_grid::output_whole_matrix ]();
 	print_empty_space_ = basic::options::option[ basic::options::OptionKeys::protein_grid::output_empty_space ]();
+	print_empty_space_only_ = basic::options::option[ basic::options::OptionKeys::protein_grid::output_empty_space_only ]();
 }
 
 // @brief simple function to derive the volume of the matrix
@@ -395,7 +396,21 @@ void ProteinGrid::define_sub_regions()
 // if a sub area boundary is defined, will define that area with different values
 // note: we are not going to re-size the proteinmatrix of measure the volume that exists outside the ProteinMatrix; this could be updated later, but not doing this simplifies the operation
 // a main argument for retaining this as-is is that there is less reason to look at the hwole pose, and usually working with the sub-area only is better, which is less likely to be cut off (only if it is at any edges)
-void ProteinGrid::project_lj_radii(){
+void ProteinGrid::project_lj_radii( core::Real projection_multiplier ){
+
+	if ( projection_multiplier <= 0.0 ) {
+		ms_tr.Warning << "Invalid projection_multiplier of " << projection_multiplier
+		              << ". Resetting to 1.0." << std::endl;
+		projection_multiplier = 1.0;
+	}
+
+	// Expand the matrix before projecting LJ radii so projected spheres are not clipped.
+	ensure_matrix_can_project_lj_radii( projection_multiplier );
+
+	using_lj_radii_ = true;
+
+	matrix_fullness_ = 0;
+	sub_matrix_fullness_ = 0;
 
 	//set using lj radii to true
 	using_lj_radii_ = true;
@@ -418,7 +433,7 @@ void ProteinGrid::project_lj_radii(){
 			atom_xyz.z() = std::floor(working_pose_->residue(res_num).xyz(atom_num).z());
 
 			//extract the lj radius as a floating point value, which we will use to project the area about teh atom
-			core::Real atom_lj_radius = working_pose_->residue(res_num).atom_type(atom_num).lj_radius();
+			core::Real atom_lj_radius = working_pose_->residue(res_num).atom_type(atom_num).lj_radius() * projection_multiplier;
 
 			//apply the xyz shift and resolution to the atom coordinates
 			atom_xyz.x() = std::floor((atom_xyz.x() + xyz_shift_[1]) * resolution_);
@@ -568,6 +583,244 @@ void ProteinGrid::project_lj_radii(){
 	}
 
 
+}
+
+// @brief Expand protein_matrix_ so projected LJ radii will not be clipped.
+// Computes the bounds needed for the current working_pose_ and calls
+// resize_matrix_to_include_bounds().
+void
+ProteinGrid::ensure_matrix_can_project_lj_radii( core::Real projection_multiplier )
+{
+	if ( projection_multiplier <= 0.0 ) {
+		ms_tr.Warning << "Invalid projection_multiplier of " << projection_multiplier
+		              << ". Resetting to 1.0." << std::endl;
+		projection_multiplier = 1.0;
+	}
+
+	if ( working_pose_ == nullptr || working_pose_->size() == 0 ) {
+		ms_tr.Warning << "Cannot expand ProteinGrid for LJ radii because working_pose_ is empty/null."
+		              << std::endl;
+		return;
+	}
+
+	//declare extrema to push to find min and max in all dimensions when applying the lj radius
+	int requested_x_min = static_cast<int>( xyz_bound_[1] );
+	int requested_x_max = 1;
+	int requested_y_min = static_cast<int>( xyz_bound_[2] );
+	int requested_y_max = 1;
+	int requested_z_min = static_cast<int>( xyz_bound_[3] );
+	int requested_z_max = 1;
+
+	bool found_atom = false;
+
+	//derive coordinates for each atom in each residue and shift them based on existing shift scalars at the proposed resolution
+	for ( core::Size res_num = 1; res_num <= working_pose_->size(); ++res_num ) {
+		for ( core::Size atom_num = 1; atom_num <= working_pose_->residue(res_num).natoms(); ++atom_num ) {
+
+			numeric::xyzVector<int> atom_xyz;
+
+			atom_xyz.x() = std::floor( working_pose_->residue(res_num).xyz(atom_num).x() );
+			atom_xyz.y() = std::floor( working_pose_->residue(res_num).xyz(atom_num).y() );
+			atom_xyz.z() = std::floor( working_pose_->residue(res_num).xyz(atom_num).z() );
+
+			core::Real atom_lj_radius =
+				working_pose_->residue(res_num).atom_type(atom_num).lj_radius() * projection_multiplier;
+
+			atom_xyz.x() = std::floor( ( atom_xyz.x() + xyz_shift_[1] ) * resolution_ );
+			atom_xyz.y() = std::floor( ( atom_xyz.y() + xyz_shift_[2] ) * resolution_ );
+			atom_xyz.z() = std::floor( ( atom_xyz.z() + xyz_shift_[3] ) * resolution_ );
+
+			atom_lj_radius *= resolution_;
+			int atom_lj_radius_cells = static_cast<int>( std::floor( atom_lj_radius ) );
+
+			if ( atom_lj_radius_cells < 0 ) {
+				atom_lj_radius_cells = 0;
+			}
+
+			int atom_x_min = atom_xyz.x() - atom_lj_radius_cells;
+			int atom_x_max = atom_xyz.x() + atom_lj_radius_cells;
+			int atom_y_min = atom_xyz.y() - atom_lj_radius_cells;
+			int atom_y_max = atom_xyz.y() + atom_lj_radius_cells;
+			int atom_z_min = atom_xyz.z() - atom_lj_radius_cells;
+			int atom_z_max = atom_xyz.z() + atom_lj_radius_cells;
+
+			//set the extrema based on if the current atom pushes it
+			if ( !found_atom ) {
+				requested_x_min = atom_x_min;
+				requested_x_max = atom_x_max;
+				requested_y_min = atom_y_min;
+				requested_y_max = atom_y_max;
+				requested_z_min = atom_z_min;
+				requested_z_max = atom_z_max;
+				found_atom = true;
+			} else {
+				requested_x_min = std::min( requested_x_min, atom_x_min );
+				requested_x_max = std::max( requested_x_max, atom_x_max );
+				requested_y_min = std::min( requested_y_min, atom_y_min );
+				requested_y_max = std::max( requested_y_max, atom_y_max );
+				requested_z_min = std::min( requested_z_min, atom_z_min );
+				requested_z_max = std::max( requested_z_max, atom_z_max );
+			}
+		}
+	}
+
+	if ( !found_atom ) {
+		return;
+	}
+
+	//residue the matrix based on the extrema found
+	resize_matrix_to_include_bounds(
+		requested_x_min,
+		requested_x_max,
+		requested_y_min,
+		requested_y_max,
+		requested_z_min,
+		requested_z_max
+	);
+}
+
+// @brief Resize protein_matrix_ to include possibly out-of-bounds matrix coordinates.
+// min/max are matrix-space coordinates using the current xyz_shift_ / resolution_.
+void
+ProteinGrid::resize_matrix_to_include_bounds(
+	int requested_x_min,
+	int requested_x_max,
+	int requested_y_min,
+	int requested_y_max,
+	int requested_z_min,
+	int requested_z_max
+)
+{
+	//record the old bounds
+	int const old_x_bound = static_cast<int>( xyz_bound_[1] );
+	int const old_y_bound = static_cast<int>( xyz_bound_[2] );
+	int const old_z_bound = static_cast<int>( xyz_bound_[3] );
+
+	//determine effective shifts needed for new bounds
+	int x_low_needed = 0;
+	int y_low_needed = 0;
+	int z_low_needed = 0;
+
+	if ( requested_x_min < 1 ) {
+		x_low_needed = 1 - requested_x_min;
+	}
+	if ( requested_y_min < 1 ) {
+		y_low_needed = 1 - requested_y_min;
+	}
+	if ( requested_z_min < 1 ) {
+		z_low_needed = 1 - requested_z_min;
+	}
+
+	int x_high_needed = 0;
+	int y_high_needed = 0;
+	int z_high_needed = 0;
+
+	if ( requested_x_max > old_x_bound ) {
+		x_high_needed = requested_x_max - old_x_bound;
+	}
+	if ( requested_y_max > old_y_bound ) {
+		y_high_needed = requested_y_max - old_y_bound;
+	}
+	if ( requested_z_max > old_z_bound ) {
+		z_high_needed = requested_z_max - old_z_bound;
+	}
+
+	//if bounds do not need to be expanded, return now to save time
+	if (
+		x_low_needed == 0 && x_high_needed == 0 &&
+		y_low_needed == 0 && y_high_needed == 0 &&
+		z_low_needed == 0 && z_high_needed == 0
+	) {
+		return;
+	}
+
+	// xyz_shift_ is stored in pose-coordinate units, while matrix expansion is in grid cells.
+	// For the usual resolution_ == 1 case, this is exactly the same number.
+	// For other resolutions, this rounds up conservatively.
+	int x_shift_delta = 0;
+	int y_shift_delta = 0;
+	int z_shift_delta = 0;
+
+	if ( x_low_needed > 0 ) {
+		x_shift_delta = static_cast<int>( std::ceil( static_cast<core::Real>(x_low_needed) / resolution_ ) );
+	}
+	if ( y_low_needed > 0 ) {
+		y_shift_delta = static_cast<int>( std::ceil( static_cast<core::Real>(y_low_needed) / resolution_ ) );
+	}
+	if ( z_low_needed > 0 ) {
+		z_shift_delta = static_cast<int>( std::ceil( static_cast<core::Real>(z_low_needed) / resolution_ ) );
+	}
+
+	int const x_low_offset = static_cast<int>( std::floor( x_shift_delta * resolution_ ) );
+	int const y_low_offset = static_cast<int>( std::floor( y_shift_delta * resolution_ ) );
+	int const z_low_offset = static_cast<int>( std::floor( z_shift_delta * resolution_ ) );
+
+	core::Size const new_x_bound = old_x_bound + x_low_offset + x_high_needed;
+	core::Size const new_y_bound = old_y_bound + y_low_offset + y_high_needed;
+	core::Size const new_z_bound = old_z_bound + z_low_offset + z_high_needed;
+
+	ms_tr.Debug << "Expanding ProteinGrid from "
+	            << old_x_bound << "," << old_y_bound << "," << old_z_bound
+	            << " to "
+	            << new_x_bound << "," << new_y_bound << "," << new_z_bound
+	            << std::endl;
+
+	ProteinMatrix new_matrix;
+
+	for ( core::Size x = 1; x <= new_x_bound; ++x ) {
+		utility::vector1< utility::vector1< core::Size > > y_matrix;
+
+		for ( core::Size y = 1; y <= new_y_bound; ++y ) {
+			utility::vector1< core::Size > z_matrix( new_z_bound, 0 );
+			y_matrix.push_back( z_matrix );
+		}
+
+		new_matrix.push_back( y_matrix );
+	}
+
+	// Copy old values into the expanded matrix.
+	for ( core::Size x = 1; x <= xyz_bound_[1]; ++x ) {
+		for ( core::Size y = 1; y <= xyz_bound_[2]; ++y ) {
+			for ( core::Size z = 1; z <= xyz_bound_[3]; ++z ) {
+
+				core::Size const new_x = x + x_low_offset;
+				core::Size const new_y = y + y_low_offset;
+				core::Size const new_z = z + z_low_offset;
+
+				new_matrix[ new_x ][ new_y ][ new_z ] = protein_matrix_[ x ][ y ][ z ];
+			}
+		}
+	}
+
+	protein_matrix_ = new_matrix;
+
+	// Update shift so future real-space coordinates map into the expanded matrix.
+	xyz_shift_[1] += x_shift_delta;
+	xyz_shift_[2] += y_shift_delta;
+	xyz_shift_[3] += z_shift_delta;
+
+	xyz_bound_[1] = new_x_bound;
+	xyz_bound_[2] = new_y_bound;
+	xyz_bound_[3] = new_z_bound;
+
+	matrix_volume_ = get_grid_volume();
+
+	// If using sub-area bookkeeping, shift existing adjusted sub-region indices.
+	// This preserves existing sub-area labels after expansion on the low side.
+	if ( using_sub_area_ ) {
+		adjusted_sub_area_center_.x() += x_low_offset;
+		adjusted_sub_area_center_.y() += y_low_offset;
+		adjusted_sub_area_center_.z() += z_low_offset;
+
+		sub_region_min_[1] += x_low_offset;
+		sub_region_max_[1] += x_low_offset;
+		sub_region_min_[2] += y_low_offset;
+		sub_region_max_[2] += y_low_offset;
+		sub_region_min_[3] += z_low_offset;
+		sub_region_max_[3] += z_low_offset;
+
+		sub_matrix_volume_ = get_sub_area_grid_volume();
+	}
 }
 
 //@brief function where a residue object (i.e. ligand) outside of a pose can be imposed upon the matrix, and the space filling volume of the system with the ligand can be analyzed
@@ -775,6 +1028,18 @@ bool ProteinGrid::placed_ligand_clash_analysis(core::conformation::ResidueOP lig
 		atom_xyz.y() = std::floor((atom_xyz.y() + xyz_shift_[2]) * resolution_);
 		atom_xyz.z() = std::floor((atom_xyz.z() + xyz_shift_[3]) * resolution_);
 
+		//adding safe handling to make sure we don't segfault if ligand atoms eixst beyond the boundary of the proteingrid
+		if (
+			atom_xyz.x() < 1 ||
+			atom_xyz.y() < 1 ||
+			atom_xyz.z() < 1 ||
+			atom_xyz.x() > static_cast<int>( protein_matrix_.size() ) ||
+			atom_xyz.y() > static_cast<int>( protein_matrix_[atom_xyz.x()].size() ) ||
+			atom_xyz.z() > static_cast<int>( protein_matrix_[atom_xyz.x()][atom_xyz.y()].size() )
+		) {
+			continue;
+		}
+
 		//plug the atom xyz coordinates into the proteinmatrix and see what the value is
 		//if the value is odd, then it is occupied by the pose (or technically could be a placed ligand, but that would indicate a clash as well)
 		if ( protein_matrix_[atom_xyz.x()][atom_xyz.y()][atom_xyz.z()] % 2 == 1 ) {
@@ -876,6 +1141,10 @@ core::pose::Pose ProteinGrid::export_protein_matrix_to_pose()
 	for ( core::Size x = 1; x <= xyz_bound_[1]; ++x ) {
 		for ( core::Size y = 1; y <= xyz_bound_[2]; ++y ) {
 			for ( core::Size z = 1; z <= xyz_bound_[3]; ++z ) {
+				if ( print_empty_space_only_ && protein_matrix_[x][y][z] != 2 ) {
+					continue;
+				}
+
 				//check whether to print the atom if it is outside the sub area and if we want to print outside the sub area
 				//if not using a sub area, we will assume that we want to print the whole pose
 				if ( using_sub_area_ && print_whole_matrix_ == false && (protein_matrix_[x][y][z] == 0 || protein_matrix_[x][y][z] == 1 || protein_matrix_[x][y][z] == 5 || protein_matrix_[x][y][z] == 9) ) {
@@ -885,7 +1154,8 @@ core::pose::Pose ProteinGrid::export_protein_matrix_to_pose()
 
 				//check whether to print the atom if it is empty space (printing with empty space is slower and makes a more memory intensive file)
 				//values that correspond to emptiness are even (0 and 2)
-				if ( print_empty_space_ == false && protein_matrix_[x][y][z] % 2 == 0 ) {
+				if ( print_empty_space_ == false && print_empty_space_only_ == false &&
+						protein_matrix_[x][y][z] % 2 == 0 ) {
 					//move to next voxel
 					continue;
 				}
@@ -1455,6 +1725,12 @@ void ProteinGrid::set_print_whole_matrix(bool setter)
 void ProteinGrid::set_print_empty_space(bool setter)
 {
 	print_empty_space_ = setter;
+}
+
+// @brief function to set the value of print_empty_space_only_
+void ProteinGrid::set_print_empty_space_only(bool setter)
+{
+	print_empty_space_only_ = setter;
 }
 }
 }

@@ -39,6 +39,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/extra_pose_info_util.hh>
+#include <utility/string_util.hh>
 
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/ScoreType.hh>
@@ -220,7 +221,20 @@ IdentifyLigandMotifs::output_single_motif_to_MotifLibrary(
 	core::Real hb_score
 )
 {
-	core::Size prot_pos_pdb( src_pose.pdb_info()->number( prot_pos ) );
+	TR.Debug << "Trying to find prot_pos_pdb from prot_pos: " << prot_pos << std::endl;
+	//core::Size prot_pos_pdb( src_pose.pdb_info()->number( prot_pos ) );
+	core::Size prot_pos_pdb = prot_pos; // safe fallback: pose numbering
+
+	//check if pdbinfo exists
+	// a synthetic pose (like a minipose) may not have pdb info, and trying to extract a rsidue number could break things
+	if ( src_pose.pdb_info() != nullptr ) {
+		core::pose::PDBInfo const & pdb_info = *( src_pose.pdb_info() );
+
+		if ( prot_pos >= 1 && prot_pos <= src_pose.size() && prot_pos <= pdb_info.nres() ) {
+			prot_pos_pdb = pdb_info.number( prot_pos );
+		}
+	}
+	TR.Debug << "Residue number: prot_pos_pdb: " << prot_pos_pdb << std::endl;
 
 	conformation::Residue const & protres( src_pose.residue( prot_pos ) );
 	conformation::Residue const & ligres( src_pose.residue( lig_pos ) );
@@ -238,6 +252,7 @@ IdentifyLigandMotifs::output_single_motif_to_MotifLibrary(
 	}
 	*/
 
+	TR.Debug << "Making motif the ligand residue " << lig_pos << " and protein residue " << prot_pos << std::endl;
 	protocols::motifs::Motif motif(protres, ligres, lig_atoms);
 
 	//add a remark to the motif so that more is known about it and can  be called later
@@ -262,10 +277,11 @@ IdentifyLigandMotifs::output_single_motif_to_MotifLibrary(
 	pdb_name_str = build_string;
 
 	std::string res_str = src_pose.residue_type( prot_pos ).name3() + string_of( prot_pos_pdb );
+	std::string res_rosetta_str = "RosettaIndex:" + src_pose.residue_type( prot_pos ).name3() + std::to_string(prot_pos);
 	std::string lig_str = src_pose.residue_type( lig_pos ).name3();
 	std::string score_str = "Packing_score:" + std::to_string(pack_score) + "_Hbond_score:" + std::to_string(hb_score);
 
-	motif.store_remark(pdb_name_str + "_" + res_str + "_" + lig_str + "_" + score_str);
+	motif.store_remark(pdb_name_str + "_" + res_str + "_" + res_rosetta_str + "_" + lig_str + "_" + score_str);
 
 	motifs.add_to_library( motif ); //Add motif to library
 }
@@ -281,8 +297,23 @@ IdentifyLigandMotifs::output_single_motif_to_pdb(
 )
 {
 
-	core::Size prot_pos_pdb( src_pose.pdb_info()->number( prot_pos ) );
-	std::string prot_pos_chain( src_pose.pdb_info()->chain( prot_pos ) );
+	//core::Size prot_pos_pdb( src_pose.pdb_info()->number( prot_pos ) );
+	TR.Debug << "Trying to find prot_pos_pdb from prot_pos: " << prot_pos << std::endl;
+	//core::Size prot_pos_pdb( src_pose.pdb_info()->number( prot_pos ) );
+	core::Size prot_pos_pdb = prot_pos; // safe fallback: pose numbering
+	std::string prot_pos_chain = "A";
+
+	//check if pdbinfo exists
+	// a synthetic pose (like a minipose) may not have pdb info, and trying to extract a rsidue number could break things
+	if ( src_pose.pdb_info() != nullptr ) {
+		core::pose::PDBInfo const & pdb_info = *( src_pose.pdb_info() );
+
+		if ( prot_pos >= 1 && prot_pos <= src_pose.size() && prot_pos <= pdb_info.nres() ) {
+			prot_pos_pdb = pdb_info.number( prot_pos );
+			prot_pos_chain = utility::to_string( pdb_info.chain( prot_pos ) );
+		}
+	}
+	TR.Debug << "Residue number: prot_pos_pdb: " << prot_pos_pdb << std::endl;
 
 	//need to figure out how to change the output path to something customizable in the flags
 	//std::string output_path( "Ligand_motif_dir/" );
@@ -715,7 +746,7 @@ IdentifyLigandMotifs::write_motifs_to_disk()
 // 4. Checks if the motifs collected are comparable to another list of motifs (i.e. used to see if motifs match a motif library that was collected from the Protein Data Bank)
 // Data is written to the pose in comments
 // At least for now, it does not seem necessary to pass along the motifs that were collected from the input pose, so we won't do that (but the functionality is possible and should be as easy as throwing in a motiflibrary into the arguments that is passed by reference)
-utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(core::pose::PoseOP working_pose, std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> mymap, std::string const & pdb_name)
+utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(core::pose::PoseOP const & working_pose, std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> const & mymap, std::string const & pdb_name)
 {
 	//create tracer to identify points of the run
 	static basic::Tracer ms_tr( "protocols.motifs.IdentifyLigandMotifs.evaluate_motifs_of_pose", basic::t_info );
@@ -845,92 +876,19 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 
 		//iterate over the library of motifs created by the ligand placement
 		for ( auto ligmotifcop : placement_libraryCOPs ) {
-			//derive tuple key
-			protocols::motifs::motif_atoms curkey_tuple(ligmotifcop->restype_name1(),ligmotifcop->res1_atom1_name(),ligmotifcop->res1_atom2_name(),ligmotifcop->res1_atom3_name(),ligmotifcop->res2_atom1_name(),ligmotifcop->res2_atom2_name(),ligmotifcop->res2_atom3_name());
 
-			ms_tr.Debug << "lgnd start: " << ligmotifcop->restype_name1() << "," << ligmotifcop->res1_atom1_name() << "," << ligmotifcop->res1_atom2_name() << "," << ligmotifcop->res1_atom3_name() << "," << ligmotifcop->res2_atom1_name() << "," << ligmotifcop->res2_atom2_name() << "," << ligmotifcop->res2_atom3_name() << std::endl;
+			//call 
+			std::tuple<bool, std::string, std::string> results = single_motif_exists_in_library(ligmotifcop, mymap);
 
-			//count the number of motifs in the real library that have the same residue and all 6 atom types
-			core::Size real_library_section_has_motifs = mymap.count(curkey_tuple);
-
-			//pull out the motif library that matches the current motif that we are on by atom names (if there is one)
-			//use map count function to determine if the key exists
-			if ( real_library_section_has_motifs > 0 ) {
-
-				//key exists
-				//pull out motif library at key address and then compare all motifs in the list against ligmotifcop to see if it resembles a real motif
-				protocols::motifs::MotifCOPs real_motifs = mymap[curkey_tuple];
-
-				ms_tr.Debug << "For motif " << ligmotifcop->remark() << " there are " << real_motifs.size() << " motifs in the real library to match against" << std::endl;
-
-				//create a bool that determines if we found a real match for the motif or not
-				bool real_match_found = false;
-
-				//iterate over the library and compare
-				for ( auto realmotifcop : real_motifs ) {
-
-					ms_tr.Debug << "lgnd: " << ligmotifcop->restype_name1() << "," << ligmotifcop->res1_atom1_name() << "," << ligmotifcop->res1_atom2_name() << "," << ligmotifcop->res1_atom3_name() << "," << ligmotifcop->res2_atom1_name() << "," << ligmotifcop->res2_atom2_name() << "," << ligmotifcop->res2_atom3_name() << std::endl;
-					ms_tr.Debug << "real: " << realmotifcop->restype_name1() << "," << realmotifcop->res1_atom1_name() << "," << realmotifcop->res1_atom2_name() << "," << realmotifcop->res1_atom3_name() << "," << realmotifcop->res2_atom1_name() << "," << realmotifcop->res2_atom2_name() << "," << realmotifcop->res2_atom3_name() << std::endl;
-
-
-					//compare code based on remove_duplicate_motifs
-					//difference is that we are not deleting any motifs, instead if we get a match hit, we will call out ligand-derived motif real
-					//secondary confirm that the motifs match (there is no good reason why we should hit a continue off of this if the map is formed right)
-					//no need to check if restype_name2 is equal, since it is expected that those names should be different (from completely different molecules)
-					if ( ligmotifcop->motif_atom_match_lax(*realmotifcop) == false ) continue;
-
-					core::Real motif_distance = 0;
-					core::Real motif_theta = 0;
-
-					jump_distance(ligmotifcop->forward_jump(), realmotifcop->forward_jump(), motif_distance, motif_theta);
-
-					ms_tr.Debug << "Comparing to motif " << realmotifcop->remark() << std::endl;
-					ms_tr.Debug << "Distance: " << motif_distance << std::endl;
-					ms_tr.Debug << "Theta: " << motif_theta << std::endl;
-
-
-					if ( motif_distance <= option[ basic::options::OptionKeys::motifs::duplicate_dist_cutoff ] && motif_theta <= option[ basic::options::OptionKeys::motifs::duplicate_angle_cutoff ] ) {
-						//note that the motif matches a real one
-
-						ms_tr.Debug << "Current motif matches real motif with distance: " << motif_distance << "  and angle difference: "  << motif_theta << std::endl;
-						if ( ligmotifcop->has_remark() ) {
-							ms_tr.Debug << "Ligand remark is: " << ligmotifcop->remark() << std::endl;
-						}
-						if ( realmotifcop->has_remark() ) {
-							ms_tr.Debug << "Real motif remark is: " << realmotifcop->remark() << std::endl;
-						}
-
-
-						//increment real counter
-						++placement_motifs_data[4];
-
-						std::string real_motif_match_info = "remark: " + realmotifcop->remark() + ", distance: " + std::to_string(motif_distance) + ", angle: " + std::to_string(motif_theta);
-
-						//add comment about real motif match for placement motif
-						core::pose::add_comment(*working_pose, "Placement motifs: Real motif check - " + ligmotifcop->remark(), real_motif_match_info);
-
-						real_match_found = true;
-
-						//greedy algorithm, stop for current ligmotifcop when we hit the first match since we got what we wanted
-						break;
-					}
-
-				}
-
-				//if no real match was found, note comment
-				if ( real_match_found == false ) {
-					ms_tr.Debug << "No real motif matches identified for motif: " << *ligmotifcop << std::endl;
-
-					core::pose::add_comment(*working_pose, "Placement motifs: Real motif check - " + ligmotifcop->remark(), "No real match, library had no motifs that were close enough");
-				}
-			} else {
-				//key (and real motif in our library) does not exist
-				//declare that this motif is not considered real
-
-				ms_tr.Debug << "No real motifs identified for motif: " << *ligmotifcop << std::endl;
-
-				core::pose::add_comment(*working_pose, "Placement motifs: Real motif check - " + ligmotifcop->remark(), "No real match, library had no motifs with matching atoms");
+			//increment real motif counter if true
+			if ( std::get<0>(results) )
+			{
+				//increment real counter
+				++placement_motifs_data[4];				
 			}
+
+			//add comment to the working pose
+			core::pose::add_comment(*working_pose, std::get<1>(results), std::get<2>(results));
 		}
 
 		//determine the ratio of ligand motifs that match real ones
@@ -944,4 +902,200 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 
 	//return placement motifs data at the end
 	return placement_motifs_data;
+}
+
+//this function serves to see if a motif exists in a motif library map
+//returns a tuple as a bool for if a motif match was found and corresponding strings that detail the hit result (intended use is to add to pose comments, but you can do whatever you want with strings)
+std::tuple<bool, std::string, std::string> IdentifyLigandMotifs::single_motif_exists_in_library(protocols::motifs::MotifCOP const & ligmotifcop, std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> const & mymap)
+{
+	//create tracer to identify points of the run
+	static basic::Tracer ms_tr( "protocols.motifs.IdentifyLigandMotifs.single_motif_exists_in_library", basic::t_info );
+
+	//derive tuple key
+	protocols::motifs::motif_atoms curkey_tuple(ligmotifcop->restype_name1(),ligmotifcop->res1_atom1_name(),ligmotifcop->res1_atom2_name(),ligmotifcop->res1_atom3_name(),ligmotifcop->res2_atom1_name(),ligmotifcop->res2_atom2_name(),ligmotifcop->res2_atom3_name());
+
+	ms_tr.Debug << "lgnd start: " << ligmotifcop->restype_name1() << "," << ligmotifcop->res1_atom1_name() << "," << ligmotifcop->res1_atom2_name() << "," << ligmotifcop->res1_atom3_name() << "," << ligmotifcop->res2_atom1_name() << "," << ligmotifcop->res2_atom2_name() << "," << ligmotifcop->res2_atom3_name() << std::endl;
+
+	//count the number of motifs in the real library that have the same residue and all 6 atom types
+	//core::Size real_library_section_has_motifs = mymap.count(curkey_tuple);
+	auto const iter = mymap.find(curkey_tuple);
+
+	//output header of motif
+	std::string comment_header = "Placement motifs: Real motif check - " + ligmotifcop->remark();
+
+	std::string fail_output = "No real match, library had no motifs that were close enough";
+
+	//pull out the motif library that matches the current motif that we are on by atom names (if there is one)
+	//use map count function to determine if the key exists
+	//if ( real_library_section_has_motifs > 0 ) {
+	if ( iter != mymap.end() ) {
+
+		//key exists
+		//pull out motif library at key address and then compare all motifs in the list against ligmotifcop to see if it resembles a real motif
+		//protocols::motifs::MotifCOPs real_motifs = mymap[curkey_tuple];
+		protocols::motifs::MotifCOPs const & real_motifs = iter->second;
+
+		ms_tr.Debug << "For motif " << ligmotifcop->remark() << " there are " << real_motifs.size() << " motifs in the real library to match against" << std::endl;
+
+		//create a bool that determines if we found a real match for the motif or not
+		//iterate over the library and compare
+		for ( auto const & realmotifcop : real_motifs ) {
+
+			ms_tr.Debug << "lgnd: " << ligmotifcop->restype_name1() << "," << ligmotifcop->res1_atom1_name() << "," << ligmotifcop->res1_atom2_name() << "," << ligmotifcop->res1_atom3_name() << "," << ligmotifcop->res2_atom1_name() << "," << ligmotifcop->res2_atom2_name() << "," << ligmotifcop->res2_atom3_name() << std::endl;
+			ms_tr.Debug << "real: " << realmotifcop->restype_name1() << "," << realmotifcop->res1_atom1_name() << "," << realmotifcop->res1_atom2_name() << "," << realmotifcop->res1_atom3_name() << "," << realmotifcop->res2_atom1_name() << "," << realmotifcop->res2_atom2_name() << "," << realmotifcop->res2_atom3_name() << std::endl;
+
+
+			//compare code based on remove_duplicate_motifs
+			//difference is that we are not deleting any motifs, instead if we get a match hit, we will call out ligand-derived motif real
+			//secondary confirm that the motifs match (there is no good reason why we should hit a continue off of this if the map is formed right)
+			//no need to check if restype_name2 is equal, since it is expected that those names should be different (from completely different molecules)
+			if ( ligmotifcop->motif_atom_match_lax(*realmotifcop) == false ) continue;
+
+			core::Real motif_distance = 0;
+			core::Real motif_theta = 0;
+
+			jump_distance(ligmotifcop->forward_jump(), realmotifcop->forward_jump(), motif_distance, motif_theta);
+
+			ms_tr.Debug << "Comparing to motif " << realmotifcop->remark() << std::endl;
+			ms_tr.Debug << "Distance: " << motif_distance << std::endl;
+			ms_tr.Debug << "Theta: " << motif_theta << std::endl;
+
+
+			if ( motif_distance <= option[ basic::options::OptionKeys::motifs::duplicate_dist_cutoff ] && motif_theta <= option[ basic::options::OptionKeys::motifs::duplicate_angle_cutoff ] ) {
+				//note that the motif matches a real one
+
+				ms_tr.Debug << "Current motif matches real motif with distance: " << motif_distance << "  and angle difference: "  << motif_theta << std::endl;
+				if ( ligmotifcop->has_remark() ) {
+					ms_tr.Debug << "Ligand remark is: " << ligmotifcop->remark() << std::endl;
+				}
+				if ( realmotifcop->has_remark() ) {
+					ms_tr.Debug << "Real motif remark is: " << realmotifcop->remark() << std::endl;
+				}
+
+
+				//increment real counter
+				//++placement_motifs_data[4];
+
+				std::string real_motif_match_info = "remark: " + realmotifcop->remark() + ", distance: " + std::to_string(motif_distance) + ", angle: " + std::to_string(motif_theta);
+
+				//add comment about real motif match for placement motif
+				//core::pose::add_comment(*working_pose, "Placement motifs: Real motif check - " + ligmotifcop->remark(), real_motif_match_info);
+				
+
+				//greedy algorithm, stop for current ligmotifcop when we hit the first match since we got what we wanted
+				//break;
+
+				return std::tuple<bool, std::string, std::string>(true, comment_header, real_motif_match_info);
+			}
+		}
+	}
+	//return if match not found in any case
+	return std::tuple<bool, std::string, std::string>(false, comment_header, fail_output);
+}
+
+// Function to take a pose and only see if motifs are made and if they exist in a provided library map
+// Effectively a simplified and streamlined version of evaluate_motifs_of_pose
+// Must provide a pose, because a pose is needed for residue-ligand packing/hbond energy calculations
+// only pulls motifs using process_for_motifs() to collect motifs from a single residue against a ligand
+// will then use single_motif_exists_in_library() to see if the motif exists in a larger motif library
+// returns a bool indicating whether any motifs were found for the residue-ligand pair in the library
+bool IdentifyLigandMotifs::residue_forms_library_motif(core::pose::PoseOP const & pose, std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> const & mymap)
+{
+	// make a new motif_library to use to contain the motif(s) pulled from 
+	protocols::motifs::MotifLibrary pose_motif_library;
+
+	//make vector that holds the indices of residues that contribute to motifs (probably the easiest way to track if motifs were made on residues of interest)
+	utility::vector1< core::Size > prot_pos_that_made_motifs_size = process_for_motifs(*pose, "ligand_minipose", pose_motif_library);
+
+	//add all motifs in pose_motif_library to motif_library_
+	//convert the motif library to motifCOPS
+	protocols::motifs::MotifCOPs placement_libraryCOPs = pose_motif_library.library();
+
+	//iterate over all motifs made to see if they exist in the map
+	for ( auto ligmotifcop : placement_libraryCOPs ) {
+		//call 
+		std::tuple<bool, std::string, std::string> results = single_motif_exists_in_library(ligmotifcop, mymap);
+
+		//return true that we found a motif
+		if ( std::get<0>(results) )
+		{
+			return true;			
+		}	
+	}
+	return false;
+}
+
+
+// @brief a quick check to see if a ligand is close enough to the provided residue to make a motif
+// makes a motif (without performing energy scores) and makes a call to see if the motif is geometrically similar to a motif that exists in the provided motif library (lives in mymap)
+// returns true if a real motif in mymap exists, false if not
+bool
+IdentifyLigandMotifs::placed_ligand_forms_library_motif_fast(
+	core::conformation::Residue const & ligres,
+	core::conformation::Residue const & secondary_residue,
+	utility::vector1<utility::vector1<utility::vector1<core::Size>>> const & ligand_trios,
+	std::map< protocols::motifs::motif_atoms, protocols::motifs::MotifCOPs > const & mymap
+)
+{
+
+	//make sure the secondary residue is an amino acid and not glycine (since glycine does not form motifs)
+	if ( !secondary_residue.is_protein() ) return false;
+	if ( secondary_residue.name3() == "GLY" ) return false;
+
+	// Cheap residue-level distance gate first
+	core::Real nbr_cutoff = 1.5 * ( ligres.nbr_radius() + secondary_residue.nbr_radius() );
+	core::Real nbr_dist = ligres.nbr_atom_xyz().distance( secondary_residue.nbr_atom_xyz() );
+
+	//abort if ligand is outright too far from the secondary residue
+	if ( nbr_dist > nbr_cutoff ) {
+		return false;
+	}
+
+	//declare a 1D vector to hold the atom intices of an atom trio to be considered for a motif
+	//seed as 3 values that are 0
+	utility::vector1<core::Size> atom_trio_indices (3,0);
+
+	for ( auto const & trio : ligand_trios ) {
+
+		// Cheap atom-level distance gate
+		bool close_enough = false;
+
+		for ( core::Size trio_i = 1; trio_i <= trio.size(); ++trio_i ) {
+			//index 0 corresponds to the atom index, index 1 would correspond to the recorded atom type numerical identifier
+			core::Size lig_atom = trio[trio_i][1];
+
+			for ( core::Size prot_atom = 1; prot_atom <= secondary_residue.nheavyatoms(); ++prot_atom ) {
+				core::Real d = ligres.xyz(lig_atom).distance( secondary_residue.xyz(prot_atom) );
+
+				if ( d < 4.0 ) {
+					close_enough = true;
+					break;
+				}
+			}
+
+			if ( close_enough ) break;
+		}
+
+		if ( !close_enough ) {
+			continue;
+		}
+
+		//if we are going to investigate a motif with the 3 atoms in this trio, seed the vector with the atom indices in the trio
+		atom_trio_indices[1] = trio[1][1];
+		atom_trio_indices[2] = trio[2][1];
+		atom_trio_indices[3] = trio[3][1];
+
+		//make a motif without calculating energy and turn into a motifCOP
+		protocols::motifs::Motif motif( secondary_residue, ligres, atom_trio_indices );
+		protocols::motifs::MotifCOP motifcop =
+			utility::pointer::make_shared< protocols::motifs::Motif const >( motif );
+
+		//see if the motif matches a motif from within mymap
+		if ( std::get<0>( single_motif_exists_in_library(motifcop, mymap) ) ) {
+			return true;
+		}
+	}
+	
+
+	return false;
 }

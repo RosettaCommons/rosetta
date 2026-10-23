@@ -1546,6 +1546,33 @@ void hash_motif_library_into_map(protocols::motifs::MotifCOPs & input_library, s
 	}
 }
 
+//function to get a sub-library of motifs from the main library, based on the residue being used (only get for select residue)
+//function may have use outside discover, so public can use it
+protocols::motifs::MotifCOPs get_motif_sublibrary_by_aa(protocols::motifs::MotifCOPs & motif_library, std::string & residue_name)
+{
+	//create temporary motifcops object to hold
+	protocols::motifs::MotifCOPs motif_holder;
+
+	for ( auto motifcop : motif_library ) {
+		//collect residue name from motifcop
+		std::string motif_residue_name(motifcop->restype_name1());
+
+		//if residue name matches that of the residue at the working position, add it to the motif_holder
+		if ( motif_residue_name == residue_name ) {
+			motif_holder.push_back(motifcop);
+		}
+	}
+
+	//assign motif_holder contents to motif_library_for_select_residue_
+	//motif_library_for_select_residue_ = motif_holder;
+
+
+	mu_tr.Debug << "Created motif sub-library for residue " << residue_name << " with " << motif_holder.size() << " motifs in it." << std::endl;
+
+
+	return motif_holder;
+}
+
 
 } // namespace motifs
 } // namespace protocols
