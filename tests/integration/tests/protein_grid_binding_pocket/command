@@ -1,0 +1,28 @@
+cd %(workdir)s
+
+[ -x %(bin)s/protein_grid_binding_pocket.%(binext)s ] || exit 1
+
+set -o pipefail
+%(bin)s/protein_grid_binding_pocket.%(binext)s @flags -database %(database)s -testing:INTEGRATION_TEST 2>&1 \
+    | egrep -vf ../../ignore_list \
+    > log
+
+set -- 9W3L_binding_pocket_WholeRatio_*_SubRatio_*.pdb
+[ "$#" -eq 1 ] && [ -f "$1" ] || exit 1
+
+awk '
+    /^(ATOM  |HETATM)/ {
+        atoms++
+        element = substr($0, 77, 2)
+        gsub(/ /, "", element)
+        if (element != "O") {
+            non_oxygen++
+        }
+    }
+    END {
+        printf "Pocket atoms: %%d; non-oxygen atoms: %%d\n", atoms, non_oxygen
+        if (atoms != 653 || non_oxygen != 0) {
+            exit 1
+        }
+    }
+' "$1"
