@@ -7626,6 +7626,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	Option_Group ( 'protein_grid',
 		Option( 'output_whole_matrix', 'Boolean', default = 'false', desc = 'If using output_space_fill_matrix_pdbs flag, this option (when true) allows for visualization of the entire space fill matrix, instead of just the sub-area.'),
 		Option( 'output_empty_space', 'Boolean', default = 'false', desc = 'If using output_space_fill_matrix_pdbs flag, this option (when true) allows for visualization of the space fill matrix, including empty space.'),
+		Option( 'output_empty_space_only', 'Boolean', default = 'false', desc = 'When exporting a ProteinGrid matrix, output only empty cells within the defined sub-area as oxygen atoms.'),
 	),
 
 	Option_Group( 'qsar',

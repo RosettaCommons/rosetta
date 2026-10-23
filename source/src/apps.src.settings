@@ -192,6 +192,7 @@ sources = {
 		"identify_ligand_motifs",
 		"ligand_discovery_search_protocol",
 		"motif_cloud",
+		"protein_grid_binding_pocket",
 		"remove_duplicate_motifs",
 	],
 	"public/pose_sewing": [

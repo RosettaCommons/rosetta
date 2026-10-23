@@ -212,6 +212,7 @@ void ProteinGrid::initialize_from_options()
 	//not planning to have devoted constructors to define these variables
 	print_whole_matrix_ = basic::options::option[ basic::options::OptionKeys::protein_grid::output_whole_matrix ]();
 	print_empty_space_ = basic::options::option[ basic::options::OptionKeys::protein_grid::output_empty_space ]();
+	print_empty_space_only_ = basic::options::option[ basic::options::OptionKeys::protein_grid::output_empty_space_only ]();
 }
 
 // @brief simple function to derive the volume of the matrix
@@ -1140,6 +1141,10 @@ core::pose::Pose ProteinGrid::export_protein_matrix_to_pose()
 	for ( core::Size x = 1; x <= xyz_bound_[1]; ++x ) {
 		for ( core::Size y = 1; y <= xyz_bound_[2]; ++y ) {
 			for ( core::Size z = 1; z <= xyz_bound_[3]; ++z ) {
+				if ( print_empty_space_only_ && protein_matrix_[x][y][z] != 2 ) {
+					continue;
+				}
+
 				//check whether to print the atom if it is outside the sub area and if we want to print outside the sub area
 				//if not using a sub area, we will assume that we want to print the whole pose
 				if ( using_sub_area_ && print_whole_matrix_ == false && (protein_matrix_[x][y][z] == 0 || protein_matrix_[x][y][z] == 1 || protein_matrix_[x][y][z] == 5 || protein_matrix_[x][y][z] == 9) ) {
@@ -1149,7 +1154,8 @@ core::pose::Pose ProteinGrid::export_protein_matrix_to_pose()
 
 				//check whether to print the atom if it is empty space (printing with empty space is slower and makes a more memory intensive file)
 				//values that correspond to emptiness are even (0 and 2)
-				if ( print_empty_space_ == false && protein_matrix_[x][y][z] % 2 == 0 ) {
+				if ( print_empty_space_ == false && print_empty_space_only_ == false &&
+						protein_matrix_[x][y][z] % 2 == 0 ) {
 					//move to next voxel
 					continue;
 				}
@@ -1719,6 +1725,12 @@ void ProteinGrid::set_print_whole_matrix(bool setter)
 void ProteinGrid::set_print_empty_space(bool setter)
 {
 	print_empty_space_ = setter;
+}
+
+// @brief function to set the value of print_empty_space_only_
+void ProteinGrid::set_print_empty_space_only(bool setter)
+{
+	print_empty_space_only_ = setter;
 }
 }
 }

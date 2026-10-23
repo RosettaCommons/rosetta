@@ -1,0 +1,13 @@
+# Input structure used for end-to-end validation.
+-s test/protocols/protein_grid/9W3L.pdb
+
+# ProteinGrid ignores residues that Rosetta cannot recognize in this cryo-EM structure.
+-ignore_unrecognized_res true
+
+# Pocket center and half-dimensions in angstroms, matching the supplied discovery arguments.
+-binding_pocket_center_sf 169,201,153
+-binding_pocket_dimensions_sf 5,5,5
+
+# Export only empty pocket voxels as oxygen atoms, beside this flags file.
+-protein_grid:output_empty_space_only true
+-out:prefix test/protocols/protein_grid/9W3L_binding_pocket
