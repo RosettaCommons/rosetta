@@ -325,30 +325,19 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 	cst_weight_ = tag->getOption< core::Real >( "cst_weight", cst_weight_ );
 	inter_chain_ = tag->getOption< bool >( "inter_chain", inter_chain_ );
 
-	AtomSelector sele = AtomSelector::ALL;
+	bool const bb_only = tag->getOption< bool >( "bb_only", false );
+	bool const sc_tip_only = tag->getOption< bool >( "sc_tip_only", false );
+	runtime_assert_msg( tag->getOption< bool >( "CA_only", false ) + bb_only + sc_tip_only <= 1, "Please use only one of 'bb_only', 'ca_only', and 'sc_tip_only'" );
 
-	if ( tag->hasOption( "bb_only" ) ) {
-		bool const bb_only = tag->getOption< bool >( "bb_only" );
-		if ( bb_only ) {
-			runtime_assert_msg( sele == AtomSelector::ALL, "Please use only one of 'bb_only', 'ca_only', and 'sc_tip_only'" );
-			sele = AtomSelector::BB_ONLY;
-		}
+	AtomSelector sele = AtomSelector::CA_ONLY;
+	if ( ! tag->getOption< bool >( "CA_only", true ) ) {
+		sele = AtomSelector::ALL;
 	}
-
-	if ( tag->hasOption( "CA_only" ) ) {
-		bool const CA_only = tag->getOption< bool >( "CA_only" );
-		if ( CA_only ) {
-			runtime_assert_msg( sele == AtomSelector::ALL, "Please use only one of 'bb_only', 'ca_only', and 'sc_tip_only'" );
-			sele = AtomSelector::CA_ONLY;
-		}
+	if ( bb_only ) {
+		sele = AtomSelector::BB_ONLY;
 	}
-
-	if ( tag->hasOption( "sc_tip_only" ) ) {
-		bool const sc_tip_only = tag->getOption< bool >( "sc_tip_only" );
-		if ( sc_tip_only ) {
-			runtime_assert_msg( sele == AtomSelector::ALL, "Please use only one of 'bb_only', 'ca_only', and 'sc_tip_only'" );
-			sele = AtomSelector::SC_TIP_ONLY;
-		}
+	if ( sc_tip_only ) {
+		sele = AtomSelector::SC_TIP_ONLY;
 	}
 
 	set_atom_selector( sele );
@@ -430,7 +419,7 @@ void AddConstraintsToCurrentConformationMover::provide_xml_schema( utility::tag:
 		+ XMLSchemaAttribute( "bound_width", xsct_real, "BoundFunc zero basin width BoundFunc; also activates use of BoundFunc (if non-zero)" )
 		+ XMLSchemaAttribute( "min_seq_sep", xsct_non_negative_integer, "Do not generate distance constraints between residues within this sequence separation.  Only active with use_distance_cst." )
 		+ XMLSchemaAttribute( "cst_weight", xsct_real, "use ScalarWeightedFunc to reweight constraints by this; also activates use of HarmonicFunc (if this and bound_width are both zero)" )
-		+ XMLSchemaAttribute( "CA_only", xsct_rosetta_bool, "constrain only CA atoms. Sets bb_only and sc_tip_only to false." )
+		+ XMLSchemaAttribute( "CA_only", xsct_rosetta_bool, "constrain only CA atoms. Sets bb_only and sc_tip_only to false. Default true unless bb_only or sc_tip_only is set; set to false (with bb_only and sc_tip_only unset) to constrain all heavy atoms." )
 		+ XMLSchemaAttribute( "bb_only", xsct_rosetta_bool, "constrain only backbone atoms. Sets CA_only and sc_tip_only to false." )
 		+ XMLSchemaAttribute( "sc_tip_only", xsct_rosetta_bool, "constrain only atoms affected by the final chi angle. Sets CA_only and bb_only to false." )
 		+ XMLSchemaAttribute( "inter_chain", xsct_rosetta_bool, "Generate distance constraints between residues on different chains if true.  (Does not appear to generate ONLY interchain constraints.)  If false, skips constraints that would go between chains.  Only active with use_distance_cst." );

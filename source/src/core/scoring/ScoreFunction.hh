@@ -139,16 +139,9 @@ public:
 	// inline ScoreFunctionAP get_self_weak_ptr() { return ScoreFunctionAP( shared_from_this() ); }
 
 private:
-	/// @brief The ScoreFunction copy constructor is explicitly private
-	/// as using it to make a copy is just too attractive, but discards subclass information.
-	/// Use ScoreFunction::clone() instead.
-	ScoreFunction( ScoreFunction const & );
-
-	/// @brief The ScoreFunction assignment operator is explicitly private
-	/// as using it discards subclass information.
-	/// Rework your algorithm to use ScoreFunctionOP's instead.
-	ScoreFunction &
-	operator=( ScoreFunction const & );
+	/// @brief Copying a ScoreFunction discards subclass information; use ScoreFunction::clone() instead.
+	ScoreFunction( ScoreFunction const & ) = delete;
+	ScoreFunction & operator=( ScoreFunction const & ) = delete;
 
 public:
 

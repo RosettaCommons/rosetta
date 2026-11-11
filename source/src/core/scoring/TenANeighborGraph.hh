@@ -25,6 +25,9 @@
 
 #include <core/pose/Pose.fwd.hh>
 
+// C++ headers
+#include <memory>
+
 
 
 #ifdef    SERIALIZATION
@@ -180,7 +183,7 @@ private:
 	static Distance const tenA_;
 	static DistanceSquared const tenA_squared_;
 
-	boost::unordered_object_pool< TenANeighborEdge > * tenA_edge_pool_;
+	std::unique_ptr< boost::unordered_object_pool< TenANeighborEdge > > tenA_edge_pool_;
 
 #ifdef    SERIALIZATION
 public:

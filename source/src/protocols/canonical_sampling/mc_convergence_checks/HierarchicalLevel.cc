@@ -307,7 +307,7 @@ HierarchicalLevel::num_matching_levels( utility::vector1< core::Size > & address
 	utility::vector1< core::Size > & address2 ){
 	runtime_assert( address1.size() == address2.size() );
 	core::Size num_matching_levels = 0;
-	for ( core::Size ii = 1; ii < address1.size(); ii++ ) {
+	for ( core::Size ii = 1; ii <= address1.size(); ii++ ) {
 		if ( address1[ ii ] == address2[ ii ] ) {
 			num_matching_levels++;
 		}

@@ -115,7 +115,7 @@ struct FinalRMSDComparator {
 class NearNativeLoopCloser : public protocols::moves::Mover {
 public:
 	NearNativeLoopCloser();
-	NearNativeLoopCloser(int resAdjustmentStartLow,int resAdjustmentStartHigh,int resAdjustmentStopLow,int resAdjustmentStopHigh,int resAdjustmentStartLow_sheet,int resAdjustmentStartHigh_sheet,int resAdjustmentStopLow_sheet,int resAdjustmentStopHigh_sheet,core::Size loopLengthRangeLow, core::Size loopLengthRangeHigh,core::Size resBeforeLoop,core::Size resAfterLoop,char chainBeforeLoop, char chainAfterLoop,core::Real rmsThreshold, core::Real max_vdw_change, bool idealExtension,bool ideal, bool output_closed, std::string closure_type="lookback",std::string allowed_loop_abegos="",std::string label_loop="", std::string fragment_store_path="",std::string fragment_store_format="",std::string fragment_store_compression="",core::Size numb_stubs_to_consider=1);
+	NearNativeLoopCloser(int resAdjustmentStartLow,int resAdjustmentStartHigh,int resAdjustmentStopLow,int resAdjustmentStopHigh,int resAdjustmentStartLow_sheet,int resAdjustmentStartHigh_sheet,int resAdjustmentStopLow_sheet,int resAdjustmentStopHigh_sheet,core::Size loopLengthRangeLow, core::Size loopLengthRangeHigh,core::Size resBeforeLoop,core::Size resAfterLoop,std::string const & chainBeforeLoop, std::string const & chainAfterLoop,core::Real rmsThreshold, core::Real max_vdw_change, bool idealExtension,bool ideal, bool output_closed, std::string closure_type="lookback",std::string allowed_loop_abegos="",std::string label_loop="", std::string fragment_store_path="",std::string fragment_store_format="",std::string fragment_store_compression="",core::Size numb_stubs_to_consider=1);
 	moves::MoverOP clone() const override { return utility::pointer::make_shared< NearNativeLoopCloser >( *this ); }
 	core::Real close_loop(Pose & pose);
 	void apply( Pose & pose ) override;
@@ -152,8 +152,8 @@ private:
 	core::Size loopLengthRangeHigh_;
 	core::Size resBeforeLoop_;
 	core::Size resAfterLoop_;
-	char chainBeforeLoop_;
-	char chainAfterLoop_;
+	std::string chainBeforeLoop_;
+	std::string chainAfterLoop_;
 	core::Real rmsThreshold_;
 	bool idealExtension_;
 	bool output_closed_;

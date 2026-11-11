@@ -329,6 +329,7 @@ RelativePoseFilter::get_alignment( core::pose::Pose const & p ) const {
 		for ( std::string const & residue_pair : residue_pairs ) {
 			utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ) );
 			runtime_assert( residues.size() == 2 );
+			// Because of the nature of the input format, we're limited to single residue chains
 			char const residues1_cstr( residues[ 1 ].c_str()[ 0 ] ), residues2_cstr( residues[ 2 ].c_str()[ 0 ] ); // these may hold the chain designators
 			if ( residues[ 1 ].length() == 1 &&
 					( residues1_cstr <= 'Z' && residues2_cstr >= 'A' ) &&
@@ -337,10 +338,10 @@ RelativePoseFilter::get_alignment( core::pose::Pose const & p ) const {
 				core::pose::PDBInfoCOP pdbinfo1( pose()->pdb_info() ), pdbinfo2( p.pdb_info() );
 				core::Size pose_res( 1 ), p_res( 1 );
 				for ( ; pose_res <= pose()->size(); ++pose_res ) {// find chain1 start
-					if ( pdbinfo1->chain( pose_res ) == residues1_cstr ) break;
+					if ( pdbinfo1->chain( pose_res ) == std::string{residues1_cstr} ) break;
 				}
 				for ( ; p_res <= p.size(); ++p_res ) { // find chain2 start
-					if ( pdbinfo2->chain( p_res ) == residues2_cstr ) break;
+					if ( pdbinfo2->chain( p_res ) == std::string{residues2_cstr} ) break;
 				}
 				while ( true ) {/// push aligned residues
 					alignment[ pose_res ] = p_res;
@@ -348,8 +349,8 @@ RelativePoseFilter::get_alignment( core::pose::Pose const & p ) const {
 						break;
 					}
 					pose_res++; p_res++;
-					if ( pdbinfo1->chain( pose_res ) != residues1_cstr ||
-							pdbinfo2->chain( p_res ) != residues2_cstr ) { /// end of aligned chains
+					if ( pdbinfo1->chain( pose_res ) != std::string{residues1_cstr} ||
+							pdbinfo2->chain( p_res ) != std::string{residues2_cstr} ) { /// end of aligned chains
 						break;
 					}
 				}

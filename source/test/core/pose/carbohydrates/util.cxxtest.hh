@@ -765,8 +765,8 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		//Test ASN torsions
 
 		subset.resize( two_glycans_.size(), false);
-		core::Size asn_res = two_glycans_.pdb_info()->pdb2pose('C', 572);
-		core::Size glycan_connect = two_glycans_.pdb_info()->pdb2pose('G', 592);
+		core::Size asn_res = two_glycans_.pdb_info()->pdb2pose("C", 572);
+		core::Size glycan_connect = two_glycans_.pdb_info()->pdb2pose("G", 592);
 
 		subset[glycan_connect] = true;
 		return_subset->set_residue_subset(subset);

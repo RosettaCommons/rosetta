@@ -109,6 +109,9 @@ class PyJobDistributor:
                     f.write("This decoy is in progress.")
                 print("Working on decoy: {}".format(self.current_name))
                 break
+            else:
+                print("Skipping decoy {} as it's already completed or is otherwise in-progess.".format(self.current_name))
+                self.sequence.remove(self.current_id)
 
     def output_decoy(self, pose):
         if os.path.isfile(self.current_name): # decoy already exists, probably written to other process -> moving to next decoy if any

@@ -11,12 +11,16 @@ __author__ = "Jason C. Klima"
 import os  # noqa
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io  # noqa
+import sys
 import unittest
 
 from pyrosetta.distributed.cluster import PyRosettaCluster  # noqa
 
 
 class BasicTest(unittest.TestCase):
+    def tearDown(self):
+        sys.stdout.flush()
+
     def test_basic(self):
         def create_tasks():
             yield {
@@ -60,7 +64,3 @@ class BasicTest(unittest.TestCase):
             simulation_records_in_scorefile=True,
             ignore_errors=True,
         ).distribute(protocols=[my_pyrosetta_protocol, my_pyrosetta_protocol_2])
-
-
-if __name__ == "__main__":
-    unittest.main(verbosity=2)

@@ -213,10 +213,9 @@ FoldConstraints::do_stage1_cycles( pose::Pose& pose ) {
 	moves::MoverOP trial( stage1_mover( pose, trial_large() ) );
 	core::Real const cycle_factor( option[ fold_cst::stage1_ramp_cst_cycle_factor ] );
 	auto const cycles ( static_cast< core::Size > ( cycle_factor * stage1_cycles() ) );
-	int total_cycles = 0;
 	if ( tr.visible() ) pose.constraint_set()->show_violations( tr, pose, show_viol_level_ );
 	//first run a normal set of fragment insertions until extended chain is lost
-	total_cycles += Parent::do_stage1_cycles( pose );
+	Parent::do_stage1_cycles( pose );
 	if ( tr.visible() ) pose.constraint_set()->show_violations( tr, pose, show_viol_level_ );
 
 	if ( pose.constraint_set()->has_residue_pair_constraints() ) {
@@ -226,7 +225,7 @@ FoldConstraints::do_stage1_cycles( pose::Pose& pose ) {
 			set_max_seq_sep( pose, jk);
 			if ( tr.visible() ) pose.constraint_set()->show_violations( tr, pose, show_viol_level_ );
 			if ( old_constraint_score == evaluate_constraint_energy ( pose, mc().score_function() ) ) continue;
-			for ( core::Size j = 1; j <= cycles; ++j, ++total_cycles ) {
+			for ( core::Size j = 1; j <= cycles; ++j ) {
 				//   if ( evaluate_constraint_energy( pose, mc().score_function() ) < 10.0 ) break; this is unlikely to be triggered for cnc and always triggered for james-cst
 				if ( numeric::mod( j, (core::Size)10)==0 && bSkipOnNoViolation_ && pose.constraint_set()->show_violations( tr, pose, 0 ) == 0 ) break;
 				trial->apply( pose );

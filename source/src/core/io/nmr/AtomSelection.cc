@@ -32,17 +32,17 @@ namespace nmr {
 AtomSelection::AtomSelection() :
 	rsd_(1),
 	atom_(""),
-	chain_('^')
+	chain_("^")
 { }
 
 AtomSelection::AtomSelection(
 	Size const residue,
 	std::string const & atom,
-	char const & chain
+	std::string const & chain
 ) :
 	rsd_(residue),
 	atom_(atom),
-	chain_(toupper(chain))
+	chain_(chain)
 {
 	runtime_assert_msg( residue > 0 , "ERROR: Residue number must be positive");
 }

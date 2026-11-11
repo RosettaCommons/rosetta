@@ -83,8 +83,8 @@ parse_resnum(
 	string number(number_start,number_end);
 	string chain(chain_start,chain_end);
 
-	//Require that the whole string match, and that the chain be a single char
-	if ( chain_end != input_end || chain.size() > 1 || number.size() < 1 ) {
+	//Require that the whole string match
+	if ( chain_end != input_end || number.size() < 1 ) {
 		TR.Error << "Could not parse '" << resnum << "' into a residue number." << std::endl;
 		return nullptr;
 	}
@@ -94,7 +94,7 @@ parse_resnum(
 	ss >> n;
 	if ( chain.size() == 1 ) { // PDB Number
 		TR.Trace << "Interpreting " << n << chain << " as a pdb number." << std::endl;
-		return utility::pointer::make_shared< ResidueIndexDescriptionPDB >( chain[0], n );
+		return utility::pointer::make_shared< ResidueIndexDescriptionPDB >( chain, n );
 	} else { // Rosetta Number
 		TR.Trace << "Interpreting " << n << " as a Rosetta residue number." << std::endl;
 		return core::pose::make_rid_posenum( n );

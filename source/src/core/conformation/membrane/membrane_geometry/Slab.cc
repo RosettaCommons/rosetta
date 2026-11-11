@@ -80,9 +80,6 @@ Slab::Slab(
 	MembraneGeometry( steepness, thickness, aqueous_pore )
 {}
 
-/// @brief Destructor
-Slab::~Slab() {}
-
 MembraneGeometryOP Slab::clone() const {
 	return SlabOP( new Slab( *this ) );
 }

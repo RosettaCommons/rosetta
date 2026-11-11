@@ -69,8 +69,6 @@ SizeVectorValuedParameter::SizeVectorValuedParameter( SizeVectorValuedParameter 
 {
 }
 
-SizeVectorValuedParameter::~SizeVectorValuedParameter() {}
-
 /// @brief Make a copy of this object ( allocate actual memory for it )
 ///
 ParameterOP

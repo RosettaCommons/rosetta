@@ -291,10 +291,10 @@ private:
 	bool partial_state_assignment_;
 	bool preped_for_sim_annealing_;
 
-	//no default constructor, uncopyable
-	SymmLinearMemEdge();
-	SymmLinearMemEdge( SymmLinearMemEdge const & );
-	SymmLinearMemEdge & operator = ( SymmLinearMemEdge const & );
+public:
+	SymmLinearMemEdge() = delete;
+	SymmLinearMemEdge( SymmLinearMemEdge const & ) = delete;
+	SymmLinearMemEdge & operator = ( SymmLinearMemEdge const & ) = delete;
 
 };
 
@@ -366,10 +366,10 @@ private:
 
 	static const int COMMIT_LIMIT_BETWEEN_UPDATES = 1024; // 2^10
 
-	//no default constructor, uncopyable
-	SymmLinearMemoryInteractionGraph();
-	SymmLinearMemoryInteractionGraph( SymmLinearMemoryInteractionGraph const & );
-	SymmLinearMemoryInteractionGraph & operator = ( SymmLinearMemoryInteractionGraph const & );
+public:
+	SymmLinearMemoryInteractionGraph() = delete;
+	SymmLinearMemoryInteractionGraph( SymmLinearMemoryInteractionGraph const & ) = delete;
+	SymmLinearMemoryInteractionGraph & operator = ( SymmLinearMemoryInteractionGraph const & ) = delete;
 };
 
 

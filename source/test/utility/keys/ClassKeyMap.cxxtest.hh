@@ -17,6 +17,9 @@
 #include <cxxtest/TestSuite.h>
 #include <utility/keys/ClassKeyMap.hh>
 
+// C++ headers
+#include <vector>
+
 
 // --- set up the individual test cases
 class KeyMapTests : public CxxTest::TestSuite {
@@ -89,6 +92,24 @@ class KeyMapTests : public CxxTest::TestSuite {
 		TS_ASSERT( m[ 9 ] == 33 );
 	}
 
-};
+	void test_ClassKeyMap_range_operations_activate_last_key() {
 
+		typedef  utility::keys::ClassKeyMap< int, int, char >  Map;
+		typedef  std::vector< Map::Value >  Values;
+
+		Values values;
+		values.push_back( Map::Value( 4, 44 ) );
+		values.push_back( Map::Value( 8, 88 ) );
+
+		Map constructed( values.begin(), values.end() );
+		TS_ASSERT( constructed.has( 8 ) );
+		TS_ASSERT_EQUALS( constructed[ 8 ], 88 );
+
+		Map assigned;
+		assigned.assign( values.begin(), values.end() );
+		TS_ASSERT( assigned.has( 8 ) );
+		TS_ASSERT_EQUALS( assigned[ 8 ], 88 );
+	}
+
+};
 

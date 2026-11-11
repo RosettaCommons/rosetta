@@ -49,18 +49,18 @@ public:
 	//change first three into vectors (create a vector of chains)
 	core::Size mut_resid;
 	char mut_target;
-	char lig_chain;
+	std::string lig_chain;
 	core::Real bind_data;
 	bool has_bind;
 	bool wild_type;
 
 	std::string print_mut_string(){return (std::to_string(mut_resid)+ "_" + std::to_string(mut_target));};
 	std::string print_string(){
-		if ( wild_type ) { return ("WT_" + std::to_string(lig_chain));}
-		return (print_mut_string() + "_" + std::to_string(lig_chain));
+		if ( wild_type ) { return ("WT_" + lig_chain);}
+		return (print_mut_string() + "_" + lig_chain);
 	};
 
-	ProtLigPair_info(): mut_resid(0), mut_target(0), lig_chain(0), bind_data(0), has_bind(false), wild_type(false){};
+	ProtLigPair_info(): mut_resid(0), mut_target(0), lig_chain(), bind_data(0), has_bind(false), wild_type(false){};
 	ProtLigPair_info(ProtLigPair_info const & ) = default;
 
 	ProtLigPair_info & operator=( ProtLigPair_info const & ) = default;

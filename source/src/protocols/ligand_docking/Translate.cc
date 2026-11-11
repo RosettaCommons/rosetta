@@ -74,13 +74,10 @@ Translate_info::chain_id( core::pose::Pose const & pose ) const {
 	return chain_ids[1];
 }
 
-char
+std::string
 Translate_info::chain_letter( core::pose::Pose const & pose ) const {
 	if ( by_string_ ) {
-		if ( chain_string_.size() != 1 ) {
-			utility_exit_with_message("'Translate' mover: chain designation '"+chain_string_+"' is not one character.");
-		}
-		return chain_string_[1];
+		return chain_string_;
 	}
 
 	return core::pose::get_chain_from_chain_id( chain_number_, pose );
@@ -159,7 +156,7 @@ void Translate::apply(core::pose::Pose & pose) {
 	// Put chain/jump determination at the top, to quickly error out if the pose isn't suitable.
 	core::Size chain_id = translate_info_.chain_id(pose);
 	core::Size jump_id = translate_info_.jump_id(pose);
-	char chain_letter = translate_info_.chain_letter(pose);
+	std::string chain_letter = translate_info_.chain_letter(pose);
 
 	core::Size const begin(pose.conformation().chain_begin(chain_id));
 

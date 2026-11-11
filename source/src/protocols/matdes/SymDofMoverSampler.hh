@@ -51,10 +51,8 @@ public:
 	void step();
 
 private:
-	// Don't implement the methods belowed, this class is a singleton.
+	// Singleton — only SingletonBase constructs instances.
 	SymDofMoverSampler();
-	SymDofMoverSampler(SymDofMoverSampler const&);
-	void operator=(SymDofMoverSampler const&);
 
 private:
 

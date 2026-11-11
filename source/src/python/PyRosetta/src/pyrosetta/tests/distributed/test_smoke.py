@@ -14,6 +14,7 @@ import pyrosetta.distributed.io as io
 import pyrosetta.distributed.packed_pose as packed_pose
 import pyrosetta.distributed.tasks.score as score
 import pyrosetta.distributed.tasks.rosetta_scripts as rosetta_scripts
+import sys
 import tempfile
 import unittest 
 
@@ -74,10 +75,10 @@ class SmokeTestDistributed(unittest.TestCase):
         score_task = score.ScorePoseTask()
         rs_task = rosetta_scripts.SingleoutputRosettaScriptsTask(self.min_rs)
 
-        score_result = score_task(io.pose_from_sequence("TEST")).scores
-        rs_result = rs_task(io.pose_from_sequence("TEST")).scores
+        score_result = score_task(io.pose_from_sequence("TEST")).pose.cache
+        rs_result = rs_task(io.pose_from_sequence("TEST")).pose.cache
 
-        self.assertAlmostEqual(
+        self.assertEqual(
             score_result["total_score"], rs_result["total_score"]
         )
 
@@ -101,6 +102,7 @@ class SmokeTestDistributed(unittest.TestCase):
         work_pose = io.pose_from_sequence("TEST")
 
         self.assertDictEqual(work_pose.scores, dict())
+        self.assertDictEqual(dict(work_pose.pose.cache), dict())
 
         # Test merge and masking, just args
         work_updated = work_pose.update_scores(
@@ -109,7 +111,9 @@ class SmokeTestDistributed(unittest.TestCase):
         )
 
         self.assertDictEqual(work_pose.scores, dict())
-        self.assertDictEqual(work_updated.scores, dict(arg=1.0, arg2=2.0, dupe="bar"))
+        self.assertDictEqual(work_updated.scores, dict())
+        self.assertDictEqual(dict(work_pose.pose.cache), dict())
+        self.assertDictEqual(dict(work_updated.pose.cache), dict(arg=1.0, arg2=2.0, dupe="bar"))
 
         # Test merge and masking, args and kwargs
         work_updated = work_pose.update_scores(
@@ -120,7 +124,9 @@ class SmokeTestDistributed(unittest.TestCase):
         )
 
         self.assertDictEqual(work_pose.scores, dict())
-        self.assertDictEqual(work_updated.scores, dict(arg=1.0, arg2=2.0, kwarg="yes", dupe="bat"))
+        self.assertDictEqual(work_updated.scores, dict())
+        self.assertDictEqual(dict(work_pose.pose.cache), dict())
+        self.assertDictEqual(dict(work_updated.pose.cache), dict(arg=1.0, arg2=2.0, kwarg="yes", dupe="bat"))
 
         # Test just kwargs
         work_updated = work_pose.update_scores(
@@ -129,13 +135,17 @@ class SmokeTestDistributed(unittest.TestCase):
         )
 
         self.assertDictEqual(work_pose.scores, dict())
-        self.assertDictEqual(work_updated.scores, dict(kwarg="yes", dupe="bat"))
+        self.assertDictEqual(work_updated.scores, dict())
+        self.assertDictEqual(dict(work_pose.pose.cache), dict())
+        self.assertDictEqual(dict(work_updated.pose.cache), dict(kwarg="yes", dupe="bat"))
 
         # Test no args
         work_updated = work_pose.update_scores()
 
         self.assertDictEqual(work_pose.scores, dict())
         self.assertDictEqual(work_updated.scores, dict())
+        self.assertDictEqual(dict(work_pose.pose.cache), dict())
+        self.assertDictEqual(dict(work_updated.pose.cache), dict())
 
     def test_silent_io(self):
 
@@ -214,6 +224,8 @@ class SmokeTestDistributed(unittest.TestCase):
             func(input_packed_pose.pose, out_file, "score12")
             func(input_packed_pose, out_file, score.ScorePoseTask(weights="ref2015_cart"))
             func(input_packed_pose, out_file, scorefxn)
+        elif ext == "init":
+            func(out_file, poses=input_packed_pose, verbose=False)
         else:
             func(input_packed_pose, out_file)
         # Load PackedPose from disk
@@ -224,6 +236,8 @@ class SmokeTestDistributed(unittest.TestCase):
                 io.pose_from_pdb(os.path.join(workdir, f"nonexistent_file.{ext}"))
             self.assertIsNone(io.pose_from_pdb(None))
             output_packed_pose = io.pose_from_pdb(out_file)
+        elif ext == "init":
+            output_packed_pose = io.pose_from_init_file(out_file)
         else:
             output_packed_pose = io.pose_from_file(out_file)
         # Test annotated sequence recovery
@@ -232,8 +246,8 @@ class SmokeTestDistributed(unittest.TestCase):
             output_packed_pose.pose.annotated_sequence(),
             msg=f"Sequence recovery failed for extension '{ext}'."
         )
-        # Test coordiante recovery
-        places = 32 if ext in ("b64", "base64", "B64", "pose", "pickle", "pickled_pose") else 2
+        # Test coordinate recovery
+        places = sys.float_info.dig if ext in ("pkl_pose", "b64_pose", "init") else 2
         for res in range(1, input_packed_pose.pose.size() + 1):
             for atom in range(1, input_packed_pose.pose.residue(res).natoms() + 1):
                 atom_input = input_packed_pose.pose.residue(res).xyz(atom)
@@ -246,26 +260,40 @@ class SmokeTestDistributed(unittest.TestCase):
                         msg=f"Coordinate recovery failed for extension '{ext}'."
                     )
         # Test score recovery
-        self.assertTrue(dict(input_packed_pose.pose.scores), msg=f"Pose scores dictionary is empty for extension '{ext}'.")
+        self.assertEqual(input_packed_pose.scores, {}, msg=f"`PackedPose.scores` dictionary is non-empty for extension '{ext}'.")
+        self.assertEqual(output_packed_pose.scores, {}, msg=f"`PackedPose.scores` dictionary is non-empty for extension '{ext}'.")
+        self.assertDictEqual(
+            input_packed_pose.scores,
+            output_packed_pose.scores,
+            msg=f"`PackedPose.scores` dictionaries differ for extension '{ext}'."
+        )
+        self.assertTrue(dict(input_packed_pose.pose.scores), msg=f"`Pose.scores` dictionary is empty for extension '{ext}'.")
+        self.assertTrue(dict(input_packed_pose.pose.cache), msg=f"`Pose.cache` dictionary is empty for extension '{ext}'.")
         if ext in ("pdb", "scored.pdb", "cif", "mmcif", "mmtf", "pdb.bz2", "bz2", "pdb.gz", "gz", "pdb.xz", "xz"):
-            self.assertFalse(dict(output_packed_pose.pose.scores), msg=f"Pose scores dictionary has items for extension '{ext}'.")
+            self.assertFalse(dict(output_packed_pose.pose.scores), msg=f"`Pose.scores` dictionary has items for extension '{ext}'.")
+            self.assertFalse(dict(output_packed_pose.pose.cache), msg=f"`Pose.cache` dictionary has items for extension '{ext}'.")
             self.assertNotEqual(
-                input_packed_pose.scores,
-                output_packed_pose.scores,
-                msg=f"PackedPose scores dictionaries differ for extension '{ext}'."
-            )
-        else: # base64-encoded and pickle-encoded files save the `pose.scores` dictionary
-            self.assertTrue(output_packed_pose.scores, msg=f"PackedPose scores dictionary is empty for extension '{ext}'.")
-            self.assertTrue(dict(output_packed_pose.pose.scores), msg=f"Pose scores dictionary is empty for extension '{ext}'.")
-            self.assertDictEqual(
-                input_packed_pose.scores,
-                output_packed_pose.scores,
-                msg=f"Pose scores dictionaries differ for extension '{ext}'."
-            )
-            self.assertDictEqual(
                 dict(input_packed_pose.pose.scores),
                 dict(output_packed_pose.pose.scores),
-                msg=f"Pose scores dictionaries differ for extension '{ext}'."
+                msg=f"`Pose.scores` dictionaries are equal for extension '{ext}'."
+            )
+            self.assertNotEqual(
+                dict(input_packed_pose.pose.cache),
+                dict(output_packed_pose.pose.cache),
+                msg=f"`Pose.cache` dictionaries are equal for extension '{ext}'."
+            )
+        else: # base64-encoded and pickle-encoded files save the `Pose.cache` dictionary
+            self.assertTrue(dict(output_packed_pose.pose.scores), msg=f"`Pose.scores` dictionary is empty for extension '{ext}'.")
+            self.assertTrue(dict(output_packed_pose.pose.cache), msg=f"`Pose.cache` dictionary is empty for extension '{ext}'.")
+            self.assertEqual(
+                dict(input_packed_pose.pose.scores),
+                dict(output_packed_pose.pose.scores),
+                msg=f"`Pose.scores` dictionaries differ for extension '{ext}'."
+            )
+            self.assertEqual(
+                dict(input_packed_pose.pose.cache),
+                dict(output_packed_pose.pose.cache),
+                msg=f"`Pose.cache` dictionaries differ for extension '{ext}'."
             )
 
     def test_packed_pose_io(self):
@@ -282,12 +310,9 @@ class SmokeTestDistributed(unittest.TestCase):
             "gz": io.dump_pdb,
             "pdb.xz": io.dump_pdb,
             "xz": io.dump_pdb,
-            "base64": io.dump_base64,
-            "b64": io.dump_base64,
-            "B64": io.dump_base64,
-            "pose": io.dump_base64,
-            "pickle": io.dump_pickle,
-            "pickled_pose": io.dump_pickle,
+            "b64_pose": io.dump_base64,
+            "pkl_pose": io.dump_pickle,
+            "init": pyrosetta.dump_init_file,
         }
         input_packed_pose = io.pose_from_sequence("CATALYST/X[ATP]")
         scorefxn = pyrosetta.create_score_function("ref2015")
@@ -297,6 +322,32 @@ class SmokeTestDistributed(unittest.TestCase):
         with tempfile.TemporaryDirectory() as workdir:
             for ext, func in ext_func_dict.items():
                 self.roundtrip(func, ext, input_packed_pose.clone(), workdir, scorefxn)
+
+    def test_to_packed_determinism(self):
+        if not pyrosetta.rosetta.basic.was_init_called():
+            pyrosetta.init(options="-run:constant_seed 1 -mute all", extra_options="", silent=True)
+        pose = pyrosetta.io.pose_from_sequence("TEST/DETERMINISM")
+        # Get reference bytes
+        bytes_ref = pyrosetta.secure_unpickle.SecureSerializerBase.to_pickle(pose)
+        # Get test bytes through `io.to_packed` interface, which sets up `PackedPose.scores`
+        # that accesses `Pose.cache` that should not call `get_sm_data()` which alters bytes
+        bytes_src = io.to_packed(pose).pickled_pose
+        self.assertEqual(
+            bytes_ref,
+            bytes_src,
+            msg="Pickled pose is not bitwise identical after setting up `PackedPose.scores` attribute without SimpleMetrics data.",
+        )
+        # Update `Pose.cache` dictionary
+        pose.cache.metrics["testing"] = dict(foo="String", bar=1.2, baz=complex(3, 4))
+        # Get reference bytes
+        bytes_ref = pyrosetta.secure_unpickle.SecureSerializerBase.to_pickle(pose)
+        # Get test bytes
+        bytes_src = io.to_packed(pose).pickled_pose
+        self.assertEqual(
+            bytes_ref,
+            bytes_src,
+            msg="Pickled pose is not bitwise identical after setting up `PackedPose.scores` attribute with SimpleMetrics data.",
+        )
 
     def test_poses_from_sequences_io(self):
         # Test `io.poses_from_sequences`

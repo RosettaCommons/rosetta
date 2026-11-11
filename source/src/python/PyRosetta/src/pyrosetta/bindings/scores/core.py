@@ -9,6 +9,7 @@
 __author__ = "Jason C. Klima"
 
 
+import itertools
 import types
 
 try:
@@ -42,19 +43,57 @@ class PoseCacheAccessor(PoseCacheAccessorBase, MutableMapping):
     arbitrary python objects to/from base64-encoded pickled byte streams, and stores/retrieves `float` and `str`
     objects without serialization.
 
+    **Warning**: ONLY LOAD DATA YOU TRUST. The `Pose.cache` dictionary uses the `pickle` module to serialze and deserialize arbitrary scores in the `Pose` object.
+    When depickling (deserializing) is performed, arbitrary code can be executed. Learn more `here <https://docs.python.org/3/library/pickle.html>`_.
+    The `Pose.cache` object is only stored in memory, so this is only a risk if these objects are sent to a user in memory over a network
+    such as a socket, queue, shared cache, etc. If you need to retrieve a `Pose.cache` dictionary this way, please make sure it is from a trusted source.
+
     Examples:
 
-    Get score dictionaries:
+    Get score dictionaries (time complexity shown in parentheses, where N is the number of scores accessed by that layer):
         - Return nested, read-only dictionaries of all cached score data:
-            `pose.cache.all_scores`
+            `pose.cache.all_scores` (~O(N))
         - Return a flattened, read-only dictionary of all cached score data (with clobber warnings):
-            `pose.cache`
+            `pose.cache` (~O(N^2))
+            `dict(pose.cache.fast_items())` (~O(N))
         - Return a flattened, read-only dictionary of all SimpleMetric data (with clobber warnings):
-            `pose.cache.metrics`
+            `pose.cache.metrics` (~O(N^2))
+            `dict(pose.cache.metrics.fast_items())` (~O(N))
+        - Return a read-only dictionary of all SimpleMetric real metric data:
+            `pose.cache.metrics.real` (~O(N^2))
+            `dict(pose.cache.metrics.real.fast_items())` (~O(N))
+       - Return a read-only dictionary of all SimpleMetric string metric data:
+            `pose.cache.metrics.string` (~O(N^2))
+            `dict(pose.cache.metrics.string.fast_items())` (~O(N))
+       - Return a read-only dictionary of all SimpleMetric composite real metric data:
+            `pose.cache.metrics.composite_real` (~O(N^2))
+            `dict(pose.cache.metrics.composite_real.fast_items())` (~O(N))
+       - Return a read-only dictionary of all SimpleMetric composite string metric data:
+            `pose.cache.metrics.composite_string` (~O(N^2))
+            `dict(pose.cache.metrics.composite_string.fast_items())` (~O(N))
+       - Return a read-only dictionary of all SimpleMetric per-residue real metric data:
+            `pose.cache.metrics.per_residue_real` (~O(N^2))
+            `dict(pose.cache.metrics.per_residue_real.fast_items())` (~O(N))
+       - Return a read-only dictionary of all SimpleMetric per-residue string metric data:
+            `pose.cache.metrics.per_residue_string` (~O(N^2))
+            `dict(pose.cache.metrics.per_residue_string.fast_items())` (~O(N))
+       - Return a read-only dictionary of all SimpleMetric per-residue probabilities metric data:
+            `pose.cache.metrics.per_residue_probabilities` (~O(N^2))
+            `dict(pose.cache.metrics.per_residue_probabilities.fast_items())` (~O(N))
         - Return a flattened, read-only dictionary of all arbitrary extra float and extra string score data (with clobber warnings):
-            `pose.cache.extra`
+            `pose.cache.extra` (~O(N^2))
+            `dict(pose.cache.extra.fast_items())` (~O(N))
+        - Return a read-only dictionary of all arbitrary extra float score data:
+            `pose.cache.extra.real` (~O(N^2))
+            `dict(pose.cache.extra.real.fast_items())` (~O(N))
+        - Return a read-only dictionary of all arbitrary extra string score data:
+            `pose.cache.extra.string` (~O(N^2))
+            `dict(pose.cache.extra.string.fast_items())` (~O(N))
         - Return a read-only dictionary of active total energies:
-            `pose.cache.energies`
+            `pose.cache.energies` (~O(N^2))
+            `dict(pose.cache.extra.fast_items())` (~O(N))
+
+        Note: see corresponding `*.fast_values()` methods (~O(N)) versus `*.values()` methods (~O(N^2)).
 
     Get a score value:
         - Return the value of a key from any `pose.cache.extra`, `pose.cache.metrics`, or `pose.cache.energies` dictionary
@@ -98,8 +137,12 @@ class PoseCacheAccessor(PoseCacheAccessorBase, MutableMapping):
                 `pose.cache.metrics["key"] = value`
             - Set a key/value pair as a `CustomRealValueMetric`:
                 `pose.cache.metrics.real["key"] = value`
+            - Set a mappable to multiple `CustomRealValueMetric`s in bulk (improved performance over one at a time):
+                `pose.cache.metrics.real.set_mappable(mappable)`
             - Set a key/value pair as a `CustomStringValueMetric`:
                 `pose.cache.metrics.string["key"] = value`
+            - Set a mappable to multiple `CustomStringValueMetric`s in bulk (improved performance over one at a time):
+                `pose.cache.metrics.string.set_mappable(mappable)`
 
         To arbitrary extra score data:
             - Set a key/value pair as an arbitrary extra float or string score with automatic type checking:
@@ -149,38 +192,42 @@ class PoseCacheAccessor(PoseCacheAccessorBase, MutableMapping):
             {
                 "extra": types.MappingProxyType(
                     {
-                        "string": types.MappingProxyType(dict(self.extra.string)),
-                        "real": types.MappingProxyType(dict(self.extra.real)),
+                        "string": types.MappingProxyType(dict(self.extra.string.fast_items())),
+                        "real": types.MappingProxyType(dict(self.extra.real.fast_items())),
                     }
                 ),
                 "metrics": types.MappingProxyType(
                         {
-                        "string": types.MappingProxyType(dict(self.metrics.string)),
-                        "real": types.MappingProxyType(dict(self.metrics.real)),
-                        "composite_string": types.MappingProxyType(dict(self.metrics.composite_string)),
-                        "composite_real": types.MappingProxyType(dict(self.metrics.composite_real)),
-                        "per_residue_string": types.MappingProxyType(dict(self.metrics.per_residue_string)),
-                        "per_residue_real": types.MappingProxyType(dict(self.metrics.per_residue_real)),
-                        "per_residue_probabilities": types.MappingProxyType(dict(self.metrics.per_residue_probabilities)),
+                        "string": types.MappingProxyType(dict(self.metrics.string.fast_items())),
+                        "real": types.MappingProxyType(dict(self.metrics.real.fast_items())),
+                        "composite_string": types.MappingProxyType(dict(self.metrics.composite_string.fast_items())),
+                        "composite_real": types.MappingProxyType(dict(self.metrics.composite_real.fast_items())),
+                        "per_residue_string": types.MappingProxyType(dict(self.metrics.per_residue_string.fast_items())),
+                        "per_residue_real": types.MappingProxyType(dict(self.metrics.per_residue_real.fast_items())),
+                        "per_residue_probabilities": types.MappingProxyType(dict(self.metrics.per_residue_probabilities.fast_items())),
                     }
                 ),
-                "energies": types.MappingProxyType(dict(self.energies)),
+                "energies": types.MappingProxyType(dict(self.energies.fast_items())),
             }
         )
 
     @property
     def all_keys(self):
         """Return a tuple of all score data keys."""
-        ref_keys = []
-        for k1, v1 in self.all_scores.items():
-            for k2, v2 in v1.items():
-                if k1 == "energies":
-                    ref_keys.append(k2)
-                else:
-                    for k3 in v2.keys():
-                        ref_keys.append(k3)
-
-        return tuple(ref_keys)
+        return tuple(
+            itertools.chain(
+                self.extra.string,
+                self.extra.real,
+                self.metrics.string,
+                self.metrics.real,
+                self.metrics.composite_string,
+                self.metrics.composite_real,
+                self.metrics.per_residue_string,
+                self.metrics.per_residue_real,
+                self.metrics.per_residue_probabilities,
+                self.energies,
+            )
+        )
 
     def assert_unique_keys(self):
         """Assert that `Pose.cache.all_keys` returns all unique keys."""
@@ -210,21 +257,21 @@ class PoseCacheAccessor(PoseCacheAccessorBase, MutableMapping):
             1. SimpleMetric data
             2. Arbitrary extra string scores
         """
-        extra = self.extra
-        metrics = self.metrics
-        energies = self.energies
+        extra = dict(self.extra.all)
+        metrics = dict(self.metrics.all)
+        energies = dict(self.energies.all)
 
-        for k in extra.keys():
-            if k in metrics.keys():
+        for k in extra:
+            if k in metrics:
                 self._clobber_warning(
                     "SimpleMetrics data key is clobbering arbitrary extra scores data key: '{0}'".format(k)
                 )
-            if k in energies.keys():
+            if k in energies:
                 self._clobber_warning(
                     "Active total energies key is clobbering arbitrary extra scores data key: '{0}'".format(k)
                 )
-        for k in metrics.keys():
-            if k in energies.keys():
+        for k in metrics:
+            if k in energies:
                 self._clobber_warning(
                     "Active total energies key is clobbering SimpleMetrics data key: '{0}'".format(k)
                 )
@@ -236,10 +283,6 @@ class PoseCacheAccessor(PoseCacheAccessorBase, MutableMapping):
                 **energies,
             }
         )
-
-    def __getitem__(self, key):
-        "Get a value from a key from the `Pose.cache` dictionary."
-        return self.maybe_decode(self.all[key])
 
     def __setitem__(self, key, value):
         """
@@ -269,6 +312,6 @@ class PoseCacheAccessor(PoseCacheAccessorBase, MutableMapping):
 
     def clear(self):
         """Clear pose energies, extra scores, and SimpleMetric data."""
-        self.pose.energies().clear()
+        self.energies.clear()
         clearPoseExtraScores(self.pose)
         clear_sm_data(self.pose)

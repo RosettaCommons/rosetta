@@ -53,7 +53,7 @@ public:
 		utility::vector1< core::Size > r1, r2;
 		r1.push_back( 3 ); r1.push_back( 4 );
 		r2.push_back( 5 ); r2.push_back( 6 );
-		fab_cst->setup_csts( trpcage, r1, r2, "AA" );
+		fab_cst->setup_csts( trpcage, r1, r2, utility::vector1<std::string>{"A","A"} );
 		// "AA" says that both the antibody and the antigen are the same chain;
 		// this is an abuse of the constraint for testing purposes;
 

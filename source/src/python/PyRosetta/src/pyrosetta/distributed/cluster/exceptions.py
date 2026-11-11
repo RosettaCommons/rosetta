@@ -5,16 +5,19 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 __author__ = "Jason C. Klima"
 
 try:
-    from billiard import WorkerLostError
+    from billiard import (
+        Process,
+        Queue,
+        WorkerLostError,
+    )
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.exceptions' requires the "
         + "third-party package 'billiard' as a dependency!\n"
-        + "Please install this package into your python environment. "
+        + "Please install this package into your virtual environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/billiard/\n"
     )
@@ -24,49 +27,45 @@ import logging
 import traceback
 
 from functools import wraps
+from pyrosetta.distributed.packed_pose.core import PackedPose
 from queue import Empty
-from typing import (
+
+from pyrosetta.distributed.cluster.type_defs import (
     Any,
-    Callable,
-    NoReturn,
-    TypeVar,
+    CallableType,
+    Dict,
+    List,
+    Optional,
+    PyRosettaProtocol,
+    Tuple,
     Union,
     cast,
 )
 
 
-T = TypeVar("T", bound=Callable[..., Any])
-
-
 class InputError(TypeError):
-    """
-    Exception raised for PyRosettaCluster attribute input errors for `str` and `int` types.
-    """
+    """Exception raised for `PyRosettaCluster` keyword argument value errors for `str` and `int` types."""
 
-    def __init__(self, obj: Any, attribute: str) -> NoReturn:
+    def __init__(self, obj: Any, attribute: str) -> None:
         super().__init__(
-            f"PyRosettaCluster '{attribute}' attribute must be of type `int` or `str`, "
-            + f"or an iterable containing `int` or `str` types. Received {obj} of type `{type(obj)}`."
+            f"The '{attribute}' keyword argument value must be of type `int` or `str`, "
+            + f"or an iterable containing `int` or `str` types. Received '{obj}' of type `{type(obj)}`."
         )
 
 
 class InputFileError(TypeError):
-    """
-    Exception raised for PyRosettaCluster  errors for `str` and `int` types.
-    """
+    """Exception raised for `PyRosettaCluster` errors for `str` types."""
 
-    def __init__(self, obj: Any) -> NoReturn:
+    def __init__(self, obj: Any) -> None:
         super().__init__(
-            "The `input_file` argument parameter must be of type `str`, not of type {0}.".format(
-                type(obj)
-            )
+            f"The `input_file` keyword argument value must be of type `str`. Received: {type(obj)}."
         )
 
 
 class OutputError(TypeError):
-    """Exception raised for worker output errors."""
+    """Exception raised for user-defined PyRosetta protocol output errors."""
 
-    def __init__(self, obj: Any) -> NoReturn:
+    def __init__(self, obj: Any) -> None:
         super().__init__(
             " ".join(
                 "Returned object(s) should be an instance of `NoneType`, `Pose`, `PackedPose`, or `dict`; or \
@@ -79,23 +78,23 @@ class OutputError(TypeError):
 
 
 class WorkerError(WorkerLostError):
-    """Exception raised for worker errors."""
+    """Exception raised for Dask worker errors."""
 
-    def __init__(self, protocol_name: str) -> NoReturn:
+    def __init__(self, protocol_name: str) -> None:
         super().__init__(WorkerError._msg(protocol_name))
 
     @staticmethod
     def _msg(protocol_name: str) -> str:
         return (
-            "Worker thread killed due to an error or segmentation fault encountered "
-            + f"in the user-provided PyRosetta protocol '{protocol_name}'."
+            "A Dask worker subprocess was killed due to an exception or segmentation fault "
+            + f"encountered in the user-defined PyRosetta protocol '{protocol_name}'"
         )
 
     @staticmethod
     def _ignore_errors_msg(protocol_name: str) -> str:
         return (
             WorkerError._msg(protocol_name)
-            + "Ignoring error because `ignore_errors` is enabled!"
+            + " Ignoring error because the `ignore_errors` instance attribute is set to `True`!"
         )
 
     @staticmethod
@@ -106,34 +105,61 @@ class WorkerError(WorkerLostError):
             return WorkerError._msg(protocol_name)
 
 
-def trace_protocol_exceptions(func: T) -> Union[T, NoReturn]:
-    """Trace exceptions in user-provided PyRosetta protocols."""
+class TaskCancelledError(RuntimeError):
+    """Exception raised for Dask `CancelledError` exceptions."""
+
+    def __init__(self, key: str, extra_msg: str) -> None:
+        super().__init__(
+            f"Task '{key}' raised `CancelledError` upon gathering results. {extra_msg}"
+        )
+
+
+def trace_protocol_exceptions(func: CallableType) -> CallableType:
+    """Trace exceptions in user-defined PyRosetta protocols."""
 
     @wraps(func)
-    def wrapper(compressed_packed_pose, protocol, ignore_errors, **kwargs):
+    def wrapper(
+        packed_pose: PackedPose,
+        protocol: PyRosettaProtocol,
+        ignore_errors: bool,
+        kwargs: Dict[str, Any],
+    ) -> Any:
+        """Wrapper function for `trace_protocol_exceptions` decorator."""
+
         protocol_name = protocol.__name__
         try:
-            result = func(compressed_packed_pose, protocol, ignore_errors, **kwargs)
+            result = func(packed_pose, protocol, ignore_errors, kwargs)
         except:
             logging.error(
                 traceback.format_exc()
                 + WorkerError._get_msg(protocol_name, ignore_errors)
             )
             if ignore_errors:
+                # Return `None` to be converted to an empty `PackedPose` object
+                # when a non-system-exiting Python exception is raised
                 result = None
             else:
                 raise
 
         return result
 
-    return cast(T, wrapper)
+    return cast(CallableType, wrapper)
 
 
-def trace_subprocess_exceptions(func: T) -> Union[T, NoReturn]:
-    """Trace exceptions in billiard subprocesses."""
+def trace_subprocess_exceptions(func: CallableType) -> CallableType:
+    """Trace exceptions in `billiard` subprocesses."""
 
     @wraps(func)
-    def wrapper(q, p, compressed_kwargs, protocol_name, timeout, ignore_errors):
+    def wrapper(
+        q: Queue,
+        p: Process,
+        compressed_kwargs: bytes,
+        protocol_name: str,
+        timeout: Union[float, int],
+        ignore_errors: bool,
+    ) -> List[Tuple[Optional[bytes], bytes]]:
+        """Wrapper function for `trace_subprocess_exceptions` decorator."""
+
         while True:
             try:
                 _results = func(
@@ -153,4 +179,4 @@ def trace_subprocess_exceptions(func: T) -> Union[T, NoReturn]:
 
         return _results
 
-    return cast(T, wrapper)
+    return cast(CallableType, wrapper)

@@ -59,29 +59,6 @@ struct XYZEvent : public GeneralEvent {
 	{}
 
 
-	/// @brief copy constructor
-	inline
-	XYZEvent( XYZEvent const & rval ) :
-		Super( rval )
-	{}
-
-
-	/// @brief copy assignment
-	inline
-	XYZEvent &
-	operator =( XYZEvent const & rval ) {
-		if ( this != &rval ) {
-			Super::operator =( rval );
-		}
-		return *this;
-	}
-
-
-	/// @brief default destructor
-	inline
-	~XYZEvent() override {}
-
-
 };
 
 

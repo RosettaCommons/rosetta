@@ -42,7 +42,7 @@ CacheableResidueTypeSets::CacheableResidueTypeSets():
 CacheableResidueTypeSets::~CacheableResidueTypeSets()= default;
 
 CacheableResidueTypeSets::CacheableResidueTypeSets( CacheableResidueTypeSets const & other ) :
-	basic::datacache::CacheableData(*this),
+	basic::datacache::CacheableData(other),
 	// Shallow copy of the PoseResidueTypeSets
 	res_type_sets_( other.res_type_sets_ )
 {}

@@ -82,13 +82,10 @@ Rotate_info::chain_id( core::pose::Pose const & pose ) const {
 	return chain_ids[1];
 }
 
-char
+std::string
 Rotate_info::chain_letter( core::pose::Pose const & pose ) const {
 	if ( by_string_ ) {
-		if ( chain_string_.size() != 1 ) {
-			utility_exit_with_message("'Translate' mover: chain designation '"+chain_string_+"' is not one character.");
-		}
-		return chain_string_[1];
+		return chain_string_;
 	}
 
 	return core::pose::get_chain_from_chain_id( chain_number_, pose );

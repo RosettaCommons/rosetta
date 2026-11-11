@@ -57,8 +57,6 @@ private:
 
 private:
 	RotamerLibrarySpecificationFactory();
-	RotamerLibrarySpecificationFactory( RotamerLibrarySpecificationFactory const & ); // unimplemented
-	RotamerLibrarySpecificationFactory const & operator = ( RotamerLibrarySpecificationFactory const & ); // unimplemented
 
 private:
 	typedef std::map< std::string, RotamerLibrarySpecificationCreatorOP > CreatorMap;

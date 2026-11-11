@@ -53,9 +53,6 @@ namespace tag {
 class Tag : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< Tag >
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
-	~Tag() override;
-
 	typedef std::map<std::string, std::string > options_t;
 	typedef utility::vector0< TagCOP > tags_t;
 

@@ -95,9 +95,6 @@ Vesicle::Vesicle(
 	radius_( radius )
 {}
 
-/// @brief Destructor
-Vesicle::~Vesicle() {}
-
 MembraneGeometryOP Vesicle::clone() const {
 	return VesicleOP( new Vesicle( *this ) );
 }

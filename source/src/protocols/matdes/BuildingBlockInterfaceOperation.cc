@@ -66,19 +66,19 @@ get_matching_subunits( core::pose::Pose const &pose, core::pose::Pose const &sub
 	runtime_assert( core::pose::symmetry::is_symmetric( pose ) );
 
 	// split reference pose into chains
-	std::map< char, utility::vector1< numeric::xyzVector<core::Real> > > cas_by_chain;
+	std::map< std::string, utility::vector1< numeric::xyzVector<core::Real> > > cas_by_chain;
 	core::Size nres = subpose.total_residue();
 	for ( core::Size i=1; i<=nres; ++i ) {
 		if ( subpose.residue(i).is_protein() ) {
-			char chn = subpose.pdb_info()->chain(i);
+			std::string chn = subpose.pdb_info()->chain(i);
 			numeric::xyzVector< core::Real > x_i = subpose.residue(i).atom(" CA ").xyz();
 			cas_by_chain[chn].push_back( x_i );
 		}
 	}
 
 	// "main" chain (in _ref_ pose) is 'A' (if it exists) or the first chain
-	char refchain = 'A';
-	if ( cas_by_chain.count('A')==0 ) {
+	std::string refchain = "A";
+	if ( cas_by_chain.count("A")==0 ) {
 		refchain = subpose.pdb_info()->chain(1);
 	}
 
@@ -260,14 +260,14 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 
 			//If two component, then check for clashes between all residues in primary subunitA and other building blocks, and all resis in primary subB and other building blocks.
 			if ( multicomponent_ ) {
-				Sizes const & isubs( get_component_of_residue(pose,ir)=='A'?intra_subs1:intra_subs2);
+				Sizes const & isubs( get_component_of_residue(pose,ir)=="A"?intra_subs1:intra_subs2);
 				if ( find(comp_chains.begin(),comp_chains.end(),pose.chain(jr))==comp_chains.end() ) {
-					if ( get_component_of_residue(pose,jr)=='A' ) {
-						select_comp1_chains.append("\"" + std::string(1, pose.pdb_info()->chain( jr )) +
+					if ( get_component_of_residue(pose,jr)=="A" ) {
+						select_comp1_chains.append("\"" + pose.pdb_info()->chain( jr ) +
 							"\"+"); // TODO: Jacob
 						comp_chains.push_back(pose.chain(jr));
-					} else if ( get_component_of_residue(pose,jr)!='A' ) {
-						select_comp2_chains.append("\"" + std::string(1, pose.pdb_info()->chain( jr )) +
+					} else if ( get_component_of_residue(pose,jr)!="A" ) {
+						select_comp2_chains.append("\"" + pose.pdb_info()->chain( jr ) +
 							"\"+"); // TODO: Jacob
 						comp_chains.push_back(pose.chain(jr));
 					}
@@ -308,7 +308,7 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 				if ( !multicomponent_ ) {
 					if ( sym_info->subunit_index(ir) > nsub_bblock_ || sym_info->subunit_index(jr) > nsub_bblock_ ) continue;
 				} else {
-					Sizes const & intra_subs(get_component_of_residue(pose,ir)=='A'?intra_subs1:intra_subs2);
+					Sizes const & intra_subs(get_component_of_residue(pose,ir)=="A"?intra_subs1:intra_subs2);
 					if ( get_component_of_residue(pose,ir)!=get_component_of_residue(pose,jr) ) continue;
 					if ( find(intra_subs.begin(), intra_subs.end(), sym_info->subunit_index(jr)) == intra_subs.end() ) continue;
 				}

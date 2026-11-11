@@ -51,8 +51,6 @@ static basic::Tracer TR_it( "core.scoring.PolymerBondedNeighborIterator" );
 
 ///////////////////////////////////////////////////////
 
-PolymerBondedNeighborIterator::~PolymerBondedNeighborIterator()= default;
-
 PolymerBondedNeighborIterator::PolymerBondedNeighborIterator(
 	Size const base_in,
 	utility::vector1< Size > const & pos_in,
@@ -143,8 +141,6 @@ bool PolymerBondedNeighborIterator::energy_computed() const {
 }
 
 /////////////////////////////////////////////////////
-
-PolymerBondedNeighborConstIterator::~PolymerBondedNeighborConstIterator()= default;
 
 PolymerBondedNeighborConstIterator::PolymerBondedNeighborConstIterator(
 	Size const base_in,

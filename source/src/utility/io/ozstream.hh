@@ -41,6 +41,7 @@
 
 // C++ headers
 #include <fstream>
+#include <memory>
 
 namespace utility {
 namespace io {
@@ -438,15 +439,14 @@ public: // Methods: i/o
 #endif
 		if ( zip_stream_p_ ) {
 			zip_stream_p_->zflush_finalize();
-			delete zip_stream_p_; zip_stream_p_ = nullptr;
+			zip_stream_p_.reset();
 		}
 		of_stream_.close();
 		of_stream_.clear();
 		if ( mpi_stream_p_ ) {
 			mpi_stream_p_->close();
 			mpi_stream_p_->clear();
-			delete mpi_stream_p_;
-			mpi_stream_p_ = nullptr;
+			mpi_stream_p_.reset();
 		}
 		compression_ = NONE;
 		filename_.clear();
@@ -692,8 +692,8 @@ private: // buffer management
 	allocate_assign_char_buffer()
 	{
 		if ( !char_buffer_p_ && !of_stream_.is_open() ) {
-			char_buffer_p_ = new char[ buffer_size_ ];
-			of_stream_.rdbuf()->pubsetbuf( char_buffer_p_, buffer_size_ );
+			char_buffer_p_.reset( new char[ buffer_size_ ] );
+			of_stream_.rdbuf()->pubsetbuf( char_buffer_p_.get(), buffer_size_ );
 
 			return true;
 		}
@@ -710,8 +710,7 @@ private: // buffer management
 	destroy_char_buffer()
 	{
 		if ( char_buffer_p_ && !of_stream_.is_open() ) {
-			delete [] char_buffer_p_;
-			char_buffer_p_ = nullptr;
+			char_buffer_p_.reset();
 
 			return true;
 		}
@@ -750,13 +749,12 @@ private: // Fields
 	std::streamsize buffer_size_;
 
 	/// @brief character buffer pointer (owning)
-	char * char_buffer_p_;
+	std::unique_ptr<char[]> char_buffer_p_;
 
 	/// @brief Zip file stream pointer (owning)
-	zlib_stream::zip_ostream *zip_stream_p_;
+	std::unique_ptr<zlib_stream::zip_ostream> zip_stream_p_;
 
-
-	mpi_stream::mpi_ostream *mpi_stream_p_;
+	std::unique_ptr<mpi_stream::mpi_ostream> mpi_stream_p_;
 
 	static bool bMPI_reroute_stream_;
 	static int mpi_FileBuf_master_rank_;

@@ -17,6 +17,7 @@
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <protocols/docking/util.hh>
@@ -40,7 +41,7 @@ std::string const PATH( "input/" );
 
 void
 setup_docking_ft_with_randomization( core::pose::Pose & prot_glyc_complex,
-	std::string const & interface /*A_X*/ )
+	core::pose::DockingPartners const & interface )
 {
 	std::cout << " FoldTree before setup_foldtree:" << std::endl;
 	std::cout << prot_glyc_complex.fold_tree() << std::endl;
@@ -78,7 +79,7 @@ main( int argc, char *argv[] )
 
 		// Declare Pose variables.
 		core::pose::Pose tripepA_hexaGlcX;
-		std::string const & tripepA_hexaGlcX_intf = "A_X";
+		core::pose::DockingPartners tripepA_hexaGlcX_intf = core::pose::DockingPartners::docking_partners_from_string( "A_X" );
 
 		// Begin testing of setup_foldtree method. /////////////////////////////////
 		std::cout << "Importing tripepA_hexaGlcX.pdb" << std::endl;

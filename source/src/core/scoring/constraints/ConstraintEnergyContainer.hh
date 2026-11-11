@@ -42,7 +42,6 @@ namespace scoring {
 namespace constraints {
 
 class CstResNeighbIterator : public ResidueNeighborIterator {
-	CstResNeighbIterator & operator = (CstResNeighbIterator const & );
 public:
 	typedef utility::graph::Node::EdgeListIter EdgeListIter;
 
@@ -50,7 +49,10 @@ public:
 
 	CstResNeighbIterator( Size focused_node, EdgeListIter edge_iter);
 
-	~CstResNeighbIterator() override;
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	CstResNeighbIterator & operator = (CstResNeighbIterator const & ) = delete;
 
 	ResidueNeighborIterator & operator = ( ResidueNeighborIterator const & ) override;
 	ResidueNeighborIterator const & operator ++ () override;
@@ -82,14 +84,16 @@ private:
 };
 
 class CstResNeighbConstIterator : public ResidueNeighborConstIterator {
-	CstResNeighbConstIterator & operator = (CstResNeighbConstIterator const & );
 public:
 	typedef utility::graph::Node::EdgeListConstIter EdgeListConstIter;
 
 public:
 	CstResNeighbConstIterator( Size focused_node, EdgeListConstIter edge_iter);
 
-	~CstResNeighbConstIterator() override;
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	CstResNeighbConstIterator & operator = (CstResNeighbConstIterator const & ) = delete;
 
 	ResidueNeighborConstIterator & operator = ( ResidueNeighborConstIterator const & ) override;
 	ResidueNeighborConstIterator const & operator ++ () override;

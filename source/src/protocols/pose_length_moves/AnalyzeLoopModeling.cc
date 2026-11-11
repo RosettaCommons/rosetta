@@ -200,9 +200,9 @@ void AnalyzeLoopModeling::apply(core::pose::Pose & pose) {
 			core::pose::PoseOP kicPoseOP = pose.clone();
 			core::pose::PoseOP lookbackPoseOP = pose.clone();
 			core::pose::PoseOP lookbackPlusPoseOP = pose.clone();
-			NearNativeLoopCloserOP loopCloserKicOP(new NearNativeLoopCloser(resAdjustmentStartLow,resAdjustmentStartHigh,resAdjustmentStopLow,resAdjustmentStopHigh,resAdjustmentStartLow_sheet,resAdjustmentStartHigh_sheet,resAdjustmentStopLow_sheet,resAdjustmentStopHigh_sheet,loopLength,loopLength,pose_loops[ii].start()-1,pose_loops[ii].stop()+1,'A','A',rmsThreshold,max_vdw_change,true,ideal,true,"kic",""));
+			NearNativeLoopCloserOP loopCloserKicOP(new NearNativeLoopCloser(resAdjustmentStartLow,resAdjustmentStartHigh,resAdjustmentStopLow,resAdjustmentStopHigh,resAdjustmentStartLow_sheet,resAdjustmentStartHigh_sheet,resAdjustmentStopLow_sheet,resAdjustmentStopHigh_sheet,loopLength,loopLength,pose_loops[ii].start()-1,pose_loops[ii].stop()+1,"A","A",rmsThreshold,max_vdw_change,true,ideal,true,"kic",""));
 			loopCloserKicOP->apply(*kicPoseOP);
-			NearNativeLoopCloserOP lookbackCloserOP(new NearNativeLoopCloser(resAdjustmentStartLow,resAdjustmentStartHigh,resAdjustmentStopLow,resAdjustmentStopHigh,resAdjustmentStartLow_sheet,resAdjustmentStartHigh_sheet,resAdjustmentStopLow_sheet,resAdjustmentStopHigh_sheet,loopLength,loopLength,pose_loops[ii].start()-1,pose_loops[ii].stop()+1,'A','A',rmsThreshold,max_vdw_change,true,ideal,true,"lookback",""));
+			NearNativeLoopCloserOP lookbackCloserOP(new NearNativeLoopCloser(resAdjustmentStartLow,resAdjustmentStartHigh,resAdjustmentStopLow,resAdjustmentStopHigh,resAdjustmentStartLow_sheet,resAdjustmentStartHigh_sheet,resAdjustmentStopLow_sheet,resAdjustmentStopHigh_sheet,loopLength,loopLength,pose_loops[ii].start()-1,pose_loops[ii].stop()+1,"A","A",rmsThreshold,max_vdw_change,true,ideal,true,"lookback",""));
 			lookbackCloserOP->apply(*lookbackPoseOP);
 			Real kicRmsd = get_loop_rmsd(pose,*kicPoseOP,loopStart-2,loopEnd+2);
 			Real lookbackRmsd = get_loop_rmsd(pose,*lookbackPoseOP,loopStart-2,loopEnd+2);
@@ -210,7 +210,7 @@ void AnalyzeLoopModeling::apply(core::pose::Pose & pose) {
 			resAdjustmentStartHigh = 3;
 			resAdjustmentStopLow = -3;
 			resAdjustmentStopHigh = 3;
-			NearNativeLoopCloserOP lookbackCloserPlusOP(new NearNativeLoopCloser(resAdjustmentStartLow,resAdjustmentStartHigh,resAdjustmentStopLow,resAdjustmentStopHigh,resAdjustmentStartLow_sheet,resAdjustmentStartHigh_sheet,resAdjustmentStopLow_sheet,resAdjustmentStopHigh_sheet,loopLength,loopLength,pose_loops[ii].start()-1,pose_loops[ii].stop()+1,'A','A',rmsThreshold,max_vdw_change,true,ideal,true,"lookback",fragment_store_path_));
+			NearNativeLoopCloserOP lookbackCloserPlusOP(new NearNativeLoopCloser(resAdjustmentStartLow,resAdjustmentStartHigh,resAdjustmentStopLow,resAdjustmentStopHigh,resAdjustmentStartLow_sheet,resAdjustmentStartHigh_sheet,resAdjustmentStopLow_sheet,resAdjustmentStopHigh_sheet,loopLength,loopLength,pose_loops[ii].start()-1,pose_loops[ii].stop()+1,"A","A",rmsThreshold,max_vdw_change,true,ideal,true,"lookback",fragment_store_path_));
 			lookbackCloserPlusOP->apply(*lookbackPlusPoseOP);
 			Real kicVallRmsd = generate_lookback_rmsd(*kicPoseOP,pose_loops[ii].start()-1);
 			Real lookbackVallRmsd = generate_lookback_rmsd(*lookbackPoseOP,pose_loops[ii].start()-1);

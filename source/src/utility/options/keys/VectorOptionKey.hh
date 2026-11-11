@@ -106,11 +106,6 @@ public: // Creation
 	clone() const override = 0;
 
 
-	/// @brief Destructor
-	inline
-	~VectorOptionKey() override {}
-
-
 public: // Assignment
 
 

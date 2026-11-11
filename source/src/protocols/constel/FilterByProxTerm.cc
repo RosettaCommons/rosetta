@@ -33,7 +33,7 @@ vector1<ChainTerm> FilterByProxTerm::chains_;
 Size FilterByProxTerm::nchains_;
 Real FilterByProxTerm::max_ct_dist2_;
 Size FilterByProxTerm::nres_;
-std::map<char, bool> FilterByProxTerm::proxnc_;
+std::map<std::string, bool> FilterByProxTerm::proxnc_;
 
 
 /// @brief filter initialization.
@@ -84,9 +84,9 @@ void FilterByProxTerm::init(Pose const &ps, Real max_ct_dist, Real max_tt_dist, 
 bool FilterByProxTerm::is_satisfied(Pose const &ps, vector1<core::Size> const &cnl) {
 
 	// identify set of chains spanned by constellation
-	std::map<char, bool> cspan;
+	std::map<std::string, bool> cspan;
 	for ( core::Size i=1; i<=cnl.size(); ++i ) {
-		char cid = ps.pdb_info()->chain(cnl[i]);
+		std::string cid = ps.pdb_info()->chain(cnl[i]);
 		cspan[cid] = true;
 	}
 
@@ -94,9 +94,9 @@ bool FilterByProxTerm::is_satisfied(Pose const &ps, vector1<core::Size> const &c
 	xyzVector<Real> com(cnl_com(cnl, ps));
 
 	// detect proximity between center of mass and chain termini
-	typedef std::map<char, bool>::const_iterator CI;
+	typedef std::map<std::string, bool>::const_iterator CI;
 	for ( CI i=cspan.begin(); i!=cspan.end(); ++i ) {
-		char cid = i->first;
+		std::string cid = i->first;
 		if ( proxnc_[cid] ) {
 			for ( core::Size j=1; j<=nchains_; ++j ) {
 				ChainTerm const &ctm = chains_[j];

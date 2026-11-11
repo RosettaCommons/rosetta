@@ -40,7 +40,7 @@ namespace simple_moves {
 static basic::Tracer TR( "protocols.mover.MissingDensityToJumpMover" );
 
 // Default constructor
-MissingDensityToJumpMover::MissingDensityToJumpMover(): protocols::moves::Mover( MissingDensityToJumpMover::get_name() )
+MissingDensityToJumpMover::MissingDensityToJumpMover(): protocols::moves::Mover( "MissingDensityToJumpMover" )
 {}
 
 // Copy constructor

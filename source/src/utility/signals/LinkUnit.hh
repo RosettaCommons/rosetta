@@ -43,18 +43,6 @@ private:
 	typedef utility::VirtualBase Super;
 
 
-	/// @brief disallow default constructor
-	LinkUnit();
-
-
-	/// @brief disallow copy constructor
-	LinkUnit( LinkUnit const & rval );
-
-
-	/// @brief disallow copy assignment
-	LinkUnit & operator =( LinkUnit const & rval );
-
-
 public:
 
 
@@ -72,6 +60,10 @@ public:
 	/// @brief default destructor
 	inline
 	~LinkUnit() override = default;
+
+	LinkUnit() = delete;
+	LinkUnit( LinkUnit const & ) = delete;
+	LinkUnit & operator =( LinkUnit const & ) = delete;
 
 
 	/// @brief return a reference to the function object with requested cast

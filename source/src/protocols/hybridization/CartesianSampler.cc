@@ -601,8 +601,8 @@ CartesianSampler::apply_constraints(
 			if ( dist <= MAXDIST ) {
 				core::Size resid_j = ref_model_.pdb_info()->number(j);
 				core::Size resid_k = ref_model_.pdb_info()->number(k);
-				char chnid_j = ref_model_.pdb_info()->chain(j);
-				char chnid_k = ref_model_.pdb_info()->chain(k);
+				std::string chnid_j = ref_model_.pdb_info()->chain(j);
+				std::string chnid_k = ref_model_.pdb_info()->chain(k);
 
 				core::Size tgt_resid_j = pose.pdb_info()->pdb2pose(chnid_j, resid_j);
 				core::Size tgt_resid_k = pose.pdb_info()->pdb2pose(chnid_k, resid_k);

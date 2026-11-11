@@ -360,10 +360,10 @@ private:
 	bool partial_state_assignment_;
 	bool preped_for_sim_annealing_;
 
-	//no default constructor, uncopyable
-	LinearMemEdge();
-	LinearMemEdge( LinearMemEdge const & );
-	LinearMemEdge & operator = ( LinearMemEdge const & );
+public:
+	LinearMemEdge() = delete;
+	LinearMemEdge( LinearMemEdge const & ) = delete;
+	LinearMemEdge & operator = ( LinearMemEdge const & ) = delete;
 
 };
 
@@ -435,10 +435,10 @@ private:
 
 	static const int COMMIT_LIMIT_BETWEEN_UPDATES = 1024; // 2^10
 
-	//no default constructor, uncopyable
-	LinearMemoryInteractionGraph();
-	LinearMemoryInteractionGraph( LinearMemoryInteractionGraph const & );
-	LinearMemoryInteractionGraph & operator = ( LinearMemoryInteractionGraph const & );
+public:
+	LinearMemoryInteractionGraph() = delete;
+	LinearMemoryInteractionGraph( LinearMemoryInteractionGraph const & ) = delete;
+	LinearMemoryInteractionGraph & operator = ( LinearMemoryInteractionGraph const & ) = delete;
 };
 
 

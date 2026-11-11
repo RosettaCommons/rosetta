@@ -62,9 +62,6 @@ public:
 		core::Real temperature
 	);
 
-
-	~ImplicitLipidInfo() override;
-
 	ImplicitLipidInfoOP
 	clone() const;
 

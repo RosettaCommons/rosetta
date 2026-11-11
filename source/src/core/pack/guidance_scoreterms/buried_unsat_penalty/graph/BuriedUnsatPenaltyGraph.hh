@@ -36,6 +36,7 @@ class BuriedUnsatPenaltyGraphTests;
 class BuriedUnsatPenaltyGraphSymmetricTests;
 
 #include <map>
+#include <memory>
 
 namespace core {
 namespace pack {
@@ -732,7 +733,7 @@ private: //Data members:
 	/// from the base edge class, the Graph base clas fails to manage the edges correctly on
 	/// destruction, and this creates a memory leak.  The workaround is to manage edges yourself
 	/// in the derived Graph class, which is silly.
-	boost::unordered_object_pool< BuriedUnsatPenaltyEdge > * bunsat_edge_pool_;
+	std::unique_ptr< boost::unordered_object_pool< BuriedUnsatPenaltyEdge > > bunsat_edge_pool_;
 
 }; //BuriedUnsatPenaltyGraph class
 

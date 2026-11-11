@@ -23,6 +23,8 @@
 #include <protocols/antibody/AntibodyEnum.hh> // AUTO IWYU For CDRNameEnum
 #include <utility/VirtualBase.hh> // AUTO IWYU For VirtualBase
 
+#include <string>
+
 #ifdef    SERIALIZATION
 // Cereal headers
 #include <cereal/access.fwd.hpp>
@@ -77,7 +79,7 @@ public:
 	pdb_end() const { return pdb_end_; }
 
 	/// @brief return PDB chain
-	char
+	std::string
 	chain() const {return chain_;}
 
 
@@ -116,7 +118,7 @@ private:
 	core::Size start_;
 	core::Size end_;
 
-	char chain_;
+	std::string chain_;
 
 	bool cis_trans_match_;
 

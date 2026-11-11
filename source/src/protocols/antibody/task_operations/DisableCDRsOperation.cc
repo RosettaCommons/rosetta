@@ -184,7 +184,7 @@ DisableCDRsOperation::apply(const core::pose::Pose& pose, core::pack::task::Pack
 
 
 		if ( ! cdrs_[ i ] ) continue;
-		if ( local_ab_info->is_camelid() && local_ab_info->get_CDR_chain( cdr ) == 'L' ) continue;
+		if ( local_ab_info->is_camelid() && local_ab_info->get_CDR_chain( cdr ) == "L" ) continue;
 
 
 

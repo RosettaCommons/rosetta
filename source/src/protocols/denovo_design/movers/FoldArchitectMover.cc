@@ -717,8 +717,7 @@ void
 FoldArchitectMover::apply_movers( MoverOPs const & movers, core::pose::Pose & pose ) const
 {
 	//pose.dump_pdb( "prefold_0.pdb" );
-	core::Size count = 1;
-	for ( auto m=movers.begin(); m!=movers.end(); ++m, ++count ) {
+	for ( auto m=movers.begin(); m!=movers.end(); ++m ) {
 		TR.Debug << "Running mover " << (*m)->get_name() << std::endl;
 		(*m)->apply( pose );
 		//pose.dump_pdb( "prefold_" + (*m)->get_name() + boost::lexical_cast< std::string >( count ) + ".pdb" );

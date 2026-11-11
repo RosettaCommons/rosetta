@@ -80,9 +80,6 @@ public: // Constructors & Setup
 		AqueousPoreParametersOP aqueous_pore
 	);
 
-	/// @brief Destructor
-	~MembraneGeometry() override;
-
 	virtual MembraneGeometryOP
 	clone() const = 0;
 

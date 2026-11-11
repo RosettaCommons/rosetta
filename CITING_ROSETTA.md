@@ -1,7 +1,7 @@
-Citing Rosetta
-===============
+Citing Rosetta and PyRosetta
+============================
 
-Rosetta is the result of years of academic research, across dozens of labs.
+Rosetta (and PyRosetta) is the result of years of academic research, across dozens of labs.
 If you use Rosetta in your research, we ask that you follow academic good citizenship and cite it appropriately.
 
 The Rosetta package as a whole is a combination of multiple different sub-protocols, each described in their own papers.
@@ -34,3 +34,5 @@ Fleishman SJ, Leaver-Fay A, Corn JE, Strauch EM, Khare SD, Koga N, Ashworth J, M
 Alford RF, Leaver-Fay A, Jeliazkov JR, O'Meara MJ, DiMaio FP, Park H, Shapovalov MV, Renfrew PD, Mulligan VK, Kappel K, Labonte JW, Pacella MS, Bonneau R, Bradley P, Dunbrack RL Jr, Das R, Baker D, Kuhlman B, Kortemme T, Gray JJ. The Rosetta All-Atom Energy Function for Macromolecular Modeling and Design. J Chem Theory Comput. 2017 Jun 13;13(6):3031-3048. doi: 10.1021/acs.jctc.7b00125. Epub 2017 May 12. Erratum in: J Chem Theory Comput. 2022 Jul 12;18(7):4594.
 
 Leman JK, et. al. Macromolecular modeling and design in Rosetta: recent methods and frameworks. Nat Methods. 2020 Jul;17(7):665-680. doi: 10.1038/s41592-020-0848-2 
+
+Chaudhury S, Lyskov S, Gray JJ. PyRosetta: a script-based interface for implementing molecular modeling algorithms using Rosetta Bioinformatics. 2010 Mar 1;26(5):689-91. doi: 10.1093/bioinformatics/btq007

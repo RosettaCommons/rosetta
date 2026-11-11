@@ -90,13 +90,13 @@ void load_set(std::string setf, utility::vector1<Size>& rset,
 		exit(0);
 	}
 
-	char cid;
+	std::string cid;
 	int idx;
 	char ico;
 	while ( setfs >> cid >> idx >> ico ) {
 
-		if ( cid == '_' ) {
-			cid = ' ';
+		if ( cid == "_" ) {
+			cid = " ";
 		}
 
 		if ( ico == '_' ) {
@@ -125,9 +125,9 @@ void print_pdb_info(Size ridx, core::pose::Pose const& ps) {
 		ico = '_';
 	}
 
-	char cid = ps.pdb_info()->chain(ridx);
-	if ( cid == ' ' ) {
-		cid = '_';
+	std::string cid = ps.pdb_info()->chain(ridx);
+	if ( cid == " " ) {
+		cid = "_";
 	}
 
 	std::cout <<

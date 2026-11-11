@@ -44,10 +44,7 @@ namespace scoring {
 
 class DenseNeighborIterator : public ResidueNeighborIterator
 {
-	DenseNeighborIterator & operator = (DenseNeighborIterator const & src );
 public:
-	~DenseNeighborIterator() override;
-
 	DenseNeighborIterator(
 		Size const pos1_in,
 		Size const pos2_in,
@@ -55,6 +52,11 @@ public:
 		ObjexxFCL::FArray2D< Real > * table_in,
 		ObjexxFCL::FArray2D< bool > * computed_in
 	);
+
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	DenseNeighborIterator & operator = (DenseNeighborIterator const & ) = delete;
 
 	ResidueNeighborIterator & operator = ( ResidueNeighborIterator const & src ) override;
 
@@ -98,10 +100,7 @@ private:
 
 class DenseNeighborConstIterator : public ResidueNeighborConstIterator
 {
-	DenseNeighborConstIterator & operator = (DenseNeighborConstIterator const & src );
 public:
-	~DenseNeighborConstIterator() override;
-
 	DenseNeighborConstIterator(
 		Size const pos1_in,
 		Size const pos2_in,
@@ -109,6 +108,11 @@ public:
 		ObjexxFCL::FArray2D< Real > const * table_in,
 		ObjexxFCL::FArray2D< bool > const * computed_in
 	);
+
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	DenseNeighborConstIterator & operator = (DenseNeighborConstIterator const & ) = delete;
 
 	ResidueNeighborConstIterator & operator = ( ResidueNeighborConstIterator const & src ) override;
 

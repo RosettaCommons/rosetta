@@ -1419,7 +1419,7 @@ ConsensusFragmentMover::run() {
 	core::Size lastres = 0;
 
 	utility::vector1< int > pdb_numbering;
-	utility::vector1< char > pdb_chains;
+	utility::vector1< std::string > pdb_chains;
 	for ( res_iter = rescounts.begin(); res_iter != rescounts.end(); res_iter++ ) {
 		core::Size resid = res_iter->first;
 
@@ -1491,7 +1491,7 @@ ConsensusFragmentMover::run() {
 		}
 		lastres = resid;
 		pdb_numbering.push_back(resid);
-		pdb_chains.push_back('A');
+		pdb_chains.push_back("A");
 	}
 
 	if ( averaged_pose.size() == 0 ) {

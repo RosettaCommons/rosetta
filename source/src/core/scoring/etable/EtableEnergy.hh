@@ -50,7 +50,6 @@ class EtableEvaluator : public utility::VirtualBase {
 
 public:
 	EtableEvaluator( Etable const & etable );
-	~EtableEvaluator() override;
 
 	virtual EtableEvaluatorOP clone() const = 0;
 
@@ -216,7 +215,6 @@ class AnalyticEtableEvaluator : public EtableEvaluator
 {
 public:
 	AnalyticEtableEvaluator( Etable const & etable );
-	~AnalyticEtableEvaluator() override;
 
 	EtableEvaluatorOP clone() const override;
 
@@ -507,7 +505,6 @@ class TableLookupEvaluator : public EtableEvaluator
 {
 public:
 	TableLookupEvaluator( Etable const & etable_in );
-	~TableLookupEvaluator() override;
 
 	EtableEvaluatorOP clone() const override;
 

@@ -140,7 +140,7 @@ main( int argc, char* argv[] )
 		//we are assuming the last two residues of the match are the second partner's single ligand residue and the metal
 		for ( core::Size i = 1; i <= matchlength-2; ++i ) {
 			int pdbnum = match.pdb_info()->number(i);
-			char chain = partner1.pdb_info()->chain(1);
+			std::string chain = partner1.pdb_info()->chain(1);
 
 			core::Size partner1_resid(partner1.pdb_info()->pdb2pose(chain, pdbnum));
 			//  TR << "pdbnum and chain and partner1_resid" << pdbnum << chain << partner1_resid << std::endl;

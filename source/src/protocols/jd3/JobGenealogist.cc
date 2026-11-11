@@ -437,7 +437,7 @@ JobGenealogist::newick_tree() const {
 	utility::vector1< std::list< JGResultNodeCAP > > parentless_results_for_input_source;
 	parentless_results_for_input_source.resize( num_input_sources_ );
 
-	for ( unsigned int i = 1; i < job_nodes_for_dag_node_.size(); ++i ) {
+	for ( unsigned int i = 1; i <= job_nodes_for_dag_node_.size(); ++i ) {
 		for ( auto const & job_node_cop : job_nodes_for_dag_node_[ i ] ) {
 			debug_assert( job_node_cop != nullptr );
 			if ( job_node_cop->parents().empty() ) {

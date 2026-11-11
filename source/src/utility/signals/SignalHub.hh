@@ -95,16 +95,8 @@ public: // construct/destruct
 		invalidate_all( links_ );
 	}
 
-
-private: // disallow copy construction and assignment
-
-
-	/// @brief disallow copy constructor
-	SignalHub( SignalHub const & rval );
-
-
-	/// @brief disallow copy assignment
-	SignalHub & operator =( SignalHub const & rval );
+	SignalHub( SignalHub const & ) = delete;
+	SignalHub & operator =( SignalHub const & ) = delete;
 
 
 public: // operators

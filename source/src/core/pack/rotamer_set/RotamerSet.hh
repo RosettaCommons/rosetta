@@ -255,8 +255,7 @@ public:
 	update_rotamer_offsets() const = 0;
 
 private:
-	// deny use of the copy constructor (no pass-by-value)
-	RotamerSet( RotamerSet const & );
+	RotamerSet( RotamerSet const & ) = delete;
 
 	Size resid_; //which residue is this?
 

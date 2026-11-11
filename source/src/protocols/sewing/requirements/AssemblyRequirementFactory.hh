@@ -54,14 +54,6 @@ private:
 	// Private constructor to make it singleton managed
 	AssemblyRequirementFactory();
 
-	AssemblyRequirementFactory const &
-	operator=( AssemblyRequirementFactory const & ); // unimplemented
-	//This should be covered by the singleton base
-	/*
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static AssemblyRequirementFactory * create_singleton_instance();
-	*/
 public:
 	// Warning this is not called because of the singleton pattern
 	virtual ~AssemblyRequirementFactory();

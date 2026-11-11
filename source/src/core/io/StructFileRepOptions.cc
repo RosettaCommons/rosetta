@@ -67,8 +67,8 @@ StructFileRepOptions::clone() const {
 
 void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 {
-	set_check_if_residues_are_Ntermini( tag->getOption< std::string >( "Ntermini", "ALL" ) );
-	set_check_if_residues_are_Ctermini( tag->getOption< std::string >( "Ctermini", "ALL" ) );
+	set_check_if_residues_are_Ntermini( split_chain_string( tag->getOption< std::string >( "Ntermini", "ALL" ) ) );
+	set_check_if_residues_are_Ctermini( split_chain_string( tag->getOption< std::string >( "Ctermini", "ALL" ) ) );
 	set_skip_connect_info( tag->getOption< bool >( "skip_connect_info", false ) );
 	set_connect_info_cutoff( tag->getOption< Real >( "connect_info_cutoff", 0.0 ) );
 	set_do_not_autoassign_SS( tag->getOption< bool >( "do_not_autoassign_SS", false ) ); //NOTE to later person writing provide_xml_schema: this option does nothing if output_secondary_structure is not set true
@@ -116,7 +116,7 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_write_all_connect_info( tag->getOption< bool >("write_all_connect_info", false) );
 	set_write_seqres_records( tag->getOption< bool >("write_seqres_records", false) );
 	set_chains_whose_residues_are_separate_chemical_entities(
-		tag->getOption< std::string >( "treat_residues_in_these_chains_as_separate_chemical_entities", " " ) );
+		split_chain_string( tag->getOption< std::string >( "treat_residues_in_these_chains_as_separate_chemical_entities", " " ) ) );
 
 	set_residues_for_atom_name_remapping(
 		utility::string_split( tag->getOption< std::string >( "remap_pdb_atom_names_for", "" ), ',') );
@@ -133,8 +133,8 @@ std::string StructFileRepOptions::type() const { return "file_data_options"; }
 
 // accessors
 //std::string StructFileRepOptions::check_if_residues_are_termini() const { return check_if_residues_are_termini_; }
-std::string const & StructFileRepOptions::check_if_residues_are_Ntermini() const { return check_if_residues_are_Ntermini_; }
-std::string const & StructFileRepOptions::check_if_residues_are_Ctermini() const { return check_if_residues_are_Ctermini_; }
+utility::vector1< std::string > const & StructFileRepOptions::check_if_residues_are_Ntermini() const { return check_if_residues_are_Ntermini_; }
+utility::vector1< std::string > const & StructFileRepOptions::check_if_residues_are_Ctermini() const { return check_if_residues_are_Ctermini_; }
 bool StructFileRepOptions::skip_connect_info() const { return skip_connect_info_; }
 core::Real StructFileRepOptions::connect_info_cutoff() const { return connect_info_cutoff_; }
 bool StructFileRepOptions::do_not_autoassign_SS() const { return do_not_autoassign_SS_;}
@@ -180,7 +180,7 @@ bool StructFileRepOptions::write_pdb_link_records() const { return write_pdb_lin
 bool StructFileRepOptions::write_pdb_parametric_info() const { return write_pdb_parametric_info_; }
 bool StructFileRepOptions::write_all_connect_info() const { return write_all_connect_info_; }
 bool StructFileRepOptions::write_seqres_records() const { return write_seqres_records_; }
-std::string const & StructFileRepOptions::chains_whose_residues_are_separate_chemical_entities() const { return chains_whose_residues_are_separate_chemical_entities_; }
+utility::vector1< std::string > const & StructFileRepOptions::chains_whose_residues_are_separate_chemical_entities() const { return chains_whose_residues_are_separate_chemical_entities_; }
 utility::vector1<std::string> const & StructFileRepOptions::residues_for_atom_name_remapping() const { return residues_for_atom_name_remapping_; }
 bool StructFileRepOptions::pdb_comments() const { return pdb_comments_; }
 bool StructFileRepOptions::show_all_fixes() const { return show_all_fixes_; }
@@ -193,10 +193,10 @@ bool StructFileRepOptions::mmtf_extra_data_io() const { return mmtf_extra_data_i
 
 // mutators
 
-void StructFileRepOptions::set_check_if_residues_are_Ntermini( std::string const & check_if_residues_are_Ntermini )
+void StructFileRepOptions::set_check_if_residues_are_Ntermini( utility::vector1< std::string > const & check_if_residues_are_Ntermini )
 { check_if_residues_are_Ntermini_ = check_if_residues_are_Ntermini; }
 
-void StructFileRepOptions::set_check_if_residues_are_Ctermini( std::string const & check_if_residues_are_Ctermini )
+void StructFileRepOptions::set_check_if_residues_are_Ctermini( utility::vector1< std::string > const & check_if_residues_are_Ctermini )
 { check_if_residues_are_Ctermini_ = check_if_residues_are_Ctermini; }
 
 void StructFileRepOptions::set_skip_connect_info( bool const skip_connect_info )
@@ -347,7 +347,7 @@ void StructFileRepOptions::set_write_seqres_records(bool const setting )
 void StructFileRepOptions::set_mmtf_extra_data_io(bool const setting )
 { mmtf_extra_data_io_ = setting; }
 
-void StructFileRepOptions::set_chains_whose_residues_are_separate_chemical_entities( std::string const & chains_whose_residues_are_separate_chemical_entities )
+void StructFileRepOptions::set_chains_whose_residues_are_separate_chemical_entities( utility::vector1< std::string > const & chains_whose_residues_are_separate_chemical_entities )
 { chains_whose_residues_are_separate_chemical_entities_ = chains_whose_residues_are_separate_chemical_entities; }
 
 
@@ -521,8 +521,8 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	set_check_if_residues_are_Ntermini( options[ in::Ntermini ].value());
-	set_check_if_residues_are_Ctermini( options[ in::Ctermini ].value());
+	set_check_if_residues_are_Ntermini( split_chain_string( options[ in::Ntermini ].value()));
+	set_check_if_residues_are_Ctermini( split_chain_string( options[ in::Ctermini ].value()));
 	set_skip_connect_info( options[ inout::skip_connect_info ].value());
 	set_connect_info_cutoff( options[ inout::connect_info_cutoff ].value());
 	set_do_not_autoassign_SS( options [ OptionKeys::out::file::do_not_autoassign_SS ].value());
@@ -570,7 +570,7 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_write_pdb_title_section_records( options[ out::file::write_pdb_title_section_records ]() );
 	set_write_pdb_link_records( options[ out::file::write_pdb_link_records ]() );
 	set_write_seqres_records( options[out::file::write_seqres_records ]() );
-	set_chains_whose_residues_are_separate_chemical_entities( options[ in::file::treat_residues_in_these_chains_as_separate_chemical_entities].user_or(""));
+	set_chains_whose_residues_are_separate_chemical_entities( split_chain_string(options[ in::file::treat_residues_in_these_chains_as_separate_chemical_entities].user_or("")));
 	if ( options[ in::file::remap_pdb_atom_names_for ].active() ) {
 		set_residues_for_atom_name_remapping( options[ in::file::remap_pdb_atom_names_for ] );
 	}
@@ -757,6 +757,19 @@ StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
 	return false;
 }
 
+utility::vector1< std::string >
+StructFileRepOptions::split_chain_string(std::string const & input) {
+	utility::vector1< std::string > chains;
+	// Special casing -- ALL is an empty vector
+	if ( input == "ALL" ) {
+		chains.push_back("ALL");
+		return chains;
+	}
+	for ( char c: input ) {
+		chains.push_back( std::string{c} );
+	}
+	return chains;
+}
 
 } // namespace io
 } // namespace core

@@ -19,6 +19,8 @@
 #include <utility/VirtualBase.hh>
 
 // C++ headers
+#include <memory>
+#include <sstream>
 #include <vector>
 #if WIN32
 #include <string>
@@ -77,13 +79,13 @@ private:
 
 	bool is_black_listed_file( const std::string &filename );
 
-	bool find_sstream( std::vector < std::pair < std::string, std::stringstream* > > &file_catalog, const std::string& filename, std::stringstream **the_stream );
+	bool find_sstream( std::vector < std::pair < std::string, std::unique_ptr<std::stringstream> > > &file_catalog, const std::string& filename, std::stringstream **the_stream );
 
 	std::string standardise_filename( std::string filename );
 
-	std::vector < std::pair < std::string, std::stringstream* > > input_files;
+	std::vector < std::pair < std::string, std::unique_ptr<std::stringstream> > > input_files;
 
-	std::vector < std::pair < std::string, std::stringstream* > > output_files;
+	std::vector < std::pair < std::string, std::unique_ptr<std::stringstream> > > output_files;
 
 	std::vector<Inline_File_Provider_HookOP> file_provider_hooks_;
 

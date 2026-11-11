@@ -24,9 +24,7 @@ namespace graph {
 
 class LKHBondInfo {
 public:
-	LKHBondInfo( LKHBondInfo const & ){}
-
-	virtual ~LKHBondInfo(){}
+	virtual ~LKHBondInfo() = default;
 
 public:
 
@@ -74,7 +72,7 @@ public:
 	{}
 
 
-	virtual ~HBondInfo(){}
+	virtual ~HBondInfo() = default;
 
 public:
 	bool first_node_is_donor() const {

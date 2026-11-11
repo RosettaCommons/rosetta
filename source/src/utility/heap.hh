@@ -42,8 +42,6 @@ public:
 	/// @brief Create a heap with this number of items.
 	heap( int max_items );
 
-	~heap() override ; // auto-removing definition from header{}
-
 	/// @brief Inserts a value into the heap that is sorted by coval. The err status
 	/// will be set to true if the heap is already at capacity; this function w
 	/// not increase the size of the heap.

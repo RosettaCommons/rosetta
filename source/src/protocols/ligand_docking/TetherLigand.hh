@@ -35,7 +35,7 @@ class TetherLigand : public protocols::moves::Mover
 {
 public:
 	TetherLigand();
-	TetherLigand(const char & chain, const core::Real & angstroms);
+	TetherLigand(std::string const & chain, const core::Real & angstroms);
 	~TetherLigand() override;
 	TetherLigand(TetherLigand const & that);
 
@@ -49,7 +49,7 @@ public:
 	get_ligand_tether() const;
 
 private:
-	char chain_;
+	std::string chain_;
 	core::Real angstroms_; //size of one stdev for ligand restraint
 	core::scoring::constraints::ConstraintCOP ligand_tether_;
 };

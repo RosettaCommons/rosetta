@@ -51,8 +51,6 @@ public:
 		it_ = s_iter;
 	}
 
-	~DereferenceIterator() {}
-
 	bool operator==( const DereferenceIterator& other ) const {
 		return ( it_ == other.it_ );
 	}

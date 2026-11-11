@@ -49,7 +49,7 @@ struct Rotate_info{ // including default values
 	Rotate_info() = default;
 
 	core::Size chain_id( core::pose::Pose const & pose ) const;
-	char chain_letter( core::pose::Pose const & pose ) const;
+	std::string chain_letter( core::pose::Pose const & pose ) const;
 	core::Size jump_id( core::pose::Pose const & pose ) const;
 
 	void set_chain_id( core::Size id );

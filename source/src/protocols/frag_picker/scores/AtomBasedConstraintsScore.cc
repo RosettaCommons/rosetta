@@ -46,7 +46,7 @@ AtomBasedConstraintsScore::AtomBasedConstraintsScore(core::Size priority,
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, score_name) {
 
 	query_size_ = query_size;
-	for ( core::Size i = 1; i < constrainable_atoms.size(); ++i ) {
+	for ( core::Size i = 1; i <= constrainable_atoms.size(); ++i ) {
 		constrainable_atoms_.insert(std::pair<std::string, core::Size>(
 			constrainable_atoms[i], i));
 	}
@@ -97,7 +97,7 @@ void AtomBasedConstraintsScore::do_caching(VallChunkOP chunk) {
 		utility::vector1<bool> flag_row(constrainable_atoms_.size());
 		utility::vector1<numeric::xyzVector<core::Real> > row(
 			constrainable_atoms_.size());
-		for ( core::Size j = 1; j < constrainable_atoms_.size(); ++j ) {
+		for ( core::Size j = 1; j <= constrainable_atoms_.size(); ++j ) {
 			flag_row[j] = false;
 			row[j] = empty_one;
 		}

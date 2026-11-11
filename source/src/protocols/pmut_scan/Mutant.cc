@@ -36,7 +36,7 @@ namespace pmut_scan {
 /// @brief
 /// Constructor for MutationData objects. A mutation holds the wt and mutant amino acid type, pdb resnum, pose resnum, chain and icode.
 ///
-MutationData::MutationData( char wt_residue, char mut_residue, core::Size pose_resnum, core::Size pdb_resnum, char icode, char chain ) :
+MutationData::MutationData( char wt_residue, char mut_residue, core::Size pose_resnum, core::Size pdb_resnum, char icode, std::string const & chain ) :
 	wt_residue_( wt_residue ),
 	mut_residue_( mut_residue ),
 	pose_resnum_( pose_resnum ),
