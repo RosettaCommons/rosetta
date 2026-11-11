@@ -17,6 +17,7 @@
 #define INCLUDED_protocols_interface_UTIL_HH
 
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/DockingPartners.fwd.hh>
 #include <core/types.hh>
 
 #include <string>
@@ -29,7 +30,7 @@ namespace interface {
 /// @brief Get a set of interface residues using the dock_chains interface string: Ex: LH_A.
 /// @details Uses Steven's InterGroupNeighborsCalculator.  Does not require pose to have specific foldtree.
 utility::vector1<bool>
-select_interface_residues(core::pose::Pose const & pose, std::string interface, core::Size interface_distance);
+select_interface_residues(core::pose::Pose const & pose, core::pose::DockingPartners const & interface, core::Size interface_distance);
 
 //Add other general methods for selecting interface residues here using different metrics, etc.
 

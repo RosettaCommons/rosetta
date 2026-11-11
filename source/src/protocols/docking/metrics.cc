@@ -521,7 +521,7 @@ calc_Fnonnat( const core::pose::Pose & pose, const core::pose::Pose & native_pos
 
 		//generate list of interface residues for partner 1 and partner 2
 		core::Size cutpoint = 0;
-		for ( core::Size i = 1; i < pose.size(); i++ ) {
+		for ( core::Size i = 1; i <= pose.size(); i++ ) {
 			if ( !temp_part( i ) ) {
 				cutpoint = i;
 				break;
@@ -596,7 +596,7 @@ calc_Fnonnat( const core::pose::Pose & pose, std::string const& list_file, DockJ
 		ObjexxFCL::FArray1D_bool temp_part ( pose.size(), false );
 		pose.fold_tree().partition_by_jump( rb_jump, temp_part );
 		core::Size cutpoint = 0;
-		for ( core::Size i = 1; i < pose.size(); i++ ) {
+		for ( core::Size i = 1; i <= pose.size(); i++ ) {
 			if ( !temp_part( i ) ) {
 				cutpoint = i;
 				break;

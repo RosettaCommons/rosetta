@@ -50,14 +50,9 @@ struct UtilityExitException : excn::Exception //noboday should be allowed to thr
 	{}
 };
 
-
-
-/// Place holder for 'end-action' of utility::exit(…)
-static void (*main_exit_callback)(void) = nullptr;
-
-void set_main_exit_callback( UtilityExitCallBack my_callback )
+void set_main_exit_callback( UtilityExitCallBack )
 {
-	main_exit_callback = my_callback;
+	// No-Op. (Setting is not used for anything)
 }
 
 /// Array to hold all additional exit-callbacks

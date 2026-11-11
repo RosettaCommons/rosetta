@@ -24,6 +24,7 @@
 
 // C++ Headers
 #include <boost/lexical_cast.hpp>
+#include <tuple>
 
 // ObjexxFCL Headers
 
@@ -94,14 +95,12 @@ void LocalPosition::position( core::Size position ){
 
 
 bool LocalPosition::operator< ( LocalPosition const& other ) const {
-	Size cmp = label_.compare( other.label_ );
-	if ( cmp == 0 ) {
-		return position_ < other.position_;
-	} else if ( cmp > 0 ) {
-		return true;
-	} else {
-		return false;
-	}
+	// Previously assigned the (signed) result of std::string::compare to the unsigned
+	// type Size, so any "label < other.label" case wrapped to a huge value and the
+	// branch returned true. On top of that, the cmp > 0 branch was also inverted.
+	// Combined effect: for any two distinct labels both a < b and b < a returned
+	// true, breaking the strict weak ordering required by std::map<LocalPosition,...>.
+	return std::tie( label_, position_ ) < std::tie( other.label_, other.position_ );
 }
 
 bool LocalPosition::operator==( LocalPosition const& other ) const {

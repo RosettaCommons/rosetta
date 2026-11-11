@@ -630,7 +630,6 @@ GALigandDock::apply( pose::Pose & pose )
 
 		//go back and calculate a probability for each ligand
 		if ( has_density_map_ ) {
-			core::Size i = 0;
 			OutputStructureStore temporary_outputs;
 			utility::vector1< core::Real > zscores;
 			utility::vector1< core::Real > lig_denses;
@@ -656,8 +655,6 @@ GALigandDock::apply( pose::Pose & pose )
 				zscores.push_back( zscore );
 
 				temporary_outputs.push( pose, score, rms, complexscore, ligscore, recscore, 0, ligandname );
-
-				i++;
 			}
 
 			//Clearing outputs
@@ -683,7 +680,6 @@ GALigandDock::apply( pose::Pose & pose )
 			}
 
 			//Adding back temp outputs
-			i = 1;
 			while ( temporary_outputs.has_data() ) {
 				pose = *temporary_outputs.pop();
 
@@ -700,7 +696,6 @@ GALigandDock::apply( pose::Pose & pose )
 				//core::pose::setPoseExtraScore( pose, "probability", id_probabilities[i] );
 
 				remaining_outputs_.push( pose, score, rms, complexscore, ligscore, recscore, 0, ligandname );
-				++i;
 			}
 			//pose = *temporary_outputs.pop();
 		}
@@ -751,7 +746,7 @@ GALigandDock::apply( pose::Pose & pose )
 					if ( TR.Debug.visible() ) TR.Debug << "Fixing pdb info." << std::endl;
 					core::Size newid(1);
 					for ( core::Size ligid : lig_resids ) {
-						pose.pdb_info()->chain( ligid, 'B' );
+						pose.pdb_info()->chain( ligid, "B" );
 						pose.pdb_info()->number( ligid, newid );
 						newid++;
 					}
@@ -803,7 +798,7 @@ GALigandDock::apply( pose::Pose & pose )
 						if ( TR.Debug.visible() ) TR.Debug << "Fixing pdb info." << std::endl;
 						core::Size newid(1);
 						for ( core::Size ligid : lig_resids ) {
-							pose.pdb_info()->chain( ligid, 'B' );
+							pose.pdb_info()->chain( ligid, "B" );
 							pose.pdb_info()->number( ligid, newid );
 							newid++;
 						}
@@ -1675,7 +1670,7 @@ GALigandDock::calculate_free_ligand_score(
 
 	//core::pose::Pose pose_premin( *pose );
 	core::id::AtomID anchorid( 1, pose->fold_tree().root() );
-	for ( core::Size ires = 1; ires < pose->total_residue(); ++ires ) {
+	for ( core::Size ires = 1; ires <= pose->total_residue(); ++ires ) {
 		for ( core::Size iatm = 1; iatm <= pose->residue(ires).natoms(); ++iatm ) {
 			core::id::AtomID atomid( iatm, ires );
 			core::Vector const &xyz = pose->xyz( atomid );

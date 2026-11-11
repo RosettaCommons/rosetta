@@ -100,7 +100,7 @@ MembraneInfo::MembraneInfo(
 	spanning_topology_( topology ),
 	implicit_lipids_( nullptr ),
 	per_atom_lipid_accessibility_(),
-	membrane_geometry_( utility::pointer::make_shared< membrane_geometry::Slab >( thickness, steepness ) )
+	membrane_geometry_( utility::pointer::make_shared< membrane_geometry::Slab >( steepness, thickness ) )
 {}
 
 /// @brief Create MembraneInfo from initialized data
@@ -122,7 +122,7 @@ MembraneInfo::MembraneInfo(
 {
 	implicit_lipids_ = ImplicitLipidInfoOP( new ImplicitLipidInfo( lipid_composition_name, lipid_composition_temp ) );
 	thickness_ = implicit_lipids_->water_thickness();
-	membrane_geometry_ = MembraneGeometryOP( new membrane_geometry::Slab( thickness, steepness ) );
+	membrane_geometry_ = MembraneGeometryOP( new membrane_geometry::Slab( steepness, thickness_ ) );
 
 }
 
@@ -326,9 +326,6 @@ MembraneInfo::operator=( MembraneInfo const & src ) {
 
 	return *this;
 }
-
-/// @brief Destructor
-MembraneInfo::~MembraneInfo() {}
 
 /// @brief Generate a string representation of information represented by ths MembraneInfo
 void

@@ -60,9 +60,6 @@ VoxelGridPoint::VoxelGridPoint(
 	coords_(coords)
 {}
 
-/// @brief Destructor
-VoxelGridPoint::~VoxelGridPoint() {}
-
 /// @brief Type name of this voxel grid point
 std::string
 VoxelGridPoint::type() const {
@@ -96,9 +93,6 @@ NMRDummySpinlabelAtom::NMRDummySpinlabelAtom(
 	VoxelGridPoint(name, id, coords),
 	conformer_(&conformer)
 {}
-
-/// @brief Destructor
-NMRDummySpinlabelAtom::~NMRDummySpinlabelAtom() {}
 
 /// @brief Type name of this voxel grid point
 std::string
@@ -134,9 +128,6 @@ VoxelGridPoint_AA::VoxelGridPoint_AA(
 	VoxelGridPoint(name, id, coords),
 	residue_(&resi)
 {}
-
-/// @brief Destructor
-VoxelGridPoint_AA::~VoxelGridPoint_AA() {}
 
 /// @brief Type name of this voxel grid point
 std::string
@@ -174,9 +165,6 @@ NMRDummySpinlabelVoxelGrid::NMRDummySpinlabelVoxelGrid(
 {
 	SetObjects(points);
 }
-
-/// @brief Destructor
-NMRDummySpinlabelVoxelGrid::~NMRDummySpinlabelVoxelGrid() {}
 
 /// @brief Extract the 3D coordinate of a given object of type VoxelGridPoint.
 Vector const *

@@ -319,12 +319,6 @@ public:
 		upper_vertex_->note_lower_edge_added();
 	}
 
-	~UEEdge()
-	{
-		//std::cout << "UEEdge dstor" << std::endl;
-	}
-
-
 	UEEdge( GraphClass * owner, int lower_node, int upper_node, E const & data )
 	:
 		owner_( owner ),
@@ -395,8 +389,6 @@ public:
 	{
 		copy_from( other );
 	}
-
-	~UpperEdgeGraph() override = default;
 
 	UpperEdgeGraph< V, E > const &
 	operator = ( UpperEdgeGraph< V, E > const & other )

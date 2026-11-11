@@ -105,7 +105,7 @@ EntityCorrespondence::initialize_from_correspondence_file( std::istream & instre
 	core::Size line_count( 0 );
 	int PDBnum = 0;
 	std::string PDBnum_string;
-	char chain = '_';
+	char chain = '_'; // Single character due to input file format considerations
 	core::Size entity_id( 0 ), residue_index( 0 );
 	while ( instream ) {
 		char icode = ' ';
@@ -169,7 +169,7 @@ EntityCorrespondence::initialize_from_correspondence_file( std::istream & instre
 				" of the EntityCorrespondence file:\n" + line );
 		}
 		if ( chain == '_' ) chain = ' ';
-		residue_index = pdb_pose_map_->find( chain, PDBnum, icode );
+		residue_index = pdb_pose_map_->find( std::string{chain}, PDBnum, icode );
 		/* end resfile code */
 
 		if ( residue_index == 0 ) {

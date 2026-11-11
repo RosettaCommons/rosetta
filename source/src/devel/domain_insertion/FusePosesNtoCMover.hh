@@ -186,7 +186,7 @@ private:
 	core::scoring::ScoreFunctionOP sfxn_, sfxn_nocb_; //nocb means no chainbreak score term
 
 	//in case the poses to be fused are multimeric
-	utility::vector1< char > chains_to_use_; //chains in pdb lettering, from tag
+	utility::vector1< std::string > chains_to_use_; //chains in pdb lettering, from tag
 
 	//which chains (in conformation numbering) are supposed to be fused
 	//note pair.first is for fuse_pose
@@ -277,7 +277,7 @@ public:
 
 private:
 
-	utility::vector1< char > coiled_coil_chains_; //chains in pdb lettering, from tag
+	utility::vector1< std::string > coiled_coil_chains_; //chains in pdb lettering, from tag
 	core::Size chain2_cutpos_; //the fold tree will have one cut, this is supposed to be pdb numbering
 	bool add_chainbreak_variants_; //whether to change the residue types in addition to changing the fold tree
 

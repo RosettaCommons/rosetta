@@ -1,9 +1,9 @@
-# beta_nov16
-#   beta energy function following parameter refitting (Frank DiMaio and Hahnbeom Park), November 2016
+# beta_jan25
+#   beta energy function following parameter refitting (Frank DiMaio and Hugh Haddox), January 2025
 #METHOD_WEIGHTS ref 1.8394 3.6196 -2.3716 -2.7348 1.0402 0.83697 -0.45461 0.73287 -1.5107 0.18072 0.60916 -0.93687 -2.4119 -0.18838 -1.2888 -0.77834 -1.0874 1.9342 1.6906 1.2797
 METHOD_WEIGHTS ref 2.3386 3.2718 -2.2837 -2.5358 1.4028 1.2108 0.134426 1.0317 -1.6738 0.729516 1.2334 -0.873554 -5.1227 -1.0644 -1.281 -1.1772 -1.425 2.085 3.035 0.964136
 fa_atr 1
-fa_rep 0.55
+fa_rep 0.6191
 fa_sol 1.0
 fa_intra_atr_xover4 1
 fa_intra_rep_xover4 0.55

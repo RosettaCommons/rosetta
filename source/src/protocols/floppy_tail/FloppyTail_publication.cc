@@ -58,8 +58,8 @@ void create_extra_output( core::pose::Pose & pose, core::scoring::ScoreFunctionC
 	//print crosslink distance
 	//magic numbers: crosslink experiment tested these residues
 	bool const NEDD8(E2_chain == 4);
-	core::Size const cl_base(pose.pdb_info()->pdb2pose('A', (NEDD8 ? 1676: 679)));   //K1676??
-	core::Size const cl_tail(pose.pdb_info()->pdb2pose('C', 223));
+	core::Size const cl_base(pose.pdb_info()->pdb2pose("A", (NEDD8 ? 1676: 679)));   //K1676??
+	core::Size const cl_tail(pose.pdb_info()->pdb2pose("C", 223));
 
 	core::Real const cl_dist(pose.residue(cl_base).atom("CA").xyz().distance( pose.residue(cl_tail).atom("CA").xyz() ));
 	protocols::jd2::add_string_to_current_job("Crosslink = distance between atom CA on residues (chain A, K679/K1676; chain C, 223)");

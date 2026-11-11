@@ -222,10 +222,10 @@ private:
 	*/
 	bool alternate_state_is_being_considered_;
 
-	//no default constructor, uncopyable
-	PDNode();
-	PDNode( PDNode const & );
-	PDNode & operator = ( PDNode const & );
+public:
+	PDNode() = delete;
+	PDNode( PDNode const & ) = delete;
+	PDNode & operator = ( PDNode const & ) = delete;
 };
 
 class PDEdge : public PrecomputedPairEnergiesEdge
@@ -344,10 +344,10 @@ private: // Data
 	core::PackerEnergy curr_state_energy_;
 	bool energies_updated_since_last_prep_for_simA_;
 
-	//no default constructor, uncopyable
-	PDEdge();
-	PDEdge( PDEdge const & );
-	PDEdge & operator = ( PDEdge const & );
+public:
+	PDEdge() = delete;
+	PDEdge( PDEdge const & ) = delete;
+	PDEdge & operator = ( PDEdge const & ) = delete;
 };
 
 class PDInteractionGraph : public PrecomputedPairEnergiesInteractionGraph
@@ -488,8 +488,6 @@ private:
 
 
 	//variables for I/O
-	int num_nodes_in_file_;
-	int num_file_aa_types_;
 	ObjexxFCL::FArray1D_int file_node_2_instance_node_;
 	ObjexxFCL::FArray1D_int instance_node_2_file_node_;
 	ObjexxFCL::FArray1D< ObjexxFCL::FArray1D_int > aa_types_for_states_on_file_nodes_;
@@ -497,10 +495,10 @@ private:
 
 	static const int COMMIT_LIMIT_BETWEEN_UPDATES = 1024; // 2^10
 
-	//no default constructor, uncopyable
-	PDInteractionGraph();
-	PDInteractionGraph( PDInteractionGraph const & );
-	PDInteractionGraph & operator = ( PDInteractionGraph const & );
+public:
+	PDInteractionGraph() = delete;
+	PDInteractionGraph( PDInteractionGraph const & ) = delete;
+	PDInteractionGraph & operator = ( PDInteractionGraph const & ) = delete;
 };
 
 inline

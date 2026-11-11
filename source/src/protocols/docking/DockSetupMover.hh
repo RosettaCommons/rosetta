@@ -22,6 +22,7 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/DockingPartners.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
@@ -63,13 +64,13 @@ public:
 
 	void apply( core::pose::Pose & pose ) override;
 
-	std::string const& partners() const { return partners_;} /// @brief returns the docking partners chain identifiers
+	core::pose::DockingPartners const& partners() const { return partners_;} /// @brief returns the docking partners chain identifiers
 
 
 	// DockJumps & movable_jumps(){ return movable_jumps_;} /// @brief returns ref to the jumps vector for docking
 	// DockJumps const & movable_jumps() const { return movable_jumps_; } /// @ return const ref to the jumps vector for docking
 
-	void set_partners( std::string const& setting ){ partners_=setting; }
+	void set_partners( core::pose::DockingPartners const& setting ){ partners_=setting; }
 	// void set_movable_jumps( DockJumps const& setting ){ movable_jumps_ = setting; }
 	// void add_jump( core::SSize const jump_number ){ movable_jumps_.push_back( int( jump_number ) ); }
 
@@ -99,7 +100,7 @@ protected:
 
 private:
 	/// --- configurables -----
-	std::string partners_;
+	core::pose::DockingPartners partners_;
 	protocols::rigid::RigidBodyPerturbNoCenterMoverOP rb_mover_;
 	DockJumps movable_jumps_; //vector1_int
 	protocols::docking::RigidBodyInfoOP rigid_body_info_;

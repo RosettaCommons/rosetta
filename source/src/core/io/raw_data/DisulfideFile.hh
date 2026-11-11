@@ -67,10 +67,10 @@ public:
 	};
 	/// @brief represents a residue of either pdb or rosetta numbering.
 	/// @details pdb numbers should include a chain character; rosetta numbers
-	/// have chain==0
+	/// have chain==""
 	struct ResNum {
 		core::Size n;
-		char chain;
+		std::string chain;
 		NumberingSystem type;
 	};
 

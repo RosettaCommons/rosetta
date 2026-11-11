@@ -22,6 +22,7 @@
 
 // C++ headers
 #include <cstddef>
+#include <memory>
 #include <string>
 
 
@@ -55,7 +56,7 @@ public: // Creation
 	/// @brief Default constructor
 	inline
 	VariantOption() :
-		option_p_( 0 )
+		option_p_()
 	{}
 
 
@@ -73,14 +74,6 @@ public: // Creation
 	{}
 
 
-	/// @brief Destructor
-	inline
-	~VariantOption() throw() // throw() is needed for ICC
-	{
-		delete option_p_;
-	}
-
-
 public: // Assignment
 
 
@@ -90,7 +83,7 @@ public: // Assignment
 	operator =( VariantOption const & var )
 	{
 		if ( this != &var ) {
-			delete option_p_; option_p_ = ( var.option_p_ ? var.option_p_->clone() : nullptr );
+			option_p_.reset( var.option_p_ ? var.option_p_->clone() : nullptr );
 		}
 		return *this;
 	}
@@ -121,7 +114,7 @@ public: // Conversion
 	operator Option const *() const
 	{
 		runtime_assert( option_p_ );
-		return option_p_;
+		return option_p_.get();
 	}
 
 
@@ -130,7 +123,7 @@ public: // Conversion
 	operator Option *()
 	{
 		runtime_assert( option_p_ );
-		return option_p_;
+		return option_p_.get();
 	}
 
 
@@ -343,7 +336,7 @@ private: // Fields
 
 
 	/// @brief Pointer to option
-	Option * option_p_;
+	std::unique_ptr< Option > option_p_;
 
 
 }; // VariantOption

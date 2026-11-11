@@ -24,6 +24,7 @@
 // Utility Headers
 
 // STL Headers
+#include <memory>
 
 #ifdef PYROSETTA
 #include <utility/graph/unordered_object_pool.hpp>
@@ -142,10 +143,10 @@ private:
 	std::string node_label_;
 	core::Size n_predecessors_w_outstanding_jobs_;
 
-	//no default constructor, uncopyable
-	JobDirectedNode();
-	JobDirectedNode( JobDirectedNode const & );
-	JobDirectedNode & operator = ( JobDirectedNode & );
+public:
+	JobDirectedNode() = delete;
+	JobDirectedNode( JobDirectedNode const & ) = delete;
+	JobDirectedNode & operator = ( JobDirectedNode const & ) = delete;
 };
 
 /// @brief A run-of-the-mill directed edge to use in JobDigraphs
@@ -213,10 +214,10 @@ protected:
 
 private:
 
-	//no default constructor, uncopyable
-	JobDirectedEdge();
-	JobDirectedEdge( JobDirectedEdge const & );
-	JobDirectedEdge & operator = ( JobDirectedEdge & );
+public:
+	JobDirectedEdge() = delete;
+	JobDirectedEdge( JobDirectedEdge const & ) = delete;
+	JobDirectedEdge & operator = ( JobDirectedEdge const & ) = delete;
 
 };
 
@@ -303,7 +304,7 @@ protected:
 private:
 
 	/// @brief the pool from which class JobDigraph allocates JobDirectedEdge objects.
-	boost::unordered_object_pool< JobDirectedEdge > * job_edge_pool_;
+	std::unique_ptr< boost::unordered_object_pool< JobDirectedEdge > > job_edge_pool_;
 
 };
 

@@ -33,3 +33,8 @@ noExplicitConstructor
 
 // The TenANeighborGraph::tenA_edge_pool_ is handled properly through virtual function calls made by the parent operator
 operatorEqVarError:core/scoring/TenANeighborGraph.cc
+
+// UpperEdgeGraph::get_vertex_ptr and ::note_edge_deleted are called from the
+// friend class UEEdge (constructors and delete_edge); cppcheck does not trace
+// template friend usage and flags them as unused.
+unusedPrivateFunction:utility/graph/UpperEdgeGraph.hh

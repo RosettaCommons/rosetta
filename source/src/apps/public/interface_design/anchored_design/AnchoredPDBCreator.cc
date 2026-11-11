@@ -88,7 +88,7 @@ public:
 		}
 
 		core::Size PDBloopstart, PDBinsertstart, PDBloopend;
-		char chain;
+		std::string chain;
 
 		scaffold_loop >> chain >> PDBloopstart >> PDBinsertstart >> PDBloopend;
 
@@ -98,7 +98,7 @@ public:
 			utility_exit();
 		}
 
-		if ( chain == '_' ) chain = ' ';
+		if ( chain == "_" ) chain = " ";
 
 		core::pose::PDBPoseMap const & pose_map( scaffold.pdb_info()->pdb2pose() );
 		insert_loop_start = pose_map.find( chain, PDBloopstart );

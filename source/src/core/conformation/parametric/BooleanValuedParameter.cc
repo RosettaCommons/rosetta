@@ -64,8 +64,6 @@ BooleanValuedParameter::BooleanValuedParameter( BooleanValuedParameter const & s
 {
 }
 
-BooleanValuedParameter::~BooleanValuedParameter() {}
-
 /// @brief Make a copy of this object ( allocate actual memory for it )
 ///
 ParameterOP

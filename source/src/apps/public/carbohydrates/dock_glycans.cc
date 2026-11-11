@@ -43,6 +43,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/DockingPartners.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -193,9 +194,8 @@ public:  // Standard Rosetta methods
 		// Prepare the FoldTree.
 		determine_docking_partners( pose );
 
-		string const partners( upstream_chains_ + "_" + downstream_chains_ );
 		vector1< int > movable_jumps( 1, JUMP_NUM );
-		setup_foldtree( pose, partners, movable_jumps );
+		setup_foldtree( pose, partners_, movable_jumps );
 
 		// Set up site constraints.
 		if ( constraint_setter_ ) {
@@ -395,8 +395,7 @@ private:  // Private methods
 	void
 	copy_data( DockGlycansProtocol & object_to_copy_to, DockGlycansProtocol const & object_to_copy_from )
 	{
-		object_to_copy_to.upstream_chains_ = object_to_copy_from.upstream_chains_;
-		object_to_copy_to.downstream_chains_ = object_to_copy_from.downstream_chains_;
+		object_to_copy_to.partners_ = object_to_copy_from.partners_;
 		object_to_copy_to.first_ligand_residue_ = object_to_copy_from.first_ligand_residue_;
 
 		object_to_copy_to.sf_ = object_to_copy_from.sf_;
@@ -450,8 +449,7 @@ private:  // Private methods
 	determine_docking_partners( core::pose::Pose const & pose )
 	{
 		// Clear data.
-		upstream_chains_ = "";
-		downstream_chains_ = "";
+		partners_ = core::pose::DockingPartners();
 
 		pose::PDBInfoCOP pdb_info( pose.pdb_info() );
 		vector1< core::uint > const & chain_endings( pose.conformation().chain_endings() );
@@ -474,12 +472,12 @@ private:  // Private methods
 			cut_point = chain_endings[ chain_number ];
 			//cout << cut_point << endl;
 			if ( cut_point < last_cut_point ) {
-				upstream_chains_ += pdb_info->chain( cut_point );
+				partners_.partner1.push_back( pdb_info->chain( cut_point ) );
 			} else if ( cut_point == last_cut_point ) {
-				upstream_chains_ += pdb_info->chain( cut_point );
-				downstream_chains_ += pdb_info->chain( cut_point + 1 );
+				partners_.partner1.push_back( pdb_info->chain( cut_point ) );
+				partners_.partner2.push_back( pdb_info->chain( cut_point + 1 ) );
 			} else /* cut_point > last_cut_point */ {
-				downstream_chains_ += pdb_info->chain( cut_point + 1 );
+				partners_.partner2.push_back( pdb_info->chain( cut_point + 1 ) );
 			}
 		}
 
@@ -563,8 +561,7 @@ private:  // Private methods
 	}
 
 private:  // Private data
-	std::string upstream_chains_;  // e.g., "AB"
-	std::string downstream_chains_; // e.g., "XY"
+	core::pose::DockingPartners partners_;
 	core::uint first_ligand_residue_;
 
 	core::scoring::ScoreFunctionOP sf_;

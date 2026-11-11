@@ -6,15 +6,21 @@
 # (c) For more information, see http://www.rosettacommons.org.
 # (c) Questions about this can be addressed to University of Washington CoMotion, email: license@uw.edu.
 
+import base64
 import glob
+import importlib
 import math
+import numpy
 import os
 import pickle
 import pyrosetta
 import pyrosetta.rosetta.core.pose as pose
+import sys
 import tempfile
+import types
 import unittest
 
+from functools import partial
 from pyrosetta.bindings.scores import ClobberWarning, PoseScoreSerializer
 from pyrosetta.rosetta.core.pose import (
     getPoseExtraFloatScores,
@@ -25,6 +31,7 @@ from pyrosetta.rosetta.core.pose import (
     clearPoseExtraScore,
     clearPoseExtraScores,
 )
+from pyrosetta.rosetta.core.pose.datacache import CacheableDataType
 from pyrosetta.rosetta.core.scoring import all_atom_rmsd
 from pyrosetta.rosetta.core.simple_metrics import TestRealMetric, TestStringMetric
 from pyrosetta.rosetta.core.simple_metrics.metrics import (
@@ -39,6 +46,14 @@ from pyrosetta.rosetta.core.simple_metrics.composite_metrics import (
     BestMutationsFromProbabilitiesMetric,
     ProtocolSettingsMetric,
 )
+from pyrosetta.secure_unpickle import (
+    SecureSerializerBase,
+    UnpickleSecurityError,
+    UnpickleIntegrityError,
+    get_unpickle_hmac_key,
+    set_unpickle_hmac_key,
+)
+from pyrosetta.utility import has_cereal
 
 
 pyrosetta.init(extra_options="-constant_seed", set_logging_handler="logging")
@@ -203,12 +218,14 @@ class TestPoseScoresAccessor(unittest.TestCase):
             # Round-trip set/get scoretype value
             if obj_type == pyrosetta.rosetta.core.scoring.ScoreFunction:
                 # `ScoreFunction` instances (and some other PyRosetta instances besides `Pose` instances) cannot be serialized
-                with self.assertRaises(TypeError):
+                with self.assertRaises(Exception):
                     test_pose.cache[str(obj_type)] = value_input
                 continue
-            else:
-                test_pose.cache[str(obj_type)] = value_input
-                value_output = test_pose.cache[str(obj_type)]
+            if obj_type == pyrosetta.Pose and not has_cereal():
+                # `Pose` instances require cereal support for round-trip serialization
+                continue
+            test_pose.cache[str(obj_type)] = value_input
+            value_output = test_pose.cache[str(obj_type)]
 
             # Test instance types
             self.assertIsInstance(value_input, obj_type)
@@ -384,6 +401,45 @@ class TestPoseCacheAccessor(unittest.TestCase):
     def tearDownClass(cls):
         cls.workdir.cleanup()
 
+    @staticmethod
+    def maybe_get_pose_state(obj):
+        if isinstance(obj, pyrosetta.Pose):
+            state = []
+            for res in range(1, obj.size() + 1):
+                residue = obj.residue(res)
+                state.append(res)
+                state.append(residue.name())
+                for atom in range(1, residue.natoms() + 1):
+                    state.append(atom)
+                    state.append(residue.atom_name(atom))
+                    xyz = residue.atom(atom).xyz()
+                    for axis in "xyz":
+                        state.append(getattr(xyz, axis))
+            return state
+        else:
+            return obj
+
+    def assert_items_equal(self, a, b):
+        self.assertEqual(len(a), len(b), msg="Objects have different size.")
+        self.assertEqual(type(a), type(b), msg="Object types differ.")
+        for k in a:
+            self.assertIn(k, b)
+            self.assertEqual(
+                TestPoseCacheAccessor.maybe_get_pose_state(a[k]),
+                TestPoseCacheAccessor.maybe_get_pose_state(b[k]),
+                msg="Objects are not equal.",
+            )
+
+    def assert_values_equal(self, a, b):
+        self.assertEqual(len(a), len(b), msg="Objects have different size.")
+        self.assertEqual(type(a), type(b), msg="Object types differ.")
+        for i in range(len(a)):
+            self.assertEqual(
+                TestPoseCacheAccessor.maybe_get_pose_state(a[i]),
+                TestPoseCacheAccessor.maybe_get_pose_state(b[i]),
+                msg="Objects are not equal.",
+            )
+
     def test_pose_cache(self):
         self.assertEqual(self.pose.cache, {})
 
@@ -464,7 +520,7 @@ class TestPoseCacheAccessor(unittest.TestCase):
         self.assertEqual(self.pose.cache["bytes_to_str"], "ASCII binary")
 
         with self.assertWarns(UserWarning):
-            setPoseExtraScore(self.pose, "invalid_bytes", pickle.dumps("raw binary")) # Manually set; warns since it's raw binary
+            setPoseExtraScore(self.pose, "invalid_bytes", pickle.dumps("raw binary", protocol=pickle.DEFAULT_PROTOCOL)) # Manually set; warns since it's raw binary
         with self.assertRaises(UnicodeDecodeError):
             self.pose.cache["invalid_bytes"]
         with self.assertRaises(UnicodeDecodeError):
@@ -475,7 +531,7 @@ class TestPoseCacheAccessor(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.pose.cache["invalid_bytes"]
 
-        for bytestring in (b'ASCII binary', pickle.dumps("raw binary")):
+        for bytestring in (b'ASCII binary', pickle.dumps("raw binary", protocol=pickle.DEFAULT_PROTOCOL)):
             self.pose.cache.extra["bytes"] = bytestring # Automatically gets serialized
             self.assertIn("bytes", self.pose.cache.extra.string)
             with self.assertRaises(KeyError):
@@ -661,7 +717,7 @@ class TestPoseCacheAccessor(unittest.TestCase):
 
         self.assertDictEqual(dict(self.pose.cache.metrics.per_residue_string), {})
 
-        # Test clearing scores
+        # Test all scores
         self.scorefxn(self.pose)
         ref_scores = dict(self.pose.cache.all_scores)
         self.assertDictEqual(dict(ref_scores["metrics"]["real"]), dict(self.pose.cache.metrics.real))
@@ -676,6 +732,32 @@ class TestPoseCacheAccessor(unittest.TestCase):
         self.assertDictEqual(dict(ref_scores["energies"]), dict(self.pose.cache.energies))
         ref_keys = list(self.pose.cache.all_keys)
         self.pose.cache.assert_unique_keys()
+
+        # Test `Pose.cache.all_scores` parity after refactor to fast accessor path
+        all_scores_old = types.MappingProxyType(
+            {
+                "extra": types.MappingProxyType(
+                    {
+                        "string": types.MappingProxyType(dict(self.pose.cache.extra.string)), # Slow path
+                        "real": types.MappingProxyType(dict(self.pose.cache.extra.real)), # Slow path
+                    }
+                ),
+                "metrics": types.MappingProxyType(
+                        {
+                        "string": types.MappingProxyType(dict(self.pose.cache.metrics.string)), # Slow path
+                        "real": types.MappingProxyType(dict(self.pose.cache.metrics.real)), # Slow path
+                        "composite_string": types.MappingProxyType(dict(self.pose.cache.metrics.composite_string)), # Slow path
+                        "composite_real": types.MappingProxyType(dict(self.pose.cache.metrics.composite_real)), # Slow path
+                        "per_residue_string": types.MappingProxyType(dict(self.pose.cache.metrics.per_residue_string)), # Slow path
+                        "per_residue_real": types.MappingProxyType(dict(self.pose.cache.metrics.per_residue_real)), # Slow path
+                        "per_residue_probabilities": types.MappingProxyType(dict(self.pose.cache.metrics.per_residue_probabilities)), # Slow path
+                    }
+                ),
+                "energies": types.MappingProxyType(dict(self.pose.cache.energies)), # Slow path
+            }
+        )
+        all_scores_new = self.pose.cache.all_scores
+        self.assertEqual(all_scores_old, all_scores_new)
 
         # Test SimpleMetric data that is immutable
         with self.assertRaises(KeyError):
@@ -701,9 +783,10 @@ class TestPoseCacheAccessor(unittest.TestCase):
         with self.assertWarns(UserWarning):
             self.pose.cache.metrics.string["float"] = 1e5
         self.assertIn("float", self.pose.cache.metrics.real.keys())
-        with self.assertWarns(UserWarning):
-            self.pose.cache.metrics.real["pose"] = pyrosetta.pose_from_sequence("DATA")
-        self.assertIn("pose", self.pose.cache.metrics.string.keys())
+        if has_cereal():
+            with self.assertWarns(UserWarning):
+                self.pose.cache.metrics.real["pose"] = pyrosetta.pose_from_sequence("DATA")
+            self.assertIn("pose", self.pose.cache.metrics.string.keys())
 
         with self.assertWarns(UserWarning):
             self.pose.cache.extra.real["str"] = "String"
@@ -722,6 +805,35 @@ class TestPoseCacheAccessor(unittest.TestCase):
             self.pose.cache.extra.real["dict"] = dict(a=1, b=2)
         self.assertIn("dict", self.pose.cache.extra.string.keys())
 
+        # Test parity between fast and slow accessor paths
+        self.assert_items_equal(dict(self.pose.cache.items()), dict(self.pose.cache.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.values()), list(self.pose.cache.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.metrics.items()), dict(self.pose.cache.metrics.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.metrics.values()), list(self.pose.cache.metrics.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.metrics.real.items()), dict(self.pose.cache.metrics.real.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.metrics.real.values()), list(self.pose.cache.metrics.real.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.metrics.string.items()), dict(self.pose.cache.metrics.string.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.metrics.string.values()), list(self.pose.cache.metrics.string.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.metrics.composite_real.items()), dict(self.pose.cache.metrics.composite_real.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.metrics.composite_real.values()), list(self.pose.cache.metrics.composite_real.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.metrics.composite_string.items()), dict(self.pose.cache.metrics.composite_string.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.metrics.composite_string.values()), list(self.pose.cache.metrics.composite_string.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.metrics.per_residue_real.items()), dict(self.pose.cache.metrics.per_residue_real.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.metrics.per_residue_real.values()), list(self.pose.cache.metrics.per_residue_real.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.metrics.per_residue_string.items()), dict(self.pose.cache.metrics.per_residue_string.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.metrics.per_residue_string.values()), list(self.pose.cache.metrics.per_residue_string.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.metrics.per_residue_probabilities.items()), dict(self.pose.cache.metrics.per_residue_probabilities.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.metrics.per_residue_probabilities.values()), list(self.pose.cache.metrics.per_residue_probabilities.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.extra.items()), dict(self.pose.cache.extra.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.extra.values()), list(self.pose.cache.extra.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.extra.real.items()), dict(self.pose.cache.extra.real.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.extra.real.values()), list(self.pose.cache.extra.real.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.extra.string.items()), dict(self.pose.cache.extra.string.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.extra.string.values()), list(self.pose.cache.extra.string.fast_values()))
+        self.assert_items_equal(dict(self.pose.cache.energies.items()), dict(self.pose.cache.energies.fast_items()))
+        self.assert_values_equal(list(self.pose.cache.energies.values()), list(self.pose.cache.energies.fast_values()))
+
+        # Test clearing scores
         self.pose.cache.clear()
         self.pose.cache.extra.real["1"] = float(1)
         with self.assertRaises(KeyError):
@@ -761,6 +873,113 @@ class TestPoseCacheAccessor(unittest.TestCase):
             dict(self.pose.cache.metrics)
         with self.assertWarns(ClobberWarning):
             dict(self.pose.cache)
+
+        if has_cereal():
+            # Test that `CacheableDataType.SIMPLE_METRIC_DATA` pose data is not automatically set by accessing `Pose.cache`
+            pose = pyrosetta.io.pose_from_sequence("TEST/SIMPLE/METRIC/DATA")
+            pickler = partial(pickle.dumps, protocol=pickle.DEFAULT_PROTOCOL)
+            bytes_start_1 = pickler(pose)
+            self.assertFalse(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+            self.assertFalse(pose.cache.metrics._has_sm_data())
+            _ = dict(pose.cache) # Access `Pose.cache`
+            self.assertFalse(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+            self.assertFalse(pose.cache.metrics._has_sm_data())
+            bytes_final_1 = pickler(pose)
+            self.assertEqual(bytes_start_1, bytes_final_1, msg="Pose is not bitwise identical after accessing `Pose.cache`.")
+            pose.cache.metrics["pi"] = math.pi # Add SimpleMetrics data
+            bytes_start_2 = pickler(pose)
+            self.assertTrue(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+            self.assertTrue(pose.cache.metrics._has_sm_data())
+            _ = dict(pose.cache) # Access `Pose.cache`
+            self.assertTrue(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+            self.assertTrue(pose.cache.metrics._has_sm_data())
+            bytes_final_2 = pickler(pose)
+            self.assertEqual(bytes_start_2, bytes_final_2, msg="Pose is not bitwise identical after accessing `Pose.cache`.")
+            self.assertNotEqual(bytes_final_1, bytes_final_2, msg="Pose is bitwise identical after adding SimpleMetrics data to `Pose.cache`.")
+
+        # Test `Pose.cache` access to SimpleMetrics data when `CacheableDataType.SIMPLE_METRIC_DATA` is not yet set up
+        pose = pyrosetta.io.pose_from_sequence("EMPTY/DATA/CACHE")
+        self.assertFalse(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+        self.assertFalse(pose.cache.metrics._has_sm_data())
+        for _attr in (
+            "real",
+            "string",
+            "composite_real",
+            "composite_string",
+            "per_residue_real",
+            "per_residue_string",
+            "per_residue_probabilities",
+        ):
+            data = getattr(pose.cache.metrics, _attr)
+            self.assertIsInstance(data.all, types.MappingProxyType)
+            self.assertDictEqual(dict(data), {})
+        self.assertFalse(pose.data().has(CacheableDataType.SIMPLE_METRIC_DATA))
+        self.assertFalse(pose.cache.metrics._has_sm_data())
+
+        # Test `Pose.cache` bulk setters
+        pose = pyrosetta.io.pose_from_sequence("EMPTY/DATA/CACHE")
+        N = 10000
+        real_mappable = {f"real_{i}": float(i) for i in range(N)}
+        string_mappable = {f"string_{i}": str(i) for i in range(N)}
+        pose.cache.metrics.real.set_mappable(real_mappable)
+        pose.cache.metrics.string.set_mappable(string_mappable)
+        self.assertEqual(len(dict(pose.cache.metrics.fast_items())), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(dict(pose.cache.fast_items())), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(list(pose.cache.metrics.fast_values())), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(list(pose.cache.fast_values())), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(pose.cache.metrics.real.all), N, msg="Bulk `Pose.cache` setter failed.") # Test encoded scores data
+        self.assertEqual(len(pose.cache.metrics.string.all), N, msg="Bulk `Pose.cache` setter failed.") # Test encoded scores data
+        self.assertEqual(len(pose.cache.metrics.all), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(pose.cache.all), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(list(pose.cache.metrics)), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        self.assertEqual(len(list(pose.cache)), N * 2, msg="Bulk `Pose.cache` setter failed.")
+        all_mappable = {}
+        all_mappable.update(real_mappable)
+        all_mappable.update(string_mappable)
+        for k, v in pose.cache.fast_items():
+            self.assertIn(k, all_mappable, msg="Bulk `Pose.cache` setter failed.")
+            self.assertEqual(v, all_mappable[k], msg="Bulk `Pose.cache` setter failed.")
+
+        # Test `Pose.cache` bulk setters with arbitrary Python types
+        pose.cache.metrics.real.clear()
+        pose.cache.metrics.string.clear()
+        arbitrary_mappable = {f"arbitrary_{i}": {i: list(range(0, 3))} if i % 2 == 0 else complex(0, 3) for i in range(N)}
+        with self.assertRaises(TypeError): # Cannot set `dict` types to a real metric
+            pose.cache.metrics.real.set_mappable(arbitrary_mappable)
+        pose.cache.metrics.string.set_mappable(arbitrary_mappable)
+        _matches = 0
+        _arbitrary_prefix = [*arbitrary_mappable][0].split("_")[0]
+        for k, v in pose.cache.all.items(): # Test encoded scores data
+            if k.startswith(_arbitrary_prefix):
+                self.assertTrue(v.startswith("[CustomArbitraryValueMetric]"), msg="Bulk `Pose.cache` setter failed.")
+                _matches += 1
+        self.assertEqual(_matches, N, msg="Bulk `Pose.cache` setter failed.")
+        for k, v in pose.cache.fast_items():
+            self.assertIn(k, arbitrary_mappable, msg="Bulk `Pose.cache` setter failed.")
+            self.assertEqual(v, arbitrary_mappable[k], msg="Bulk `Pose.cache` setter failed.")
+
+        # Test parity of energy clearing paths
+        pose.cache.clear()
+        pose1 = pose.clone()
+        pose2 = pose.clone()
+        self.scorefxn(pose1)
+        self.scorefxn(pose2)
+        self.assertEqual(pose1.cache.energies, pose2.cache.energies)
+        self.assertEqual(dict(pose1.cache.energies.fast_items()), dict(pose2.cache.energies.fast_items()))
+        self.assertEqual(dict(pose1.energies().active_total_energies().items()), dict(pose2.energies().active_total_energies().items()))
+        self.assertEqual(pose1.cache.energies, dict(pose2.energies().active_total_energies().items()))
+        self.assertEqual(dict(pose1.energies().active_total_energies().items()), pose2.cache.energies)
+        self.assertIn("total_score", pose1.cache.energies)
+        self.assertIn("total_score", pose2.cache.energies)
+        pose1.energies().clear() # Clear energies via `Pose.energies`
+        pose2.cache.energies.clear() # Clear energies via `Pose.cache`
+        self.assertEqual(pose1.cache.energies, pose2.cache.energies)
+        self.assertEqual(dict(pose1.cache.energies.fast_items()), dict(pose2.cache.energies.fast_items()))
+        self.assertEqual(dict(pose1.energies().active_total_energies().items()), dict(pose2.energies().active_total_energies().items()))
+        self.assertEqual(pose1.cache.energies, dict(pose2.energies().active_total_energies().items()))
+        self.assertEqual(dict(pose1.energies().active_total_energies().items()), pose2.cache.energies)
+        self.assertNotIn("total_score", pose1.cache.energies)
+        self.assertNotIn("total_score", pose2.cache.energies)
 
 
 class TestPoseResidueLabelAccessor(unittest.TestCase):
@@ -1000,5 +1219,254 @@ class TestPosesToSilent(unittest.TestCase):
                     msg="List position recovery failed.")
 
 
-if __name__ == "__main__":
-    unittest.main()
+class TestPoseSecureUnpickler(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        pyrosetta.init("-run:constant_seed 1")
+
+    def test_secure_unpickler(self):
+        # Test secure packages
+        self.assertIn("numpy", pyrosetta.secure_unpickle.get_secure_packages())
+        pyrosetta.secure_unpickle.clear_secure_packages()
+        self.assertEqual(pyrosetta.secure_unpickle.get_secure_packages(), ())
+        pyrosetta.secure_unpickle.add_secure_package("pandas.core.frame")  # Normalizes to 'pandas'
+        self.assertEqual(pyrosetta.secure_unpickle.get_secure_packages(), ("pandas",))
+        pyrosetta.secure_unpickle.add_secure_package("pandas")  # Also normalizes to 'pandas'
+        self.assertEqual(pyrosetta.secure_unpickle.get_secure_packages(), ("pandas",))
+        pyrosetta.secure_unpickle.remove_secure_package("pandas.io.parquet")  # Also normalizes to 'pandas'
+        self.assertEqual(pyrosetta.secure_unpickle.get_secure_packages(), ())
+        pyrosetta.secure_unpickle.clear_secure_packages()
+        pyrosetta.secure_unpickle.set_secure_packages(("numpy",))
+        self.assertEqual(pyrosetta.secure_unpickle.get_secure_packages(), ("numpy",))
+
+        # Test secure serialization round-trip
+        data = {"foo": [1, 2, 3], "bar": ("String", b"Bytes"), "baz": complex(1, -2)}
+        obj = pickle.dumps(data, protocol=pickle.DEFAULT_PROTOCOL)
+        key = get_unpickle_hmac_key()
+        if key is not None:
+            obj = SecureSerializerBase._prepend_hmac_tag(obj, key)
+        string = base64.b64encode(obj).decode(SecureSerializerBase._encoder)
+        out = SecureSerializerBase.secure_from_base64_pickle(string)
+        self.assertEqual(out, data)
+
+        # Test a disallowed module
+        class _CauseHavoc:
+            """Problematic class using the `pickle` module to attempt to import and run `os.system`."""
+            def __reduce__(self):
+                import os
+                return (os.system, ("echo 'Wreaking havoc...'",))
+
+        pyrosetta.secure_unpickle.clear_secure_packages()
+        _obj = pickle.dumps(_CauseHavoc(), protocol=pickle.DEFAULT_PROTOCOL)
+        with self.assertRaises(UnpickleSecurityError) as ex:
+            _ = SecureSerializerBase.secure_loads(_obj)
+        _msg = str(ex.exception)
+        self.assertIn("Disallowed unpickling of the 'posix.system' namespace!", _msg)
+        self.assertIn("the 'posix.system' namespace cannot be added", _msg)
+
+        # Test custom HMAC key
+        data = {
+            "foo": list(range(10)),
+            "bar": dict(enumerate([complex(1, i) for i in range(10)])),
+        }
+        if has_cereal():
+            data["baz"] = pyrosetta.pose_from_sequence("TEST")
+        _hmac_size = 32
+        set_unpickle_hmac_key(os.urandom(_hmac_size))
+        self.assertEqual(len(get_unpickle_hmac_key()), _hmac_size)
+        string = SecureSerializerBase.secure_to_base64_pickle(data)
+        out = SecureSerializerBase.secure_from_base64_pickle(string)
+        self.assertEqual(out["foo"], data["foo"])
+        self.assertEqual(out["bar"], data["bar"])
+        if has_cereal():
+            self.assertIsInstance(out["baz"], pyrosetta.Pose)
+            self.assertEqual(out["baz"].sequence(), data["baz"].sequence())
+        # Test tampering with HMAC tag
+        arr = bytearray(base64.b64decode(string.encode(SecureSerializerBase._encoder)))
+        _hmac_tag_idx = 3
+        self.assertLessEqual(_hmac_tag_idx + 1, _hmac_size)
+        arr[_hmac_tag_idx] ^= int("0x01", 16)
+        string_hmac_tampered = base64.b64encode(bytes(arr)).decode(SecureSerializerBase._encoder)
+        with self.assertRaises(UnpickleIntegrityError):
+            _ = SecureSerializerBase.secure_from_base64_pickle(string_hmac_tampered)
+        # Test tampering with data
+        arr = bytearray(base64.b64decode(string.encode(SecureSerializerBase._encoder)))
+        arr[-1] ^= int("0x01", 16)
+        string_data_tampered = base64.b64encode(bytes(arr)).decode(SecureSerializerBase._encoder)
+        with self.assertRaises(UnpickleIntegrityError):
+            _ = SecureSerializerBase.secure_from_base64_pickle(string_data_tampered)
+        set_unpickle_hmac_key(None)
+
+        pyrosetta.secure_unpickle.set_secure_packages(("numpy",))
+        for hmac_key in (None,  b"", os.urandom(16), b"TestingMyKey", "String", {1, 2, 3}, {"foo": "bar"}):
+            if not isinstance(hmac_key, (type(None), bytes)):
+                with self.assertRaises(TypeError):
+                    set_unpickle_hmac_key(hmac_key)
+            else:
+                set_unpickle_hmac_key(hmac_key)
+            arr = numpy.array([[1, 2, 3], [4, 5, 6]], dtype=numpy.float64)
+            test_pose = pyrosetta.pose_from_sequence("SEQ")
+            test_pose.cache["test_numpy"] = arr
+            _arr = test_pose.cache["test_numpy"]
+            numpy.testing.assert_equal(arr, _arr)
+            set_unpickle_hmac_key(None)
+
+        # Test secure builtins roundtrip
+        test_pose = pyrosetta.pose_from_sequence("TEST/CACHE")
+        secure_builtins = pyrosetta.secure_unpickle.SECURE_PYTHON_BUILTINS
+        for builtin in secure_builtins:
+            if builtin == "NoneType":
+                builtin = "None"
+            module = getattr(sys.modules["builtins"], builtin)
+            if module == None:
+                instance = None
+            elif module == type:
+                instance = type(None)
+            elif module == slice:
+                instance = slice(0, 3, 5)
+            elif module == range:
+                instance = range(1, 10)
+            elif module == type(complex):
+                instance = complex(0, -1)
+            else:
+                instance = module()
+            test_pose.cache[builtin] = instance
+            self.assertIsInstance(test_pose.cache[builtin], type(instance))
+            if has_cereal():
+                _test_pose = SecureSerializerBase.secure_loads(
+                    pickle.dumps(test_pose, protocol=pickle.DEFAULT_PROTOCOL)
+                )
+                _instance = _test_pose.cache[builtin]
+                self.assertIsInstance(_instance, type(instance))
+
+        # Test disallowed packages
+        test_pose = pyrosetta.pose_from_sequence("TEST/CACHE")
+        disallowed_packages = sorted(pyrosetta.secure_unpickle.BLOCKED_PACKAGES)
+        for package in disallowed_packages:
+            try:  # Try to import
+                _module = sys.modules.get(package, None) or importlib.import_module(package)
+            except ImportError:
+                continue
+            # Find a callable
+            for attr in reversed(dir(_module)): # Reverse to defer dunder methods
+                obj = getattr(_module, attr)
+                if callable(obj):
+                    class _ReduceObject:
+                        def __reduce__(self):
+                            return (obj, tuple())
+                    try:  # Try `pickle.dumps`
+                        test_pose.cache[package] = _ReduceObject()
+                        break
+                    except Exception: # Catch `pickle.PicklingError`
+                        continue
+            else:
+                continue
+            with self.assertRaises(UnpickleSecurityError) as ex:
+                _obj = test_pose.cache[package]
+            _msg = str(ex.exception)
+            self.assertTrue(_msg.startswith("Disallowed unpickling"), msg=_msg)
+
+        # Test disallowed globals
+        test_pose = pyrosetta.pose_from_sequence("RISKY/DATA")
+        disallowed_globals = sorted(pyrosetta.secure_unpickle.BLOCKED_GLOBALS)
+        for package, attr in disallowed_globals:
+            try:  # Try to import
+                _module = sys.modules.get(package, None) or importlib.import_module(package)
+            except ImportError:
+                continue
+            obj = getattr(_module, attr, None)
+            if callable(obj):
+                class _ReduceObject:
+                    def __reduce__(self):
+                        return (obj, tuple())
+                key = f"{package}.{attr}"
+                try:  # Try `pickle.dumps`
+                    test_pose.cache[key] = _ReduceObject()
+                except Exception: # Catch `pickle.PicklingError`
+                    continue
+            else:
+                continue
+            with self.assertRaises(UnpickleSecurityError) as ex:
+                _obj = test_pose.cache[key]
+            _msg = str(ex.exception)
+            self.assertTrue(_msg.startswith("Disallowed unpickling"), msg=_msg)
+
+        # Test disallowed prefixes
+        test_pose = pyrosetta.pose_from_sequence("TEST/NAMESPACE")
+        disallowed_prefixes = dict(pyrosetta.secure_unpickle.BLOCKED_PREFIXES)
+        for package, prefixes in disallowed_prefixes.items():
+            try:  # Try to import
+                _module = sys.modules.get(package, None) or importlib.import_module(package)
+            except ImportError:
+                continue
+            for prefix in prefixes:
+                for attr in filter(lambda a: a.startswith(prefix), dir(_module)):
+                    obj = getattr(_module, attr, None)
+                    if callable(obj):
+                        class _ReduceObject:
+                            def __reduce__(self):
+                                return (obj, tuple())
+                        key = f"{package}.{attr}"
+                        try:  # Try `pickle.dumps`
+                            test_pose.cache[key] = _ReduceObject()
+                        except Exception: # Catch `pickle.PicklingError`
+                            continue
+                    else:
+                        continue
+                    with self.assertRaises(UnpickleSecurityError) as ex:
+                        _obj = test_pose.cache[key]
+                    _msg = str(ex.exception)
+                    self.assertTrue(_msg.startswith("Disallowed unpickling"), msg=_msg)
+
+        # Test that `numpy.load` is disallowed
+        test_pose = pyrosetta.pose_from_sequence("TEST")
+        pyrosetta.secure_unpickle.clear_secure_packages()
+        pyrosetta.secure_unpickle.add_secure_package("numpy")
+        class _ReduceObject:
+            def __reduce__(self):
+                return (numpy.load, tuple())
+        key = "np.load"
+        test_pose.cache[key] = _ReduceObject()
+        with self.assertRaises(UnpickleSecurityError) as ex:
+            _obj = test_pose.cache[key] # Test that `np.load` is disallowed
+        _msg = str(ex.exception)
+        self.assertTrue(_msg.startswith("Disallowed unpickling"), msg=_msg)
+        test_pose.cache.clear()
+        class _ReduceObject:
+            def __reduce__(self):
+                return (numpy.array, (list(range(10)),))
+        key = "np.array"
+        test_pose.cache[key] = _ReduceObject()
+        _obj = test_pose.cache[key] # Test that `np.array` is allowed
+
+        # Test that `pandas.read_pickle` is disallowed
+        try:
+            import pandas
+        except ImportError:
+            print("Skipping test with `pandas.read_pickle` because 'pandas' is not installed.")
+        if "pandas" in sys.modules:
+            pyrosetta.secure_unpickle.clear_secure_packages()
+            pyrosetta.secure_unpickle.add_secure_package("pandas")
+            pyrosetta.secure_unpickle.add_secure_package("pyarrow")
+            test_pose.cache.clear()
+            class _ReduceObject:
+                def __reduce__(self):
+                    return (pandas.read_pickle, tuple())
+            key = "pd.read_pickle"
+            test_pose.cache[key] = _ReduceObject()
+            with self.assertRaises(UnpickleSecurityError) as ex:
+                _obj = test_pose.cache[key] # Test that `pd.read_pickle` is disallowed
+            _msg = str(ex.exception)
+            self.assertTrue(_msg.startswith("Disallowed unpickling"), msg=_msg)
+            test_pose.cache.clear()
+            class _ReduceObject:
+                def __reduce__(self):
+                    return (pandas.DataFrame, ({0: []},))
+            key = "pd.DataFrame"
+            test_pose.cache[key] = _ReduceObject()
+            _obj = test_pose.cache[key] # Test that `pd.DataFrame` is allowed
+            test_pose.cache.clear()
+
+
+# if __name__ == "__main__":
+#    unittest.main()

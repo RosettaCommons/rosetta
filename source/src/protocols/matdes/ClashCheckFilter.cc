@@ -148,7 +148,7 @@ core::Size ClashCheckFilter::compute( Pose const & pose, bool const & v, bool co
 				if ( sym_info->subunit_index(jr) <= nsub_bblock_ ) continue;
 			} else if ( sym_dof_name_list.size() == 2 ) {
 				//If two component, then check for clashes between all residues in primary subunitA and other building blocks, and all resis in primary subB and other building blocks.
-				Sizes const & isubs( get_component_of_residue(pose,ir)=='A'?intra_subs1:intra_subs2);
+				Sizes const & isubs( get_component_of_residue(pose,ir)=="A"?intra_subs1:intra_subs2);
 				if ( get_component_of_residue(pose,ir)==get_component_of_residue(pose,jr)&&find(isubs.begin(),isubs.end(),sym_info->subunit_index(jr))!=isubs.end() ) continue;
 			} else {
 				utility_exit_with_message("Clash check filter currently only works for 1 or 2 component symmetries");

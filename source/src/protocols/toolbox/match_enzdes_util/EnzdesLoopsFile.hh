@@ -223,11 +223,11 @@ public:
 	stop_pdb() const {
 		return loop_end_pdb_; }
 
-	char
+	std::string
 	start_pdb_chain() const {
 		return loop_start_pdb_chain_; }
 
-	char
+	std::string
 	stop_pdb_chain() const {
 		return loop_end_pdb_chain_; }
 
@@ -296,7 +296,7 @@ private:
 
 	//some basic information about the loop
 	core::Size loop_start_, loop_end_, loop_start_pdb_, loop_end_pdb_;
-	char loop_start_pdb_chain_, loop_end_pdb_chain_;
+	std::string loop_start_pdb_chain_, loop_end_pdb_chain_;
 	bool pose_numb_, pdb_numb_;
 
 	core::Size min_length_, max_length_;

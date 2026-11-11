@@ -125,10 +125,10 @@ private:
 
 	bool alternate_state_is_being_considered_;
 
-	//no default constructor, uncopyable
-	DoubleDensePDNode();
-	DoubleDensePDNode( DoubleDensePDNode const & );
-	DoubleDensePDNode & operator = ( DoubleDensePDNode const & );
+public:
+	DoubleDensePDNode() = delete;
+	DoubleDensePDNode( DoubleDensePDNode const & ) = delete;
+	DoubleDensePDNode & operator = ( DoubleDensePDNode const & ) = delete;
 };
 
 class DoubleDensePDEdge : public PrecomputedPairEnergiesEdge
@@ -200,10 +200,10 @@ private:
 	core::PackerEnergy curr_state_energy_;
 	bool energies_updated_since_last_prep_for_simA_;
 
-	//no default constructor, uncopyable
-	DoubleDensePDEdge();
-	DoubleDensePDEdge( DoubleDensePDEdge const & );
-	DoubleDensePDEdge & operator = ( DoubleDensePDEdge const & );
+public:
+	DoubleDensePDEdge() = delete;
+	DoubleDensePDEdge( DoubleDensePDEdge const & ) = delete;
+	DoubleDensePDEdge & operator = ( DoubleDensePDEdge const & ) = delete;
 };
 
 class DoubleDensePDInteractionGraph : public PrecomputedPairEnergiesInteractionGraph
@@ -273,10 +273,10 @@ private:
 
 	static const int COMMIT_LIMIT_BETWEEN_UPDATES = 1024; // 2^10
 
-	//no default constructor, uncopyable
-	DoubleDensePDInteractionGraph();
-	DoubleDensePDInteractionGraph( DoubleDensePDInteractionGraph const & );
-	DoubleDensePDInteractionGraph & operator = ( DoubleDensePDInteractionGraph const & );
+public:
+	DoubleDensePDInteractionGraph() = delete;
+	DoubleDensePDInteractionGraph( DoubleDensePDInteractionGraph const & ) = delete;
+	DoubleDensePDInteractionGraph & operator = ( DoubleDensePDInteractionGraph const & ) = delete;
 };
 
 /// @brief returns the change in energy that would be induced by switching this node

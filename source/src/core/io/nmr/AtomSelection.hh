@@ -42,7 +42,7 @@ public: // Methods
 	AtomSelection(
 		Size const residue,
 		std::string const & atom,
-		char const & chain
+		std::string const & chain
 	);
 
 	/// @brief copy constructor
@@ -58,10 +58,10 @@ public: // Methods
 	// Setters and Getters
 	Size get_rsd() const { return rsd_; }
 	std::string get_atom() const { return atom_; }
-	const char & get_chain() const { return chain_; }
+	std::string const & get_chain() const { return chain_; }
 	void set_rsd(Size const residue) { rsd_ = residue; }
 	void set_atom(std::string const & atom) { atom_ = atom; }
-	void set_chain(char const & chain) { chain_ = toupper(chain); }
+	void set_chain(std::string const & chain) { chain_ = chain; }
 	void show(std::ostream & TR) const;
 
 	friend bool operator<(AtomSelection const & lhs, AtomSelection const & rhs);
@@ -75,7 +75,7 @@ private: // Data
 
 	Size rsd_;
 	std::string atom_;
-	char chain_;
+	std::string chain_;
 
 };
 

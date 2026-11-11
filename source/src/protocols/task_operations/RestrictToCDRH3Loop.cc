@@ -37,6 +37,7 @@ using namespace utility::tag;
 using utility::tag::TagCOP;
 using core::Size;
 
+std::string const RestrictToCDRH3Loop::heavy_chain = "H";
 
 RestrictToCDRH3Loop::RestrictToCDRH3Loop() : parent() {}
 

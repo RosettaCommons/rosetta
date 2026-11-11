@@ -27,16 +27,6 @@
 namespace core {
 namespace chemical {
 
-// this used to be in PDBInfo.hh and had a space as the first character -- rhiju.
-static std::string const chr_chains( "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz" );
-
-///@brief pad chr_chains with a dummy char in the first element so that it can be indexed starting at 1
-inline
-std::string
-one_indexed_chr_chains(){
-	return " " + chr_chains;
-}
-
 enum Hybridization {
 	SP2_HYBRID = 1,
 	SP3_HYBRID,

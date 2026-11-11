@@ -75,9 +75,9 @@ StructFileRepOP create_sfr_from_cif_file( gemmi::cif::Document & cifdoc, StructF
 
 	StructFileRepOP sfr( new StructFileRep );
 
-	std::map<char, ChainAtoms> atom_chain_map;
-	std::vector< char > chain_list; // preserve order
-	std::map<char, Size> chain_to_idx;
+	std::map<std::string, ChainAtoms> atom_chain_map;
+	std::vector< std::string > chain_list; // preserve order
+	std::map<std::string, Size> chain_to_idx;
 
 	std::map<std::pair<Size, Size>, char> modelchain_to_chain;
 	std::string const & chain_letters( utility::UPPERCASE_ALPHANUMERICS );
@@ -225,9 +225,7 @@ StructFileRepOP create_sfr_from_cif_file( gemmi::cif::Document & cifdoc, StructF
 					ssbond.iCode1 = ' ';
 				}
 
-				std::stringstream strstr1;
-				strstr1 << std::setw( 4 ) << std::right << ssbond.resSeq1 << ssbond.iCode1 << ssbond.chainID1;
-				ssbond.resID1 = strstr1.str();
+				ssbond.resID1 = ResID( ssbond.resSeq1, ssbond.iCode1, ssbond.chainID1 );
 
 				if ( ptnr2_auth_comp_id >= 0 ) {
 					ssbond.resName2 = as_string(row[ptnr2_auth_comp_id]);
@@ -260,9 +258,7 @@ StructFileRepOP create_sfr_from_cif_file( gemmi::cif::Document & cifdoc, StructF
 					ssbond.iCode2 = ' ';
 				}
 
-				std::stringstream strstr2;
-				strstr2 << std::setw( 4 ) << std::right << ssbond.resSeq2 << ssbond.iCode2 << ssbond.chainID2;
-				ssbond.resID2 = strstr2.str();
+				ssbond.resID2 = ResID( ssbond.resSeq2, ssbond.iCode2, ssbond.chainID2 );
 
 				if ( pdbx_dist_value >= 0 ) {
 					ssbond.length = as_number( row[pdbx_dist_value] );
@@ -346,9 +342,7 @@ StructFileRepOP create_sfr_from_cif_file( gemmi::cif::Document & cifdoc, StructF
 					link.iCode1 = ' ';
 				}
 
-				std::stringstream strstr1;
-				strstr1 << std::setw( 4 ) << std::right << link.resSeq1 << link.iCode1 << link.chainID1;
-				link.resID1 = strstr1.str();
+				link.resID1 = ResID( link.resSeq1, link.iCode1, link.chainID1);
 
 				if ( ptnr2_auth_comp_id >= 0 ) {
 					link.resName2 = as_string(row[ptnr2_auth_comp_id]);
@@ -381,9 +375,7 @@ StructFileRepOP create_sfr_from_cif_file( gemmi::cif::Document & cifdoc, StructF
 					link.iCode2 = ' ';
 				}
 
-				std::stringstream strstr2;
-				strstr2 << std::setw( 4 ) << std::right << link.resSeq2 << link.iCode2 << link.chainID2;
-				link.resID2 = strstr2.str();
+				link.resID2 = ResID( link.resSeq2, link.iCode2, link.chainID2 );
 
 				if ( pdbx_dist_value >= 0 ) {
 					link.length = as_number( row[pdbx_dist_value] );
@@ -519,14 +511,14 @@ StructFileRepOP create_sfr_from_cif_file( gemmi::cif::Document & cifdoc, StructF
 				ai.resName = as_string(row[label_comp_id]); // Mandatory
 			}
 
-			ai.chainID = ' ';
+			ai.chainID = " ";
 			if ( auth_asym_id >= 0 ) {
-				ai.chainID = as_char(row[auth_asym_id], ' ');
+				ai.chainID = as_string(row[auth_asym_id]);
 			} else if ( label_asym_id >= 0 ) {
-				ai.chainID = as_char(row[label_asym_id], ' '); // Mandatory
+				ai.chainID = as_string(row[label_asym_id]); // Mandatory
 			}
 			if ( options.new_chain_order() ) {
-				char chainid = ai.chainID;
+				std::string chainid = ai.chainID;
 				if ( chain_to_idx.find(chainid) == chain_to_idx.end() ) {
 					chain_to_idx[chainid] = chain_to_idx.size()+1;
 					TR << "found new chain " << chainid << " " << chain_to_idx.size() << std::endl;
@@ -595,7 +587,7 @@ StructFileRepOP create_sfr_from_cif_file( gemmi::cif::Document & cifdoc, StructF
 		//  TR.Warning << " Note that the final table in the cif file may not be recognized - adding a dummy entry (like `_citation.title  \"\"`) to the end of the file may help." << std::endl;
 	}
 
-	for ( char i : chain_list ) { // std::vector
+	for ( std::string const & i : chain_list ) { // std::vector
 		sfr->chains().push_back( atom_chain_map.find( i )->second );
 	}
 

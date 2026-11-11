@@ -112,7 +112,8 @@ public:
 	}
 
 private:
-	AtomTreeDiff(AtomTreeDiff const &);
+	AtomTreeDiff( AtomTreeDiff const & ) = delete;
+	AtomTreeDiff & operator=( AtomTreeDiff const & ) = delete;
 
 	/// The list of (tag,scores) pairs for the diffed structures, for efficient selection of subsets.
 	/// (E.g. the top 5% by total score.) Memory cost is probably ~1 kb / structure.

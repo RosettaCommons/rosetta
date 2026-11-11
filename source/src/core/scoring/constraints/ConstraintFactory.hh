@@ -41,9 +41,6 @@ public:
 private:
 	ConstraintFactory();
 
-	ConstraintFactory(ConstraintFactory const &); // unimplemented
-	ConstraintFactory const & operator=( ConstraintFactory const & ); // unimplemented
-
 public:
 
 	void factory_register( ConstraintCreatorCOP creator );

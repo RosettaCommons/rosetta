@@ -133,8 +133,8 @@ public:
 	// ------------------------------------------ //
 	/// @brief test isMarkup function
 	void test_isMarkup() {
-		double num;
-		unsigned int end_pos;
+		double num = 987e-2;
+		unsigned int end_pos = 6574;
 		bool res;
 
 		res = test::utools::isMarkup("something(1.23)", 0, num, end_pos, "MARKUP(");

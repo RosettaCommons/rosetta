@@ -73,10 +73,6 @@ public:
 private: // methods
 	// Private constructor - singleton
 	LoopRefineInnerCycleFactory();
-	LoopRefineInnerCycleFactory(const LoopRefineInnerCycleFactory & src); // unimplemented
-
-	LoopRefineInnerCycleFactory const &
-	operator=( LoopRefineInnerCycleFactory const & ); // unimplemented
 
 	LoopRefineInnerCycleOP make_inner_cycle_from_string_name( std::string const & name ) const;
 	void setup_known_types();

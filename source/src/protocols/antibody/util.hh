@@ -19,6 +19,7 @@
 //Core Headers
 
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/DockingPartners.fwd.hh>
 #include <core/types.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
@@ -117,12 +118,12 @@ simple_fold_tree(
 	core::Size cutpoint,
 	core::Size jumppoint2);
 
-/// @brief Setup LH_A foldtree via docking.  Return dock_chains string.
-std::string
+/// @brief Setup LH_A foldtree via docking.
+core::pose::DockingPartners
 setup_LH_A_foldtree(AntibodyInfoCOP ab_info, core::pose::Pose & pose);
 
-/// @brief Setup A_LH foldtree via docking. Return dock_chains string.
-std::string
+/// @brief Setup A_LH foldtree via docking.
+core::pose::DockingPartners
 setup_A_LH_foldtree(AntibodyInfoCOP ab_info, core::pose::Pose & pose);
 
 

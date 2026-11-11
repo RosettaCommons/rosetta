@@ -67,8 +67,6 @@ RealVectorValuedParameter::RealVectorValuedParameter( RealVectorValuedParameter 
 {
 }
 
-RealVectorValuedParameter::~RealVectorValuedParameter() {}
-
 
 /// @brief Make a copy of this object ( allocate actual memory for it )
 ///

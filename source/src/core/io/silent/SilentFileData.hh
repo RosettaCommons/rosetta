@@ -233,7 +233,7 @@ public:
 	std::string
 	get_sequence( std::string const & filename );
 
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > >
+	std::tuple< utility::vector1< int >, utility::vector1< std::string >, utility::vector1< std::string > >
 	get_resnum( std::string const & filename );
 
 	/// @brief quickly read a list of tags from a silent-input file. Only checks
@@ -450,8 +450,6 @@ public:
 			it_( s_iter)
 		{}
 
-		~iterator() {}
-
 		bool operator==( const iterator& other ) const {
 			return ( it_ == other.it_ );
 		}
@@ -504,8 +502,6 @@ public:
 		const_iterator( Structure_Map::const_iterator s_iter ) :
 			it_( s_iter )
 		{}
-
-		~const_iterator() {}
 
 		bool operator==( const const_iterator& other ) {
 			return ( it_ == other.it_ );

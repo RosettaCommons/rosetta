@@ -854,7 +854,6 @@ MinimizationGraph::MinimizationGraph( // NOLINT(bugprone-copy-constructor-init) 
 
 MinimizationGraph::~MinimizationGraph() {
 	delete_everything();
-	delete minimization_edge_pool_; minimization_edge_pool_ = nullptr;
 }
 
 

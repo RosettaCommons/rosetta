@@ -29,6 +29,7 @@
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <utility/vector1.hh>
 
+#include <memory>
 #include <ostream> // AUTO IWYU For operator<<, ostream, basic_ostream, basi...
 
 
@@ -54,10 +55,9 @@ public:
 		queryResidueIndex_ = queryPosition;
 		vallResidueIndex_ = inChunkPosition;
 		fragmentLength_ = fragmentLength;
-		pool_name_ = nullptr;
 	}
 
-	~FragmentCandidate() override { delete pool_name_; }
+	~FragmentCandidate() override = default;
 
 	/// @brief returns a pointer to the original chunk from vall the fragment comes from
 	inline VallChunkOP get_chunk() const {
@@ -159,8 +159,7 @@ public:
 	void output_silent(core::io::silent::SilentFileData & sfd, std::string const & sequence, std::string const & silent_file_name, std::string const & tag, scores::FragmentScoreMapOP sc, scores::FragmentScoreManagerOP ms);
 
 	inline void set_pool_name(std::string const & pool_name) {
-		if ( pool_name_!=nullptr ) delete pool_name_;
-		pool_name_= new std::string(pool_name);
+		pool_name_.reset( new std::string(pool_name) );
 	}
 
 	inline std::string get_pool_name() {
@@ -177,7 +176,7 @@ protected:
 	core::Size fragmentLength_;
 private:
 	static const std::string unknown_pool_name_;
-	std::string* pool_name_;
+	std::unique_ptr< std::string > pool_name_;
 };
 
 inline std::ostream& operator<<(std::ostream& out, FragmentCandidate const& fr) {

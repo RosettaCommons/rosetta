@@ -21,6 +21,7 @@
 
 // C++ headers
 #include <utility/assert.hh>
+#include <memory>
 #include <string>
 
 
@@ -52,7 +53,7 @@ public: // Creation
 	/// @brief Default constructor
 	inline
 	VariantKey() :
-		key_p_( 0 )
+		key_p_()
 	{}
 
 
@@ -70,14 +71,6 @@ public: // Creation
 	{}
 
 
-	/// @brief Destructor
-	inline
-	~VariantKey() throw() // throw() needed for ICC
-	{
-		delete key_p_;
-	}
-
-
 public: // Assignment
 
 
@@ -87,7 +80,7 @@ public: // Assignment
 	operator =( VariantKey const & var )
 	{
 		if ( this != &var ) {
-			delete key_p_; key_p_ = ( var.key_p_ ? var.key_p_->clone() : 0 );
+			key_p_.reset( var.key_p_ ? var.key_p_->clone() : nullptr );
 		}
 		return *this;
 	}
@@ -292,7 +285,7 @@ private: // Fields
 
 
 	/// @brief Pointer to key
-	Key * key_p_;
+	std::unique_ptr< Key > key_p_;
 
 
 }; // VariantKey

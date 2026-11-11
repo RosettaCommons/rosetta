@@ -116,7 +116,7 @@ UnfoldedStateEnergyCalculatorMover::create_random_fragments( Pose & pose, vector
 {
 	// get number of protein residues
 	core::Size num_protein_res( 0 );
-	for ( core::Size i = 1; i < pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue( i ).type().is_protein() ) {
 			num_protein_res++;
 		}

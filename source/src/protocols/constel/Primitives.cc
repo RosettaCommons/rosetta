@@ -61,13 +61,13 @@ void pair_constel_set_idx2(core::Size const i, core::Size const j, Pose const& p
 	// get info about either residue
 	char aai = core::chemical::oneletter_code_from_aa(pose_init.aa(i));
 	int i_pdb_number = pose_init.pdb_info()->number(i);
-	char i_pdb_chain = pose_init.pdb_info()->chain(i);
+	std::string i_pdb_chain = pose_init.pdb_info()->chain(i);
 	utility::vector1<char> allowable_primary_mutations =
 		SingResCnlCrea::list_allowable_mutations(aai);
 
 	char aaj = core::chemical::oneletter_code_from_aa(pose_init.aa(j));
 	int j_pdb_number = pose_init.pdb_info()->number(j);
-	char j_pdb_chain = pose_init.pdb_info()->chain(j);
+	std::string j_pdb_chain = pose_init.pdb_info()->chain(j);
 	utility::vector1<char> allowable_secondary_mutations =
 		SingResCnlCrea::list_allowable_mutations(aaj);
 
@@ -207,19 +207,19 @@ void triple_constel_set_idx3(core::Size const i, core::Size const j, core::Size 
 	// get info about each residue of the triple
 	char aai = oneletter_code_from_aa(pose_init.aa(i));
 	int i_pdb_number = pose_init.pdb_info()->number(i);
-	char i_pdb_chain = pose_init.pdb_info()->chain(i);
+	std::string i_pdb_chain = pose_init.pdb_info()->chain(i);
 	vector1<char> allowable_primary_mutations =
 		SingResCnlCrea::list_allowable_mutations(aai);
 
 	char aaj = oneletter_code_from_aa(pose_init.aa(j));
 	int j_pdb_number = pose_init.pdb_info()->number(j);
-	char j_pdb_chain = pose_init.pdb_info()->chain(j);
+	std::string j_pdb_chain = pose_init.pdb_info()->chain(j);
 	vector1<char> allowable_secondary_mutations =
 		SingResCnlCrea::list_allowable_mutations(aaj);
 
 	char aak = oneletter_code_from_aa(pose_init.aa(k));
 	int k_pdb_number = pose_init.pdb_info()->number(k);
-	char k_pdb_chain = pose_init.pdb_info()->chain(k);
+	std::string k_pdb_chain = pose_init.pdb_info()->chain(k);
 	vector1<char> allowable_tertiary_mutations =
 		SingResCnlCrea::list_allowable_mutations(aak);
 

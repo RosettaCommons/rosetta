@@ -3,13 +3,13 @@ Rosetta Biomolecular Modeling Library
 
 The Rosetta software suite includes algorithms for computational modeling and analysis of protein structures. It has enabled notable scientific advances in computational biology, including de novo protein design, enzyme design, ligand docking, and structure prediction of biological macromolecules and macromolecular complexes.
 
-Rosetta is maintained by the RosettaCommons, a collaboration of 50+ academic research groups, who have been developing Rosetta for over 20 years.
+Rosetta is maintained by the RosettaCommons, a collaboration of 100+ academic research groups who have been developing Rosetta for over 20 years, and is available by license from the University of Washington.
 See <https://www.rosettacommons.org> for more information about Rosetta and the RosettaCommons.
 
 Rosetta Code
 ============
 
-While the Rosetta source code is published on GitHub, it is not "Open Source" (according to the OSI definition). Most notably, use for commercial purposes requires purchase of a separate license. See LICENSE.md for further information.
+While the Rosetta source code is published on GitHub, it is not "Open Source" (according to the OSI definition). Most notably, use for commercial purposes requires purchase of a separate license. See LICENSE.md for further information regarding licensing for both commercial and non-commercial use.
 
 The main GitHub repository on https://github.com/RosettaCommons/rosetta integrates all the Rosetta-associated code base.
 It should be noted that many parts of Rosetta are structured as separate GitHub repositories, which the main repository conveniently presents as submodules.
@@ -157,3 +157,4 @@ To obtain the contents of submodules which aren't currently cloned:
 or if you want to get all the submodules
 
     git submodule update --init --recursive
+

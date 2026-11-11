@@ -69,7 +69,7 @@ void get_chain_terms(core::pose::Pose const &ps, utility::vector1<ChainTerm> &ch
 	for ( core::Size i=1; i<=protein_pose.num_chains(); ++i ) {
 
 		core::Size chain_begin = protein_pose.chain_begin(i);
-		char beg_cid = protein_pose.pdb_info()->chain(chain_begin);
+		std::string beg_cid = protein_pose.pdb_info()->chain(chain_begin);
 		int beg_num = protein_pose.pdb_info()->number(chain_begin);
 		char beg_ico = protein_pose.pdb_info()->icode(chain_begin);
 		core::Size chain_begin_orig = ps.pdb_info()->pdb2pose(beg_cid, beg_num, beg_ico);

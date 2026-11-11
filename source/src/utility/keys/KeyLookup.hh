@@ -97,24 +97,13 @@ private: // Creation
 	= default;
 
 
-	/// @brief Copy constructor
-	inline
-	KeyLookup( KeyLookup const & a ); // Undefined
-
-
 	/// @brief Destructor
 	inline
 	~KeyLookup()
 	= default;
 
-
-private: // Assignment
-
-
-	/// @brief Copy assignment
-	inline
-	KeyLookup &
-	operator =( KeyLookup const & a ); // Undefined
+	KeyLookup( KeyLookup const & ) = delete;
+	KeyLookup & operator =( KeyLookup const & ) = delete;
 
 
 public: // Methods

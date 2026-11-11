@@ -375,19 +375,19 @@ public:
 
 		auto start_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPDB const >( lfd[ 1 ].start_res() );
 		TS_ASSERT( start_rid != nullptr );
-		TS_ASSERT_EQUALS( start_rid->chain(), 'A' );
+		TS_ASSERT_EQUALS( start_rid->chain(), "A" );
 		TS_ASSERT_EQUALS( start_rid->resindex(), 2 );
 		TS_ASSERT_EQUALS( start_rid->insertion_code(), ' ' );
 
 		auto end_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPDB const >( lfd[ 1 ].end_res() );
 		TS_ASSERT( end_rid != nullptr );
-		TS_ASSERT_EQUALS( end_rid->chain(), 'A' );
+		TS_ASSERT_EQUALS( end_rid->chain(), "A" );
 		TS_ASSERT_EQUALS( end_rid->resindex(), 10 );
 		TS_ASSERT_EQUALS( end_rid->insertion_code(), ' ' );
 
 		auto cutpoint_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPDB const >( lfd[ 1 ].cutpoint_res() );
 		TS_ASSERT( cutpoint_rid != nullptr );
-		TS_ASSERT_EQUALS( cutpoint_rid->chain(), 'A' );
+		TS_ASSERT_EQUALS( cutpoint_rid->chain(), "A" );
 		TS_ASSERT_EQUALS( cutpoint_rid->resindex(), 8 );
 		TS_ASSERT_EQUALS( cutpoint_rid->insertion_code(), ' ' );
 

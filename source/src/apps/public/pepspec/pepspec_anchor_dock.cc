@@ -291,7 +291,7 @@ pep_rmsd_analysis(
 		Size ref_pep_anchor_in = option[ pepspec::native_pep_anchor ];
 		std::string ref_pep_chain_in( option[ pepspec::pep_chain ] );
 		if ( option[ pepspec::native_pep_chain ].user() ) ref_pep_chain_in = option[ pepspec::native_pep_chain ];
-		ref_pep_anchor = ref_pose.pdb_info()->pdb2pose( ref_pep_chain_in[0], ref_pep_anchor_in );
+		ref_pep_anchor = ref_pose.pdb_info()->pdb2pose( ref_pep_chain_in, ref_pep_anchor_in );
 	}
 	Size ref_pep_chain( ref_pose.chain( ref_pep_anchor ) );
 	Size ref_pep_begin( ref_pose.conformation().chain_begin( ref_pep_chain ) );
@@ -666,7 +666,7 @@ run_pep_prep()
 			Pose ref_pose;
 			import_pose::pose_from_file( ref_pose, ref_input_name , core::import_pose::PDB_file);
 
-			Size const ref_pep_anchor( ref_pose.pdb_info()->pdb2pose( ref_pep_chain_in[0], ref_pep_anchor_int ) );
+			Size const ref_pep_anchor( ref_pose.pdb_info()->pdb2pose( ref_pep_chain_in, ref_pep_anchor_int ) );
 			if ( ref_pep_anchor == 0 ) utility_exit_with_message( "ERROR: Residue " + string_of( ref_pep_anchor_int ) + " not found in " + ref_input_name + "\n" );
 			//if gly, just change to ala, orient and calc data, then change back
 			//can we just use one of the Halphas?

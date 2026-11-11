@@ -57,8 +57,8 @@ public:
 		nter_overhang=3;
 		cter_overhang=3;
 		flex=2;
-		start = scaffold_pose.pdb_info()->pdb2pose('L', 24) - 1;
-		end = scaffold_pose.pdb_info()->pdb2pose('L', 42) + 1;
+		start = scaffold_pose.pdb_info()->pdb2pose("L", 24) - 1;
+		end = scaffold_pose.pdb_info()->pdb2pose("L", 42) + 1;
 		insert_size = piece.size()-nter_overhang-cter_overhang;
 		L1_2j88_size = 11;
 
@@ -114,8 +114,8 @@ public:
 
 		//Check PDBInfo Copy - first residue of L1 from insert start.
 		// If copy failed - we cannot access.
-		TS_ASSERT_EQUALS(scaffold_copy.pdb_info()->pdb2pose('L', 23), start);
-		TS_ASSERT_EQUALS(scaffold_copy.pdb_info()->pdb2pose('L', 24), start + 1);
+		TS_ASSERT_EQUALS(scaffold_copy.pdb_info()->pdb2pose("L", 23), start);
+		TS_ASSERT_EQUALS(scaffold_copy.pdb_info()->pdb2pose("L", 24), start + 1);
 
 	}
 

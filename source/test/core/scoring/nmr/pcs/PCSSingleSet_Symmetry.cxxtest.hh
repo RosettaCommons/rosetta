@@ -105,9 +105,9 @@ public:
 		// Convert tagging residue from pdb to pose numbering
 		core::pose::PDBInfoCOP pdbinfo = il10_.pdb_info();
 		core::Size tag_residue(14);
-		char chain_id = 'A';
+		std::string chain_id = "A";
 		if ( pdbinfo ) {
-			TR.Debug << "Converting PCS tagging residue " << to_string(tag_residue) << " " << to_string(chain_id) << " from PDB to pose numbering." << std::endl;
+			TR.Debug << "Converting PCS tagging residue " << to_string(tag_residue) << " " << chain_id << " from PDB to pose numbering." << std::endl;
 			tag_residue = pdbinfo->pdb2pose(chain_id, tag_residue);
 		} else {
 			TR.Debug << "Cannot convert PCS tagging residue from PDB to pose numbering. Assume that residue is in pose numbering instead." << std::endl;
@@ -246,7 +246,7 @@ public:
 		// Convert tagging residue from pdb to pose numbering
 		core::pose::PDBInfoCOP pdbinfo = il10_.pdb_info();
 		core::Size tag_residue(14);
-		char chain_id = 'A';
+		std::string chain_id = "A";
 		if ( pdbinfo ) {
 			TR.Debug << "Converting PCS tagging residue " << to_string(tag_residue) << " " << to_string(chain_id) << " from PDB to pose numbering." << std::endl;
 			tag_residue = pdbinfo->pdb2pose(chain_id, tag_residue);

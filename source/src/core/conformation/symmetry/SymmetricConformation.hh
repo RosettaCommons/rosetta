@@ -298,7 +298,7 @@ protected:
 
 	// @brief  invert one of the Tsymm transforms about Z
 	void
-	invert_Tsymm( char sub, core::Size subunit ) const;
+	invert_Tsymm( std::string const & sub, core::Size subunit ) const;
 
 	// utility function gets the nearest upstream virtual
 	core::Size
@@ -312,8 +312,7 @@ private:
 	// stores the symmetric transformation between subunits
 	//   computed when needed, invalidated when a jump changes
 	// multicomp: store transforms for each component (indexed by character)
-	//std::map< char, utility::vector1< numeric::HomogeneousTransform< core::Real > > > Tsymm_;
-	mutable std::map< char, utility::vector1<SymmetryTransform> > Tsymm_;
+	mutable std::map< std::string, utility::vector1<SymmetryTransform> > Tsymm_;
 
 #ifdef    SERIALIZATION
 public:

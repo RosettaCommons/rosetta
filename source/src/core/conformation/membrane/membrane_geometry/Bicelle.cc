@@ -113,9 +113,6 @@ Bicelle::Bicelle(
 	update_outer_radius();
 }
 
-/// @brief Destructor
-Bicelle::~Bicelle() {}
-
 
 MembraneGeometryOP
 Bicelle::clone() const {

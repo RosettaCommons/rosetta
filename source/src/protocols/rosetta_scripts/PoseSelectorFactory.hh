@@ -79,10 +79,6 @@ public:
 private:
 	PoseSelectorFactory();
 
-	// Unimplemented -- uncopyable
-	PoseSelectorFactory( PoseSelectorFactory const & );
-	PoseSelectorFactory const & operator = ( PoseSelectorFactory const & );
-
 
 private:
 

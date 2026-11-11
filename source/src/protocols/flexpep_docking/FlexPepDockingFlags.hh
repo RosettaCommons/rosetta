@@ -19,6 +19,7 @@
 #include <core/types.hh>
 #include <protocols/flexpep_docking/FlexPepDockingFlags.fwd.hh>
 #include <utility/VirtualBase.hh>
+#include <utility/vector1.hh>
 #include <map>
 #include <string>
 
@@ -88,15 +89,15 @@ public:
 
 	bool is_ligand_present( core::pose::Pose const& pose ) const;
 
-	std::string receptor_chain() const;
+	utility::vector1<std::string> const & receptor_chains() const;
 
-	char peptide_chain() const;
+	std::string peptide_chain() const;
 
-	void set_receptor_chain(std::string ch){
-		receptor_chain_ = ch; valid_receptor_chain_ = true;
+	void set_receptor_chains(utility::vector1<std::string> const & ch){
+		receptor_chains_ = ch; valid_receptor_chain_ = true;
 	}
 
-	void set_peptide_chain(char ch){
+	void set_peptide_chain(std::string const & ch){
 		peptide_chain_ = ch; valid_peptide_chain_ = true;
 	}
 
@@ -139,8 +140,8 @@ public:
 private:
 	// TODO: change all ints to core::Size, and add access to basic::options::user() to check validity
 	// chain info fields
-	std::string receptor_chain_;
-	char peptide_chain_;
+	utility::vector1< std::string > receptor_chains_;
+	std::string peptide_chain_;
 	core::Size receptor_first_res_;
 	core::Size receptor_nres_;
 	core::Size peptide_first_res_;

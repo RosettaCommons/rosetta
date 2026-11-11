@@ -56,9 +56,6 @@ FloatingResonance::FloatingResonance( Resonance const& resin, FloatList const& p
 	}
 }
 
-FloatingResonance::~FloatingResonance() = default;
-
-
 core::Size FloatingResonance::float_label( core::Size ifloat ) const {
 	for ( auto it = partner_ids_.begin(); it!=partner_ids_.end(); ++it, --ifloat ) {
 		if ( ifloat==1 ) return *it;

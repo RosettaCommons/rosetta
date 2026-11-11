@@ -46,7 +46,7 @@ static basic::Tracer TR( "src.protocols.constel.SearchOptions" );
 ///  file.
 /// @param[in] pose_init pose to which the target belongs.
 ///
-void pair_constel_set(int const target_pdb_number, char const target_pdb_chain,
+void pair_constel_set(int const target_pdb_number, std::string const & target_pdb_chain,
 	Pose& pose_init) {
 
 	// set target_rosetta_resnum to Rosetta internal resid for the residue to be mutated
@@ -91,7 +91,7 @@ void pair_constel_set( std::string const& tgtmuts, Pose& pose_init ) {
 		if ( ( aai == saa1 ) || ( aai == saa2 ) ) {
 
 			core::conformation::Residue resi = pose_init.residue(i);
-			char chi = pose_init.pdb_info()->chain(i);
+			std::string chi = pose_init.pdb_info()->chain(i);
 			core::Size pdbi = pose_init.pdb_info()->number(i);
 
 			for ( core::Size j=i+1; j<=TOTRES; ++j ) {
@@ -102,7 +102,7 @@ void pair_constel_set( std::string const& tgtmuts, Pose& pose_init ) {
 						( ( aaj == saa1 ) && ( aai == saa2) ) ) {
 
 					core::conformation::Residue resj = pose_init.residue(j);
-					char chj = pose_init.pdb_info()->chain(j);
+					std::string chj = pose_init.pdb_info()->chain(j);
 					core::Size pdbj = pose_init.pdb_info()->number(j);
 
 					if ( nt.isneigh( resi, resj, pose_init ) ) {
@@ -143,7 +143,7 @@ void pair_constel_set( std::string const& tgtmuts, Pose& pose_init ) {
 /// @param[in] pose_init: pose to which the target belongs.
 ///
 void triple_constel_set(int const target_pdb_number,
-	char const target_pdb_chain, Pose& pose_init) {
+	std::string const & target_pdb_chain, Pose& pose_init) {
 
 	using utility::vector1;
 	using core::chemical::oneletter_code_from_aa;
@@ -225,7 +225,7 @@ void target_constel(std::string &tgtcnl_fil, Pose & ps) {
 		return;
 	}
 
-	char cid;
+	char cid; // Does input limitations require this to be a single char, or are multicharacters supported?
 	int rnum;
 	char ico;
 	char aasta;
@@ -247,6 +247,8 @@ void target_constel(std::string &tgtcnl_fil, Pose & ps) {
 			cid = ' ';
 		}
 
+		std::string chain = std::string{cid}; // Are we limited to single letter chains by the input format?
+
 		if ( ico == '_' ) {
 			ico = ' ';
 		}
@@ -257,13 +259,13 @@ void target_constel(std::string &tgtcnl_fil, Pose & ps) {
 		for ( core::Size i=1; i<=NRES; ++i ) {
 			if (
 					(pdb_info->number(i) == rnum) &&
-					(pdb_info->chain(i) == cid) &&
+					(pdb_info->chain(i) == chain) &&
 					(pdb_info->icode(i) == ico) &&
 					(oneletter_code_from_aa( ps.aa( i )) == aasta)
 					) {
 				SingResCnlCrea::zero_occ_for_deleted_atoms(ps, i, aaend);
 				cnl.push_back(i);
-				resmut.push_back(ResMut(aasta, aaend, cid, rnum, i));
+				resmut.push_back(ResMut(aasta, aaend, chain, rnum, i));
 				found = true;
 				break;
 			}

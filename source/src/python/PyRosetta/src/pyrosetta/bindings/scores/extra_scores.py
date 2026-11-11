@@ -41,9 +41,6 @@ class ExtraScoresAccessorBase(PoseCacheAccessorBase, MutableMapping):
     def __init__(self, pose):
         super().__init__(pose)
 
-    def __getitem__(self, key):
-        return self.maybe_decode(self.all[key])
-
     def __setitem__(self, key, value):
         self._validate_set(key)
         value = self.maybe_encode(value)
@@ -147,11 +144,11 @@ class ExtraScoresAccessor(ExtraScoresAccessorBase):
             2. `ScoreMap.get_arbitrary_score_data_from_pose(pose)`
             3. `ScoreMap.get_arbitrary_string_data_from_pose(pose)`
         """
-        extra_string_scores = self.string
-        extra_float_scores = self.real
+        extra_string_scores = dict(self.string.all)
+        extra_float_scores = dict(self.real.all)
 
-        for k in extra_float_scores.keys():
-            if k in extra_string_scores.keys():
+        for k in extra_float_scores:
+            if k in extra_string_scores:
                 self._clobber_warning(
                     "Arbitrary extra float score key is clobbering arbitrary extra string score key: '{0}'".format(k)
                 )

@@ -182,10 +182,10 @@ private:
 	bool edge_vector_up_to_date_;
 	InteractionGraphBase* owner_;
 
-	//no default constructor, uncopyable
-	NodeBase();
-	NodeBase( NodeBase const & );
-	NodeBase & operator = ( NodeBase & );
+public:
+	NodeBase() = delete;
+	NodeBase( NodeBase const & ) = delete;
+	NodeBase & operator = ( NodeBase const & ) = delete;
 };
 
 class EdgeBase
@@ -311,10 +311,10 @@ private:
 	bool marked_for_deletion_ = false;
 
 
-	//no default constructor, uncopyable
-	EdgeBase();
-	EdgeBase( EdgeBase const & );
-	EdgeBase & operator = ( EdgeBase & );
+public:
+	EdgeBase() = delete;
+	EdgeBase( EdgeBase const & ) = delete;
+	EdgeBase & operator = ( EdgeBase const & ) = delete;
 
 };
 
@@ -550,10 +550,10 @@ private:
 	ObjexxFCL::FArray2D_bool energy_sum_group_membership_;
 	ObjexxFCL::FArray1D_int component_membership_;
 
-	//no default constructor, uncopyable
-	InteractionGraphBase();
-	InteractionGraphBase( InteractionGraphBase const &);
-	InteractionGraphBase & operator = (InteractionGraphBase const & );
+public:
+	InteractionGraphBase() = delete;
+	InteractionGraphBase( InteractionGraphBase const & ) = delete;
+	InteractionGraphBase & operator = ( InteractionGraphBase const & ) = delete;
 };
 
 } //end namespace interaction_graph

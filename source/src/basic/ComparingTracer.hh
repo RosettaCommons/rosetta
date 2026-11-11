@@ -31,8 +31,8 @@ protected:
 	/// @brief overload member function.
 	void t_flush(std::string const & s) override;
 
-private:
-	ComparingTracer(ComparingTracer const & );
+	ComparingTracer( ComparingTracer const & ) = delete;
+	ComparingTracer & operator=( ComparingTracer const & ) = delete;
 
 	//std::string  file_name_;
 	std::fstream file_;

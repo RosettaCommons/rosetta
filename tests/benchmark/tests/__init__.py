@@ -70,8 +70,10 @@ DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED = {
     "billiard": ">=3.6.3.0",
     "blosc": ">=1.8.3",
     "cloudpickle": ">=1.5.0",
+    "cryptography": ">=2.8",
     "dask": ">=2.16.0",
     "dask-jobqueue": ">=0.7.0",
+    "decorator": ">=4.3.0",
     "distributed": ">=2.16.0",
     "gitpython": ">=3.1.1",
     "jupyter": ">=1.0.0",
@@ -503,6 +505,7 @@ def get_required_pyrosetta_python_packages_for_testing(platform, conda=False, st
     python_version = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
     packages = copy.deepcopy(DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED)
+
     packages = update_packages_for_python_version(packages, python_version)
     packages = update_packages_for_conda(packages, conda)
 
@@ -512,7 +515,11 @@ def get_required_pyrosetta_python_packages_for_testing(platform, conda=False, st
     if static_versions:
         packages = set_static_versions_for_python_packages(packages)
 
-    return get_packages_str_for_python_packages(packages) if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else ''
+    return (
+        get_packages_str_for_python_packages(packages)
+        if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.'
+        else get_packages_str_for_python_packages({'numpy': packages.get('numpy', DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED['numpy'])})
+    )
 
 
 def get_required_pyrosetta_python_packages_for_release_package(platform, conda=True, static_versions=True, distributed_packages=False):
@@ -523,7 +530,7 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda=T
 
         IMPORTANT: there should be no spaces between package name and version number
 
-        IMPORTANT: if PyRosetta build without serialization support or on Python-2 platform then we DO NOT REQUIRE any packages
+        IMPORTANT: if PyRosetta build without serialization support or on Python-2 platform then we require only `numpy`
     '''
 
     python_version = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
@@ -540,7 +547,11 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda=T
     if static_versions:
         packages = set_static_versions_for_python_packages(packages)
 
-    return get_packages_list_for_python_packages(packages) if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else []
+    return (
+        get_packages_list_for_python_packages(packages)
+        if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.'
+        else get_packages_list_for_python_packages({'numpy': packages.get('numpy', DEFAULT_PACKAGE_VERSIONS_FOR_PYROSETTA_DISTRIBUTED['numpy'])})
+    )
 
 
 def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', options='', conda=None, verbose=False, skip_compile=False, version=None):
@@ -548,12 +559,23 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', opti
 
     #binder = install_llvm_tool('binder', source_location='{}/source/src/python/PyRosetta/binder'.format(rosetta_dir), config=config)
 
-    py_env = conda if conda else local_python_install(platform, config)
+    py_env = conda if conda else local_python_install(platform, config, packages='pybind11-stubgen')
+
+    # if conda:
+    #     py_env = conda
+    # else:
+    #     # py_env = local_python_install(platform, config, packages='pybind11-stubgen')
+    #     py_env = setup_persistent_python_virtual_environment(local_python_install(platform, config), 'pybind11-stubgen')
+
 
     #print(sysconfig.get_config_vars())
     #CONFINCLUDEPY
 
-    extra = ' --python-include-dir={py_env.python_include_dir} --python-lib={py_env.python_lib_dir}'.format(**vars())
+    extra = f' --python-include-dir={py_env.python_include_dir} --python-lib={py_env.python_lib_dir}'
+
+    python_version = platform.get('python', DEFAULT_PYTHON_VERSION)
+    if not (python_version in ['3.8'] and conda): extra += ' --stubs'
+
     # if platform['os'] == 'mac'  and  platform['python'].startswith('python3'):
     #     python_prefix = execute('Getting {} prefix path...'.format(platform['python']), '{}-config --prefix'.format(platform['python']), return_='output')
     #     extra += ' --python-include-dir={0}/include/python3.5m --python-lib={0}/lib/libpython3.5.dylib'.format(python_prefix)
@@ -566,6 +588,7 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', opti
     if version: extra += " --version '{version}'".format(**vars())
 
     command_line = f'cd {rosetta_dir}/source/src/python/PyRosetta && {py_env.python} build.py -j{jobs} --compiler {platform["compiler"]} --type {mode}{extra} {options}'
+    # command_line = f'{py_env.activate} && cd {rosetta_dir}/source/src/python/PyRosetta && python build.py -j{jobs} --compiler {platform["compiler"]} --type {mode}{extra} {options}'
 
     pyrosetta_path = execute('Getting PyRosetta build path...', command_line + ' --print-build-root', return_='output').split()[-1]
 
@@ -807,7 +830,7 @@ def remove_pip_and_easy_install(prefix_root_path):
 
 
 
-def local_python_install(platform, config):
+def local_python_install(platform, config, *, packages=None):
     ''' Perform local install of given Python version and return path-to-python-interpreter, python_include_dir, python_lib_dir
         If previous install is detected skip installiation.
         Provided Python install will _persistent_ and _immutable_
@@ -852,6 +875,7 @@ def local_python_install(platform, config):
         '3.11' : 'https://www.python.org/ftp/python/3.11.12/Python-3.11.12.tgz',
         '3.12' : 'https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz',
         '3.13' : 'https://www.python.org/ftp/python/3.13.0/Python-3.13.0.tgz',
+        '3.14' : 'https://www.python.org/ftp/python/3.14.0/Python-3.14.0.tgz',
     }
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')
@@ -863,7 +887,7 @@ def local_python_install(platform, config):
     }
 
     #packages = '' if (python_version[0] == '2' or  python_version == '3.5' ) and  platform['os'] == 'mac' else 'pip setuptools wheel' # 2.7 is now deprecated on Mac so some packages could not be installed
-    packages = 'setuptools'
+    packages = 'setuptools' + ( (' ' + packages) if packages else '')
 
     url = python_sources[python_version]
 
@@ -941,7 +965,9 @@ def local_python_install(platform, config):
         # if 'certifi' not in packages:
         #     packages += ' certifi'
 
-        if packages: execute( f'Installing packages {packages}...', f'cd {root} && unset __PYVENV_LAUNCHER__ && {root}/bin/pip{python_version} install --upgrade {packages}' )
+        if packages:
+            execute( f'Installing packages {packages}...', f'cd {root} && unset __PYVENV_LAUNCHER__ && {root}/bin/pip{python_version} install --no-cache-dir --upgrade pip' )
+            execute( f'Installing packages {packages}...', f'cd {root} && unset __PYVENV_LAUNCHER__ && {root}/bin/pip{python_version} install --no-cache-dir --upgrade {packages}' )
         #if packages: execute( f'Installing packages {packages}...', f'cd {root} && unset __PYVENV_LAUNCHER__ && {executable} -m pip install --upgrade {packages}' )
 
         remove_pip_and_easy_install(root)  # removing all pip's and easy_install's to make sure that environment is immutable
@@ -978,8 +1004,10 @@ def setup_python_virtual_environment(working_dir, python_environment, packages='
 
     bin=working_dir+'/bin'
 
-    if packages: execute('Installing packages: {}...'.format(packages), 'unset __PYVENV_LAUNCHER__ && {bin}/python {bin}/pip install --upgrade pip setuptools && {bin}/python {bin}/pip install --progress-bar off {packages}'.format(**vars()) )
-    #if packages: execute('Installing packages: {}...'.format(packages), '{bin}/pip{python_environment.version} install {packages}'.format(**vars()) )
+    #if packages: execute('Installing packages: {}...'.format(packages), 'unset __PYVENV_LAUNCHER__ && {bin}/python {bin}/pip install --no-cache-dir --upgrade pip setuptools && {bin}/python {bin}/pip install --no-cache-dir --progress-bar off {packages}'.format(**vars()) )
+    if packages:
+        packages = ' '.join( f"'{p}'" for p in packages.split() )
+        execute('Installing packages: {}...'.format(packages), '{activate} && {bin}/pip install --no-cache-dir --upgrade pip setuptools && {bin}/pip install --no-cache-dir --progress-bar off {packages}'.format(**vars()) )
 
     return NT(activate = activate, python = bin + '/python', root = working_dir, bin = bin)
 
@@ -997,7 +1025,7 @@ def setup_persistent_python_virtual_environment(python_environment, packages):
         #if 'certifi' not in packages: packages += ' certifi'
 
         h = hashlib.md5()
-        h.update(f'v1.0.0 platform: {python_environment.platform} python_source_url: {python_environment.url} python-hash: {python_environment.hash} packages: {packages}'.encode('utf-8', errors='backslashreplace') )
+        h.update(f'v1.1.0 platform: {python_environment.platform} python_source_url: {python_environment.url} python-hash: {python_environment.hash} packages: {packages}'.encode('utf-8', errors='backslashreplace') )
         hash = h.hexdigest()
 
         prefix = calculate_unique_prefix_path(python_environment.platform, python_environment.config)
@@ -1016,7 +1044,7 @@ def setup_persistent_python_virtual_environment(python_environment, packages):
             remove_pip_and_easy_install(root)  # removing all pip's and easy_install's to make sure that environment is immutable
             with open(signature_file_name, 'w') as f: f.write(signature)
 
-        return NT(activate = activate, python = bin + '/python', root = root, bin = bin, hash = hash)
+        return NT(activate = activate, python = bin + '/python', root = root, bin = bin, hash = hash, python_include_dir= python_environment.python_include_dir, python_lib_dir=python_environment.python_lib_dir)
 
 
 
@@ -1256,6 +1284,20 @@ def setup_conda_virtual_environment(working_dir, platform, config, packages=''):
         platform=platform,
         config=config,
     )
+
+
+def setup_pixi(working_dir):
+    ''' Setup Pixi package manager in working_dir/.pixi-root and return path to pixi executable
+    '''
+    pixi_root = f'{working_dir}/.pixi-root'
+
+    execute('Setting up Pixi...', f'cd {working_dir} && export PIXI_HOME={pixi_root} && curl -fsSL https://pixi.sh/install.sh | sh')
+
+    return f'{pixi_root}/bin/pixi'
+
+
+def setup_pixi_environment(pixi, working_dir, packages):
+    execute('Setting up Pixi environment...', f'cd {working_dir} && {pixi} init {working_dir} && {pixi} add {packages}')
 
 
 

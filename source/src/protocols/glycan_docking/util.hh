@@ -29,6 +29,7 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/DockingPartners.fwd.hh>
 #include <core/types.hh>
 #include <core/select/residue_selector/ChainSelector.fwd.hh>
 
@@ -49,10 +50,8 @@ namespace glycan_docking {
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Creates a ChainSelector based on the downstream partner (glycoligand)
-/// @brief of the -docking:partners (e.g. AB_X) after some quality assurance
 core::select::residue_selector::ChainSelectorCOP
-setup_glycoligand_selector
-( std::string const & docking_partners /* e.g. A_X */ );
+setup_glycoligand_selector( core::pose::DockingPartners const & docking_partners );
 
 
 /// @brief Return a residue subset where carbohydrates of the glycoligand
@@ -195,9 +194,10 @@ calc_GlycanDock_intf_metrics
 
 /// @brief Create an InterfaceAnalyzerMover appropriate for GlycanDock output
 protocols::analysis::InterfaceAnalyzerMoverOP
-get_GlycanDock_IAM
-( std::string const & docking_partners,
-	core::scoring::ScoreFunctionOP sf );
+get_GlycanDock_IAM(
+	core::pose::DockingPartners const & docking_partners,
+	core::scoring::ScoreFunctionOP sf
+);
 
 
 } // glycan_docking

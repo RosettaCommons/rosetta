@@ -183,9 +183,6 @@ DotSphere::DotSphere() :
 }
 
 ///
-DotSphere::~DotSphere() = default;
-
-///
 /// @brief
 /// copy constructor
 ///
@@ -519,11 +516,6 @@ RotamerDots::RotamerDots(
 		radii_ = RotamerDotsRadiusData::get_instance()->get_NACCESS_SASA_radii();
 	}
 
-}
-
-///
-RotamerDots::~RotamerDots() {
-	//TR_RD << "called destructor" << std::endl;
 }
 
 ///
@@ -1577,9 +1569,6 @@ RotamerDotsCache::RotamerDotsCache( Size num_atoms ) {
 RotamerDotsCache::RotamerDotsCache( RotamerDotsCache const & /*rhs*/ ) = default;
 
 ///
-RotamerDotsCache::~RotamerDotsCache() = default;
-
-///
 /// @brief
 /// assignment operator
 ///
@@ -1681,8 +1670,6 @@ InvRotamerDots::InvRotamerDots( InvRotamerDots const & src ) :
 	inv_dots_( src.inv_dots_ ),
 	radii_( src.radii_ )
 {}
-
-InvRotamerDots::~InvRotamerDots() = default;
 
 InvRotamerDots &
 InvRotamerDots::operator= ( InvRotamerDots const & rhs ) {

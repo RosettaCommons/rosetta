@@ -71,8 +71,6 @@ private:
 
 private:
 	SingleResidueRotamerLibraryFactory();
-	SingleResidueRotamerLibraryFactory( SingleResidueRotamerLibraryFactory const & ); // unimplemented
-	SingleResidueRotamerLibraryFactory const & operator = ( SingleResidueRotamerLibraryFactory const & ); // unimplemented
 
 private:
 	typedef std::map< std::string, SingleResidueRotamerLibraryCreatorOP > CreatorMap;

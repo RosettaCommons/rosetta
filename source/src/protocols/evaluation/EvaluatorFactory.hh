@@ -47,13 +47,6 @@ private:
 	/// @brief Private constructor to make it singleton managed
 	EvaluatorFactory();
 
-	/// @brief Private unimplemented copy constructor -- uncopyable.
-	EvaluatorFactory(const EvaluatorFactory & src);
-
-	/// @brief Private unimplemented assignment operator -- uncopyable.
-	EvaluatorFactory const &
-	operator = ( EvaluatorFactory const & );
-
 public:
 
 	// Warning this is not called because of the singleton pattern

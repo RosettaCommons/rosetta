@@ -59,7 +59,6 @@ namespace disulfides {
 */
 class DisulfideMatchingNeighborIterator : public ResidueNeighborIterator
 {
-	DisulfideMatchingNeighborIterator & operator = (DisulfideMatchingNeighborIterator const & src );
 public:
 
 	DisulfideMatchingNeighborIterator(
@@ -72,7 +71,10 @@ public:
 		DisulfideMatchingEnergyContainer * owner
 	);
 
-	~DisulfideMatchingNeighborIterator() override;
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	DisulfideMatchingNeighborIterator & operator = (DisulfideMatchingNeighborIterator const & src ) = delete;
 
 	ResidueNeighborIterator & operator = ( ResidueNeighborIterator const & ) override;
 	ResidueNeighborIterator const & operator ++ () override;
@@ -102,7 +104,6 @@ private:
 
 /// @brief Just a const version of DisulfideMatchingNeighborIterator
 class DisulfideMatchingNeighborConstIterator : public ResidueNeighborConstIterator {
-	DisulfideMatchingNeighborConstIterator & operator = (DisulfideMatchingNeighborConstIterator const & src );
 public:
 	DisulfideMatchingNeighborConstIterator(
 		DisulfideMatchingEnergyContainer const * owner,
@@ -112,7 +113,10 @@ public:
 
 	DisulfideMatchingNeighborConstIterator( DisulfideMatchingEnergyContainer const * owner );
 
-	~DisulfideMatchingNeighborConstIterator() override;
+	// Assignment must go through the polymorphic operator= below, which
+	// downcasts and copies all members; suppress the implicit derived-derived
+	// copy assignment that would bypass it.
+	DisulfideMatchingNeighborConstIterator & operator = (DisulfideMatchingNeighborConstIterator const & src ) = delete;
 
 	ResidueNeighborConstIterator & operator = ( ResidueNeighborConstIterator const & ) override;
 	ResidueNeighborConstIterator const & operator ++ () override;

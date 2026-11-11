@@ -2677,8 +2677,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	# correction for testing ------------------------------------------------------------
 	Option_Group( 'corrections',
-		Option( 'beta', 'Boolean', desc='Use the most-recent (curr Apr 2018) beta score function', default='false'),
-		Option( 'beta_cart', 'Boolean', desc='Use the most-recent (curr Apr 2018) beta score function for nonideal optimization', default='false'),
+		Option( 'beta', 'Boolean', desc='Use the most-recent (curr Jan 2025) beta score function', default='false'),
+		Option( 'beta_cart', 'Boolean', desc='Use the most-recent (curr Jan 2025) beta score function for nonideal optimization', default='false'),
+		Option( 'beta_jan25', 'Boolean', desc='Use the January 2025 beta score function', default='false'),
+		Option( 'beta_jan25_cart', 'Boolean', desc='Use the January 2025 beta score function for nonideal optimization', default='false'),
 		Option( 'beta_nov16', 'Boolean', desc='Use the November 2015 beta score function', default='false'),
 		Option( 'beta_nov16_cart', 'Boolean', desc='Use the November 2015 beta score function for nonideal optimization', default='false'),
 		Option( 'beta_july15', 'Boolean', desc='Use the July 2015 beta  score function', default='false'),

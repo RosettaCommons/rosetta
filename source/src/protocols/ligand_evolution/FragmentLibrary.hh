@@ -60,10 +60,10 @@ public:
 	void set_pose( core::pose::PoseCOP pose );
 
 	/// @brief generates a smiles representation for the id and calls create_ligand_pose with smiles
-	core::pose::PoseOP create_ligand_pose( LigandIdentifier const& id, bool create_rotamers, char ligand_chain ) const;
+	core::pose::PoseOP create_ligand_pose( LigandIdentifier const& id, bool create_rotamers, std::string const & ligand_chain ) const;
 
 	/// @brief generates a new residue represented by a given ligand code and adds it to a detached copy of the internally saved pose object
-	core::pose::PoseOP create_ligand_pose( std::string const& smiles, bool create_rotamers, char ligand_chain ) const;
+	core::pose::PoseOP create_ligand_pose( std::string const& smiles, bool create_rotamers, std::string const & ligand_chain ) const;
 
 	/// @brief Loads smirks reaction file and all reagents in the same folder
 	void load_data( std::string const& reaction_file_path, std::string const& reagent_file_path, core::Size rank );
@@ -143,7 +143,7 @@ private:
 	core::Size generate_rotamers( core::chemical::MutableResidueType& new_ligand ) const;
 
 	/// @brief Takes a ligand and adds it to a detached copy of the internally saved pose object
-	core::pose::PoseOP create_pose( core::conformation::Residue& ligand, char ligand_chain ) const;
+	core::pose::PoseOP create_pose( core::conformation::Residue& ligand, std::string const & ligand_chain ) const;
 
 private:
 

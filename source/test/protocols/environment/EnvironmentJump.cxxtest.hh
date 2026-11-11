@@ -281,7 +281,7 @@ public:
 
 	void test_pdb_info_persistence() {
 		core::pose::PDBInfoOP info( new core::pose::PDBInfo( pose.size() ) );
-		info->set_chains( 'A' );
+		info->set_all_chains( "A" );
 		pose.pdb_info( info );
 
 		EnvironmentOP env_op( new Environment( "env" ) );
@@ -290,12 +290,12 @@ public:
 		core::pose::Pose protected_pose;
 		TS_ASSERT_THROWS_NOTHING( protected_pose = env.start( pose ) );
 		TS_ASSERT( protected_pose.pdb_info() );
-		TS_ASSERT_EQUALS( protected_pose.pdb_info()->chain( 1 ), 'A' );
+		TS_ASSERT_EQUALS( protected_pose.pdb_info()->chain( 1 ), "A" );
 
 		core::pose::Pose end_pose;
 		TS_ASSERT_THROWS_NOTHING( end_pose = env.end( protected_pose ) );
 		TS_ASSERT( end_pose.pdb_info() );
-		TS_ASSERT_EQUALS( end_pose.pdb_info()->chain( 1 ), 'A' );
+		TS_ASSERT_EQUALS( end_pose.pdb_info()->chain( 1 ), "A" );
 	}
 
 	void test_JumpClaim_rscripts_creation( core::pose::Pose const& pose ) {

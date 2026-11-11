@@ -101,7 +101,7 @@ DrugDesignMover::DrugDesignMover():
 	temperature_( 1.0 ),
 	simulated_annealing_( false ),
 	maxtrials_( 10 ),
-	chain_( 'X' ),
+	chain_( "X" ),
 	restypeset_( new core::chemical::PoseResidueTypeSet(core::chemical::FULL_ATOM_t) )
 {}
 
@@ -673,7 +673,7 @@ DrugDesignMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	attlist
 		+ XMLSchemaAttribute::attribute_w_default( "trials", xsct_non_negative_integer, "The number of Monte Carlo trials", "10")
 		+ XMLSchemaAttribute::attribute_w_default( "temperature", xsct_real, "The Monte Carlo temperature", "0.1" )
-		+ XMLSchemaAttribute::attribute_w_default( "chain", xsct_char, "The chain of the ligand to use", "X" )
+		+ XMLSchemaAttribute::attribute_w_default( "chain", xs_string, "The chain of the ligand to use", "X" )
 		+ XMLSchemaAttribute::attribute_w_default( "lig_efficy", xsct_rosetta_bool, "Use ligand efficiency interface energy in MC acceptance", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "logfile", xsct_rosetta_bool, "Output log files", "true")
 		+ XMLSchemaAttribute( "prefilter", xs_string, "If set, apply this filter to the pose prior to the redocker mover." )
@@ -728,7 +728,7 @@ DrugDesignMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 {
 	maxtrials_ = tag->getOption< core::Size >( "trials", 10 );
 	temperature_ = tag->getOption< Real >( "temperature", 0.1 );
-	chain_ = tag->getOption< char >( "chain", 'X' );
+	chain_ = tag->getOption< std::string >( "chain", "X" );
 	debug_prefix_ = tag->getOption< std::string >( "debug_prefix", "" );
 	lig_efficiency_ = tag->getOption< bool >( "lig_efficy", true );
 	output_logfile_ = tag->getOption< bool >( "logfile", true );
