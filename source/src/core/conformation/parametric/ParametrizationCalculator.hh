@@ -195,6 +195,11 @@ protected: //Functions
 
 private: //Functions
 
+	/// @brief Configure common properties on a parameter and add it to this calculator.
+	/// @details Sets the name, description, short description, units, type, capabilities, and global flag,
+	/// then adds the parameter. Used by add_*_parameter() and add_custom_parameter() to avoid duplication.
+	void configure_and_add_parameter( ParameterOP param, std::string const &parameter_name, ParameterType type, std::string const &description, std::string const &short_description, std::string const &units, ParameterizationCalculatorProperties const &properties );
+
 	/// @brief Add a parameter to this calculator.
 	///
 	void add_parameter( ParameterOP parameter_in );
