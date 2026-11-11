@@ -43,7 +43,6 @@ typedef utility::pointer::shared_ptr< AdditionalPosesMover const > AdditionalPos
 class AdditionalPosesMover : public protocols::moves::Mover {
 
 public:
-	AdditionalPosesMover() = default;
 	AdditionalPosesMover(std::string const & name = ""): Mover(name) {}
 
 	// Abstract class -- don't need to (re)implement all of the Mover-necessary functions
