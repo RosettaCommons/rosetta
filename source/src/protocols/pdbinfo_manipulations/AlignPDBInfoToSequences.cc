@@ -36,6 +36,8 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <json.hpp>
+
 #include <sstream>
 
 #include <utility/stream_util.hh> // AUTO IWYU For operator<<
@@ -181,7 +183,7 @@ void to_json(nlohmann::json& j, SequenceSpecification const & ss) {
 		};
 }
 
-void from_json(const json& j, SequenceSpecification & ss) {
+void from_json(const nlohmann::json& j, SequenceSpecification & ss) {
 	j.at("sequence").get_to(ss.sequence_);
 	j.at("chains").get_to(ss.chains_);
 	if ( j.find("insCodes") != j.end() ) j.at("insCodes").get_to(ss.insCodes_);

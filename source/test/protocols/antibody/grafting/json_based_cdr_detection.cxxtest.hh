@@ -47,7 +47,6 @@ public:
 	/// @brief test if CDR defined by input json matches antibody sequence output
 	void test_cdr_regions_detection() {
 #ifdef __ANTIBODY_GRAFTING__
-#ifdef _NLOHMANN_JSON_ENABLED_
 
 		using namespace protocols::antibody::grafting;
 
@@ -69,7 +68,6 @@ public:
 		TS_ASSERT_EQUALS( as.l2_sequence(), "YTSSLRS" );
 		TS_ASSERT_EQUALS( as.l3_sequence(), "QQYSRLPFT" );
 
-#endif // _NLOHMANN_JSON_ENABLED_
 #endif // __ANTIBODY_GRAFTING__
 		TS_ASSERT(true);
 	}

@@ -33,8 +33,6 @@ namespace protocols {
 namespace ddg {
 namespace CartesianddG {
 
-#ifdef _NLOHMANN_JSON_ENABLED_
-
 class MutationSet{
 public:
 	MutationSet(utility::vector1<core::Size> resnums, utility::vector1<core::chemical::AA> mutations, core::Size iterations){
@@ -113,39 +111,39 @@ public:
 		scores_.push_back(score);
 	}
 
-    bool
-    is_same(MutationSet otherset){
-        if(get_mutation_pairs() == otherset.get_mutation_pairs()){
-            return true;
-        }else{
-            return false;
-        }
-    }
+	bool
+	is_same(MutationSet otherset){
+		if ( get_mutation_pairs() == otherset.get_mutation_pairs() ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-    void
-    add_wildtypes(core::pose::Pose & pose){
-        for( core::Size res : resnums_ ){
-            wild_types_.push_back(pose.residue(res).name1());
-        }
-    }
+	void
+	add_wildtypes(core::pose::Pose & pose){
+		for ( core::Size res : resnums_ ) {
+			wild_types_.push_back(pose.residue(res).name1());
+		}
+	}
 
-    void
-    set_tag(std::string newtag){
-        tag_ = newtag;
-    }
+	void
+	set_tag(std::string newtag){
+		tag_ = newtag;
+	}
 
-    //@brief returns a json object with the data stored in this mutation set.
-    nlohmann::json
-    to_json(core::pose::Pose & pose);
+	//@brief returns a json object with the data stored in this mutation set.
+	nlohmann::json
+	to_json(core::pose::Pose & pose);
 
 private:
 	core::Size iterations_;
 	utility::vector1<core::Size> resnums_;
 	utility::vector1<core::chemical::AA> mutations_;
-    utility::vector1<char> wild_types_; //One letter code of the matching wild type residues;
+	utility::vector1<char> wild_types_; //One letter code of the matching wild type residues;
 	std::map<core::Size,core::fragment::FragSetOP> fragments_;//These are the fragments used to optimize proline
 	utility::vector1<core::Real> scores_; //Scores for this mutation set
-    std::string tag_ = "";
+	std::string tag_ = "";
 };
 
 utility::vector1<core::Size>
@@ -192,47 +190,47 @@ optimize_native(
 	utility::vector1<MutationSet> mutationsets,
 	core::pose::Pose & pose,
 	core::scoring::ScoreFunctionOP fa_scorefxn,
-    const bool flex_bb,
+	const bool flex_bb,
 	const core::Size bbnbrs,
 	utility::io::ozstream ofp,
-    core::Size ncycles,
-    std::string jsonout,
-    nlohmann::json & results_json,
+	core::Size ncycles,
+	std::string jsonout,
+	nlohmann::json & results_json,
 	const bool cartesian=true,
-    const core::Real heavyatom_distance_threshold = 6
+	const core::Real heavyatom_distance_threshold = 6
 );
 
 ///@brief Separates the two interfaces and then runs the optimazation calcuations and writes the results.
 void
 interface_separate_and_score(
-    MutationSet mutations,
-    core::pose::Pose & work_pose,
-    core::scoring::ScoreFunctionOP score_fxn,
-    utility::vector1< core::Size > neighbors,
-    const core::Size bbnbrs,
-    const core::Size interface_ddg,
-    bool flex_bb,
-    bool cartesian,
+	MutationSet mutations,
+	core::pose::Pose & work_pose,
+	core::scoring::ScoreFunctionOP score_fxn,
+	utility::vector1< core::Size > neighbors,
+	const core::Size bbnbrs,
+	const core::Size interface_ddg,
+	bool flex_bb,
+	bool cartesian,
 	utility::io::ozstream & ofp
 );
 
 ///@brief Runs a single mutation optimization and reporting iteration.
 void
 run_single_iteration(
-    MutationSet & mutations,
-    core::pose::Pose & work_pose,
-    core::scoring::ScoreFunctionOP score_fxn,
-    const core::Size round,
-    utility::vector1< core::Size > neighbors,
-    const core::Size bbnbrs,
-    const core::Size ncycles,
-    const core::Size interface_ddg,
-    bool flex_bb,
-    bool cartesian,
+	MutationSet & mutations,
+	core::pose::Pose & work_pose,
+	core::scoring::ScoreFunctionOP score_fxn,
+	const core::Size round,
+	utility::vector1< core::Size > neighbors,
+	const core::Size bbnbrs,
+	const core::Size ncycles,
+	const core::Size interface_ddg,
+	bool flex_bb,
+	bool cartesian,
 	utility::io::ozstream & ofp,
-    std::string jsonout,
+	std::string jsonout,
 	nlohmann::json & results_json,
-    nlohmann::json & mutationset_results
+	nlohmann::json & mutationset_results
 );
 
 /// @brief Cartesian Minimizer the residues in the set
@@ -290,17 +288,17 @@ read_existing(std::string filename, utility::vector1<MutationSet> & mutationsets
 // @brief returns a json object with all the scores as well as the tags for the mutation
 nlohmann::json
 single_result_json(
-        core::pose::Pose & pose,
-        core::scoring::ScoreFunctionOP score_fxn,
-        core::Real total_score,
-        std::string mut_string);
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunctionOP score_fxn,
+	core::Real total_score,
+	std::string mut_string);
 
 // @brief returns a json object of all the score types and their values as found in the pose energy graph.
 nlohmann::json
 get_scores_as_json(
-    core::pose::Pose & pose,
-    core::scoring::ScoreFunctionOP score_fxn,
-    core::Real total_score);
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunctionOP score_fxn,
+	core::Real total_score);
 
 // @brief write all the results stored in the json object to a file.
 void
@@ -309,7 +307,6 @@ write_json(const std::string filename, nlohmann::json results_json);
 void
 run(core::pose::Pose & pose);
 
-#endif //_NLOHMANN_JSON_ENABLED_
 }// CartesianDDG
 }//ddg
 }//protocols

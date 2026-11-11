@@ -69,6 +69,8 @@
 #include <core/fragment/FrameIterator.hh> // AUTO IWYU For ConstFrameIterator
 #include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
+#include <json.hpp>
+
 //Auto Headers
 
 namespace protocols {
@@ -78,8 +80,6 @@ namespace CartesianddG {
 using namespace core;
 
 static basic::Tracer TR("protocols.CartesianddG");
-
-#ifdef _NLOHMANN_JSON_ENABLED_
 
 utility::vector1<core::Size>
 MutationSet::get_prolines(){
@@ -161,15 +161,15 @@ MutationSet::is_converged(
 std::string
 MutationSet::generate_tag(){
 	//generate tag
-    if ( tag_ == "" ){
-	    std::ostringstream tag;
-	    tag << "MUT";
-	    for ( core::Size i=1; i <= resnums_.size(); i++ ) {
-	    	tag << "_" << resnums_[i] << mutations_[i];
-	    }
-	    return tag.str();
-    }
-    return tag_;
+	if ( tag_ == "" ) {
+		std::ostringstream tag;
+		tag << "MUT";
+		for ( core::Size i=1; i <= resnums_.size(); i++ ) {
+			tag << "_" << resnums_[i] << mutations_[i];
+		}
+		return tag.str();
+	}
+	return tag_;
 }
 
 utility::vector1<core::Size>
@@ -180,7 +180,7 @@ find_neighbors(
 {
 	utility::vector1<core::Size> neighbors;
 
-    utility::vector1<core::Size> all_muts;
+	utility::vector1<core::Size> all_muts;
 	for ( MutationSet mutset : mutationsets ) {
 		for ( core::Size i : mutset.get_resnums() ) {
 			all_muts.push_back(i);
@@ -192,7 +192,7 @@ find_neighbors(
 		for ( core::Size j=1; j<=pose.size(); j++ ) {
 			if ( j == i or all_muts.has_value(j) ) continue;
 			core::conformation::Residue const & rsd2( pose.residue(j) );
-            if( rsd2.is_virtual_residue() ) continue;
+			if ( rsd2.is_virtual_residue() ) continue;
 			if ( rsd1.nbr_atom_xyz().distance_squared( rsd2.nbr_atom_xyz() ) <=
 					numeric::square( rsd1.nbr_radius() + rsd2.nbr_radius() + heavyatom_distance_threshold ) ) {
 				if ( !neighbors.has_value(j) ) {
@@ -233,7 +233,7 @@ find_neighbors_directional(
 
 	utility::vector1<core::Size> neighbors;
 
-    utility::vector1<core::Size> all_muts;
+	utility::vector1<core::Size> all_muts;
 	for ( MutationSet mutset : mutationsets ) {
 		for ( core::Size i : mutset.get_resnums() ) {
 			all_muts.push_back(i);
@@ -473,15 +473,15 @@ optimize_structure(
 		}
 	}
 	for ( core::Size i : mutations.get_resnums() ) {
-        movemap->set_chi( i, true );
+		movemap->set_chi( i, true );
 		for ( core::Size j=std::max(i-bbnbrs,core::Size(1)); j<=std::min(i+bbnbrs,pose.size()); j++ ) {
 			movemap->set_bb( j, true );
 		}
 	}
 
 	fastrelax.set_movemap( movemap );
-    TR.Debug << " movemap is " << movemap << std::endl;
-    //movemap->show();
+	TR.Debug << " movemap is " << movemap << std::endl;
+	//movemap->show();
 	fastrelax.set_movemap_disables_packing_of_fixed_chi_positions( true );
 	fastrelax.apply(pose);
 	pose.remove_constraints();
@@ -496,13 +496,13 @@ optimize_native(
 	const bool flex_bb,
 	const core::Size bbnbrs,
 	utility::io::ozstream & ofp,
-    core::Size ncycles,
-    std::string jsonout,
-    nlohmann::json & results_json,
+	core::Size ncycles,
+	std::string jsonout,
+	nlohmann::json & results_json,
 	const bool cartesian,
-    const core::Real heavyatom_distance_threshold,
-    const core::Size interface_ddg
-    )
+	const core::Real heavyatom_distance_threshold,
+	const core::Size interface_ddg
+)
 {
 	utility::vector1<core::Size> all_muts;
 	for ( MutationSet mutset : mutationsets ) {
@@ -512,49 +512,49 @@ optimize_native(
 	}
 	utility::vector1<core::chemical::AA> alanines;
 	for ( core::Size i=1; i<=all_muts.size(); i++ ) {
-	    core::chemical::AA aa = core::chemical::aa_from_oneletter_code( pose.residue(all_muts[i]).name1() );
+		core::chemical::AA aa = core::chemical::aa_from_oneletter_code( pose.residue(all_muts[i]).name1() );
 		alanines.push_back(aa);
 	}
 
 	core::Size const iterations = basic::options::option[ basic::options::OptionKeys::ddg::iterations ].value();
 	MutationSet newmuts(all_muts,alanines,iterations);
-    newmuts.set_tag("WT_");
+	newmuts.set_tag("WT_");
 	utility::vector1<core::Size> neighbors = find_neighbors(mutationsets, pose, heavyatom_distance_threshold);
 	nlohmann::json mutationset_results;
 	nlohmann::json mutations_json = newmuts.to_json(pose);
 	mutationset_results["mutations"] = mutations_json;
 
-    for ( core::Size i=1; i<=iterations; i++){
-        run_single_iteration(
-            newmuts, 
-            pose, 
-            fa_scorefxn,
-            i,
-            neighbors,
-            bbnbrs, 
-            ncycles,
-            interface_ddg,
-            flex_bb,
-            cartesian,
-	        ofp,
-            jsonout,
-	        results_json,
-            mutationset_results
-        );
-    }
+	for ( core::Size i=1; i<=iterations; i++ ) {
+		run_single_iteration(
+			newmuts,
+			pose,
+			fa_scorefxn,
+			i,
+			neighbors,
+			bbnbrs,
+			ncycles,
+			interface_ddg,
+			flex_bb,
+			cartesian,
+			ofp,
+			jsonout,
+			results_json,
+			mutationset_results
+		);
+	}
 
-    if ( int(interface_ddg) > 0 ){
-        interface_separate_and_score(
-           newmuts, 
-           pose, 
-           fa_scorefxn,
-           neighbors,
-           bbnbrs, 
-           interface_ddg,
-           flex_bb,
-           cartesian,
-	       ofp
-           );
+	if ( int(interface_ddg) > 0 ) {
+		interface_separate_and_score(
+			newmuts,
+			pose,
+			fa_scorefxn,
+			neighbors,
+			bbnbrs,
+			interface_ddg,
+			flex_bb,
+			cartesian,
+			ofp
+		);
 	}
 }
 
@@ -701,35 +701,35 @@ pick_fragments(
 
 				//Check that there are no terminal residues between the mutation and the lower bound.
 				//If so change the start of the fragment.
-				for( int i=proline; i>=proline-frag_nbrs; i--){
-						if( pose.residue_type(i).is_lower_terminus() or !pose.residue(i).is_protein() ){
-								lower=i;
-								for( int j=lower; j<=lower+expected_fragsize; j++){
-										upper = j;
-										set = true;
-										if(pose.residue_type(j).is_upper_terminus() or !pose.residue(i).is_protein()){
-												break;
-										}
-								}
+				for ( int i=proline; i>=proline-frag_nbrs; i-- ) {
+					if ( pose.residue_type(i).is_lower_terminus() or !pose.residue(i).is_protein() ) {
+						lower=i;
+						for ( int j=lower; j<=lower+expected_fragsize; j++ ) {
+							upper = j;
+							set = true;
+							if ( pose.residue_type(j).is_upper_terminus() or !pose.residue(i).is_protein() ) {
 								break;
-						}else{
-								lower = i;
+							}
 						}
+						break;
+					} else {
+						lower = i;
+					}
 				}
 				//Check that no residues in the upper region of the fragment cross a terminus.
 				//If so reset the lower and upper to contain the mutated residue.
-				if (!set){
-					for( int i=proline; i<=proline+frag_nbrs; i++){
-							if( pose.residue_type(i).is_upper_terminus() or !pose.residue(i).is_protein()){
-									upper=i;
-									for( int j=upper; j>=upper-expected_fragsize; j-- ){
-											lower = j;
-											if( pose.residue_type(j).is_lower_terminus() or !pose.residue(i).is_protein()) break;
-									}
-									break;
-							}else{
-									upper=i;
+				if ( !set ) {
+					for ( int i=proline; i<=proline+frag_nbrs; i++ ) {
+						if ( pose.residue_type(i).is_upper_terminus() or !pose.residue(i).is_protein() ) {
+							upper=i;
+							for ( int j=upper; j>=upper-expected_fragsize; j-- ) {
+								lower = j;
+								if ( pose.residue_type(j).is_lower_terminus() or !pose.residue(i).is_protein() ) break;
 							}
+							break;
+						} else {
+							upper=i;
+						}
 					}
 				}
 				const core::Size fragsize = upper-lower+1;
@@ -874,48 +874,48 @@ write_json(const std::string filename, nlohmann::json results_json){
 
 nlohmann::json
 single_result_json(
-        core::pose::Pose & pose,
-        core::scoring::ScoreFunctionOP score_fxn,
-        std::string mut_string)
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunctionOP score_fxn,
+	std::string mut_string)
 {
-   // {
-   // "mutations": [
-   //     {
-   //         "mut": "WT"
-   //     }
-   // ],
-   // "scores": {
-   //     "cart_bonded": 194.78899335700908,
-   //     "dslf_fa13": 0.0,
-   //     "fa_atr": -1174.5407406554784,
-   //     "fa_dun": 344.7884469182397,
-   //     "fa_elec": -245.5280808577139,
-   //     "fa_intra_rep": 376.8224696502054,
-   //     "fa_intra_sol_xover4": 42.4283098829558,
-   //     "fa_rep": 199.88193235920224,
-   //     "fa_sol": 665.8443512730054,
-   //     "hbond_bb_sc": -15.38968523893088,
-   //     "hbond_lr_bb": -40.309865885607245,
-   //     "hbond_sc": -24.858856164103365,
-   //     "hbond_sr_bb": -50.67657775541289,
-   //     "lk_ball_wtd": -64.0705748490573,
-   //     "omega": 5.80686106481193,
-   //     "p_aa_pp": -26.574887499090835,
-   //     "rama_prepro": 35.73608669714092,
-   //     "ref": 48.002930000000035,
-   //     "total": -406.05460572251303,
-   //     "yhh_planarity": 0.03127827289871449
-   // }
-   core::Real score = (*score_fxn)(pose);
-   nlohmann::json result_json;
-   utility::vector1<nlohmann::json> mutations_json;
-   nlohmann::json mutation;
-   mutation["mut"] = mut_string;
-   mutations_json.push_back(mutation);
-   result_json["mutations"] = mutations_json;
-   result_json["scores"] = get_scores_as_json(pose,score_fxn, score);
+	// {
+	// "mutations": [
+	//     {
+	//         "mut": "WT"
+	//     }
+	// ],
+	// "scores": {
+	//     "cart_bonded": 194.78899335700908,
+	//     "dslf_fa13": 0.0,
+	//     "fa_atr": -1174.5407406554784,
+	//     "fa_dun": 344.7884469182397,
+	//     "fa_elec": -245.5280808577139,
+	//     "fa_intra_rep": 376.8224696502054,
+	//     "fa_intra_sol_xover4": 42.4283098829558,
+	//     "fa_rep": 199.88193235920224,
+	//     "fa_sol": 665.8443512730054,
+	//     "hbond_bb_sc": -15.38968523893088,
+	//     "hbond_lr_bb": -40.309865885607245,
+	//     "hbond_sc": -24.858856164103365,
+	//     "hbond_sr_bb": -50.67657775541289,
+	//     "lk_ball_wtd": -64.0705748490573,
+	//     "omega": 5.80686106481193,
+	//     "p_aa_pp": -26.574887499090835,
+	//     "rama_prepro": 35.73608669714092,
+	//     "ref": 48.002930000000035,
+	//     "total": -406.05460572251303,
+	//     "yhh_planarity": 0.03127827289871449
+	// }
+	core::Real score = (*score_fxn)(pose);
+	nlohmann::json result_json;
+	utility::vector1<nlohmann::json> mutations_json;
+	nlohmann::json mutation;
+	mutation["mut"] = mut_string;
+	mutations_json.push_back(mutation);
+	result_json["mutations"] = mutations_json;
+	result_json["scores"] = get_scores_as_json(pose,score_fxn, score);
 
-   return result_json;
+	return result_json;
 }
 
 nlohmann::json
@@ -937,29 +937,29 @@ get_scores_as_json(
 
 void
 run_single_iteration(
-    MutationSet & mutations, 
-    core::pose::Pose & work_pose, 
-    core::scoring::ScoreFunctionOP score_fxn,
-    const core::Size round,
-    utility::vector1< core::Size > neighbors,
-    const core::Size bbnbrs, 
-    const core::Size ncycles, 
-    const core::Size interface_ddg,
-    bool flex_bb,
-    bool cartesian,
+	MutationSet & mutations,
+	core::pose::Pose & work_pose,
+	core::scoring::ScoreFunctionOP score_fxn,
+	const core::Size round,
+	utility::vector1< core::Size > neighbors,
+	const core::Size bbnbrs,
+	const core::Size ncycles,
+	const core::Size interface_ddg,
+	bool flex_bb,
+	bool cartesian,
 	utility::io::ozstream & ofp,
-    std::string jsonout,
+	std::string jsonout,
 	nlohmann::json & results_json,
-    nlohmann::json & mutationset_results)
+	nlohmann::json & mutationset_results)
 {
 
 	core::pose::Pose local_pose = work_pose;
 	sample_fragments(local_pose, mutations, score_fxn, bbnbrs, ncycles);
 	optimize_structure(mutations, score_fxn, local_pose, neighbors, flex_bb, bbnbrs, cartesian);
-    core::Real score = (*score_fxn)(local_pose);
+	core::Real score = (*score_fxn)(local_pose);
 	mutations.add_score(score);
 
-    //Write Results
+	//Write Results
 	ofp << "COMPLEX:   Round" << utility::to_string(round) << ": " << mutations.generate_tag() << ": " << ObjexxFCL::format::F(9,3,score) << " "
 		<< local_pose.energies().total_energies().weighted_string_of( score_fxn->weights() ) << std::endl;
 	mutationset_results["scores"] = get_scores_as_json(local_pose, score_fxn, score);
@@ -987,18 +987,18 @@ run_single_iteration(
 
 void
 interface_separate_and_score(
-    MutationSet mutations, 
-    core::pose::Pose & work_pose, 
-    core::scoring::ScoreFunctionOP score_fxn,
-    utility::vector1< core::Size > neighbors,
-    const core::Size bbnbrs, 
-    const core::Size interface_ddg,
-    bool flex_bb,
-    bool cartesian,
+	MutationSet mutations,
+	core::pose::Pose & work_pose,
+	core::scoring::ScoreFunctionOP score_fxn,
+	utility::vector1< core::Size > neighbors,
+	const core::Size bbnbrs,
+	const core::Size interface_ddg,
+	bool flex_bb,
+	bool cartesian,
 	utility::io::ozstream & ofp)
 {
 
-    core::Size rb_jump(interface_ddg);
+	core::Size rb_jump(interface_ddg);
 	protocols::rigid::RigidBodyTransMoverOP separate_partners( new protocols::rigid::RigidBodyTransMover( work_pose, rb_jump ) );
 	separate_partners->step_size(1000.0);
 	separate_partners->apply(work_pose);
@@ -1080,7 +1080,7 @@ run(core::pose::Pose & pose){
 		ofp.open(ofn);
 	}
 
-    core::Size const n_iters = basic::options::option[ basic::options::OptionKeys::ddg::iterations ].value();
+	core::Size const n_iters = basic::options::option[ basic::options::OptionKeys::ddg::iterations ].value();
 	if ( basic::options::option[ basic::options::OptionKeys::ddg::json ].value() ) {
 		read_existing_json( mutationsets, jsonout, results_json, n_iters);
 	} else {
@@ -1093,16 +1093,16 @@ run(core::pose::Pose & pose){
 	}
 
 	core::pose::Pose native_pose(pose); //Make this copy so we don't modify the starting pose when optimizing the native structure. This is to mimic the behavior of the legacy version.
-    if ( basic::options::option[ basic::options::OptionKeys::ddg::optimize_wt ].value() ) {
-	    optimize_native(mutationsets, native_pose, score_fxn, flex_bb, bbnbrs, ofp, ncycles, jsonout, results_json, cartesian, cutoff, interface_ddg);
-    } else {
-	        std::string tag  = "WT";
-            core::Real native_score = (*score_fxn)(pose);
-            ofp << "COMPLEX:   Round1: " << tag << ": " << ObjexxFCL::format::F(9,3, native_score) << " "
-            	<< native_pose.energies().total_energies().weighted_string_of( score_fxn->weights() ) << std::endl;
-            nlohmann::json wt_results = single_result_json(pose, score_fxn, tag);
-	        results_json.push_back(wt_results);
-    }
+	if ( basic::options::option[ basic::options::OptionKeys::ddg::optimize_wt ].value() ) {
+		optimize_native(mutationsets, native_pose, score_fxn, flex_bb, bbnbrs, ofp, ncycles, jsonout, results_json, cartesian, cutoff, interface_ddg);
+	} else {
+		std::string tag  = "WT";
+		core::Real native_score = (*score_fxn)(pose);
+		ofp << "COMPLEX:   Round1: " << tag << ": " << ObjexxFCL::format::F(9,3, native_score) << " "
+			<< native_pose.energies().total_energies().weighted_string_of( score_fxn->weights() ) << std::endl;
+		nlohmann::json wt_results = single_result_json(pose, score_fxn, tag);
+		results_json.push_back(wt_results);
+	}
 
 
 	if ( basic::options::option[ basic::options::OptionKeys::ddg::json ].value() ) {
@@ -1134,44 +1134,43 @@ run(core::pose::Pose & pose){
 					break;
 				}
 			}
-	        core::Size round = basic::options::option[ basic::options::OptionKeys::ddg::iterations ].value()-mutations.iterations()+i;
+			core::Size round = basic::options::option[ basic::options::OptionKeys::ddg::iterations ].value()-mutations.iterations()+i;
 
-            run_single_iteration(
-                    mutations, 
-                    work_pose, 
-                    score_fxn,
-                    round,
-                    neighbors,
-                    bbnbrs,
-                    ncycles,
-                    interface_ddg,
-                    flex_bb,
-                    cartesian,
-            	    ofp,
-                    jsonout,
-            	    results_json,
-                    mutationset_results
-                    );
+			run_single_iteration(
+				mutations,
+				work_pose,
+				score_fxn,
+				round,
+				neighbors,
+				bbnbrs,
+				ncycles,
+				interface_ddg,
+				flex_bb,
+				cartesian,
+				ofp,
+				jsonout,
+				results_json,
+				mutationset_results
+			);
 
 		}
 		//interface mode, seperate and score
 		if ( interface_ddg > 0 ) {
-            interface_separate_and_score(
-                mutations, 
-                work_pose, 
-                score_fxn,
-                neighbors,
-                bbnbrs, 
-                interface_ddg,
-                flex_bb,
-                cartesian,
-	            ofp);
+			interface_separate_and_score(
+				mutations,
+				work_pose,
+				score_fxn,
+				neighbors,
+				bbnbrs,
+				interface_ddg,
+				flex_bb,
+				cartesian,
+				ofp);
 		}
 	}
 	ofp.close();
 }
 
-#endif //_NLOHMANN_JSON_ENABLED_
 }//CartesianddG
 }//ddg
 }//protocols
