@@ -69,7 +69,9 @@ AddFlankingVirtualResiduesMover::AddFlankingVirtualResiduesMover( AddFlankingVir
 {
 	N_term_length_ = src.get_N_term_length();
 	C_term_length_ = src.get_C_term_length();
+	chain_to_modify_ = src.get_chain_to_modify();
 	vital_selector_ = src.get_vital_selector();
+	remove_pre_pose_ = src.get_remove_pre_pose();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

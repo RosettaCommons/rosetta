@@ -112,6 +112,7 @@ GlycanTreeModeler::GlycanTreeModeler( GlycanTreeModeler const & src ):
 	use_gaussian_sampling_( src.use_gaussian_sampling_),
 	use_shear_( src.use_shear_),
 	match_window_one_(src.match_window_one_),
+	root_prob_sampling_(src.root_prob_sampling_),
 	glycan_sampler_kt_(src.glycan_sampler_kt_)
 
 {

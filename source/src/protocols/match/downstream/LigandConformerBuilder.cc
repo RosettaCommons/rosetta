@@ -81,6 +81,7 @@ LigandConformerBuilder::LigandConformerBuilder( LigandConformerBuilder const & o
 	non_collision_detection_atoms_reqd_in_active_site_( other.non_collision_detection_atoms_reqd_in_active_site_ ),
 	rmsd_unique_cutoff_( other.rmsd_unique_cutoff_ ),
 	conformer_group_indices_( other.conformer_group_indices_ ),
+	conformer_group_for_conformer_( other.conformer_group_for_conformer_ ),
 	lig_conformers_( other.lig_conformers_.size() ),
 	min_sep_d2_from_upstream_atoms_( other.min_sep_d2_from_upstream_atoms_ )
 {

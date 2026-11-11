@@ -85,6 +85,8 @@ BluePrint::BluePrint( BluePrint const & src ):
 	sstype_( src.sstype_ ),
 	abego_( src.abego_ ),
 	buildtype_( src.buildtype_ ),
+	extra_( src.extra_ ),
+	insertion_( src.insertion_ ),
 	resnum_map_( src.resnum_map_ ),
 	strand_pairings_( src.strand_pairings_ ),
 	helix_pairings_( src.helix_pairings_ ),

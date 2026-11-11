@@ -61,15 +61,16 @@ DockTaskFactory::DockTaskFactory() : utility::VirtualBase()
 	init_from_options();
 }
 
-DockTaskFactory::DockTaskFactory( DockTaskFactory const & old_instance ) : utility::VirtualBase( old_instance )
-{
-	resfile_ = old_instance.resfile_;
-	norepack1_ = old_instance.norepack1_;
-	norepack2_ = old_instance.norepack2_;
-	design_chains_ = old_instance.design_chains_;
-	prepack_only_ = old_instance.prepack_only_;
-	restrict_to_interface_ = old_instance.restrict_to_interface_;
-}
+DockTaskFactory::DockTaskFactory( DockTaskFactory const & old_instance ) :
+	utility::VirtualBase( old_instance ),
+	resfile_( old_instance.resfile_ ),
+	norepack1_( old_instance.norepack1_ ),
+	norepack2_( old_instance.norepack2_ ),
+	design_chains_( old_instance.design_chains_ ),
+	additional_task_operations_( old_instance.additional_task_operations_ ),
+	prepack_only_( old_instance.prepack_only_ ),
+	restrict_to_interface_( old_instance.restrict_to_interface_ )
+{}
 //destructor
 DockTaskFactory::~DockTaskFactory() = default;
 

@@ -98,6 +98,8 @@ MotifSearch::operator = ( MotifSearch const & src )
 {
 	if ( this != &src ) {
 		motif_library_ = src.motif_library_ ;
+		dna_positions_ = src.dna_positions_ ;
+		protein_positions_ = src.protein_positions_ ;
 		target_positions_ = src.target_positions_ ;
 		build_positionOPs_ = src.build_positionOPs_ ;
 		target_conformers_map_ = src.target_conformers_map_ ;

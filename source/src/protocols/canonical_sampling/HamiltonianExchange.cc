@@ -98,6 +98,7 @@ HamiltonianExchange::HamiltonianExchange( HamiltonianExchange const & other ) :
 	exchange_grid_dimension_( other.exchange_grid_dimension_ ),
 	successfully_initialized_( other.successfully_initialized_ ),
 	max_coord_( other.max_coord_ ),
+	exchange_schedule_file_( other.exchange_schedule_file_ ),
 	bias_energy_( other.bias_energy_ )
 {
 	core::Size const nlevels( n_temp_levels() );
@@ -114,6 +115,7 @@ HamiltonianExchange& HamiltonianExchange::operator=( HamiltonianExchange const& 
 	exchange_grid_dimension_ = other.exchange_grid_dimension_;
 	successfully_initialized_ = other.successfully_initialized_;
 	max_coord_ = other.max_coord_;
+	exchange_schedule_file_ = other.exchange_schedule_file_;
 	bias_energy_ = other.bias_energy_;
 	core::Size const nlevels( n_temp_levels() );
 	runtime_assert( nlevels == hamiltonians_.size() );

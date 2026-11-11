@@ -111,7 +111,8 @@ LinkageConformerMover::LinkageConformerMover( LinkageConformerMover const & src 
 	use_gaussian_sampling_(src.use_gaussian_sampling_),
 	sample_protein_linkage_(src.sample_protein_linkage_),
 	use_conformer_population_stats_(src.use_conformer_population_stats_),
-	random_sampler_(src.random_sampler_)
+	random_sampler_(src.random_sampler_),
+	root_prob_sampling_(src.root_prob_sampling_)
 {
 	if ( src.selector_ ) selector_ = src.selector_->clone();
 	phi_sampler_mover_ = utility::pointer::make_shared< BBDihedralSamplerMover >( *src.phi_sampler_mover_ );
