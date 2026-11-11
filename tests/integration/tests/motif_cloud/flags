@@ -1,0 +1,6 @@
+-in:file:s 4s0v_receptor_only.pdb
+-motif_filename GLN_motifs_20k.motifs
+-motifs:motif_cloud_residue_indices 85
+-motifs:motif_cloud_output_prefix motif_cloud
+
+# Pose residue 85 is GLN (PDB chain A, residue 134) in this receptor.
