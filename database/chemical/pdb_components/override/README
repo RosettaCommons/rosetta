@@ -1,0 +1,29 @@
+Override documentation
+======================
+## e.g. 
+## XYZ -- This residue has a bad annotation of ....
+
+# These haven't been overridden, but they're known bad entries which still exist, but have been removed from PDB usage
+# CYA 
+# CYO 
+# DML
+# H 
+# MEO 
+# TML
+# YH
+
+###################################################
+# Note: The following haven't been edited for scientific accuracy, just merely to keep Rosetta from crashing when it uses them
+
+4L8 -- Leaving group annotations which leaves a disconnected type; fix annotations
+7HA -- Leaving group annotations which leaves a disconnected type; fix annotations
+AY0 -- Leaving group annotations which leaves a disconnected type; fix annotations
+FA5 -- Leaving group annotations which leaves a disconnected type; fix annotations
+GOM -- Leaving group annotations which leaves a disconnected type; fix annotations
+NKS -- Leaving group annotations which leaves a disconnected type; fix annotations
+THX -- Leaving group annotations which leaves a disconnected type; fix annotations
+
+0E7 -- Leaving group annotations which leaves a disconnected type; class as non-polymer instead. 
+0ZX -- Leaving group annotations which leaves a disconnected type; class as non-polymer instead.
+
+ZPT -- Missing coordinate; Sole usage is for platinum ion, correct accordingly

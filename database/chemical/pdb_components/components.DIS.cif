@@ -1,0 +1,155 @@
+data_DISEP
+# 
+_chem_comp.id                                    DISEP 
+_chem_comp.name                                  DIPHOSPHOSERINE 
+_chem_comp.type                                  "L-PEPTIDE LINKING" 
+_chem_comp.pdbx_type                             ATOMP 
+_chem_comp.formula                               "C3 H9 N O9 P2" 
+_chem_comp.mon_nstd_parent_comp_id               SER 
+_chem_comp.pdbx_synonyms                         "2-azanyl-3-[oxidanyl(phosphonooxy)phosphoryl]oxy-propanoic acid" 
+_chem_comp.pdbx_formal_charge                    0 
+_chem_comp.pdbx_initial_date                     2024-01-22 
+_chem_comp.pdbx_modified_date                    2025-06-06 
+_chem_comp.pdbx_ambiguous_flag                   N 
+_chem_comp.pdbx_release_status                   REL 
+_chem_comp.pdbx_replaced_by                      ? 
+_chem_comp.pdbx_replaces                         ? 
+_chem_comp.formula_weight                        265.052 
+_chem_comp.one_letter_code                       S 
+_chem_comp.three_letter_code                     DISEP 
+_chem_comp.pdbx_model_coordinates_details        ? 
+_chem_comp.pdbx_model_coordinates_missing_flag   N 
+_chem_comp.pdbx_ideal_coordinates_details        Corina 
+_chem_comp.pdbx_ideal_coordinates_missing_flag   N 
+_chem_comp.pdbx_model_coordinates_db_code        ? 
+_chem_comp.pdbx_subcomponent_list                ? 
+_chem_comp.pdbx_processing_site                  PDBE 
+_chem_comp.pdbx_pcm                              Y 
+# 
+loop_
+_chem_comp_atom.comp_id 
+_chem_comp_atom.atom_id 
+_chem_comp_atom.alt_atom_id 
+_chem_comp_atom.type_symbol 
+_chem_comp_atom.charge 
+_chem_comp_atom.pdbx_align 
+_chem_comp_atom.pdbx_aromatic_flag 
+_chem_comp_atom.pdbx_leaving_atom_flag 
+_chem_comp_atom.pdbx_stereo_config 
+_chem_comp_atom.pdbx_n_terminal_atom_flag 
+_chem_comp_atom.pdbx_backbone_atom_flag 
+_chem_comp_atom.pdbx_c_terminal_atom_flag 
+_chem_comp_atom.model_Cartn_x 
+_chem_comp_atom.model_Cartn_y 
+_chem_comp_atom.model_Cartn_z 
+_chem_comp_atom.pdbx_model_Cartn_x_ideal 
+_chem_comp_atom.pdbx_model_Cartn_y_ideal 
+_chem_comp_atom.pdbx_model_Cartn_z_ideal 
+_chem_comp_atom.pdbx_component_atom_id 
+_chem_comp_atom.pdbx_component_comp_id 
+_chem_comp_atom.pdbx_ordinal 
+DISEP N   N   N 0 1 N N N Y Y N -3.392 0.114  0.783  3.097  1.956  0.196  N   DISEP 1  
+DISEP CA  CA  C 0 1 N N S N Y N -2.490 0.577  -0.273 3.227  0.536  0.551  CA  DISEP 2  
+DISEP CB  CB  C 0 1 N N N N N N -1.027 0.341  0.101  2.144  -0.271 -0.167 CB  DISEP 3  
+DISEP OG  OG  O 0 1 N N N N N N -0.159 1.070  -0.777 0.858  0.123  0.316  OG  DISEP 4  
+DISEP P1  P1  P 0 1 N N N N N N 1.405  1.090  -0.554 -0.516 -0.523 -0.220 P1  DISEP 5  
+DISEP O2  O2  O 0 1 N N N N N N 1.670  1.569  0.864  -0.569 -2.081 0.181  O2  DISEP 6  
+DISEP O3  O3  O 0 1 N N N N N N 2.172  1.815  -1.590 -0.581 -0.390 -1.693 O3  DISEP 7  
+DISEP O4  O4  O 0 1 N N N N N N 1.821  -0.445 -0.566 -1.765 0.246  0.444  O4  DISEP 8  
+DISEP P2  P2  P 0 1 N N N N N N 2.959  -1.263 0.208  -3.341 0.309  0.118  P2  DISEP 9  
+DISEP O5  O5  O 0 1 N N N N N N 2.202  -2.339 1.028  -4.065 -1.000 0.713  O5  DISEP 10 
+DISEP O6  O6  O 0 1 N N N N N N 3.776  -1.978 -0.898 -3.975 1.627  0.791  O6  DISEP 11 
+DISEP O7  O7  O 0 1 N N N N N N 3.761  -0.322 1.041  -3.540 0.359  -1.348 O7  DISEP 12 
+DISEP C   C   C 0 1 N N N N Y Y -2.800 -0.073 -1.615 4.586  0.037  0.132  C   DISEP 13 
+DISEP OXT OXT O 0 1 N Y N N Y Y -2.852 -1.383 -1.547 5.093  -1.075 0.688  OXT DISEP 14 
+DISEP O   O   O 0 1 N N N N Y Y -2.977 0.563  -2.630 5.219  0.637  -0.704 O   DISEP 15 
+DISEP H   H   H 0 1 N N N Y Y N -4.339 0.281  0.510  3.199  2.090  -0.799 H   DISEP 16 
+DISEP H2  H2  H 0 1 N Y N Y Y N -3.256 -0.866 0.931  2.220  2.331  0.524  H2  DISEP 17 
+DISEP HA  HA  H 0 1 N N N N Y N -2.628 1.662  -0.392 3.114  0.419  1.629  HA  DISEP 18 
+DISEP HB2 HB2 H 0 1 N N N N N N -0.859 0.676  1.135  2.202  -0.084 -1.239 HB2 DISEP 19 
+DISEP HB3 HB3 H 0 1 N N N N N N -0.802 -0.733 0.022  2.295  -1.333 0.026  HB3 DISEP 20 
+DISEP H6  H6  H 0 1 N N N N N N 2.304  2.276  0.847  -0.531 -2.243 1.133  H6  DISEP 21 
+DISEP H7  H7  H 0 1 N N N N N N 2.380  -2.216 1.953  -3.975 -1.097 1.671  H7  DISEP 22 
+DISEP H8  H8  H 0 1 N N N N N N 4.680  -1.689 -0.861 -4.924 1.730  0.635  H8  DISEP 23 
+DISEP HXT HXT H 0 1 N Y N N Y Y -3.047 -1.738 -2.406 5.968  -1.356 0.388  HXT DISEP 24 
+# 
+loop_
+_chem_comp_bond.comp_id 
+_chem_comp_bond.atom_id_1 
+_chem_comp_bond.atom_id_2 
+_chem_comp_bond.value_order 
+_chem_comp_bond.pdbx_aromatic_flag 
+_chem_comp_bond.pdbx_stereo_config 
+_chem_comp_bond.pdbx_ordinal 
+DISEP N   CA  SING N N 1  
+DISEP CA  CB  SING N N 2  
+DISEP CB  OG  SING N N 3  
+DISEP OG  P1  SING N N 4  
+DISEP P1  O2  SING N N 5  
+DISEP P1  O3  DOUB N N 6  
+DISEP P1  O4  SING N N 7  
+DISEP O4  P2  SING N N 8  
+DISEP P2  O5  SING N N 9  
+DISEP P2  O6  SING N N 10 
+DISEP P2  O7  DOUB N N 11 
+DISEP CA  C   SING N N 12 
+DISEP C   OXT SING N N 13 
+DISEP C   O   DOUB N N 14 
+DISEP N   H   SING N N 15 
+DISEP N   H2  SING N N 16 
+DISEP CA  HA  SING N N 17 
+DISEP CB  HB2 SING N N 18 
+DISEP CB  HB3 SING N N 19 
+DISEP O2  H6  SING N N 20 
+DISEP O5  H7  SING N N 21 
+DISEP O6  H8  SING N N 22 
+DISEP OXT HXT SING N N 23 
+# 
+loop_
+_pdbx_chem_comp_descriptor.comp_id 
+_pdbx_chem_comp_descriptor.type 
+_pdbx_chem_comp_descriptor.program 
+_pdbx_chem_comp_descriptor.program_version 
+_pdbx_chem_comp_descriptor.descriptor 
+DISEP InChI            InChI                1.06  "InChI=1S/C3H9NO9P2/c4-2(3(5)6)1-12-15(10,11)13-14(7,8)9/h2H,1,4H2,(H,5,6)(H,10,11)(H2,7,8,9)/t2-/m0/s1" 
+DISEP InChIKey         InChI                1.06  APDGJFZXPJDQMS-REOHCLBHSA-N                                                                              
+DISEP SMILES_CANONICAL CACTVS               3.385 "N[C@@H](CO[P](O)(=O)O[P](O)(O)=O)C(O)=O"                                                                
+DISEP SMILES           CACTVS               3.385 "N[CH](CO[P](O)(=O)O[P](O)(O)=O)C(O)=O"                                                                  
+DISEP SMILES_CANONICAL "OpenEye OEToolkits" 2.0.7 "C(C(C(=O)O)N)OP(=O)(O)OP(=O)(O)O"                                                                       
+DISEP SMILES           "OpenEye OEToolkits" 2.0.7 "C(C(C(=O)O)N)OP(=O)(O)OP(=O)(O)O"                                                                       
+# 
+_pdbx_chem_comp_identifier.comp_id           DISEP 
+_pdbx_chem_comp_identifier.type              "SYSTEMATIC NAME" 
+_pdbx_chem_comp_identifier.program           "OpenEye OEToolkits" 
+_pdbx_chem_comp_identifier.program_version   2.0.7 
+_pdbx_chem_comp_identifier.identifier        "2-azanyl-3-[oxidanyl(phosphonooxy)phosphoryl]oxy-propanoic acid" 
+# 
+loop_
+_pdbx_chem_comp_audit.comp_id 
+_pdbx_chem_comp_audit.action_type 
+_pdbx_chem_comp_audit.date 
+_pdbx_chem_comp_audit.processing_site 
+DISEP "Create component"   2024-02-14 PDBE 
+DISEP "Modify descriptor"  2024-02-14 PDBE 
+DISEP "Other modification" 2024-02-14 PDBE 
+DISEP "Modify PCM"         2024-09-27 PDBE 
+DISEP "Initial release"    2025-06-11 RCSB 
+# 
+_pdbx_chem_comp_synonyms.ordinal      1 
+_pdbx_chem_comp_synonyms.comp_id      DISEP 
+_pdbx_chem_comp_synonyms.name         "2-azanyl-3-[oxidanyl(phosphonooxy)phosphoryl]oxy-propanoic acid" 
+_pdbx_chem_comp_synonyms.provenance   PDB 
+_pdbx_chem_comp_synonyms.type         ? 
+# 
+_pdbx_chem_comp_pcm.pcm_id                             1 
+_pdbx_chem_comp_pcm.comp_id                            DISEP 
+_pdbx_chem_comp_pcm.modified_residue_id                SER 
+_pdbx_chem_comp_pcm.type                               Diphosphorylation 
+_pdbx_chem_comp_pcm.category                           "Named protein modification" 
+_pdbx_chem_comp_pcm.position                           "Amino-acid side chain" 
+_pdbx_chem_comp_pcm.polypeptide_position               "Any position" 
+_pdbx_chem_comp_pcm.comp_id_linking_atom               ? 
+_pdbx_chem_comp_pcm.modified_residue_id_linking_atom   ? 
+_pdbx_chem_comp_pcm.uniprot_specific_ptm_accession     PTM-0697 
+_pdbx_chem_comp_pcm.uniprot_generic_ptm_accession      ? 
+# 

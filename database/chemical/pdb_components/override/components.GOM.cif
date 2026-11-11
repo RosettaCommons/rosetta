@@ -1,0 +1,197 @@
+data_GOM
+# 
+_chem_comp.id                                    GOM 
+_chem_comp.name                                  GLUTAMOL-AMP 
+_chem_comp.type                                  "RNA LINKING" 
+_chem_comp.pdbx_type                             ATOMN 
+_chem_comp.formula                               "C15 H22 N6 O9 P" 
+_chem_comp.mon_nstd_parent_comp_id               G 
+_chem_comp.pdbx_synonyms                         ? 
+_chem_comp.pdbx_formal_charge                    -1 
+_chem_comp.pdbx_initial_date                     2002-11-26 
+_chem_comp.pdbx_modified_date                    2011-06-04 
+_chem_comp.pdbx_ambiguous_flag                   N 
+_chem_comp.pdbx_release_status                   REL 
+_chem_comp.pdbx_replaced_by                      ? 
+_chem_comp.pdbx_replaces                         ? 
+_chem_comp.formula_weight                        461.344 
+_chem_comp.one_letter_code                       G 
+_chem_comp.three_letter_code                     GOM 
+_chem_comp.pdbx_model_coordinates_details        ? 
+_chem_comp.pdbx_model_coordinates_missing_flag   N 
+_chem_comp.pdbx_ideal_coordinates_details        ? 
+_chem_comp.pdbx_ideal_coordinates_missing_flag   N 
+_chem_comp.pdbx_model_coordinates_db_code        ? 
+_chem_comp.pdbx_subcomponent_list                ? 
+_chem_comp.pdbx_processing_site                  RCSB 
+# 
+loop_
+_chem_comp_atom.comp_id 
+_chem_comp_atom.atom_id 
+_chem_comp_atom.alt_atom_id 
+_chem_comp_atom.type_symbol 
+_chem_comp_atom.charge 
+_chem_comp_atom.pdbx_align 
+_chem_comp_atom.pdbx_aromatic_flag 
+_chem_comp_atom.pdbx_leaving_atom_flag 
+_chem_comp_atom.pdbx_stereo_config 
+_chem_comp_atom.model_Cartn_x 
+_chem_comp_atom.model_Cartn_y 
+_chem_comp_atom.model_Cartn_z 
+_chem_comp_atom.pdbx_model_Cartn_x_ideal 
+_chem_comp_atom.pdbx_model_Cartn_y_ideal 
+_chem_comp_atom.pdbx_model_Cartn_z_ideal 
+_chem_comp_atom.pdbx_component_atom_id 
+_chem_comp_atom.pdbx_component_comp_id 
+_chem_comp_atom.pdbx_ordinal 
+GOM N      N    N 1  1 N N N 40.645 82.262 52.670 -5.945  -0.091 -1.974 N      GOM 1  
+GOM C      C    C 0  1 N N N 38.660 80.829 52.998 -4.593  -0.242 0.062  C      GOM 2  
+GOM CA     CA   C 0  1 N N S 39.187 82.229 52.651 -5.619  0.587  -0.713 CA     GOM 3  
+GOM CB     CB   C 0  1 N N N 38.685 82.645 51.267 -6.889  0.741  0.127  CB     GOM 4  
+GOM CG     CG   C 0  1 N N N 37.176 82.614 51.111 -7.866  1.673  -0.593 CG     GOM 5  
+GOM CD     CD   C 0  1 N N N 36.725 83.107 49.755 -9.117  1.824  0.234  CD     GOM 6  
+GOM OE1    OE1  O 0  1 N N N 36.693 84.339 49.530 -9.217  1.241  1.300  OE1    GOM 7  
+GOM OE2    OE2  O -1 1 N N N 36.412 82.249 48.911 -10.028 2.531  -0.163 OE2    GOM 8  
+GOM P      P    P 0  1 N N N 39.243 78.703 54.436 -2.339  -1.172 0.198  P      GOM 9  
+GOM OP1    O1P  O 0  1 N N N 40.422 77.871 54.077 -2.225  -0.581 1.620  OP1    GOM 10 
+GOM OP2    O2P  O -1 1 N Y N 38.806 78.778 55.863 -2.855  -2.626 0.284  OP2    GOM 11 
+GOM OP3    O3P  O 0  1 N N N 39.539 80.182 53.914 -3.367  -0.289 -0.671 OP3    GOM 12 
+GOM "O5'"  O5*  O 0  1 N N N 37.976 78.228 53.594 -0.891  -1.158 -0.506 "O5'"  GOM 13 
+GOM "C5'"  C5*  C 0  1 N N N 38.116 77.541 52.355 0.000   -1.856 0.366  "C5'"  GOM 14 
+GOM "C4'"  C4*  C 0  1 N N R 36.762 77.392 51.671 1.401   -1.879 -0.247 "C4'"  GOM 15 
+GOM "O4'"  O4*  O 0  1 N N N 35.940 76.453 52.425 1.949   -0.543 -0.300 "O4'"  GOM 16 
+GOM "C1'"  C1*  C 0  1 N N R 34.838 77.126 53.004 3.378   -0.722 -0.409 "C1'"  GOM 17 
+GOM N9     N9   N 0  1 Y N N 34.546 76.608 54.343 4.078   0.493  0.013  N9     GOM 18 
+GOM C4     C4   C 0  1 Y N N 33.456 75.821 54.625 5.354   0.858  -0.335 C4     GOM 19 
+GOM N3     N3   N 0  1 Y N N 32.537 75.364 53.752 6.311   0.322  -1.085 N3     GOM 20 
+GOM C2     C2   C 0  1 Y N N 31.604 74.655 54.382 7.468   0.932  -1.233 C2     GOM 21 
+GOM N1     N1   N 0  1 Y N N 31.493 74.374 55.687 7.739   2.088  -0.655 N1     GOM 22 
+GOM C6     C6   C 0  1 Y N N 32.436 74.848 56.535 6.843   2.700  0.114  C6     GOM 23 
+GOM N6     N6   N 0  1 N N N 32.316 74.574 57.832 7.136   3.911  0.715  N6     GOM 24 
+GOM C5     C5   C 0  1 Y N N 33.484 75.610 55.991 5.595   2.085  0.307  C5     GOM 25 
+GOM N7     N7   N 0  1 Y N N 34.589 76.227 56.561 4.471   2.404  0.993  N7     GOM 26 
+GOM C8     C8   C 0  1 Y N N 35.192 76.796 55.542 3.581   1.469  0.825  C8     GOM 27 
+GOM "C2'"  C2*  C 0  1 N N R 34.985 78.637 52.818 3.706   -1.892 0.546  "C2'"  GOM 28 
+GOM "O2'"  O2*  O 0  1 N N N 33.728 79.164 52.448 4.728   -2.725 -0.006 "O2'"  GOM 29 
+GOM "C3'"  C3*  C 0  1 N N S 35.980 78.710 51.662 2.373   -2.669 0.656  "C3'"  GOM 30 
+GOM "O3'"  O3*  O 0  1 N N N 35.519 79.196 50.400 2.531   -4.005 0.174  "O3'"  GOM 31 
+GOM HN2    HN2  H 0  1 N N N 41.045 81.549 52.060 -5.108  -0.192 -2.528 HN2    GOM 32 
+GOM HN3    HN3  H 0  1 N N N 40.995 83.192 52.440 -6.330  -1.002 -1.776 HN3    GOM 33 
+GOM H      H    H 0  1 N N N 41.016 81.931 53.561 -6.622  0.456  -2.485 H      GOM 34 
+GOM HC1    1HC  H 0  1 N N N 38.484 80.213 52.085 -4.973  -1.255 0.198  HC1    GOM 35 
+GOM HC2    2HC  H 0  1 N N N 37.613 80.862 53.380 -4.417  0.214  1.036  HC2    GOM 36 
+GOM HA     HA   H 0  1 N N N 38.808 82.942 53.420 -5.203  1.572  -0.926 HA     GOM 37 
+GOM HB1    1HB  H 0  1 N N N 39.170 82.027 50.476 -7.353  -0.235 0.266  HB1    GOM 38 
+GOM HB2    2HB  H 0  1 N N N 39.083 83.650 50.995 -6.633  1.163  1.099  HB2    GOM 39 
+GOM HG1    1HG  H 0  1 N N N 36.676 83.181 51.931 -7.402  2.649  -0.732 HG1    GOM 40 
+GOM HG2    2HG  H 0  1 N N N 36.771 81.597 51.324 -8.122  1.251  -1.565 HG2    GOM 41 
+GOM "H5'"  1H5* H 0  1 N N N 38.627 76.558 52.482 -0.353  -2.878 0.505  "H5'"  GOM 42 
+GOM "H5''" 2H5* H 0  0 N N N 38.864 78.033 51.691 0.034   -1.349 1.331  "H5''" GOM 43 
+GOM "H4'"  H4*  H 0  1 N N N 36.964 77.051 50.629 1.370   -2.316 -1.245 "H4'"  GOM 44 
+GOM "H1'"  H1*  H 0  1 N N N 33.888 76.903 52.465 3.651   -0.980 -1.433 "H1'"  GOM 45 
+GOM H2     H2   H 0  1 N N N 30.813 74.243 53.733 8.225   0.470  -1.850 H2     GOM 46 
+GOM HN61   1HN6 H 0  0 N N N 32.239 73.564 57.952 8.003   4.324  0.578  HN61   GOM 47 
+GOM HN62   2HN6 H 0  0 N N N 33.026 74.931 58.471 6.473   4.350  1.271  HN62   GOM 48 
+GOM H8     H8   H 0  1 N N N 36.128 77.363 55.677 2.594   1.468  1.263  H8     GOM 49 
+GOM "H2'"  H2*  H 0  1 N N N 35.320 79.205 53.717 4.009   -1.512 1.522  "H2'"  GOM 50 
+GOM "HO2'" *HO2 H 0  0 N N N 33.819 80.103 52.333 4.843   -3.466 0.605  "HO2'" GOM 51 
+GOM "H3'"  H3*  H 0  1 N N N 36.676 79.562 51.843 2.018   -2.675 1.687  "H3'"  GOM 52 
+GOM "HO3'" *HO3 H 0  0 N Y N 35.034 80.013 50.394 3.145   -4.448 0.775  "HO3'" GOM 53 
+# 
+loop_
+_chem_comp_bond.comp_id 
+_chem_comp_bond.atom_id_1 
+_chem_comp_bond.atom_id_2 
+_chem_comp_bond.value_order 
+_chem_comp_bond.pdbx_aromatic_flag 
+_chem_comp_bond.pdbx_stereo_config 
+_chem_comp_bond.pdbx_ordinal 
+GOM N     CA     SING N N 1  
+GOM N     HN2    SING N N 2  
+GOM N     HN3    SING N N 3  
+GOM N     H      SING N N 4  
+GOM C     CA     SING N N 5  
+GOM C     OP3    SING N N 6  
+GOM C     HC1    SING N N 7  
+GOM C     HC2    SING N N 8  
+GOM CA    CB     SING N N 9  
+GOM CA    HA     SING N N 10 
+GOM CB    CG     SING N N 11 
+GOM CB    HB1    SING N N 12 
+GOM CB    HB2    SING N N 13 
+GOM CG    CD     SING N N 14 
+GOM CG    HG1    SING N N 15 
+GOM CG    HG2    SING N N 16 
+GOM CD    OE1    DOUB N N 17 
+GOM CD    OE2    SING N N 18 
+GOM P     OP1    DOUB N N 19 
+GOM P     OP2    SING N N 20 
+GOM P     OP3    SING N N 21 
+GOM P     "O5'"  SING N N 22 
+GOM "O5'" "C5'"  SING N N 23 
+GOM "C5'" "C4'"  SING N N 24 
+GOM "C5'" "H5'"  SING N N 25 
+GOM "C5'" "H5''" SING N N 26 
+GOM "C4'" "O4'"  SING N N 27 
+GOM "C4'" "C3'"  SING N N 28 
+GOM "C4'" "H4'"  SING N N 29 
+GOM "O4'" "C1'"  SING N N 30 
+GOM "C1'" N9     SING N N 31 
+GOM "C1'" "C2'"  SING N N 32 
+GOM "C1'" "H1'"  SING N N 33 
+GOM N9    C4     SING Y N 34 
+GOM N9    C8     SING Y N 35 
+GOM C4    N3     DOUB Y N 36 
+GOM C4    C5     SING Y N 37 
+GOM N3    C2     SING Y N 38 
+GOM C2    N1     DOUB Y N 39 
+GOM C2    H2     SING N N 40 
+GOM N1    C6     SING Y N 41 
+GOM C6    N6     SING N N 42 
+GOM C6    C5     DOUB Y N 43 
+GOM N6    HN61   SING N N 44 
+GOM N6    HN62   SING N N 45 
+GOM C5    N7     SING Y N 46 
+GOM N7    C8     DOUB Y N 47 
+GOM C8    H8     SING N N 48 
+GOM "C2'" "O2'"  SING N N 49 
+GOM "C2'" "C3'"  SING N N 50 
+GOM "C2'" "H2'"  SING N N 51 
+GOM "O2'" "HO2'" SING N N 52 
+GOM "C3'" "O3'"  SING N N 53 
+GOM "C3'" "H3'"  SING N N 54 
+GOM "O3'" "HO3'" SING N N 55 
+# 
+loop_
+_pdbx_chem_comp_descriptor.comp_id 
+_pdbx_chem_comp_descriptor.type 
+_pdbx_chem_comp_descriptor.program 
+_pdbx_chem_comp_descriptor.program_version 
+_pdbx_chem_comp_descriptor.descriptor 
+GOM SMILES           ACDLabs              10.04 "[O-]C(=O)CCC([NH3+])COP([O-])(=O)OCC3OC(n2cnc1c(ncnc12)N)C(O)C3O" 
+GOM SMILES_CANONICAL CACTVS               3.341 "Nc1ncnc2n(cnc12)[C@@H]3O[C@H](CO[P]([O-])(=O)OC[C@@H]([NH3+])CCC([O-])=O)[C@@H](O)[C@H]3O" 
+GOM SMILES           CACTVS               3.341 "Nc1ncnc2n(cnc12)[CH]3O[CH](CO[P]([O-])(=O)OC[CH]([NH3+])CCC([O-])=O)[CH](O)[CH]3O" 
+GOM SMILES_CANONICAL "OpenEye OEToolkits" 1.5.0 "c1nc(c2c(n1)n(cn2)[C@H]3[C@@H]([C@@H]([C@H](O3)CO[P@](=O)([O-])OC[C@H](CCC(=O)[O-])[NH3+])O)O)N" 
+GOM SMILES           "OpenEye OEToolkits" 1.5.0 "c1nc(c2c(n1)n(cn2)C3C(C(C(O3)COP(=O)([O-])OCC(CCC(=O)[O-])[NH3+])O)O)N" 
+GOM InChI            InChI                1.03  
+"InChI=1S/C15H23N6O9P/c16-7(1-2-9(22)23)3-28-31(26,27)29-4-8-11(24)12(25)15(30-8)21-6-20-10-13(17)18-5-19-14(10)21/h5-8,11-12,15,24-25H,1-4,16H2,(H,22,23)(H,26,27)(H2,17,18,19)/p-1/t7-,8+,11+,12+,15+/m0/s1" 
+GOM InChIKey         InChI                1.03  JDELUWYDJMPPMI-SBZSCLMQSA-M 
+# 
+loop_
+_pdbx_chem_comp_identifier.comp_id 
+_pdbx_chem_comp_identifier.type 
+_pdbx_chem_comp_identifier.program 
+_pdbx_chem_comp_identifier.program_version 
+_pdbx_chem_comp_identifier.identifier 
+GOM "SYSTEMATIC NAME" ACDLabs              10.04 "5'-O-({[(2S)-2-ammonio-4-carboxylatobutyl]oxy}phosphinato)adenosine"                                                        
+GOM "SYSTEMATIC NAME" "OpenEye OEToolkits" 1.5.0 "(4S)-5-[[(2R,3S,4R,5R)-5-(6-aminopurin-9-yl)-3,4-dihydroxy-oxolan-2-yl]methoxy-oxido-phosphoryl]oxy-4-azaniumyl-pentanoate" 
+# 
+loop_
+_pdbx_chem_comp_audit.comp_id 
+_pdbx_chem_comp_audit.action_type 
+_pdbx_chem_comp_audit.date 
+_pdbx_chem_comp_audit.processing_site 
+GOM "Create component"  2002-11-26 RCSB 
+GOM "Modify descriptor" 2011-06-04 RCSB 
+GOM "Fix leaving annotations"  2026-04-29 RoccoMoretti 
+# 

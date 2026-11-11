@@ -1,0 +1,195 @@
+data_7HA
+# 
+_chem_comp.id                                    7HA 
+_chem_comp.name                                  "N-(3-{[2-(4-chlorophenyl)-5-methyl-1,3-oxazol-4-yl]methoxy}benzyl)-N-(methoxycarbonyl)glycine" 
+_chem_comp.type                                  "L-PEPTIDE LINKING" 
+_chem_comp.pdbx_type                             ATOMP 
+_chem_comp.formula                               "C22 H21 Cl N2 O6" 
+_chem_comp.mon_nstd_parent_comp_id               ? 
+_chem_comp.pdbx_synonyms                         ? 
+_chem_comp.pdbx_formal_charge                    0 
+_chem_comp.pdbx_initial_date                     2009-10-28 
+_chem_comp.pdbx_modified_date                    2011-06-04 
+_chem_comp.pdbx_ambiguous_flag                   N 
+_chem_comp.pdbx_release_status                   REL 
+_chem_comp.pdbx_replaced_by                      ? 
+_chem_comp.pdbx_replaces                         ? 
+_chem_comp.formula_weight                        444.865 
+_chem_comp.one_letter_code                       ? 
+_chem_comp.three_letter_code                     7HA 
+_chem_comp.pdbx_model_coordinates_details        ? 
+_chem_comp.pdbx_model_coordinates_missing_flag   N 
+_chem_comp.pdbx_ideal_coordinates_details        Corina 
+_chem_comp.pdbx_ideal_coordinates_missing_flag   N 
+_chem_comp.pdbx_model_coordinates_db_code        3KDT 
+_chem_comp.pdbx_subcomponent_list                ? 
+_chem_comp.pdbx_processing_site                  RCSB 
+# 
+loop_
+_chem_comp_atom.comp_id 
+_chem_comp_atom.atom_id 
+_chem_comp_atom.alt_atom_id 
+_chem_comp_atom.type_symbol 
+_chem_comp_atom.charge 
+_chem_comp_atom.pdbx_align 
+_chem_comp_atom.pdbx_aromatic_flag 
+_chem_comp_atom.pdbx_leaving_atom_flag 
+_chem_comp_atom.pdbx_stereo_config 
+_chem_comp_atom.model_Cartn_x 
+_chem_comp_atom.model_Cartn_y 
+_chem_comp_atom.model_Cartn_z 
+_chem_comp_atom.pdbx_model_Cartn_x_ideal 
+_chem_comp_atom.pdbx_model_Cartn_y_ideal 
+_chem_comp_atom.pdbx_model_Cartn_z_ideal 
+_chem_comp_atom.pdbx_component_atom_id 
+_chem_comp_atom.pdbx_component_comp_id 
+_chem_comp_atom.pdbx_ordinal 
+7HA C1   C1   C  0 1 N N N 0.775  17.140 -8.104  -1.605 -1.531 -3.125 C1   7HA 1  
+7HA C2   C2   C  0 1 Y N N 1.937  17.245 -9.065  -2.473 -1.220 -1.932 C2   7HA 2  
+7HA C3   C3   C  0 1 Y N N 3.211  16.664 -8.957  -2.153 -1.415 -0.640 C3   7HA 3  
+7HA N4   N4   N  0 1 Y N N 3.894  17.049 -10.043 -3.192 -1.011 0.106  N4   7HA 4  
+7HA C5   C5   C  0 1 Y N N 3.060  17.814 -10.778 -4.137 -0.575 -0.692 C5   7HA 5  
+7HA O6   O6   O  0 1 Y N N 1.920  17.916 -10.167 -3.711 -0.689 -1.962 O6   7HA 6  
+7HA C7   C7   C  0 1 Y N N 3.488  18.462 -12.052 -5.448 -0.041 -0.266 C7   7HA 7  
+7HA C8   C8   C  0 1 Y N N 2.621  18.841 -13.083 -6.371 0.393  -1.219 C8   7HA 8  
+7HA C9   C9   C  0 1 Y N N 3.152  19.466 -14.212 -7.593 0.890  -0.816 C9   7HA 9  
+7HA C10  C10  C  0 1 Y N N 4.530  19.720 -14.287 -7.905 0.958  0.531  C10  7HA 10 
+7HA C11  C11  C  0 1 Y N N 5.384  19.356 -13.252 -6.994 0.529  1.482  C11  7HA 11 
+7HA C12  C12  C  0 1 Y N N 4.853  18.737 -12.139 -5.771 0.025  1.090  C12  7HA 12 
+7HA CL13 CL13 CL 0 0 N N N 5.270  20.497 -15.656 -9.445 1.584  1.031  CL13 7HA 13 
+7HA C14  C14  C  0 1 N N N 3.769  15.774 -7.876  -0.858 -1.987 -0.123 C14  7HA 14 
+7HA O15  O15  O  0 1 N N N 2.681  15.110 -7.199  0.076  -0.928 0.097  O15  7HA 15 
+7HA C16  C16  C  0 1 Y N N 2.793  13.970 -6.535  1.303  -1.275 0.567  C16  7HA 16 
+7HA C17  C17  C  0 1 Y N N 4.026  13.609 -5.981  1.604  -2.608 0.805  C17  7HA 17 
+7HA C18  C18  C  0 1 Y N N 4.124  12.411 -5.298  2.852  -2.959 1.282  C18  7HA 18 
+7HA C19  C19  C  0 1 Y N N 3.021  11.581 -5.152  3.801  -1.982 1.522  C19  7HA 19 
+7HA C20  C20  C  0 1 Y N N 1.790  11.943 -5.683  3.503  -0.652 1.287  C20  7HA 20 
+7HA C21  C21  C  0 1 Y N N 1.685  13.137 -6.385  2.258  -0.298 0.804  C21  7HA 21 
+7HA C22  C22  C  0 1 N N N 0.628  11.005 -5.524  4.540  0.410  1.550  C22  7HA 22 
+7HA N23  N23  N  0 1 N N N 0.271  10.568 -6.869  5.335  0.627  0.339  N23  7HA 23 
+7HA C24  C24  C  0 1 N N N 1.158  9.717  -7.668  4.914  1.628  -0.644 C24  7HA 24 
+7HA C25  C25  C  0 1 N N N 0.905  8.253  -7.410  5.533  2.959  -0.302 C25  7HA 25 
+7HA O26  O26  O  0 1 N N N 1.800  7.460  -7.635  6.252  3.061  0.664  O26  7HA 26 
+7HA O27  O27  O  0 1 N Y N -0.267 7.829  -6.951  5.286  4.031  -1.071 O27  7HA 27 
+7HA C28  C28  C  0 1 N N N -0.867 11.004 -7.407  6.454  -0.094 0.130  C28  7HA 28 
+7HA O29  O29  O  0 1 N N N -1.647 11.652 -6.733  6.803  -0.925 0.945  O29  7HA 29 
+7HA O30  O30  O  0 1 N N N -1.136 10.741 -8.681  7.185  0.105  -0.983 O30  7HA 30 
+7HA C31  C31  C  0 1 N N N -2.069 9.679  -9.022  8.378  -0.707 -1.143 C31  7HA 31 
+7HA H1   H1   H  0 1 N N N -0.075 17.720 -8.491  -1.795 -2.551 -3.456 H1   7HA 32 
+7HA H1A  H1A  H  0 1 N N N 0.481  16.085 -7.998  -1.836 -0.837 -3.933 H1A  7HA 33 
+7HA H1B  H1B  H  0 1 N N N 1.074  17.538 -7.123  -0.556 -1.428 -2.847 H1B  7HA 34 
+7HA H8   H8   H  0 1 N N N 1.560  18.653 -13.006 -6.129 0.340  -2.271 H8   7HA 35 
+7HA H9   H9   H  0 1 N N N 2.504  19.754 -15.026 -8.308 1.226  -1.553 H9   7HA 36 
+7HA H11  H11  H  0 1 N N N 6.444  19.554 -13.318 -7.242 0.585  2.531  H11  7HA 37 
+7HA H12  H12  H  0 1 N N N 5.504  18.461 -11.323 -5.061 -0.309 1.832  H12  7HA 38 
+7HA H14  H14  H  0 1 N N N 4.436  15.023 -8.325  -1.041 -2.511 0.814  H14  7HA 39 
+7HA H14A H14A H  0 0 N N N 4.336  16.381 -7.155  -0.450 -2.684 -0.856 H14A 7HA 40 
+7HA H17  H17  H  0 1 N N N 4.886  14.254 -6.085  0.864  -3.372 0.618  H17  7HA 41 
+7HA H18  H18  H  0 1 N N N 5.072  12.117 -4.872  3.087  -3.996 1.468  H18  7HA 42 
+7HA H19  H19  H  0 1 N N N 3.121  10.646 -4.621  4.777  -2.258 1.895  H19  7HA 43 
+7HA H21  H21  H  0 1 N N N 0.738  13.422 -6.818  2.027  0.741  0.616  H21  7HA 44 
+7HA H22  H22  H  0 1 N N N 0.909  10.144 -4.899  4.044  1.339  1.831  H22  7HA 45 
+7HA H22A H22A H  0 0 N N N -0.220 11.517 -5.046  5.193  0.087  2.361  H22A 7HA 46 
+7HA H24  H24  H  0 1 N N N 0.981  9.924  -8.734  5.239  1.321  -1.638 H24  7HA 47 
+7HA H24A H24A H  0 0 N N N 2.201  9.947  -7.405  3.828  1.718  -0.628 H24A 7HA 48 
+7HA HO27 HO27 H  0 0 N Y N -0.246 6.884  -6.852  5.705  4.863  -0.812 HO27 7HA 49 
+7HA H31  H31  H  0 1 N N N -2.163 9.610  -10.116 8.873  -0.446 -2.078 H31  7HA 50 
+7HA H31A H31A H  0 0 N N N -1.697 8.723  -8.626  9.057  -0.524 -0.310 H31A 7HA 51 
+7HA H31B H31B H  0 0 N N N -3.053 9.900  -8.582  8.100  -1.761 -1.160 H31B 7HA 52 
+# 
+loop_
+_chem_comp_bond.comp_id 
+_chem_comp_bond.atom_id_1 
+_chem_comp_bond.atom_id_2 
+_chem_comp_bond.value_order 
+_chem_comp_bond.pdbx_aromatic_flag 
+_chem_comp_bond.pdbx_stereo_config 
+_chem_comp_bond.pdbx_ordinal 
+7HA C2   C1   SING N N 1  
+7HA C1   H1   SING N N 2  
+7HA C1   H1A  SING N N 3  
+7HA C1   H1B  SING N N 4  
+7HA O6   C2   SING Y N 5  
+7HA C2   C3   DOUB Y N 6  
+7HA N4   C3   SING Y N 7  
+7HA C3   C14  SING N N 8  
+7HA C5   N4   DOUB Y N 9  
+7HA C7   C5   SING Y N 10 
+7HA C5   O6   SING Y N 11 
+7HA C8   C7   DOUB Y N 12 
+7HA C12  C7   SING Y N 13 
+7HA C9   C8   SING Y N 14 
+7HA C8   H8   SING N N 15 
+7HA C10  C9   DOUB Y N 16 
+7HA C9   H9   SING N N 17 
+7HA CL13 C10  SING N N 18 
+7HA C10  C11  SING Y N 19 
+7HA C11  C12  DOUB Y N 20 
+7HA C11  H11  SING N N 21 
+7HA C12  H12  SING N N 22 
+7HA C14  O15  SING N N 23 
+7HA C14  H14  SING N N 24 
+7HA C14  H14A SING N N 25 
+7HA O15  C16  SING N N 26 
+7HA C16  C21  DOUB Y N 27 
+7HA C16  C17  SING Y N 28 
+7HA C17  C18  DOUB Y N 29 
+7HA C17  H17  SING N N 30 
+7HA C18  C19  SING Y N 31 
+7HA C18  H18  SING N N 32 
+7HA C20  C19  DOUB Y N 33 
+7HA C19  H19  SING N N 34 
+7HA C21  C20  SING Y N 35 
+7HA C20  C22  SING N N 36 
+7HA C21  H21  SING N N 37 
+7HA N23  C22  SING N N 38 
+7HA C22  H22  SING N N 39 
+7HA C22  H22A SING N N 40 
+7HA C24  N23  SING N N 41 
+7HA C28  N23  SING N N 42 
+7HA C24  C25  SING N N 43 
+7HA C24  H24  SING N N 44 
+7HA C24  H24A SING N N 45 
+7HA O26  C25  DOUB N N 46 
+7HA C25  O27  SING N N 47 
+7HA O27  HO27 SING N N 48 
+7HA O30  C28  SING N N 49 
+7HA C28  O29  DOUB N N 50 
+7HA C31  O30  SING N N 51 
+7HA C31  H31  SING N N 52 
+7HA C31  H31A SING N N 53 
+7HA C31  H31B SING N N 54 
+# 
+loop_
+_pdbx_chem_comp_descriptor.comp_id 
+_pdbx_chem_comp_descriptor.type 
+_pdbx_chem_comp_descriptor.program 
+_pdbx_chem_comp_descriptor.program_version 
+_pdbx_chem_comp_descriptor.descriptor 
+7HA SMILES           ACDLabs              11.02 "O=C(OC)N(CC(=O)O)Cc3cc(OCc1nc(oc1C)c2ccc(Cl)cc2)ccc3"                                                                                               
+7HA SMILES_CANONICAL CACTVS               3.352 "COC(=O)N(CC(O)=O)Cc1cccc(OCc2nc(oc2C)c3ccc(Cl)cc3)c1"                                                                                               
+7HA SMILES           CACTVS               3.352 "COC(=O)N(CC(O)=O)Cc1cccc(OCc2nc(oc2C)c3ccc(Cl)cc3)c1"                                                                                               
+7HA SMILES_CANONICAL "OpenEye OEToolkits" 1.7.0 "Cc1c(nc(o1)c2ccc(cc2)Cl)COc3cccc(c3)CN(CC(=O)O)C(=O)OC"                                                                                             
+7HA SMILES           "OpenEye OEToolkits" 1.7.0 "Cc1c(nc(o1)c2ccc(cc2)Cl)COc3cccc(c3)CN(CC(=O)O)C(=O)OC"                                                                                             
+7HA InChI            InChI                1.03  "InChI=1S/C22H21ClN2O6/c1-14-19(24-21(31-14)16-6-8-17(23)9-7-16)13-30-18-5-3-4-15(10-18)11-25(12-20(26)27)22(28)29-2/h3-10H,11-13H2,1-2H3,(H,26,27)" 
+7HA InChIKey         InChI                1.03  UJIBXDMNCMEJAY-UHFFFAOYSA-N                                                                                                                          
+# 
+loop_
+_pdbx_chem_comp_identifier.comp_id 
+_pdbx_chem_comp_identifier.type 
+_pdbx_chem_comp_identifier.program 
+_pdbx_chem_comp_identifier.program_version 
+_pdbx_chem_comp_identifier.identifier 
+7HA "SYSTEMATIC NAME" ACDLabs              11.02 "N-(3-{[2-(4-chlorophenyl)-5-methyl-1,3-oxazol-4-yl]methoxy}benzyl)-N-(methoxycarbonyl)glycine"                 
+7HA "SYSTEMATIC NAME" "OpenEye OEToolkits" 1.6.1 "2-[[3-[[2-(4-chlorophenyl)-5-methyl-1,3-oxazol-4-yl]methoxy]phenyl]methyl-methoxycarbonyl-amino]ethanoic acid" 
+# 
+loop_
+_pdbx_chem_comp_audit.comp_id 
+_pdbx_chem_comp_audit.action_type 
+_pdbx_chem_comp_audit.date 
+_pdbx_chem_comp_audit.processing_site 
+7HA "Create component"         2009-10-28 RCSB 
+7HA "Modify aromatic_flag"     2011-06-04 RCSB 
+7HA "Modify descriptor"        2011-06-04 RCSB 
+7HA "Fix leaving annotations"  2026-04-29 RoccoMoretti 
+# 

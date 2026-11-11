@@ -1899,8 +1899,7 @@ void MutableResidueType::assign_internal_coordinates(core::chemical::VD new_root
 {
 	//%TODO: right now we're ignoring M FRAG lines and M SPLT lines in molfiles
 	if ( n_possible_residue_connections() != 0 ) {
-		TR.Error << "Residue " << name() << " has connections - can't assign internal coordinates.";
-		utility_exit_with_message("Cannot currently assign internal coordinates for polymeric residue.");
+		TR.Warning << "Residue " << name() << " has connections -- assign_internal_coordinates() will re-write the coordinates for the real atoms, but will not assign/update the connection ICOORs" << std::endl;
 	}
 	debug_assert( new_root != MutableResidueType::null_vertex );
 	// Reset the root atom so we can re-root the tree
@@ -1930,167 +1929,42 @@ MutableResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples )
 	utility::vector1<VDs> found_chis( core::chemical::find_chi_bonds( *this ) );
 	utility::vector1< core::Size > proton_chis; // Not the member variable as set_proton_chi modifies that.
 
-	if ( is_protein() ) {
 
-		utility::vector1<VDs> true_chis; // filtered and ordered from found_chis.
-		// Note that this algorithm to get down to the 'real' chis is pretty
-		// gross, but when N is < 10 most reasonable big-Os are fine, right?
+	/// For polymeric residues, any "chis" involving the mainchain should be removed.
+	if ( is_polymer() ) {
+		utility::vector1< VD > mainchain_vec = mainchain_path(*this);
+		if ( !mainchain_vec.empty() ) {
+			set_mainchain_atoms( mainchain_vec );
 
-		// Step 1. Get chi1 (it's the one with N as first or fourth)
-		// Other criterion -- atom 3 can't be C (it'll find N CA C O)
-		for ( VDs const & chi : found_chis ) {
-			TR.Trace << "looking at found chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
-			if ( atom_name( chi[ 1 ] ) == "N" && atom_name( chi[ 3 ] ) != "C" ) {
-				true_chis.push_back( chi );
-
-				break;
-			}
-		}
-
-		// Step 2. Get remainder of chis by asking each one to start with the
-		// second atom of the prior chi[s]. Note that this will potentially
-		// confuse branches, but branched sidechains with lots of chis are treated
-		// poorly by essentially any chi system.
-		std::string target_first_atom;
-		if ( true_chis.size() > 0 )  target_first_atom = atom_name( true_chis[ 1 ][ 2 ] );
-		while ( true ) {
-
-			// this extra loop is to future-proof a bit against branching: multiple
-			// chis per pass may start with the target_first_atom and therefore
-			// we don't want to update it right away.
-
-			std::string candidate_new_atom = target_first_atom;
-			for ( VDs const & found_chi : found_chis ) {
-				TR.Trace << "looking at found chi: " << atom_name( found_chi[1] ) << " " << atom_name( found_chi[2] ) << " " << atom_name( found_chi[3] ) << " " << atom_name( found_chi[4] ) << std::endl;
-				if ( atom_name( found_chi[ 1 ] ) == target_first_atom ) {
-					true_chis.push_back( found_chi );
-					candidate_new_atom = atom_name( found_chi[ 2 ] );
+			utility::vector1<VDs> valid_chis;
+			for ( VDs const & chi: found_chis ) {
+				if ( mainchain_vec.has_value( chi[4] ) ) { continue; } // Controlled atom is in the mainchain.
+				if ( mainchain_vec.has_value( chi[2] ) && mainchain_vec.has_value( chi[3] ) ) { continue; } // Rotatable bond is in the mainchain.
+				if ( mainchain_vec.has_value( chi[3] ) ) {
+					TR.Warning << "In autodetermine_chi_bonds(), the third atom of the chi is on the mainchain, but the second atom isn't" << std::endl;
 				}
-
+				// (It's fine for either/both chi[1] and chi[2] to be on the mainchain)
+				valid_chis.push_back( chi ); // It's a non-mainchain chi, keep it.
 			}
-			if ( candidate_new_atom == target_first_atom ) break;
 
-			// This may have to become a vector -- where we accumulated many
-			// candidate_new_atom -- later.
-			target_first_atom = candidate_new_atom;
+			// reset found_chis.
+			found_chis = valid_chis;
 		}
-		for ( VDs const & true_chi : true_chis ) {
-			debug_assert( true_chi.size() == 4 );
-			TR.Debug << "looking at true chi: " << atom_name( true_chi[1] ) << " " << atom_name( true_chi[2] ) << " " << atom_name( true_chi[3] ) << " " << atom_name( true_chi[4] ) << std::endl;
-			add_chi( true_chi[1], true_chi[2], true_chi[3], true_chi[4] );
-			if ( atom( true_chi[4] ).element_type()->element() == core::chemical::element::H ) {
-				// proton chi
-				proton_chis.push_back( nchi() );
-			}
-		} // for all found chis
+	}
 
+	for ( VDs const & chi : found_chis ) {
+		debug_assert( chi.size() == 4 );
+		add_chi( chi[1], chi[2], chi[3], chi[4] );
+		if ( atom( chi[4] ).element_type()->element() == core::chemical::element::H ) {
+			// proton chi
+			proton_chis.push_back( nchi() );
+		}
+	} // for all found chis
+
+	if ( is_polymer() ) {
 		// TODO: This is probably out of place here - we should move it to a more general location
+		// (But the definition of backbone requires the chis to be set.
 		core::chemical::annotate_backbone( *this );
-
-	} else if ( is_RNA() ) {
-		utility::vector1<VDs> true_chis; // filtered and ordered from found_chis.
-
-		//CHI 1 C2' C1' N9  C4
-		//CHI 2 C4' C3' C2' C1'
-		//CHI 3 C3' C2' C1' N9
-		//CHI 4 C3' C2' O2' HO2'
-		// First base atom is either N1 or N9
-
-		// Will never actually remain this value -- but we need
-		// to know that we're not using uninitialized, and we
-		// need a value we can always initialize to for RNA rsd.
-		// (This is tough just because of thenature of VDs.)
-		// So we use a runtime_assert after the loop.
-		VD first_base_atom = atom_vertex( "P" );
-		for ( VDs const & chi : found_chis ) {
-			TR.Trace << "looking at found chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
-			if ( atom_name( chi[ 1 ] ) == "C2'" && atom_name( chi[ 2 ] ) != "O2'" ) {
-				true_chis.push_back( chi );
-				first_base_atom = chi[3];
-				// Third atom of chi1 is first base atom... but not first SC atom (formally)
-				// setting it that way is HELL for hbond types
-				break;
-			}
-		}
-		runtime_assert( true_chis.size() == 0 || first_base_atom != atom_vertex( "P" ) );
-
-		// Step 2. Hard-fix three chis: two rings, and proton chi for HO2'.
-		VDs new_chi{atom_vertex("C4'"), atom_vertex("C3'"), atom_vertex("C2'"), atom_vertex("C1'")};
-		true_chis.emplace_back( new_chi );
-		// Skip this chi for N
-		if ( first_base_atom != atom_vertex( "P" ) ) {
-			new_chi = VDs{ atom_vertex("C3'"), atom_vertex("C2'"), atom_vertex("C1'"), first_base_atom };
-		}
-		//true_chis.emplace_back( { atom_vertex("C4'"), atom_vertex("C3'"), atom_vertex("C2'"), atom_vertex("C1'") } );
-		true_chis.emplace_back( new_chi );
-		// What to do absent HO2'?
-		// answer: whatever else O2' is bonded to that's not C2'
-		if ( has( "HO2'" ) ) {
-			//chi = ;
-			true_chis.emplace_back( VDs{ atom_vertex("C3'"), atom_vertex("C2'"), atom_vertex("O2'"), atom_vertex("HO2'") } );
-
-		} else {
-			// actually essential for pdb_T38 for example.
-			// Oh: we also *must* figure out why atom ordering matters so much for the backbone
-			// sidechain distinction (rather than reordering after a Correct grouping) and how to
-			// do the latter. Right now I have to relabel...
-			for ( VDs const & found_chi : found_chis ) {
-				if ( atom_name( found_chi[ 3 ] ) == "O2'" && atom_name( found_chi[ 2 ] ) == "C2'" ) {
-					true_chis.emplace_back( found_chi );
-				}
-			}
-		}
-
-		// Theoretical final step (AMW TODO): add all chis that are children of the base
-		// or of O2', in a protein-y way, as chis 5+.
-		std::string target_first_atom;
-		if ( true_chis.size() > 0 ) target_first_atom = atom_name( true_chis[ 1 ][ 2 ] );
-
-		while ( true ) {
-
-			// this extra loop is to future-proof a bit against branching: multiple
-			// chis per pass may start with the target_first_atom and therefore
-			// we don't want to update it right away.
-
-			std::string candidate_new_atom = target_first_atom;
-			for ( VDs const & chi : found_chis ) {
-				TR.Trace << "looking at found chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
-				if ( atom_name( chi[ 1 ] ) == target_first_atom ) {
-					true_chis.push_back( chi );
-					candidate_new_atom = atom_name( chi[ 2 ] );
-				}
-			}
-			if ( candidate_new_atom == target_first_atom ) break;
-
-			// This may have to become a vector -- where we accumulated many
-			// candidate_new_atom -- later.
-			target_first_atom = candidate_new_atom;
-		}
-
-		for ( VDs const & chi : true_chis ) {
-			TR.Debug << "looking at true chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
-			debug_assert( chi.size() == 4 );
-			add_chi( chi[1], chi[2], chi[3], chi[4] );
-			if ( atom( chi[4] ).element_type()->element() == core::chemical::element::H ) {
-				// proton chi
-				proton_chis.push_back( nchi() );
-			}
-		} // for all found chis
-
-		// TODO: This is probably out of place here - we should move it to a more general location
-		core::chemical::annotate_backbone( *this );
-
-	} else {
-		// ligand logic: far simpler.
-
-		for ( VDs const & chi : found_chis ) {
-			debug_assert( chi.size() == 4 );
-			add_chi( chi[1], chi[2], chi[3], chi[4] );
-			if ( atom( chi[4] ).element_type()->element() == core::chemical::element::H ) {
-				// proton chi
-				proton_chis.push_back( nchi() );
-			}
-		} // for all found chis
 	}
 
 	if ( max_proton_chi_samples == 0 ) {

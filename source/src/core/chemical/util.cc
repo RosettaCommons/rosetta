@@ -35,6 +35,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/vector1.functions.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/string_util.hh>
@@ -44,6 +45,7 @@
 
 #include <core/chemical/MutableICoorRecord.hh> // AUTO IWYU For MutableICoorRecord
 
+#include <numeric>
 
 namespace core {
 namespace chemical {
@@ -525,67 +527,206 @@ get_terminal_varianttypes() {
 	return terminal_types;
 }
 
+///@brief A utility function for  find_best_match()
+/// Entries are a vector of indices into values. Will collect all entries which match the lowest entry in values, and return the filtered entries vector.
+/// (Not the lowest of all values, just the lowest of the provided entries)
+/// designation and rsd_type_list are just for reporting purposes.
+utility::vector1<core::Size>
+filter_by_lowest(utility::vector1<core::Size> const & entries, utility::vector1<core::Size> const & values, std::string const & designation, ResidueTypeCOPs const & rsd_type_list ) {
+	core::Size lowest_value = 9999999; // Hopefully will be bigger than any value in values
+	for ( core::Size ii: entries ) {
+		if ( values[ii] < lowest_value ) {
+			lowest_value = values[ii];
+		}
+	}
+	utility::vector1<core::Size> filtered;
+	for ( core::Size ii: entries ) {
+		if ( values[ii] == lowest_value ) {
+			filtered.push_back(ii);
+		}
+	}
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "After filtering on " << designation << " ( " << lowest_value << " ) found: ";
+		for ( core::Size ii: filtered ) {
+			TR.Debug << rsd_type_list[ii]->name() << "   ";
+		}
+		TR.Debug << std::endl;
+	}
+
+	return filtered;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 ///
-/// @brief look for best match to atom_names
-/// @details taken out of build_pose_as_is1
-///  rsd_type should have all the atoms present in xyz
-///  try to minimize atoms missing from xyz
 ResidueTypeCOP
 find_best_match( ResidueTypeCOPs const & rsd_type_list,
-	utility::vector1< std::string > const & atom_names,
+	std::map< std::string, Vector > const & coords,
 	bool const ignore_atom_named_H /* = false */ )
 {
 	using namespace core::chemical;
-	Size best_index(0), best_rsd_missing( 99999 ), best_xyz_missing( 99999 );
-	for ( Size j=1; j <= rsd_type_list.size(); j++ ) {
+	if ( rsd_type_list.empty() ) { return nullptr; }
 
-		ResidueType const & rsd_type( *(rsd_type_list[j]) );
+	utility::vector1<core::Size> missing_atoms; // Number of entries in coords which aren't in RT
+	utility::vector1<core::Size> extra_real_heavy; // Number of non-virtual heavy atoms in RT that aren't in coords
+	utility::vector1<core::Size> extra_real_hydrogens; // Number of non-virtual hydrogen atoms in RT that aren't in coords
+	utility::vector1<core::Size> extra_virt_heavy; // Number of virt heavy atoms in RF that aren't in coords
+	utility::vector1<core::Size> extra_virt_hydrogens; // Number of virt hydrogen atoms in RF that aren't in coords
 
-		Size rsd_missing( 0 ), xyz_missing( 0 );
-		utility::vector1< std::string > rsd_missing_atoms, xyz_missing_atoms;
+	std::set< std::string > stripped_cn;
+	for ( auto const & pair: coords ) {
+		stripped_cn.insert( ObjexxFCL::stripped_whitespace(pair.first) );
+	}
 
-		// xyz_missing is number of candidate ResidueType's atoms that do not match target atom names
-		for ( Size k=1; k<= rsd_type.natoms(); ++k ) {
-			bool found_match( false );
-			// @mlnance TODO (quote from RM from closed PR #4570)
-			// "some 'half' approach which considers virtuals but not the same as non-virtuals
-			// (e.g. just as a tiebreaker) might be the better approach" [It may be]
-			// "worth putting in missing virtuals as a secondary, lower level check,
-			// versus being equivalent to a missing real atom."
-			// context: both virtual and non-virtual atoms can be considered a match
-			for ( Size m = 1; m <= atom_names.size(); ++m ) {
-				if ( ObjexxFCL::stripped_whitespace( atom_names[m] ) == ObjexxFCL::stripped_whitespace( rsd_type.atom_name(k) ) ) {
-					found_match = true; break;
+	// Tally the number of missing atoms for each type (If they're not in the ResidueType, we really can't tell if they're virtual/hydrogen or not.)
+	for ( ResidueTypeCOP const & rsd_type: rsd_type_list ) {
+		debug_assert( rsd_type != nullptr );
+		core::Size n_missing_atoms = 0;
+		for ( std::string const & coord_atom: stripped_cn ) {
+			if ( ignore_atom_named_H && coord_atom == "H" ) { continue; }
+			if ( ! rsd_type->has(coord_atom) ) {
+				n_missing_atoms += 1;
+			}
+		}
+		core::Size n_extra_real_heavy = 0, n_extra_virt_heavy = 0, n_extra_real_hydrogen = 0, n_extra_virt_hydrogen = 0;
+		for ( core::Size aa(1); aa <= rsd_type->natoms(); ++aa ) {
+			std::string const & stripped_name = ObjexxFCL::stripped_whitespace(rsd_type->atom_name(aa));
+			if ( ignore_atom_named_H && stripped_name == "H" ) { continue; }
+			if ( stripped_cn.count(stripped_name) == 0 ) {
+				if ( rsd_type->is_virtual(aa) ) {
+					if ( rsd_type->atom_is_hydrogen(aa) ) {
+						n_extra_virt_hydrogen += 1;
+					} else {
+						n_extra_virt_heavy += 1;
+					}
+				} else {
+					if ( rsd_type->atom_is_hydrogen(aa) ) {
+						n_extra_real_hydrogen += 1;
+					} else {
+						n_extra_real_heavy += 1;
+					}
 				}
 			}
-			if ( !found_match ) {
-				++xyz_missing;
-				xyz_missing_atoms.push_back( rsd_type.atom_name(k) );
+		}
+		TR.Trace << "Restype " << rsd_type->name() << " is missing " << n_missing_atoms << " atoms from the input, and has " << n_extra_real_heavy << " extra heavy atoms, " << n_extra_real_hydrogen << " extra hydrogens, " << n_extra_virt_heavy << " extra virtual heavy atoms, and " << n_extra_virt_hydrogen << " extra virtual hydrogens." << std::endl;
+		missing_atoms.push_back( n_missing_atoms );
+		extra_real_heavy.push_back( n_extra_real_heavy );
+		extra_virt_heavy.push_back( n_extra_virt_heavy );
+		extra_real_hydrogens.push_back( n_extra_real_hydrogen );
+		extra_virt_hydrogens.push_back( n_extra_virt_hydrogen );
+	}
+	debug_assert( missing_atoms.size() == rsd_type_list.size() );
+	debug_assert( extra_real_heavy.size() == rsd_type_list.size() );
+	debug_assert( extra_virt_heavy.size() == rsd_type_list.size() );
+	debug_assert( extra_real_hydrogens.size() == rsd_type_list.size() );
+	debug_assert( extra_virt_hydrogens.size() == rsd_type_list.size() );
+
+	utility::vector1<core::Size> all( rsd_type_list.size() );
+	std::iota(all.begin(),all.end(),1); // fill vector with consecutive integers
+
+	// First attempt to filter by number of atoms in the input which aren't represented by the residue type.
+	utility::vector1<core::Size> missing_filtered = filter_by_lowest( all, missing_atoms, "atoms missing from residue type", rsd_type_list);
+	if ( missing_filtered.size() == 1 ) {
+		return rsd_type_list[missing_filtered[1]];
+	}
+
+	// If ties, then look for the number of extra real heavy atoms
+	utility::vector1<core::Size> real_heavy_filtered = filter_by_lowest( missing_filtered, extra_real_heavy, "unrepresented heavy atoms", rsd_type_list);
+	if ( real_heavy_filtered.size() == 1 ) {
+		return rsd_type_list[real_heavy_filtered[1]];
+	}
+
+	// If still tied, minimize the number of unrepresented virtual heavy atoms
+	// As specialist patches sometimes replace hydrogens (which might be missing from the input) with virtual heavyatoms
+	utility::vector1<core::Size> virtual_heavy_filtered = filter_by_lowest( real_heavy_filtered, extra_virt_heavy, "unrepresented virtual heavy atoms", rsd_type_list);
+	if ( virtual_heavy_filtered.size() == 1 ) {
+		return rsd_type_list[virtual_heavy_filtered[1]];
+	}
+
+	// If ties, then look for the number of extra real hydrogen atoms
+	utility::vector1<core::Size> real_hydro_filtered = filter_by_lowest( virtual_heavy_filtered, extra_real_hydrogens, "unrepresented hydrogen atoms", rsd_type_list);
+	if ( real_hydro_filtered.size() == 1 ) {
+		return rsd_type_list[real_hydro_filtered[1]];
+	}
+
+	// If still tied, minimize the number of unrepresented virtual heavy atoms
+	utility::vector1<core::Size> virtual_hydro_filtered = filter_by_lowest( virtual_heavy_filtered, extra_virt_hydrogens, "unrepresented virtual hydrogen atoms", rsd_type_list);
+	if ( virtual_hydro_filtered.size() == 1 ) {
+		return rsd_type_list[virtual_hydro_filtered[1]];
+	}
+
+	// If we reach here, we have multiple residues which are equivalent from the atom naming perspective
+	// Attempt to disambiguate based on coordinates (as it may be a chirality issue)
+	std::map< std::string, Vector > stripped_coords;
+	for ( auto const & pair: coords ) {
+		stripped_coords[ ObjexxFCL::stripped_whitespace(pair.first) ] = pair.second;
+	}
+	utility::vector1<core::Size> chiral_mismatches; // Same size/index as virt_filtered
+	for ( core::Size ii: virtual_hydro_filtered ) {
+		ResidueType const & restype = *rsd_type_list[ii];
+		core::Size n_chiral_mismatch = 0;
+		for ( core::Size aa(1); aa <= restype.natoms(); ++aa ) {
+			AtomIndices nbrs = restype.bonded_neighbor(aa);
+			if ( nbrs.size() <= 3 ) { continue; } // Quick out if we don't have enough atoms to do chirality checks.
+			nbrs.insert( nbrs.begin(), aa ); // Include the this atom, as a referent
+			utility::vector1< std::string > present_neighbors;
+			for ( core::Size nbr_ii: nbrs ) {
+				std::string const & nbr_name = ObjexxFCL::stripped_whitespace(restype.atom_name(nbr_ii));
+				if ( stripped_coords.count(nbr_name) ) {
+					present_neighbors.push_back(nbr_name);
+				}
+			}
+			if ( present_neighbors.size() < 4 ) { // Need 4 points to calculate chirality.
+				// No penalization here -- lots of times missing atoms are due to missing hydrogens.
+				TR.Trace << "Skipping chirality for atom " << restype.atom_name(aa) << " due to too many missing neighbors." << std::endl;
+				continue;
+			}
+
+			// If we wanted to do all the combinations, we could likely use utility::nmers_of() to enumerate them.
+			// But we're probably fine with using the first 4 atoms (which are weighted to the center atom and then heavy atoms)
+			auto const & n = present_neighbors;
+
+			core::Real coord_dihedral = numeric::dihedral_degrees( stripped_coords[n[1]], stripped_coords[n[2]], stripped_coords[n[3]], stripped_coords[n[4]] );
+			core::Real rt_dihedral = numeric::dihedral_degrees( restype.ideal_xyz(n[1]), restype.ideal_xyz(n[2]), restype.ideal_xyz(n[3]), restype.ideal_xyz(n[4]));
+
+			TR.Trace << "With " << restype.name() << ": dihedrals from " << n[1] << " " << n[2] << " " << n[3] << " " << n[4] << " coord dihedral " << coord_dihedral << " restype dihedral " << rt_dihedral << std::endl;
+			if ( (std::abs(coord_dihedral) < 10 && std::abs(rt_dihedral) < 10 ) ||
+					(std::abs(coord_dihedral) > 170 && std::abs(rt_dihedral) > 170 ) ) {
+				continue; // Too close to planar to know
+			}
+
+			if ( std::signbit(coord_dihedral) != std::signbit(rt_dihedral) ) {
+				if ( restype.atom_is_backbone(aa) ) {
+					n_chiral_mismatch += 10; //Somewhat arbitrarily, count a backbone mismatch as 10 times as important as a non-backbone one.
+				} else {
+					n_chiral_mismatch += 1;
+				}
 			}
 		}
-
-		// rsd_missing is number of target atom names not found in candidate ResidueType
-		for ( std::string const & atom_name : atom_names ) {
-			if ( !rsd_type.has( ObjexxFCL::stripped_whitespace( atom_name ) ) &&
-					!( atom_name == " H  " && ignore_atom_named_H ) ) { // don't worry about missing BB H if Nterm
-				++rsd_missing;
-				rsd_missing_atoms.push_back( atom_name );
-			}
+		chiral_mismatches.push_back(n_chiral_mismatch);
+	}
+	core::Size least_chiral = *(std::min_element( chiral_mismatches.begin(), chiral_mismatches.end() ));
+	utility::vector1<core::Size> chiral_filtered;
+	for ( core::Size jj(1); jj <= chiral_mismatches.size(); ++jj ) { // chiral_mismatches is the same length as virtual_hydro_filtered
+		if ( chiral_mismatches[jj] == least_chiral ) {
+			chiral_filtered.push_back( virtual_hydro_filtered[jj] );
 		}
+	}
+	if ( chiral_filtered.size() == 1 ) {
+		return rsd_type_list[chiral_filtered[1]];
+	}
 
-		// TR.Debug << "checking: " << rsd_type.name() << "  rsd_missing " << rsd_missing << "  xyz_missing " << xyz_missing << "  rsd_missing names in xyz not captured by ResidueType" << rsd_missing_atoms << "  xyz_missing names in ResidueType not captured in atoms " << xyz_missing_atoms << std::endl;
 
-		if ( ( rsd_missing < best_rsd_missing ) ||
-				( rsd_missing == best_rsd_missing && xyz_missing < best_xyz_missing ) ) {
-			best_rsd_missing = rsd_missing;
-			best_xyz_missing = xyz_missing;
-			best_index = j;
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "When filtering by coordinates, found " << chiral_filtered.size() << " equally valid types:" << std::endl << '\t';
+		for ( core::Size ii: chiral_filtered ) {
+			TR.Debug << rsd_type_list[ii]->name() << "   ";
 		}
-	} // j=1,rsd_type_list.size()
+		TR.Debug << std::endl << "Arbitrarily picking " << rsd_type_list[chiral_filtered[1]]->name() << std::endl;
+	}
 
-	return  rsd_type_list[ best_index ];
+	return rsd_type_list[chiral_filtered[1]];
 }
 
 //////////////////////////////////////

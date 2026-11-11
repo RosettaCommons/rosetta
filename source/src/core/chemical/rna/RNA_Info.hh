@@ -47,20 +47,6 @@ public:
 
 	~RNA_Info() override;
 
-	///////////////////////////Implemented for fast lookup! Parin Sripakdeevong, June 25th, 2011//////////////////
-private:
-
-	static
-	utility::vector1< Size > const
-	figure_out_chi_order( ResidueType const & residue_type );
-
-	static
-	void
-	rna_note_chi_controls_atom( ResidueType const & residue_type_in,
-		core::Size const chi, core::Size const atomno,
-		utility::vector1< core::Size > & last_controlling_chi,
-		utility::vector1< core::Size > const & chi_order );
-
 public:
 
 	void
@@ -143,9 +129,26 @@ public:
 	Size chi_number_pseudoepsilon() const { return chi_number_pseudoepsilon_;}
 	Size chi_number_pseudozeta() const { return chi_number_pseudozeta_;}
 
-	///////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////Implemented for fast lookup! Parin Sripakdeevong, June 25th, 2011//////////////////
+private:
 
-public:
+	static
+	utility::vector1< Size > const
+	figure_out_chi_order( ResidueType const & residue_type );
+
+	static
+	void
+	rna_note_chi_controls_atom( ResidueType const & residue_type_in,
+		core::Size const chi, core::Size const atomno,
+		utility::vector1< core::Size > & last_controlling_chi,
+		utility::vector1< core::Size > const & chi_order );
+
+	// used by update_derived_rna_data() -- updates the index_ values.
+	void
+	update_atom_annotations( ResidueType const & residue_type );
+
+	///////////////////////////////////////////////////////////////////////////////////////
+private:
 
 	//o2prime atom
 	core::Size o2prime_index_;
