@@ -200,6 +200,7 @@ void MultipleOutputWrapper::parse_my_tag(
 				mover_ = parser.parse_protocol_tag( curr_tag, basic::options::option );
 			} else {
 				// Treat subtag as a regular mover tag
+				/*std::string name =*/ curr_tag->getOption<std::string>("name"); // Result unused, but needed to avoid unaccessed option error later.
 				protocols::moves::MoverOP new_mover(
 					protocols::moves::MoverFactory::get_instance()->
 					newMover(curr_tag, data)
