@@ -92,11 +92,11 @@ BlockwiseAnalysisMover::apply( core::pose::Pose& pose){
 
 	std::pair<core::Size, core::Size> helix_pair;
 
-	for ( core::Size upstream_res = 1; upstream_res < pose.size(); ++upstream_res ) {
+	for ( core::Size upstream_res = 1; upstream_res <= pose.size(); ++upstream_res ) {
 		if ( pose.secstruct(upstream_res) == 'H' ) {
 			for ( core::Size downstream_res = upstream_res+1; downstream_res <= pose.size(); ++downstream_res ) {
 				if ( pose.secstruct(downstream_res) == 'H' ) {
-					if ( element_blocks[upstream_res] != element_blocks[downstream_res] && pose.residue(upstream_res).xyz(2).distance(pose.residue(upstream_res).xyz(2)) <= crit_dist_ ) {
+					if ( element_blocks[upstream_res] != element_blocks[downstream_res] && pose.residue(upstream_res).xyz(2).distance(pose.residue(downstream_res).xyz(2)) <= crit_dist_ ) {
 						helix_pair.first = element_blocks[upstream_res];
 						helix_pair.second = element_blocks[downstream_res];
 						helix_pairs.insert(helix_pair);
@@ -117,7 +117,7 @@ BlockwiseAnalysisMover::apply( core::pose::Pose& pose){
 	//core::Size label_res = 1;
 	for ( auto current_pair : helix_pairs ) {
 		scc.Reset(); // this may not be needed anymore, but I'm leaving it here for safety
-		for ( core::Size current_res = 1; current_res < pose.size(); ++current_res ) {
+		for ( core::Size current_res = 1; current_res <= pose.size(); ++current_res ) {
 			if ( element_blocks[current_res] == current_pair.first ) {
 				scc.AddResidue( 0, pose.residue(current_res) );
 			}
@@ -134,7 +134,7 @@ BlockwiseAnalysisMover::apply( core::pose::Pose& pose){
 		d_median = r.distance;
 		has_disulfide = false;
 		core::Size last_upstream_res = 1;
-		for ( core::Size upstream_res = 1; upstream_res <pose.size(); ++upstream_res ) {
+		for ( core::Size upstream_res = 1; upstream_res <= pose.size(); ++upstream_res ) {
 			if ( pose.residue(upstream_res).type().is_disulfide_bonded() && element_blocks[upstream_res] == current_pair.first ) {
 				for ( core::Size downstream_res = upstream_res+2; downstream_res <= pose.size(); ++downstream_res ) {
 					if ( pose.residue(downstream_res).type().is_disulfide_bonded() && pose.residue(upstream_res).is_bonded(pose.residue(downstream_res)) && element_blocks[downstream_res] == current_pair.second ) {

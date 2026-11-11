@@ -934,8 +934,8 @@ StrandBundleFeatures::shortest_dis_sidechain(
 
 		for ( core::Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
 			core::Size j_resnum = strand_j.get_start()+strand_j_res;
-			for ( core::Size i_AtomNum=1; i_AtomNum < pose.residue(i_resnum).natoms(); i_AtomNum++ ) {
-				for ( core::Size j_AtomNum=1; j_AtomNum < pose.residue(j_resnum).natoms(); j_AtomNum++ ) {
+			for ( core::Size i_AtomNum=1; i_AtomNum <= pose.residue(i_resnum).natoms(); i_AtomNum++ ) {
+				for ( core::Size j_AtomNum=1; j_AtomNum <= pose.residue(j_resnum).natoms(); j_AtomNum++ ) {
 					Real dis_sc_sc = pose.residue(i_resnum).xyz(i_AtomNum).distance(pose.residue(j_resnum).xyz(j_AtomNum));
 					if ( temp_shortest_dis > dis_sc_sc ) {
 						temp_shortest_dis = dis_sc_sc;
