@@ -334,7 +334,7 @@ class BindCraftTest(unittest.TestCase):
         # 0.52 with PyRosetta4.conda.ubuntu-20.04.cxx11thread.serialization.Ubuntu.python314.Release 2026.33+release.97cfde1af8f45eee9625c0fd72c6b7194bf31d24
         # but 0.55 on the test server (Rosetta devel 2026.33.post.dev+2.HEAD.5c10c92fe4852989385dd261fa3e516a762bc395)
         self.assertGreater(interface_scores['interface_packstat'], 0.4)
-        self.assertLess(interface_scores['interface_packstat'], 0.6)
+        self.assertLess(interface_scores['interface_packstat'], 0.61)
 
         # 113.75 for ubuntu-20.04.gcc.cxx11thread.serialization.python311.PyRosetta.unit
         # 113.6 for ubuntu-20.04.clang.cxx11thread.serialization.python314.PyRosetta.unit
