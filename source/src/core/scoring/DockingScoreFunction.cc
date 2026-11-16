@@ -33,7 +33,7 @@
 //#include <utility/options/OptionCollection.fwd.hh>
 //#include <utility/options/keys/OptionKeyList.fwd.hh>
 
-static basic::Tracer tr( "core.scoring.DockingScoreFunction" );
+static basic::Tracer TR( "core.scoring.DockingScoreFunction" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -117,11 +117,28 @@ DockingScoreFunction::operator()( pose::Pose & pose ) const
 	Real interaction_energy = (bound_energy - unbound_energy);
 
 	pose.energies().total_energies()[ total_score ] = interaction_energy + pose.energies().total_energies()[ atom_pair_constraint ]*cst_weight;
-	tr.Debug << "unbound_energy " << unbound_energy << " full_score " << bound_energy << " diff " << interaction_energy << std::endl;
+	TR.Debug << "unbound_energy " << unbound_energy << " full_score " << bound_energy << " diff " << interaction_energy << std::endl;
 	pose::setPoseExtraScore( pose, "I_sc", interaction_energy );
 	return pose.energies().total_energies()[ total_score ];
 }
 
+
+///////////////////////////////////////////////////////////////////////////////
+
+void
+DockingScoreFunction::setup_for_minimizing(
+	pose::Pose & pose,
+	kinematics::MinimizerMapBase const & min_map
+) const {
+	TR.Warning << "DockingScoreFunction is not built for minimization -- results may be unexpected." << std::endl;
+	ScoreFunction::setup_for_minimizing(pose, min_map);
+}
+
+void
+DockingScoreFunction::setup_for_packing( pose::Pose & pose, utility::vector1< bool > const & residues_repacking, utility::vector1< bool > const & residues_designing ) const {
+	TR.Warning << "DockingScoreFunction is not built for packing -- results may be unexpected." << std::endl;
+	ScoreFunction::setup_for_packing(pose, residues_repacking, residues_designing);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 

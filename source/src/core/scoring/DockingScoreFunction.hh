@@ -71,6 +71,19 @@ public:
 	void
 	list_options_read( utility::options::OptionKeyList & options_read );
 
+	/////////////////////////////////////////////////////////////////////////////
+	// Not really for minimization or packing
+	/////////////////////////////////////////////////////////////////////////////
+
+	void
+	setup_for_minimizing(
+		pose::Pose & pose,
+		kinematics::MinimizerMapBase const & min_map
+	) const override;
+
+	void
+	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const & residues_repacking, utility::vector1< bool > const & residues_designing ) const override;
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

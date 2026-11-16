@@ -590,7 +590,7 @@ public:
 	/// energies in a packing step (rotamer_trials or pack_rotamers)
 	/// @note: the Etable caches tries for each of the residues, the
 	/// hydrogen bond function caches backbone/backbone hydrogen bonds
-	void
+	virtual void
 	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const & residues_repacking, utility::vector1< bool > const & residues_designing ) const;
 
 	/// @brief Lets the scoring functions cache anything they need to calculate
