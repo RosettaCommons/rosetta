@@ -84,6 +84,12 @@ public:
 	void
 	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const & residues_repacking, utility::vector1< bool > const & residues_designing ) const override;
 
+private:
+	// Mutable & multithreading should be fine here, as this just controls the warning level and is an assigned-true-once write access.
+	// (Extra warnings from a race condition aren't too much of an issue.)
+	mutable bool warned_on_minimization_ = false;
+	mutable bool warned_on_packing_ = false;
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;
