@@ -431,8 +431,6 @@ void MultiplePoseMover::parse_my_tag(
 
 void MultiplePoseMover::set_main_mover( protocols::moves::MoverOP const m ) { mover_ = m; }
 
-void MultiplePoseMover::set_main_mover( protocols::moves::MoverOP const m ) { mover_ = m; }
-
 /// @brief sets rosettascripts tag
 void MultiplePoseMover::set_rosetta_scripts_tag( utility::tag::TagCOP tag ) { rosetta_scripts_tag_ = tag; }
 
