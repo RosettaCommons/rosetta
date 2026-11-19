@@ -197,6 +197,7 @@ void MultipleOutputWrapper::parse_my_tag(
 			if ( curr_tag->getName() == "ROSETTASCRIPTS" ) {
 				// Treat subtag as a ROSETTASCRIPTS protocol
 				protocols::rosetta_scripts::RosettaScriptsParser parser;
+				rosetta_scripts_tag_ = curr_tag; // To allow for reparsing the script if keep_mover_state is false
 				mover_ = parser.parse_protocol_tag( curr_tag, basic::options::option );
 			} else {
 				// Treat subtag as a regular mover tag
@@ -215,7 +216,7 @@ void MultipleOutputWrapper::parse_my_tag(
 		}
 
 	} catch( utility::excn::Exception const & e ) {
-		std::string my_name( tag->getOption<std::string>("name") );
+		std::string my_name( tag->getOption<std::string>("name","UNNAMED") );
 		throw CREATE_EXCEPTION(utility::excn::Exception, "Exception in MultipleOutputWrapper with name \"" + my_name + "\": " + e.msg());
 	}
 }
@@ -252,7 +253,7 @@ void MultipleOutputWrapper::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	ct_gen.element_name( mover_name() )
 		.complex_type_naming_func( & moves::complex_type_name_for_mover )
 		.add_attributes( attlist )
-		.set_subelements_pick_one( subelements )
+		.set_subelements_pick_one_or_none( subelements )
 		.description( "XRW TO DO" )
 		.write_complex_type_to_schema( xsd );
 
