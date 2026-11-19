@@ -266,6 +266,7 @@ sources = {
 		"standard_mains",
 	],
 	"protocols/moves": [
+		"AdditionalPosesMover",
 		"CompositionMover",
 		"CyclicMover",
 		"DsspMover",
