@@ -7110,6 +7110,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'place_adduct_waters', 'Boolean', default = 'true', desc="used to dna_motif_collector - whether or not adduct waters are placed before motifs are collected, there will be no water interaction calculated if this is false" ),
 		Option( 'list_motifs', 'FileVector', desc="File(s) containing list(s) of PDB files to process" ),
 		Option( 'motif_filename', 'String', desc="File containing motifs" ),
+		Option( 'motif_cloud_residue_indices', 'IntegerVector', desc = '1-based pose residue indices from which to project motif partner residues into a MotifCloud'),
+		Option( 'motif_cloud_output_prefix', 'String', default = 'motif_cloud', desc = 'Prefix for MotifCloud aggregate and per-residue visualization PDB files'),
 		Option( 'file_prefix', 'String', default = 'motif', desc="File containing motifs" ),
 		Option( 'build_residue_file', 'String', desc="File containing the target positions for building and incorporating motifs" ),
 		Option( 'motif_flexible_loop_file', 'String', desc="File containing the flexible loop definition" ),
@@ -7163,6 +7165,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		#Option( 'protein_discovery_locus', 'Real', default = '0', desc = 'Value to indicate the index/locus that a user wants to run ligand discovery for on a protein'),
 		#changing to ve an integer vector so that you can use more than 1 locus in a single object and store the loci within the object instead of externally
 		Option( 'protein_discovery_locus', 'IntegerVector', desc = 'Value to indicate the index/locus that a user wants to run ligand discovery for on a protein'),
+		Option( 'input_ligand_residue', 'ResidueChainVector', desc = 'PDB chain and residue number of a ligand already present in the input complex; when set, evaluate this ligand instead of placing ligand-library entries by motifs. Load its residue type with -extra_res_fa or params_directory_path'),
+		Option( 'input_ligand_insertion_code', 'String', desc = 'Optional one-character PDB insertion code for the ligand selected with input_ligand_residue'),
+		Option( 'input_ligand_start_step', 'String', default = 'clash_check', desc = 'First discovery step to run for the selected input ligand: clash_check, preliminary_scoring, space_fill, high_res_docking, system_scoring, or motif_collection'),
+		Option( 'input_ligand_skip_highresdock', 'Boolean', default = 'false', desc = 'Skip high-resolution docking when evaluating a ligand already present in the input complex'),
 		Option( 'fa_rep_cutoff', 'Real', default = '10000', desc = 'Value for ligand discovery cutoff for fa_rep score'),
 		Option( 'fa_atr_cutoff', 'Real', default = '10000', desc = 'Value for ligand discovery cutoff for fa_atr score'),
 		Option( 'fa_atr_rep_cutoff', 'Real', default = '10000', desc = 'Value for ligand discovery cutoff for fa_atr_rep score function score'),
@@ -7209,6 +7215,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'check_if_ligand_motifs_match_real', 'Boolean', default = 'false', desc = 'If collecting motifs from placed ligand, check if motifs are similar to existing ones in starting motif library'),
 		Option( 'minimum_ratio_of_real_motifs_from_ligand', 'Real', default = '0', desc = 'If checking that motifs from placed ligand match motifs in inputted library, ratio cutoff for how many must match real to keep ligand'),
 		Option( 'clean_pdb_name', 'Boolean', default = 'true', desc = 'Use a cleaner naming scheme for naming the pdbs that are produced by liganddiscoverysearch'),
+		Option( 'secondary_protein_discovery_locus', 'IntegerVector', desc = 'An optional secondary integer list of residue indices, which forces ligand interactions with a specified second residue before further investigating the pose. If this flag is used, after a residue is docked against a residue from protein_discovery_locus, LigandDiscoverySearch will try to collect a motif against the ligand and these residue indices. If a motif is identified, the pose will be considered for further investigation.'),
+		Option( 'dump_input_pdb_with_rosetta_residue_indices', 'Boolean', default = 'false', desc = 'A debug boolean to allow the user to spit out the starting empty receptor pose with no ligand. The purpose of this is to have an easy way to get a copy of the empty pose with all residues translated to Rosetta indexing (since it is very likely that the indices are different unless they index from 1 with no skipping).'),
+		
 	), # -motifs
 
 	Option_Group( 'ms' , # multistate_design
@@ -7617,6 +7626,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	Option_Group ( 'protein_grid',
 		Option( 'output_whole_matrix', 'Boolean', default = 'false', desc = 'If using output_space_fill_matrix_pdbs flag, this option (when true) allows for visualization of the entire space fill matrix, instead of just the sub-area.'),
 		Option( 'output_empty_space', 'Boolean', default = 'false', desc = 'If using output_space_fill_matrix_pdbs flag, this option (when true) allows for visualization of the space fill matrix, including empty space.'),
+		Option( 'output_empty_space_only', 'Boolean', default = 'false', desc = 'When exporting a ProteinGrid matrix, output only empty cells within the defined sub-area as oxygen atoms.'),
 	),
 
 	Option_Group( 'qsar',

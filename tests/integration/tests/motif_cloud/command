@@ -1,0 +1,44 @@
+cd %(workdir)s
+
+[ -x %(bin)s/motif_cloud.%(binext)s ] || exit 1
+
+grep -q '^ATOM.* GLN A 134 ' 4s0v_receptor_only.pdb || exit 1
+
+%(bin)s/motif_cloud.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST 2>&1 \
+	| egrep -vf ../../ignore_list \
+	| egrep -v 'Total time to initialize' \
+	> log
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+
+for cloud in motif_cloud_aggregate.pdb motif_cloud_residue_85.pdb; do
+	test -s "$cloud" || exit 1
+	grep -q '^REMARK MotifCloud voxel density visualization' "$cloud" || exit 1
+	awk 'substr($0, 1, 6) == "HETATM" {
+		occupancy = substr($0, 55, 6) + 0
+		density = substr($0, 61, 6) + 0
+		element = substr($0, 77, 2)
+		expected_elements[0] = " I"
+		expected_elements[1] = " N"
+		expected_elements[2] = " F"
+		expected_elements[3] = "CL"
+		expected_elements[4] = " S"
+		expected_elements[5] = " P"
+		expected_elements[6] = " O"
+		expected_elements[7] = "BR"
+		expected_bin = int(density / 12.5)
+		if (expected_bin > 7) expected_bin = 7
+		if (occupancy <= 0 || density <= 0 || density > 100) exit 1
+		if (element != expected_elements[expected_bin]) exit 1
+		colors[element] = 1
+		markers++
+	} END {
+		for (element in colors) color_count++
+		if (markers == 0 || color_count < 2) exit 1
+	}' "$cloud" || exit 1
+done
+
+aggregate_markers=$(grep -c '^HETATM' motif_cloud_aggregate.pdb)
+test "$aggregate_markers" -gt 2 || exit 1
+motif_count=$(grep -c '^SINGLE' GLN_motifs_20k.motifs)
+projected_anchor_count=$(awk 'substr($0, 1, 6) == "HETATM" { count += substr($0, 55, 6) } END { print count + 0 }' motif_cloud_aggregate.pdb)
+test "$projected_anchor_count" -gt "$((motif_count * 2))" || exit 1

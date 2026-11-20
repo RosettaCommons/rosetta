@@ -74,7 +74,25 @@ public:
 	// 4. Checks if the motifs collected are comparable to another list of motifs (i.e. used to see if motifs match a motif library that was collected from the Protein Data Bank)
 	// Data is written to the pose in comments
 	//mymap is not declared as const because the [] operator is used on it, and apparently you can't [] on a constant map
-	utility::vector1< core::Real > evaluate_motifs_of_pose(core::pose::PoseOP working_pose, std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> mymap, std::string const & pdb_name);
+	utility::vector1< core::Real > evaluate_motifs_of_pose(core::pose::PoseOP const & working_pose, std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> const & mymap, std::string const & pdb_name);
+
+	// @brief Function to take a pose and only see if motifs are made and if they exist in a provided library map
+	// Effectively a simplified and streamlined version of evaluate_motifs_of_pose
+	// Must provide a pose, because a pose is needed for residue-ligand packing/hbond energy calculations
+	// only pulls motifs using process_for_motifs() to collect motifs from a single residue against a ligand
+	// will then use single_motif_exists_in_library() to see if the motif exists in a larger motif library
+	// returns a bool indicating whether any motifs were found for the residue-ligand pair in the library
+	bool residue_forms_library_motif(core::pose::PoseOP const & pose, std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> const & mymap);
+
+	// @brief this function sees if the provided motifCOP exists within a motif library (by jump distance and angle comparison for equivalent matching atoms) that is hashed into a map by atoms
+	// returns a tuple that is a bool noting if the provided motif matches one in the library and 2 strings that are a header and match data (intended to be added to a pose comment, but could be used elsewhere)
+	// Making this a public function, in case a future protocol may want to use this functionality outside of the scope of ILM
+	std::tuple<bool, std::string, std::string> single_motif_exists_in_library(protocols::motifs::MotifCOP const & ligmotifcop, std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> const & mymap);
+
+	// @brief a quick check to see if a ligand is close enough to the provided residue to make a motif
+	// makes a motif (without performing energy scores) and makes a call to see if the motif is geometrically similar to a motif that exists in the provided motif library (lives in mymap)
+	// returns true if a real motif in mymap exists, false if not
+	bool placed_ligand_forms_library_motif_fast(core::conformation::Residue const & ligres, core::conformation::Residue const & secondary_residue, utility::vector1<utility::vector1<utility::vector1<core::Size>>> const & ligand_trios, std::map< protocols::motifs::motif_atoms, protocols::motifs::MotifCOPs > const & mymap);
 
 private:
 	//protected:

@@ -1,0 +1,6 @@
+-s 9W3L.pdb
+-ignore_unrecognized_res true
+-binding_pocket_center_sf 169,201,153
+-binding_pocket_dimensions_sf 5,5,5
+-protein_grid:output_empty_space_only true
+-out:prefix 9W3L_binding_pocket

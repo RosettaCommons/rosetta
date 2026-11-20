@@ -105,7 +105,7 @@ public:
 
 	// @brief function to elaborate upon the protein_matrix_, and will review the pose and update occupied cells by projecting atom lennard jobes radii and marking cells within the radius as occupied
 	// if a sub area boundary is defined, will define that area with different values
-	void project_lj_radii();
+	void project_lj_radii(core::Real projection_multiplier = 1.0);
 
 	//@brief function where a residue object (i.e. ligand) outside of a pose can be imposed upon the matrix, and the space filling volume of the system with the ligand can be analyzed
 	//this forces activation of the space fill data on the class
@@ -129,6 +129,9 @@ public:
 
 	// @brief function to set the value of print_empty_space_
 	void set_print_empty_space(bool setter);
+
+	// @brief function to set the value of print_empty_space_only_
+	void set_print_empty_space_only(bool setter);
 
 private:
 
@@ -167,6 +170,22 @@ private:
 
 	// @brief function to initialize additional member variables that rely on options
 	void initialize_from_options();
+
+	// @brief Expand protein_matrix_ so projected LJ radii will not be clipped.
+	// Computes the bounds needed for the current working_pose_ and calls
+	// resize_matrix_to_include_bounds().
+	void ensure_matrix_can_project_lj_radii( core::Real projection_multiplier = 1.0 );
+
+	// @brief Resize protein_matrix_ to include possibly out-of-bounds matrix coordinates.
+	// min/max are matrix-space coordinates using the current xyz_shift_ / resolution_.
+	void resize_matrix_to_include_bounds(
+		int requested_x_min,
+		int requested_x_max,
+		int requested_y_min,
+		int requested_y_max,
+		int requested_z_min,
+		int requested_z_max
+	);
 
 	// @brief function to be used to convert a base 10 number to base 62 (as a string with characters represented by upper+lower case letters and digits)
 	//used in export_protein_matrix_to_pose to assign a unique name to an atom
@@ -237,10 +256,12 @@ private:
 	// @brief values that help to specify that to output to a pose/pdb
 	// print_whole_matrix_ determines whether to only print the sub area (if there is one) or the entire ProteinMatrix; default to false because the user likely wants to focus on the sub area if doing this
 	// print_empty_space_ determines whether to represent empty space as atoms in the pdb; default to false because readability is better when the empty space is not shown
+	// print_empty_space_only_ restricts output to empty cells within the sub area
 	// both of these variables aren't included in constructors since this feature is mainly used for debugging, and can instead be set in setter variables or flags
 	//default as false
 	bool print_whole_matrix_ = false;
 	bool print_empty_space_ = false;
+	bool print_empty_space_only_ = false;
 };
 
 }

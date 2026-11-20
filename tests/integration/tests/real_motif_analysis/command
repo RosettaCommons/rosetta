@@ -48,3 +48,11 @@ cd %(workdir)s
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
+[ -x %(bin)s/ligand_discovery_search_protocol.%(binext)s ] || exit 1
+%(bin)s/ligand_discovery_search_protocol.%(binext)s %(additional_flags)s @onramp.flags -database %(database)s -testing:INTEGRATION_TEST 2>&1 \
+    | egrep -vf ../../ignore_list \
+    > onramp.log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+test -s 4s0v_and_suvorexant_only_pdb_SUV_onramp.pdb || exit 1
+grep -q "On-ramp: Failed steps:" 4s0v_and_suvorexant_only_pdb_SUV_onramp.pdb || exit 1

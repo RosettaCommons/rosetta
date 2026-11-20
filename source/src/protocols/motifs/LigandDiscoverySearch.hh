@@ -28,6 +28,7 @@
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <protocols/motifs/Motif.fwd.hh>
+#include <protocols/motifs/motif_utils.hh>
 #include <protocols/motifs/MotifHit.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.fwd.hh>
@@ -139,8 +140,23 @@ public:
 	// @brief function to append an additional single working position index to the existing working_positions_ vector
 	void add_working_positions(core::Size working_positions);
 
-	// @brief return contents of working_positions_
+	// @brief return contents of working_positions_ vector
 	utility::vector1<core::Size>  get_working_positions();
+
+	// @brief function to define the vector of OPTIONAL secondary residue indices that we will use for applying motifs for ligand placements
+	void set_secondary_working_positions(utility::vector1<core::Size> working_position);
+
+	// @brief overload function to define the vector of secondary residue indices that we will use for applying motifs for ligand placements; takes single core::Size
+	void set_secondary_working_positions(core::Size working_position);
+
+	// @brief function to append an additional vector of secondary position indices to the existing secondary_working_positions_ vector
+	void add_secondary_working_positions(utility::vector1<core::Size> working_positions);
+
+	// @brief function to append an additional single working position index to the existing secondary_working_positions_ vector
+	void add_secondary_working_positions(core::Size working_positions);
+
+	// @brief return contents of secondary_working_positions_ vector
+	utility::vector1<core::Size>  get_secondary_working_positions();
 
 	// @brief function to load in a pose for the receptor
 	void set_working_pose(core::pose::PoseOP pose_from_PDB);
@@ -163,11 +179,15 @@ public:
 	// @brief main function to run ligand discovery operations
 	//needs to have values set for working_pose_, motif_library_, and all_residues_
 	//parameter is a string to be a prefix name to use for outputted file names
-	core::Size discover(std::string output_prefix);
+	core::Size discover(
+		std::string output_prefix,
+		core::Size ligand_residue_position = 0,
+		std::string const & input_ligand_start_step = "clash_check"
+	);
 
 	// @brief function to get a sub-library of motifs from the main library, based on the residue being used (only get for select residue)
 	//function may have use outside discover, so public can use it
-	protocols::motifs::MotifCOPs get_motif_sublibrary_by_aa(std::string residue_name);
+	//protocols::motifs::MotifCOPs get_motif_sublibrary_by_aa(std::string residue_name);
 
 	// @brief function to push all adjacent atom indices if inputted ligand residue (pointer) into a 3D core::Size vector (atom_trios typedef)
 	//this in theory could be useful beyond the scope the discover function, so I will leave this as public
@@ -200,6 +220,10 @@ private:
 	//returns a boolean based on whether the minipose score was good enough at all steps or not (false means it failed, and the placement will be killed)
 	bool score_minipose(const core::pose::PoseOP & minipose, core::Real & fa_rep, core::Real & fa_atr, core::Real & fa_atr_rep_score_before);
 
+	// @brief function used to make a minipose (focused pose around placed ligand to get quicker scoring of metrics like fa_atr and fa_rep)
+	//if returns true, a minipose was successfully made; if returns false, minipose is still empty because no other residues were recruited to it
+	void make_secondary_minipose(core::pose::PoseOP & minipose, const core::Size exclude_working_residue);
+
 	// @brief create a constraint set on the 3 ligand motif atoms (the last residue in working_pose_) to reduce their movement before applying a highresdock
 	void add_constraints_to_working_pose(const core::Size trip_atom_1, const core::Size trip_atom_2, const core::Size trip_atom_3, const core::Size working_position, const core::conformation::ResidueOP ligresOP);
 
@@ -212,6 +236,15 @@ private:
 
 	// @brief This function uses a HighResDockOP object for using highresdock in discover() to try to optimize the ligand placement
 	void run_HighResDock_on_working_pose(const protocols::ligand_docking::HighResDockerOP my_HighResDocker);
+
+	// @brief run high-resolution docking and apply the shared post-docking score filters
+	bool run_highresdock_and_score(const protocols::ligand_docking::HighResDockerOP high_res_docker, core::Real & delta_score, core::Real & fa_rep, core::Real & fa_atr, core::Real & fa_atr_rep_score_after, core::Real & whole_score);
+
+	// @brief apply the shared post-docking system score filters without running high-resolution docking
+	bool score_post_highresdock(core::Real & delta_score, core::Real & fa_rep, core::Real & fa_atr, core::Real & fa_atr_rep_score_after, core::Real & whole_score, std::string * failure_reason = nullptr);
+
+	// @brief collect motifs from a placed ligand and apply the configured motif-count filters
+	bool collect_and_filter_placement_motifs(const std::map<protocols::motifs::motif_atoms, protocols::motifs::MotifCOPs> & motif_map, std::string const & pdb_name, utility::vector1<core::Real> & motif_data);
 
 	// @brief A function to reset the working_pose_ back to its original state, as found in original_pose
 	void reset_working_pose();
@@ -229,8 +262,12 @@ private:
 	protocols::motifs::MotifCOPs motif_library_for_select_residue_;
 	// @brief ligand library
 	utility::vector1<core::conformation::ResidueOP> all_residues_;
-	// @brief vector to hold list of all indices to investigate/use as anchor residues, used to set value of working_position_
+	// @brief vector to hold list of all indices to investigate/use as anchor residues, used to set value of working_position
 	utility::vector1<core::Size> working_positions_;
+	// @brief vector to hold a secondary list of all indices to investigate/use as a secondary anchor residue, used to set value of secondary_working_position
+	utility::vector1<core::Size> secondary_working_positions_;
+	// @brief pose to hold and secondary residues for motif projection
+	core::pose::PoseOP secondary_residue_minipose_;
 
 	// @brief variable to be used as a cutoff to define the maximum allowed fa_rep score for a placement to be considered
 	core::Real fa_rep_cutoff_;
@@ -279,4 +316,7 @@ private:
 	//for the space fill analysis, another proteingrid will be cloned of this template in the discover function
 	//The clone is because it should be faster to clone to wipe placed ligand data, as opposed to call the wrap and space fill functions again as a form of wiping the object
 	protocols::protein_grid::ProteinGridOP sf_pose_grid_;
+
+	// @brief a protein grid only for residues to form secondary motifs against for a quick selection. LJ radii (x2.25) are projected about each atom to mock an interaction range
+	protocols::protein_grid::ProteinGridOP secondary_residue_grid_;
 };
