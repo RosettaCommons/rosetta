@@ -41,6 +41,7 @@
 // C++ Headers
 #include <map>
 #include <set>
+#include <tuple>
 
 #include <utility/vector1.hh>
 #include <utility/io/izstream.fwd.hh>
@@ -262,6 +263,12 @@ single_ligand_motif_from_stream(
 MotifLibrary const
 get_LigandMotifLibrary_user(bool check_for_bad_motifs, utility::vector1< std::string > const &  ligand_atom_names);
 
+MotifLibrary const
+get_LigandMotifLibrary_user(
+	bool check_for_bad_motifs,
+	std::set< std::tuple< std::string, std::string, std::string > > const & ligand_atom_type_triplets
+);
+
 // @brief operator overload of >> to read in, functionally same as single_ligand_motif_from_stream
 std::istream & operator >> (
 	std::istream & motif_info, SingleMotifOP & retval
@@ -278,7 +285,7 @@ write_motifs_to_disk(MotifCOPs motifcops, std::string filename);
 // @brief function to hash out an input motif library into a standard map of motifCOPs
 //inputs are initial motif library and map that is to be filled out
 //map keys are tuples of 7 strings, which is the residue involved in the motif and then the names of the atoms involved (3 atoms on both sides of motif; we don't care about ligand name in key)
-void hash_motif_library_into_map(protocols::motifs::MotifCOPs & input_library, std::map<motif_atoms, protocols::motifs::MotifCOPs> & mymap);
+void hash_motif_library_into_map(protocols::motifs::MotifCOPs const & input_library, std::map<motif_atoms, protocols::motifs::MotifCOPs> & mymap);
 
 
 } // namespace motifs

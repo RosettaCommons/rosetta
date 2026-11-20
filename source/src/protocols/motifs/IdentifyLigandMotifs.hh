@@ -73,8 +73,17 @@ public:
 	// 3. Checks if motifs were made for residues where at least one motif is wanted to be found (with a total collected for the number of residues of interest that got a motif)
 	// 4. Checks if the motifs collected are comparable to another list of motifs (i.e. used to see if motifs match a motif library that was collected from the Protein Data Bank)
 	// Data is written to the pose in comments
-	//mymap is not declared as const because the [] operator is used on it, and apparently you can't [] on a constant map
-	utility::vector1< core::Real > evaluate_motifs_of_pose(core::pose::PoseOP working_pose, std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> mymap, std::string const & pdb_name);
+	utility::vector1< core::Real > evaluate_motifs_of_pose(core::pose::PoseOP working_pose, std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> const & mymap, std::string const & pdb_name);
+
+	// @brief Lightweight pre-check: counts how many significant residues have motifs formed against them,
+	// without adding comments to the pose, without adding motifs to motif_library_, and without writing PDBs.
+	// Returns a vector where:
+	//   [1] = total motifs made
+	//   [2] = 1 if all mandatory residues got a motif, 0 otherwise
+	//   [3] = number of significant residues that got a motif
+	// This is cheaper than the full evaluate_motifs_of_pose() because it skips all side effects
+	// and the real-motif comparison step.
+	utility::vector1< core::Real > count_significant_motifs(core::pose::PoseOP const & working_pose);
 
 private:
 	//protected:
@@ -140,6 +149,8 @@ private:
 	bool output_motifs_;
 	// @brief bool to control whether to output motifs to a pdb
 	bool output_motifs_as_pdb_;
+	// @brief cached score function used for motif contact evaluation
+	core::scoring::ScoreFunctionOP motif_scorefxn_;
 	// @brief MotifLibrary to stay with the class
 	protocols::motifs::MotifLibrary motif_library_;
 };
