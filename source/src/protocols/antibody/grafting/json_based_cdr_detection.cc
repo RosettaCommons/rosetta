@@ -26,7 +26,6 @@
 #include <protocols/antibody/grafting/antibody_sequence.hh> // AUTO IWYU For uint, AntibodyChain, CDR_Bounds, AntibodySequence
 
 #ifdef __ANTIBODY_GRAFTING__
-#ifdef _NLOHMANN_JSON_ENABLED_
 
 #include <protocols/antibody/grafting/exception.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
@@ -271,5 +270,4 @@ void Json_based_CDR_Detector::detect_light_chain(AntibodySequence &A)
 } // namespace antibody
 } // namespace protocols
 
-#endif // _NLOHMANN_JSON_ENABLED_
 #endif // __ANTIBODY_GRAFTING__

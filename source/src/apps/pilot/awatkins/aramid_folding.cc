@@ -13,7 +13,7 @@
 
 #include <utility/json_utilities.hh>
 
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 #include <protocols/network/hal.hh>
 #include <protocols/network/util.hh>
 #include <json.hpp>
@@ -71,7 +71,7 @@ using namespace protocols;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
 
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 using namespace utility;
 using namespace protocols::network;
 #endif
@@ -80,7 +80,7 @@ static basic::Tracer TR( "apps.pilot.awatkins.aramid_folding" );
 
 
 ///////////////////////////////////////////////////////////////////////////////
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 core::pose::Pose
 #else
 void
@@ -106,7 +106,7 @@ aramid_main()
 		pose.set_torsion( TorsionID( ii, core::id::BB, 5 ), 180 );
 	}
 
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 	protocols::network::AddUIObserver( pose );
 #endif
 
@@ -159,12 +159,12 @@ aramid_main()
 
 
 
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 	return pose;
 #endif
 }
 
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 ///////////////////////////////////////////////////////////////
 core::pose::Pose
 my_main()
@@ -215,7 +215,7 @@ main( int argc, char * argv [] )
 		////////////////////////////////////////////////////////////////////////////
 		// end of setup
 		////////////////////////////////////////////////////////////////////////////
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 		{ // creating dummy pose object to trigger database load so later we can create Pose immeditaly
 			core::pose::Pose p;
 			core::import_pose::pose_from_pdbstring(p, "ATOM     17  N   ILE A   1      16.327  47.509  23.466  1.00  0.00\n");

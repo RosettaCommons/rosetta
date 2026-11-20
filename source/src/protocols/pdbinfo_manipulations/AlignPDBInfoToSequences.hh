@@ -26,7 +26,8 @@
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
 
-#include <json.hpp> // AUTO IWYU For json
+#include <json_fwd.hpp>
+
 #include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
@@ -94,7 +95,7 @@ operator<<( std::ostream & os, SequenceSpecification const & ss );
 ///@brief serialization (json) of SequenceSpecification
 void to_json(nlohmann::json& j, SequenceSpecification const & ss);
 
-void from_json(const json& j, SequenceSpecification & ss);
+void from_json(const nlohmann::json& j, SequenceSpecification & ss);
 
 
 

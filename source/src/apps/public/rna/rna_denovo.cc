@@ -13,10 +13,9 @@
 
 #include <utility/json_utilities.hh>
 
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 #include <protocols/network/hal.hh>
 #include <protocols/network/util.hh>
-#include <json.hpp>
 #include <protocols/network/ui_mover.hh>
 #include <core/import_pose/import_pose.hh>
 #endif
@@ -81,7 +80,7 @@ using namespace core::import_pose::options;
 // using namespace protocols::jd3;
 // using namespace protocols::jd3::chunk_library;
 
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 using namespace utility;
 using namespace protocols::network;
 #endif
@@ -158,7 +157,7 @@ OPT_1GRP_KEY( Boolean, denovo, use_legacy_job_distributor )
 //   native_pose_ = rna_de_novo_setup->native_pose();
 //   refine_pose_list_ = rna_de_novo_setup->refine_pose_list();
 
-// #if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+// #if defined(ZEROMQ)
 //   protocols::network::AddUIObserver( pose );
 // #endif
 //   protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
@@ -474,7 +473,7 @@ OPT_1GRP_KEY( Boolean, denovo, use_legacy_job_distributor )
 
 
 ///////////////////////////////////////////////////////////////////////////////
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 core::pose::Pose
 #else
 void
@@ -516,13 +515,13 @@ rna_denovo()
 	//protocols::jd3::JobDistributorOP jd = protocols::jd3::JobDistributorFactory::create_job_distributor();
 	//protocols::jd3::JobQueenOP queen( new RNA_DeNovoJobQueen );
 	//jd->go( queen );
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 	return Pose();
 #endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 core::pose::Pose
 #else
 void
@@ -547,7 +546,7 @@ rna_denovo_legacy()
 	rna_de_novo_protocol.set_native_pose( rna_de_novo_setup->native_pose() );
 	rna_de_novo_protocol.set_refine_pose_list( rna_de_novo_setup->refine_pose_list() );
 
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 	protocols::network::AddUIObserver( pose );
 #endif
 
@@ -555,12 +554,12 @@ rna_denovo_legacy()
 	// protocols::moves::AddPyMOLObserver( pose, false, 0.01);
 
 	rna_de_novo_protocol.apply( pose );
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 	return pose;
 #endif
 }
 
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 ///////////////////////////////////////////////////////////////
 core::pose::Pose
 my_main()
@@ -619,7 +618,7 @@ main( int argc, char * argv [] )
 		////////////////////////////////////////////////////////////////////////////
 		// end of setup
 		////////////////////////////////////////////////////////////////////////////
-#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#if defined(ZEROMQ)
 		{ // creating dummy pose object to trigger database load so later we can create Pose immeditaly
 			core::pose::Pose p;
 			core::import_pose::pose_from_pdbstring(p, "ATOM     17  N   ILE A   1      16.327  47.509  23.466  1.00  0.00\n");

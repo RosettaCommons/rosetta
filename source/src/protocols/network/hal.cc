@@ -441,8 +441,8 @@ void hal(SpecificationCallBack const &specification_callback, ExecutionerCallBac
 					if( type == _m_execute_  and  message.size() == 1  ) {
 						string binary_command = message.popstr();
 
-						json command = nlohmann::json::from_msgpack(binary_command);
-						json result = executioner_callback(command);
+						nlohmann::json command = nlohmann::json::from_msgpack(binary_command);
+						nlohmann::json result = executioner_callback(command);
 
 						string binary_result;
 						nlohmann::json::basic_json::to_msgpack(result, binary_result);
@@ -467,21 +467,21 @@ void hal(HAs _actions, CommandLineArguments const &args)
 	std::map<string, HA> actions( std::move(_actions) );
 
 	hal([&actions]() {
-			auto f = json::object();
+			auto f = nlohmann::json::object();
 
 			for(auto const & a : actions) f[a.first] = a.second.specification;
 
-			json spec;
+			nlohmann::json spec;
 			spec[_f_functions_] = f;
 			return spec;
 		},
-		[&actions](json const &command) -> json {
+		[&actions](nlohmann::json const &command) -> nlohmann::json {
 			std::string name;
 			if ( extract_value_if_present(command, _f_name_, name) ) {
 				auto it = actions.find(name);
 				if( it != actions.end() ) return it->second.execute(command[_f_arguments_]);
 			}
-			return json();
+			return nlohmann::json();
 		},
 		args);
 
@@ -491,4 +491,4 @@ void hal(HAs _actions, CommandLineArguments const &args)
 } // namespace network
 } // namespace protocols
 
-#endif // defined(ZEROMQ) and  defined(_NLOHMANN_JSON_ENABLED_)
+#endif // defined(ZEROMQ)
