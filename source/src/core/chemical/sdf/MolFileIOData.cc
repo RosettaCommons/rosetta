@@ -156,9 +156,17 @@ MutableResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 
 	restype->name( name_ );
 	restype->base_name( name_ );
-	restype->name3( name_.substr(0,3) );
+	if ( name3_.empty() ) {
+		restype->name3( name_.substr(0,3) );
+	} else {
+		restype->name3( name3_ );
+	}
 	restype->interchangeability_group( restype->name3() );
-	restype->name1( 'Z' );
+	if ( name1_.empty() ) {
+		restype->name1( 'Z' );
+	} else {
+		restype->name1( name1_[0] );
+	}
 
 	bool uncharged = true; // Have partial charges been set?
 
