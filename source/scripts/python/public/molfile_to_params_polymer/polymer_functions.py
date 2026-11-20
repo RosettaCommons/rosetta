@@ -31,23 +31,32 @@ def polymer_assign_backbone_atom_types(m):
     # first get POLY flags from molfile
     for line in m.footer:
         if line.startswith("M  POLY_N_BB"):
-            m.atoms[ int(line.split()[2]) - 1 ].poly_backbone = True
-            m.atoms[ int(line.split()[2]) - 1 ].poly_n_bb = True
+            num = atom_num( line.split()[2], m )
+            m.atoms[ num ].poly_backbone = True
+            m.atoms[ num ].poly_n_bb = True
         if line.startswith("M  POLY_CA_BB"):
-            m.atoms[ int(line.split()[2]) - 1 ].poly_backbone = True
-            m.atoms[ int(line.split()[2]) - 1 ].poly_ca_bb = True
+            num = atom_num( line.split()[2], m )
+            m.atoms[ num ].poly_backbone = True
+            m.atoms[ num ].poly_ca_bb = True
         if line.startswith("M  POLY_O_BB"):
-            m.atoms[ int(line.split()[2]) - 1 ].poly_backbone = True
-            m.atoms[ int(line.split()[2]) - 1 ].poly_o_bb = True
+            num = atom_num( line.split()[2], m )
+            m.atoms[ num ].poly_backbone = True
+            m.atoms[ num ].poly_o_bb = True
         if line.startswith("M  POLY_C_BB"):
-            m.atoms[ int(line.split()[2]) - 1 ].poly_backbone = True
-            m.atoms[ int(line.split()[2]) - 1 ].poly_c_bb = True
+            num = atom_num( line.split()[2], m )
+            m.atoms[ num ].poly_backbone = True
+            m.atoms[ num ].poly_c_bb = True
         if line.startswith("M  POLY_UPPER"):
-            m.atoms[ int(line.split()[2]) - 1 ].poly_backbone = True
-            m.atoms[ int(line.split()[2]) - 1 ].poly_upper = True
+            num = atom_num( line.split()[2], m )
+            m.atoms[ num ].poly_backbone = True
+            m.atoms[ num ].poly_upper = True
         if line.startswith("M  POLY_LOWER"):
-            m.atoms[ int(line.split()[2]) - 1 ].poly_backbone = True
-            m.atoms[ int(line.split()[2]) - 1 ].poly_lower = True
+            num = atom_num( line.split()[2], m )
+            m.atoms[ num ].poly_backbone = True
+            m.atoms[ num ].poly_lower = True
+        if line.startswith("M  POLY_BACKBONE"):
+            for num in [ atom_num(s, m) for s in line.split()[2:] ]:
+                m.atoms[ num ].poly_backbone = True
 
 def polymer_assign_backbone_atom_names(atoms, bonds, peptoid):
     ''' modifies the rosetta atom type of the hydorgen attached to the alpha carbon and backbone nitrogen to be the correct
@@ -69,12 +78,7 @@ def polymer_assign_backbone_atom_names(atoms, bonds, peptoid):
         elif atom.poly_c_bb:
             atom.ros_type = "CObb"
             atom.pdb_name = " C  "
-        elif atom.poly_upper:
-            atom.ros_type = "X"
-            atom.pdb_name = "UPPER"
-        elif atom.poly_lower:
-            atom.ros_type = "X"
-            atom.pdb_name = "LOWER"
+        # Upper & Lower handled in a different function.
     # alpha carbon hydrogen(s)
     ca_h_bonds = []
     index = 0;
@@ -109,13 +113,23 @@ def polymer_assign_backbone_atom_names(atoms, bonds, peptoid):
             bond.a1.ros_type = "HNbb"
             bond.a1.pdb_name = " H  "
 
+def polymer_assign_connection_atom_names(atoms, bonds, peptoid):
+    ''' modifies the names of the upper and lower connections '''
+    for atom in atoms:
+        if atom.poly_upper:
+            atom.ros_type = "X"
+            atom.pdb_name = "UPPER"
+        elif atom.poly_lower:
+            atom.ros_type = "X"
+            atom.pdb_name = "LOWER"
+
+
 def polymer_assign_ignored_atoms_bonds(m):
     ''' sets the ignore boolean for each atom in the list and for each bond with at least one atom in the list'''
     ignore_list = []
     for line in m.footer:
         if line.startswith("M  POLY_IGNORE"):
-            ignore_list = line.split()[2:]
-    ignore_list = [int(i)-1 for i in ignore_list]
+            ignore_list = [ atom_num(d, m) for d in line.split()[2:] ]
     #atoms
     for i,a in enumerate(m.atoms):
         if i in ignore_list:
@@ -218,7 +232,7 @@ def polymer_assign_pdb_like_atom_names_to_sidechain(atoms, bonds, peptoid):
             for t in temp:
                 while str(k) in used_index:
                     k += 1
-                if atoms[t].pdb_postfix_num == " ": 
+                if atoms[t].pdb_postfix_num == " ":
                     atoms[t].pdb_postfix_num = "%d" % k
                     used_index.append(str(k))
 
