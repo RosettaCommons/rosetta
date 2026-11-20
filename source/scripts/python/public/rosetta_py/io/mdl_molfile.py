@@ -22,7 +22,7 @@ Author: Ian W. Davis
 '''
 
 from __future__ import print_function
-import os, sys, math, copy, gzip
+import os, sys, math, copy, gzip, io
 
 try: set
 except: from sets import Set as set
@@ -31,7 +31,7 @@ except: from sets import Set as set
 def gz_open(file,mode):
     filename, extension = os.path.splitext( file )
     if extension == ".gz":
-        return gzip.open(file,mode)
+        return io.TextIOWrapper(gzip.open(file,mode), encoding='utf-8')
     else:
         return open(file,mode)
 
