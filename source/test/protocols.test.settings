@@ -369,6 +369,7 @@ sources = {
 		"HelicalBundlePDBInfoTests",
 		"params_data_storage",
 		"PerturbBundleTests",
+		"PerturbBundleCorrelatedTests",
 	],
 
 	"helical_bundle_predict" : [
