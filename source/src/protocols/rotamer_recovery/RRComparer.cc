@@ -61,7 +61,8 @@ RRComparerRotBins::RRComparerRotBins() :
 
 RRComparerRotBins::RRComparerRotBins( RRComparerRotBins const & src) :
 	RRComparer(),
-	recovery_threshold_(src.recovery_threshold_)
+	recovery_threshold_(src.recovery_threshold_),
+	absolute_threshold_(src.absolute_threshold_)
 {}
 
 RRComparerRotBins::~RRComparerRotBins() = default;
@@ -144,6 +145,7 @@ RRComparerChiDiff::RRComparerChiDiff() : tolerance_( 20.0 ), limit_chi_angles_( 
 RRComparerChiDiff::RRComparerChiDiff( RRComparerChiDiff const & src ) :
 	RRComparer(),
 	tolerance_( src.tolerance_ ),
+	absolute_threshold_( src.absolute_threshold_ ),
 	limit_chi_angles_( src.limit_chi_angles_ ),
 	max_chi_considered_( src.max_chi_considered_ )
 {}

@@ -294,6 +294,7 @@ MembraneInfo::MembraneInfo( MembraneInfo const & src ) :
 	utility::VirtualBase(),
 	thickness_( src.thickness_ ),
 	steepness_( src.steepness_ ),
+	membrane_core_( src.membrane_core_ ),
 	membrane_rsd_num_( src.membrane_rsd_num_ ),
 	membrane_jump_( src.membrane_jump_ ),
 	is_helical_( src.is_helical_ ),
@@ -315,6 +316,7 @@ MembraneInfo::operator=( MembraneInfo const & src ) {
 	// Make a deep copy of everything
 	this->thickness_ = src.thickness_;
 	this->steepness_ = src.steepness_;
+	this->membrane_core_ = src.membrane_core_;
 	this->membrane_rsd_num_ = src.membrane_rsd_num_;
 	this->membrane_jump_ = src.membrane_jump_;
 	this->is_helical_ = src.is_helical_;

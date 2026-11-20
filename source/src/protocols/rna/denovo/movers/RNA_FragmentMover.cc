@@ -85,7 +85,9 @@ RNA_FragmentMover::RNA_FragmentMover(RNA_FragmentMover const & object_to_copy) :
 	insert_map_frag_size_(object_to_copy.insert_map_frag_size_),
 	frag_size_(object_to_copy.frag_size_),
 	symm_hack_arity_(object_to_copy.symm_hack_arity_),
-	exhaustive_(object_to_copy.exhaustive_)
+	exhaustive_(object_to_copy.exhaustive_),
+	sfxn_(object_to_copy.sfxn_),
+	homology_exclusion_(object_to_copy.homology_exclusion_)
 {}
 
 

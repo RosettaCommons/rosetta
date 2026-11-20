@@ -49,17 +49,13 @@ BondedResidueSelector::BondedResidueSelector( std::set<core::Size> const & input
 	set_input_set(input_set);
 }
 
-BondedResidueSelector::BondedResidueSelector ( BondedResidueSelector const & other )
-{
-	if ( other.input_set_selector_defined() ) {
-		use_input_set_selector_ = true;
-		input_set_selector_ = other.input_set_selector();
-	}
-	input_set_defined_ = other.input_set_defined();
-	set_input_set( other.input_set());
-	input_set_str_ = other.input_set_string();
-
-}
+BondedResidueSelector::BondedResidueSelector ( BondedResidueSelector const & other ) :
+	input_set_( other.input_set_ ),
+	input_set_str_( other.input_set_str_ ),
+	input_set_selector_( other.input_set_selector_ ),
+	input_set_defined_( other.input_set_defined_ ),
+	use_input_set_selector_( other.use_input_set_selector_ )
+{}
 
 
 ResidueSelectorOP BondedResidueSelector::clone() const {

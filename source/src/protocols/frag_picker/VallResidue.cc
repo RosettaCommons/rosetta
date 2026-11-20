@@ -124,6 +124,7 @@ VallResidue::~VallResidue() = default;
 /// @brief copy assignment
 VallResidue & VallResidue::operator =(VallResidue const & rval) {
 	if ( this != &rval ) {
+		key_ = rval.key_;
 		id_ = rval.id_;
 		aa_ = rval.aa_;
 		ss_ = rval.ss_;
@@ -150,6 +151,7 @@ VallResidue & VallResidue::operator =(VallResidue const & rval) {
 		profile_ = rval.profile_;
 		profile_struct_ = rval.profile_struct_;
 		sec_shift_data_ = rval.sec_shift_data_;
+		all_atom_residue_depth_ = rval.all_atom_residue_depth_;
 	}
 	return *this;
 }

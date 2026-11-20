@@ -61,6 +61,7 @@ MHCEpitopeConstraint::MHCEpitopeConstraint( MHCEpitopeConstraint const &src ):
 	runtime_assert( src.mhc_epitope_setup_ );
 	mhc_epitope_setup_ = src.mhc_epitope_setup_->clone();
 	cst_weight_ = src.get_cst_weight();
+	cst_selector_name_ = src.cst_selector_name_;
 }
 
 /// @brief Destructor

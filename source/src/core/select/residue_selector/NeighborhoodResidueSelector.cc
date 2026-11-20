@@ -98,7 +98,8 @@ NeighborhoodResidueSelector::NeighborhoodResidueSelector( NeighborhoodResidueSel
 	focus_str_( src.focus_str_ ),
 	distance_( src.distance_ ),
 	focus_selector_( src.focus_selector_ ),
-	include_focus_in_subset_(src.include_focus_in_subset_)
+	include_focus_in_subset_(src.include_focus_in_subset_),
+	atom_names_for_distance_measure_( src.atom_names_for_distance_measure_ )
 {
 	if ( src.focus_selector_ ) focus_selector_ = src.focus_selector_->clone();
 }

@@ -67,6 +67,7 @@ SSElementLengthFilter::SSElementLengthFilter():
 // @brief copy constructor
 SSElementLengthFilter::SSElementLengthFilter( SSElementLengthFilter const & rval ):
 	Super( rval ),
+	threshold_(rval.threshold_),
 	report_avg_(rval.report_avg_),
 	report_longest_(rval.report_longest_),
 	report_shortest_(rval.report_shortest_),

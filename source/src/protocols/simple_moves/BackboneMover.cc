@@ -118,6 +118,7 @@ BackboneMover::BackboneMover( BackboneMover const &src ) :
 	scorefxn_(), // Cloned below
 	temperature_( src.temperature_ ),
 	nmoves_( src.nmoves_ ),
+	warn_empty_list_( src.warn_empty_list_ ),
 	angle_max_( src.angle_max_),
 	resnum_( src.resnum_ ),
 	big_angle_( src.big_angle_ ),

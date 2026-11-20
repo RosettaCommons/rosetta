@@ -119,6 +119,7 @@ FragmentClaimer::FragmentClaimer( FragmentClaimer const & src ) :
 	bInitDofs_ = src.bInitDofs_;
 	claim_right_ = src.claim_right_;
 	region_ = src.region_;
+	active_sequence_labels_ = src.active_sequence_labels_;
 }
 
 
