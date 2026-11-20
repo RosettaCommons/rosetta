@@ -48,6 +48,12 @@ fill_ideal_xyz_from_icoor(
 	core::chemical::MutableResidueType & restype,
 	core::chemical::ResidueGraph const & graph);
 
+void
+pretty_print_atomicoor(
+	std::ostream & out,
+	core::chemical::MutableResidueType & restype
+);
+
 } // chemical
 } // core
 
