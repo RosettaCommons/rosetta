@@ -270,6 +270,12 @@ public:
 	hrf_dynamics_input( std::string const & setting );
 
 	std::string
+	hrf_gbm_input() const;
+
+	void
+	hrf_gbm_input( std::string const & setting );
+
+	std::string
 	depc_ms_input() const;
 
 	void
@@ -1103,6 +1109,7 @@ private:
 	std::string covalent_labeling_input_;
 	std::string covalent_labeling_fa_input_;
 	std::string hrf_dynamics_input_;
+	std::string hrf_gbm_input_;
 	std::string depc_ms_input_;
 	bool exclude_protein_protein_fa_elec_;
 	bool exclude_RNA_RNA_fa_elec_;
