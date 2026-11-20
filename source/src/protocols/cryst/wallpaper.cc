@@ -74,7 +74,7 @@ WallpaperGroup::set_wallpaper_group( std::string name_in) {
 	// setting + validation
 	if ( name_ == "P1" || name_ == "P112" ) {
 		setting_ = wgMONOCLINIC;
-	} else if ( name_ == "P121" || name_ == "P2111" || name_ == "C211" || name_ == "P222" || name_ == "P2122" || name_ == "P21212" || name_ == "C222" || name_ == "C211" ) {
+	} else if ( name_ == "P121" || name_ == "P2111" || name_ == "C211" || name_ == "P222" || name_ == "P2122" || name_ == "P21212" || name_ == "C222" ) {
 		setting_ = wgTETRAGONAL;
 	} else if ( name_ == "P4" || name_ == "P422" || name_ == "P4212" ) {
 		setting_ = wgCUBIC;

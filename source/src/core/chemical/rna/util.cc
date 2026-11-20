@@ -1062,19 +1062,19 @@ get_base_pair_atoms(
 			} else if ( aa1 == na_rcy && aa2 == na_ura ) {
 				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
 				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( "HO2'" ); // lame
-			} else if ( aa1 == na_rad && aa2 == na_rad ) {
+			} else if ( aa1 == na_rgu && aa2 == na_rad ) {
 				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
 				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( "HO2'" );
 				atom_ids1.push_back( " H22" );  atom_ids2.push_back( " N3 " );
-			} else if ( aa1 == na_rad && aa2 == na_rcy ) {
+			} else if ( aa1 == na_rgu && aa2 == na_rcy ) {
 				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
 				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( "HO2'" );
 				//atom_ids1.push_back( " H22" );  atom_ids2.push_back( " H6 " ); // nah
-			} else if ( aa1 == na_rad && aa2 == na_rgu ) {
+			} else if ( aa1 == na_rgu && aa2 == na_rgu ) {
 				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
 				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( "HO2'" );
 				atom_ids1.push_back( " H22" );  atom_ids2.push_back( " N3 " );
-			} else if ( aa1 == na_rad && aa2 == na_ura ) {
+			} else if ( aa1 == na_rgu && aa2 == na_ura ) {
 				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
 				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( "HO2'" );
 				//atom_ids1.push_back( " H22" );  atom_ids2.push_back( " H6 " ); // nah

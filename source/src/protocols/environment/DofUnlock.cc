@@ -49,7 +49,7 @@ DofUnlock::~DofUnlock(){
 		// should always be valid since pass_ exists.
 		DofPassportCOP pass_out( conformation_.pop_passport() );
 		if ( pass_out->mover() != pass_->mover() ||
-				pass_out->env_id() != pass_out->env_id() ) {
+				pass_out->env_id() != pass_->env_id() ) {
 			std::ostringstream ss;
 			ss << "DofUnlock popped a passport belonging to mover " << pass_out->mover()
 				<< " and environment id " << pass_out->env_id() << " when it expected a passport from "

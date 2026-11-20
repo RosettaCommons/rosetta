@@ -316,7 +316,7 @@ CDRSeqDesignOptionsParser::parse_cdr_design_option(std::string const & name, vec
 		check_line_len(lineSP, 4);
 		std::string option = lineSP[4];
 		set_cdr_design_fallback_option(option);
-	} else if ( name=="DISALLOWED_AA" || name=="DISALLOWED" || name == "DISALLOWED" ) {
+	} else if ( name=="DISALLOWED_AA" || name=="DISALLOWED" ) {
 		debug_assert( lineSP.size() > 2 ); //Should actually set something!
 		set_disallow_amino_acids( lineSP );
 

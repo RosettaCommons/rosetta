@@ -223,10 +223,10 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 	} else if ( //these options are incompatible with movemap use; the movemap determines flexible regions
 			option[FloppyTail::flexible_chain].user() ||
 			option[FloppyTail::flexible_stop_resnum].user() ||
-			option[FloppyTail::flexible_chain].user() ||
+			option[FloppyTail::flexible_start_resnum].user() ||
 			option[FloppyTail::short_tail::short_tail_fraction].user() ||
 			option[FloppyTail::short_tail::short_tail_off].user() ) {
-		utility_exit_with_message("option in::file::movemap not compatible with options flexible_chain, flexible_stop_resnum, flexible_chain, short_tail_fraction, or short_tail off.  This is because a manually-defined movemap overrides these options.");
+		utility_exit_with_message("option in::file::movemap not compatible with options flexible_chain, flexible_stop_resnum, flexible_start_resnum, short_tail_fraction, or short_tail off.  This is because a manually-defined movemap overrides these options.");
 	} else {
 		//handle user-defined movemap from file or from function; reverse-convert into start_ and stop_
 		if ( !movemap_ ) { //setup MoveMap (input by user)

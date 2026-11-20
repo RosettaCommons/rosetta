@@ -3597,7 +3597,7 @@ CartesianBondedEnergy::eval_singleres_torsion_derivatives(
 		if ( ! rsd.is_protein() ) { // This maintains the original behavior before aromatic ring conformers were added. ~Labonte
 			for ( core::uint i( 1 ); i <= n_rings && !skip_this_torsion; ++i ) {
 				if ( rsd.type().is_ring_atom( i, atids[1] ) && rsd.type().is_ring_atom( i, atids[2] )
-						&& rsd.type().is_ring_atom( i, atids[2] ) && rsd.type().is_ring_atom( i, atids[3] ) ) {
+						&& rsd.type().is_ring_atom( i, atids[3] ) && rsd.type().is_ring_atom( i, atids[4] ) ) {
 					skip_this_torsion=true;
 				}
 			}
