@@ -132,7 +132,7 @@ OmnibusDisulfideAnalysisLabelerMover::apply( core::pose::Pose& pose){
 	std::string label;
 
 	//pose.pdb_info()->add_reslabel(1,label);
-	for ( core::Size upstream_res = 1; upstream_res <pose.size(); ++upstream_res ) {
+	for ( core::Size upstream_res = 1; upstream_res <= pose.size(); ++upstream_res ) {
 		if ( pose.residue(upstream_res).type().is_disulfide_bonded() ) {
 			for ( core::Size downstream_res = upstream_res+2; downstream_res <= pose.size(); ++downstream_res ) {
 				if ( pose.residue(downstream_res).type().is_disulfide_bonded() && pose.residue(upstream_res).is_bonded(pose.residue(downstream_res)) ) {
@@ -170,11 +170,11 @@ OmnibusDisulfideAnalysisLabelerMover::apply( core::pose::Pose& pose){
 
 	std::pair<core::Size, core::Size> helix_pair;
 
-	for ( core::Size upstream_res = 1; upstream_res < pose.size(); ++upstream_res ) {
+	for ( core::Size upstream_res = 1; upstream_res <= pose.size(); ++upstream_res ) {
 		if ( pose.secstruct(upstream_res) == 'H' ) {
 			for ( core::Size downstream_res = upstream_res+2; downstream_res <= pose.size(); ++downstream_res ) {
 				if ( pose.secstruct(downstream_res) == 'H' ) {
-					if ( element_blocks[upstream_res] != element_blocks[downstream_res] && pose.residue(upstream_res).xyz(2).distance(pose.residue(upstream_res).xyz(2)) <= crit_dist_ ) {
+					if ( element_blocks[upstream_res] != element_blocks[downstream_res] && pose.residue(upstream_res).xyz(2).distance(pose.residue(downstream_res).xyz(2)) <= crit_dist_ ) {
 						helix_pair.first = element_blocks[upstream_res];
 						helix_pair.second = element_blocks[downstream_res];
 						helix_pairs.insert(helix_pair);
@@ -195,7 +195,7 @@ OmnibusDisulfideAnalysisLabelerMover::apply( core::pose::Pose& pose){
 		utility::vector1< core::Size > selection1;
 		utility::vector1< core::Size > selection2;
 
-		for ( core::Size current_res = 1; current_res < pose.size(); ++current_res ) {
+		for ( core::Size current_res = 1; current_res <= pose.size(); ++current_res ) {
 			if ( element_blocks[current_res] == current_pair.first ) {
 				selection1.push_back(current_res);
 			}

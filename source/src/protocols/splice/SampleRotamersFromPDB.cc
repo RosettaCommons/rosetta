@@ -229,7 +229,7 @@ void SampleRotamersFromPDB_RotamerSetOperation::fill_rotamer_matrix_from_db_file
 			}
 			//new_res->set_all_chi(Rots_real);
 			bool res_exsits_in_db = false;
-			for ( core::Size i=1; i<resi_vec_[resi_num].size(); i++ ) {
+			for ( core::Size i=1; i<=resi_vec_[resi_num].size(); i++ ) {
 				res_exsits_in_db = is_identical_rotamer(resi_vec_[resi_num][i],new_res);
 				if ( res_exsits_in_db ) break;
 				//TR<<"Found identical residue"<<std::endl;
@@ -780,7 +780,7 @@ rot_matrix RotLibdb::fill_rotamer_matrix_from_db_file(std::string fname) {
 			}
 
 			bool res_exsits_in_db = false;
-			for ( core::Size i=1; i<resi_mat[resi_num].size(); i++ ) {
+			for ( core::Size i=1; i<=resi_mat[resi_num].size(); i++ ) {
 				res_exsits_in_db = is_identical_rotamer(resi_mat[resi_num][i],new_res);
 				if ( res_exsits_in_db ) break;
 				//TR<<"Found identical residue"<<std::endl;
