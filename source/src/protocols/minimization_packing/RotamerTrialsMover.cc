@@ -103,8 +103,8 @@ RotamerTrialsMover::fresh_instance() const
 // setters
 void RotamerTrialsMover::score_function( core::scoring::ScoreFunctionCOP sf ) { scorefxn_ = sf; }
 void RotamerTrialsMover::task_factory( core::pack::task::TaskFactoryCOP tf ) { factory_ = tf; }
-void RotamerTrialsMover::task( core::pack::task::PackerTask const & task_in ) {
-	task_ = task_in.clone();
+void RotamerTrialsMover::task( core::pack::task::PackerTaskOP task_in ) {
+	task_ = task_in;
 	factory_.reset();
 }
 

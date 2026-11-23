@@ -316,7 +316,7 @@ HighResDocker::apply(core::pose::Pose & pose) {
 				unconstrained_pack_rotamers->apply(pose);
 			} else {
 				TR.Debug << "making RotamerTrialsMover" << std::endl;
-				rotamer_trials_mover->task(*packer_task);
+				rotamer_trials_mover->task(packer_task);
 				unconstrained_rotamer_trials->apply(pose);
 			}
 		}

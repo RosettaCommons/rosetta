@@ -89,7 +89,8 @@ public:
 	// setters
 	void score_function( core::scoring::ScoreFunctionCOP sf );
 	void task_factory( core::pack::task::TaskFactoryCOP tf );
-	void task( core::pack::task::PackerTask const & task_in );
+	/// @brief Set the task directly and clear any task factory. Clone before calling if a copy is needed.
+	void task( core::pack::task::PackerTaskOP task_in );
 
 public:
 

@@ -713,9 +713,7 @@ IdentifyLigandMotifs::write_motifs_to_disk()
 // and the real-motif comparison step.
 utility::vector1< core::Real > IdentifyLigandMotifs::count_significant_motifs(core::pose::PoseOP const & working_pose)
 {
-	static basic::Tracer ms_tr( "protocols.motifs.IdentifyLigandMotifs.count_significant_motifs", basic::t_info );
-
-	ms_tr.Trace << "Beginning count_significant_motifs (lightweight pre-check)" << std::endl;
+	TR.Trace << "Beginning count_significant_motifs (lightweight pre-check)" << std::endl;
 
 	// Result vector: [1]=total, [2]=mandatory_ok, [3]=sig_count
 	utility::vector1< core::Real > result (3, 0);
@@ -752,7 +750,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::count_significant_motifs(co
 	}
 
 	result[1] = total_motifs;
-	ms_tr.Debug << "Ligand placement created " << result[1] << " total motifs (pre-check)" << std::endl;
+	TR.Debug << "Ligand placement created " << result[1] << " total motifs (pre-check)" << std::endl;
 
 	result[2] = 1;
 	if ( option[ OptionKeys::motifs::mandatory_residues_for_motifs].user() ) {
@@ -760,7 +758,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::count_significant_motifs(co
 		for ( auto const mandatory_residue : mandatory_residues ) {
 			if ( mandatory_residue <= 0 || static_cast< core::Size >(mandatory_residue) > nres
 				|| !residue_has_motif[static_cast< core::Size >(mandatory_residue)] ) {
-				ms_tr.Debug << "No motifs made for mandatory residue index " << mandatory_residue << " (pre-check)" << std::endl;
+				TR.Debug << "No motifs made for mandatory residue index " << mandatory_residue << " (pre-check)" << std::endl;
 				result[2] = 0;
 				return result;
 			}
@@ -787,7 +785,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::count_significant_motifs(co
 		}
 	}
 
-	ms_tr.Debug << "About to exit count_significant_motifs: total=" << result[1]
+	TR.Debug << "About to exit count_significant_motifs: total=" << result[1]
 		<< " mandatory_ok=" << result[2] << " sig_count=" << result[3] << std::endl;
 	return result;
 }
