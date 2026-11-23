@@ -89,6 +89,8 @@ public:
 	// setters
 	void score_function( core::scoring::ScoreFunctionCOP sf );
 	void task_factory( core::pack::task::TaskFactoryCOP tf );
+	/// @brief Set the task directly and clear any task factory. Clone before calling if a copy is needed.
+	void task( core::pack::task::PackerTaskOP task_in );
 
 public:
 
@@ -139,7 +141,7 @@ private:
 	TaskFactoryCOP factory_;
 
 	/// @brief showing contents of PackerTask ( default false )
-	bool show_packer_task_;
+	bool show_packer_task_ = false;
 };  // class RotamerTrialsMover
 
 std::ostream &operator<< (std::ostream &os, RotamerTrialsMover const &mover);

@@ -20,6 +20,8 @@
 
 
 #include <iostream>
+#include <cstring>
+#include <limits>
 
 #ifdef USE_TENSORFLOW
 #include <core/select/residue_selector/ResidueSelector.hh>
@@ -57,6 +59,27 @@ void test(
   TR << std::setprecision(5);
   TR << "Output from model: " << observed << "\tExpected: " << expected << "\t" << (pass ? "PASSED" : "FAILED") << std::endl;
 	runtime_assert( pass );
+}
+
+void test_tensor_copy_preserves_special_values() {
+	using Tensor = RosettaTensorflowTensorContainer< float >;
+	utility::vector1< Tensor > tensors( 2 );
+	utility::vector1< int64_t > const dimensions( { 1, 2 } );
+	for ( auto & tensor : tensors ) tensor.initialize( TF_FLOAT, dimensions, 0.0f );
+	tensors[1](1) = std::numeric_limits< float >::quiet_NaN();
+	tensors[1](2) = -0.0f;
+	tensors[2](1) = std::numeric_limits< float >::infinity();
+	tensors[2](2) = 3.5f;
+
+	Tensor combined;
+	Tensor::combine_tensors( tensors, combined );
+	for ( core::Size t = 1; t <= tensors.size(); ++t ) {
+		for ( core::Size element = 1; element <= 2; ++element ) {
+			runtime_assert_string_msg(
+				std::memcmp( &tensors[t](element), &combined((t-1)*2+element), sizeof(float) ) == 0,
+				"Tensor combination must preserve the exact representation of special values." );
+		}
+	}
 }
 
 TF_Tensor *FloatTensor(const int64_t *dims, int num_dims, const float *values) {
@@ -318,6 +341,8 @@ int main( int argc, char* argv[] ) {
     NEW_OPT( select::path_to_model, "Path to your directory of saved models. Check the integration test at main/tests/integration/tests/tensorflow_simple_model_load_and_evaluate for an example", "./saved_models" );
 
     devel::init( argc, argv );
+
+    test_tensor_copy_preserves_special_values();
 
     if ( ! option[ select::path_to_model ].user() ) {
       utility_exit_with_message( "Please use the -select:path_to_model flag" );

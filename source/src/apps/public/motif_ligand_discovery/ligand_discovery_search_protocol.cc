@@ -81,6 +81,8 @@ using namespace protocols::dna;
 #include <string>
 #include <queue>
 #include <functional>
+#include <set>
+#include <tuple>
 
 // option key includes
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -183,14 +185,6 @@ main( int argc, char * argv [] )
 				<< std::endl;
 		}
 
-		//load in whole motif library
-		//create a vector that only stores the identity of the atoms  in the ligand (not their index  value); this vector will be empty, but is necessary to call wanted versions of overloaded  function to loading in the library
-		//version if we don't use this empty vector has potential to terminate the read of motifs early if a single bad motif is  read in, this version ditches the bad motif and keeps reading
-		utility::vector1< std::string > ligand_atom_names;
-		bool check_for_bad_motifs = true;
-		protocols::motifs::MotifLibrary motifs( protocols::motifs::get_LigandMotifLibrary_user(check_for_bad_motifs, ligand_atom_names) );
-		protocols::motifs::MotifCOPs motifcops = motifs.library();
-		ms_tr << "Collected motifs library with " << motifcops.size() << " motifs. " << std::endl;
 
 		//load in ligands
 
@@ -220,6 +214,32 @@ main( int argc, char * argv [] )
 
 			all_residues.push_back(ligresOP);
 		}
+
+		// Retain only motifs matching an ordered, bonded heavy-atom triplet in an
+		// input ligand. Irrelevant Motif objects are discarded while streaming.
+		std::set< std::tuple< std::string, std::string, std::string > > ligand_atom_type_triplets;
+		for ( auto const & ligand : all_residues ) {
+			for ( core::Size atom_i = 1; atom_i <= ligand->natoms(); ++atom_i ) {
+				if ( ligand->atom_is_hydrogen(atom_i) ) continue;
+				for ( core::Size atom_j : ligand->bonded_neighbor(atom_i) ) {
+					if ( ligand->atom_is_hydrogen(atom_j) ) continue;
+					for ( core::Size atom_k : ligand->bonded_neighbor(atom_j) ) {
+						if ( ligand->atom_is_hydrogen(atom_k) || atom_i == atom_k ) continue;
+						ligand_atom_type_triplets.insert(std::make_tuple(
+							ligand->atom_type(atom_i).atom_type_name(),
+							ligand->atom_type(atom_j).atom_type_name(),
+							ligand->atom_type(atom_k).atom_type_name()));
+					}
+				}
+			}
+		}
+
+		bool const check_for_bad_motifs = true;
+		protocols::motifs::MotifLibrary motifs(
+			protocols::motifs::get_LigandMotifLibrary_user(check_for_bad_motifs, ligand_atom_type_triplets)
+		);
+		protocols::motifs::MotifCOPs motifcops = motifs.library();
+		ms_tr << "Collected " << motifcops.size() << " ligand-compatible motifs. " << std::endl;
 
 		//iterate through all pdb files to run discovery on
 		for ( Filenames::const_iterator filename( pdbnames.begin() );
