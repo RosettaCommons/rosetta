@@ -302,7 +302,8 @@ RosettaTensorflowTensorContainer< T >::combine_tensors(
 			//VKM: Revisited April 2021: this should still work, though debugging
 			//output is now more verbose.
 			for( platform::Size element = 1; element <= n_elements_per_tensor; ++element ){
-				if( tensor_vector[ t ]( element ) != combined_tensor( offset + element ) ) {
+				// Verify the copied representation: NaNs compare unequal even when copied correctly.
+				if( std::memcmp( &tensor_vector[ t ]( element ), &combined_tensor( offset + element ), sizeof(T) ) != 0 ) {
 					errormsgs << "MISMATCH!!!\tOriginal[" << t << "](" << element << "):\t" << tensor_vector[t](element) << "\t";
 					errormsgs << "Combined(" << offset << "+" << element << "):\t" << combined_tensor(offset + element) << std::endl;
 					failed = true;
