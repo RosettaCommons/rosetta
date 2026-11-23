@@ -178,7 +178,6 @@ IdentifyLigandMotifs::IdentifyLigandMotifs()
 	output_motifs_ = option[ OptionKeys::motifs::output_motifs ];
 	//default true
 	output_motifs_as_pdb_ = option[ OptionKeys::motifs::output_motifs_as_pdb ];
-	motif_scorefxn_ = ScoreFunctionFactory::create_score_function( "ligand.wts" );
 
 	TR.Debug << "motif_pdb_output_path_: " << motif_pdb_output_path_ << std::endl;
 	TR.Debug << "motif_file_output_: " << motif_file_output_ << std::endl;
@@ -441,6 +440,9 @@ IdentifyLigandMotifs::process_for_motifs(
 
 	//declare new empty vector that will hold the indices for residues where motifs were made
 	utility::vector1< core::Size > prot_pos_that_made_motifs;
+
+	// Initialize on first use so constructing the protocol does not load scoring data.
+	if ( !motif_scorefxn_ ) motif_scorefxn_ = ScoreFunctionFactory::create_score_function( "ligand.wts" );
 
 	//score the pose (in theory only has to be done once)
 	motif_scorefxn_->score(pose);
@@ -720,6 +722,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::count_significant_motifs(co
 
 	// Only residue-contact counts are needed here. Prepare score-method caches,
 	// but avoid a full-pose score, pose cloning, atom trios, and motif objects.
+	if ( !motif_scorefxn_ ) motif_scorefxn_ = ScoreFunctionFactory::create_score_function( "ligand.wts" );
 	motif_scorefxn_->setup_for_scoring(*working_pose);
 	core::Size const nres = working_pose->size();
 	utility::vector1< bool > residue_has_motif(nres, false);

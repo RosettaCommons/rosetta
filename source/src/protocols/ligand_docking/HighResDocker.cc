@@ -305,11 +305,16 @@ HighResDocker::apply(core::pose::Pose & pose) {
 		// boltzmann() either accepts pose or restores the last accepted pose, so its cached score is exact here.
 		core::Real const score1 = allow_minimization_ ? monteCarlo->last_accepted_score() : 0.0;
 
+		// Select the packing interface from the accepted pose, before perturbing the ligand.
+		// Moving this after the rigid-body step changes the packing task and docking trajectory.
+		core::pack::task::PackerTaskOP packer_task;
+		if ( allow_repacking_ ) {
+			packer_task = make_packer_task(pose, all_residues_, packer_palette, unbound_rotamers);
+		}
+
 		apply_rigid_body_moves(pose, rigid_body_movers);
 
 		if ( allow_repacking_ ) {
-			core::pack::task::PackerTaskOP packer_task = make_packer_task(
-				pose, all_residues_, packer_palette, unbound_rotamers);
 			if ( repack_every_Nth_ != 0 && cycle % repack_every_Nth_ == 1 ) {
 				TR.Debug << "making PackRotamersMover" << std::endl;
 				pack_rotamers_mover->task(packer_task);
