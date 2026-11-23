@@ -757,7 +757,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::count_significant_motifs(co
 		utility::vector1< int > const mandatory_residues = option[ OptionKeys::motifs::mandatory_residues_for_motifs];
 		for ( auto const mandatory_residue : mandatory_residues ) {
 			if ( mandatory_residue <= 0 || static_cast< core::Size >(mandatory_residue) > nres
-				|| !residue_has_motif[static_cast< core::Size >(mandatory_residue)] ) {
+					|| !residue_has_motif[static_cast< core::Size >(mandatory_residue)] ) {
 				TR.Debug << "No motifs made for mandatory residue index " << mandatory_residue << " (pre-check)" << std::endl;
 				result[2] = 0;
 				return result;

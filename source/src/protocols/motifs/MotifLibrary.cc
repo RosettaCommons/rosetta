@@ -338,7 +338,7 @@ MotifLibrary::add_ligand_from_file(
 	std::string const cache_filename = cache_environment && cache_environment[0] != '\0'
 		? std::string(cache_environment) : motif_filename + ".ldcache";
 	if ( utility::file::file_exists(cache_filename)
-		&& load_ligand_index_cache(motif_filename, cache_filename, check_for_bad_motifs, ligand_atom_type_triplets) ) {
+			&& load_ligand_index_cache(motif_filename, cache_filename, check_for_bad_motifs, ligand_atom_type_triplets) ) {
 		return;
 	}
 
@@ -372,10 +372,10 @@ MotifLibrary::load_ligand_index_cache(
 	std::int64_t source_mtime = 0;
 	std::uint32_t group_count = 0;
 	if ( !cache || std::memcmp(magic, ligand_cache_magic, sizeof(magic)) != 0
-		|| !read_binary(cache, source_size) || !read_binary(cache, source_mtime)
-		|| !read_binary(cache, group_count)
-		|| source_size != static_cast< std::uint64_t >(source_status.st_size)
-		|| source_mtime != static_cast< std::int64_t >(source_status.st_mtime) ) {
+			|| !read_binary(cache, source_size) || !read_binary(cache, source_mtime)
+			|| !read_binary(cache, group_count)
+			|| source_size != static_cast< std::uint64_t >(source_status.st_size)
+			|| source_mtime != static_cast< std::int64_t >(source_status.st_mtime) ) {
 		return false;
 	}
 
@@ -385,8 +385,8 @@ MotifLibrary::load_ligand_index_cache(
 		std::uint64_t offset = 0;
 		std::uint64_t size = 0;
 		if ( !read_cache_string(cache, atom1) || !read_cache_string(cache, atom2)
-			|| !read_cache_string(cache, atom3) || !read_binary(cache, offset)
-			|| !read_binary(cache, size) ) {
+				|| !read_cache_string(cache, atom3) || !read_binary(cache, offset)
+				|| !read_binary(cache, size) ) {
 			return false;
 		}
 		auto const key = std::make_tuple(atom1, atom2, atom3);

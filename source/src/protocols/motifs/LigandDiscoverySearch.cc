@@ -545,7 +545,7 @@ bool LigandDiscoverySearch::passes_motif_geometry_precheck(const core::conformat
 	core::Size possible_contacts = 0;
 	for ( core::Size protein_position = 1; protein_position <= working_pose_->size(); ++protein_position ) {
 		if ( !working_pose_->residue_type(protein_position).is_protein()
-			|| working_pose_->residue(protein_position).name3() == "GLY" ) continue;
+				|| working_pose_->residue(protein_position).name3() == "GLY" ) continue;
 		core::conformation::Residue const & protein_residue = working_pose_->residue(protein_position);
 		core::Real const motif_distance_cutoff = 1.5 * (ligresOP->nbr_radius() + protein_residue.nbr_radius());
 		if ( ligresOP->nbr_atom_xyz().distance(protein_residue.nbr_atom_xyz()) <= motif_distance_cutoff ) {
@@ -850,7 +850,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 				static_cast< core::Size >(motifcop->res2_atom1_int()),
 				static_cast< core::Size >(motifcop->res2_atom2_int()),
 				static_cast< core::Size >(motifcop->res2_atom3_int())
-			};
+				};
 			placement_motif_index[key].push_back(motifcop);
 		}
 
@@ -1057,7 +1057,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					ligand_atom_trios[i][1][2],
 					ligand_atom_trios[i][2][2],
 					ligand_atom_trios[i][3][2]
-				};
+					};
 				auto const motif_bucket_iter = placement_motif_index.find(motif_key);
 				if ( motif_bucket_iter == placement_motif_index.end() ) {
 					ms_tr.Debug << "# matching motifs = 0" << std::endl;
@@ -1213,7 +1213,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					// If the placement doesn't form enough motifs against significant residues,
 					// kill it early and skip docking entirely (~50-80% of placements filtered here).
 					if ( option[ OptionKeys::motifs::collect_motifs_from_placed_ligand]
-						&& option[ OptionKeys::motifs::significant_residues_for_motifs].user() ) {
+							&& option[ OptionKeys::motifs::significant_residues_for_motifs].user() ) {
 
 						ms_tr.Trace << "Running early significant-motif pre-check before HighResDock" << std::endl;
 
@@ -1229,8 +1229,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						// - A mandatory residue didn't get a motif (pre_check_data[2] == 0)
 						// - Not enough significant-residue motifs (use min_sig_motifs_cutoff_)
 						if ( pre_check_data[1] < min_motifs_cutoff_
-							|| pre_check_data[2] == 0
-							|| pre_check_data[3] < min_sig_motifs_cutoff_ ) {
+								|| pre_check_data[2] == 0
+								|| pre_check_data[3] < min_sig_motifs_cutoff_ ) {
 
 							ms_tr.Debug << "Early pre-check FAILED: skipping expensive HighResDock for this placement." << std::endl;
 
