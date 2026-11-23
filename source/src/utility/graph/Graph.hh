@@ -25,6 +25,7 @@
 // STL Headers
 #include <iosfwd>
 #include <array>
+#include <memory>
 
 // Boost Headers
 #include <utility/graph/unordered_object_pool.fwd.hpp>
@@ -811,12 +812,14 @@ private:
 	platform::Size num_edges_;
 
 	/// @brief the pool from which edge lists are to allocate their edge list elements
-	boost::unordered_object_pool< EdgeListElement > * edge_list_element_pool_;
+	/// @details Must be declared before edge_list_: the list holds a reference to this
+	/// pool and returns its elements to it while being destroyed.
+	std::unique_ptr< boost::unordered_object_pool< EdgeListElement > > edge_list_element_pool_;
 	EdgeList edge_list_;
 
 	/// @brief the pool from which class Graph allocates Edge objects.
 	/// Not used by derived classes
-	boost::unordered_object_pool< Edge > * edge_pool_;
+	std::unique_ptr< boost::unordered_object_pool< Edge > > edge_pool_;
 
 	/// @brief Quick-access to a frequently needed edge -- the most recently sought edge
 	/// in a call to find_edge() or the most recently added edge

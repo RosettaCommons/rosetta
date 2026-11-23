@@ -49,21 +49,16 @@ inline core::Real dist_score( core::Real const & sqdist, core::Real const & star
 SICFast::SICFast(core::Real clash_dis) :
 	CLD(clash_dis),
 	CLD2(sqr(CLD)),
-	BIN(CLD*basic::options::option[basic::options::OptionKeys::sicdock::hash_2D_vs_3D]()),
-	h1_(nullptr),h2_(nullptr)
+	BIN(CLD*basic::options::option[basic::options::OptionKeys::sicdock::hash_2D_vs_3D]())
 {}
 
 SICFast::SICFast() :
 	CLD(basic::options::option[basic::options::OptionKeys::sicdock::clash_dis]()),
 	CLD2(sqr(CLD)),
-	BIN(CLD*basic::options::option[basic::options::OptionKeys::sicdock::hash_2D_vs_3D]()),
-	h1_(nullptr),h2_(nullptr)
+	BIN(CLD*basic::options::option[basic::options::OptionKeys::sicdock::hash_2D_vs_3D]())
 {}
 
-SICFast::~SICFast(){
-	if ( h1_ ) delete h1_;
-	if ( h2_ ) delete h2_;
-}
+SICFast::~SICFast() = default;
 
 
 void
@@ -112,10 +107,8 @@ SICFast::init(
 ){
 	using core::id::AtomID;
 
-	if ( h1_ ) delete h1_;
-	if ( h2_ ) delete h2_;
-	h1_ = new xyzStripeHashPose(pose1,clash_atoms1,CLD+0.01);
-	h2_ = new xyzStripeHashPose(pose2,clash_atoms2,CLD+0.01);
+	h1_.reset( new xyzStripeHashPose(pose1,clash_atoms1,CLD+0.01) );
+	h2_.reset( new xyzStripeHashPose(pose2,clash_atoms2,CLD+0.01) );
 }
 
 
@@ -306,7 +299,7 @@ SICFast::slide_into_contact(
 	core::Real const mindis_approx = get_mindis_with_plane_hashes(xlb,ylb,xub,yub,ha,hb,CLD2);
 	if ( fabs(mindis_approx) > 9e8 ) return 9e9;
 
-	core::Real const mindis = refine_mindis_with_xyzHash(h2_,xb,pa,ra,ori,CLD2,mindis_approx);
+	core::Real const mindis = refine_mindis_with_xyzHash(h2_.get(),xb,pa,ra,ori,CLD2,mindis_approx);
 	if ( fabs(mindis) > 9e8 ) return 9e9;
 
 	return -mindis;

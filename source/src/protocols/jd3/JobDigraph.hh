@@ -24,6 +24,7 @@
 // Utility Headers
 
 // STL Headers
+#include <memory>
 
 #ifdef PYROSETTA
 #include <utility/graph/unordered_object_pool.hpp>
@@ -303,7 +304,7 @@ protected:
 private:
 
 	/// @brief the pool from which class JobDigraph allocates JobDirectedEdge objects.
-	boost::unordered_object_pool< JobDirectedEdge > * job_edge_pool_;
+	std::unique_ptr< boost::unordered_object_pool< JobDirectedEdge > > job_edge_pool_;
 
 };
 

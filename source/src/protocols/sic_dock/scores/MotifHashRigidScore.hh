@@ -19,8 +19,9 @@
 #include <numeric/xyzVector.hh>
 #include <core/types.hh>
 #include <protocols/sic_dock/types.hh>
-#include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 #include <core/pose/xyzStripeHashPose.fwd.hh>
+
+#include <memory>
 
 
 namespace protocols {
@@ -57,10 +58,9 @@ private:
 	numeric::Xforms bbx1_,bbx2_;
 	mutable core::scoring::motif::MotifHashCOP mh_;
 	core::scoring::motif::XformScoreCOP xs_, xsee_, xseh_, xshe_, xshh_, xspp_;
-	protocols::fldsgn::topology::SS_Info2 *ssinfo1_, *ssinfo2_;
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
 	// core::Size nss1_,nss2_;
-	core::pose::xyzStripeHashPose* reshash_;
+	std::unique_ptr< core::pose::xyzStripeHashPose > reshash_;
 	utility::vector1< std::pair<numeric::xyzVector<float>,int> > reslist_;
 	bool hash_pose1_;
 	std::string ss1_,ss2_;
