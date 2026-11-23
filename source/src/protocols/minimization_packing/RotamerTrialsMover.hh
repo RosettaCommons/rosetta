@@ -141,7 +141,7 @@ private:
 	TaskFactoryCOP factory_;
 
 	/// @brief showing contents of PackerTask ( default false )
-	bool show_packer_task_;
+	bool show_packer_task_ = false;
 };  // class RotamerTrialsMover
 
 std::ostream &operator<< (std::ostream &os, RotamerTrialsMover const &mover);
