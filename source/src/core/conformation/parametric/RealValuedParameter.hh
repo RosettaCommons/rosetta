@@ -49,6 +49,7 @@ namespace parametric {
 enum RealPerturbationType {
 	RPT_gaussian=1, //Keep first
 	RPT_uniform,
+	RPT_von_mises,
 	RPT_unknown_type, //Keep second-to-last
 	RPT_end_of_list=RPT_unknown_type //Keep last
 };
