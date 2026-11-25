@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 3.0)
+# CMake >= 4.0 refuses to configure projects that declare compatibility with CMake < 3.5.
+# The `<min>...<max>` form keeps CMake 3.0 as the minimum while enabling policies up to 3.5 (CMake < 3.12 ignores the `...<max>` part).
+cmake_minimum_required(VERSION 3.0...3.5)
 
 # enabling IN_LIST operator https://cmake.org/cmake/help/v3.7/policy/CMP0057.html
 # cmake_policy(SET CMP0057 NEW)

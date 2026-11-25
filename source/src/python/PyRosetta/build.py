@@ -153,6 +153,22 @@ def get_cmake_compiler_options():
 
     return ''
 
+def patch_llvm_for_modern_cmake(prefix):
+    ''' Make sources of old LLVM releases (6.0.1) configurable with CMake >= 4.0 while keeping behavior under older CMake versions unchanged.
+        CMake-4 removed policy CMP0051 so explicit request for its OLD behavior in LLVM top-level CMakeLists.txt is now a hard error.
+        This function is idempotent so it is safe to call it on already patched (or on newer LLVM) sources.
+    '''
+    cmake_lists = prefix + '/CMakeLists.txt'
+    with open(cmake_lists) as f: text = f.read()
+
+    old = '\ncmake_policy(SET CMP0051 OLD)\n'
+    new = '\nif(CMAKE_VERSION VERSION_LESS 4.0)\n  cmake_policy(SET CMP0051 OLD)\nendif()\n'
+
+    if old in text:
+        print(f'Patching {cmake_lists} for compatibility with CMake >= 4.0...')
+        with open(cmake_lists, 'w') as f: f.write( text.replace(old, new) )
+
+
 def install_llvm_tool(name, source_location, prefix_root, debug, compiler, jobs, gcc_install_prefix, clean=True):
     ''' Install and update (if needed) custom LLVM tool at given prefix (from config).
         Return absolute path to executable on success and terminate with error on failure
@@ -243,8 +259,13 @@ def install_llvm_tool(name, source_location, prefix_root, debug, compiler, jobs,
         if not os.path.isfile(cmake_lists):
             with open(cmake_lists, 'w') as f: f.write(tool_build_line + '\n')
 
+        patch_llvm_for_modern_cmake(prefix)
+
         config = '-DCMAKE_BUILD_TYPE={build_type}'.format(build_type='Debug' if debug else 'Release')
         config += get_cmake_compiler_options()
+
+        # LLVM-6.0.1 declare `cmake_minimum_required(VERSION 3.4.3)` which CMake >= 4.0 refuses to configure unless policy floor is raised. Older CMake versions ignore this variable.
+        config += ' -DCMAKE_POLICY_VERSION_MINIMUM=3.5'
 
         if not os.path.isdir(build_dir): os.makedirs(build_dir)
         execute(
